@@ -70,10 +70,16 @@ const AVATAR_3D=[
  ['Лисёнок','Мультики'],['Девочка','Мультики'],['Виноград','Фрукты'],['Клубника','Фрукты'],
  ['Персик','Фрукты'],['Яблоко','Фрукты'],['В очках','Мультики'],['Сердечки','Мультики']
 ];
+/* Additional gallery slots 12–75 are additive; previous 0–11 stay stable. */
+const AVATAR_COLLECTION_64=["Кудрявый","Нежная улыбка","В очках","Подмигивание","Космонавт 2","Путешественница 2","В наушниках","Оранжевая шапка","Дедушка","Бабушка","Юноша в очках","Кепка","С бородой","Солнечная улыбка","Меломан","Мир","Девушка","Деловой","Очки и пучок","Строитель","Медик","Доктор","Шеф-повар","Пилот","Хаски","Кот","Лис","Корги","Панда","Коала","Енот","Сова","Тигрёнок","Кролик","Оленёнок","Ёжик","Пингвин","Тюлень","Выдра","Бобр","Слонёнок","Жираф","Лев","Корова","Ягнёнок","Черепаха","Хамелеон","Попугай","Яблоко 2","Банан","Клубника 2","Арбуз","Ананас","Авокадо","Морковка","Вишня","Робот 2","Галактика","Робот с сердцами","Пришелец","Монстрик","Деревце","Кот-робот","Пёс-космонавт"];
 const OWNER_AVATAR_KEY='seyveo-owner-avatar-v1',STAFF_AVATAR_KEY='seyveo-self-identity-avatar-v1';
 function atlasMark(index){
  const m=node('span','sv-atlas-thumb');
- m.style.backgroundPosition=`${(index%4)*100/3}% ${Math.floor(index/4)*50}%`;
+ if(index>=12&&index<76){
+  const tile=index-12;
+  m.classList.add('sv-atlas-collection-64');
+  m.style.backgroundPosition=`${(tile%8)*100/7}% ${Math.floor(tile/8)*100/7}%`;
+ }else m.style.backgroundPosition=`${(index%4)*100/3}% ${Math.floor(index/4)*50}%`;
  m.setAttribute('aria-hidden','true');return m;
 }
 function readActualSelfAvatar(){
@@ -81,8 +87,8 @@ function readActualSelfAvatar(){
   const isStaff=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
   const record=JSON.parse(localStorage.getItem(isStaff?STAFF_AVATAR_KEY:OWNER_AVATAR_KEY)||'null');
   const item=isStaff?record?.elena:record;
-  if(item?.kind==='atlas'&&Number.isInteger(item.index)&&item.index>=0&&item.index<12)return {kind:'atlas',index:item.index};
-  if(item?.kind==='preset'&&/^3d-(?:[0-9]|1[01])$/.test(item.id||''))return {kind:'atlas',index:Number(item.id.slice(3))};
+  if(item?.kind==='atlas'&&Number.isInteger(item.index)&&item.index>=0&&item.index<76)return {kind:'atlas',index:item.index};
+  if(item?.kind==='preset'&&/^3d-\d{1,2}$/.test(item.id||'')&&Number(item.id.slice(3))<76)return {kind:'atlas',index:Number(item.id.slice(3))};
   if(item?.kind==='photo'&&typeof item.data==='string'&&item.data.length<320000&&
      /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(item.data))
    return {kind:'photo',image:item.data};
@@ -105,7 +111,7 @@ function safeAvatar(spec){
  const initials=[...String(spec.initials||'Я')].slice(0,2).join('').toLocaleUpperCase('ru-RU');
  const emoji=[...String(spec.emoji||'😊')].slice(0,2).join('');
  const image=typeof spec.image==='string'&&spec.image.startsWith('data:image/jpeg;base64,')&&/^[A-Za-z0-9+/=]+$/.test(spec.image.slice('data:image/jpeg;base64,'.length))&&spec.image.length<320000?spec.image:'';
- return {kind:kind==='photo'&&!image?'monogram':kind,color,initials,emoji,image,index:Number.isInteger(spec.index)&&spec.index>=0&&spec.index<12?spec.index:0};
+ return {kind:kind==='photo'&&!image?'monogram':kind,color,initials,emoji,image,index:Number.isInteger(spec.index)&&spec.index>=0&&spec.index<76?spec.index:0};
 }
 function paintAvatar(element,source){
  const spec=safeAvatar(source);
@@ -194,6 +200,15 @@ function showAvatarEditor(id){
   AVATAR_3D.forEach(([title,group],index)=>{
    // Emoji-style portraits live in the separate Emotions tab.
    if(index===10||index===11)return;
+   const b=node('button','sv-atlas-choice');b.type='button';
+   b.setAttribute('aria-label',title);
+   b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===index));
+   b.append(atlasMark(index),node('small',null,title));
+   b.addEventListener('click',()=>{activeAvatarTab='atlas';draft.kind='atlas';draft.index=index;draw()});
+   atlasGrid.append(b);
+  });
+  AVATAR_COLLECTION_64.forEach((title,offset)=>{
+   const index=offset+12;
    const b=node('button','sv-atlas-choice');b.type='button';
    b.setAttribute('aria-label',title);
    b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===index));
