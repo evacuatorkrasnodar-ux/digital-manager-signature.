@@ -227,7 +227,7 @@ function showAvatarEditor(id){
  const photoButton=node('button','sv-inbox-avatar-method','Фото');
  for(const [kind,b] of [['atlas',atlasButton],['monogram',monoButton],['photo',photoButton]]){
   b.type='button';b.addEventListener('click',()=>{
-   activeAvatarTab=kind;if(kind!=='atlas'&&kind!=='emoji')draft.kind=kind;draw();
+   activeAvatarTab=kind;if(kind!=='atlas')draft.kind=kind;draw();
    if(kind==='photo'&&!draft.image)fileInput.click();
   });
   b.dataset.avatarMethod=kind;
@@ -264,7 +264,6 @@ function showAvatarEditor(id){
    swatches[i].setAttribute('aria-pressed',String(AVATAR_COLORS[i]===draft.color));
   build3D();
   atlasPanel.hidden=activeAvatarTab!=='atlas';
-  emojiPanel.hidden=true;
   monoPanel.hidden=activeAvatarTab!=='monogram';
   photoPanel.hidden=activeAvatarTab!=='photo';
   palette.hidden=activeAvatarTab!=='monogram';
