@@ -1,0 +1,126 @@
+/* SEYVEO · one static circular-button press standard · 23 Nov 2026
+   Applies to the real navigation / call / add / header icon buttons.
+   - No depressed/glowing/grey tap surface, no jump or scale on tap.
+   - Preserve each THEME'S idle face, drop shadow and existing handler.
+   - Never disable keyboard focus-visible outlines, selected tools or
+     the user's reduced-motion preferences.
+   Loaded LAST to outrank legacy and late theme-specific :active rules. */
+
+/* Clear iOS blue/grey native tap flashes on existing circular controls.
+   No background, sizing, shadow or pseudo-icon changes in this rule. */
+html body button:is(
+ .sv-header-material-circle,
+ .sv-note-nav-circle,
+ .sv-white-pearl-circle,
+ .sv-top-action,
+ .sv-nav-back,
+ .sv-nav-arrow,
+ .svcp-work-chat-back,
+ .svcp-work-history-top,
+ .svcp-directory-search-toggle,
+ .svcp-call-button,
+ .svcp-plus-pearl-rebuilt,
+ .sv-newdock-button,
+ .sv-doc-head-icon,
+ .sv-doc-shelf-add,
+ .sv-mail-icon-button,
+ .sv-ink-confirm,
+ .sv-cabinet-plus,
+ .calendar-header-add,
+ .personal-tasks-add,
+ .svcp-manager-task-create,
+ .sv-note-home-new-dock button,
+ [class*="-header-circle"],
+ [class*="-nav-circle"]
+),
+html body button:is(
+ #svcpWorkChatBack,#svcpWorkHistoryTop,#svcpConversationStandaloneBack,
+ #svcpConversationBack,#svcpAudioCall,#svcpVideoCall,#svcpAttachFile,
+ #svNoteHomeNew,#svNoteDone,#notePaperSave,
+ #calendarAdd,#personalAddTasks,#svNewTaskCameraButton,
+ #svNewTaskVoice,#svNewTaskCalendarButton,
+ #sayviSurfaceBack,#assistantChatHistoryBack,
+ #noteReviewBack,#noteReadBack,#noteScanBack
+){
+ -webkit-tap-highlight-color:transparent!important;
+ -webkit-touch-callout:none!important;
+}
+
+/* Optically stationary: no tap movement, no scaling animation.
+   Select actual circle controls, not entire headers, popovers or docks. */
+html body button:is(
+ .sv-header-material-circle,.sv-note-nav-circle,.sv-white-pearl-circle,
+ .sv-top-action,.sv-nav-back,.sv-nav-arrow,.svcp-work-chat-back,
+ .svcp-work-history-top,.svcp-directory-search-toggle,.svcp-call-button,
+ .svcp-plus-pearl-rebuilt,.sv-newdock-button,.sv-doc-head-icon,
+ .sv-doc-shelf-add,.sv-mail-icon-button,.sv-ink-confirm,
+ .sv-cabinet-plus,.calendar-header-add,.personal-tasks-add,
+ .svcp-manager-task-create,[class*="-header-circle"],[class*="-nav-circle"]
+):is(:active,:focus,:hover),
+html body button:is(
+ #svcpWorkChatBack,#svcpWorkHistoryTop,#svcpConversationStandaloneBack,
+ #svcpConversationBack,#svcpAudioCall,#svcpVideoCall,#svcpAttachFile,
+ #svNoteHomeNew,#svNoteDone,#notePaperSave,
+ #calendarAdd,#personalAddTasks,#svNewTaskCameraButton,
+ #svNewTaskVoice,#svNewTaskCalendarButton,
+ #sayviSurfaceBack,#assistantChatHistoryBack,
+ #noteReviewBack,#noteReadBack,#noteScanBack
+):is(:active,:focus,:hover){
+ transform:none!important;
+ translate:none!important;
+ scale:1!important;
+ animation:none!important;
+ transition:none!important;
+}
+/* The two actual inbox buttons on the user's screenshot must be identical
+   while pressed as when idle. One pearl face; never inset/gloomy. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"]
+ :is(.svcp-work-chat-back,#svcpWorkHistoryTop,.svcp-directory-search-toggle):is(:active,:focus,:hover),
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] > #svcpConversationStandaloneBack:is(:active,:focus,:hover),
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > .svcp-call-button:not([hidden]):is(:active,:focus,:hover){
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ background-image:none!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+}
+/* Same White Pearl for ordinary light header/navigation circular buttons.
+   Leave colored Done, warning, tools, emoji and selected dock state alone. */
+html:root[data-theme="light"] body button:is(
+ .sv-header-material-circle,
+ .sv-continuity-titlebar > .seyveo-picture-back,
+ .sv-continuity-titlebar > .life-back,
+ .sv-continuity-titlebar > .sv-deep-back,
+ .sv-continuity-titlebar > .manage-theme-back,
+ #sayviSurfaceBack,#noteReviewBack,#noteReadBack,#noteScanBack,
+ #assistantChatHistoryBack,#calendarAdd,.calendar-header-add,
+ #personalAddTasks,.personal-tasks-add,.svcp-manager-task-create,
+ .sv-cabinet-plus,#svNoteHomeNew
+):is(:active,:focus,:hover){
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ background-image:none!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13))!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+}
+/* The standalone white composer + has its own static circle. The two-row
+   expanded composer intentionally has NO separate + button background. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatForm:not(.svcp-compose-multiline) > #svcpAttachFile:is(:active,:focus,:hover){
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ background-image:none!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13))!important;
+}
+/* Blue chats retain their existing blue palette, not White Pearl. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack:is(:active,:focus,:hover),
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]):is(:active,:focus,:hover){
+ background:var(--sv-chat-blue-surface,rgba(11,84,174,.68))!important;
+ background-image:none!important;
+ box-shadow:var(--sv-chat-blue-circle-shadow,0 3px 11px rgba(5,53,111,.14))!important;
+ border:var(--sv-chat-blue-edge,1px solid rgba(3,70,151,.32))!important;
+}
+/* Keep the focus-visible accessibility ring: only the pressed face freezes. */
