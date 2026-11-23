@@ -3987,7 +3987,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
  align-items:stretch!important;flex:0 0 auto!important;
  width:calc(100% - 24px)!important;min-height:44px!important;
- margin:7px 12px 10px!important;padding:3px!important;gap:3px!important;
+ margin:8px 12px 10px!important;padding:3px!important;gap:3px!important;
  border:0!important;border-radius:14px!important;
  background:var(--sv-msg-base)!important;background-image:none!important;
  box-shadow:none!important;overflow:hidden!important;
