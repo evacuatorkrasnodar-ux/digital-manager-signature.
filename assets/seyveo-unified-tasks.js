@@ -629,7 +629,16 @@
    if(Number.isFinite(top))
     employeeChatScreen.style.setProperty('--svcp-visible-top',Math.max(0,Math.round(top))+'px');
   }finally{
-   employeeChatScreen.style.removeProperty('visibility');
+   // Safari must commit the fully reset inbox DOM before revealing the
+   // fullscreen composited layer. Unhiding in the same JS task can briefly
+   // replay the cached wallpaper of the previously opened Sayvi room.
+   requestAnimationFrame(()=>{
+    if(transition!==workChatTransition||page.dataset.workChatOpen!=='true')return;
+    requestAnimationFrame(()=>{
+     if(transition!==workChatTransition||page.dataset.workChatOpen!=='true')return;
+     employeeChatScreen.style.removeProperty('visibility');
+    });
+   });
   }
   settleWorkChatViewport();
   requestAnimationFrame(()=>{
