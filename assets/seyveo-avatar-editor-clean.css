@@ -71,12 +71,13 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-hero{
  display:flex!important;flex-direction:column!important;align-items:center!important;
- gap:8px!important;margin:0!important;padding:0 0 2px!important;
+ gap:0!important;margin:0!important;padding:0 0 2px!important;
  border:0!important;background:transparent!important;box-shadow:none!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-preview{
  display:grid!important;place-items:center!important;width:88px!important;height:88px!important;
  min-width:88px!important;min-height:88px!important;padding:0!important;margin:0!important;
+ position:relative!important;z-index:2!important;
  border:0!important;border-radius:50%!important;overflow:hidden!important;box-shadow:none!important;
  font-size:35px!important;
 }
@@ -84,7 +85,8 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
  display:inline-flex!important;align-items:center!important;justify-content:center!important;
  gap:5px!important;max-width:calc(100% - 24px)!important;
  min-height:30px!important;padding:3px 10px 3px 12px!important;
- margin:0!important;border:0!important;border-radius:999px!important;
+ position:relative!important;z-index:1!important;
+ margin:-9px 0 0!important;border:0!important;border-radius:999px!important;
  background:var(--svav-bg,#fff)!important;background-image:none!important;
  box-shadow:0 2px 9px rgba(25,38,52,.09)!important;
  color:var(--svav-ink,#1b2027)!important;
