@@ -14,6 +14,9 @@
  --sv-white-pearl-edge:1px solid rgba(255,255,255,.99);
  --sv-white-pearl-blur:blur(16px) saturate(100%);
  --sv-white-pearl-ink:#0b0b0d;
+ /* One quiet white selected state for segmented capsules and new screens. */
+ --sv-white-pearl-selected:rgba(255,255,255,.96);
+ --sv-white-pearl-selected-shadow:0 1px 3px rgba(82,69,57,.075);
  /* EXACT white-chat shadows: one fine readable rim and soft lift.
     No second outline pseudo element or heavy embossed gradient. */
  --sv-white-pearl-circle-shadow:
