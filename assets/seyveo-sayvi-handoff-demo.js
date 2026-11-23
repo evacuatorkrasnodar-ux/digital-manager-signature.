@@ -1,45 +1,17 @@
-/* SEYVEO opening: the real Sayvi greets, gently travels into
-   her miniature, while the original three-slot dock grows by one slot.
-   Home stays Home; task data, navigation and touch handlers are untouched.
-   ?sayvi-intro=1 replays the scene for review; ?sayvi-intro=0 skips it. */
+/* SEYVEO Home sphere and dock continuity.
+   This module keeps the real Home orb, agenda and three/four-button dock in
+   sync. The public startup loading screen was removed; only an explicitly
+   requested local voice demo can use the former welcome transition. */
 (() => {
   'use strict';
   const params=new URLSearchParams(location.search);
-  const replay=params.get('sayvi-intro')==='1'||params.get('sayvi-handoff')==='1';
   const noIntro=params.get('sayvi-intro')==='0';
   const speed=params.get('sayvi-slow')==='1'?1.8:1;
-  // Allow the 5.2s logo and pearl mist to finish before the first dock motion.
   const openingDuration=5700;
-  // The approved Sayvi voice is available via the trusted local server, or
-  // from a file the owner explicitly imports into this browser's private data.
-  // No recording is published with SEYVEO; other visitors remain silent.
   const voiceRequested=params.get('sayvi-voice')==='1';
   const localVoicePreview=voiceRequested&&location.origin==='http://127.0.0.1:8790';
-  let personalVoiceSaved=false;
-  try{personalVoiceSaved=localStorage.getItem('seyveo-private-voice-ready-v1')==='1';}catch{}
   const fileVoicePreview=!localVoicePreview&&voiceRequested;
-  // The personal cinematic uses the exact approved short WAV, never a fresh
-  // TTS performance. Long project narration remains a separate local task.
-  const dailyKey='seyveo-sayvi-cinema-last-day-v4';
-  const currentDay=()=>{
-    const d=new Date();
-    return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
-  };
-  const day=currentDay();
-  let alreadySeen=false;
-  try{alreadySeen=localStorage.getItem(dailyKey)===day;}catch{}
-  // Replaying on a refresh is intentional on both Safari/iPhone and desktop.
-  // Previously the mouse-pointer check accidentally excluded mobile Safari.
-  const pageReload=performance.getEntriesByType('navigation')[0]?.type==='reload'
-    ||performance.navigation?.type===1;
-  // Home Screen PWA launches are often reported as "navigate", not "reload".
-  // Each new standalone document is a new app opening: replay its artwork,
-  // while ordinary Safari tabs retain the once-a-day behavior.
-  const standaloneLaunch=matchMedia('(display-mode: standalone)').matches
-    ||navigator.standalone===true;
   const atHome=!location.hash||location.hash==='#home';
-  // Retired the legacy multi-step public intro. The new independent splash
-  // owns startup; explicit private voice preview remains available.
   const showCinema=atHome&&!noIntro&&voiceRequested;
   const root=document.documentElement;
   root.classList.add('sv-sayvi-handoff-demo');
@@ -50,7 +22,7 @@
   const small=dockButton?.querySelector('.sv-sayvi-velvet-sphere');
   const dock=dockButton?.closest('footer.dock');
   if(!home||!orb||!dockButton||!small){
-    root.classList.remove('sv-sayvi-handoff-demo','sv-cinema-boot');
+    root.classList.remove('sv-sayvi-handoff-demo');
     return;
   }
   // Restore the approved top-of-Home presence line independently of greeting.
@@ -218,10 +190,6 @@
       originalOrbStyle=null;
     }
   }
-  function rememberOpening(){
-    if(!showCinema)return;
-    try{localStorage.setItem(dailyKey,day);}catch{}
-  }
   const storeList=key=>{
     try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[];}
     catch{return [];}
@@ -312,7 +280,6 @@
     greeting?.remove();
     greeting=null;
     root.classList.remove('sv-cinema-greeting-active');
-    root.classList.remove('sv-cinema-boot');
     clearTimeout(introTimer);
     clearTimeout(safetyTimer);
     if(spark)root.classList.add('sv-cinema-stagger-enter');
@@ -350,7 +317,6 @@
       document.body.appendChild(flash);
       setTimeout(()=>flash.remove(),1050);
     }
-    rememberOpening();
     renderToday();
     beginHomeGreetingLifetime();
     // Remove animation control once every delayed card has settled, so any
@@ -413,7 +379,6 @@
     if(done)return;
     // A quiet, task-free launch has no miniature destination to prepare.
     if(shouldDockHome())prepareDock();
-    root.classList.remove('sv-cinema-boot');
     // Start the original mark/word/signature choreography at a faster pace.
     // The Home controller waits two frames for its final visible geometry.
     window.dispatchEvent(new Event('seyveo:cinema-opening'));
@@ -655,7 +620,7 @@
   // No automatic spoken welcome: the public launch is intentionally silent.
   // An explicitly requested private preview (?sayvi-voice=1) remains separate.
 
-  // One opening per LOCAL calendar day; route changes never replay the film.
+  // The normal Home enters immediately; the voice demo is opt-in only.
   const launch=()=>{
     if(!showCinema||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
     if(document.hidden){
@@ -671,12 +636,10 @@
     }
     if(localVoicePreview){
       prepareDock();
-      root.classList.remove('sv-cinema-boot');
-      showLocalVoicePreview();
+        showLocalVoicePreview();
     }else if(fileVoicePreview){
       prepareDock();
-      root.classList.remove('sv-cinema-boot');
-      showPrivateFileVoicePreview();
+        showPrivateFileVoicePreview();
     }else runOpening();
   };
   // The script is at the end of <body>; do not wait for slow images or audio.
