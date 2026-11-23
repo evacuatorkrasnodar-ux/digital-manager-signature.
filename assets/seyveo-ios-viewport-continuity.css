@@ -266,8 +266,8 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  box-sizing:border-box!important;
  width:44px!important;height:44px!important;
  border:0!important;border-radius:50%!important;
- background:rgba(13,73,186,.68)!important;color:#fff!important;
- box-shadow:none!important;-webkit-backdrop-filter:none!important;
+ background:rgba(13,73,186,.84)!important;color:#fff!important;
+ box-shadow:0 3px 10px rgba(9,49,117,.16)!important;-webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;transform:none!important;transition:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
