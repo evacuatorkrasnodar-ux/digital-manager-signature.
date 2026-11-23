@@ -150,6 +150,10 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-monogram{
  display:flex!important;flex-direction:column!important;gap:16px!important;
 }
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-color-caption{
+ display:block!important;font:550 13px/1.4 -apple-system,system-ui,sans-serif!important;
+ color:var(--svav-ink)!important;
+}
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-colors{
  display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:13px!important;
 }
