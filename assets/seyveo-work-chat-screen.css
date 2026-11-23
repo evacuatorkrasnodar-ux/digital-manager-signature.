@@ -7150,19 +7150,35 @@ html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > #svcpConve
  order:2!important;
 }
 
-/* 2026-11-23 · iPhone Safari: keep final message above floating composer.
-   A real flex child is needed: bottom padding on an overflow-y flex column
-   is not consistently included in the scroll range on older WebKit.
-   This reserves scrollable space, not visible extra screen height. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
- scroll-padding-bottom:calc(var(--svcp-current-compose-height,56px) + var(--seyveo-dock-bottom,8px) + 20px + env(safe-area-inset-bottom,0px))!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpMessages::after{
- content:""!important;
- display:block!important;
- flex:0 0 calc(var(--svcp-current-compose-height,56px) + var(--seyveo-dock-bottom,8px) + 22px + env(safe-area-inset-bottom,0px))!important;
- height:calc(var(--svcp-current-compose-height,56px) + var(--seyveo-dock-bottom,8px) + 22px + env(safe-area-inset-bottom,0px))!important;
+/* 2026-11-23 · Native chat scroll above the fixed composer.
+   Root cause: the old empty ::after spacer lived INSIDE the scroll list while
+   the list itself continued beneath the absolute composer, making the final
+   bubbles inaccessible on iPhone. Reserve the ACTUAL composer height as a
+   flex margin outside the scrollable element. Do not touch header or dock. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #svcpMessages{
+ box-sizing:border-box!important;
+ flex:1 1 0px!important;
+ height:0!important;
  min-height:0!important;
- width:1px!important;
- pointer-events:none!important;
+ max-height:none!important;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ -webkit-overflow-scrolling:touch!important;
+ overscroll-behavior-y:contain!important;
+ touch-action:pan-y!important;
+ margin-top:0!important;
+ margin-bottom:calc(var(--svcp-current-compose-height,56px) + var(--seyveo-dock-bottom,8px) + 14px + env(safe-area-inset-bottom,0px))!important;
+ padding-bottom:14px!important;
+ scroll-padding-bottom:14px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #svcpMessages::after{
+ content:none!important;
+ display:none!important;
+}
+/* Expanded reply/attachment cards temporarily occupy space above the input.
+   Keep the thread's bottom edge out of those panels too. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat:has(
+ :is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden])
+) #svcpMessages{
+ margin-bottom:calc(var(--svcp-current-compose-height,56px) + var(--seyveo-dock-bottom,8px) + 100px + env(safe-area-inset-bottom,0px))!important;
 }
