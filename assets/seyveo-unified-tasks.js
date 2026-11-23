@@ -599,7 +599,8 @@
    previousRoom.style.setProperty('display','none','important');
   }
   if(directory)directory.hidden=false;
-  employeeChatScreen.hidden=false;
+  // Prepare everything offscreen, then publish the finished inbox/room
+  // in a single paint. Do not expose the shell during DOM and theme updates.
   page.dataset.workChatOpen='true';
   chatHost.hidden=false;chats.hidden=false;
   document.documentElement.classList.add('svcp-work-chat-active');
@@ -624,10 +625,11 @@
    if(Number.isFinite(top))
     employeeChatScreen.style.setProperty('--svcp-visible-top',Math.max(0,Math.round(top))+'px');
   }finally{
-   // All room/inbox state and the initial viewport are ready synchronously.
-   // Reveal in this same task: no artificial 2-frame blank screen.
-   if(transition===workChatTransition&&page.dataset.workChatOpen==='true')
+   // Reveal the fully built route once, after chat state and viewport are set.
+   if(transition===workChatTransition&&page.dataset.workChatOpen==='true'){
+    employeeChatScreen.hidden=false;
     employeeChatScreen.style.removeProperty('visibility');
+   }
   }
   settleWorkChatViewport();
   requestAnimationFrame(()=>{
