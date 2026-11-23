@@ -2770,7 +2770,7 @@ $('svcpConversationBack')?.addEventListener('click',showInbox);
  $('svcpConversationStandaloneBack')?.addEventListener('click',showInbox);
 $('svcpConversationSearch')?.addEventListener('click',()=>{
  showInbox();
- $('svcpHistorySearch')?.focus({preventScroll:true});
+ window.dispatchEvent(new Event('seyveo:messages-open-search'));
 });
 $('svcpMentionElena')?.addEventListener('click',()=>{
  const input=$('svcpChatInput');if(!input)return;
