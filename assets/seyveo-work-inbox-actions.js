@@ -143,6 +143,143 @@ function updateHeaderAvatar(){
  }
  // Other people's avatars are not editable from the manager's browser.
 }
+
+/* Clean standalone avatar editor; separate fixed footer and one scroll area. */
+function showAvatarEditor(){
+ const staff=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
+ const initial=readActualSelfAvatar();
+ let draft=safeAvatar(initial)||{kind:'monogram',initials:staff?'Е':'Я',color:AVATAR_COLORS[0]};
+ let tab=draft.kind==='photo'?'photo':draft.kind==='monogram'?'monogram':'atlas';
+ const editor=node('form','sv-new-avatar-editor');
+ editor.id='svNewAvatarForm';
+ editor.noValidate=true;
+ const hero=node('div','sv-new-avatar-hero');
+ const preview=node('span','sv-new-avatar-preview');
+ preview.setAttribute('aria-hidden','true');
+ const subtitle=node('small',null,'Ваш профиль');
+ hero.append(preview,subtitle);
+ const nameLabel=node('label','sv-new-avatar-field');
+ nameLabel.append(node('span',null,'Имя'));
+ const nameInput=node('input','sv-new-avatar-name');
+ nameInput.type='text';nameInput.maxLength=50;nameInput.placeholder='Ваше имя';nameInput.autocomplete='nickname';
+ nameInput.value=staff?'Елена':String(prefs.myProfile?.name||'');
+ if(staff)nameInput.readOnly=true;
+ nameLabel.append(nameInput);
+ const tabs=node('div','sv-new-avatar-tabs');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Способ оформления');
+ const views=node('div','sv-new-avatar-views');
+ const gallery=node('div','sv-new-avatar-grid');
+ const options=[
+  ['atlas','Аватары'],
+  ['monogram','Буквы'],
+  ['photo','Фото']
+ ];
+ const btns=[];
+ for(const [mode,label] of options){
+  const btn=node('button','sv-new-avatar-tab',label);btn.type='button';
+  btn.addEventListener('click',()=>{
+   tab=mode;
+   if(mode==='monogram')draft.kind='monogram';
+   if(mode==='photo'&&draft.kind!=='photo'){ /* Wait for the chosen file; preserve existing selection. */ }
+   paint();
+  });
+  btn.dataset.mode=mode;tabs.append(btn);btns.push(btn);
+ }
+ for(let i=0;i<AVATAR_3D.length;i++){
+  const button=node('button','sv-new-avatar-choice');button.type='button';
+  button.dataset.index=String(i);button.setAttribute('aria-label',AVATAR_3D[i][0]);
+  const portrait=node('span','sv-atlas-thumb');
+  portrait.style.backgroundPosition=`${(i%4)*100/3}% ${Math.floor(i/4)*50}%`;
+  portrait.setAttribute('aria-hidden','true');
+  button.append(portrait,node('small',null,AVATAR_3D[i][0]));
+  button.addEventListener('click',()=>{draft.kind='atlas';draft.index=i;tab='atlas';paint()});
+  gallery.append(button);
+ }
+ const mono=node('div','sv-new-avatar-monogram');
+ const monoLabel=node('label','sv-new-avatar-field');
+ monoLabel.append(node('span',null,'Буквы на аватаре'));
+ const letters=node('input','sv-new-avatar-name');
+ letters.type='text';letters.maxLength=2;letters.placeholder='Р';
+ letters.value=draft.initials||String(nameInput.value||'Я').slice(0,1);
+ monoLabel.append(letters);mono.append(monoLabel);
+ const swatches=node('div','sv-new-avatar-colors');
+ for(const color of AVATAR_COLORS){
+  const button=node('button','sv-new-avatar-color');button.type='button';
+  button.style.backgroundColor=color;button.dataset.color=color;button.setAttribute('aria-label','Цвет фона');
+  button.addEventListener('click',()=>{draft.color=color;draft.kind='monogram';paint()});
+  swatches.append(button);
+ }
+ mono.append(swatches);
+ letters.addEventListener('input',()=>{draft.kind='monogram';draft.initials=[...letters.value.trim()].slice(0,2).join('').toLocaleUpperCase('ru-RU');paint()});
+ const photo=node('div','sv-new-avatar-photo');
+ const photoLabel=node('label','sv-new-avatar-photo-pick');
+ photoLabel.append(node('span',null,'Выбрать фотографию'));
+ const photoInput=node('input');
+ photoInput.type='file';photoInput.accept='image/jpeg,image/png,image/webp';photoInput.setAttribute('aria-label','Выбрать фото');
+ photoLabel.append(photoInput);photo.append(photoLabel);
+ const status=node('p','sv-new-avatar-status');status.setAttribute('role','status');
+ photoInput.addEventListener('change',()=>{
+  const file=photoInput.files?.[0];if(!file)return;
+  if(!file.type.startsWith('image/')||file.size>8*1024*1024){status.textContent='Выберите фото до 8 МБ.';photoInput.value='';return}
+  const url=URL.createObjectURL(file),picture=new Image();
+  picture.onload=()=>{
+   try{
+    const canvas=document.createElement('canvas');canvas.width=256;canvas.height=256;
+    const ctx=canvas.getContext('2d'),side=Math.min(picture.naturalWidth,picture.naturalHeight);
+    if(!ctx||!side)throw new Error('picture');
+    ctx.drawImage(picture,(picture.naturalWidth-side)/2,(picture.naturalHeight-side)/2,side,side,0,0,256,256);
+    const data=canvas.toDataURL('image/jpeg',.78);
+    if(data.length>=320000)throw new Error('size');
+    draft.kind='photo';draft.image=data;tab='photo';status.textContent='';paint();
+   }catch{status.textContent='Не удалось обработать фотографию.'}
+   URL.revokeObjectURL(url);photoInput.value='';
+  };
+  picture.onerror=()=>{status.textContent='Не удалось открыть фото.';URL.revokeObjectURL(url);photoInput.value=''};
+  picture.src=url;
+ });
+ views.append(gallery,mono,photo);
+ editor.append(hero,nameLabel,tabs,views,status);
+ const footer=node('div','sv-new-avatar-footer');
+ const reset=node('button','sv-new-avatar-reset','Сбросить');reset.type='button';
+ const save=node('button','sv-new-avatar-save','Сохранить');save.type='submit';save.setAttribute('form',editor.id);
+ footer.append(reset,save);
+ function paint(){
+  paintAvatar(preview,draft);
+  for(const b of btns)b.setAttribute('aria-pressed',String(b.dataset.mode===tab));
+  gallery.hidden=tab!=='atlas';mono.hidden=tab!=='monogram';photo.hidden=tab!=='photo';
+  for(const b of gallery.children)b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===Number(b.dataset.index)));
+  for(const b of swatches.children)b.setAttribute('aria-pressed',String(draft.color===b.dataset.color&&draft.kind==='monogram'));
+ }
+ function persist(clear=false){
+  const chosen=clear?{kind:'monogram',initials:staff?'Е':'Я',color:AVATAR_COLORS[0]}:safeAvatar(draft);
+  const payload=clear?staff?{kind:'monogram'}:{kind:'preset',id:'monogram'}:
+   chosen.kind==='atlas'?(staff?{kind:'atlas',index:chosen.index}:{kind:'preset',id:'3d-'+chosen.index}):
+   chosen.kind==='photo'?{kind:'photo',data:chosen.image}:{kind:'monogram'};
+  try{
+   if(staff){
+    const existing=JSON.parse(localStorage.getItem(STAFF_AVATAR_KEY)||'{}');
+    const records=existing&&typeof existing==='object'&&!Array.isArray(existing)?existing:{};
+    records.elena=payload;localStorage.setItem(STAFF_AVATAR_KEY,JSON.stringify(records));
+    prefs.employeeProfile={...prefs.employeeProfile,name:'Елена',avatar:chosen};
+   }else{
+    localStorage.setItem(OWNER_AVATAR_KEY,JSON.stringify(payload));
+    prefs.myProfile={...prefs.myProfile,name:nameInput.value.trim().slice(0,50),avatar:chosen};
+   }
+   localStorage.setItem(KEY,JSON.stringify(prefs));
+  }catch{status.textContent='Не удалось сохранить данные на устройстве.';return}
+  window.dispatchEvent(new Event('seyveo:avatar-changed'));
+  window.dispatchEvent(new CustomEvent('seyveo:self-avatar-updated',{detail:{person:staff?'elena':'manager'}}));
+  decorateRows();closeSheet();
+ }
+ reset.addEventListener('click',()=>persist(true));
+ editor.addEventListener('submit',event=>{
+  event.preventDefault();
+  if(draft.kind==='photo'&&!draft.image){status.textContent='Выберите фотографию.';return}
+  persist();
+ });
+ paint();
+ body.append(editor);
+ panel.append(footer);
+}
 function employee(){return window.SEYVEO_PREVIEW?.isEmployee?.()===true}
 function openChat(id){closeSheet();closeMenu();window.SEYVEO_BUSINESS_COMMAND?.showChat?.(id)}
 const menuButton=node('button','sv-inbox-options-button');
@@ -200,13 +337,14 @@ const body=node('div','sv-inbox-sheet-body');
 panel.append(top,body);
 overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
-function closeSheet(){overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
+function closeSheet(){panel.querySelector(':scope > .sv-new-avatar-footer')?.remove();overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
 function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
-function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники','team-structure':'Структура чатов',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
+function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники','team-structure':'Структура чатов',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
 function openSheet(type,id='',nested=false){
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
  title.textContent=viewTitle(type);body.replaceChildren();
+ panel.querySelector(':scope > .sv-new-avatar-footer')?.remove();
  overlay.hidden=false;
  overlay.classList.toggle('sv-inbox-sheet-notifications',type==='notifications');
  overlay.dataset.svInboxScreen=type;
@@ -217,6 +355,7 @@ function openSheet(type,id='',nested=false){
  else if(type==='invite')showInvite();
  else if(type==='group')showGroupForm();
  else if(type==='settings')showSettings();
+ else if(type==='my-avatar')showAvatarEditor();
  else if(type==='one')showOneInfo();
  else if(type==='room-avatar')showRoomActions(id);
  else if(type==='notifications')showNotifications();
@@ -410,6 +549,12 @@ function settingToggle(key,label,help){
  row.append(copy,control);body.append(row);return control;
 }
 function showSettings(){
+ sectionHeading('Профиль');
+ const avatarEntry=menuLink('Моё имя и фото','Аватар, буквы или своё фото','users',()=>openSubSheet('my-avatar','settings'));
+ avatarEntry.querySelector(':scope > svg')?.remove();
+ const avatarThumb=node('span','sv-inbox-avatar-settings-preview');
+ paintAvatar(avatarThumb,readActualSelfAvatar());
+ avatarEntry.prepend(avatarThumb);
  sectionHeading('Темы чатов');
  body.append(makeChatWallpapers());
  sectionHeading('Сообщения');
