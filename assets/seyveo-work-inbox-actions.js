@@ -410,7 +410,6 @@ function settingToggle(key,label,help){
  row.append(copy,control);body.append(row);return control;
 }
 function showSettings(){
- sectionHeading('Профиль');
  sectionHeading('Темы чатов');
  body.append(makeChatWallpapers());
  sectionHeading('Сообщения');
