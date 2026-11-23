@@ -67,3 +67,126 @@ html body #svcpWorkChatScreen .svcp-room-profile-avatar .svcp-native-avatar{font
 #homeHeader .seyveo-owner-business-avatar-label small{font-size:9.5px;color:var(--secondary)}
 #homeHeader .seyveo-owner-business-avatar-entry>span:last-child{color:var(--secondary);font-size:20px}
 #homeHeader #homeWorldPopover{overflow-y:auto}
+
+/* Personal avatars are editable only from one's OWN profile, never the contact sheet. */
+#svcpSelfAvatarOpen[hidden],#svcpEmployeeAvatarOpen[hidden]{display:none!important}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-own-avatar-entry{
+ display:flex;align-items:center;gap:12px;
+ box-sizing:border-box;width:calc(100% - 24px);margin:8px 12px 13px;
+ padding:9px 12px;min-height:60px;
+ border:1px solid rgba(135,153,178,.14);border-radius:17px;
+ color:var(--text);background:var(--sv-ui-sheet,rgba(255,255,255,.78));
+ text-align:left;font:inherit;cursor:pointer;box-shadow:none;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-own-avatar-entry strong{flex:1;font-size:13px;font-weight:590}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-own-avatar-chevron{font-size:22px;color:var(--secondary)}
+#svcpWorkChatScreen .svcp-own-avatar-mini,
+#svcpEmployeeOwnAvatar{
+ display:grid;place-items:center;overflow:hidden;flex:none;
+ width:42px;height:42px;border:0;border-radius:50%;
+ background:#e9eff8;color:#263c50;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-own-avatar-mini .svcp-native-avatar{font-size:30px!important}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-own-avatar-mini .svcp-native-avatar,
+#svcpEmployeeOwnAvatar .svcp-native-avatar{font-size:30px!important}
+#svcpWorkChatScreen .svcp-native-avatar-photo,
+#svcpSelfAvatarDialog .svcp-native-avatar-photo,
+#svcpEmployeeOwnAvatar .svcp-native-avatar-photo{
+ width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;
+ border-radius:50%!important;border:0!important;box-shadow:none!important;
+}
+#svcpEmployeeAvatarOpen{
+ display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;padding:2px;
+ margin-left:auto;border:0;background:transparent;color:var(--text);cursor:pointer;
+}
+#svcpEmployeeOwnAvatar{width:44px;height:44px}
+#svcpSelfAvatarDialog{
+ position:fixed;inset:0 0 auto;top:50%;transform:translateY(-50%);
+ display:block;box-sizing:border-box;
+ width:min(410px,calc(100vw - 18px));max-width:calc(100vw - 18px);
+ max-height:min(87dvh,760px);margin:0 auto;padding:0;
+ overflow:auto;overscroll-behavior:contain;
+ border:0;border-radius:28px;
+ background:var(--sv-ui-sheet,#fff);color:var(--text,#1c222a);
+ box-shadow:0 22px 68px rgba(19,37,59,.20);
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+}
+#svcpSelfAvatarDialog:not([open]){display:none!important}
+#svcpSelfAvatarDialog::backdrop{background:rgba(16,24,32,.32);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#svcpSelfAvatarDialog .svcp-self-avatar-header{
+ display:grid;grid-template-columns:44px 1fr 44px;align-items:center;
+ min-height:60px;padding:8px 16px;border-bottom:1px solid rgba(130,145,166,.11);
+}
+#svcpSelfAvatarDialog .svcp-self-avatar-header h2{
+ text-align:center;font-size:16px;font-weight:630;letter-spacing:-.025em;margin:0;
+}
+#svcpSelfAvatarDialog #svcpSelfAvatarClose{
+ width:44px;height:44px;display:grid;place-items:center;padding:0;
+ border:0;border-radius:50%;background:var(--sv-ui-field,rgba(159,177,200,.1));
+ color:var(--text);cursor:pointer;
+}
+#svcpSelfAvatarDialog #svcpSelfAvatarClose svg{
+ width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.85;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#svcpSelfAvatarDialog .svcp-self-avatar-body{
+ padding:17px 16px 20px;display:flex;flex-direction:column;align-items:center;
+}
+#svcpSelfAvatarHero{
+ width:100px;height:100px;display:grid;place-items:center;border-radius:50%;
+ overflow:hidden;background:#e9eff8;color:#314255;margin:0 0 8px;font-size:46px;
+}
+#svcpSelfAvatarDialog #svcpSelfAvatarHero .svcp-native-avatar{font-size:69px!important}
+#svcpSelfAvatarDialog .svcp-self-avatar-body>strong{font-size:20px;font-weight:680}
+#svcpSelfAvatarDialog .svcp-self-avatar-body>small{font-size:11px;color:var(--secondary);margin-top:4px}
+#svcpSelfAvatarDialog .svcp-self-avatar-body h3{
+ margin:23px 0 10px;align-self:stretch;font-size:13px;font-weight:600;
+}
+#svcpSelfAvatarDialog .svcp-self-avatar-choices{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;
+ align-self:stretch;width:100%;
+}
+#svcpSelfAvatarDialog .svcp-own-avatar-choice{
+ appearance:none;display:flex;flex-direction:column;align-items:center;gap:5px;
+ min-width:0;padding:8px 3px;min-height:77px;border-radius:13px;
+ border:1px solid rgba(142,155,174,.13);
+ background:var(--sv-ui-field,rgba(165,175,190,.07));color:var(--text);
+ font:inherit;cursor:pointer;
+}
+#svcpSelfAvatarDialog .svcp-own-avatar-choice[aria-pressed=true]{
+ border-color:#1685ff;background:rgba(40,134,249,.08);
+}
+#svcpSelfAvatarDialog .svcp-own-avatar-glyph{
+ display:grid;place-items:center;border-radius:50%;
+ width:42px;height:42px;background:#edf2f8;font-size:31px;line-height:1;
+ font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+}
+#svcpSelfAvatarDialog .svcp-own-avatar-choice small{
+ width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ text-align:center;font-size:9px;color:var(--secondary);
+}
+#svcpSelfAvatarDialog .svcp-self-avatar-actions{
+ display:grid;grid-template-columns:1fr 1fr;align-self:stretch;gap:8px;margin-top:16px;
+}
+#svcpSelfAvatarDialog .svcp-self-avatar-actions button{
+ min-height:42px;border:1px solid rgba(142,156,174,.16);
+ background:var(--sv-ui-field,rgba(160,178,199,.08));
+ border-radius:13px;color:var(--text);font:inherit;font-size:12px;cursor:pointer;
+}
+#svcpSelfAvatarDialog .svcp-self-avatar-hint{
+ text-align:center;font-size:10px;line-height:1.5;color:var(--secondary);margin:17px 0 0;
+}
+#svcpSelfAvatarDialog #svcpSelfAvatarStatus{
+ font-size:11px;text-align:center;color:var(--secondary);min-height:0;margin:8px 0;
+}
+#svcpSelfAvatarDialog #svcpSelfAvatarStatus:empty{display:none}
+#svcpSelfAvatarDialog .svcp-self-avatar-save{
+ align-self:stretch;min-height:44px;margin-top:12px;border:0;border-radius:13px;
+ background:#087bfc;color:#fff;font:inherit;font-size:14px;font-weight:650;cursor:pointer;
+}
+:root[data-theme=dark] #svcpSelfAvatarDialog{background:#20262c}
+@media(max-width:370px){
+ #svcpSelfAvatarDialog .svcp-self-avatar-choices{gap:5px}
+ #svcpSelfAvatarDialog .svcp-own-avatar-choice{padding:7px 2px}
+ #svcpSelfAvatarDialog .svcp-own-avatar-glyph{width:38px;height:38px;font-size:29px}
+}
