@@ -42,15 +42,48 @@ function updateRoom(id,prop,value){prefs.rooms[id]={...roomState(id),[prop]:valu
 /* Local avatar editing: Apple-style photo, monogram and emoji.
    No upload, no claim of changing colleagues' accounts or the SEYVEO assistant. */
 const AVATAR_COLORS=['#536f84','#4f8574','#7d78a1','#b27788','#be8a54','#606b79'];
-const AVATAR_EMOJIS=['😊','😎','🌿','✨','💼','🐱','❤️','🎨'];
+const AVATAR_EMOJIS=['😊','😎','🌿','✨','🐱','🦊','❤️','🎨','🍇','🍓','🍎','🍑'];
+const AVATAR_3D=[
+ ['Космонавт','Космос'],['Супергерой','Герои'],['Путешественница','Космос'],['Робот','Космос'],
+ ['Лисёнок','Мультики'],['Девочка','Мультики'],['Виноград','Фрукты'],['Клубника','Фрукты'],
+ ['Персик','Фрукты'],['Яблоко','Фрукты'],['В очках','Мультики'],['Сердечки','Мультики']
+];
+const OWNER_AVATAR_KEY='seyveo-owner-avatar-v1',STAFF_AVATAR_KEY='seyveo-self-identity-avatar-v1';
+function atlasMark(index){
+ const m=node('span','sv-atlas-thumb');
+ m.style.backgroundPosition=`${(index%4)*100/3}% ${Math.floor(index/4)*50}%`;
+ m.setAttribute('aria-hidden','true');return m;
+}
+function readActualSelfAvatar(){
+ try{
+  const isStaff=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
+  const record=JSON.parse(localStorage.getItem(isStaff?STAFF_AVATAR_KEY:OWNER_AVATAR_KEY)||'null');
+  const item=isStaff?record?.elena:record;
+  if(item?.kind==='atlas'&&Number.isInteger(item.index)&&item.index>=0&&item.index<12)return {kind:'atlas',index:item.index};
+  if(item?.kind==='preset'&&/^3d-(?:[0-9]|1[01])$/.test(item.id||''))return {kind:'atlas',index:Number(item.id.slice(3))};
+  if(item?.kind==='photo'&&typeof item.data==='string'&&item.data.length<320000&&
+     /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(item.data))
+   return {kind:'photo',image:item.data};
+  if(item?.kind==='emoji'){
+   const aliases={red:'👩🏻‍🦰',dark:'👩🏽',senior:'👩🏼‍🦳',man:'👨🏻‍🦱',smile:'😊',grapes:'🍇',strawberry:'🍓',apple:'🍎'};
+   return {kind:'emoji',emoji:item.emoji||aliases[item.id]||'😊'};
+  }
+  if(item?.kind==='preset'){
+   const preset={'woman-red':'👩🏻‍🦰','woman-brunette':'👩🏽','woman-silver':'👩🏼‍🦳','man-curly':'👨🏻‍🦱',smile:'😊',cool:'😎',grapes:'🍇',strawberry:'🍓',peach:'🍑',apple:'🍎'};
+   if(preset[item.id])return {kind:'emoji',emoji:preset[item.id]};
+  }
+  if(item?.kind==='monogram'||item?.kind==='preset'&&item.id==='monogram')return {kind:'monogram',color:AVATAR_COLORS[0],initials:isStaff?'Е':'Я'};
+ }catch{}
+ return {kind:'monogram',color:AVATAR_COLORS[0],initials:window.SEYVEO_PREVIEW?.isEmployee?.()===true?'Е':'Я'};
+}
 function safeAvatar(spec){
  if(!spec||typeof spec!=='object')return null;
- const kind=['monogram','emoji','photo'].includes(spec.kind)?spec.kind:'monogram';
+ const kind=['monogram','emoji','photo','atlas'].includes(spec.kind)?spec.kind:'monogram';
  const color=AVATAR_COLORS.includes(spec.color)?spec.color:AVATAR_COLORS[0];
  const initials=[...String(spec.initials||'Я')].slice(0,2).join('').toLocaleUpperCase('ru-RU');
  const emoji=[...String(spec.emoji||'😊')].slice(0,2).join('');
  const image=typeof spec.image==='string'&&spec.image.startsWith('data:image/jpeg;base64,')&&/^[A-Za-z0-9+/=]+$/.test(spec.image.slice('data:image/jpeg;base64,'.length))&&spec.image.length<320000?spec.image:'';
- return {kind:kind==='photo'&&!image?'monogram':kind,color,initials,emoji,image};
+ return {kind:kind==='photo'&&!image?'monogram':kind,color,initials,emoji,image,index:Number.isInteger(spec.index)&&spec.index>=0&&spec.index<12?spec.index:0};
 }
 function paintAvatar(element,source){
  const spec=safeAvatar(source);
@@ -59,7 +92,8 @@ function paintAvatar(element,source){
  element.dataset.svAvatarKind=spec.kind;
  element.style.setProperty('--sv-avatar-color',spec.color);
  element.style.setProperty('--sv-avatar-image',spec.kind==='photo'?'url("'+spec.image+'")':'none');
- element.textContent=spec.kind==='monogram'?(spec.initials||'Я'):spec.kind==='emoji'?spec.emoji:'';
+ if(spec.kind==='atlas')element.replaceChildren(atlasMark(spec.index));
+ else element.textContent=spec.kind==='monogram'?(spec.initials||'Я'):spec.kind==='emoji'?spec.emoji:'';
 }
 function clearAvatarStyle(element){
  element.classList.remove('sv-inbox-avatar-custom');
@@ -259,7 +293,7 @@ menuButton.innerHTML=svg('dots');
 history.hidden=true;history.setAttribute('tabindex','-1');history.setAttribute('aria-hidden','true');history.classList.add('sv-inbox-history-proxy');
 header.append(menuButton);
 const menu=node('div','sv-inbox-popover');menu.id='svcpInboxMenu';menu.hidden=true;menu.setAttribute('role','menu');menu.setAttribute('aria-label','Действия с сообщениями');
-const menuItems=[['Новый чат','pen','new'],['Новая группа','groupAdd','group'],['Сотрудники','users','staff'],['Имя и фото','portrait','my-avatar'],['Настройки сообщений','sliders','settings'],['Архив','archive','archives']];
+const menuItems=[['Новый чат','pen','new'],['Новая группа','groupAdd','group'],['Сотрудники','users','staff'],['Настройки сообщений','sliders','settings'],['Архив','archive','archives']];
 for(const [label,icon,action] of menuItems){const b=button(label,icon,()=>chooseAction(action),'sv-inbox-menu-row');b.setAttribute('role','menuitem');menu.append(b)}
 screen.append(menu);
 function closeMenu(){menu.hidden=true;menuButton.setAttribute('aria-expanded','false')}
@@ -297,7 +331,7 @@ function openSheet(type,id='',nested=false){
  else if(type==='group')showGroupForm();
  else if(type==='settings')showSettings();
  else if(type==='my-avatar')showAvatarEditor('self');
- else if(type==='room-avatar')showAvatarEditor(id);
+ else if(type==='room-avatar')showRoomActions(id);
  else if(type==='notifications')showNotifications();
  else if(type==='archives')showArchives();
  else if(type==='room')showRoomActions(id);
@@ -439,9 +473,7 @@ function showSettings(){
  const profileRow=menuLink('Моё имя и фото','Фото, эмодзи или монограмма на этом устройстве','users',()=>openSubSheet('my-avatar','settings'));
  profileRow.querySelector(':scope > svg')?.remove();
  const profileAvatar=node('span','sv-inbox-avatar-settings-preview');
- paintAvatar(profileAvatar,prefs.myProfile?.avatar||{
-  kind:'monogram',initials:String(prefs.myProfile?.name||'Я').slice(0,1),color:AVATAR_COLORS[0]
- });
+ paintAvatar(profileAvatar,readActualSelfAvatar());
  profileRow.prepend(profileAvatar);
  sectionHeading('Темы чатов');
  body.append(makeChatWallpapers());
@@ -567,9 +599,7 @@ function showRoomActions(id){
   [st.archived?'Вернуть из архива':'В архив','archive',()=>updateRoom(id,'archived',!st.archived)]
  ];
  for(const [label,icon,fn] of actions){body.append(button(label,icon,()=>{fn();closeSheet()},'sv-inbox-action-row'))}
- if(r.person!=='sayvi')body.append(button('Изменить аватар','users',()=>{
-  sheetStack.push({type:'room',id});openSheet('room-avatar',id,true);
- },'sv-inbox-action-row'));
+
  if(!employee()){
   const del=button('Очистить переписку','trash',()=>{
    if(!window.confirm('Удалить сообщения этой переписки из локального хранилища? Отменить нельзя.'))return;
@@ -632,10 +662,8 @@ function decorateRows(){
     avatar.innerHTML=svg(id==='general'?'messages':id==='docs'?'file':'users');
     avatar.dataset.svInboxGlyph='true';
    }
-   if(avatar&&wrap.dataset.roomId!=='dm-sayvi'){
-    if(st.avatar)paintAvatar(avatar,st.avatar);
-    else if(avatar.classList.contains('sv-inbox-avatar-custom'))restoreAvatar(avatar,wrap.dataset.roomId,row);
-   }
+   // No leader-owned avatar overrides are drawn on colleagues' identities.
+   if(avatar?.classList.contains('sv-inbox-avatar-custom'))clearAvatarStyle(avatar);
    // No tiny dots in the time column: mute/pin state is accessible from
    // the conversation actions and preserved in its local settings.
    row.querySelector('.sv-inbox-row-badges')?.remove();
