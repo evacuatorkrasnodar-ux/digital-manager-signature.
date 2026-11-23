@@ -1471,7 +1471,7 @@ html body #svcpWorkChatScreen #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-ava
 #svcpWorkChatScreen .sv-inbox-avatar-settings-preview>.sv-atlas-thumb{
  display:block!important;flex:none;
  width:100%!important;height:100%!important;
- background-image:url('./seyveo-3d-avatars-atlas.webp')!important;
+ background-image:url('./seyveo-avatar-3d-atlas.webp')!important;
  background-repeat:no-repeat!important;
  background-size:400% 300%!important;
  border-radius:50%!important;overflow:hidden!important;
