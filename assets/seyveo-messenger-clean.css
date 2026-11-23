@@ -1203,54 +1203,27 @@ html:root[data-theme="dark"] body #svcpWorkChatScreen > #svcpWorkChatBack svg{
  stroke:#f6f7f8!important;
 }
 
-/* SEYVEO SKY · flat Apple-inspired visual standard (23 Nov 2026).
-   One shared blue material for Sayvi, employee and group conversations.
-   NO elevation shadows on the blue theme, including active/pressed states.
-   Preserve colors, exact 44px button geometry and all event handlers. */
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"]{
- --sv-chat-blue-circle-shadow:none;
- --sv-chat-blue-dock-shadow:none;
-}
-/* The visible shared Back lives at the screen root, outside the room. */
+/* SKY CHAT · same sapphire glass and shadow as Elena's 44px call buttons. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack,
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack:is(:active,:hover,:focus){
- background:rgba(11,84,174,.68)!important;
+ background:var(--sv-chat-blue-surface,rgba(11,84,174,.68))!important;
  background-image:none!important;
- border:1px solid rgba(3,70,151,.32)!important;
- box-shadow:none!important;filter:none!important;
+ border:var(--sv-chat-blue-edge,1px solid rgba(3,70,151,.32))!important;
+ box-shadow:var(--sv-chat-blue-circle-shadow,0 3px 11px rgba(5,53,111,.14),0 1px 4px rgba(5,53,111,.065))!important;
  color:#fff!important;
  -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
  backdrop-filter:blur(13px) saturate(110%)!important;
+ opacity:1!important;filter:none!important;
  transform:none!important;translate:none!important;scale:1!important;
  transition:none!important;animation:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack svg{
  stroke:#fff!important;fill:none!important;
 }
-/* One flat surface each: no duplicated shadows on button, capsule, dock
-   or its pseudo-surface. Intentionally no inset/pressed effect either. */
+/* The two call controls, +, title pill and composer ::before already
+   share sapphire shadow tokens in the theme sheets. Keep the message
+   bubbles flat, and avoid a second grey shadow on the composer wrapper. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"]
- :is(.svcp-call-actions,.svcp-call-actions .svcp-call-button,
-     .svcp-identity-v2-pill,#svcpChatForm,#svcpAttachFile,
-     #svcpAttachMenu,#svcpCameraToggle,
-     .svcp-bubble,.svcp-message-menu,
-     #svcpReplyPreview,#svcpAttachmentPreview),
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"]
- :is(.svcp-call-actions .svcp-call-button,#svcpAttachFile,#svcpCameraToggle):is(:hover,:active,:focus){
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm{
  box-shadow:none!important;
- -webkit-filter:none!important;filter:none!important;
- text-shadow:none!important;
-}
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm::before,
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm::after,
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] .svcp-identity-v2-pill::before,
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] .svcp-identity-v2-pill::after{
- box-shadow:none!important;-webkit-filter:none!important;filter:none!important;
 }
