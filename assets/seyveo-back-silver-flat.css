@@ -164,3 +164,39 @@ html body dialog:is(#onboardDialog,#seyveoAccountDemo,#seyveoQrCardDialog,#seyve
   -webkit-backdrop-filter:none!important;
  }
 }
+
+
+/* 2026-11-23 · Unified room information sheets.
+   The same DOM renders Elena, Mini and future chat participants.
+   Change presentation only; the existing close handler stays intact. */
+html body #seyveoBusinessCommandPage #svcpRoomInfo #svcpRoomProfileClose,
+html body #unifiedTasksChatHost #svcpRoomInfo #svcpRoomProfileClose,
+html body #svcpRoomInfo #svcpRoomProfileClose{
+  box-sizing:border-box!important;
+  flex:0 0 44px!important;
+  width:44px!important;min-width:44px!important;max-width:44px!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+  display:grid!important;place-items:center!important;
+  padding:0!important;margin:0!important;
+  border:var(--sv-header-circle-border,var(--sv-white-pearl-edge))!important;
+  border-radius:50%!important;
+  background:var(--sv-header-circle,var(--sv-back-flat))!important;
+  background-image:none!important;
+  color:var(--sv-header-icon-ink,var(--sv-back-flat-ink))!important;
+  box-shadow:var(--sv-header-circle-shadow,var(--sv-back-button-shadow,none))!important;
+  -webkit-backdrop-filter:var(--sv-header-circle-filter,var(--sv-back-button-blur,none))!important;
+  backdrop-filter:var(--sv-header-circle-filter,var(--sv-back-button-blur,none))!important;
+  transform:none!important;filter:none!important;opacity:1!important;
+  -webkit-tap-highlight-color:transparent;
+}
+html body #svcpRoomInfo #svcpRoomProfileClose:is(:active,:hover,:focus:not(:focus-visible)){
+  transform:none!important;
+  background:var(--sv-header-circle,var(--sv-back-flat))!important;
+  box-shadow:var(--sv-header-circle-shadow,var(--sv-back-button-shadow,none))!important;
+}
+html body #svcpRoomInfo #svcpRoomProfileClose svg{
+  display:block!important;width:22px!important;height:22px!important;
+  fill:none!important;stroke:currentColor!important;
+  stroke-width:1.45!important;stroke-linecap:round!important;
+  stroke-linejoin:round!important;transform:none!important;
+}
