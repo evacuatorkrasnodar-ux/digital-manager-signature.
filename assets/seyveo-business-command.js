@@ -76,9 +76,13 @@ function selfAvatarRecords(){
 }
 function selfAvatarFor(person){
  const raw=selfAvatarRecords()[person];
+ if(raw&&raw.kind==='atlas'&&Number.isInteger(raw.index)&&raw.index>=0&&raw.index<12)
+  return {kind:'atlas',index:raw.index};
  if(raw&&raw.kind==='photo'&&typeof raw.data==='string'&&raw.data.length<320000
     &&PHOTO_DATA_PATTERN.test(raw.data))return {kind:'photo',data:raw.data};
  if(raw&&raw.kind==='monogram')return {kind:'monogram'};
+ if(raw&&raw.kind==='emoji'&&typeof raw.emoji==='string'&&[...raw.emoji].length<=10)
+  return {kind:'emoji',emoji:raw.emoji};
  if(raw&&raw.kind==='emoji'&&CHAT_AVATAR_OPTIONS.some(([id])=>id===raw.id))
   return {kind:'emoji',id:raw.id};
  return {kind:'emoji',id:CHAT_AVATAR_DEFAULTS[person]||'smile'};
@@ -106,8 +110,14 @@ function drawPortrait(node,photo,letter){
  if(photo?.kind==='photo'){
   target.src=photo.data;target.alt='';target.draggable=false;
  }else{
-  target.textContent=photo?.kind==='monogram'?letter:
-    (CHAT_AVATAR_OPTIONS.find(([id])=>id===photo?.id)?.[1]||'😊');
+  if(photo?.kind==='atlas'){
+   target.textContent='';
+   target.classList.add('svcp-atlas-avatar');
+   target.style.backgroundPosition=((photo.index%4)*100/3)+'% '+(Math.floor(photo.index/4)*50)+'%';
+  }else{
+   target.textContent=photo?.kind==='monogram'?letter:
+     (photo?.emoji||CHAT_AVATAR_OPTIONS.find(([id])=>id===photo?.id)?.[1]||'😊');
+  }
  }
  node.append(target);
  node.classList.add('svcp-native-avatar-host');
@@ -230,6 +240,14 @@ $('svcpSelfAvatarFile')?.addEventListener('change',event=>{
  reader.readAsDataURL(file);
 });
 window.addEventListener('seyveo:avatar-changed',refreshOwnAvatarEntrypoints);
+window.addEventListener('seyveo:self-avatar-updated',event=>{
+ refreshOwnAvatarEntrypoints();
+ renderDirectory();
+ const room=roomDetails(),display=$('svcpRoomAvatar');
+ if(display&&!$('svcpConversation')?.hidden&&room?.person===event.detail?.person)
+  fillWorkPortrait(display,room,false);
+});
+
 window.addEventListener('seyveo:work-role-preview',()=>{
  if(!activeSelfAvatarPerson()&&selfAvatarDialog?.open)selfAvatarDialog.close();
  refreshOwnAvatarEntrypoints();
