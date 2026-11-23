@@ -205,7 +205,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
  background:rgba(13,73,186,.84)!important;color:#fff!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack svg{
- stroke:#fff!important;
+ stroke:#161b20!important;
 }
 /* SKY shares the same fade, blur and start/end coordinates as WHITE,
    but keeps the cool blue reflection of its wallpaper. */
