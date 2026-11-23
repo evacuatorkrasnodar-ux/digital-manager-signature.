@@ -894,9 +894,15 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
  #svcpWorkChatScreen .svcp-voice-dot{animation:none}
  #svcpWorkChatScreen *{scroll-behavior:auto!important;transition:none!important}
 }
-/* Room/back-list state is explicit: never display both panes simultaneously. */
+/* Room/back-list state is explicit: never display both panes simultaneously.
+   A recycled conversation can retain its previous blue wallpaper and be
+   composited by Safari while the directory opens. Only a real room route may
+   paint that pane, independently of stale hidden attributes or old CSS. */
 #svcpWorkChatScreen #svcpChatDirectory[hidden],
 #svcpWorkChatScreen #svcpConversation[hidden]{display:none!important}
+html body #svcpWorkChatScreen:not([data-view="room"]) #svcpConversation{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
 
 /* Short acknowledgement and error toast: readable, never another composer row. */
 #svcpWorkChatScreen #svcpChatStatus[data-show="true"]{
