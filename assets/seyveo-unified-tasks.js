@@ -539,12 +539,24 @@
    composer.blur();composer.rows=1;
    composer.style.removeProperty('height');composer.style.removeProperty('overflow-y')
   }
-  // The original chat still belongs to the manager's hub while it is closed.
+  // Close the painted surface FIRST, before moving its live chat back
+  // into Cabinet. A room may have its own blue wallpaper; it must never
+  // remain the next entry's initial state.
+  employeeChatScreen.style.setProperty('visibility','hidden','important');
+  employeeChatScreen.hidden=true;
+  employeeChatScreen.dataset.view='inbox';
+  const previousRoom=$('svcpConversation');
+  const directory=$('svcpChatDirectory');
+  if(previousRoom)previousRoom.hidden=true;
+  if(directory)directory.hidden=false;
+  // Reuse the real controller, preserving messages/history while resetting
+  // the display state and dismissing an old conversation or call overlay.
+  window.SEYVEO_BUSINESS_COMMAND?.showChat?.(null);
   if(chatHost.parentElement!==board)board.insertBefore(chatHost,taskHost);
   chatHost.hidden=true;
   page.dataset.workChatOpen='false';
-  employeeChatScreen.hidden=true;
   restoreWorkChatDock();
+  employeeChatScreen.style.removeProperty('visibility');
   document.documentElement.classList.remove('svcp-work-chat-active');
   workChatViewportSettleTimers.forEach(clearTimeout);
   workChatViewportSettleTimers.length=0;
@@ -566,10 +578,15 @@
   if(employeeMode&&page.dataset.employeeMode!=='true')select('employee');
   if(!employeeMode&&business.hidden)select('business');
   if(page.dataset.workChatOpen!=='true')chatReturnFocus=document.activeElement;
-  // Keep the fullscreen chat compositor invisible while we move its live
-  // DOM and select inbox/room. This prevents the previously mounted view from
-  // flashing for one frame when entering from Cabinet.
+  // Defensively reset the previous room while the screen is STILL hidden.
+  // In iOS Safari an old composited blue wallpaper can otherwise appear
+  // during the first frame of Cabinet -> Messages.
   employeeChatScreen.style.setProperty('visibility','hidden','important');
+  employeeChatScreen.dataset.view='inbox';
+  const directory=$('svcpChatDirectory');
+  const previousRoom=$('svcpConversation');
+  if(previousRoom)previousRoom.hidden=true;
+  if(directory)directory.hidden=false;
   employeeChatScreen.hidden=false;
   attachWorkChatDock();
   page.dataset.workChatOpen='true';
