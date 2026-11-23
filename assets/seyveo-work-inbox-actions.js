@@ -926,11 +926,36 @@ function showRoomActions(id){
  }
 }
 function syncProfile(){
- // Info is for chat content. Mute/avatar settings already live in Chat Settings.
- // Keep the actual avatar and per-room preferences unchanged.
  updateHeaderAvatar();
+ updateProfileMute();
 }
 document.querySelector('#svcpRoomInfo .sv-inbox-profile-settings')?.remove();
+// Reuse the same stored mute preference from inbox actions and notification settings.
+// Tapping a person's name opens this profile, where the room's sound is editable.
+const roomProfile=$('svcpRoomInfo');
+const roomProfileActions=roomProfile?.querySelector('.svcp-room-profile-actions');
+const roomMute=button('Звук сообщений','bell',()=>{
+ const id=$('svcpConversation')?.dataset.roomId;
+ if(!roomInfo(id))return;
+ updateRoom(id,'muted',!roomState(id).muted);
+},'sv-inbox-profile-mute sv-inbox-profile-mute-row');
+const roomMuteStatus=node('small','sv-inbox-profile-mute-status');
+roomMute.append(roomMuteStatus);
+roomMute.hidden=true;
+roomProfileActions?.insertAdjacentElement('afterend',roomMute);
+function updateProfileMute(){
+ if(!roomProfileActions?.isConnected)return;
+ const id=$('svcpConversation')?.dataset.roomId,r=roomInfo(id);
+ const available=!!r&&r.person!=='sayvi';
+ roomMute.hidden=!available;
+ if(!available)return;
+ const muted=roomState(id).muted===true;
+ roomMute.setAttribute('aria-pressed',String(muted));
+ roomMute.setAttribute('aria-label',(muted?'Включить':'Отключить')+' звук в чате '+r.label);
+ roomMuteStatus.textContent=muted?'Без звука':'Включён';
+}
+if(roomProfile)new MutationObserver(updateProfileMute).observe(roomProfile,{attributes:true,attributeFilter:['hidden']});
+
 $('svcpConversationHeading')?.addEventListener('click',()=>requestAnimationFrame(syncProfile));
 function closeSwipe(){if(swipeOpen){swipeOpen.classList.remove('is-swiped');swipeOpen=null}}
 function attachRow(row){
