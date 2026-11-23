@@ -48,3 +48,22 @@ html body #svcpWorkChatScreen .svcp-room-profile-avatar .svcp-native-avatar{font
  font-size:32px;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
 #svcpWorkChatScreen .svcp-room-avatar-choice small{font-size:9px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 @media(max-width:360px){#svcpWorkChatScreen .svcp-room-avatar-choices{gap:4px}}
+
+/* The owner's actual header opens the company popover; make photo settings reachable there too. */
+#homeHeader #homePassportPopover[data-side="studio"] .seyveo-owner-business-avatar-entry{display:none!important}
+#homeHeader #homePassportPopover[data-side="company"] .seyveo-owner-business-avatar-entry{
+ display:flex;align-items:center;gap:9px;box-sizing:border-box;
+ width:100%;min-height:58px;margin:8px 0 0;padding:7px 10px;
+ border:0;border-radius:15px;background:var(--sv-ui-sheet,#fff);color:var(--text);
+ font:inherit;text-align:left;cursor:pointer}
+#homeHeader #seyveoOwnerAvatarBusinessPreview{
+ width:37px;height:37px;min-width:37px;min-height:37px;
+ border:0!important;border-radius:50%!important;background:#e9f0f7!important;
+ box-shadow:none!important;overflow:hidden}
+#homeHeader #seyveoOwnerAvatarBusinessPreview .seyveo-avatar-glyph{
+ font-size:27px!important;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+#homeHeader .seyveo-owner-business-avatar-label{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+#homeHeader .seyveo-owner-business-avatar-label strong{font-size:12.5px;font-weight:580}
+#homeHeader .seyveo-owner-business-avatar-label small{font-size:9.5px;color:var(--secondary)}
+#homeHeader .seyveo-owner-business-avatar-entry>span:last-child{color:var(--secondary);font-size:20px}
+#homeHeader #homeWorldPopover{overflow-y:auto}
