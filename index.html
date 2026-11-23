@@ -1349,11 +1349,11 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    <button type="button" id="svcpConversationStandaloneBack" aria-label="К списку сообщений"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
    <!-- One floating matte-glass material and the SAME live avatar/name nodes,
         moved from the removed header. No duplicate avatar or title IDs. -->
-   <div class="svcp-minimal-identity-header">
-     <div class="svcp-room-identity">
+   <div class="svcp-identity-v2" role="group" aria-label="Собеседник">
+     <div class="svcp-identity-v2-stack">
       <span id="svcpRoomAvatar" class="svcp-room-avatar" aria-hidden="true">◎</span>
       <button type="button" id="svcpConversationHeading" class="svcp-conversation-info" aria-label="Информация о чате" aria-controls="svcpRoomInfo" aria-expanded="false">
-       <span class="svcp-room-name-pill"><strong id="svcpConversationTitle">Общий чат</strong><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 5 7 7-7 7"/></svg></span>
+       <span class="svcp-identity-v2-pill"><strong id="svcpConversationTitle">Общий чат</strong><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 5 7 7-7 7"/></svg></span>
        <small id="svcpConversationDetail">Рабочая группа</small>
       </button>
      </div>
@@ -5894,10 +5894,11 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-depth-system.css?v=12">
 <link rel="stylesheet" href="assets/seyveo-notebook-home-new-dock.css?v=5">
 <link rel="stylesheet" href="assets/seyveo-white-pearl.css?v=16"><link rel="stylesheet" href="assets/seyveo-work-floating-pearl.css?v=5">
-<link rel="stylesheet" href="assets/seyveo-chat-identity-composer.css?v=48"><link rel="stylesheet" href="assets/seyveo-chat-polls.css?v=7"><link rel="stylesheet" href="assets/seyveo-chat-semantic-colors.css?v=2"><link rel="stylesheet" href="assets/seyveo-chat-themes.css?v=13"><link rel="stylesheet" href="assets/seyveo-work-inbox-actions.css?v=13">
+<link rel="stylesheet" href="assets/seyveo-chat-identity-composer.css?v=49"><link rel="stylesheet" href="assets/seyveo-chat-polls.css?v=7"><link rel="stylesheet" href="assets/seyveo-chat-semantic-colors.css?v=2"><link rel="stylesheet" href="assets/seyveo-chat-themes.css?v=13"><link rel="stylesheet" href="assets/seyveo-work-inbox-actions.css?v=13">
 <link rel="stylesheet" href="assets/seyveo-sayvi-identity-standard.css?v=20">
-<link rel="stylesheet" href="assets/seyveo-sayvi-response-state.css?v=7"><link rel="stylesheet" href="assets/seyveo-chat-composer-reset.css?v=23"><link rel="stylesheet" href="assets/seyveo-ios-viewport-continuity.css?v=51">
+<link rel="stylesheet" href="assets/seyveo-sayvi-response-state.css?v=7"><link rel="stylesheet" href="assets/seyveo-chat-composer-reset.css?v=23"><link rel="stylesheet" href="assets/seyveo-ios-viewport-continuity.css?v=52">
 <link rel="stylesheet" href="assets/seyveo-chat-bubbles-imessage.css?v=7">
 
-<link rel="stylesheet" href="assets/seyveo-emoji-avatars.css?v=7">
+<link rel="stylesheet" href="assets/seyveo-emoji-avatars.css?v=8">
+<link rel="stylesheet" href="assets/seyveo-chat-header-v2.css?v=1">
 </body></html>
