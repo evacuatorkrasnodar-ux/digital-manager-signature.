@@ -8,8 +8,8 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  inset:0 0 auto 0!important;display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:flex-start!important;
  --svcp-header-avatar:56px;--svcp-header-label:28px;--svcp-header-overlap:-5px;
- height:calc(128px + env(safe-area-inset-top,0px))!important;
- padding:calc(8px + env(safe-area-inset-top,0px)) 12px 0!important;
+ height:calc(136px + env(safe-area-inset-top,0px))!important;
+ padding:calc(16px + env(safe-area-inset-top,0px)) 12px 0!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
  overflow:visible!important;pointer-events:none!important;z-index:30!important;
 }
@@ -194,8 +194,8 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
  stroke:currentColor!important;stroke-width:1.65!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpMessages{
- padding-top:calc(128px + env(safe-area-inset-top,0px))!important;
- scroll-padding-top:calc(128px + env(safe-area-inset-top,0px))!important;
+ padding-top:calc(136px + env(safe-area-inset-top,0px))!important;
+ scroll-padding-top:calc(136px + env(safe-area-inset-top,0px))!important;
 }
 /* Old hidden header actions remain available to existing internal handlers. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-conversation-bar{
@@ -261,7 +261,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
    previews; do not draw additional copies or promise remote calling. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-call-actions{
  box-sizing:border-box!important;position:absolute!important;
- top:calc(14px + env(safe-area-inset-top,0px))!important;
+ top:calc(22px + env(safe-area-inset-top,0px))!important;
  right:max(14px,env(safe-area-inset-right,0px))!important;left:auto!important;
  display:flex!important;align-items:center!important;justify-content:flex-end!important;
  gap:6px!important;width:auto!important;height:44px!important;
@@ -295,7 +295,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-call-a
  transform:none!important;filter:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > #svcpConversationStandaloneBack{
- top:calc(14px + env(safe-area-inset-top,0px))!important;
+ top:calc(22px + env(safe-area-inset-top,0px))!important;
 }
 /* On iOS, the two call circles share a compositor/blur layer. Their
    individual pearl shadows can disappear against white. Elevate that
@@ -425,7 +425,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
    colors and real handlers; discard transient pressed motion/halo. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  > :is(#svcpConversationStandaloneBack,.svcp-call-actions) {
- --svcp-room-control-top:calc(14px + env(safe-area-inset-top,0px));
+ --svcp-room-control-top:calc(22px + env(safe-area-inset-top,0px));
  top:var(--svcp-room-control-top)!important;
  transform:none!important;translate:none!important;scale:none!important;
  transition:none!important;animation:none!important;
