@@ -4139,18 +4139,19 @@ html body #svcpWorkChatScreen:not([data-view="room"]) #svcpConversation{
  --sv-msg-accent:#38383A;
  --sv-msg-muted:#66707a;
 }
+/* Later light-theme skin must respect Work's canonical flat 38px
+   porcelain segmented tab. No alternate shadowed blue/white capsule. */
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters{
- background:rgba(226,234,242,.46)!important;
- border:.75px solid rgba(203,211,222,.38)!important;
- box-shadow:inset 0 1px 1px rgba(255,255,255,.7)!important;
- -webkit-backdrop-filter:blur(8px) saturate(104%)!important;
- backdrop-filter:blur(8px) saturate(104%)!important;
+ background:rgba(238,242,246,.52)!important;
+ border:1px solid rgba(170,186,199,.26)!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters button[aria-pressed="true"]{
- color:#191d23!important;
- background:rgba(255,255,255,.95)!important;
- box-shadow:0 1px 5px rgba(37,48,63,.10),inset 0 1px 0 rgba(255,255,255,.85)!important;
- font-weight:620!important;
+ color:#1A2028!important;
+ background:rgba(255,255,255,.88)!important;
+ box-shadow:none!important;filter:none!important;
+ font-weight:640!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-search-field{
  background:rgba(255,255,255,.55)!important;
@@ -4166,7 +4167,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpC
 /* remove obsolete white header/history skins: governed by the original Messages inbox action component. */
 @media(max-width:355px){
  #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters button{
-  font-size:11px!important;
+  font-size:11.5px!important;
  }
  #svcpWorkChatScreen[data-view="inbox"] .svcp-work-chat-heading h1{
   font-size:23px!important;
