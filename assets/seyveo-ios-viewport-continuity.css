@@ -39,15 +39,15 @@
  }
  /* Scenic wallpaper continuity through iOS Home-indicator region.
     These match the existing opt-in chat wallpapers, not other app themes. */
- html.svcp-work-chat-active:has(#svcpConversation[data-chat-wallpaper="sky"]),
- html.svcp-work-chat-active:has(#svcpConversation[data-chat-wallpaper="sky"]) body{
+ html.svcp-work-chat-active:has(#svcpWorkChatScreen:not([hidden])[data-view="room"] #svcpConversation:not([hidden])[data-chat-wallpaper="sky"]),
+ html.svcp-work-chat-active:has(#svcpWorkChatScreen:not([hidden])[data-view="room"] #svcpConversation:not([hidden])[data-chat-wallpaper="sky"]) body{
   background-color:#AFDAE7!important;
   background-image:var(--sv-chat-sky-wallpaper)!important;
   background-size:100% 100%!important;
   background-repeat:no-repeat!important;
  }
- html.svcp-work-chat-active:has(#svcpConversation[data-chat-wallpaper="evening"]),
- html.svcp-work-chat-active:has(#svcpConversation[data-chat-wallpaper="evening"]) body{
+ html.svcp-work-chat-active:has(#svcpWorkChatScreen:not([hidden])[data-view="room"] #svcpConversation:not([hidden])[data-chat-wallpaper="evening"]),
+ html.svcp-work-chat-active:has(#svcpWorkChatScreen:not([hidden])[data-view="room"] #svcpConversation:not([hidden])[data-chat-wallpaper="evening"]) body{
   background-color:#EDBCB5!important;
   background-image:var(--sv-chat-evening-wallpaper)!important;
   background-size:100% 100%!important;
