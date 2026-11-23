@@ -1960,31 +1960,37 @@ html body #svcpWorkChatScreen[data-view="room"]
  }
 }
 
-/* 2026-11-23 · iPhone chat scroll: real viewport above floating composer.
-   The composer is positioned absolutely, so bottom padding INSIDE an
-   overflowing list cannot reliably keep the last message above it on iOS.
-   The flex item's bottom margin reserves the composer outside the list. */
+/* SEYVEO · 24 Nov 2026: remove the detached bottom band introduced by
+   the old overflow fix. The chat remains one continuous scroll canvas:
+   no margin-bottom outside #svcpMessages and NO pseudo spacer. Scroll
+   clearance lives INSIDE the list and follows the actual composer height
+   supplied by the existing JS ResizeObserver. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #svcpMessages{
  box-sizing:border-box!important;
  flex:1 1 0px!important;
  height:0!important;
  min-height:0!important;
  max-height:none!important;
- overflow-y:auto!important;
  overflow-x:hidden!important;
+ overflow-y:auto!important;
  -webkit-overflow-scrolling:touch!important;
- overscroll-behavior-y:contain!important;
  touch-action:pan-y!important;
- margin-top:0!important;
- margin-bottom:calc(var(--svcp-current-compose-height,56px) + var(--seyveo-dock-bottom,8px) + 14px + env(safe-area-inset-bottom,0px))!important;
- padding-bottom:14px!important;
- scroll-padding-bottom:14px!important;
+ overscroll-behavior-y:contain!important;
+ margin:0!important;
+ padding-bottom:calc(var(--svcp-current-compose-height,56px) + 18px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(var(--svcp-current-compose-height,56px) + 18px + env(safe-area-inset-bottom,0px))!important;
+ background:transparent!important;
+ background-image:none!important;
 }
-/* Leave previews above the composer, not on top of the final messages. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #svcpMessages::after{
+ content:none!important;
+ display:none!important;
+}
+/* Expanded message actions still scroll within the SAME canvas. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat:has(
  :is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden])
 ) #svcpMessages{
- margin-bottom:calc(var(--svcp-current-compose-height,56px) + var(--seyveo-dock-bottom,8px) + 100px + env(safe-area-inset-bottom,0px))!important;
+ padding-bottom:calc(var(--svcp-current-compose-height,56px) + 100px + env(safe-area-inset-bottom,0px))!important;
 }
 
 /* 24 Nov 2026 · Match approved Home segmented capsule in Messages filters. */
