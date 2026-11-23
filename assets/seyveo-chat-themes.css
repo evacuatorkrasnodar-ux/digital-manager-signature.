@@ -766,24 +766,35 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  --sv-sky-flat-rim:rgba(7,88,165,.74);
  --sv-sky-flat-surface:rgba(8,99,181,.65);
  --sv-sky-flat-pressed:rgba(5,82,158,.78);
+ /* Shared SKY glass instead of six unrelated flat / shadowless paints. */
+ --sv-chat-blue-surface:rgba(14,124,194,.66);
+ --sv-chat-blue-edge:1px solid rgba(200,236,253,.52);
+ --sv-chat-blue-dock-shadow:
+  0 6px 18px rgba(6,62,122,.15),
+  0 2px 6px rgba(6,62,122,.08),
+  inset 0 1px 0 rgba(255,255,255,.18);
+ --sv-chat-blue-circle-shadow:
+  0 5px 15px rgba(5,53,111,.16),
+  0 2px 5px rgba(5,53,111,.09),
+  inset 0 1px 0 rgba(255,255,255,.15);
 }
 /* Recovered the original v6 frosted header from commit 8ea8faa.
    Sky wallpaper and composer colors remain intact; no second header skin. */
 /* Input is one compact darker-blue glass capsule, not an extra toolbar. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm::before{
- border:1px solid rgba(4,103,175,.73)!important;
- background:rgba(11,131,190,.60)!important;
- background-image:none!important;box-shadow:none!important;
+ border:var(--sv-chat-blue-edge)!important;
+ background:var(--sv-chat-blue-surface)!important;
+ background-image:none!important;box-shadow:var(--sv-chat-blue-dock-shadow)!important;
  -webkit-backdrop-filter:blur(19px) saturate(112%)!important;
  backdrop-filter:blur(19px) saturate(112%)!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"]
  #svcpChatForm > button#svcpAttachFile.svcp-plus-pearl-rebuilt{
- border:1px solid rgba(4,100,179,.73)!important;
- background:rgba(7,121,188,.72)!important;
- background-image:none!important;box-shadow:none!important;filter:none!important;
+ border:var(--sv-chat-blue-edge)!important;
+ background:var(--sv-chat-blue-surface)!important;
+ background-image:none!important;box-shadow:var(--sv-chat-blue-circle-shadow)!important;filter:none!important;
  color:#FFFFFF!important;transform:none!important;
  -webkit-backdrop-filter:blur(15px) saturate(109%)!important;
  backdrop-filter:blur(15px) saturate(109%)!important;
@@ -791,8 +802,8 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"]
  #svcpChatForm > button#svcpAttachFile.svcp-plus-pearl-rebuilt:is(:active,:focus){
- background:rgba(5,92,166,.82)!important;
- box-shadow:none!important;transform:none!important;
+ background:var(--sv-chat-blue-surface)!important;
+ box-shadow:var(--sv-chat-blue-circle-shadow)!important;transform:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"]
@@ -834,10 +845,10 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm:has(#svcpAttachMenu:not([hidden]))
  > button#svcpAttachFile.svcp-plus-pearl-rebuilt{
- background:rgba(7,121,188,.72)!important;
+ background:var(--sv-chat-blue-surface)!important;
  background-image:none!important;
- border:1px solid rgba(4,100,179,.73)!important;
- box-shadow:none!important;
+ border:var(--sv-chat-blue-edge)!important;
+ box-shadow:var(--sv-chat-blue-circle-shadow)!important;
  filter:none!important;
  color:#FFFFFF!important;
  -webkit-backdrop-filter:blur(15px) saturate(109%)!important;
@@ -879,13 +890,13 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
  #svcpAttachMenu:not([hidden]){
  box-sizing:border-box!important;
- border:1px solid rgba(191,234,255,.53)!important;
+ border:var(--sv-chat-blue-edge)!important;
  border-radius:17px!important;
- background:rgba(18,126,189,.94)!important;
+ background:rgba(15,119,192,.73)!important;
  background-image:none!important;
- -webkit-backdrop-filter:blur(19px) saturate(113%)!important;
- backdrop-filter:blur(19px) saturate(113%)!important;
- box-shadow:0 8px 22px rgba(10,71,116,.16),inset 0 1px 0 rgba(255,255,255,.14)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(115%)!important;
+ backdrop-filter:blur(22px) saturate(115%)!important;
+ box-shadow:var(--sv-chat-blue-dock-shadow)!important;
  color:#FFFFFF!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
