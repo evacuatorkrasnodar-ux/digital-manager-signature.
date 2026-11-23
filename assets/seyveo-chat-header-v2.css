@@ -185,6 +185,55 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack svg{
  stroke:#fff!important;
 }
+/* SKY · restore one genuine translucent frosted title bar, not a second
+   overlay. The existing avatar, title and real Back/Call buttons stay put.
+   Blue light and messages show through softly, with no opaque rectangle. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2{
+ background:linear-gradient(
+  180deg,
+  rgba(171,223,247,.29) 0%,
+  rgba(144,208,240,.18) 61%,
+  rgba(144,208,240,0) 100%
+ )!important;
+ -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
+ backdrop-filter:blur(16px) saturate(115%)!important;
+ border:0!important;box-shadow:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
+ background:rgba(10,102,185,.66)!important;
+ border:var(--sv-chat-blue-edge,1px solid rgba(200,236,253,.52))!important;
+ box-shadow:var(--sv-chat-blue-dock-shadow,0 6px 18px rgba(6,62,122,.15))!important;
+ -webkit-backdrop-filter:blur(13px) saturate(113%)!important;
+ backdrop-filter:blur(13px) saturate(113%)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack:is(:hover,:focus,:active){
+ background:rgba(11,84,174,.68)!important;background-image:none!important;
+ border:var(--sv-chat-blue-edge,1px solid rgba(200,236,253,.52))!important;
+ box-shadow:var(--sv-chat-blue-circle-shadow,0 5px 15px rgba(5,53,111,.16))!important;
+ -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
+ backdrop-filter:blur(13px) saturate(110%)!important;
+ color:#fff!important;transform:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]),
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]):is(:hover,:focus,:active){
+ background:rgba(11,84,174,.68)!important;background-image:none!important;
+ border:var(--sv-chat-blue-edge,1px solid rgba(200,236,253,.52))!important;
+ box-shadow:var(--sv-chat-blue-circle-shadow,0 5px 15px rgba(5,53,111,.16))!important;
+ -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
+ backdrop-filter:blur(13px) saturate(110%)!important;
+ color:#fff!important;transform:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2{
+  background:linear-gradient(180deg,#227fc8 0%,#328fd1 78%,transparent 100%)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill,
+ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack{
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
 /* One real pair of call controls, moved out of the retired/inert header.
    Existing #svcpAudioCall / #svcpVideoCall listeners open the local device
    previews; do not draw additional copies or promise remote calling. */
