@@ -766,17 +766,16 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  --sv-sky-flat-rim:rgba(7,88,165,.74);
  --sv-sky-flat-surface:rgba(8,99,181,.65);
  --sv-sky-flat-pressed:rgba(5,82,158,.78);
- /* Shared SKY glass instead of six unrelated flat / shadowless paints. */
- --sv-chat-blue-surface:rgba(14,124,194,.66);
- --sv-chat-blue-edge:1px solid rgba(200,236,253,.52);
+ /* SKY reference: the existing phone/video buttons.
+    Shared sapphire glass; blue seam, no white outline or pearl shine. */
+ --sv-chat-blue-surface:rgba(11,84,174,.68);
+ --sv-chat-blue-edge:1px solid rgba(3,70,151,.32);
  --sv-chat-blue-dock-shadow:
-  0 6px 18px rgba(6,62,122,.15),
-  0 2px 6px rgba(6,62,122,.08),
-  inset 0 1px 0 rgba(255,255,255,.18);
+  0 5px 15px rgba(6,62,122,.13),
+  0 2px 5px rgba(6,62,122,.075);
  --sv-chat-blue-circle-shadow:
-  0 5px 15px rgba(5,53,111,.16),
-  0 2px 5px rgba(5,53,111,.09),
-  inset 0 1px 0 rgba(255,255,255,.15);
+  0 3px 11px rgba(5,53,111,.14),
+  0 1px 4px rgba(5,53,111,.065);
 }
 /* Recovered the original v6 frosted header from commit 8ea8faa.
    Sky wallpaper and composer colors remain intact; no second header skin. */
@@ -892,7 +891,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  box-sizing:border-box!important;
  border:var(--sv-chat-blue-edge)!important;
  border-radius:17px!important;
- background:rgba(15,119,192,.73)!important;
+ background:var(--sv-chat-blue-surface)!important;
  background-image:none!important;
  -webkit-backdrop-filter:blur(22px) saturate(115%)!important;
  backdrop-filter:blur(22px) saturate(115%)!important;
