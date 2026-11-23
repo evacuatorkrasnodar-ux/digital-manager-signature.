@@ -17,6 +17,12 @@
   employeeAvatar=$('svcpEmployeeAvatar'),employeeResults=$('svcpEmployeeResults'),
   workDashboard=$('svcpWorkDashboard');
  if(!page||!personal||!business||!board||!taskHost||!chatHost||!tasks||!chats)return;
+ // A fixed screen nested in the scrolling/transformed Tasks workspace is
+ // positioned against that ancestor on iOS Safari and can appear to rise
+ // from below the viewport. Mount the one existing screen at document level
+ // once. Its live chat subtree, IDs and event listeners stay unchanged.
+ if(employeeChatScreen&&employeeChatScreen.parentElement!==document.body)
+  document.body.appendChild(employeeChatScreen);
  // The single avatar remains a static identity indicator in the heading.
  // The single live task list belongs under "Мои дела", never in Cabinet.
  // Reparent rather than clone to retain history, storage and action handlers.
