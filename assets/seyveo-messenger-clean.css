@@ -1048,10 +1048,12 @@ html:root body #svcpWorkChatScreen[data-view="inbox"]
  transform:none!important;translate:none!important;scale:1!important;
  transition:none!important;animation:none!important;
 }
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper] > #svcpConversationStandaloneBack,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper] > #svcpConversationStandaloneBack:is(:active,:hover,:focus),
 html:root body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation > #svcpConversationStandaloneBack,
-html:root body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper] > #svcpConversationStandaloneBack:is(:active,:hover,:focus){
+ #svcpConversation:not([data-chat-wallpaper]) > #svcpConversationStandaloneBack{
  position:absolute!important;
  top:var(--svcp-shared-back-top)!important;
  left:var(--svcp-shared-back-left)!important;
