@@ -15,6 +15,7 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]){
  order:1!important;position:relative!important;isolation:isolate!important;
  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
  grid-auto-rows:32px!important;align-items:center!important;
+ align-content:center!important;justify-items:center!important;
  align-self:center!important;justify-content:stretch!important;
  width:calc(100% - 24px)!important;max-width:404px!important;min-width:0!important;
  height:38px!important;min-height:38px!important;max-height:38px!important;
@@ -55,12 +56,12 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-wor
  box-sizing:border-box!important;
  display:flex!important;position:relative!important;
  align-items:center!important;justify-content:center!important;align-self:center!important;
- /* Keep the selected segment centered on the fixed capsule axis. */
- top:0!important;
+ /* All four faces use identical box metrics and the same grid center. */
+ inset:auto!important;translate:none!important;scale:none!important;
  flex:none!important;width:100%!important;min-width:0!important;
  height:32px!important;min-height:32px!important;max-height:32px!important;
  margin:0!important;padding:0 2px!important;
- border:0!important;border-radius:999px!important;
+ border:1px solid transparent!important;border-radius:999px!important;
  background:transparent!important;background-image:none!important;
  box-shadow:none!important;filter:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
@@ -77,7 +78,7 @@ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWork
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][aria-pressed="true"]:not([hidden]){
  color:#1A2028!important;font-weight:640!important;
  background:rgba(255,255,255,.88)!important;background-image:none!important;
- border:0!important;box-shadow:none!important;filter:none!important;
+ border:1px solid transparent!important;box-shadow:none!important;filter:none!important;
  transform:none!important;
 }
 /* Invisible extra touch reach: 32px painted + 6px top/bottom = 44px. */
