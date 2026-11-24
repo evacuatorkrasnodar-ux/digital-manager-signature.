@@ -42,7 +42,7 @@
   const living=document.getElementById('seyveoLivingMoment');
   const tiles=document.getElementById('seyveoLivingTiles');
   const pendingPreview=Number(window.SEYVEO_LIVING_MOMENT?.reviewCount?.())||0;
-  const livingCount=pendingPreview>0?(window.SEYVEO_LIVING_MOMENT?.reviewExamplesActive?.()?pendingPreview:1):
+  const livingCount=pendingPreview>0?pendingPreview:
    (living&&active(living)?Math.max(1,tiles?.querySelectorAll('.lm-field').length||0):0);
   const dynamic=document.getElementById('dynamic');
   const decisions=dynamic&&!dynamic.hidden?Array.from(dynamic.children).filter(el=>!el.hidden).length:0;
@@ -65,10 +65,9 @@
   if(total!==lastCount){lastCount=total;window.dispatchEvent(new CustomEvent('seyveo:review-count',{detail:{count:total}}));}
   // The fixed Home reminder owns the card count; no second copy.
   if(greetingSubline&&greetingSubline.hidden!==(total>0))greetingSubline.hidden=total>0;
-  const demoCount=window.SEYVEO_LIVING_MOMENT?.reviewExamplesActive?.()?
-   Number(window.SEYVEO_LIVING_MOMENT?.reviewCount?.())||0:0;
-  const demoLabel=demoCount===1?'карточка':demoCount>=2&&demoCount<=4?'карточки':'карточек';
-  const progress=demoCount?demoCount+' '+demoLabel:total?total+' осталось':'Всё разобрано';
+  const tail=total%10,teen=total%100>=11&&total%100<=14;
+  const noun=!teen&&tail===1?'карточка':!teen&&tail>=2&&tail<=4?'карточки':'карточек';
+  const progress=total?total+' '+noun:'Всё разобрано';
   if(document.getElementById('svReviewProgress').textContent!==progress)document.getElementById('svReviewProgress').textContent=progress;
   room.classList.toggle('sv-review-empty',!total);
   // When the final decision is resolved, return to Home rather than trapping
