@@ -350,7 +350,7 @@
      check.addEventListener('change',()=>{check.checked?selected.add(task.id):selected.delete(task.id);updateBulk()});
      row.append(check);
     }
-    const body=make('div','sv-tool-copy');
+    const body=make('span','sv-tool-copy');
     body.append(make('strong','',task.title));
     const today=new Date();
     const localToday=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
