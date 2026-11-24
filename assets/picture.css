@@ -1144,3 +1144,101 @@ html[data-theme="light"] body #picturePage #pictureDataTools #pictureConnectSour
 /* Chart columns are visual data, not a route to a redundant detail screen. */
 #picturePage .picture-bin{cursor:default!important;pointer-events:none!important}
 #picturePage .picture-bin:active .picture-bin-bar{filter:none!important}
+
+/* Pulse · native route geometry and White Pearl polish. The main analytics
+   route, not the legacy detail dialog. Preserve data, navigation and dock. */
+html:root body .app.sv-dock-width-workspace.sv-pulse-route{
+ box-sizing:border-box!important;width:100%!important;max-width:530px!important;
+ height:100vh!important;height:100dvh!important;min-height:0!important;max-height:100dvh!important;
+ margin:0 auto!important;padding:0!important;overflow:hidden!important;
+ border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;
+ background-image:none!important;
+}
+@media(max-width:720px){
+ html:root body .app.sv-dock-width-workspace.sv-pulse-route{
+  max-width:100%!important;margin:0!important;
+ }
+}
+html:root body #picturePage.picture-main:not([hidden]){
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ flex:1 1 auto!important;width:100%!important;min-width:0!important;max-width:none!important;
+ min-height:0!important;height:100%!important;max-height:100%!important;
+ margin:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) 0 0!important;
+ border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;
+ overflow:hidden!important;overscroll-behavior:none!important;
+}
+html:root body #picturePage.picture-main:not([hidden]) > .picture-head{
+ box-sizing:border-box!important;flex:0 0 auto!important;
+ margin:0 0 8px!important;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))!important;
+ width:100%!important;max-width:none!important;overflow:visible!important;
+ border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+html:root body #picturePage .picture-head .sv-continuity-titlebar{
+ display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-rows:48px!important;align-items:center!important;
+ height:48px!important;min-height:48px!important;gap:4px!important;padding:0!important;margin:0!important;
+ overflow:visible!important;background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html:root body #picturePage .picture-head #pictureTitle{
+ grid-column:2!important;grid-row:1!important;text-align:center!important;
+ font:640 17px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.025em!important;margin:0!important;min-width:0!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html:root body #picturePage .picture-head .sv-continuity-titlebar #pictureBackToBusiness.seyveo-picture-back{
+ box-sizing:border-box!important;position:relative!important;grid-column:1!important;grid-row:1!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ max-width:44px!important;max-height:44px!important;margin:0!important;padding:0!important;
+ border-radius:50%!important;overflow:visible!important;transform:none!important;transition:none!important;
+}
+html:root body #picturePage .picture-head .sv-continuity-titlebar #pictureBackToBusiness::before,
+html:root body #picturePage .picture-head .sv-continuity-titlebar #pictureBackToBusiness::after{
+ content:none!important;display:none!important;
+}
+html:root[data-theme="light"] body #picturePage .picture-head .sv-continuity-titlebar #pictureBackToBusiness.seyveo-picture-back{
+ background:var(--sv-white-pearl-surface)!important;border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;color:var(--sv-white-pearl-ink)!important;
+}
+html:root body #picturePage .picture-head .sv-continuity-titlebar #pictureBackToBusiness svg{
+ width:19px!important;height:19px!important;stroke:currentColor!important;stroke-width:1.55!important;
+}
+html:root body #picturePage > #picturePageScroll{
+ display:block;box-sizing:border-box;flex:1 1 auto;min-height:0;min-width:0;max-height:none;
+ overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+ padding:0 max(16px,env(safe-area-inset-right,0px)) calc(90px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+ scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));
+}
+html:root body #picturePage #pictureLead{margin:0 0 9px!important;font-size:12px!important;line-height:1.4!important}
+html:root body #picturePage #pictureDemoLabel{margin-inline:0!important}
+html:root body #picturePage #pictureBusiness > .sv-pulse-periods{
+ width:100%!important;height:44px!important;min-height:44px!important;margin:8px 0 12px!important;
+ border-radius:999px!important;padding:3px!important;gap:3px!important;
+}
+html:root body #picturePage #pictureBusiness > .sv-pulse-periods > button{
+ height:36px!important;min-height:36px!important;border-radius:999px!important;
+}
+html:root[data-theme="light"] body #picturePage #pictureBusiness > .sv-pulse-periods{
+ background:var(--sv-white-pearl-surface)!important;border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+}
+html:root[data-theme="light"] body #picturePage #pictureBusiness > .sv-pulse-periods > button[aria-pressed="true"]{
+ background:var(--sv-white-pearl-selected)!important;box-shadow:var(--sv-white-pearl-selected-shadow)!important;
+}
+html:root[data-theme="light"] body #picturePage .sv-connect-prompt--pulse:not([hidden]){
+ min-height:54px!important;padding:6px 11px!important;margin:8px 0 10px!important;
+ border-radius:15px!important;box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+}
+html:root[data-theme="light"] body #picturePage #pictureQuickInsight.picture-sayvi:not([hidden]){
+ margin:0 0 14px!important;border-radius:16px!important;
+ border:var(--sv-white-pearl-edge)!important;box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+}
+html:root[data-theme="light"] body #picturePage #pictureSayviDiscuss{
+ border:var(--sv-white-pearl-edge)!important;background:var(--sv-white-pearl-surface)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;border-radius:999px!important;color:#176ab4!important;
+}
+html:root[data-theme="light"] body #picturePage #pictureSayviWhy{color:#176ab4!important}
+html:root body #picturePage :is(#pictureWidgetArea,#pictureBusinessCharts){padding-inline:0!important}
+html:root body #picturePage .picture-kpi strong{font-size:20px!important;font-weight:650!important}
+html:root[data-theme="light"] body #picturePage .picture-bin-bar{background:#78A9D5!important;opacity:1!important}
+html:root[data-theme="light"] body #picturePage #pictureSources .picture-split-fill{background:#81A9D0!important}
+html:root[data-theme="light"] body #picturePage #pictureExpenses .picture-split-fill{background:#D7A172!important}

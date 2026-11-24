@@ -145,7 +145,8 @@
  }
  // One notice in each relevant external-service workspace.
  const pulse=document.getElementById('picturePage');
- mount({host:pulse,after:pulse?.querySelector('.picture-head'),service:'pulse'});
+ const pulseContent=document.getElementById('picturePageScroll')||pulse;
+ mount({host:pulseContent,after:pulseContent?.querySelector('#pictureLead'),service:'pulse'});
  // Do not obstruct offline music. Show only in the external-sources panel.
  const music=document.getElementById('sayviMusicSourcesPanel');
  mount({host:music,after:music?.querySelector('.sv-music-providers-desc'),service:'music'});

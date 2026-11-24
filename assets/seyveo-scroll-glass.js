@@ -1,13 +1,14 @@
 /* SEYVEO · native scroll-under glass. One visual layer, no scroll interception. */
 (()=>{
 'use strict';
-const ids=['seyveoCompanyDialog','seyveoQrCardDialog','seyveoContactsDialog'];
+const ids=['seyveoCompanyDialog','seyveoQrCardDialog','seyveoContactsDialog','picturePage'];
 for(const id of ids){
  const screen=document.getElementById(id);
  const body=document.getElementById(id+'Scroll');
  if(!screen||!body)continue;
  const header=Array.from(screen.children).find(el=>el.matches('header,.seyveo-passport-dialog-head'));
  if(!header)continue;
+ const isActive=()=>screen.tagName==='DIALOG'?screen.open:!screen.hidden;
  const material=document.createElement('span');
  material.className='sv-scroll-glass-material';
  material.setAttribute('aria-hidden','true');
@@ -15,7 +16,7 @@ for(const id of ids){
  header.classList.add('sv-scroll-glass-head');
  let pending=false;
  const measure=()=>{
-  if(!screen.open)return;
+  if(!isActive())return;
   const mode=getComputedStyle(body).display;
   if(mode==='contents'||mode==='none'){
    screen.classList.remove('sv-scroll-glass-ready');
@@ -33,17 +34,17 @@ for(const id of ids){
  };
  const paint=()=>{
   pending=false;
-  if(!screen.open)return;
+  if(!isActive())return;
   const progress=Math.max(0,Math.min(1,body.scrollTop/12));
   screen.style.setProperty('--sv-scroll-glass-opacity',String(progress));
  };
  body.addEventListener('scroll',()=>{
   if(!pending){pending=true;requestAnimationFrame(paint)}
  },{passive:true});
- new MutationObserver(()=>{if(screen.open){measure();requestAnimationFrame(measure)}})
-  .observe(screen,{attributes:true,attributeFilter:['open','data-sv-company-mode','data-sv-company-filled']});
+ new MutationObserver(()=>{if(isActive()){measure();requestAnimationFrame(measure)}})
+  .observe(screen,{attributes:true,attributeFilter:['open','hidden','data-sv-company-mode','data-sv-company-filled']});
  if(typeof ResizeObserver==='function')new ResizeObserver(measure).observe(header);
  window.addEventListener('resize',measure,{passive:true});
- if(screen.open)measure();
+ if(isActive())measure();
 }
 })();
