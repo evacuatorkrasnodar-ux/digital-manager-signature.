@@ -814,3 +814,101 @@ html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > p{
   padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))!important;
  }
 }
+
+/* Cabinet configuration: same compact header and pearl material as Mail.
+   Scope only to this dialog; preserve all selection and guide handlers. */
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head{
+ display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-rows:48px!important;min-height:48px!important;height:48px!important;
+ align-items:center!important;gap:4px!important;margin:0 0 10px!important;padding:0!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > h2{
+ grid-column:2!important;grid-row:1!important;text-align:center!important;
+ font:640 17px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.025em!important;margin:0!important;min-width:0!important;
+ overflow-wrap:anywhere!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > #svCabinetDisclosure{display:none!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > #svCabinetCancel.sv-cabinet-dismiss{
+ grid-column:1!important;grid-row:1!important;justify-self:start!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ max-width:44px!important;max-height:44px!important;margin:0!important;padding:0!important;
+ border-radius:50%!important;opacity:1!important;transform:none!important;transition:none!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > #svCabinetCancel > svg{
+ display:block!important;width:19px!important;height:19px!important;
+ margin:0!important;transform:none!important;stroke-width:1.55!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-search:not([hidden]){
+ display:flex!important;align-items:center!important;gap:9px!important;
+ box-sizing:border-box!important;min-height:44px!important;height:44px!important;
+ border-radius:999px!important;padding:0 13px!important;margin:0 0 8px!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-search > svg{flex:0 0 18px!important;width:18px!important;height:18px!important;stroke-width:1.55!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-search > input{min-width:0!important;font-size:16px!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-row{
+ position:relative!important;min-height:56px!important;align-items:center!important;gap:4px!important;
+ border-bottom:0!important;background:transparent!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-row::after{
+ content:""!important;position:absolute!important;left:31px!important;right:0!important;bottom:0!important;height:1px!important;
+ background:var(--sv-cabinet-hairline)!important;pointer-events:none!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-detail{
+ min-height:56px!important;align-items:center!important;padding:6px 2px!important;gap:9px!important;
+ background:transparent!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-icon{
+ flex:0 0 20px!important;width:20px!important;height:20px!important;color:var(--text)!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-icon svg{width:19px!important;height:19px!important;stroke-width:1.6!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-choice-copy{min-width:0!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-choice-copy strong{font-size:14px!important;font-weight:610!important;line-height:1.28!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-choice-copy small{font-size:12px!important;line-height:1.32!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-info{flex:0 0 28px!important;width:28px!important;height:36px!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-mark{
+ display:grid!important;place-items:center!important;align-self:center!important;opacity:1!important;
+ transform:none!important;transition:none!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-mark::before{
+ inset:8px!important;width:28px!important;height:28px!important;box-shadow:none!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-mark svg{width:16px!important;height:16px!important;stroke-width:1.7!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-footer{border-top:0!important;align-items:center!important;padding-top:10px!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-status:empty{display:none!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-footer > button{min-height:44px!important;transform:none!important;transition:none!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-footer > .sv-cabinet-reset:not([hidden]){
+ border:0!important;background:transparent!important;box-shadow:none!important;
+ color:var(--text)!important;padding:0 9px!important;
+}
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > #svCabinetCancel.sv-cabinet-dismiss,
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > #svCabinetCancel.sv-cabinet-dismiss:active{
+ background:var(--sv-white-pearl-surface,#f5f6f7)!important;
+ border:var(--sv-white-pearl-edge,1px solid #eee)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 2px 7px rgba(0,0,0,.06))!important;
+ color:var(--sv-white-pearl-ink,#20242b)!important;
+}
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-search:not([hidden]){
+ background:var(--sv-white-pearl-surface,#f5f6f7)!important;
+ border:var(--sv-white-pearl-edge,1px solid #eee)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow,0 2px 7px rgba(0,0,0,.06))!important;
+}
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-mark.is-selected,
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-mark.is-selected:active{color:#fff!important}
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-mark.is-selected::before,
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-mark.is-selected:active::before{
+ background:#007aff!important;border:1px solid #007aff!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-mark:not(.is-selected)::before{
+ background:transparent!important;border:1px solid #c9ced5!important;
+}
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-footer > .sv-cabinet-reset:not([hidden]){color:#176ab4!important}
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-footer > .sv-cabinet-save,
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-footer > .sv-cabinet-save:active{
+ background:var(--sv-white-pearl-surface,#f5f6f7)!important;
+ border:var(--sv-white-pearl-edge,1px solid #eee)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 2px 7px rgba(0,0,0,.06))!important;
+ border-radius:999px!important;color:#176ab4!important;font-weight:620!important;padding:0 18px!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-footer > .sv-cabinet-reset{display:none!important}
