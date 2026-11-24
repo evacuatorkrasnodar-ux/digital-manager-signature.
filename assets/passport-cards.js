@@ -193,6 +193,7 @@ privateForm?.addEventListener('submit',event=>{
 let companyFormSnapshot='';
 const companyView=$('seyveoCompanyView'),companyEditor=$('seyveoCompanyEditor');
 const companyDone=dialog.querySelector('button.seyveo-dialog-close');
+function resetCompanyScroll(){($('seyveoCompanyDialogScroll')||dialog).scrollTop=0;}
 function companyEditing(){return dialog.dataset.svCompanyMode==='edit'}
 function setCompanyMode(mode){
  const editing=mode==='edit';
@@ -225,7 +226,7 @@ function discardCompanyEditing(){
  restorePrivateContext();
  status(dialog,'');
  setCompanyMode('view');
- dialog.scrollTop=0;
+ resetCompanyScroll();
  return true;
 }
 function companyFormSignature(){
@@ -259,10 +260,10 @@ function openCompany(){
  if(!dialog.open)dialog.showModal();
  // Modal scroll positions survive reopens on Safari. Always show the title,
  // summary and Done first; focusing the exit must not jump the form.
- dialog.scrollTop=0;
+ resetCompanyScroll();
  requestAnimationFrame(()=>{
   if(!dialog.open)return;
-  dialog.scrollTop=0;
+  resetCompanyScroll();
   dialog.querySelector('button.sv-nav-done,button.seyveo-dialog-close')
    ?.focus({preventScroll:true});
  });
@@ -272,7 +273,7 @@ function toggleCompanyDemo(){
  COMPANY_DEMO=!COMPANY_DEMO;KEY=COMPANY_DEMO?DEMO_KEY:REAL_KEY;
  try{if(COMPANY_DEMO)sessionStorage.setItem(DEMO_SESSION,'1');else sessionStorage.removeItem(DEMO_SESSION);}catch{}
  if(!COMPANY_DEMO){try{const url=new URL(location.href);url.searchParams.delete('seyveo-company-demo');history.replaceState(history.state,'',url.href);}catch{}}
- restoreCompanyForm();restorePrivateContext();setCompanyMode('view');drawRows();fillPreview();status(dialog,'');dialog.scrollTop=0;
+ restoreCompanyForm();restorePrivateContext();setCompanyMode('view');drawRows();fillPreview();status(dialog,'');resetCompanyScroll();
  window.dispatchEvent(new CustomEvent('seyveo:company-changed'));
 }
 function openStudio(){
@@ -302,7 +303,7 @@ function save(event){
  fillPreview();drawRows();status(dialog,'Сохранено');
  companyFormSnapshot=companyFormSignature();
  setCompanyMode('view');
- dialog.scrollTop=0;
+ resetCompanyScroll();
  window.dispatchEvent(new CustomEvent('seyveo:company-changed'));
 }
 function plain(kind){
@@ -402,10 +403,10 @@ $('seyveoCompanyEditTop')?.addEventListener('click',()=>{
  }
  setCompanyMode('edit');
  status(dialog,'');
- dialog.scrollTop=0;
+ resetCompanyScroll();
  requestAnimationFrame(()=>{
   if(!dialog.open||!companyEditing())return;
-  dialog.scrollTop=0;
+  resetCompanyScroll();
   const field=form.elements.namedItem('name');
   field?.focus?.({preventScroll:true});
  });

@@ -2373,16 +2373,23 @@ function renderMini(){
 window.addEventListener('seyveo:company-changed',renderMini);
 window.addEventListener('storage',e=>{if(e.key===KEY||e.key==='seyveo-company-passport-demo-v1')renderMini()});
 let returnToCompany=false;
+let companyReturnScroll=0;
 function openQr(fromCompany){
  const owner=$('seyveoCompanyDialog');
  returnToCompany=Boolean(fromCompany&&owner?.open);
+ companyReturnScroll=returnToCompany?($('seyveoCompanyDialogScroll')||owner).scrollTop:0;
  if(owner?.open)owner.close();
  if(!dialog.open)dialog.showModal();
  update();
+ ($('seyveoQrCardDialogScroll')||dialog).scrollTop=0;
 }
 function closeQr(){
  if(dialog.open)dialog.close();
- if(returnToCompany){returnToCompany=false;const owner=$('seyveoCompanyDialog');if(owner&&!owner.open)owner.showModal();}
+ if(returnToCompany){
+  returnToCompany=false;
+  const owner=$('seyveoCompanyDialog');
+  if(owner&&!owner.open){owner.showModal();($('seyveoCompanyDialogScroll')||owner).scrollTop=companyReturnScroll;}
+ }
 }
 mini?.addEventListener('click',event=>{
  event.stopPropagation();

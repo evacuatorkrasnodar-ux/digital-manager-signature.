@@ -19,3 +19,45 @@ html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb,body *::-webkit-scro
 }
 /* Keep textareas clean and use their natural wheel/touch scrolling when long. */
 #seyveoFamilyDialog .svf-compose textarea{resize:none}
+
+/* Shared full-page scroll contract. Adopt explicitly on audited destinations.
+   The top-layer dialog is stationary; its original header and dock stay
+   outside the one scrolling content region. No global overflow lock. */
+.sv-page-scroll{display:contents}
+html:root body dialog#seyveoCompanyDialog.seyveo-passport-modal[open],
+html:root body dialog#seyveoQrCardDialog.sv-qr-dialog[open]{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ overflow:hidden!important;overscroll-behavior:none!important;
+}
+html:root body dialog:is(#seyveoCompanyDialog,#seyveoQrCardDialog)[open] > :is(.seyveo-passport-dialog-head,header){
+ flex:0 0 auto!important;
+}
+html:root body dialog:is(#seyveoCompanyDialog,#seyveoQrCardDialog)[open] > .sv-page-scroll{
+ display:block;flex:1 1 auto;min-height:0;min-width:0;max-height:none;
+ box-sizing:border-box;overflow-x:hidden;overflow-y:auto;
+ overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+ margin-inline:-8px;padding-inline:8px;padding-bottom:4px;
+ scroll-padding-bottom:12px;
+}
+html:root body dialog#seyveoCompanyDialog[open][data-sv-company-filled="false"][data-sv-company-mode="view"] > .sv-page-scroll{
+ display:flex;flex-direction:column;
+}
+html:root body dialog#seyveoCompanyDialog[open][data-sv-company-filled="false"][data-sv-company-mode="view"] .sv-company-view:not([hidden]){
+ flex:0 0 auto!important;
+}
+@media(max-width:720px){
+ html:root body dialog#seyveoContactsDialog.personal-contacts-dialog[open]{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  overflow:hidden!important;overscroll-behavior:none!important;
+ }
+ html:root body dialog#seyveoContactsDialog[open] > .sv-phonebook-toolbar{
+  flex:0 0 auto!important;
+ }
+ html:root body dialog#seyveoContactsDialog[open] > .sv-page-scroll{
+  display:block;flex:1 1 auto;min-height:0;min-width:0;max-height:none;
+  box-sizing:border-box;overflow-x:hidden;overflow-y:auto;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  margin-inline:-8px;padding-inline:8px;padding-bottom:4px;
+  scroll-padding-bottom:12px;
+ }
+}
