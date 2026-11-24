@@ -12,7 +12,7 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
  pointer-events:none!important;
  box-sizing:border-box!important;
  left:0!important;
- top:calc((60px - var(--sv-indicator-size,52px)) / 2 + 2px)!important;
+ top:calc((60px - var(--sv-indicator-size,52px)) / 2)!important;
  width:var(--sv-indicator-size,52px)!important;
  height:var(--sv-indicator-size,52px)!important;
  border-radius:50%!important;
