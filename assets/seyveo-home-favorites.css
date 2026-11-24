@@ -623,3 +623,11 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{
 @media(max-width:355px){
  dialog#svHomeFavoritesEditor .sv-home-favorites-editor-head strong{font-size:16px!important}
 }
+
+/* Home · consistent fine-line glyphs; keep original artwork, fills and layout. */
+html:root body #homePage #svHomeFavorites .sv-home-favorite-icon svg[viewBox="0 0 64 64"]{
+ stroke-width:2.05!important;
+}
+html:root body #homePage #svHomeFavorites .sv-home-favorite-icon svg[viewBox="0 0 64 64"] :is(path,circle,rect,ellipse,line,polyline,polygon):not([stroke="none"]){
+ stroke-width:2.05!important;
+}
