@@ -4,91 +4,91 @@
  min-width:0;width:100%;margin:0;padding:0 0 17px;
  color:var(--text);font:inherit;
 }
-#seyveoRecruitment [hidden]{display:none!important}
-#seyveoRecruitment .svrec-head{
+:is(#seyveoRecruitment,#svRecruitDetail) [hidden]{display:none!important}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-head{
  display:flex;align-items:center;justify-content:space-between;gap:11px;
  margin:1px 0 0;padding:0;background:transparent;border:0;
 }
-#seyveoRecruitment .svrec-title{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-title{
  margin:0 0 4px;font-size:15px;font-weight:625;
  line-height:1.3;letter-spacing:-.025em;
 }
-#seyveoRecruitment .svrec-desc{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-desc{
  margin:0;font-size:11.5px;line-height:1.45;color:var(--secondary);
 }
-#seyveoRecruitment .svrec-state{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-state{
  flex:0 0 auto;font-size:10px;line-height:1.4;
  font-weight:450;color:var(--secondary);text-align:right;
 }
-#seyveoRecruitment .svrec-stats{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-stats{
  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
  gap:0;margin:2px 0 1px;padding:12px 0;
  border-top:1px solid rgba(190,197,206,.12);
  border-bottom:1px solid rgba(190,197,206,.12);
  background:transparent;
 }
-#seyveoRecruitment .svrec-stat{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-stat{
  display:grid;gap:5px;justify-items:center;
  min-width:0;margin:0;padding:0 4px;
  border:0;border-radius:0;background:transparent;text-align:center;
 }
-#seyveoRecruitment .svrec-stat+.svrec-stat{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-stat+.svrec-stat{
  border-left:1px solid rgba(190,197,206,.12);
 }
-#seyveoRecruitment .svrec-stat strong{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-stat strong{
  display:block;font-size:20px;font-weight:650;
  letter-spacing:-.025em;font-variant-numeric:tabular-nums;line-height:1.1;
 }
-#seyveoRecruitment .svrec-stat small{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-stat small{
  font-size:10.5px;line-height:1.4;font-weight:450;color:var(--secondary);
 }
-#seyveoRecruitment .svrec-status:not(:empty){
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-status:not(:empty){
  margin:0 0 3px;padding:11px 12px;
  border:0;border-radius:12px;
  background:#38383A;color:#F6F7F8;
  font-size:11.5px;line-height:1.45;
 }
-#seyveoRecruitment .svrec-fold{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-fold{
  display:block;min-width:0;box-sizing:border-box;
  margin:0;padding:0;border:0;
  border-bottom:1px solid rgba(190,197,206,.12);
  background:transparent;box-shadow:none;
 }
-#seyveoRecruitment .svrec-fold-label{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-fold-label{
  display:flex;align-items:center;justify-content:space-between;
  gap:10px;width:100%;box-sizing:border-box;
  min-height:49px;padding:10px 1px;margin:0;
  list-style:none;cursor:pointer;color:var(--text);
  font-size:13px;font-weight:590;line-height:1.4;
 }
-#seyveoRecruitment .svrec-fold-label::-webkit-details-marker{display:none}
-#seyveoRecruitment .svrec-fold-chevron{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-fold-label::-webkit-details-marker{display:none}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-fold-chevron{
  display:grid;place-items:center;flex:0 0 25px;
  width:25px;height:25px;color:var(--secondary);
  font-size:21px;font-weight:400;line-height:1.1;
  transition:transform .15s ease;
 }
-#seyveoRecruitment .svrec-fold[open] .svrec-fold-chevron{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-fold[open] .svrec-fold-chevron{
  transform:rotate(90deg);
 }
-#seyveoRecruitment .svrec-fold:not([open]) > .svrec-section{display:none!important}
-#seyveoRecruitment .svrec-section{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-fold:not([open]) > .svrec-section{display:none!important}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-section{
  display:grid;gap:10px;min-width:0;
  margin:0;padding:3px 0 16px;
  border:0;background:transparent;
 }
-#seyveoRecruitment .svrec-section-head:empty{display:none}
-#seyveoRecruitment .svrec-grid{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-section-head:empty{display:none}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-grid{
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
  gap:11px;min-width:0;margin:0;padding:0;
 }
-#seyveoRecruitment .svrec-field{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-field{
  display:grid;align-content:start;gap:6px;
  min-width:0;font-size:11px;line-height:1.4;
  color:var(--secondary);
 }
-#seyveoRecruitment .svrec-field.wide{grid-column:1/-1}
-#seyveoRecruitment :is(input:not([type="checkbox"]),textarea,select){
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-field.wide{grid-column:1/-1}
+:is(#seyveoRecruitment,#svRecruitDetail) :is(input:not([type="checkbox"]),textarea,select){
  box-sizing:border-box;display:block;
  width:100%;min-width:0;min-height:46px;
  padding:10px 12px;margin:0;
@@ -99,19 +99,19 @@
  box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
  outline-offset:2px;
 }
-#seyveoRecruitment textarea{min-height:76px;resize:vertical}
-#seyveoRecruitment .svrec-consent{
+:is(#seyveoRecruitment,#svRecruitDetail) textarea{min-height:76px;resize:vertical}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-consent{
  display:flex;align-items:flex-start;gap:9px;
  font-size:11px;line-height:1.5;color:var(--secondary);
 }
-#seyveoRecruitment .svrec-consent input[type="checkbox"]{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-consent input[type="checkbox"]{
  width:18px;height:18px;min-height:18px;flex:0 0 18px;
  margin:1px 0 0;accent-color:#77777A;
 }
-#seyveoRecruitment .svrec-actions{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-actions{
  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
 }
-#seyveoRecruitment .svrec-button{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-button{
  box-sizing:border-box;min-height:44px;padding:9px 14px;
  margin:0;border:0;border-radius:14px;
  background:#38383A;color:#F6F7F8;
@@ -119,75 +119,130 @@
  box-shadow:none;cursor:pointer;
  -webkit-backdrop-filter:none;backdrop-filter:none;
 }
-#seyveoRecruitment .svrec-button.primary{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-button.primary{
  background:#38383A;color:#FFFFFF;
 }
-#seyveoRecruitment .svrec-button:active{background:#505053}
-#seyveoRecruitment .svrec-small{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-button:active{background:#505053}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-small{
  margin:0;color:var(--secondary);font-size:10.5px;line-height:1.5;
 }
-#seyveoRecruitment .svrec-candidates{display:grid;gap:0;min-width:0}
-#seyveoRecruitment .svrec-card{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-candidates{display:grid;gap:0;min-width:0}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-card{
  display:grid;gap:8px;min-width:0;
  margin:0;padding:12px 0;border:0;
  border-bottom:1px solid rgba(190,197,206,.12);
  border-radius:0;background:transparent;box-shadow:none;
  -webkit-backdrop-filter:none;backdrop-filter:none;
 }
-#seyveoRecruitment .svrec-cardhead{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-cardhead{
  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
 }
-#seyveoRecruitment .svrec-cardhead strong{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-cardhead strong{
  font-size:13px;font-weight:620;line-height:1.35;color:var(--text);
 }
-#seyveoRecruitment .svrec-cardhead small{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-cardhead small{
  display:block;margin-top:3px;font-size:10.5px;
  line-height:1.35;color:var(--secondary);
 }
-#seyveoRecruitment .svrec-tag{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-tag{
  padding:5px 7px;border:0;border-radius:9px;
  background:#38383A;color:#FFF;font-size:10px;
  white-space:nowrap;
 }
-#seyveoRecruitment .svrec-analysis{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-analysis{
  margin:0;font-size:12px;line-height:1.5;color:var(--text);
  white-space:pre-line;
 }
-#seyveoRecruitment .svrec-pipeline{display:flex;flex-wrap:wrap;gap:6px}
-#seyveoRecruitment .svrec-stage{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-pipeline{display:flex;flex-wrap:wrap;gap:6px}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-stage{
  min-height:35px;padding:7px 9px;
  border:1px solid rgba(190,197,206,.12);
  border-radius:10px;background:transparent;
  color:var(--secondary);font-size:10.5px;font-weight:500;line-height:1.3;font-family:inherit;
 }
-#seyveoRecruitment .svrec-stage[aria-pressed="true"]{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-stage[aria-pressed="true"]{
  border-color:transparent;background:#38383A;color:#FFF;
 }
-#seyveoRecruitment .svrec-empty{
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-empty{
  margin:0;padding:5px 0 9px;
  color:var(--secondary);font-size:11.5px;line-height:1.5;
 }
-#seyveoRecruitment :is(button,input,textarea,select,summary):focus-visible{
+:is(#seyveoRecruitment,#svRecruitDetail) :is(button,input,textarea,select,summary):focus-visible{
  outline:2px solid var(--text);outline-offset:2px;
 }
 @media(max-width:365px){
- #seyveoRecruitment .svrec-grid{grid-template-columns:1fr}
- #seyveoRecruitment .svrec-field.wide{grid-column:auto}
- #seyveoRecruitment .svrec-state{font-size:9px}
+ :is(#seyveoRecruitment,#svRecruitDetail) .svrec-grid{grid-template-columns:1fr}
+ :is(#seyveoRecruitment,#svRecruitDetail) .svrec-field.wide{grid-column:auto}
+ :is(#seyveoRecruitment,#svRecruitDetail) .svrec-state{font-size:9px}
 }
 @media(prefers-reduced-motion:reduce){
- #seyveoRecruitment .svrec-fold-chevron{transition:none}
+ :is(#seyveoRecruitment,#svRecruitDetail) .svrec-fold-chevron{transition:none}
 }
 
 /* White Pearl recruiting. Keep the actual forms and pipeline interactive. */
-#seyveoRecruitment .svrec-mode{min-height:36px;max-width:120px;flex:0 0 auto;border:0;background:transparent;color:var(--secondary);font:600 11px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;cursor:pointer;text-align:right;padding:4px 0}
-#seyveoRecruitment .svrec-advice{border-radius:15px;padding:12px 13px;background:#38383A;color:#fff}
-#seyveoRecruitment .svrec-advice-head{display:flex;align-items:center;gap:8px;font-size:13px}
-#seyveoRecruitment .svrec-advice-head .sv-sayvi-symbol{display:block;width:20px;height:20px;flex:0 0 20px}
-#seyveoRecruitment .svrec-advice .svrec-status:not(:empty){background:transparent;color:inherit;margin:7px 0 0;padding:0;font-size:12px}
-html:root[data-theme="light"] body #seyveoRecruitment .svrec-advice{background:#fff;color:#242b34;border:var(--sv-white-pearl-edge);box-shadow:var(--sv-white-pearl-circle-shadow)}
-html:root[data-theme="light"] body #seyveoRecruitment .svrec-mode{color:#176ab4}
-html:root[data-theme="light"] body #seyveoRecruitment :is(input:not([type="checkbox"]),textarea,select){background:#f7f7f8;color:#20242a;border:var(--sv-white-pearl-edge)}
-html:root[data-theme="light"] body #seyveoRecruitment .svrec-button{background:var(--sv-white-pearl-surface);border:var(--sv-white-pearl-edge);box-shadow:var(--sv-white-pearl-circle-shadow);color:#176ab4;border-radius:999px}
-html:root[data-theme="light"] body #seyveoRecruitment .svrec-tag{background:#eaf2fa;color:#28628f;white-space:normal;text-align:right}
-html:root[data-theme="light"] body #seyveoRecruitment .svrec-stage[aria-pressed="true"]{background:#eaf2fa;color:#28628f}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-mode{min-height:36px;max-width:120px;flex:0 0 auto;border:0;background:transparent;color:var(--secondary);font:600 11px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;cursor:pointer;text-align:right;padding:4px 0}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-advice{border-radius:15px;padding:12px 13px;background:#38383A;color:#fff}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-advice-head{display:flex;align-items:center;gap:8px;font-size:13px}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-advice-head .sv-sayvi-symbol{display:block;width:20px;height:20px;flex:0 0 20px}
+:is(#seyveoRecruitment,#svRecruitDetail) .svrec-advice .svrec-status:not(:empty){background:transparent;color:inherit;margin:7px 0 0;padding:0;font-size:12px}
+html:root[data-theme="light"] body :is(#seyveoRecruitment,#svRecruitDetail) .svrec-advice{background:#fff;color:#242b34;border:var(--sv-white-pearl-edge);box-shadow:var(--sv-white-pearl-circle-shadow)}
+html:root[data-theme="light"] body :is(#seyveoRecruitment,#svRecruitDetail) .svrec-mode{color:#176ab4}
+html:root[data-theme="light"] body :is(#seyveoRecruitment,#svRecruitDetail) :is(input:not([type="checkbox"]),textarea,select){background:#f7f7f8;color:#20242a;border:var(--sv-white-pearl-edge)}
+html:root[data-theme="light"] body :is(#seyveoRecruitment,#svRecruitDetail) .svrec-button{background:var(--sv-white-pearl-surface);border:var(--sv-white-pearl-edge);box-shadow:var(--sv-white-pearl-circle-shadow);color:#176ab4;border-radius:999px}
+html:root[data-theme="light"] body :is(#seyveoRecruitment,#svRecruitDetail) .svrec-tag{background:#eaf2fa;color:#28628f;white-space:normal;text-align:right}
+html:root[data-theme="light"] body :is(#seyveoRecruitment,#svRecruitDetail) .svrec-stage[aria-pressed="true"]{background:#eaf2fa;color:#28628f}
+
+/* Native recruiting subpages; the single original dock is portaled by the shared controller. */
+html:root body dialog.sv-recruit-page[open]{
+ position:fixed!important;inset:0!important;box-sizing:border-box!important;
+ width:100vw!important;max-width:100vw!important;height:100vh!important;height:100dvh!important;max-height:100dvh!important;
+ margin:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(90px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+ overflow:hidden!important;border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;background:var(--bg)!important;color:var(--text)!important;
+}
+html:root[data-theme="light"] body dialog.sv-recruit-page[open]{background:#fff!important}
+html body dialog.sv-recruit-page:not([open]){display:none!important}
+html body dialog.sv-recruit-page [hidden]{display:none!important}
+html body dialog.sv-recruit-page > .sv-recruit-head{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:4px;min-height:52px;flex:0 0 auto;margin:0 0 8px;padding:0;background:transparent;border:0;box-shadow:none}
+html body .sv-recruit-head h2{margin:0!important;padding:0!important;text-align:center;font:640 17px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important}
+html body .sv-recruit-head button{box-sizing:border-box;display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border-radius:50%;border:var(--sv-white-pearl-edge,0);background:var(--sv-white-pearl-surface,#38383a);color:var(--sv-white-pearl-ink,#fff);box-shadow:var(--sv-white-pearl-circle-shadow,none)}
+html body .sv-recruit-head button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+html body dialog.sv-recruit-page > .sv-page-scroll{display:block;flex:1 1 auto;min-height:0;min-width:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box;margin-inline:-8px;padding-inline:8px;padding-bottom:12px}
+#seyveoRecruitment{gap:8px}
+#seyveoRecruitment .svrec-list-row{display:flex;align-items:center;gap:9px;width:100%;min-height:62px;text-align:left;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;background:transparent;box-shadow:none;padding:8px 0;color:var(--text);font:inherit}
+#seyveoRecruitment .svrec-list-copy{display:grid;gap:4px;flex:1;min-width:0}
+#seyveoRecruitment .svrec-list-copy strong{font-size:14px;font-weight:620;overflow-wrap:anywhere}
+#seyveoRecruitment .svrec-list-copy small{font-size:11px;color:var(--secondary)}
+.svrec-list-avatar{display:grid;place-items:center;border-radius:50%;width:42px;height:42px;flex:0 0 42px;background:#dceaf3;color:#335e7b;font-size:15px;font-weight:600}
+#seyveoRecruitment .svrec-list-arrow{flex:none;color:var(--secondary);font-size:19px;padding-inline:2px}
+#seyveoRecruitment .svrec-list-row .svrec-tag{max-width:90px;flex:0 1 auto;font-size:10px;white-space:normal;overflow-wrap:anywhere}
+#seyveoRecruitment .svrec-section>.svrec-button{justify-self:start}
+#svRecruitDetail .svrec-grid{padding-top:12px}
+#svRecruitDetail .svrec-detail-content{display:grid;gap:10px;padding:8px 0}
+#svRecruitDetail .svrec-identity{display:grid;justify-items:center;text-align:center;gap:8px;padding:8px 0 16px}
+#svRecruitDetail .svrec-identity .svrec-list-avatar{width:72px;height:72px;font-size:26px}
+#svRecruitDetail .svrec-detail-name{font-size:20px;letter-spacing:-.025em;margin:0;font-weight:640}
+#svRecruitDetail .svrec-detail-heading{font-size:14px;margin:12px 0 0;font-weight:630}
+#svRecruitDetail .svrec-analysis{font-size:13px;line-height:1.55}
+#svRecruitDetail .svrec-criteria{font-size:13px;line-height:1.6;padding-left:20px;margin:0}
+#svRecruitDetail .svrec-delete{min-height:44px;justify-self:start;background:transparent;border:0;color:#bf342d;font-size:13px;font-weight:600;margin-top:12px}
+#svRecruitDetail .svrec-detail-status{font-size:12px;color:var(--secondary);line-height:1.45}
+#svRecruitDetail .svrec-stage{min-height:44px}
+#svRecruitDetail .svrec-actions{padding-top:6px}
+#svHrInterview .svhr-avatar{display:block;object-fit:contain;width:88px;height:88px;margin:12px auto 15px;border-radius:50%}
+#svHrInterview .svhr-tag{font-size:12px;color:var(--secondary);line-height:1.5;margin:12px 0}
+#svHrInterview .svhr-tag:first-of-type{text-align:center}
+#svHrInterview p:not(.svhr-tag){font-size:15px;line-height:1.5}
+#svHrInterview .svhr-options{display:grid;gap:9px;margin:20px 0}
+#svHrInterview .svhr-choice{min-height:54px;width:100%;border:1px solid var(--soft-line);border-radius:14px;background:var(--card);color:var(--text);text-align:left;padding:12px 14px;font:500 14px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+#svHrInterview .svhr-choice[aria-pressed="true"]{background:#dfeef8;color:#205b87;border-color:#9ec4e0}
+#svHrInterview .svhr-summary{padding:12px 0;border-bottom:1px solid var(--soft-line);font-size:13px;line-height:1.5}
+#svHrInterview .svhr-summary strong{display:block;margin-bottom:4px}
+#svHrInterview .svhr-summary p{font-size:12px;color:var(--secondary);margin:6px 0}
+#svHrInterview .svhr-next,#svcpManagerPeople .svhr-demo-trigger{min-height:44px;border-radius:999px;padding:10px 15px;background:var(--sv-white-pearl-surface,#38383a);border:var(--sv-white-pearl-edge,0);box-shadow:var(--sv-white-pearl-circle-shadow,none);color:var(--text);font:600 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+html:root[data-theme="light"] body :is(#svHrInterview .svhr-next,#svcpManagerPeople .svhr-demo-trigger){color:#176ab4!important}
+#svHrInterview .svhr-next{width:100%}
+#svHrInterview .svhr-next:disabled{opacity:.45}
+#svcpManagerPeople #svcpPeopleHiringHost .seyveo-hr-fold{margin-inline:0!important;padding-inline:0!important}
+#svcpManagerPeople #svcpPeopleHiringHost .seyveo-hr-fold>summary{padding-inline:0!important}
+#svcpManagerPeople #svcpPeopleHiringHost .seyveo-hr-fold>p{margin-inline:0!important}

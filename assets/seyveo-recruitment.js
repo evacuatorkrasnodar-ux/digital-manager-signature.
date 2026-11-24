@@ -4,7 +4,10 @@
 const root=document.getElementById('seyveoRecruitment');if(!root)return;
 const STORE='seyveo-recruiting-local-v1';
 const STAGES=['Новый','Проверить опыт','Собеседование','Решение человека','Принят'];
-const $=s=>root.querySelector(s);
+const detail=document.getElementById('svRecruitDetail'),detailBody=document.getElementById('svRecruitDetailScroll');
+if(!detail||!detailBody)return;
+document.body.append(detail);
+const $=s=>root.querySelector(s)||detail.querySelector(s);
 const el=(tag,cls,text)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x};
 const initial=()=>({vacancies:[],candidates:[]});
 function load(){try{const p=JSON.parse(localStorage.getItem(STORE)||'null');return p&&Array.isArray(p.vacancies)&&Array.isArray(p.candidates)?p:initial()}catch{return initial()}}
@@ -49,7 +52,56 @@ sections.forEach((section,i)=>{
  heading?.remove();
  fold.append(summary,section);
 });
-function sayvi(message){$('#svrecStatus').textContent='Сэйви: '+message;}
+const vacancyForm=$('#svrecVacancyForm'),candidateForm=$('#svrecCandidateForm');
+const detailContent=el('div','svrec-detail-content'),detailStatus=el('p','svrec-detail-status');
+detailStatus.setAttribute('role','status');detailStatus.hidden=true;
+function action(text,fn,cls='svrec-button'){const button=el('button',cls,text);button.type='button';button.addEventListener('click',fn);return button;}
+const vacancyLaunch=action('Новая вакансия',()=>openDetail('vacancy'));
+const responseLaunch=action('Добавить отклик',()=>openDetail('response'));
+const vacancyList=$('#svrecVacancyList');
+vacancyList.after(vacancyLaunch);
+candidateForm.before(responseLaunch);
+detailBody.append(vacancyForm,candidateForm,detailContent,detailStatus);
+let currentMode='',currentId=null,returnTrigger=null;
+function openDetail(mode,id=null,trigger=document.activeElement){
+ currentMode=mode;currentId=id;returnTrigger=trigger;
+ detail.querySelector('h2').textContent=mode==='vacancy'?'Новая вакансия':mode==='response'?'Новый отклик':mode==='vacancy-view'?'Вакансия':'Кандидат';
+ vacancyForm.hidden=mode!=='vacancy';candidateForm.hidden=mode!=='response';
+ detailContent.hidden=mode==='vacancy'||mode==='response';detailStatus.hidden=true;
+ if(mode==='candidate')renderCandidateDetail();
+ if(mode==='vacancy-view')renderVacancyDetail();
+ if(!detail.open)detail.showModal();
+ detailBody.scrollTop=0;
+ window.SEYVEO_DOCK_CONTINUITY?.refresh?.();
+}
+detail.querySelector('header button').addEventListener('click',()=>detail.close());
+detail.addEventListener('close',()=>{currentMode='';currentId=null;detailStatus.hidden=true;if(returnTrigger?.isConnected)returnTrigger.focus({preventScroll:true});});
+function sayvi(message){$('#svrecStatus').textContent=message;if(detail.open){detailStatus.textContent=message;detailStatus.hidden=false;}}
+function row(title,sub,initials,tag,fn){
+ const button=el('button','svrec-list-row');button.type='button';
+ // A single real click handler; title and secondary text remain accessible.
+ const copy=el('span','svrec-list-copy');copy.append(el('strong',null,title),el('small',null,sub));
+ if(initials)button.append(el('span','svrec-list-avatar',initials));
+ button.append(copy);
+ if(tag)button.append(el('span','svrec-tag',tag));
+ const arrow=el('span','svrec-list-arrow','›');arrow.setAttribute('aria-hidden','true');button.append(arrow);
+ button.addEventListener('click',()=>fn(button));return button;
+}
+function renderVacancyDetail(){
+ const v=state.vacancies.find(x=>x.id===currentId);detailContent.replaceChildren();if(!v)return;
+ detailContent.append(el('h3','svrec-detail-name',v.title),el('p','svrec-desc',(v.city||'Город не указан')+(demo?' · учебная вакансия':'')),el('h4','svrec-detail-heading','Требования'));
+ const list=el('ul','svrec-criteria');v.criteria.forEach(c=>list.append(el('li',null,c)));detailContent.append(list,el('p','svrec-small','Публикация требует подключения площадки и подтверждения работодателя.'));
+}
+function renderCandidateDetail(){
+ const c=state.candidates.find(x=>x.id===currentId);detailContent.replaceChildren();if(!c)return;
+ const vacancy=state.vacancies.find(v=>v.id===c.vacancyId);
+ const identity=el('div','svrec-identity');
+ identity.append(el('span','svrec-list-avatar',c.name.trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()),el('h3','svrec-detail-name',c.name),el('p','svrec-desc',(vacancy?.title||'Вакансия')+' · '+c.source),el('span','svrec-tag',c.stage));detailContent.append(identity);
+ detailContent.append(el('h4','svrec-detail-heading','Разбор Сэйви'),el('div','svrec-analysis',assess(c,vacancy)),el('h4','svrec-detail-heading','Этап подбора'));
+ const stages=el('div','svrec-pipeline');
+ STAGES.forEach(stage=>{const b=action(stage,()=>{const previous=c.stage;c.stage=stage;if(!persist()){c.stage=previous;return;}render();renderCandidateDetail();sayvi('Этап изменён. Решение принимает руководитель.');},'svrec-stage');b.setAttribute('aria-pressed',String(c.stage===stage));stages.append(b);});
+ detailContent.append(stages,action('Удалить данные кандидата',()=>{if(!confirm('Удалить запись кандидата?'))return;const previous=state.candidates;state.candidates=previous.filter(x=>x.id!==c.id);if(!persist()){state.candidates=previous;return;}detail.close();render();sayvi('Запись удалена.');},'svrec-delete'));
+}
 function persist(){if(demo)return true;try{localStorage.setItem(STORE,JSON.stringify(state));return true}catch{sayvi('Не удалось сохранить изменения в браузере. Проверь свободное место.');return false}}
 function cardTitle(parent,title,sub){const h=el('div','svrec-cardhead'),name=el('div');name.append(el('strong',null,title),el('small',null,sub));h.append(name);parent.append(h);return h}
 function render(){
@@ -62,33 +114,14 @@ function render(){
  $('#svrecInterviews').textContent=String(state.candidates.filter(x=>x.stage==='Собеседование').length);
  const list=$('#svrecVacancyList');list.replaceChildren();
  if(!state.vacancies.length)list.append(el('p','svrec-empty','Вакансий пока нет. Опиши первую должность — Сэйви подготовит основу.'));
- state.vacancies.forEach(v=>{
-  const card=el('article','svrec-card');cardTitle(card,v.title,(v.city||'Город не указан')+' · '+v.criteria.length+' требований');
-  const copy=el('p','svrec-small','Требования: '+v.criteria.join('; '));card.append(copy);list.append(card);
- });
+ state.vacancies.forEach(v=>list.append(row(v.title,(v.city||'Город не указан')+' · '+v.criteria.length+' требований','', '',trigger=>openDetail('vacancy-view',v.id,trigger))));
  const select=$('#svrecCandidateForm [name=vacancy]'),chosen=select.value;select.replaceChildren();
  select.append(new Option('Выбрать вакансию',''));
  state.vacancies.forEach(v=>select.append(new Option(v.title,v.id)));
  if(state.vacancies.some(v=>v.id===chosen))select.value=chosen;
  const out=$('#svrecCandidateList');out.replaceChildren();
  if(!state.candidates.length)out.append(el('p','svrec-empty','Здесь появятся кандидаты после разрешённого отклика или ручного ввода. Сэйви подскажет, что подтвердить.'));
- state.candidates.slice().reverse().forEach(c=>{
-  const vacancy=state.vacancies.find(v=>v.id===c.vacancyId);
-  const card=el('article','svrec-card');
-  const head=cardTitle(card,c.name,(vacancy?.title||'Вакансия')+' · '+c.source);head.append(el('span','svrec-tag',c.stage));
-  const facts=el('div','svrec-analysis');facts.textContent=assess(c,vacancy);card.append(facts);
-  const stages=el('div','svrec-pipeline');
-  STAGES.forEach(stage=>{
-   const b=el('button','svrec-stage',stage);b.type='button';b.setAttribute('aria-pressed',String(c.stage===stage));
-   b.addEventListener('click',()=>{c.stage=stage;if(!persist())return;render();sayvi('Этап «'+stage+'» изменён. Это не сообщение кандидату и не решение о найме.');});
-   stages.append(b);
-  });
-  card.append(stages);
-  const remove=el('button','svrec-button','Удалить данные кандидата');remove.type='button';remove.addEventListener('click',()=>{
-   if(!confirm('Удалить локальную запись кандидата?'))return;
-   state.candidates=state.candidates.filter(x=>x.id!==c.id);if(persist()){render();sayvi('Запись удалена.');}
-  });card.append(remove);out.append(card);
- });
+ state.candidates.slice().reverse().forEach(c=>{const vacancy=state.vacancies.find(v=>v.id===c.vacancyId);const initials=c.name.trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();out.append(row(c.name,vacancy?.title||'Вакансия',initials,c.stage,trigger=>openDetail('candidate',c.id,trigger)));});
 }
 function assess(candidate,vacancy){
  if(!vacancy)return 'Не найдена вакансия для сопоставления.';
@@ -112,14 +145,14 @@ $('#svrecVacancyForm').addEventListener('submit',e=>{
  const criteria=String(f.get('criteria')||'').split(/[\n;]+/).map(x=>x.trim()).filter(Boolean).slice(0,20);
  if(!title||!criteria.length)return sayvi('Укажи должность и хотя бы одно профессиональное требование.');
  state.vacancies.push({id:'v'+Date.now().toString(36),title,city,criteria});
- if(!persist()){state=load();return}e.currentTarget.reset();render();sayvi('Вакансия «'+title+'» создана. Следующий шаг — подтвердить публикацию на выбранной площадке после подключения.');
+ if(!persist()){state=load();render();return}e.currentTarget.reset();detail.close();render();sayvi('Вакансия «'+title+'» создана. Следующий шаг — подтвердить публикацию на выбранной площадке после подключения.');
 });
 $('#svrecCandidateForm').addEventListener('submit',e=>{
  e.preventDefault();const form=e.currentTarget,f=new FormData(form);
  const name=String(f.get('name')||'').trim(),vacancyId=String(f.get('vacancy')||''),evidence=String(f.get('evidence')||'').trim();
  if(!f.has('allowed')||!name||!evidence||!state.vacancies.some(v=>v.id===vacancyId))return sayvi('Проверь вакансию, профессиональные факты и разрешение на обработку данных.');
  const item={id:'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name,vacancyId,evidence,source:String(f.get('source')||'Вручную').trim().slice(0,90)||'Вручную',stage:'Новый'};
- state.candidates.push(item);if(!persist()){state=load();return}form.reset();render();
+ state.candidates.push(item);if(!persist()){state=load();return}form.reset();detail.close();render();
  sayvi('Появился кандидат '+name+'. Я подготовила разбор профессиональных требований ниже. Уточни непроверенные сведения перед собеседованием.');
 });
 $('#svrecMode').addEventListener('click',()=>{
