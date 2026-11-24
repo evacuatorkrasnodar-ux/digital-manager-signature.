@@ -541,3 +541,43 @@ html:root body #noteScanDialog[data-saved-scan="true"][data-step="photo"] > .sv-
 html:root body #noteScanDialog[data-saved-scan="true"][data-step="photo"] #noteScanPreview.paper-scan-preview:not([hidden]){
  max-height:min(70dvh,760px)!important;
 }
+
+/* Scanner actions use the existing Pearl menu; submenu rows occupy only
+   their own content, never a second overlay or a permanent footer. */
+html:root body #noteScanDialog > #svScanMenu > button[hidden],
+html:root body #noteScanDialog > #svScanPrepared[hidden],
+html:root body #noteScanDialog > #svScanTextExport[hidden]{
+ display:none!important;
+}
+html:root body #noteScanDialog > #svScanMenu:not([hidden]){
+ max-height:min(65dvh,420px)!important;overflow-y:auto!important;
+}
+html:root body #noteScanDialog > #svScanPrepared:not([hidden]){
+ box-sizing:border-box!important;position:absolute!important;z-index:16!important;
+ top:calc(68px + env(safe-area-inset-top,0px))!important;
+ right:max(16px,env(safe-area-inset-right,0px))!important;
+ width:min(290px,calc(100% - 32px))!important;
+ display:grid!important;gap:3px!important;padding:10px!important;
+ border:var(--sv-menu-border)!important;border-radius:16px!important;
+ background:var(--sv-menu-bg)!important;color:var(--sv-menu-text)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+}
+html:root body #noteScanDialog > #svScanPrepared > strong{
+ padding:5px 8px!important;font:600 14px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ overflow-wrap:anywhere!important;
+}
+html:root body #noteScanDialog > #svScanPrepared > button,
+html:root body #noteScanDialog > #svScanTextExport:not([hidden]){
+ box-sizing:border-box!important;min-height:44px!important;
+ padding:8px 10px!important;margin:0!important;border:0!important;border-radius:11px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#176ab4!important;font:550 14px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root body #noteScanDialog > #svScanTextExport:not([hidden]){
+ display:block!important;flex:0 0 auto!important;width:100%!important;
+ border:var(--sv-menu-border)!important;background:var(--sv-menu-bg)!important;
+ margin-top:8px!important;
+}
+html:root[data-theme="dark"] body #noteScanDialog > #svScanPrepared > button,
+html:root[data-theme="dark"] body #noteScanDialog > #svScanTextExport:not([hidden]){color:#8bc2ff!important;}
+html:root body #noteScanDialog > #svScanTextExport:disabled{opacity:.45!important;}
