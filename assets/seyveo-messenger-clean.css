@@ -288,6 +288,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
  font-size:11px;font-weight:550;color:#B8BEC4
 }
 #svcpWorkChatScreen .svcp-bubble{
+ flex:0 0 auto!important;
  position:relative;align-self:flex-start;max-width:min(88%,410px);min-width:0;
  border:0!important;border-radius:19px 19px 19px 6px!important;
  background:var(--svcp-room-other,#2F3337)!important;
@@ -2075,4 +2076,10 @@ html body #svcpWorkChatScreen .svcp-native-avatar-host > .svcp-native-avatar.svc
  display:block!important;width:100%!important;height:100%!important;
  border:0!important;background-color:transparent!important;
  border-radius:50%!important;box-shadow:none!important;
+}
+
+/* Each timeline row reserves its own natural height in the scrolling flex column.
+   Prevent date separators and special cards shrinking under long conversations. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpMessages > :is(.svcp-bubble,article){
+ flex-shrink:0!important;
 }
