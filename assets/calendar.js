@@ -352,6 +352,11 @@ function renderDay(){
 
 /* Week keeps seven-day navigation, with Apple's hourly schedule for the selected date. */
 let lastWeekTimelineFocus='';
+function updateWeekHourLabels(root, minute){
+ root.querySelectorAll('.cal-week-hour-row').forEach((row,hour)=>{
+  row.toggleAttribute('data-now-near',minute!==null&&Math.abs(hour*60-minute)<16);
+ });
+}
 function renderWeekTimeline(list){
  const panel=$('calendarWeekTimeline'),allDay=$('calendarWeekAllDay');
  const root=$('calendarWeekHours'),scroll=$('calendarWeekTimelineScroll');
@@ -403,7 +408,7 @@ function renderWeekTimeline(list){
    button.style.top=slot.start+'px';
    button.style.height=Math.max(1,slot.end-slot.start-2)+'px';
    button.style.left=(slot.lane*100/laneCount)+'%';
-   button.style.width=(100/laneCount)+'%';
+   button.style.width=laneCount>1&&slot.lane<laneCount-1?`calc(${100/laneCount}% - 3px)`:(100/laneCount)+'%';
    const explicitDuration=Number(slot.item.duration)>0;
    const endLabel=String(Math.floor(slot.end/60)).padStart(2,'0')+':'+String(slot.end%60).padStart(2,'0');
    button.append(text('span','cal-timeline-time-label',slot.item.time+(explicitDuration?' – '+endLabel:'')));
@@ -418,6 +423,7 @@ function renderWeekTimeline(list){
   const label=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   marker.dataset.time=label;marker.setAttribute('aria-label','Сейчас '+label);
   layer.append(marker);
+  updateWeekHourLabels(root,minute);
  }
  window.requestAnimationFrame(()=>{
   if(panel.hidden||mode!=='week')return;
@@ -1210,7 +1216,8 @@ window.setInterval(()=>{
   const now=new Date(),label=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   marker.style.top=(now.getHours()*60+now.getMinutes())+'px';
   marker.dataset.time=label;marker.setAttribute('aria-label','Сейчас '+label);
- }else if(marker)marker.remove();
+  updateWeekHourLabels($('calendarWeekHours'),now.getHours()*60+now.getMinutes());
+ }else if(marker){marker.remove();updateWeekHourLabels($('calendarWeekHours'),null);}
 },60*1000);
 // A saved #calendar URL may be active before this script initializes.
 if(!page.hidden)render();
