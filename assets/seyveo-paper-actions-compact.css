@@ -176,3 +176,24 @@ html:root body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-cursor-visib
 @media(max-width:355px){
  html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBack{left:-4px!important;}
 }
+
+/* Graphite sheet: same 44px back target and shared header axis as white. */
+html:root body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) > .sv-paper-top > #notePaperBack,
+html:root body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) > .sv-paper-top > #notePaperBack:is(:hover,:active){
+ box-sizing:border-box!important;width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ border:.75px solid rgba(255,255,255,.12)!important;border-radius:50%!important;
+ background:#343436!important;background-image:none!important;
+ color:#f3f4f6!important;box-shadow:0 3px 10px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.055)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ transform:none!important;transition:none!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) > .sv-paper-top > #notePaperBack::before,
+html:root body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) > .sv-paper-top > #notePaperBack::after{content:none!important;display:none!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) > .sv-paper-top > #notePaperBack svg{stroke:#f3f4f6!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) > .sv-paper-top > .sv-paper-history > button > svg{
+ transform:none!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) > .sv-paper-top > .sv-paper-history > button:not(:disabled):active{
+ background:transparent!important;box-shadow:none!important;transform:none!important;
+}
