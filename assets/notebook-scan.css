@@ -616,3 +616,27 @@ html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-edit-scan-text
 html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-edit-scan-text="true"] > #noteScanText{
  min-height:180px!important;flex:1 1 auto!important;
 }
+
+/* Corrected text is the document's editable copy. Its source scan remains
+   available in the menu, without adding a second toolbar to the page. */
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-edit-scan-text="true"] > .paper-scan-caption{
+ display:none!important;
+}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-edit-scan-text="true"] > #noteScanText{
+ margin:8px 0 0!important;padding:8px 0 16px!important;
+ font:400 16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+ color:var(--text,#171e29)!important;outline:none!important;
+}
+html:root body #noteScanDialog > #svScanReadText[hidden]{display:none!important;}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-scan-reading-text] > .sv-scan-document-stage{
+ display:none!important;
+}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-scan-reading-text] > #svScanReadText:not([hidden]){
+ box-sizing:border-box!important;display:block!important;flex:0 0 auto!important;
+ width:100%!important;min-width:0!important;min-height:min(62dvh,560px)!important;
+ margin:8px 0 0!important;padding:8px 0 16px!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+ white-space:pre-wrap!important;overflow-wrap:anywhere!important;
+ font:400 16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+ color:var(--text,#171e29)!important;
+}
