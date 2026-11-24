@@ -1090,11 +1090,11 @@ border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line));
 #tasksPage .svcp-manager-people-content{
 padding:5px 8px 9px;border:0;background:transparent;
 }
-#tasksPage #unifiedPeopleHost #svcpTeam[hidden]{display:none!important}
-#tasksPage #unifiedPeopleHost #svcpTeam{display:block;width:100%;min-width:0}
-#tasksPage #unifiedPeopleHost .svcp-panel{background:transparent;padding-top:10px}
-#tasksPage #unifiedPeopleHost .svcp-people-note{font-size:11px}
-#tasksPage #unifiedPeopleHost .svcp-people-switch button{min-height:38px}
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost #svcpTeam[hidden]{display:none!important}
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost #svcpTeam{display:block;width:100%;min-width:0}
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-panel{background:transparent;padding-top:10px}
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-people-note{font-size:11px}
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-people-switch button{min-height:38px}
 #tasksPage #unifiedTasksTeamBoard #unifiedTasksChatHost{margin-bottom:19px}
 #picturePage .svcp-pulse-return-note{font-size:11px;color:var(--secondary);margin:8px 2px 13px}
 @media(max-width:360px){
@@ -1102,35 +1102,35 @@ padding:5px 8px 9px;border:0;background:transparent;
 }
 
 /* Manager-people workspace: reparented from Management with the original staff listeners. */
-#tasksPage #unifiedPeopleHost .svcp-people-note{
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-people-note{
 margin:2px 2px 10px;color:var(--secondary);font-size:10.5px;line-height:1.45;
 }
-#tasksPage #unifiedPeopleHost .svcp-people-switch{
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-people-switch{
 display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:3px;margin:0 0 11px;border-radius:16px;border:0;
 background:var(--sv-liquid-nav-material,var(--card2));
 -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));box-shadow:none;
 }
-#tasksPage #unifiedPeopleHost .svcp-people-switch button{
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-people-switch button{
 border:0;min-height:42px;border-radius:13px;background:transparent;color:var(--secondary);
 font:inherit;font-size:12px;font-weight:550;cursor:pointer;
 }
-#tasksPage #unifiedPeopleHost .svcp-people-switch button[aria-pressed="true"]{
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-people-switch button[aria-pressed="true"]{
 color:var(--text);background:color-mix(in srgb,var(--text) 11%,transparent);
 box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 7%,transparent);
 }
-:root[data-theme=light] #tasksPage #unifiedPeopleHost .svcp-people-switch button[aria-pressed="true"]{
+:root[data-theme=light] :is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-people-switch button[aria-pressed="true"]{
 background:color-mix(in srgb,var(--seyveo-emerald) 12%,white);
 }
-#tasksPage #unifiedPeopleHost .svcp-people-switch button:focus-visible{
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-people-switch button:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:1px
 }
-#tasksPage #unifiedPeopleHost .svcp-people-view{min-width:0}
-#tasksPage #unifiedPeopleHost .svcp-people-view[hidden]{display:none!important}
-#tasksPage #unifiedPeopleHost .svcp-people-heading{
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-people-view{min-width:0}
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-people-view[hidden]{display:none!important}
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost .svcp-people-heading{
 font-size:12px;font-weight:575;letter-spacing:-.015em;margin:3px 2px 6px;color:var(--secondary);
 }
-#tasksPage #unifiedPeopleHost #svcpPeopleCardsHost{min-width:0}
-#tasksPage #unifiedPeopleHost #svcpPeopleShiftHost{margin-top:12px;padding-top:9px;border-top:1px solid var(--soft-line)}
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost #svcpPeopleCardsHost{min-width:0}
+:is(#tasksPage,#svcpManagerPeople) #unifiedPeopleHost #svcpPeopleShiftHost{margin-top:12px;padding-top:9px;border-top:1px solid var(--soft-line)}
 
 
 /* Compact assignment monitor below existing chats: no duplicated controls. */
@@ -2539,7 +2539,7 @@ html:root[data-theme="light"] body #svCabinetDialog[open] :is(button,input):focu
 /* SEYVEO · EMPLOYEES | Unified flat graphite workspace · 2026-11-10.
    Three live sections reuse existing team, schedule and recruiting handlers.
    Styles belong to the existing business stylesheet, not another glass layer. */
-html body #tasksPage #svcpManagerPeople{
+html body dialog#svcpManagerPeople{
  --svstaff-graphite:#38383A;
  --svstaff-divider:rgba(190,197,206,.12);
  box-sizing:border-box!important;
@@ -2547,7 +2547,7 @@ html body #tasksPage #svcpManagerPeople{
  border-radius:0!important;box-shadow:none!important;
  overflow:visible!important;
 }
-html body #tasksPage #svcpManagerPeople>summary{
+html body dialog#svcpManagerPeople>summary{
  box-sizing:border-box!important;display:flex!important;
  width:100%!important;min-height:58px!important;
  align-items:center!important;gap:12px!important;
@@ -2558,33 +2558,33 @@ html body #tasksPage #svcpManagerPeople>summary{
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  list-style:none!important;
 }
-html body #tasksPage #svcpManagerPeople>summary::-webkit-details-marker{display:none!important}
-html body #tasksPage #svcpManagerPeople[open]>summary{
+html body dialog#svcpManagerPeople>summary::-webkit-details-marker{display:none!important}
+html body dialog#svcpManagerPeople[open]>summary{
  border-bottom:0!important;margin-bottom:5px!important;
 }
-html body #tasksPage #svcpManagerPeople>summary .svcp-manager-staff-symbol{
+html body dialog#svcpManagerPeople>summary .svcp-manager-staff-symbol{
  display:grid!important;place-items:center!important;
  flex:0 0 28px!important;width:28px!important;height:28px!important;
  padding:0!important;border:0!important;border-radius:0!important;
  background:transparent!important;color:var(--secondary)!important;
 }
-html body #tasksPage #svcpManagerPeople>summary .svcp-manager-staff-symbol svg{
+html body dialog#svcpManagerPeople>summary .svcp-manager-staff-symbol svg{
  width:19px!important;height:19px!important;
  stroke-width:1.55!important;
 }
-html body #tasksPage #svcpManagerPeople>summary strong{
+html body dialog#svcpManagerPeople>summary strong{
  font-size:15px!important;line-height:1.25!important;
  font-weight:620!important;letter-spacing:-.015em!important;
 }
-html body #tasksPage #svcpManagerPeople>summary small{
+html body dialog#svcpManagerPeople>summary small{
  font-size:11px!important;line-height:1.3!important;
  font-weight:420!important;color:var(--secondary)!important;
 }
-html body #tasksPage #svcpManagerPeople>summary .svcp-manager-chevron{
+html body dialog#svcpManagerPeople>summary .svcp-manager-chevron{
  flex:0 0 22px!important;width:22px!important;
  color:var(--secondary)!important;
 }
-html body #tasksPage #svcpManagerPeople .svstaff-tabs{
+html body dialog#svcpManagerPeople .svstaff-tabs{
  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
  width:100%!important;box-sizing:border-box!important;
  min-height:44px!important;gap:3px!important;
@@ -2595,7 +2595,7 @@ html body #tasksPage #svcpManagerPeople .svstaff-tabs{
  box-shadow:var(--sv-white-pearl-dock-shadow,none)!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-blur,none)!important;backdrop-filter:var(--sv-white-pearl-blur,none)!important;
 }
-html body #tasksPage #svcpManagerPeople .svstaff-tabs button{
+html body dialog#svcpManagerPeople .svstaff-tabs button{
  box-sizing:border-box!important;display:flex!important;
  align-items:center!important;justify-content:center!important;
  min-width:0!important;min-height:38px!important;margin:0!important;
@@ -2604,39 +2604,39 @@ html body #tasksPage #svcpManagerPeople .svstaff-tabs button{
  font:550 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  letter-spacing:-.01em!important;box-shadow:none!important;
 }
-html body #tasksPage #svcpManagerPeople .svstaff-tabs button[aria-pressed="true"]{
+html body dialog#svcpManagerPeople .svstaff-tabs button[aria-pressed="true"]{
  background:var(--sv-white-pearl-selected,#555559)!important;color:var(--sv-white-pearl-ink,#FFFFFF)!important;
  box-shadow:var(--sv-white-pearl-selected-shadow,none)!important;
  font-weight:640!important;
 }
-html body #tasksPage #svcpManagerPeople .svstaff-tabs button:focus-visible{
+html body dialog#svcpManagerPeople .svstaff-tabs button:focus-visible{
  outline:2px solid var(--text)!important;outline-offset:-3px!important;
 }
-html body #tasksPage #svcpManagerPeople #unifiedPeopleHost{
+html body dialog#svcpManagerPeople #unifiedPeopleHost{
  box-sizing:border-box!important;width:100%!important;
  min-width:0!important;margin:0!important;padding:0 3px 14px!important;
  border:0!important;background:transparent!important;box-shadow:none!important;
 }
-html body #tasksPage #svcpManagerPeople :is(#unifiedPeopleHost,#svcpStaffSchedulePanel)[hidden],
-html body #tasksPage #svcpManagerPeople #svcpTeam[hidden],
-html body #tasksPage #svcpManagerPeople #svcpPeopleDirectory[hidden],
-html body #tasksPage #svcpManagerPeople #svcpPeopleHiring[hidden],
-html body #tasksPage #svcpManagerPeople .svcp-people-switch[hidden]{
+html body dialog#svcpManagerPeople :is(#unifiedPeopleHost,#svcpStaffSchedulePanel)[hidden],
+html body dialog#svcpManagerPeople #svcpTeam[hidden],
+html body dialog#svcpManagerPeople #svcpPeopleDirectory[hidden],
+html body dialog#svcpManagerPeople #svcpPeopleHiring[hidden],
+html body dialog#svcpManagerPeople .svcp-people-switch[hidden]{
  display:none!important;
 }
-html body #tasksPage #svcpManagerPeople #svcpTeam{
+html body dialog#svcpManagerPeople #svcpTeam{
  box-sizing:border-box!important;width:100%!important;margin:0!important;
  padding:0!important;border:0!important;background:transparent!important;
 }
-html body #tasksPage #svcpManagerPeople :is(.svcp-panel,.svcp-people-view){
+html body dialog#svcpManagerPeople :is(.svcp-panel,.svcp-people-view){
  box-sizing:border-box!important;margin:0!important;padding:0!important;
  border:0!important;background:transparent!important;box-shadow:none!important;
 }
-html body #tasksPage #svcpManagerPeople .svcp-people-switch{display:none!important}
-html body #tasksPage #svcpManagerPeople .svcp-people-heading{
+html body dialog#svcpManagerPeople .svcp-people-switch{display:none!important}
+html body dialog#svcpManagerPeople .svcp-people-heading{
  display:none!important;
 }
-html body #tasksPage #svcpManagerPeople .svcp-people-note{
+html body dialog#svcpManagerPeople .svcp-people-note{
  box-sizing:border-box!important;max-width:100%!important;
  margin:0 1px 12px!important;padding:0!important;
  font-size:11px!important;line-height:1.4!important;
@@ -2644,13 +2644,13 @@ html body #tasksPage #svcpManagerPeople .svcp-people-note{
  border:0!important;background:transparent!important;
 }
 /* Schedules are separate live settings, only visible under Графики. */
-html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel:not([hidden]){
+html body dialog#svcpManagerPeople #svcpStaffSchedulePanel:not([hidden]){
  box-sizing:border-box!important;display:flex!important;
  flex-direction:column!important;gap:0!important;
  width:100%!important;margin:0!important;padding:0 3px 16px!important;
  border:0!important;background:transparent!important;
 }
-html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details{
+html body dialog#svcpManagerPeople #svcpStaffSchedulePanel > details{
  box-sizing:border-box!important;width:100%!important;
  margin:0!important;padding:0!important;
  border:0!important;border-bottom:1px solid var(--svstaff-divider)!important;
@@ -2658,7 +2658,7 @@ html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details{
  box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  overflow:visible!important;
 }
-html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details > summary{
+html body dialog#svcpManagerPeople #svcpStaffSchedulePanel > details > summary{
  box-sizing:border-box!important;display:flex!important;
  align-items:center!important;justify-content:space-between!important;
  gap:8px!important;min-height:51px!important;width:100%!important;
@@ -2668,24 +2668,24 @@ html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details > summ
  font:580 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  list-style:none!important;
 }
-html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details > summary::-webkit-details-marker{display:none!important}
-html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details > summary > span{
+html body dialog#svcpManagerPeople #svcpStaffSchedulePanel > details > summary::-webkit-details-marker{display:none!important}
+html body dialog#svcpManagerPeople #svcpStaffSchedulePanel > details > summary > span{
  display:grid!important;place-items:center!important;
  width:25px!important;height:25px!important;
  font-size:19px!important;font-weight:400!important;color:var(--secondary)!important;
  transition:transform .15s ease;
 }
-html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details[open] > summary > span{
+html body dialog#svcpManagerPeople #svcpStaffSchedulePanel > details[open] > summary > span{
  transform:rotate(90deg);
 }
-html body #tasksPage #svcpManagerPeople :is(.svcp-manager-schedule-inner,.svcp-break-setup-inner){
+html body dialog#svcpManagerPeople :is(.svcp-manager-schedule-inner,.svcp-break-setup-inner){
  box-sizing:border-box!important;
  margin:0!important;padding:5px 1px 15px!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-html body #tasksPage #svcpManagerPeople :is(.svcp-manager-schedule-inner,.svcp-break-setup-inner) :is(input,select){
+html body dialog#svcpManagerPeople :is(.svcp-manager-schedule-inner,.svcp-break-setup-inner) :is(input,select){
  min-height:44px!important;
  border:1px solid var(--svstaff-divider)!important;
  border-radius:12px!important;
@@ -2694,7 +2694,7 @@ html body #tasksPage #svcpManagerPeople :is(.svcp-manager-schedule-inner,.svcp-b
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  color:var(--text)!important;font:inherit!important;
 }
-html body #tasksPage #svcpManagerPeople :is(.svcp-manager-schedule-save,.svcp-break-save){
+html body dialog#svcpManagerPeople :is(.svcp-manager-schedule-save,.svcp-break-save){
  min-height:44px!important;padding:10px 16px!important;
  margin-top:11px!important;border:0!important;border-radius:14px!important;
  background:#38383A!important;background-image:none!important;
@@ -2702,21 +2702,87 @@ html body #tasksPage #svcpManagerPeople :is(.svcp-manager-schedule-save,.svcp-br
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  color:#FFFFFF!important;font-size:12.5px!important;font-weight:610!important;
 }
-html body #tasksPage #svcpManagerPeople :is(.svcp-manager-schedule-status,.svcp-break-status){
+html body dialog#svcpManagerPeople :is(.svcp-manager-schedule-status,.svcp-break-status){
  font-size:11px!important;line-height:1.45!important;
  color:var(--secondary)!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
-html body #tasksPage #svcpManagerPeople .svcp-manager-weekdays button{
+html body dialog#svcpManagerPeople .svcp-manager-weekdays button{
  min-height:39px!important;border-radius:10px!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
-html body #tasksPage #svcpManagerPeople .svcp-manager-weekdays button[aria-pressed="true"]{
+html body dialog#svcpManagerPeople .svcp-manager-weekdays button[aria-pressed="true"]{
  background:#38383A!important;color:#FFFFFF!important;
 }
-html body #tasksPage #svcpManagerPeople .svcp-manager-request-list{
+html body dialog#svcpManagerPeople .svcp-manager-request-list{
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
 @media(max-width:360px){
- html body #tasksPage #svcpManagerPeople .svstaff-tabs button{font-size:11.5px!important}
+ html body dialog#svcpManagerPeople .svstaff-tabs button{font-size:11.5px!important}
 }
+
+/* Staff is a full destination with the original three functional tabs.
+   No inline expansion in Cabinet; no cloned directory or second dock. */
+html:root body dialog#svcpManagerPeople.sv-staff-page[open]{
+ box-sizing:border-box!important;position:fixed!important;inset:0!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ width:100vw!important;max-width:100vw!important;min-width:0!important;
+ height:100vh!important;height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;
+ margin:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(90px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))!important;
+ border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;
+ background:var(--bg,#151b20)!important;color:var(--text)!important;
+ overflow:hidden!important;overscroll-behavior:none!important;
+}
+html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open]{background:#fff!important}
+html body dialog#svcpManagerPeople:not([open]){display:none!important}
+html:root body #svcpManagerPeople > .sv-staff-head{
+ flex:0 0 auto;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;
+ align-items:center;gap:4px;min-height:52px;margin:0 0 8px;padding:0;
+ background:transparent;border:0;box-shadow:none;overflow:visible;
+}
+html:root body #svcpManagerPeople .sv-staff-head h2{
+ font:640 17px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:center;margin:0!important;padding:0!important;min-width:0;color:var(--text);
+}
+html:root body #svcpManagerPeople .sv-staff-head button{
+ box-sizing:border-box;display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;
+ padding:0;margin:0;border:var(--sv-white-pearl-edge,0);border-radius:50%;
+ background:var(--sv-white-pearl-surface,#38383A);color:var(--sv-white-pearl-ink,#fff);
+ box-shadow:var(--sv-white-pearl-circle-shadow,none);transform:none;cursor:pointer;
+}
+html:root body #svcpManagerPeople .sv-staff-head button svg{
+ display:block;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+}
+html:root body #svcpManagerPeople > .sv-page-scroll{
+ display:block;flex:1 1 auto;min-height:0;min-width:0;overflow-x:hidden;overflow-y:auto;
+ overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box;
+ margin-inline:-8px;padding-inline:8px;padding-bottom:8px;
+}
+html:root body #svcpManagerPeople #svcpStaffTabs.svstaff-tabs{
+ border-radius:999px!important;width:100%!important;height:40px!important;min-height:40px!important;
+ margin:8px 0 15px!important;padding:3px!important;gap:3px!important;
+}
+html:root body #svcpManagerPeople #svcpStaffTabs.svstaff-tabs button{
+ border-radius:999px!important;min-height:32px!important;height:32px!important;
+}
+html:root[data-theme="light"] body #svcpManagerPeople #svcpStaffTabs button:not([aria-pressed="true"]){color:#575c65!important}
+html:root body #svcpManagerPeople :is(#unifiedPeopleHost,#svcpStaffSchedulePanel,#svcpTeam,#svcpPeopleDirectory,#svcpPeopleCardsHost,.svstaff-directory,.svstaff-directory-list){
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important;
+ margin-inline:0!important;padding-inline:0!important;
+}
+html:root body #svcpManagerPeople .svstaff-tile{
+ box-sizing:border-box!important;position:relative;display:flex!important;align-items:center!important;
+ width:100%!important;min-width:0!important;min-height:66px!important;gap:12px!important;
+ margin:0!important;padding:8px 0!important;border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html:root body #svcpManagerPeople .svstaff-tile:not(:last-child)::after{
+ content:"";position:absolute;left:58px;right:0;bottom:0;border-top:1px solid var(--soft-line);pointer-events:none;
+}
+html:root body #svcpManagerPeople .svstaff-thumb{
+ width:46px!important;height:46px!important;flex:0 0 46px!important;border-radius:50%!important;
+ object-fit:cover!important;object-position:center 15%!important;
+}
+html:root body #svcpManagerPeople .svstaff-tile-copy strong{font-size:15px!important;font-weight:610!important}
+html:root body #svcpManagerPeople .svstaff-tile-arrow{display:grid;place-items:center;flex:0 0 18px;width:18px;font-size:19px;margin:0!important}
+html:root body #svcpManagerPeople .sv-staff-invite-notice{font-size:12px;line-height:1.45;padding:12px;border-radius:14px;background:var(--sv-white-pearl-surface,#38383A);margin:8px 0}
+html:root body #svcpManagerPeople [hidden]{display:none!important}

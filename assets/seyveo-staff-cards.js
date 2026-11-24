@@ -451,6 +451,8 @@ function renderProfile(){
   const personId=p.id;
   leavingForChat=true;
   modal.close();
+  const staffPage=document.getElementById('svcpManagerPeople');
+  if(staffPage?.open)staffPage.close();
   const opened=window.SEYVEO_BUSINESS_COMMAND?.openPrivateChat?.(personId);
   if(!opened)leavingForChat=false;
  }));

@@ -44,6 +44,7 @@
  if(employeeChatCanvas&&chatHost.parentElement!==employeeChatCanvas)
   employeeChatCanvas.appendChild(chatHost);
  chatHost.hidden=true;
+ if(staffReveal&&staffReveal.parentElement!==document.body)document.body.appendChild(staffReveal);
  if(people&&peopleHost){peopleHost.appendChild(people);people.hidden=false}
  // Reparent the ONE existing shift widget; never duplicate its controls or ledger.
  const shiftFold=$('seyveoShiftToggle')?.closest('details.seyveo-hr-fold');
@@ -938,6 +939,7 @@
   if(kind==='mail')window.SEYVEO_SAYVI_SURFACES?.open?.('mail','business');
   if(kind==='documents')window.SEYVEO_SAYVI_SURFACES?.open?.('contract','business');
   if(kind==='company')window.SEYVEO_COMPANY_PASSPORT?.open?.();
+  if(kind==='people')openPeople('team');
  });
  const staffTabs=$('svcpStaffTabs'),staffSchedule=$('svcpStaffSchedulePanel');
  function setStaffTab(kind='team'){
@@ -959,8 +961,12 @@
  function openPeople(kind='team'){
   if(!isManager())return;
   openBusiness('preserve');
-  if(staffReveal)staffReveal.open=true;
   setStaffTab(kind);
+  if(staffReveal&&!staffReveal.open){
+   staffReveal.showModal();
+   const scroller=$('svcpManagerPeopleScroll');if(scroller)scroller.scrollTop=0;
+   window.SEYVEO_DOCK_CONTINUITY?.refresh?.();
+  }
  }
  function updateManagerSummary(){
   const summary=$('svcpManagerStatus');if(!summary)return;
@@ -977,8 +983,16 @@
    summary.textContent='Сэйви · Локальные поручения недоступны';
   }
  }
- staffReveal?.addEventListener('toggle',()=>{
-  if(staffReveal.open)setStaffTab(staffTabs?.dataset.active||'team');
+ $('svStaffBack')?.addEventListener('click',()=>staffReveal?.close());
+ $('svStaffInvite')?.addEventListener('click',()=>{
+  const notice=$('svStaffInviteNotice'),button=$('svStaffInvite');if(!notice)return;
+  notice.hidden=!notice.hidden;button.setAttribute('aria-expanded',String(!notice.hidden));
+  if(!notice.hidden){const scroller=$('svcpManagerPeopleScroll');if(scroller)scroller.scrollTop=0;}
+ });
+ staffReveal?.addEventListener('close',()=>{
+  const notice=$('svStaffInviteNotice');if(notice)notice.hidden=true;
+  $('svStaffInvite')?.setAttribute('aria-expanded','false');
+  if(location.hash==='#tasks')$('svcpManagerPeopleOpen')?.focus({preventScroll:true});
  });
  window.addEventListener('seyveo:manager-tasks-updated',()=>{updateManagerSummary();if(isEmployee())renderEmployeeTasks()});
  window.addEventListener('storage',event=>{if(event.key===TASK_KEY){updateManagerSummary();if(isEmployee())renderEmployeeTasks()}});

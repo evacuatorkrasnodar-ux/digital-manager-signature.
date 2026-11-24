@@ -1,7 +1,7 @@
 /* SEYVEO · native scroll-under glass. One visual layer, no scroll interception. */
 (()=>{
 'use strict';
-const ids=['seyveoCompanyDialog','seyveoQrCardDialog','seyveoContactsDialog','picturePage'];
+const ids=['seyveoCompanyDialog','seyveoQrCardDialog','seyveoContactsDialog','picturePage','svcpManagerPeople'];
 for(const id of ids){
  const screen=document.getElementById(id);
  const body=document.getElementById(id+'Scroll');
