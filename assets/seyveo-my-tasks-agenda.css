@@ -1034,17 +1034,17 @@ html[data-sv-weather-mode="true"] #tasksPage #svTasksDateNav
   .sv-agenda-day > .sv-agenda-day-weather{animation:none!important}
 }
 
-/* My Tasks · the list ends above the stationary floating dock.
-   Reserve space in layout, not by painting a second bottom surface.
+/* My Tasks · the scrollport continues behind the floating dock.
+   End clearance belongs to the scroll content, never a fixed bottom strip.
    The date rail, header, dock and search button remain in their existing positions. */
 @media(max-width:699px){
  html:root.sv-agenda-scroll-active body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList.personal-tasks-list{
   box-sizing:border-box!important;
   flex:1 1 0!important;
   min-height:0!important;
-  margin-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;
-  padding-bottom:8px!important;
-  scroll-padding-bottom:8px!important;
+  margin-bottom:0!important;
+  padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
+  scroll-padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
  }
 }
 
