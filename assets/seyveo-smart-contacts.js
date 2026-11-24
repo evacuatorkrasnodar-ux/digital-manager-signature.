@@ -60,7 +60,8 @@
   const page=make('section','sv-mail-contacts-page');page.hidden=true;
   page.setAttribute('aria-label','Умные контакты SEYVEO');
   host.append(page);
-  let selected='personal',open=false;
+  let selected='personal',open=false,statusTimer=0;
+  function clearStatusTimer(){window.clearTimeout(statusTimer);statusTimer=0;}
   const staged={personal:{...preferences.personal},business:{...preferences.business}};
   const infoText={
    book:{icon:'book',label:'Адресная книга',hint:'Контакты из подключённой почты'},
@@ -68,6 +69,7 @@
    groups:{icon:'sayvi',label:'Категории Сэйви',hint:'Группы и возможные совпадения'}
   };
   function render(){
+   clearStatusTimer();
    page.replaceChildren();
    if(!open){page.hidden=true;return}
    page.hidden=false;
@@ -111,11 +113,13 @@
     input.checked=staged[selected][key]===true;
     input.setAttribute('aria-label',data.label);
     input.addEventListener('change',()=>{
+     clearStatusTimer();
      staged[selected][key]=input.checked;
      const previous={...preferences[selected]};
      preferences[selected]={...staged[selected],configured:true};
      if(save()){
       status.textContent='Выбор сохранён. Подключения и разрешения оформляются отдельно.';
+      statusTimer=window.setTimeout(()=>{status.textContent='';statusTimer=0;},3000);
       if(typeof onSaved==='function')onSaved(selected);
      }else{
       preferences[selected]=previous;
@@ -130,7 +134,7 @@
   }
   return Object.freeze({
    open(scope){selected=SPACES.includes(scope)?scope:'personal';open=true;for(const s of SPACES)staged[s]={...preferences[s]};render()},
-   close(){open=false;page.hidden=true},
+   close(){clearStatusTimer();open=false;page.hidden=true},
    isOpen(){return open},
    refresh(){if(open)render()},
    hasSaved,
