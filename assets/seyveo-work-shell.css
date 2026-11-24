@@ -989,7 +989,7 @@ html body #svWorkShell[data-active="business"] #tasksPage .svcp-manager-chevron{
 
 /* Cabinet root: shared inset and text-aligned hairlines, without changing chrome. */
 html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView #svCabinetToolbar.sv-cabinet-toolbar{
- padding-inline:16px!important;
+ padding-inline:24px!important;
 }
 html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView :is(#svCabinetContinueWithSayvi.sv-cabinet-resume:not([hidden]),.svcp-manager-actions > .svcp-manager-row,.svcp-manager-actions > .svcp-manager-staff > summary){
  box-sizing:border-box!important;
@@ -1000,12 +1000,20 @@ html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessT
 }
 html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView :is(#svCabinetContinueWithSayvi.sv-cabinet-resume:not([hidden]),.svcp-manager-actions > .svcp-manager-row,.svcp-manager-actions > .svcp-manager-staff > summary)::after{
  content:"";position:absolute;left:54px;right:16px;bottom:0;
- height:1px;background:var(--soft-line);pointer-events:none;
+ box-sizing:border-box!important;height:0!important;
+ border:0!important;border-top:1px solid var(--soft-line)!important;
+ background:none!important;box-shadow:none!important;opacity:1!important;pointer-events:none;
 }
 html:root[data-theme="light"] body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView :is(#svCabinetContinueWithSayvi.sv-cabinet-resume:not([hidden]),.svcp-manager-actions > .svcp-manager-row,.svcp-manager-actions > .svcp-manager-staff > summary)::after{
- background:rgba(37,48,60,.11);
+ border-top-color:#e7e8ea!important;
 }
 html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .sv-cabinet-dragging::after,
 html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .sv-cabinet-dragging > summary::after{
  visibility:hidden;
 }
+
+/* Remove competing legacy dividers from the wrapper of the staff row. */
+html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .svcp-manager-staff:not(.sv-cabinet-dragging){border-bottom:0!important;box-shadow:none!important;}
+html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .svcp-manager-row:not(.sv-cabinet-dragging),
+html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .svcp-manager-staff > summary,
+html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView #svCabinetContinueWithSayvi.sv-cabinet-resume:not([hidden]){border-top:0!important;border-bottom:0!important;box-shadow:none!important;}
