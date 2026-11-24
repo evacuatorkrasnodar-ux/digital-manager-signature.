@@ -469,8 +469,8 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-when-time{
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-when-arrow{
  display:none!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-when[aria-expanded="true"]{
- outline:1.5px solid #C9DFF6!important;
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-when[aria-expanded="true"]:not(:focus-visible){
+ outline:none!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-wheel-edit{
  box-sizing:border-box!important;display:flex!important;flex-direction:column!important;gap:9px!important;
@@ -492,7 +492,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-tabs button
  color:#656B75!important;font:570 13.5px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-tabs button.is-active{
- background:#FFF!important;color:#17191E!important;box-shadow:0 1px 2px #00000013!important;
+ background:#FFF!important;color:#17191E!important;box-shadow:0 1px 2px rgba(32,42,56,.045)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-body{
  position:relative!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
@@ -514,8 +514,8 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-column{
  overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;
  -webkit-overflow-scrolling:touch!important;scroll-snap-type:y mandatory!important;
  scrollbar-width:none!important;
- -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 30%,#000 70%,transparent 100%)!important;
- mask-image:linear-gradient(to bottom,transparent 0%,#000 30%,#000 70%,transparent 100%)!important;
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 21%,#000 79%,transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,transparent 0%,#000 21%,#000 79%,transparent 100%)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-column::-webkit-scrollbar{display:none!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-column:focus-visible{
@@ -526,7 +526,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-option{
  width:100%!important;min-width:0!important;height:40px!important;min-height:40px!important;
  margin:0!important;padding:0 2px!important;border:0!important;border-radius:0!important;
  background:transparent!important;scroll-snap-align:center!important;
- color:#555D68!important;font:500 16px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+ color:#414a56!important;font:500 16px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
  white-space:nowrap!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-option.is-selected{
@@ -1640,4 +1640,23 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-info-content :is(.sv-place-info-source,.sv-place-menu-link){
  color:#176ab4!important;font:540 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  text-decoration:none!important;
+}
+
+/* Date/time wheel · same pearl material, quiet text actions, centered columns. */
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-tabs{
+ background:var(--sv-task-action-fill)!important;
+ border:var(--sv-task-action-rim)!important;
+ box-shadow:none!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-body{
+ gap:0!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-option{
+ text-align:center!important;font-variant-numeric:tabular-nums!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-actions :is(.sv-task-wheel-clear,.sv-task-smart-quick-done){
+ min-height:44px!important;padding:8px 12px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:#176ab4!important;font:540 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
