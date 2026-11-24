@@ -1037,7 +1037,7 @@ function open(note=null){
  requestAnimationFrame(()=>{
   // Start each sheet at the beginning of the seamless palette: the white
   // swatch must be fully visible beside (not underneath) the gradient picker.
-  const swatches=dialog.querySelector('.sv-paper-swatches');
+  const swatches=dialog.querySelector('.sv-paper-color-strip');
   if(swatches)swatches.scrollLeft=0;
   fitPaper();render();
  });
