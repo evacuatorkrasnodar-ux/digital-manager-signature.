@@ -26,11 +26,45 @@
    const size=Math.round(Math.min(b.w,b.h));canvas.width=canvas.height=size;
    const ctx=canvas.getContext('2d');if(!ctx)throw Error('Canvas unavailable');
    ctx.beginPath();ctx.arc(size/2,size/2,size/2,0,Math.PI*2);ctx.clip();
-   // Preserve the entire original portrait; allow a small breathing space in staff cards.
+   // The atlas portraits already have a white exterior and some flattened
+   // sides. Extend only the outer edge colors, then apply ONE circular mask.
+   // Do not inset an already masked circle: that preserves its flat edges.
    if(insetRatio>0){
+    const work=document.createElement('canvas');work.width=work.height=size;
+    const wctx=work.getContext('2d',{willReadFrequently:true});
+    if(!wctx)throw Error('Canvas unavailable');
     const inset=Math.round(size*insetRatio),inner=size-2*inset;
     const scale=inner/Math.max(b.w,b.h),dw=b.w*scale,dh=b.h*scale;
-    ctx.drawImage(img,b.x,b.y,b.w,b.h,(size-dw)/2,(size-dh)/2,dw,dh);
+    wctx.drawImage(img,b.x,b.y,b.w,b.h,(size-dw)/2,(size-dh)/2,dw,dh);
+    const frame=wctx.getImageData(0,0,size,size),pixels=frame.data;
+    const offset=(x,y)=>(y*size+x)*4;
+    const hasColor=i=>pixels[i+3]>200&&Math.min(pixels[i],pixels[i+1],pixels[i+2])<235;
+    const rows=[];
+    for(let y=0;y<size;y++){
+     let left=0,right=size-1;
+     while(left<size&&!hasColor(offset(left,y)))left++;
+     while(right>=left&&!hasColor(offset(right,y)))right--;
+     if(right-left<Math.max(2,size*.04))continue;
+     rows.push(y);
+     const l=offset(Math.min(left+2,right),y),r=offset(Math.max(right-2,left),y);
+     const lc=[pixels[l],pixels[l+1],pixels[l+2]],rc=[pixels[r],pixels[r+1],pixels[r+2]];
+     for(let x=0;x<size;x++){
+      if(x>left&&x<right)continue;
+      const i=offset(x,y),color=x<=left?lc:rc;
+      pixels[i]=color[0];pixels[i+1]=color[1];pixels[i+2]=color[2];pixels[i+3]=255;
+     }
+    }
+    // Only the narrow top/bottom margin (outside the original artwork)
+    // needs a nearest-row continuation before the final circular clip.
+    if(rows.length){
+     const valid=new Set(rows);
+     for(let y=0;y<size;y++){
+      if(valid.has(y))continue;
+      const near=rows.reduce((best,row)=>Math.abs(row-y)<Math.abs(best-y)?row:best,rows[0]);
+      pixels.copyWithin(offset(0,y),offset(0,near),offset(0,near)+size*4);
+     }
+    }
+    wctx.putImageData(frame,0,0);ctx.drawImage(work,0,0);
    }else ctx.drawImage(img,b.x,b.y,b.w,b.h,0,0,size,size);
    return canvas.toDataURL('image/png');
   }));
