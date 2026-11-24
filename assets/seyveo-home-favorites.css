@@ -305,17 +305,9 @@ dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button small{
 /* One-time first-launch reveal, while the sphere's brand logo is still visible.
    Four shortcuts finish in roughly two and a half seconds; no motion on later navigation. */
 #homePage #svHomeFavorites.sv-home-favorites-enter .sv-home-favorite-tile{
- animation:sv-home-shortcut-arrive 1.2s cubic-bezier(.22,.8,.32,1) both;
+ animation:sv-home-shortcut-arrive .42s ease-out both;
 }
-#homePage #svHomeFavorites.sv-home-favorites-enter .sv-home-favorite-tile:nth-child(1){animation-delay:0ms}
-#homePage #svHomeFavorites.sv-home-favorites-enter .sv-home-favorite-tile:nth-child(2){animation-delay:420ms}
-#homePage #svHomeFavorites.sv-home-favorites-enter .sv-home-favorite-tile:nth-child(3){animation-delay:840ms}
-#homePage #svHomeFavorites.sv-home-favorites-enter .sv-home-favorite-tile:nth-child(4){animation-delay:1260ms}
-#homePage #svHomeFavorites.sv-home-favorites-enter .sv-home-favorite-tile:nth-child(5){animation-delay:1680ms}
-@keyframes sv-home-shortcut-arrive{
- from{opacity:0}
- to{opacity:1}
-}
+@keyframes sv-home-shortcut-arrive{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){
  #homePage #svHomeFavorites.sv-home-favorites-enter .sv-home-favorite-tile{animation:none!important}
 }
