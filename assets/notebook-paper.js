@@ -43,7 +43,7 @@ function resetScanGeometry(){
  for(const k of ['width','height','left','top'])sheet.style.removeProperty('--sv-scan-'+k);
  canvas.style.removeProperty('clip-path');
 }
-function scanBounds(){return isScan()&&data.photo?photoBounds(data,photoView):null;}
+function scanBounds(){return isScan()&&data.photo&&photoView?.getAttribute('src')===data.photo?photoBounds(data,photoView):null;}
 function scanContains(e){
  if(!isScan())return true;
  const b=scanBounds(),r=canvas.getBoundingClientRect();
@@ -518,12 +518,12 @@ function previewList(target,obj){
  if(isScan()){
   const b=scanBounds(),pageH=data.height||H;
   const box=b||{x:0,y:0,width:W,height:pageH};
-  const scale=Math.min((rect.width-32)/box.width,Math.max(100,Math.min(rect.height-64,window.innerHeight*.70))/box.height);
+  const scale=Math.min(Math.max(1,rect.width-36)/box.width,Math.max(1,Math.min(rect.height-68,window.innerHeight*.70))/box.height);
   width=Math.max(1,Math.round(W*scale));height=Math.max(1,Math.round(pageH*scale));
   sheet.style.setProperty('--sv-scan-width',width+'px');
   sheet.style.setProperty('--sv-scan-height',height+'px');
   sheet.style.setProperty('--sv-scan-left',((rect.width-box.width*scale)/2-box.x*scale)+'px');
-  sheet.style.setProperty('--sv-scan-top',(8-box.y*scale)+'px');
+  sheet.style.setProperty('--sv-scan-top',(6-box.y*scale)+'px');
   canvas.style.clipPath=b?'inset('+Math.max(0,b.y/pageH*100)+'% '+Math.max(0,(W-b.x-b.width)/W*100)+'% '+Math.max(0,(pageH-b.y-b.height)/pageH*100)+'% '+Math.max(0,b.x/W*100)+'%)':'inset(100%)';
  }else{
   const logicalHeight=Math.max(H,Math.min(MAX_PAGE_HEIGHT,Math.round(W*height/width)));
@@ -561,8 +561,8 @@ photoView?.addEventListener('load',()=>{
 function render(redrawInk=true){
  dialog.classList.toggle('sv-paper-light-surface',data.background==='light');
  sheet.dataset.pattern=data.pattern;sheet.dataset.inkBackground=data.background;pattern.value=data.pattern;syncPatternMenu();syncHandwritingRules();
- if(photoView){photoView.hidden=!data.photo;if(data.photo&&photoView.src!==data.photo)photoView.src=data.photo;if(!data.photo)photoView.removeAttribute('src')}
- placePhotoPreview();
+ if(photoView){photoView.hidden=!data.photo;if(data.photo&&photoView.getAttribute('src')!==data.photo)photoView.src=data.photo;if(!data.photo)photoView.removeAttribute('src')}
+ if(isScan()&&scanBounds())fitPaper();else placePhotoPreview();
  if($('notePaperRemovePhoto'))$('notePaperRemovePhoto').hidden=!data.photo;
  if(redrawInk)paint(canvas,data);updateHistoryControls();
  dialog.dispatchEvent(new Event('sv-paper-render'));
