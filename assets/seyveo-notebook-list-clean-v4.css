@@ -536,3 +536,49 @@ html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4
 /* The collection menu lives outside the list's scroll and fade layers. */
 html:root body > #svNotebookListMenu[hidden]{display:none!important;visibility:hidden!important;pointer-events:none!important;}
 html:root body > #svNotebookListMenu:not([hidden]){visibility:visible!important;pointer-events:auto!important;overflow:visible!important;}
+
+/* Bulk selection: only selection mode shows check circles, with the existing
+   collection toolbar and full-height note rows retained. */
+html:root body > #svNotebookListMenu:not([hidden]) #svNotebookSelect{
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ width:100%!important;min-height:44px!important;gap:8px!important;padding:0 8px!important;
+ margin:0!important;border:0!important;border-radius:10px!important;background:transparent!important;
+ box-shadow:none!important;color:var(--sv-menu-text,#252a33)!important;
+ font:500 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root body > #svNotebookListMenu #svNotebookSelect svg{
+ width:18px!important;height:18px!important;flex:0 0 18px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html:root body > #svNotebookListMenu #svNotebookDeleteAll{justify-content:flex-start!important;}
+html:root body #svWorkShell[data-active="notes"] #notesDialog :is(#svNotebookSelection,#svNotebookListLabel,#svNotebookListMore)[hidden]{
+ display:none!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookSelection:not([hidden]){
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:4px!important;width:100%!important;min-width:0!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookSelection button{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-height:44px!important;min-width:0!important;padding:0 3px!important;margin:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+ color:#176ab4!important;font:550 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:nowrap!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookDeleteSelected{color:#d93238!important}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookDeleteSelected:disabled{opacity:.38!important;cursor:default!important}
+html:root body #svWorkShell[data-active="notes"] #notesDialog .sv-nb-select-mark{
+ display:grid!important;place-items:center!important;box-sizing:border-box!important;
+ width:22px!important;height:22px!important;flex:0 0 22px!important;border-radius:50%!important;
+ border:1.5px solid #aeb8c5!important;color:transparent!important;background:transparent!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog .sv-nb-select-mark svg{
+ width:15px!important;height:15px!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog .sv-nb4-open.is-selected .sv-nb-select-mark{
+ background:#237fd5!important;border-color:#237fd5!important;color:#fff!important;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog #svNotebookSelection button{color:#8bc2ff!important}
+html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog #svNotebookDeleteSelected{color:#ff777a!important}
