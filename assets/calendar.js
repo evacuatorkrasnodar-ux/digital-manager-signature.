@@ -361,6 +361,8 @@ function renderWeekTimeline(list){
  const panel=$('calendarWeekTimeline'),allDay=$('calendarWeekAllDay');
  const root=$('calendarWeekHours'),scroll=$('calendarWeekTimelineScroll');
  panel.hidden=false;allDay.replaceChildren();root.replaceChildren();
+ const dayHeading=$('calendarWeekSelectedDay');
+ if(dayHeading)dayHeading.textContent=niceFirst(fmtShort.format(focus))+' '+focus.getFullYear()+' г.';
  const parseMinutes=time=>{
   if(typeof time!=='string'||!/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(time))return null;
   const [hours,minutes]=time.split(':').map(Number);
@@ -412,7 +414,10 @@ function renderWeekTimeline(list){
    const explicitDuration=Number(slot.item.duration)>0;
    const endLabel=String(Math.floor(slot.end/60)).padStart(2,'0')+':'+String(slot.end%60).padStart(2,'0');
    button.append(text('span','cal-timeline-time-label',slot.item.time+(explicitDuration?' – '+endLabel:'')));
-   if(!explicitDuration)button.dataset.durationUnknown='true';
+   if(!explicitDuration){
+    button.dataset.durationUnknown='true';
+    button.style.height=Math.min(24,Math.max(1,slot.end-slot.start-2))+'px';
+   }
    layer.append(button);
   }
  }
