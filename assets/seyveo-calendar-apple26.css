@@ -593,10 +593,10 @@ html body #calendarPage #calendarWeekTimelineScroll{
  scrollbar-width:none!important;background:#FFF!important;
 }
 #calendarPage #calendarWeekTimelineScroll::-webkit-scrollbar{display:none!important}
-#calendarPage .cal-week-hours{position:relative!important;width:100%!important;min-height:calc(24 * var(--cal-week-hour-height,52px))!important}
+#calendarPage .cal-week-hours{position:relative!important;width:100%!important;min-height:calc(24 * var(--cal-week-hour-height,46px))!important}
 #calendarPage .cal-week-hour-row{
  position:relative!important;box-sizing:border-box!important;
- height:var(--cal-week-hour-height,52px)!important;border:0!important;
+ height:var(--cal-week-hour-height,46px)!important;border:0!important;
  border-bottom:1px solid #EAECEF!important;background:transparent!important;
 }
 #calendarPage .cal-week-hour-row::before{
@@ -1377,7 +1377,7 @@ html body #calendarPage #calendarWeekSelectedDay{
  font:600 13px/18px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
 html body #calendarPage #calendarWeekTimeline .cal-week-hour-label{
- color:#686F79!important;
+ color:#59616B!important;
 }
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-calendar-tone]{
  border:0!important;border-radius:5px!important;padding:1px 7px 0 12px!important;
@@ -1402,7 +1402,7 @@ html:root[data-theme="dark"] body #calendarPage #calendarWeekSelectedDay{
  color:#E7E9EF!important;border-top-color:#343840!important;
 }
 html:root[data-theme="dark"] body #calendarPage #calendarWeekTimeline .cal-week-hour-label{
- color:#B0B6C0!important;
+ color:#BCC2CC!important;
 }
 
 /* Parallel compact events: keep the full card width available for the title. */
@@ -1417,4 +1417,14 @@ html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-
 /* Compact 52px hours: fit both title and time within a 24px half-hour card. */
 html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
  line-height:9px!important;
+}
+
+/* Compact 46px hour scale: keep two-line half-hour events readable without overlap. */
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed:not([data-duration-unknown="true"]),
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"][data-compact-stacked="true"]{
+ padding-top:0!important;padding-bottom:0!important;gap:0!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed:not([data-duration-unknown="true"]) .cal-entry-copy strong,
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"][data-compact-stacked="true"] .cal-entry-copy strong{
+ line-height:13px!important;
 }
