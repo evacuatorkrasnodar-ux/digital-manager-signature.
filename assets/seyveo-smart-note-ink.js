@@ -649,7 +649,8 @@
   pointerId=null;active=null;mode='text';noteId=id||'';redo=[];smoothUndo=null;smoothRedo=null;
   touchPointers.clear();multiTouchPan=false;inkScrollY=0;inkPageHeight=0;
   paperSheet.hidden=true;
-  const note=id?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===id):null;
+  const savedNote=id?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===id):null;
+  const note=savedNote?(window.SEYVEO_NOTEBOOK_SCREEN?.alignExample?.(savedNote)||savedNote):null;
   legacyPaperPending=note?.noteKind==='handwriting'&&note.paper&&!note.inlineInk?note.paper:null;
   legacyRuleOrigin=Number.isFinite(note?.inlineInk?.ruleOrigin)?note.inlineInk.ruleOrigin:null;
   paperStyle=normalizePaper(note?.notePaperStyle||(legacyPaperPending?.pattern==='lines'?'lined':legacyPaperPending?.pattern==='grid'?'grid':'plain'));syncPaper();
