@@ -52,7 +52,57 @@ const preparedName=document.createElement('strong');const preparedAction=documen
 const preparedCancel=document.createElement('button');preparedCancel.type='button';preparedCancel.textContent='Закрыть';
 const preparedArchive=document.createElement('button');preparedArchive.type='button';preparedArchive.textContent='В архив документов';
 const preparedDownload=document.createElement('button');preparedDownload.type='button';preparedDownload.textContent='Сохранить в файлы';preparedDownload.addEventListener('click',()=>downloadPrepared());
-prepared.append(preparedName,preparedAction,preparedDownload,preparedArchive,preparedCancel);dialog.append(prepared);
+const preparedDestinations=document.createElement('div');preparedDestinations.id='svScanShareDestinations';
+function destination(label,icon,callback){
+ const node=document.createElement('button');node.type='button';
+ node.innerHTML='<span>'+label+'</span><svg viewBox="0 0 24 24" aria-hidden="true">'+icon+'</svg>';
+ node.addEventListener('click',callback);return node;
+}
+const chatIcon='<path d="M20 11.5a8 8 0 0 1-8 8H5l1.5-4A8 8 0 1 1 20 11.5Z"/>';
+const familyIcon='<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20v-3a6 6 0 0 1 12 0v3M16 14a5 5 0 0 1 5 5v1"/>';
+const mailIcon='<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/>';
+const workChoice=destination('Рабочий чат',chatIcon,chooseWorkRoom);
+const familyChoice=destination('Семейный чат',familyIcon,()=>sendDraft('family'));
+const mailChoice=destination('Почта',mailIcon,()=>sendDraft('mail'));
+const roomList=document.createElement('div');roomList.id='svScanShareRooms';roomList.hidden=true;
+const backRooms=destination('Назад',arrowIcon,()=>showShareDestinations());
+preparedDestinations.append(workChoice,familyChoice,mailChoice);
+prepared.append(preparedName,preparedDestinations,roomList,preparedAction,preparedDownload,preparedArchive,preparedCancel);dialog.append(prepared);
+function showShareDestinations(){
+ roomList.hidden=true;roomList.replaceChildren();
+ preparedDestinations.hidden=false;preparedDownload.hidden=false;preparedArchive.hidden=false;
+ let nativeShare=false;try{nativeShare=!!(preparedFile&&navigator.share&&navigator.canShare?.({files:[preparedFile]}));}catch{}
+ preparedAction.hidden=!nativeShare;
+ workChoice.hidden=!window.SEYVEO_BUSINESS_COMMAND?.prepareSharedFile||!(window.SEYVEO_BUSINESS_COMMAND.listRooms?.()||[]).some(r=>r.id!=='dm-sayvi');
+ familyChoice.hidden=!window.SEYVEO_FAMILY_CHAT?.prepareSharedFile;
+ mailChoice.hidden=!window.SEYVEO_SAYVI_SURFACES?.prepareSharedMail;
+}
+function chooseWorkRoom(){
+ if(!preparedFile||exportBusy)return;
+ const rooms=(window.SEYVEO_BUSINESS_COMMAND?.listRooms?.()||[]).filter(r=>r.id!=='dm-sayvi');
+ if(!rooms.length){message('Нет доступных рабочих чатов.');return;}
+ roomList.replaceChildren(backRooms);
+ for(const room of rooms){
+  const choice=destination('',chatIcon,()=>sendDraft('work',room.id));
+  choice.querySelector('span').textContent=room.label;
+  roomList.append(choice);
+ }
+ preparedDestinations.hidden=true;preparedAction.hidden=true;preparedDownload.hidden=true;preparedArchive.hidden=true;roomList.hidden=false;backRooms.focus({preventScroll:true});
+}
+async function sendDraft(target,room){
+ if(!preparedFile||exportBusy)return;
+ const file=preparedFile;exportBusy=true;syncMenu();
+ for(const item of prepared.querySelectorAll('button'))item.disabled=true;
+ try{
+  let ok=false;
+  if(target==='work')ok=window.SEYVEO_BUSINESS_COMMAND?.prepareSharedFile?.(room,file);
+  else if(target==='family')ok=window.SEYVEO_FAMILY_CHAT?.prepareSharedFile?.(file);
+  else if(target==='mail')ok=await window.SEYVEO_SAYVI_SURFACES?.prepareSharedMail?.(file);
+  if(!ok){message('Не удалось прикрепить файл. Можно сохранить его или выбрать другое приложение.');return;}
+  leavingForDocs=true;dialog.close();
+ }catch{message('Не удалось открыть черновик. Файл остаётся доступен.');}
+ finally{exportBusy=false;for(const item of prepared.querySelectorAll('button'))item.disabled=false;syncMenu();}
+}
 let editStartText='',knownScanText=null;
 const formattedRead=document.createElement('div');formattedRead.id='svScanFormattedRead';formattedRead.hidden=true;formattedRead.tabIndex=0;formattedRead.setAttribute('role','button');formattedRead.setAttribute('aria-label','Открыть редактор документа');text.after(formattedRead);
 function readableText(){return typeof savedScan?.scanText==='string'?savedScan.scanText:knownScanText;}
@@ -101,8 +151,9 @@ function showPrepared(blob,extension,share){
  clearPrepared();preparedFile=new File([blob],fileBase()+'.'+extension,{type:blob.type});
  preparedName.textContent=preparedFile.name;
  let canShare=false;try{canShare=!!(navigator.share&&navigator.canShare?.({files:[preparedFile]}));}catch{}
- preparedAction.hidden=!canShare;preparedAction.textContent='Поделиться';preparedAction.dataset.share='true';
- prepared.hidden=false;(preparedAction.hidden?preparedDownload:preparedAction).focus({preventScroll:true});
+ preparedAction.hidden=!canShare;preparedAction.textContent='Другие приложения';preparedAction.dataset.share='true';
+ showShareDestinations();
+ prepared.hidden=false;(Array.from(preparedDestinations.children).find(n=>!n.hidden)|| (preparedAction.hidden?preparedDownload:preparedAction)).focus({preventScroll:true});
  message('');
 }
 function downloadPrepared(){
@@ -114,7 +165,7 @@ function downloadPrepared(){
 preparedAction.addEventListener('click',()=>{
  if(!preparedFile)return;
  if(preparedAction.dataset.share==='true'&&navigator.share&&navigator.canShare?.({files:[preparedFile]})){
-  navigator.share({files:[preparedFile]}).catch(e=>{if(e?.name!=='AbortError')message('Не удалось открыть отправку. Можно скачать файл.');preparedAction.hidden=true;});
+  navigator.share({files:[preparedFile]}).catch(e=>{if(e?.name!=='AbortError')message('Не удалось открыть отправку. Можно скачать файл.');});
  }else downloadPrepared();
 });
 preparedCancel.addEventListener('click',clearPrepared);
