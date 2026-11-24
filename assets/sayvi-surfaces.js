@@ -809,8 +809,8 @@ function mailView(){
   // One inline sender selection, no duplicate bottom dialog.
   let accountValue=original?.account||mailComposeScope||'';
   const accountField=create('div','sv-mail-sender-switch');
-  accountField.setAttribute('role','group');accountField.setAttribute('aria-label','От имени');
-  const senderCaption=create('span','sv-mail-sender-caption','От имени');
+  accountField.setAttribute('role','group');accountField.setAttribute('aria-label','От кого');
+  const senderCaption=create('span','sv-mail-sender-caption','От кого');
   const senderOptions=create('div','sv-mail-sender-options');
   const senderButtons=[];
   const refreshAccount=()=>senderButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mailAccount===accountValue)));
