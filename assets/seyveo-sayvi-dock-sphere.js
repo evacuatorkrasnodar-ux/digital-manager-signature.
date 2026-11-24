@@ -5,6 +5,17 @@
   const button = document.getElementById('assistantButton');
   if (!button || button.querySelector('.sv-sayvi-dock-sphere')) return;
 
+  // The idle shared dock uses the approved brand mark. Keep the animated
+  // pearl for voice states and preserve the original button and handlers.
+  const mark = document.createElement('img');
+  mark.className = 'sv-sayvi-dock-brand';
+  mark.src = 'assets/seyveo-sayvi-user-upload.svg?v=3';
+  mark.alt = '';
+  mark.setAttribute('aria-hidden', 'true');
+  mark.draggable = false;
+  mark.hidden = true;
+  button.appendChild(mark);
+
   const canvas = document.createElement('canvas');
   canvas.className = 'sv-sayvi-dock-sphere';
   canvas.setAttribute('aria-hidden', 'true');
