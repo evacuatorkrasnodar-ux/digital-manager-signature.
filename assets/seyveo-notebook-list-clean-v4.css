@@ -282,13 +282,13 @@ html body #svWorkShell[data-active="notes"] #notesDialog
  min-height:0!important;
  margin-top:0!important;
  padding-top:0!important;
- padding-bottom:calc(116px + env(safe-area-inset-bottom,0px))!important;
+ padding-bottom:12px!important;
  overflow-x:hidden!important;
  overflow-y:auto!important;
  -webkit-overflow-scrolling:touch!important;
  overscroll-behavior-y:contain!important;
  scroll-behavior:auto!important;
- scroll-padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));
+ scroll-padding-bottom:12px!important;
  scrollbar-width:none!important;
 }
 html body #svWorkShell[data-active="notes"] #notesList.sv-note-clean-list::-webkit-scrollbar{
@@ -462,8 +462,8 @@ html:root body > #svNotebookListMenu:not([hidden]){
  right:var(--sv-nb-reading-inset)!important;
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog > #notesList.sv-note-clean-list:not(.is-empty){
- padding-bottom:calc(116px + env(safe-area-inset-bottom,0px))!important;
- scroll-padding-bottom:calc(116px + env(safe-area-inset-bottom,0px))!important;
+ padding-bottom:12px!important;
+ scroll-padding-bottom:12px!important;
 }
 html:root body #svWorkShell[data-active="notes"] #notesList :is(.sv-nb4-open,.sv-nb4-dots):focus-visible,
 html:root body #svWorkShell[data-active="notes"] #svNotebookListMore:focus-visible{
@@ -511,21 +511,6 @@ html:root body > #svNotebookListMenu #svNotebookDeleteAll svg{
  flex:0 0 18px!important;width:18px!important;height:18px!important;
 }
 
-/* Notebook: reserve real space above the dock, rather than paint an opaque footer. */
-html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{
- background:transparent!important;background-image:none!important;
- border:0!important;border-radius:0!important;box-shadow:none!important;
-}
-html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]::after{
- content:none!important;display:none!important;
-}
-html:root body #svWorkShell[data-active="notes"] #notesDialog:not(.sv-nb-selecting) > #notesList.sv-note-clean-list:not(.is-empty){
- margin-bottom:0!important;
- padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important;
- scroll-padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important;
- -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 88px - env(safe-area-inset-bottom,0px)),transparent calc(100% - 72px - env(safe-area-inset-bottom,0px)),transparent 100%)!important;
- mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 88px - env(safe-area-inset-bottom,0px)),transparent calc(100% - 72px - env(safe-area-inset-bottom,0px)),transparent 100%)!important;
-}
 /* Saved rows are one full-width tap target. Swipe and context gestures
    expose individual actions; only the collection header keeps its dots. */
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-front{
@@ -601,17 +586,6 @@ html:root body #svWorkShell[data-active="notes"] #notesDialog.sv-nb-selecting > 
 html:root body #svWorkShell[data-active="notes"] #notesDialog.sv-nb-selecting > #notesList.sv-note-clean-list:not(.is-empty){
  padding-bottom:16px!important;scroll-padding-bottom:16px!important;
 }
-html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content.sv-nb-selecting[open]:has(> #notesList.sv-note-clean-list:not(.is-empty))::after{
- content:none!important;display:none!important;
-}
-html:root body #svWorkShell[data-active="notes"] #notesDialog.sv-nb-selecting > #svNotebookSelectionFooter:not([hidden])::before{
- content:""!important;position:absolute!important;display:block!important;
- bottom:100%!important;left:0!important;right:0!important;height:18px!important;
- background:linear-gradient(to top,#fff,transparent)!important;pointer-events:none!important;
-}
-html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog.sv-nb-selecting > #svNotebookSelectionFooter:not([hidden])::before{
- background:linear-gradient(to top,var(--bg,#17181b),transparent)!important;
-}
 html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookSelectedCount{
  color:#606975!important;font:500 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
@@ -630,9 +604,6 @@ html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog
 
 /* Actual shared dock on the notebook route: brand mark at rest, original voice art during interaction. */
 #assistantButton > .sv-notebook-dock-mark{display:none!important;pointer-events:none!important;}
-html:root[data-theme="light"]:has(#svWorkShell[data-active="notes"]:not([hidden]) > #notesDialog[open]) body > footer.dock.sv-shared-dock{
- background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
-}
 html:root[data-theme="light"]:has(#svWorkShell[data-active="notes"]:not([hidden]) > #notesDialog[open]) body > footer.dock.sv-shared-dock > #assistantButton:not(:active,.listening,.pressing,.arming,[aria-pressed="true"],[data-sayvi-motion="listening"],[data-sayvi-motion="speaking"],[data-sayvi-motion="reply"],[data-sayvi-velvet-state="listening"],[data-sayvi-velvet-state="thinking"],[data-sayvi-velvet-state="speaking"]) > .sv-notebook-dock-mark{
  display:block!important;position:absolute!important;left:50%!important;top:50%!important;
  width:36px!important;height:36px!important;max-width:36px!important;max-height:36px!important;
@@ -642,20 +613,11 @@ html:root[data-theme="light"]:has(#svWorkShell[data-active="notes"]:not([hidden]
 }
 html:root[data-theme="light"]:has(#svWorkShell[data-active="notes"]:not([hidden]) > #notesDialog[open]) body > footer.dock.sv-shared-dock > #assistantButton:not(:active,.listening,.pressing,.arming,[aria-pressed="true"],[data-sayvi-motion="listening"],[data-sayvi-motion="speaking"],[data-sayvi-motion="reply"],[data-sayvi-velvet-state="listening"],[data-sayvi-velvet-state="thinking"],[data-sayvi-velvet-state="speaking"]) > :is(.button-art,.sv-sayvi-velvet-sphere,.sv-sayvi-dock-sphere,.sv-sayvi-velvet-glass-glow){visibility:hidden!important;}
 
-/* The notebook shares the root canvas; no independent framed surface at its lower edge. */
-html:root[data-theme="light"]:has(#svWorkShell[data-active="notes"]:not([hidden]) > #notesDialog[open]),
-html:root[data-theme="light"]:has(#svWorkShell[data-active="notes"]:not([hidden]) > #notesDialog[open]) body{
- background:#fff!important;background-image:none!important;
- border:0!important;border-radius:0!important;box-shadow:none!important;
+
+/* Notebook lower area is owned exclusively by the clean dock layout below. */
+html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{
+ padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+ background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
 }
-html:root[data-theme="light"] body > .app:has(> #svWorkShell[data-active="notes"] > #notesDialog[open]),
-html:root[data-theme="light"] body #svWorkShell[data-active="notes"]:has(> #notesDialog[open]),
-html:root[data-theme="light"] body #svWorkShell[data-active="notes"] > dialog#notesDialog.sv-notebook-content[open]{
- background:transparent!important;background-image:none!important;
- border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html:root[data-theme="light"]:has(#svWorkShell[data-active="notes"] > #notesDialog[open]) body > footer.dock.sv-shared-dock{
- background:transparent!important;background-image:none!important;border:0!important;
- box-shadow:none!important;outline:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
+html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]::after{content:none!important;display:none!important;}
+html:root body #svWorkShell[data-active="notes"] #notesDialog.sv-nb-selecting > #svNotebookSelectionFooter:not([hidden]){margin-bottom:0!important;}
