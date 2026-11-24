@@ -119,5 +119,41 @@ function docxFromText(text,options={}){
  ];
  return new Blob([zip(files)],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
 }
-window.SEYVEO_DOCS_EXPORT=Object.freeze({pdfFromJpegs,docxFromText});
+// Read only the exact image-page layout created by this exporter. General PDF
+// parsing, arbitrary object streams, encrypted PDFs and text editing are not
+// supported. Never rewrite the source. Reject unexpected syntax and lengths.
+async function readScanPdf(file){
+ if(!(file instanceof Blob)||file.size<1||file.size>MAX+1000000)throw Error('PDF слишком большой или пустой.');
+ const raw=new Uint8Array(await file.arrayBuffer());
+ const str=new TextDecoder('latin1').decode(raw);
+ let cursor=0;
+ function take(value){if(!str.startsWith(value,cursor))throw Error('Редактирование страниц доступно только для PDF-сканов SEYVEO.');cursor+=value.length;}
+ function match(pattern){const m=pattern.exec(str.slice(cursor,cursor+2048));if(!m)throw Error('Этот PDF нельзя разобрать как скан SEYVEO.');cursor+=m[0].length;return m;}
+ take('%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [ ');
+ const kids=match(/^((?:\d+ 0 R ?){1,12}) \] \/Count (\d{1,2}) >>\nendobj\n/);
+ const count=Number(kids[2]);if(count<1||count>12||kids[1]!==Array.from({length:count},(_,i)=>String(3+i*3)+' 0 R').join(' '))throw Error('Неизвестная структура PDF.');
+ const pages=[];
+ for(let i=0;i<count;i++){
+  const pg=3+i*3,stream=pg+1,img=pg+2;
+  take(pg+' 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 ');
+  const h=match(/^(\d{1,9})\] /)[1];
+  take('/Resources << /XObject << /Im0 '+img+' 0 R >> >> /Contents '+stream+' 0 R >>\nendobj\n');
+  take(stream+' 0 obj\n<< /Length ');
+  const length=Number(match(/^(\d{1,5}) >>\nstream\n/)[1]);
+  const content='q\n595 0 0 '+h+' 0 0 cm\n/Im0 Do\nQ\n';
+  if(length!==content.length)throw Error('Неизвестное содержимое страницы.');
+  take(content+'endstream\nendobj\n');
+  take(img+' 0 obj\n<< /Type /XObject /Subtype /Image /Width ');
+  const dims=match(/^(\d{1,4}) \/Height (\d{1,4}) \/ColorSpace \/DeviceRGB \/BitsPerComponent 8 \/Filter \/DCTDecode \/Length (\d{1,8}) >>\nstream\n/);
+  const width=Number(dims[1]),height=Number(dims[2]),size=Number(dims[3]);
+  if(width<1||height<1||width>6000||height>6000||size<4||cursor+size>raw.length||raw[cursor]!==255||raw[cursor+1]!==216||raw[cursor+size-2]!==255||raw[cursor+size-1]!==217)throw Error('Повреждённая страница скана.');
+  if(![Math.max(1,Math.round(595*height/width)),Math.max(160,Math.round(595*height/width))].includes(Number(h)))throw Error('Неизвестный размер страницы.');
+  pages.push({width,height,jpegBytes:raw.slice(cursor,cursor+size)});cursor+=size;
+  take('\nendstream\nendobj\n');
+ }
+ const trailer=str.slice(cursor);
+ if(!/^xref\n0 \d+\n[\s\S]*?trailer\n<< \/Size \d+ \/Root 1 0 R >>\nstartxref\n\d+\n%%EOF\n$/.test(trailer)||trailer.length>2000)throw Error('Неизвестная структура PDF.');
+ return pages;
+}
+window.SEYVEO_DOCS_EXPORT=Object.freeze({pdfFromJpegs,docxFromText,readScanPdf});
 })();
