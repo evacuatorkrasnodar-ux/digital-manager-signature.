@@ -352,7 +352,7 @@ function renderDay(){
 
 /* Week keeps seven-day navigation, with Apple's hourly schedule for the selected date. */
 let lastWeekTimelineFocus='';
-const WEEK_HOUR_PX=46;
+const WEEK_HOUR_PX=42;
 const weekMinutePx=minute=>minute*WEEK_HOUR_PX/60;
 function updateWeekHourLabels(root, minute){
  root.querySelectorAll('.cal-week-hour-row').forEach((row,hour)=>{
@@ -420,7 +420,7 @@ function renderWeekTimeline(list){
    if(!explicitDuration){
     button.dataset.durationUnknown='true';
     if(laneCount>1)button.dataset.compactStacked='true';
-    button.style.height=Math.min(laneCount>1?24:22,Math.max(1,weekMinutePx(slot.end-slot.start)-1))+'px';
+    button.style.height=Math.min(laneCount>1?20:18,Math.max(1,weekMinutePx(slot.end-slot.start)-1))+'px';
    }
    layer.append(button);
   }
