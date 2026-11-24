@@ -1047,3 +1047,25 @@ html[data-sv-weather-mode="true"] #tasksPage #svTasksDateNav
   scroll-padding-bottom:8px!important;
  }
 }
+
+/* Agenda day headers pin below the fixed date rail, then yield to the next day.
+   No extra footer or separate overlay; all entries keep their native scroll. */
+#tasksPage #personalTaskList .sv-agenda-day-group{
+ display:block;position:relative;width:100%;margin:0;padding:0;
+ border:0;background:transparent;overflow:visible;
+}
+html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading{
+ position:-webkit-sticky!important;position:sticky!important;
+ top:0!important;z-index:4!important;
+ min-height:34px!important;margin:0!important;
+ padding-block:5px!important;
+ background:#fff!important;
+}
+html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group:not(:first-child) > .sv-agenda-section-heading::after{
+ content:"";display:block;position:absolute;top:0;left:0;right:0;height:1px;
+ background:#E7EAF0;pointer-events:none;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading{
+ background:#17191D!important;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading::after{background:#42464F;}
