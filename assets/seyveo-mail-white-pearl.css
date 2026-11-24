@@ -665,3 +665,39 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-top-actions > #sayviSurfaceBack,.sv-mail-detail-bar > .sv-mail-icon-button,.sv-mail-detail-tools > .sv-mail-icon-button,.sv-mail-editor-header > .sv-mail-editor-back,.sv-mail-file-preview-head > .sv-mail-icon-button):is(:active,:hover){
  background:var(--sv-white-pearl-surface)!important;box-shadow:var(--sv-white-pearl-circle-shadow)!important;
 }
+
+/* Mail scroll contract: the app frame stays put; only the existing mail body
+   scrolls. Keep the global dock and all existing mail controls unchanged. */
+html:root body .app:has(> #sayviSurfacePage[data-sv-subject="mail"]:not([hidden])){
+ box-sizing:border-box!important;height:100vh!important;height:100dvh!important;
+ min-height:0!important;max-height:100dvh!important;
+ padding-bottom:0!important;overflow:hidden!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"]:not([hidden]){
+ flex:1 1 0!important;min-height:0!important;max-height:100%!important;
+ padding-bottom:0!important;overflow:hidden!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] > #sayviSurfaceBody{
+ display:block!important;flex:1 1 0!important;min-height:0!important;min-width:0!important;
+ max-height:none!important;box-sizing:border-box!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;
+ scroll-behavior:auto;scroll-padding-top:58px;
+ padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace.sv-mail-bulk-active{
+ padding-bottom:0!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-workspace,.sv-mail-list,.sv-mail-editor,.sv-mail-detail){
+ overflow:visible!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-top-actions,.sv-mail-editor-header,.sv-mail-detail-bar):not([hidden]){
+ position:sticky!important;top:0!important;z-index:30!important;flex-shrink:0!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"].sv-mail-scrolled :is(.sv-mail-top-actions,.sv-mail-editor-header,.sv-mail-detail-bar):not([hidden]){
+ background:var(--bg,#151b20)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"].sv-mail-scrolled :is(.sv-mail-top-actions,.sv-mail-editor-header,.sv-mail-detail-bar):not([hidden]){
+ background:rgba(255,255,255,.96)!important;
+}
