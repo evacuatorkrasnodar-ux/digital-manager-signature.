@@ -310,6 +310,17 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  box-shadow:var(--sv-white-pearl-selected-shadow)!important;
 }
 
+:root[data-theme="light"] :is(
+ #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab,
+ #svWorkShell #svWorkTabs button,
+ #tasksPage #unifiedTasksTabs:not([hidden]) button,
+ #calendarPage #managerCalendarTabs:not([hidden]) button,
+ #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters > button,
+ #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tab
+):not([aria-pressed="true"]){
+ color:var(--sv-white-pearl-segment-ink,#444B56)!important;
+}
+
 /* 24 Nov · Approved light-theme material for the REAL 44px navigation and Add
    buttons. Preserve the existing size, alignment, icon and handler: only face,
    pearl edge, blur and soft shadow change. Blue/dark palettes remain native. */
