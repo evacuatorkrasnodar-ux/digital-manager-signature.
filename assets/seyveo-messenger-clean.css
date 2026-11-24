@@ -347,8 +347,16 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
  background:var(--card);border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
  border-radius:14px;box-shadow:none;z-index:4
 }
+html:root[data-theme="light"] body #svcpWorkChatScreen .svcp-message-menu{
+ background:var(--sv-menu-bg,#FCFCFD)!important;
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius,20px)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--sv-menu-text,#252A33)!important;
+}
 #svcpWorkChatScreen .svcp-message-menu-item{
- min-height:42px;font-size:13px;padding:10px 13px;border-bottom:1px solid var(--soft-line)
+ min-height:44px;font-size:13px;padding:10px 13px;border-bottom:1px solid var(--soft-line)
 }
 #svcpWorkChatScreen .svcp-note{
  margin:auto;padding:16px 26px;color:var(--secondary);font-size:13px;line-height:1.5;text-align:center
