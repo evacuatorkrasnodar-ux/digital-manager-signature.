@@ -8,22 +8,22 @@
   family,icon,accent,actions:Object.freeze(actions),example:Object.freeze(example)
  });
  const catalog=Object.freeze({
-  message:make('Сообщения','◎','#8FE3C3',['reply','open-chat','later'],['Елена написала','Проверить выкладку товаров','Запросить фотографию']),
-  mail:make('Почта','✉','#8FE3C3',['review-draft','open-mail','later'],['Письмо Андрея','Клиент спрашивает о доставке','Уточнить адрес доставки']),
-  document:make('Документы','▤','#B8D4E8',['review','open-document','later'],['Договор поставки','В учебном договоре нет срока','Предложить конкретный срок']),
-  task:make('Дела','☑','#B8D4E8',['open-task','later'],['Срок поручения','Учебное поручение ожидает','Проверить исполнение']),
-  calendar:make('Календарь','▦','#E7D2A2',['open-calendar','later'],['Скоро встреча','Запланировано событие','Подготовить материалы']),
-  health:make('Здоровье','♡','#E8B8C7',['open-health','later'],['Время передышки','Учебное напоминание об отдыхе','Сделать короткую паузу']),
-  care:make('Забота','♥','#E8B8C7',['open-care','later'],['Личное напоминание','Запланированное личное дело','Проверить расписание']),
-  finance:make('Финансы','▱','#E7D2A2',['review-payment','later'],['Проверка платежа','Учебный платёж ожидает','Проверить реквизиты']),
-  business:make('Бизнес','▥','#A5D8BB',['open-business','later'],['Новая продажа','Учебная запись о продаже','Посмотреть показатели']),
-  employee:make('Сотрудники','♧','#CBBFE9',['open-team','later'],['Запрос сотрудника','Елена оставила запрос','Открыть обращение']),
-  home:make('Умный дом','⌂','#C2DED1',['open-home','later'],['Нет связи с устройством','Учебный датчик недоступен','Проверить соединение']),
-  security:make('Безопасность','◇','#B8D4E8',['review-security','later'],['Проверка доступа','Учебное событие входа','Посмотреть устройства']),
-  shelf:make('Проверка выкладки','▧','#8FE3C3',['request-photo','open-chat','later'],['Елена закончила выкладку','Фото ещё не получено','Попросить прислать фото полки и ценников']),
-  recognition:make('Благодарность','✦','#E7D2A2',['review-recognition','open-team','later'],['Предложена звезда сотруднику','Коллега отметил помощь Елены','Проверить благодарность без автоматического начисления']),
-  secureFlow:make('Документооборот','▤','#B8D4E8',['review-document','open-document','later'],['Документ ожидает проверки','Учебный договор подготовлен','Проверить содержание и полномочия подписанта']),
-  music:make('Музыка','♫','#BBA6E4',['open-release','later','not-interested'],['Новый альбом любимого исполнителя','Учебный релиз подтверждён в музыкальном каталоге','Открыть страницу альбома'])
+  message:make('Сообщения','business-chats','#8FE3C3',['reply','open-chat','later'],['Елена написала','Проверить выкладку товаров','Запросить фотографию']),
+  mail:make('Почта','mail','#8FE3C3',['review-draft','open-mail','later'],['Письмо Андрея','Клиент спрашивает о доставке','Уточнить адрес доставки']),
+  document:make('Документы','documents','#B8D4E8',['review','open-document','later'],['Договор поставки','В учебном договоре нет срока','Предложить конкретный срок']),
+  task:make('Дела','tasks','#B8D4E8',['open-task','later'],['Срок поручения','Учебное поручение ожидает','Проверить исполнение']),
+  calendar:make('Календарь','calendar','#E7D2A2',['open-calendar','later'],['Скоро встреча','Запланировано событие','Подготовить материалы']),
+  health:make('Здоровье','health','#E8B8C7',['open-health','later'],['Время передышки','Учебное напоминание об отдыхе','Сделать короткую паузу']),
+  care:make('Забота','care','#E8B8C7',['open-care','later'],['Личное напоминание','Запланированное личное дело','Проверить расписание']),
+  finance:make('Финансы','wallet','#E7D2A2',['review-payment','later'],['Проверка платежа','Учебный платёж ожидает','Проверить реквизиты']),
+  business:make('Бизнес','business-pulse','#A5D8BB',['open-business','later'],['Новая продажа','Учебная запись о продаже','Посмотреть показатели']),
+  employee:make('Сотрудники','business-people','#CBBFE9',['open-team','later'],['Запрос сотрудника','Елена оставила запрос','Открыть обращение']),
+  home:make('Умный дом','smart-home','#C2DED1',['open-home','later'],['Нет связи с устройством','Учебный датчик недоступен','Проверить соединение']),
+  security:make('Безопасность','management','#B8D4E8',['review-security','later'],['Проверка доступа','Учебное событие входа','Посмотреть устройства']),
+  shelf:make('Проверка выкладки','business-chats','#8FE3C3',['request-photo','open-chat','later'],['Елена закончила выкладку','Фото ещё не получено','Попросить прислать фото полки и ценников']),
+  recognition:make('Благодарность','business-people','#E7D2A2',['review-recognition','open-team','later'],['Предложена звезда сотруднику','Коллега отметил помощь Елены','Проверить благодарность без автоматического начисления']),
+  secureFlow:make('Документооборот','business-documents','#B8D4E8',['review-document','open-document','later'],['Документ ожидает проверки','Учебный договор подготовлен','Проверить содержание и полномочия подписанта']),
+  music:make('Музыка','music','#BBA6E4',['open-release','later','not-interested'],['Новый альбом любимого исполнителя','Учебный релиз подтверждён в музыкальном каталоге','Открыть страницу альбома'])
  });
  const eventType=Object.freeze({
   'message.received':'message','mail.received':'mail','document.review_requested':'document',
@@ -91,7 +91,7 @@
   if(!card||!owns(catalog,card.family))return null;
   const config=catalog[card.family];
   return Object.freeze({
-   family:config.family,icon:config.icon,accent:config.accent,
+   family:config.family,icon:card.sourceApp||config.icon,sourceApp:card.sourceApp||config.icon,accent:config.accent,
    source:card.source||'Источник не указан',title:card.title,fact:card.fact,occurredAt:card.occurredAt||'',
    suggestion:card.suggestion,priority:card.priority,demo:card.demo===true,
    sections:safety.sections,
@@ -111,7 +111,8 @@
   const card={id,family,eventType:event.type,title,fact,occurredAt,
    suggestion:trim(event.suggestion,1200),
    source:trim(event.source,100)||(event.demo===true?'Студия · учебный пример':'Источник не указан'),
-   icon:config.icon,accent:config.accent,
+   sourceApp:root.SEYVEO_APP_ICONS?.sourceFor(family,event.sourceApp)||config.icon,
+   icon:root.SEYVEO_APP_ICONS?.sourceFor(family,event.sourceApp)||config.icon,accent:config.accent,
    priority:['normal','important','urgent'].includes(event.priority)?event.priority:'normal',
    status:'new',actions:[...config.actions],
    demo:event.demo===true
@@ -382,24 +383,6 @@
  // Pure rendering: buttons call only the supplied onAction callback; without it
  // they are disabled. This UI does NOT send, approve, pay, sign or close tasks.
 
- const familyGlyphs=Object.freeze({
-  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
-  message:'<path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/>',
-  document:'<path d="M6 2.7h8l4 4V21H6Z"/><path d="M14 3v4h4M9 11h6M9 14h6M9 17h4"/>',
-  secureFlow:'<path d="M6 3h8l4 4v14H6Z"/><path d="M14 3v4h4M9 11h6M9 14h5M10 18l1.5 1.5 3-3"/>',
-  task:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 12 3 3 7-7"/>',
-  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18M8 14h3m2 0h3m-8 4h3"/>',
-  health:'<path d="M12 21 4.5 13.5C.5 9.5 6 3.5 12 9c6-5.5 11.5.5 7.5 4.5Z"/>',
-  care:'<path d="M12 21 4.5 13.5C.5 9.5 6 3.5 12 9c6-5.5 11.5.5 7.5 4.5Z"/><path d="M8.5 14h7"/>',
-  finance:'<rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 9h19M6 15h5"/>',
-  business:'<rect x="4" y="7" width="16" height="14" rx="2"/><path d="M9 7V4h6v3M4 12h16M10 12v2h4v-2"/>',
-  employee:'<circle cx="12" cy="7" r="4"/><path d="M4 21v-2c0-7 16-7 16 0v2"/>',
-  shelf:'<path d="M4 4h16v16H4Z M4 10h16M4 15h16M8 10V4m8 11v5"/>',
-  home:'<path d="m3 11 9-8 9 8M5.5 9v12h13V9M10 21v-7h4v7"/>',
-  security:'<path d="m12 2 8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6Z"/><path d="m9 12 2 2 4-4"/>',
-  recognition:'<path d="m12 2 3 6 7 .8-5 4.8 1.2 7-6.2-3.3-6.2 3.3 1.2-7-5-4.8L9 8Z"/>',
-  music:'<path d="M9 18V5l11-2v13M9 18a3 2 0 1 1-6 0 3 2 0 0 1 6 0Zm11-2a3 2 0 1 1-6 0 3 2 0 0 1 6 0Z"/>'
- });
  const destination=Object.freeze({
   mail:'в почту',message:'в чат',employee:'в команду',shelf:'в рабочий чат',
   document:'в документы',secureFlow:'в документы',task:'в дела',
@@ -407,16 +390,12 @@
   finance:'в финансы',business:'в управление',home:'в умный дом',
   security:'в безопасность',recognition:'в команду',music:'в музыку'
  });
- const familyIcon=family=>{
+ const familyIcon=(family,sourceApp)=>{
   const mark=el('span','sv-card-mark');
   mark.setAttribute('aria-hidden','true');
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('viewBox','0 0 24 24');
-  svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
-  svg.setAttribute('stroke-width','1.35');svg.setAttribute('stroke-linecap','round');
-  svg.setAttribute('stroke-linejoin','round');
-  svg.innerHTML=familyGlyphs[family]||familyGlyphs.task;
-  mark.append(svg);return mark;
+  const icons=root.SEYVEO_APP_ICONS;
+  if(icons)mark.append(icons.svg(icons.sourceFor(family,sourceApp)));
+  return mark;
  };
  const momentText=value=>{
   if(value===null||value===undefined||value==='')return '';
@@ -448,7 +427,7 @@
   }
   article.append(eyebrow);
   const head=el('div','sv-card-header');
-  const mark=familyIcon(card.family);
+  const mark=familyIcon(card.family,p.sourceApp);
   mark.style.setProperty('--sv-card-accent',p.accent);
   const headCopy=el('div','sv-card-header-copy');
   headCopy.append(el('strong','sv-card-title',p.title));
@@ -538,7 +517,7 @@
   return article;
  }
  root.SEYVEO_CARD_ENGINE=Object.freeze({
-  version:10,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
+  version:11,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
    isProtected,isSuppressed,isSnoozed,hideCard,muteFamily,getVisibility,restoreVisibility,visibleCards,
    rotateQueue,snoozeCards,getSnoozes,clearSnoozes,
   presentation,buildCard,fromEvents,demoEvents,renderCard,decorateHome,decorateActionButton
