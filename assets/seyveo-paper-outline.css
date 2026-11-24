@@ -76,7 +76,7 @@ html.sv-sayvi-paper-embed body{
  box-sizing:border-box!important;
  width:100%!important;height:100%!important;
  margin:0!important;overflow:hidden!important;
- background:#202124!important;
+ background:#212121!important;
 }
 html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open]{
  position:fixed!important;
@@ -85,7 +85,7 @@ html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open]{
  height:100dvh!important;min-height:100dvh!important;max-height:100dvh!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:0!important;
- background:#202124!important;
+ background:#212121!important;
  box-shadow:none!important;
 }
 html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio::backdrop{
@@ -101,7 +101,7 @@ html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open] > .sv-paper-bot
  height:72px!important;min-height:72px!important;
 }
 html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open] #notePaperStage{
- background:#202124!important;
+ background:#212121!important;
 }
 html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-newdock-settings-panel:not([hidden]),
 html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu:not([hidden]){
