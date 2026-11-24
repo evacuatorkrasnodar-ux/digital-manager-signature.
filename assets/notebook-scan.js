@@ -39,7 +39,7 @@ const docIcon='<path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/>';
 const imageIcon='<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="2"/><path d="m4 17 5-5 4 4 3-3 5 5"/>';
 const arrowIcon='<path d="m14 6-6 6 6 6"/>';
 const shareIcon='<path d="M12 15V3m-4 4 4-4 4 4M7 9H4v12h16V9h-3"/>';
-const menuMarkup=menuButton('Разметка',penIcon);
+const menuMarkup=menuButton('Разметка','<path d="m8 14 9-9 3 3-9 9-5 1 2-4ZM13 9l3 3M4 21h10"/>');
 
 const menuOriginal=menuButton('Показать оригинал',imageIcon);
 const menuShare=menuButton('Поделиться',shareIcon);
@@ -221,7 +221,7 @@ textExport.addEventListener('click',()=>{
  const [format,share]=outputIntent.split('-');if(['docx','txt','textpdf'].includes(format))void prepareFormat(format,share==='share');
 });
 menuBack.addEventListener('click',()=>page('root'));
-menuMarkup.addEventListener('click',()=>{closeMenu();toPaper();});
+menuMarkup.addEventListener('click',()=>{closeMenu();toPaper('marker');});
 
 menuOriginal.addEventListener('click',()=>{closeMenu();showDocument(!dialog.hasAttribute('data-scan-reading-text'));syncMenu();});
 menuShare.addEventListener('click',()=>page('share'));
@@ -261,7 +261,7 @@ function syncMenu(){
 
  menu.dataset.page=menuPage;
  menuOriginal.hidden=menuPage!=='root'||inEdit||typeof readableText()!=='string';
- menuMarkup.hidden=menuPage!=='root'||inEdit||dialog.hasAttribute('data-scan-reading-text');
+ menuMarkup.hidden=menuPage!=='root'||inEdit;
  outAnnotated.hidden=true;
  const shareTextPDF=!!text.value.trim()&&dialog.hasAttribute('data-scan-reading-text');
  outTextPDF.hidden=menuPage!=='share'||!shareTextPDF;
@@ -391,7 +391,7 @@ function openSaved(note,options={}){
   $('noteScanTitle').textContent=note.title||'Скан документа';
   const known=typeof original.scanText==='string'?original.scanText:window.SEYVEO_NOTEBOOK_SCREEN?.scanExampleText?.(original);
   if(typeof known==='string'){knownScanText=known;text.value=known;}
-  message('');showDocument(!options.exportPDF);syncMenu();
+  message('');showDocument(!options.exportPDF&&!options.showMarkup);syncMenu();
   if(options.editText)openTextEditor();
   if(original.paper.strokes?.length||original.paper.texts?.length){
    const token=session;
@@ -533,8 +533,8 @@ function toPaper(mode){
  const file=selected,existing=savedScan;
  if(typeof window.SEYVEO_PAPER?.open!=='function'){message('Редактор пометок недоступен.');return;}
  dialog.close();
- if(existing)window.SEYVEO_PAPER.open(existing,{scan:true,exportPDF:mode==='pdf'});
- else{window.SEYVEO_PAPER.open(null,{scan:true,sourceFile:file,exportPDF:mode==='pdf'});window.SEYVEO_PAPER.importPhoto(file);}
+ if(existing)window.SEYVEO_PAPER.open(existing,{scan:true,exportPDF:mode==='pdf',initialTool:mode==='marker'?'marker':'pen'});
+ else{window.SEYVEO_PAPER.open(null,{scan:true,sourceFile:file,exportPDF:mode==='pdf',initialTool:mode==='marker'?'marker':'pen'});window.SEYVEO_PAPER.importPhoto(file);}
 }
 // Test a real OCR input without needing the camera or gallery.
 $('svNoteScanExample')?.addEventListener('click',()=>{
@@ -560,10 +560,11 @@ for(const id of ['noteScanCamera','noteScanGallery']){
 // Soft wrapping only changes how long lines LOOK on a narrow iPhone screen.
 // Actual newlines and the user's "preserve lines" OCR choice stay untouched.
 keepLines?.addEventListener('change',()=>{text.wrap='soft';syncMenu();});
+text.setAttribute('aria-label','Текст документа');
 text.addEventListener('focus',()=>{
  if(dialog.hasAttribute('data-scan-reading-text')&&!editingScanText&&!running&&!exportBusy){closeMenu();clearPrepared();activateTextEditor();}
 });
-text.addEventListener('input',syncActions);
+text.addEventListener('input',()=>{if(dialog.hasAttribute('data-scan-reading-text')&&!editingScanText){const entered=text.value;activateTextEditor();editStartText=readableText()||'';text.value=entered;}syncActions();});
 manualButton?.addEventListener('click',()=>{
  if(!selected||running)return;
  if(pendingScanEdit||autoReadExisting||(!intoOpenNote&&!outputIntent)){autoReadExisting=false;activateTextEditor();}else setStep('edit');syncActions();
