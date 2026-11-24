@@ -254,3 +254,61 @@ html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page.sv-pape
 html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page.sv-paper-light-surface[open] #notePaperStage > .sv-paper-width-control > .sv-paper-width-handle{
  border-color:rgba(110,124,143,.45)!important;
 }
+
+/* Scan annotation mode only: document header, separate tools, actual photo
+   boundary. The full drawing canvas keeps its legacy coordinate system. */
+html:root body dialog#notePaperDialog.sv-paper-studio[open] :is(#svScanAnnotationDone,#svScanAnnotationTitle)[hidden]{display:none!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > .sv-paper-top{
+ display:grid!important;grid-template-columns:56px minmax(0,1fr) 56px!important;
+ grid-template-rows:44px 48px!important;row-gap:5px!important;
+ padding:calc(12px + env(safe-area-inset-top,0px)) 12px 4px!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > .sv-paper-top > #notePaperBack{
+ grid-column:1!important;grid-row:1!important;justify-self:start!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > .sv-paper-top > #svScanAnnotationTitle:not([hidden]){
+ grid-column:2!important;grid-row:1!important;justify-self:center!important;
+ font:600 17px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;color:#171e29!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > .sv-paper-top > #svScanAnnotationDone:not([hidden]){
+ grid-column:3!important;grid-row:1!important;justify-self:end!important;
+ appearance:none!important;-webkit-appearance:none!important;display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;
+ background:#237bd3!important;background-image:none!important;color:white!important;
+ box-shadow:0 2px 6px rgba(32,92,155,.13)!important;transform:none!important;transition:none!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > .sv-paper-top > #svScanAnnotationDone svg{
+ display:block!important;width:21px!important;height:21px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > .sv-paper-top > #svScanAnnotationDone::before,
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > .sv-paper-top > #svScanAnnotationDone::after{content:none!important;display:none!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > .sv-paper-top > #svPaperNewDock{
+ grid-column:1/4!important;grid-row:2!important;justify-self:center!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > .sv-paper-top > .sv-paper-history{
+ grid-column:3!important;grid-row:2!important;justify-self:end!important;gap:0!important;width:52px!important;min-width:52px!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > .sv-paper-top > .sv-paper-history > button{
+ flex:0 0 26px!important;width:26px!important;min-width:26px!important;max-width:26px!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > #svPaperBottomControls > #notePaperSave{display:none!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > #svPaperBottomControls{
+ grid-template-columns:44px minmax(0,1fr)!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > #notePaperStage::after{content:none!important;display:none!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > #notePaperStage > #notePaperSheet.paper-sheet{
+ position:absolute!important;inset:auto!important;
+ top:var(--sv-scan-top,0px)!important;left:var(--sv-scan-left,0px)!important;
+ width:var(--sv-scan-width,100%)!important;height:var(--sv-scan-height,100%)!important;
+ max-width:none!important;max-height:none!important;
+ background:transparent!important;background-image:none!important;overflow:visible!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] #notePaperPhotoPreview:not([hidden]){
+ outline:1px solid #d5d9df!important;border-radius:1px!important;
+ box-shadow:0 2px 8px rgba(31,42,55,.08),0 1px 2px rgba(31,42,55,.04)!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] :is(#notePaperAddPhoto,#notePaperRemovePhoto,#notePaperPatternTrigger,#notePaperTextAction,[data-paper-tool="lasso"]){
+ display:none!important;
+}
