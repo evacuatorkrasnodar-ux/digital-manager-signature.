@@ -538,10 +538,8 @@ html body #calendarPage #calendarWeekTimeline{
  display:flex!important;flex-direction:column!important;
  width:100%!important;min-width:0!important;margin:5px 0 0!important;
  padding:0 4px!important;border:0!important;background:#FFF!important;
- /* Fill the available week viewport; reserve space for the shared floating dock once. */
- box-sizing:border-box!important;flex:none!important;min-height:0!important;
- height:calc(100vh - 232px - env(safe-area-inset-bottom,0px))!important;
- height:calc(100dvh - 232px - env(safe-area-inset-bottom,0px))!important;
+ box-sizing:border-box!important;flex:1 1 0!important;min-height:0!important;
+ height:auto!important;
 }
 html body #calendarPage #calendarWeekAllDay{
  display:flex!important;flex-direction:column!important;gap:3px!important;
@@ -656,12 +654,7 @@ html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
  content:""!important;position:absolute!important;left:-4px!important;top:-3px!important;
  width:8px!important;height:8px!important;border-radius:50%!important;background:#EF4D59!important;
 }
-@media(max-width:370px){
- html body #calendarPage #calendarWeekTimeline{
-  height:calc(100vh - 215px - env(safe-area-inset-bottom,0px))!important;
-  height:calc(100dvh - 215px - env(safe-area-inset-bottom,0px))!important;
- }
-}
+
 
 
 /* Month: Apple-style numbered week bands, filling the usable iPhone height.
@@ -1300,3 +1293,36 @@ html:root[data-theme="dark"] body #calendarPage #calendarView[data-mode="month"]
  background:var(--cal-item-accent)!important;color:transparent!important;
 }
 html:root[data-theme="dark"] body #calendarPage #calendarYear .cal-year-mini-day{color:#D8DCE2!important;}
+
+/* Week only: the scrollport fills the canvas underneath the real floating dock.
+   The dock reserve belongs inside the scrollable content, never below it. */
+html:root body .app:has(#calendarPage:not([hidden]) #calendarView[data-mode="week"]:not([hidden])){
+ box-sizing:border-box!important;height:100vh!important;height:100dvh!important;
+ min-height:0!important;max-height:100dvh!important;
+ padding-bottom:0!important;overflow:hidden!important;
+}
+html:root body #svWorkShell:has(#calendarPage:not([hidden]) #calendarView[data-mode="week"]:not([hidden])),
+html:root body .app > #calendarPage:not([hidden]):has(#calendarView[data-mode="week"]:not([hidden])){
+ flex:1 1 0!important;min-height:0!important;max-height:100%!important;
+ padding-bottom:0!important;
+}
+html:root body .app > #calendarPage:not([hidden]):has(#calendarView[data-mode="week"]:not([hidden])){
+ display:flex!important;flex-direction:column!important;
+}
+html:root body #calendarPage:not([hidden]) #calendarView[data-mode="week"]:not([hidden]){
+ display:flex!important;flex-direction:column!important;flex:1 1 0!important;
+ min-height:0!important;min-width:0!important;margin-bottom:0!important;padding-bottom:0!important;
+}
+html:root body #calendarPage #calendarView[data-mode="week"] > #calendarWeek:not([hidden]){
+ flex:none!important;
+}
+html:root body #calendarPage #calendarView[data-mode="week"] #calendarWeekTimeline:not([hidden]){
+ flex:1 1 0!important;min-height:0!important;height:auto!important;max-height:none!important;
+ background:transparent!important;
+}
+html:root body #calendarPage #calendarView[data-mode="week"] #calendarWeekTimelineScroll{
+ flex:1 1 0!important;min-height:0!important;height:auto!important;max-height:none!important;
+ padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
+ background:transparent!important;
+}
