@@ -1070,6 +1070,11 @@ function mailView(){
   }).join('\n')).join('\n\n');
  }
  function tintMailAvatar(avatar,item){
+   if(String(item.initial).trim()==='?'){
+    avatar.classList.add('sv-mail-avatar-unknown');
+    avatar.style.setProperty('--sv-mail-avatar-tint','#E9EAED');
+    return avatar;
+   }
    let tint=0;for(const ch of String(item.from||item.initial).trim().toLocaleLowerCase('ru-RU'))tint=(tint*31+ch.codePointAt(0))>>>0;
    avatar.style.setProperty('--sv-mail-avatar-tint',['#E9EFF5','#E9F2EF','#EEEAF4','#F3EDE6','#E8F1F4','#F1EBF0'][tint%6]);
   return avatar;
@@ -1629,8 +1634,12 @@ function mailView(){
   section.classList.toggle('sv-mail-composing',mailEditorOpen);
   introCopy.hidden=!contactsActive&&(mailEditorOpen||!!mailCurrent);
   top.hidden=!contactsActive&&(mailEditorOpen||!!mailCurrent);
-  introCopy.querySelector('.sv-mail-introduction-title').textContent=contactsActive?'Умные контакты':'Почта';
+  const folderTitle=tabs.find(([key])=>key===mailFolder)?.[1]||'Почта';
+  const headerTitle=contactsActive?'Умные контакты':folderTitle;
+  introCopy.querySelector('.sv-mail-introduction-title').textContent=headerTitle;
+  title.textContent=headerTitle;
   if(contactsActive){back.setAttribute('aria-label','Назад к почте');guardOpen=false;}
+  else if(mailFolder!=='overview'){back.setAttribute('aria-label','Назад к почте');}
   else updateBackDestination();
   topButtons.hidden=contactsActive;
   connect.hidden=mailEditorOpen||!!mailCurrent||contactsActive;
@@ -1682,7 +1691,7 @@ function mailView(){
    mailFolder==='drafts'?'': // Draft count already belongs to the selected folder tab.
    mailFolder==='sent'?'Отправка пока недоступна':
    ['inbox','starred','archive'].includes(mailFolder)?'':
-   mailFolder==='review'?'Ожидают вашего решения · учебные письма':
+   mailFolder==='review'?'':
    mailFolder==='promotions'?'Рассылки · учебные письма':
    mailFolder==='spam'?'Спам · учебные письма':'';
   if(mailNotice&&!mailCurrent&&!mailEditorOpen)info.textContent=mailNotice;
