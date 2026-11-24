@@ -126,6 +126,32 @@
   const part=type=>parts.find(x=>x.type===type)?.value||'';
   return part('year')+'-'+part('month')+'-'+part('day');
  }
+ // The existing station feed requests wind in km/h. Display m/s, and
+ // use the meteorological direction the wind comes FROM, never a guessed value.
+ function addWind(parent,date,source){
+  const station=source?.getStationData?.();
+  const current=station?.current;
+  if(date!==moscowDate()||typeof current?.time!=='string'||!current.time.startsWith(date+'T'))return;
+  const speed=current.wind_speed_10m;
+  const unit=station.current_units?.wind_speed_10m||'km/h';
+  if(!Number.isFinite(speed)||speed<0||!['km/h','m/s'].includes(unit))return;
+  const ms=unit==='km/h'?speed/3.6:speed;
+  const value=new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(ms);
+  const direction=current.wind_direction_10m;
+  const index=Number.isFinite(direction)&&direction>=0&&direction<=360?Math.round(direction/45)%8:-1;
+  const short=['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'];
+  const full=['северный','северо-восточный','восточный','юго-восточный','южный','юго-западный','западный','северо-западный'];
+  const row=document.createElement('span');row.className='sv-weather-peek-wind';
+  const glyph=document.createElement('span');glyph.className='sv-weather-peek-wind-icon';
+  glyph.setAttribute('aria-hidden','true');
+  glyph.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h12a2.5 2.5 0 1 0-2.5-2.5M3 12h16a2 2 0 1 1-2 2M3 16h9a2.5 2.5 0 1 1-2.5 2.5"/></svg>';
+  row.append(glyph);
+  const label=value+' м/с'+(index>=0&&ms>=.05?' · '+short[index]:'');
+  add('sv-weather-peek-wind-value',label,row);
+  row.title='Ветер: '+value+' м/с'+(index>=0&&ms>=.05?', '+full[index]:'');
+  row.setAttribute('aria-label',row.title);
+  parent.append(row);
+ }
  function addRainTimeline(parent,date,source){
   // Compact, human-readable rain forecast. Only real hourly probabilities
   // from our existing verified feed; never infer observed rain or exact onset.
@@ -233,6 +259,7 @@
    add('sv-weather-peek-city',city,info,'strong');
    add('sv-weather-peek-condition',condition(day.code),info);
    add('sv-weather-peek-low','↑ '+temp(day.max)+'   ↓ '+temp(day.min),info);
+   addWind(info,date,src);
    main.append(info);
    panel.append(main);
    addRainTimeline(panel,date,src);
