@@ -304,10 +304,10 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters > button[aria-pressed="true"],
  #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tab[aria-pressed="true"]
 ){
- background:rgba(255,255,255,.96)!important;
+ background:var(--sv-white-pearl-selected)!important;
  border:1px solid rgba(255,255,255,.99)!important;
  border-radius:999px!important;
- box-shadow:0 1px 3px rgba(82,69,57,.075)!important;
+ box-shadow:var(--sv-white-pearl-selected-shadow)!important;
 }
 
 /* 24 Nov · Approved light-theme material for the REAL 44px navigation and Add
