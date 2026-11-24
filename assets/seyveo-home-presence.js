@@ -72,8 +72,8 @@
   const above=visibleSphereTop-host.top-height-clearance;
   // Center the complete thought (copy + action) in the real free gap between
   // “СЭЙВИ · НА СВЯЗИ” and the visible glass, not against the sphere's edge.
-  // Both free margins stay equal when the text wraps or the button appears.
-  let top=(minimumTop+above)/2,placement='above';
+  // Bias the thought up by 7px for extra air above the painted sphere.
+  let top=Math.max(minimumTop,(minimumTop+above)/2-7),placement='above';
   if(above<minimumTop){
    // Only truly short phones use the lower gap; do not jump there because
    // the safe top margin was a few pixels too conservative.
