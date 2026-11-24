@@ -235,16 +235,16 @@
  border-left:1px solid rgba(134,151,168,.14);
 }
 #homePage #svSayviHomeWeather .sv-home-weather-day-name{
- color:#919da8;font-size:9px;font-weight:510;
+ color:#687989;font-size:10.5px;font-weight:550;
  text-transform:lowercase;white-space:nowrap;
 }
 #homePage #svSayviHomeWeather .sv-home-weather-day-pair{
  display:flex;justify-content:center;align-items:center;
  gap:2px;white-space:nowrap;color:#4b5863;
- font-size:clamp(10px,2.8vw,11.5px);font-weight:520;
+ font-size:clamp(11px,3vw,12.5px);font-weight:560;
  font-variant-numeric:tabular-nums;
 }
-#homePage #svSayviHomeWeather .sv-home-weather-day-night{color:#9ba7b3;font-weight:440}
+#homePage #svSayviHomeWeather .sv-home-weather-day-night{color:#6d8095;font-weight:500}
 #homePage #svSayviHomeWeather .sv-home-weather-day-symbol,
 #homePage #svSayviHomeWeather .sv-home-weather-day-symbol svg{
  width:12px!important;height:12px!important;flex:0 0 12px!important;
@@ -279,7 +279,7 @@
 #homePage #svSayviHomeWeather .sv-home-weather-day-symbol{
  display:inline-flex!important;align-items:center!important;
  justify-content:center!important;
- color:#92a9c0!important;
+ color:#7896b3!important;
 }
 #homePage #svSayviHomeWeather .sv-home-weather-day-symbol svg{
  display:block!important;
@@ -291,12 +291,12 @@
  fill:none!important;stroke:currentColor!important;
 }
 #homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="sun"]{color:#d4ae71!important}
-#homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="cloud"]{color:#99acc1!important}
-#homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="rain"]{color:#7fadd1!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="cloud"]{color:#839bb2!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="rain"]{color:#6599c2!important}
 #homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="snow"]{color:#a1bfda!important}
-#homePage #svSayviHomeWeather .sv-home-weather-day-name{color:#95a3b4!important}
-#homePage #svSayviHomeWeather .sv-home-weather-day-pair{color:#647b92!important}
-#homePage #svSayviHomeWeather .sv-home-weather-day-night{color:#99acc3!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-name{color:#687989!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-pair{color:#42566d!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-night{color:#6d8095!important}
 #homePage #svSayviHomeWeather .sv-home-weather-day + .sv-home-weather-day{
  border-left-color:rgba(140,161,182,.13)!important;
 }
