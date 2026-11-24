@@ -79,12 +79,15 @@ html body dialog#svPaperAskSayvi.sv-paper-ai-workbench::backdrop{
 }
 #svPaperAskSayvi textarea[data-pa-request]::placeholder{color:#7a818c;opacity:1}
 #svPaperAskSayvi .sv-pa-plan{
- display:block;width:100%;min-height:44px;margin:10px 0 0!important;padding:9px 13px!important;
- border:1px solid #38383a!important;border-radius:22px!important;
- background:#38383a!important;color:#fff!important;
- box-shadow:none!important;font-size:14px!important;font-weight:560!important;line-height:22px!important;
+ box-sizing:border-box!important;display:block;width:100%;min-height:44px!important;height:44px!important;margin:10px 0 0!important;padding:9px 13px!important;
+ border:var(--sv-white-pearl-edge,1px solid #e4e7eb)!important;border-radius:22px!important;
+ background:var(--sv-white-pearl-surface,#f7f7f8)!important;background-image:none!important;color:var(--sv-white-pearl-ink,#252a33)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 2px 5px rgba(30,40,55,.06))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,none)!important;backdrop-filter:var(--sv-white-pearl-blur,none)!important;
+ font-size:14px!important;font-weight:560!important;line-height:22px!important;
+ transform:none!important;transition:none!important;
 }
-#svPaperAskSayvi .sv-pa-plan:active{background:#38383a!important;transform:none!important}
+#svPaperAskSayvi .sv-pa-plan:active{background:var(--sv-white-pearl-surface,#f7f7f8)!important;transform:none!important;transition:none!important;box-shadow:var(--sv-white-pearl-circle-shadow,0 2px 5px rgba(30,40,55,.06))!important}
 #svPaperAskSayvi .sv-pa-chat{
  display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;
  min-height:44px;margin:8px 0 0!important;padding:0 3px!important;
