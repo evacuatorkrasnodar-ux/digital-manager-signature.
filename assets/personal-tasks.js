@@ -818,12 +818,28 @@ function svAgendaAnchorAt(position){
  }
  return anchors[result];
 }
+let svAgendaFadeHeading=null;
 function svAgendaSyncPinnedDate(){
  const panel=list.parentElement;
  if(!panel)return;
  let slot=panel.querySelector('#svAgendaPinnedDate');
  if(!slot){slot=element('div','sv-agenda-pinned-date');slot.id='svAgendaPinnedDate';list.before(slot);}
  const current=svAgendaAnchorAt(list.scrollTop+1);
+ const traveled=current?Math.max(0,list.scrollTop-current.top):0;
+ const fadeHeading=traveled>0.5?current.heading:null;
+ if(svAgendaFadeHeading!==fadeHeading){
+  if(svAgendaFadeHeading){
+   svAgendaFadeHeading.removeAttribute('data-sv-edge-fade');
+   svAgendaFadeHeading.style.removeProperty('--sv-agenda-edge-opacity');
+  }
+  svAgendaFadeHeading=fadeHeading;
+  if(fadeHeading)fadeHeading.setAttribute('data-sv-edge-fade','');
+ }
+ if(fadeHeading){
+  const alpha=String(Math.min(1,traveled/12).toFixed(2));
+  if(fadeHeading.style.getPropertyValue('--sv-agenda-edge-opacity')!==alpha)
+   fadeHeading.style.setProperty('--sv-agenda-edge-opacity',alpha);
+ }
  if(!current){slot.replaceChildren();delete slot.dataset.key;return;}
  if(slot.dataset.key===current.key&&slot.firstElementChild)return;
  slot.dataset.key=current.key;
