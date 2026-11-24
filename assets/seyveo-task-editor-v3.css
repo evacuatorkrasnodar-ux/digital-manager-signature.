@@ -1528,3 +1528,40 @@ html:root body #personalTaskDialog #personalTaskForm > .sv-task-example-launch:n
 }
 html:root[data-theme="light"] body #personalTaskDialog #personalTaskForm > .sv-task-example-launch:not([hidden]){color:#176ab4!important}
 html:root body #personalTaskDialog #personalTaskForm > .sv-task-example-launch[hidden]{display:none!important}
+
+/* New Task · approved blue confirmation and a single clean reading surface. */
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header > #personalTaskSave:not(:disabled){
+ background:#287fda!important;background-image:none!important;
+ color:#fff!important;border:0!important;box-shadow:0 2px 5px rgba(40,127,218,.15)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header > #personalTaskSave:not(:disabled) svg{
+ stroke:#fff!important;width:21px!important;height:21px!important;stroke-width:1.8!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header > #personalTaskSave:disabled{
+ background:var(--sv-white-pearl-surface,#f6f7f9)!important;
+ border:var(--sv-white-pearl-edge)!important;color:#9da6b1!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header > #personalTaskSave:disabled svg{stroke:#9da6b1!important;}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm:not(:disabled){
+ min-height:44px!important;color:#fff!important;background:#287fda!important;
+ border:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-trigger{min-height:44px!important;color:#526170!important;}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-link .sv-place-photo-label{
+ position:absolute!important;bottom:7px!important;left:7px!important;
+ padding:3px 7px!important;border-radius:8px!important;background:rgba(20,25,31,.72)!important;
+ color:white!important;font:500 11px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ pointer-events:none!important;z-index:2!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice-mark{
+ width:24px!important;height:24px!important;min-width:24px!important;flex-basis:24px!important;
+ border-radius:0!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .personal-task-sheet:not(.sv-task-keyboard-visible) #personalTaskForm{
+ flex:1 1 0!important;min-height:0!important;
+ margin-bottom:calc(var(--sv-task-float-bottom) + 52px)!important;
+ padding-bottom:16px!important;scroll-padding-bottom:16px!important;
+ -webkit-mask-image:linear-gradient(to bottom,transparent,#000 8px,#000 calc(100% - 12px),transparent);
+ mask-image:linear-gradient(to bottom,transparent,#000 8px,#000 calc(100% - 12px),transparent);
+}
