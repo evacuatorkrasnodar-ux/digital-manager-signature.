@@ -1467,3 +1467,26 @@ html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout=
 html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="compact"] .cal-month-grid .cal-day:not([data-today="true"]):not([data-selected="true"]) .cal-day-number{
  font-weight:500!important;
 }
+
+/* Stacked month: use variable week heights, never expand empty weeks. */
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month>.cal-month-grid{
+ grid-template-rows:var(--cal-month-detail-rows,repeat(var(--cal-month-weeks,6),49px))!important;
+ grid-auto-rows:49px!important;
+ height:var(--cal-month-layout-height,294px)!important;
+}
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day{
+ justify-content:flex-start!important;padding:3px 1px 1px!important;gap:0!important;
+}
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-labels{
+ gap:2px!important;margin:2px 0 0!important;
+}
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-chip{
+ width:76%!important;height:3px!important;min-height:3px!important;max-height:3px!important;
+ flex:0 0 3px!important;border-radius:2px!important;
+}
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-more{
+ font:600 9px/9px system-ui!important;color:#59616B!important;
+}
+html:root[data-theme="dark"] body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-more{
+ color:#BCC2CC!important;
+}
