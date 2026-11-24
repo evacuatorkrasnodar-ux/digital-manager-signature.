@@ -97,10 +97,29 @@
     (stageRect?.top||viewTop)+Math.min(210,viewHeight*.31);
    const favorites=document.querySelector('#svHomeFavorites');
    const favoritesRect=favorites&&!favorites.hidden?favorites.getBoundingClientRect():null;
-   const bottomLimit=Math.min(maxBottom,favoritesRect?.top?favoritesRect.top-14:maxBottom);
-   const allowedTop=viewTop+Math.max(42,Math.min(68,viewHeight*.09));
-   const upper=Math.max(allowedTop,bottomLimit-bounds.height);
-   y=Math.max(allowedTop,Math.min(sphereMiddle-bounds.height/2,upper));
+   // The weekly forecast is the existing anchor. Reserve its actual painted
+   // row before positioning the expanded card; never move the shortcuts.
+   const weekTop=rect.height>0&&rect.top>viewTop?rect.top-12:maxBottom;
+   const bottomLimit=Math.min(maxBottom,weekTop,
+    favoritesRect?.top?favoritesRect.top-14:maxBottom);
+   const baseTop=viewTop+Math.max(42,Math.min(68,viewHeight*.09));
+   // Keep the visible greeting clear as well. On exceptionally short
+   // viewports the card may use its reserved sphere area and scroll.
+   let greetingBottom=baseTop;
+   for(const el of document.querySelectorAll('#homePage :is(#kicker,#headline,#subline)')){
+    const style=getComputedStyle(el),b=el.getBoundingClientRect();
+    if(b.height>0&&style.display!=='none'&&style.visibility!=='hidden'&&
+       Number(style.opacity)>0.05&&b.bottom<bottomLimit)
+     greetingBottom=Math.max(greetingBottom,b.bottom+12);
+   }
+   const allowedTop=bottomLimit-greetingBottom>=180?greetingBottom:baseTop;
+   const available=Math.max(1,Math.floor(bottomLimit-allowedTop));
+   panel.style.setProperty('--sv-home-peek-room',available+'px');
+   // offsetHeight is the untransformed box: entry animation must not
+   // under-report the final height and overlap the weekly forecast.
+   const height=panel.offsetHeight;
+   const upper=Math.max(allowedTop,bottomLimit-height);
+   y=Math.max(allowedTop,Math.min(sphereMiddle-height/2,upper));
   }else{
    /* Agenda keeps its own central placement below the date rail. */
    const desiredTop=viewTop+(viewHeight-bounds.height)/2;
@@ -339,6 +358,8 @@
   // this small glanceable weather preview.
   document.body.append(panel);
   position();
+  // The week row is positioned by weather-brief on the next animation frame.
+  if(homeMode)requestAnimationFrame(()=>{if(panel&&homeMode)position();});
   resetTimer();
   panel.addEventListener('pointerdown',resetTimer,{passive:true});
   if(!day&&!requestedRefresh){requestedRefresh=true;src?.refresh?.();}
@@ -360,6 +381,8 @@
   if(agendaMode&&event.target?.closest?.('#svTasksDateNav'))resetTimer();
  },{capture:true,passive:true});
  window.addEventListener('resize',()=>{if(panel)position();},{passive:true});
+ window.visualViewport?.addEventListener('resize',()=>{if(panel&&homeMode)requestAnimationFrame(()=>{if(panel&&homeMode)position();});},{passive:true});
+ window.addEventListener('seyveo:home-shortcuts-layout',()=>{if(panel&&homeMode)requestAnimationFrame(()=>{if(panel&&homeMode)position();});});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)close(true);});
  window.addEventListener('seyveo:route-changed',()=>close(true));
  window.addEventListener('seyveo:weather-updated',()=>{
@@ -367,5 +390,6 @@
    const anchor=activeAnchor,date=activeDate;
    if(getDay(date))open({anchor,date,origin:agendaMode?'agenda':homeMode?'home':'agenda'});
   }
+  if(panel&&homeMode)requestAnimationFrame(()=>{if(panel&&homeMode)position();});
  });
 })();
