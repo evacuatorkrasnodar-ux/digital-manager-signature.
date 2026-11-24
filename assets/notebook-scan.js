@@ -202,7 +202,7 @@ textExport.addEventListener('click',()=>{
  const [format,share]=outputIntent.split('-');if(['docx','txt','textpdf'].includes(format))void prepareFormat(format,share==='share');
 });
 menuBack.addEventListener('click',()=>page('root'));
-menuEdit.addEventListener('click',()=>{closeMenu();clearPrepared();openTextEditor();if(!text.value.trim())button.click();});
+menuEdit.addEventListener('click',()=>{closeMenu();clearPrepared();if(intoOpenNote){if(dialog.dataset.step==='edit'&&text.value.trim())text.focus();else button.click();return;}openTextEditor();if(!text.value.trim())button.click();});
 menuMarks.addEventListener('click',()=>{closeMenu();toPaper();});
 menuExport.addEventListener('click',()=>page('export'));
 menuShare.addEventListener('click',()=>page('share'));
