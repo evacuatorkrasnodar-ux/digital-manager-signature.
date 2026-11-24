@@ -61,30 +61,39 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt > .sv-connect-prompt-icon{
  background:transparent!important;color:#53616E!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-title{color:#20262D!important}
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-caption{color:#66707B!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-title{color:#171B21!important;font-size:13px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-caption{color:#505A65!important;font-size:11px!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-arrow svg{stroke:#637080!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-toolbar{gap:4px!important;margin:2px 0 7px!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder{min-height:53px!important;padding:5px 1px 7px!important;gap:5px!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder-count{background:#0A84FF!important;color:#fff!important}
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-recent-head{
- justify-content:flex-end!important;margin:2px 0 0!important;min-height:0!important;
+/* Equal avatar and text columns for read/unread mail. Reserve the dot gutter
+   without an extra DOM element; dividers travel with the swipeable row. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell:not(.is-bulk-selecting){
+ border-bottom:0!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-recent-head .sv-deep-intent{
- color:#0075DF!important;font-size:12px!important;min-height:36px!important;
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell:not(.is-bulk-selecting) > .sv-mail-letter{
+ min-height:72px!important;padding:8px 3px 8px 14px!important;gap:9px!important;background:#fff!important;
+ align-items:center!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell > .sv-mail-letter{
- min-height:66px!important;padding:8px 3px!important;gap:9px!important;background:#fff!important;
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell:not(.is-bulk-selecting):not(:last-child) > .sv-mail-letter::after{
+ content:""!important;position:absolute!important;left:63px!important;right:0!important;bottom:0!important;
+ height:1px!important;background:rgba(35,45,55,.10)!important;pointer-events:none!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter .sv-mail-avatar:not(.sv-mail-bulk-avatar){
- flex:0 0 36px!important;width:36px!important;height:36px!important;
+ flex:0 0 40px!important;width:40px!important;height:40px!important;min-width:40px!important;max-width:40px!important;
  background:var(--sv-mail-avatar-tint,#E9EFF5)!important;color:#374C60!important;
- border:0!important;border-radius:50%!important;box-shadow:none!important;font-weight:600!important;
+ border:0!important;border-radius:50%!important;box-shadow:none!important;font-weight:600!important;font-size:15px!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-sender{font-size:14px!important;font-weight:620!important;color:#17191D!important}
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-subject{font-size:12.5px!important;font-weight:570!important;color:#252930!important}
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-preview{font-size:11.5px!important;color:#68717C!important;line-height:1.3!important}
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-unread-dot{background:#0A84FF!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-details{gap:2px!important;text-align:left!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-sender{font-size:15px!important;font-weight:620!important;color:#17191D!important;line-height:1.2!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-subject{font-size:13px!important;font-weight:570!important;color:#252930!important;line-height:1.2!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-preview{font-size:12px!important;color:#515C68!important;line-height:1.3!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-meta{font-size:10.5px!important;color:#59636D!important;align-self:flex-start!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter .sv-mail-unread-dot{
+ position:absolute!important;left:3px!important;top:50%!important;transform:translateY(-50%)!important;
+ margin:0!important;width:6px!important;height:6px!important;background:#0A84FF!important;
+}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action{background:#8A929C!important;color:#fff!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action[data-mail-swipe-action="trash"]{background:#E34B45!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action[data-mail-swipe-action="shield"],

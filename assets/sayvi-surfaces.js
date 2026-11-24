@@ -1610,9 +1610,7 @@ function mailView(){
    mailCurrent=null;
   }
   if(mailFolder==='overview'){
-   const recent=create('div','sv-mail-recent-head');
-   recent.append(intent('Все письма ›',()=>selectFolder('inbox')));
-   drawExamples(3);content.append(recent);return;
+   drawExamples(3);return;
   }
   if(mailFolder==='drafts'){drawDrafts();return}
   if(['inbox','starred','archive','review','promotions','spam','trash'].includes(mailFolder)){drawExamples();return}
