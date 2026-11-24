@@ -873,7 +873,7 @@ function mailView(){
   attachButton.append(attachmentCount);
   const attachmentList=create('div','sv-mail-attached-list');
   attachmentList.setAttribute('role','list');
-  attachmentList.setAttribute('aria-label','Прикреплённые файлы. Проведите в сторону, чтобы увидеть остальные.');
+  attachmentList.setAttribute('aria-label','Прикреплённые файлы');
   const attachmentShelf=create('section','sv-mail-attachment-shelf');
   attachmentShelf.setAttribute('aria-label','Вложения в черновике');
   attachmentShelf.hidden=true;
