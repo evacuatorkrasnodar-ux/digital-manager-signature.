@@ -337,7 +337,7 @@ html:root[data-theme="light"] body :is(
    different solid-white style. Borrow the actual shared White Pearl tokens,
    preserve its position and existing save handlers, and don't add a backing
    rectangle, duplicate pseudo-surface, or another circle around the palette. */
-/* Single opaque gold face; no glass, pseudo plate or clipped shadow. */
+/* Transparent hit target. The actual gold circle and its contour shadow are SVG only. */
 html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm,
 html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm:is(:active,:hover,:focus){
  -webkit-appearance:none!important;appearance:none!important;
@@ -347,9 +347,9 @@ html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-pap
  position:fixed!important;right:max(12px,env(safe-area-inset-right,0px))!important;
  bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
  padding:0!important;margin:0!important;
- border:var(--sv-note-gold-edge,.75px solid rgba(118,87,9,.16))!important;
- border-radius:50%!important;background:#c69c09!important;background-image:none!important;color:#fff!important;
- box-shadow:0 4px 10px rgba(98,72,10,.14),0 1px 3px rgba(98,72,10,.07)!important;
+ border:0!important;border-radius:50%!important;
+ background:none!important;background-color:transparent!important;background-image:none!important;color:#fff!important;
+ box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  -webkit-clip-path:none!important;clip-path:none!important;filter:none!important;
  overflow:visible!important;transform:none!important;transition:none!important;
@@ -361,10 +361,20 @@ html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-pap
 }
 html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm svg{
  display:block!important;position:static!important;
- width:21px!important;height:21px!important;margin:0!important;padding:0!important;
- fill:none!important;stroke:#fff!important;stroke-width:1.8!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ max-width:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;overflow:visible!important;
+ background:none!important;border:0!important;box-shadow:none!important;
+ fill:none!important;stroke:none!important;
  transform:none!important;translate:none!important;filter:none!important;
+}
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm svg > .sv-ink-gold-disc{
+ display:block!important;fill:#c69c09!important;stroke:none!important;
+ filter:drop-shadow(0 2px 3px rgba(84,65,13,.14))!important;
+}
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm svg > .sv-ink-check{
+ stroke:#fff!important;stroke-width:1.0!important;fill:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm:focus-visible{
  outline:2px solid rgba(55,65,76,.60)!important;outline-offset:3px!important;
