@@ -112,6 +112,14 @@ html body #svcpWorkChatScreen .sv-inbox-popover{
  box-shadow:0 15px 45px rgba(22,30,47,.16),0 2px 7px rgba(22,30,47,.04);
  -webkit-backdrop-filter:blur(24px) saturate(110%);backdrop-filter:blur(24px) saturate(110%);
 }
+:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-popover{
+ background:var(--sv-menu-bg,#FCFCFD)!important;
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius,20px)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--sv-menu-text,#252A33)!important;
+}
 html body #svcpWorkChatScreen .sv-inbox-menu-row{
  display:flex!important;align-items:center;justify-content:flex-start;
  gap:11px;width:100%;min-height:46px;padding:9px 11px;
@@ -1232,10 +1240,10 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"]
 }
 /* Menus are crisp, white and compact; keep existing selection/delete actions. */
 :root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory :is(.svcp-work-history-menu,.svcp-work-history-row-menu){
- background:#FFFFFF!important;color:#1B1D22!important;
- border:1px solid rgba(150,161,174,.17)!important;
- border-radius:16px!important;padding:6px!important;
- box-shadow:0 11px 36px rgba(30,43,61,.13)!important;
+ background:var(--sv-menu-bg,#FCFCFD)!important;color:var(--sv-menu-text,#252A33)!important;
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius,20px)!important;padding:7px!important;
+ box-shadow:var(--sv-menu-shadow)!important;
 }
 :root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-menu{
  top:54px!important;right:0!important;width:190px!important;
