@@ -127,40 +127,12 @@
  display:block!important;width:100%!important;height:100%!important;
  touch-action:none!important;cursor:crosshair!important;
 }
-#notePaperDialog .sv-paper-size{
- box-sizing:border-box!important;position:absolute!important;z-index:6!important;
- left:max(6px,env(safe-area-inset-left,0px))!important;top:50%!important;
- transform:translateY(-50%)!important;
- display:block!important;width:44px!important;height:min(200px,38dvh)!important;
- margin:0!important;padding:0!important;
- background:transparent!important;border:0!important;pointer-events:none!important;
-}
-#notePaperDialog .sv-paper-size input[type="range"]{
- appearance:none!important;-webkit-appearance:none!important;
- box-sizing:border-box!important;
- position:absolute!important;
- left:50%!important;top:50%!important;
- transform:translate(-50%,-50%) rotate(-90deg)!important;
- width:min(190px,36dvh)!important;height:30px!important;
- margin:0!important;padding:0!important;
- background:transparent!important;border:0!important;
- pointer-events:auto!important;touch-action:none!important;cursor:pointer!important;
-}
-#notePaperDialog .sv-paper-size input::-webkit-slider-runnable-track{
- height:2px!important;background:rgba(235,240,245,.39)!important;border-radius:99px!important;
-}
-#notePaperDialog .sv-paper-size input::-webkit-slider-thumb{
- appearance:none!important;-webkit-appearance:none!important;
- width:20px!important;height:20px!important;margin-top:-9px!important;
- border:0!important;border-radius:50%!important;
- background:#fff!important;box-shadow:0 1px 5px rgba(0,0,0,.25)!important;
-}
-#notePaperDialog .sv-paper-size input::-moz-range-track{
- height:2px!important;background:rgba(235,240,245,.39)!important;border-radius:99px!important;
-}
-#notePaperDialog .sv-paper-size input::-moz-range-thumb{
- width:20px!important;height:20px!important;border:0!important;border-radius:50%!important;background:#fff!important;
-}
+
+
+
+
+
+
 #notePaperDialog .sv-paper-bottom{
  box-sizing:border-box!important;flex:0 0 auto!important;position:relative!important;z-index:10!important;
  display:flex!important;align-items:center!important;gap:7px!important;
