@@ -8,7 +8,7 @@
  const HIDE_AFTER=30000;
  const getSource=()=>window.SAYVI_WEATHER;
  let panel=null,activeAnchor=null,activeDate='',timer=0,requestedRefresh=false,agendaMode=false,homeMode=false;
- let homeLayoutObserver=null,homeTextObserver=null,homeLayoutFrame=0,homeLayoutWatch=0;
+ let homeLayoutObserver=null,homeTextObserver=null,homeLayoutFrame=0;
  function scheduleHomePosition(){
   if(!panel||!homeMode||homeLayoutFrame)return;
   homeLayoutFrame=requestAnimationFrame(()=>{homeLayoutFrame=0;if(panel&&homeMode)position();});
@@ -64,7 +64,6 @@
   clearTimeout(timer);timer=0;
   homeLayoutObserver?.disconnect();homeLayoutObserver=null;
   homeTextObserver?.disconnect();homeTextObserver=null;
-  clearInterval(homeLayoutWatch);homeLayoutWatch=0;
   if(homeLayoutFrame){cancelAnimationFrame(homeLayoutFrame);homeLayoutFrame=0;}
   if(activeAnchor)activeAnchor.setAttribute('aria-expanded','false');
   activeAnchor=null;activeDate='';requestedRefresh=false;
@@ -100,37 +99,45 @@
   if(homeMode){
    const favorites=document.querySelector('#svHomeFavorites');
    const favoritesRect=favorites&&!favorites.hidden?favorites.getBoundingClientRect():null;
-   // Measure the painted forecast face, not its larger touch target.
+   // The week row is the hard lower boundary. Text never dictates the
+   // card's height: hidden/expired greetings can still have large boxes.
    const face=activeAnchor.querySelector('.sv-home-weather-week-face');
    const faceRect=face?.getBoundingClientRect();
    const rowTop=faceRect?.height>0?faceRect.top:rect.top;
    const weekTop=rect.height>0&&rowTop>viewTop?rowTop-12:maxBottom;
    const bottomLimit=Math.min(maxBottom,weekTop,
     favoritesRect?.top?favoritesRect.top-14:maxBottom);
-   const baseTop=viewTop+Math.max(12,Math.min(68,viewHeight*.09));
-   let allowedTop=baseTop;
-   const hasLayout=el=>{
+   const safeTop=viewTop+12;
+   const physicalRoom=Math.floor(bottomLimit-safeTop);
+   // If the viewport has genuinely become unusable (keyboard/rotation),
+   // restore the normal Home rather than drawing a clipped empty pill.
+   if(physicalRoom<180){close(true);return;}
+   panel.style.setProperty('--sv-home-peek-room',physicalRoom+'px');
+   const height=panel.offsetHeight;
+   const baseTop=Math.min(bottomLimit-height,viewTop+Math.max(42,Math.min(68,viewHeight*.09)));
+   let allowedTop=Math.max(safeTop,baseTop);
+   let allowedBottom=bottomLimit;
+   const visible=el=>{
     if(!el||el.closest('[hidden]'))return false;
+    if(el.closest('.message')&&document.documentElement.classList.contains('sv-home-greeting-expired'))return false;
     for(let node=el;node&&node.id!=='homePage';node=node.parentElement){
      const style=getComputedStyle(node);
-     if(style.display==='none')return false;
+     if(style.display==='none'||style.visibility==='hidden'||Number(style.opacity)<.05)return false;
     }
-    // Reserve geometry even during a fade/typing/action reveal. Opacity
-    // and visibility can be transient while the weather card is opening.
     return true;
    };
-   const selectors='#homePage .sv-sayvi-home-online, #homePage #kicker, #homePage #headline, #homePage #subline, #svHomeLivingLine, #svHomeLivingLine .sv-home-living-copy, #svHomeLivingLine .sv-home-living-actions, #svHomeLivingLine .sv-home-living-action';
-   for(const el of document.querySelectorAll(selectors)){
-    if(!hasLayout(el))continue;
-    const b=el.getBoundingClientRect();
-    if(b.height>0&&b.width>0&&b.top>=viewTop&&b.top<bottomLimit)
-     allowedTop=Math.max(allowedTop,Math.min(bottomLimit,b.bottom+12));
+   const texts=document.querySelectorAll('#homePage .sv-sayvi-home-online,#homePage #headline,#homePage #subline,#svHomeLivingLine,#svHomeLivingLine .sv-home-living-action');
+   for(const el of texts){
+    if(!visible(el))continue;
+    const box=el.getBoundingClientRect();
+    if(box.height<=0||box.width<=0||box.top<viewTop||box.bottom>bottomLimit)continue;
+    const after=box.bottom+12;
+    // Prefer the full card below the text. If the thought sits low,
+    // use the free area above it. Never shrink the card to fit a text box.
+    if(after+height<=allowedBottom)allowedTop=Math.max(allowedTop,after);
+    else if(box.top-12-height>=allowedTop)allowedBottom=Math.min(allowedBottom,box.top-12);
    }
-   const available=Math.max(1,Math.floor(bottomLimit-allowedTop));
-   panel.style.setProperty('--sv-home-peek-room',available+'px');
-   const height=panel.offsetHeight;
-   // Equal free margins above and below, using the untransformed height.
-   y=allowedTop+Math.max(0,(bottomLimit-allowedTop-height)/2);
+   y=allowedTop+Math.max(0,(allowedBottom-allowedTop-height)/2);
   }else{
    /* Agenda keeps its own central placement below the date rail. */
    const desiredTop=viewTop+(viewHeight-bounds.height)/2;
@@ -372,6 +379,7 @@
   // this small glanceable weather preview.
   document.body.append(panel);
   position();
+  if(!panel)return;
   // The week row is positioned by weather-brief on the next animation frame.
   if(homeMode){
    scheduleHomePosition();
@@ -385,10 +393,6 @@
     homeTextObserver=new MutationObserver(scheduleHomePosition);
     for(const node of [thought,message])if(node)homeTextObserver.observe(node,{attributes:true,subtree:true,childList:true,characterData:true,attributeFilter:['hidden','style','class','data-revealed','data-sv-presence','data-sv-space','data-sv-typing']});
    }
-   // Some Safari layout/animation changes move a node without resizing it
-   // or mutating its own attributes. Reconcile the actual bounds only while
-   // the temporary Home card is open; close() always clears this watcher.
-   homeLayoutWatch=setInterval(scheduleHomePosition,160);
   }
   resetTimer();
   panel.addEventListener('pointerdown',resetTimer,{passive:true});
