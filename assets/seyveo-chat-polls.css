@@ -106,6 +106,8 @@
 /* One standalone conversation card, no nested bright-blue/green message surface. */
 #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-poll{
  display:block!important;box-sizing:border-box!important;
+ /* A poll is one complete feed item, never a shrinking flex spacer. */
+ flex:0 0 auto!important;height:auto!important;max-height:none!important;
  width:min(91%,365px)!important;max-width:min(91%,365px)!important;
  min-width:0!important;min-height:0!important;
  margin:4px 0!important;padding:0 0 20px!important;
@@ -227,6 +229,7 @@
 /* Family chat: same poll controls, but its own local storage and only real voter "Я". */
 #seyveoFamilyDialog .svf-msg.is-poll{
  box-sizing:border-box!important;
+ flex:0 0 auto!important;height:auto!important;max-height:none!important;
  width:min(96%,365px)!important;max-width:min(96%,365px)!important;
  min-width:0!important;margin:6px 0!important;padding:0 0 19px!important;
  background:transparent!important;border:0!important;border-radius:0!important;
@@ -741,7 +744,7 @@ html body :is(#svcpWorkChatScreen,#seyveoFamilyDialog) .sv-poll-title-row{
  width:max-content!important;
  max-width:100%!important;
  min-width:0!important;
- height:44px!important;
+ height:auto!important;min-height:44px!important;
  padding:0!important;
  margin:0 0 3px!important;
  position:relative!important;
