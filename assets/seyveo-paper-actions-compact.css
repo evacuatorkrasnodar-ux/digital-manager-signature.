@@ -301,11 +301,17 @@ html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] >
 html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > #notePaperStage > #notePaperSheet.paper-sheet{
  position:absolute!important;inset:auto!important;
  top:var(--sv-scan-top,0px)!important;left:var(--sv-scan-left,0px)!important;
- width:var(--sv-scan-width,100%)!important;height:var(--sv-scan-height,100%)!important;
- max-width:none!important;max-height:none!important;
+ /* Lock both axes to the calculated uniform scale. Old studio rules
+    otherwise enforce min-height/min-width:100%, stretching short scans. */
+ width:var(--sv-scan-width,1px)!important;height:var(--sv-scan-height,1px)!important;
+ min-width:var(--sv-scan-width,1px)!important;max-width:var(--sv-scan-width,1px)!important;
+ min-height:var(--sv-scan-height,1px)!important;max-height:var(--sv-scan-height,1px)!important;
+ flex:none!important;align-self:start!important;aspect-ratio:auto!important;
  background:transparent!important;background-image:none!important;overflow:visible!important;
 }
 html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] #notePaperPhotoPreview:not([hidden]){
+ object-fit:contain!important;max-width:none!important;max-height:none!important;
+ min-width:0!important;min-height:0!important;
  outline:1px solid #d5d9df!important;border-radius:1px!important;
  box-shadow:0 2px 8px rgba(31,42,55,.08),0 1px 2px rgba(31,42,55,.04)!important;
 }
@@ -320,4 +326,11 @@ html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] >
  min-width:44px!important;min-height:44px!important;margin:0!important;padding:0 4px!important;
  border:0!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;color:#176ab4!important;
  font:550 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+
+/* Keep the two tool rows compact instead of inheriting fullscreen toolbar
+   height. The document begins below the toolbar, not halfway down the stage. */
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page[open] > .sv-paper-top{
+ height:auto!important;min-height:0!important;max-height:none!important;
+ align-content:start!important;
 }
