@@ -388,3 +388,26 @@ html[data-theme="dark"] body #noteScanDialog .paper-scan-actions #noteScanToText
 html[data-theme="dark"] body #noteScanDialog #noteScanRecognize:not(:disabled){background:#29292d!important;color:#f7f7f8!important;border-color:#3d3d42!important;}
 html body #noteScanDialog #noteScanRecognize:disabled{box-shadow:none!important;}
 html body #noteScanDialog[data-step="photo"] #noteScanStatus{text-align:center!important;}
+
+/* Saved documents return to the scanner, not the art studio. Allow explicit
+   annotation before OCR, without offering replacement of the saved original. */
+html:root body #noteScanDialog[data-saved-scan="true"] :is(.paper-scan-inputs,#svNoteScanExample){
+ display:none!important;
+}
+html:root body #noteScanDialog[data-step="photo"] .paper-scan-actions{
+ display:flex!important;justify-content:center!important;align-items:center!important;
+ margin:4px 0 0!important;padding:0!important;
+ background:transparent!important;box-shadow:none!important;border:0!important;
+}
+html:root body #noteScanDialog[data-step="photo"] .paper-scan-actions #noteScanToText{
+ display:none!important;
+}
+html:root body #noteScanDialog[data-step="photo"] .paper-scan-actions #noteScanToPaper{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-height:44px!important;width:auto!important;padding:0 12px!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+ color:#176ab4!important;
+}
+html:root[data-theme="dark"] body #noteScanDialog[data-step="photo"] .paper-scan-actions #noteScanToPaper{
+ color:#8bc2ff!important;
+}
