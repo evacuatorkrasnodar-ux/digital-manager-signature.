@@ -259,7 +259,7 @@
   const lastUpdate=updatedAt?new Date(updatedAt).toLocaleString('ru-RU',{
    day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'
   }):'';
-  list.querySelectorAll('.sv-agenda-section-heading[data-weather-date]').forEach(heading=>{
+  document.querySelectorAll('#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-weather-date]').forEach(heading=>{
    const badge=heading.querySelector('.sv-agenda-weather');
    if(!badge)return;
    const item=days.get(heading.dataset.weatherDate);
@@ -362,6 +362,7 @@
   window.dispatchEvent(new Event('seyveo:weather-updated'));
   refresh();
   document.addEventListener('seyveo:agenda-rendered',()=>{paint();refresh();});
+  document.addEventListener('seyveo:agenda-pinned-date-changed',paint);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
   document.addEventListener('pointerdown',event=>{
    if(sourcePopover&&!sourcePopover.node.contains(event.target)&&
