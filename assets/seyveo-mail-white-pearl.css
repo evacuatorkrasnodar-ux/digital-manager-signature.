@@ -701,3 +701,22 @@ html:root body #sayviSurfacePage[data-sv-subject="mail"].sv-mail-scrolled :is(.s
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"].sv-mail-scrolled :is(.sv-mail-top-actions,.sv-mail-editor-header,.sv-mail-detail-bar):not([hidden]){
  background:rgba(255,255,255,.96)!important;
 }
+
+/* Mail overview: the account selector and titlebar form one stationary
+   region. Only folders and letters move below the capsule. */
+html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head{
+ display:flow-root!important;position:sticky!important;top:0!important;
+ z-index:30!important;box-sizing:border-box!important;
+ background:var(--bg,#151b20)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head{
+ background:#fff!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-top-actions:not([hidden]){
+ position:relative!important;top:auto!important;
+ background:transparent!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] > #sayviSurfaceBody{
+ scrollbar-width:none;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] > #sayviSurfaceBody::-webkit-scrollbar{display:none}
