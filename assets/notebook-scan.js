@@ -204,7 +204,7 @@ function toPaper(){
  if(!selected){message('Сначала выберите изображение.');return}
  const file=selected;
  dialog.close();
- window.SEYVEO_PAPER?.open();
+ window.SEYVEO_PAPER?.open(null,{scan:true});
  window.SEYVEO_PAPER?.importPhoto(file);
 }
 // Test a real OCR input without needing the camera or gallery.
