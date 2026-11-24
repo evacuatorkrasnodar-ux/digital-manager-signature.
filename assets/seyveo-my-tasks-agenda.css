@@ -1055,24 +1055,17 @@ html[data-sv-weather-mode="true"] #tasksPage #svTasksDateNav
  border:0;background:transparent;overflow:visible;
 }
 #tasksPage #svAgendaPinnedDate{display:none;}
-html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate{
- display:block!important;flex:0 0 auto!important;min-height:34px!important;
- position:relative!important;z-index:2!important;
- margin:0!important;padding:0!important;border:0!important;
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate{display:none!important;}
+/* Day labels belong to their own sections and stick naturally beneath the calendar.
+   No separate overlay: the next day pushes the previous label away. */
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading{
+ display:flex!important;position:sticky!important;top:0!important;z-index:3!important;
+ min-height:34px!important;margin:0!important;padding-block:5px!important;
  background:#fff!important;box-shadow:none!important;
 }
-html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate .sv-agenda-section-heading{
- display:flex!important;position:relative!important;min-height:34px!important;
- padding-block:5px!important;margin:0!important;border:0!important;
- background:transparent!important;box-shadow:none!important;
-}
-html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate .sv-agenda-section-heading::before,
-html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate .sv-agenda-section-heading::after{
- content:none!important;display:none!important;
-}
-html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading{display:none!important;}
-html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList.personal-tasks-list{
- padding-top:0!important;scroll-padding-top:0!important;
+html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading{background:#17191D!important;}
+ html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList.personal-tasks-list{
+ padding-top:0!important;scroll-padding-top:34px!important;
  isolation:isolate;overflow-y:auto!important;
 }
 html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate{
