@@ -841,7 +841,7 @@ function mailView(){
   const refreshAccount=()=>senderButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mailAccount===accountValue)));
   for(const [value,label] of [['personal','Личная'],['business','Рабочая']]){
    const button=create('button','sv-mail-sender-option',label);
-   button.type='button';button.dataset.mailAccount=value;button.disabled=!!original;
+   button.type='button';button.dataset.mailAccount=value;button.disabled=!!original&&['personal','business'].includes(original.account);
    button.addEventListener('click',()=>{if(button.disabled)return;accountValue=value;mailComposeScope=value;refreshAccount();autosaveDraft()});
    senderButtons.push(button);senderOptions.append(button);
   }
