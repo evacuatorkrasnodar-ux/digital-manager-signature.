@@ -2083,3 +2083,32 @@ html body #svcpWorkChatScreen .svcp-native-avatar-host > .svcp-native-avatar.svc
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpMessages > :is(.svcp-bubble,article){
  flex-shrink:0!important;
 }
+
+/* Inbox only: bounded flex chain, one native contact-list scrollport.
+   The existing titlebar, search and filter capsule never participate in
+   the list scroll. Room messages, composer and dock remain untouched. */
+html:root body #svcpWorkChatScreen[data-view="inbox"]:not([hidden]):not(.svcp-history-screen-open){
+ min-height:0!important;overflow:hidden!important;
+}
+html:root body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header{
+ flex:0 0 auto!important;
+}
+html:root body #svcpWorkChatScreen[data-view="inbox"] :is(#svcpWorkChatCanvas,#unifiedTasksChatHost,#seyveoBusinessCommandPage,#svcpChats,#svcpChatDirectory):not([hidden]){
+ min-height:0!important;min-width:0!important;flex:1 1 0!important;
+ max-height:100%!important;overflow:hidden!important;
+}
+html:root body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > :is(#svcpChatFilters,#svcpDirectorySearchBar,.svcp-directory-head):not([hidden]){
+ flex:0 0 auto!important;
+}
+html:root body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > #svcpConversationList{
+ box-sizing:border-box!important;flex:1 1 0!important;min-height:0!important;max-height:none!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch;
+ scrollbar-width:none!important;scroll-behavior:auto;
+ padding-bottom:max(20px,calc(12px + env(safe-area-inset-bottom,0px)))!important;
+ scroll-padding-bottom:max(20px,calc(12px + env(safe-area-inset-bottom,0px)));
+}
+html:root body #svcpWorkChatScreen[data-view="inbox"] #svcpConversationList > :is(.sv-inbox-row-shell,.svcp-directory-item){
+ flex-shrink:0!important;
+}
+html:root body #svcpWorkChatScreen[data-view="inbox"] #svcpConversationList::-webkit-scrollbar{display:none}
