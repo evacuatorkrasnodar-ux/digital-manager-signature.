@@ -584,22 +584,25 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
  background:var(--sv-white-pearl-selected,rgba(255,255,255,.96))!important;
  border:var(--sv-white-pearl-edge)!important;box-shadow:var(--sv-white-pearl-selected-shadow)!important;
 }
-/* Unselected apps stay quiet and white. Selection uses the approved
-   neutral Pearl face, plus a graphite check. The tab capsule is separate. */
+/* Application tiles have their own quiet card material, not the
+   round-button Pearl finish. Selection is a restrained blue tint. */
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{
- background:rgba(255,255,255,.80)!important;background-image:none!important;
- border:1px solid rgba(213,211,209,.58)!important;
- box-shadow:0 1px 3px rgba(82,69,57,.025)!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+ background:rgba(255,255,255,.76)!important;background-image:none!important;
+ border:1px solid rgba(192,201,212,.34)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  transform:none!important;
 }
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"]{
- background:var(--sv-white-pearl-surface)!important;background-image:none!important;
- border:var(--sv-white-pearl-edge)!important;
- box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ background:rgba(219,232,245,.82)!important;background-image:none!important;
+ border:1px solid rgba(145,176,204,.43)!important;
+ box-shadow:none!important;
+}
+html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"] small{
+ background:#507CA8!important;color:#fff!important;
 }
 dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid{
- grid-template-rows:none!important;grid-auto-rows:minmax(70px,1fr)!important;
+ grid-template-rows:none!important;grid-auto-rows:72px!important;
  overflow-y:auto!important;align-content:start!important;
 }
 dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
