@@ -65,6 +65,8 @@
   homeLayoutObserver?.disconnect();homeLayoutObserver=null;
   homeTextObserver?.disconnect();homeTextObserver=null;
   if(homeLayoutFrame){cancelAnimationFrame(homeLayoutFrame);homeLayoutFrame=0;}
+  document.getElementById('svHomeLivingLine')?.removeEventListener('animationend',scheduleHomePosition);
+  document.getElementById('svHomeLivingLine')?.removeEventListener('transitionend',scheduleHomePosition);
   if(activeAnchor)activeAnchor.setAttribute('aria-expanded','false');
   activeAnchor=null;activeDate='';requestedRefresh=false;
   setCalendarWeatherMode(false);
@@ -114,30 +116,39 @@
    if(physicalRoom<180){close(true);return;}
    panel.style.setProperty('--sv-home-peek-room',physicalRoom+'px');
    const height=panel.offsetHeight;
-   const baseTop=Math.min(bottomLimit-height,viewTop+Math.max(42,Math.min(68,viewHeight*.09)));
-   let allowedTop=Math.max(safeTop,baseTop);
-   let allowedBottom=bottomLimit;
-   const visible=el=>{
-    if(!el||el.closest('[hidden]'))return false;
-    if(el.closest('.message')&&document.documentElement.classList.contains('sv-home-greeting-expired'))return false;
-    for(let node=el;node&&node.id!=='homePage';node=node.parentElement){
-     const style=getComputedStyle(node);
-     if(style.display==='none'||style.visibility==='hidden'||Number(style.opacity)<.05)return false;
-    }
-    return true;
-   };
-   const texts=document.querySelectorAll('#homePage .sv-sayvi-home-online,#homePage #headline,#homePage #subline,#svHomeLivingLine,#svHomeLivingLine .sv-home-living-action');
-   for(const el of texts){
-    if(!visible(el))continue;
+   // Center between the actual thought/action and the week, not the
+   // sphere or viewport. The thought's entrance fade is not a layout change.
+   let upperEdge=viewTop+Math.max(42,Math.min(68,viewHeight*.09))-12;
+   const root=document.documentElement;
+   const thought=document.getElementById('svHomeLivingLine');
+   const boxes=[];
+   function reserve(el){
+    if(!el||el.closest('[hidden]')||getComputedStyle(el).display==='none')return;
     const box=el.getBoundingClientRect();
-    if(box.height<=0||box.width<=0||box.top<viewTop||box.bottom>bottomLimit)continue;
-    const after=box.bottom+12;
-    // Prefer the full card below the text. If the thought sits low,
-    // use the free area above it. Never shrink the card to fit a text box.
-    if(after+height<=allowedBottom)allowedTop=Math.max(allowedTop,after);
-    else if(box.top-12-height>=allowedTop)allowedBottom=Math.min(allowedBottom,box.top-12);
+    if(box.height>0&&box.width>0&&box.bottom>viewTop&&box.top<bottomLimit)
+     boxes.push(box);
    }
-   y=allowedTop+Math.max(0,(allowedBottom-allowedTop-height)/2);
+   reserve(document.querySelector('#homePage .sv-sayvi-home-online'));
+   if(!root.classList.contains('sv-home-greeting-expired')&&!root.classList.contains('sv-home-greeting-fading')){
+    reserve(document.getElementById('headline'));
+    reserve(document.getElementById('subline'));
+   }
+   if(thought&&!thought.hidden&&getComputedStyle(thought).display!=='none'){
+    // Measure both the real text face and its action, even at opacity 0
+    // during the entrance. Ignore the invisible expired greeting entirely.
+    reserve(thought.querySelector('.sv-home-living-copy'));
+    reserve(thought.querySelector('.sv-home-living-actions'));
+    reserve(thought.querySelector('.sv-home-living-action'));
+   }
+   // Upper text belongs above the weather card. Ignore lower/off-screen
+   // legacy boxes that cannot possibly leave space for a full card.
+   const latestTop=bottomLimit-height;
+   for(const box of boxes){
+    if(box.bottom+12<=latestTop)upperEdge=Math.max(upperEdge,box.bottom);
+   }
+   const allowedTop=Math.min(latestTop,Math.max(safeTop,upperEdge+12));
+   y=allowedTop+Math.max(0,(bottomLimit-allowedTop-height)/2);
+
   }else{
    /* Agenda keeps its own central placement below the date rail. */
    const desiredTop=viewTop+(viewHeight-bounds.height)/2;
@@ -385,6 +396,8 @@
    scheduleHomePosition();
    const thought=document.getElementById('svHomeLivingLine');
    const message=document.querySelector('#homePage #stage > .message');
+   thought?.addEventListener('animationend',scheduleHomePosition);
+   thought?.addEventListener('transitionend',scheduleHomePosition);
    if(typeof ResizeObserver==='function'){
     homeLayoutObserver=new ResizeObserver(scheduleHomePosition);
     for(const node of [activeAnchor,thought,message])if(node)homeLayoutObserver.observe(node);
@@ -392,6 +405,7 @@
    if(typeof MutationObserver==='function'){
     homeTextObserver=new MutationObserver(scheduleHomePosition);
     for(const node of [thought,message])if(node)homeTextObserver.observe(node,{attributes:true,subtree:true,childList:true,characterData:true,attributeFilter:['hidden','style','class','data-revealed','data-sv-presence','data-sv-space','data-sv-typing']});
+    homeTextObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
    }
   }
   resetTimer();
