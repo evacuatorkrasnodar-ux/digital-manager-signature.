@@ -1116,7 +1116,7 @@ function mailView(){
    }),more);
   }
   heading.append(backButton,opts);
-  panel.append(heading,create('span','sv-mail-account-tag',mailAccountName(item.account)),create('h2','sv-mail-detail-title',item.subject));
+  panel.append(heading,create('h2','sv-mail-detail-title',item.subject));
   const addMenuAction=(icon,label,callback)=>{
    const control=create('button','sv-mail-message-menu-item');control.type='button';
    control.append(mailIcon(icon),create('span','',label));
@@ -1156,7 +1156,9 @@ function mailView(){
   const person=create('div','sv-mail-detail-person');
   person.append(tintMailAvatar(create('span','sv-mail-avatar',item.initial),item));
   const who=create('div','sv-mail-detail-who');
-  who.append(create('strong','',item.from),create('span','',item.when+' · образец письма'));
+  const senderMeta=create('div','sv-mail-detail-sender-meta');
+  senderMeta.append(create('span','',''+item.when+' · образец письма'),create('span','sv-mail-account-tag',mailAccountName(item.account)));
+  who.append(create('strong','',item.from),senderMeta);
   person.append(who);panel.append(person);
 
   const inspectButton=create('button','sv-mail-inspect-trigger');
@@ -1183,7 +1185,11 @@ function mailView(){
    inspectButton.setAttribute('aria-expanded',String(!inspectPanel.hidden));
   });
   panel.append(inspectButton,inspectPanel);
-  const message=create('p','sv-mail-detail-text',item.body);panel.append(message);
+  const message=create('div','sv-mail-detail-text');
+  for(const paragraph of String(item.body??'').split(/\r?\n(?:[\t ]*\r?\n)+/)){
+   message.append(create('p','sv-mail-detail-paragraph',paragraph));
+  }
+  panel.append(message);
   if(item.attachment){
    const example=create('div','sv-mail-attachment');
    example.append(mailIcon('paperclip'),create('span','','Образец письма · настоящее вложение отсутствует'));
