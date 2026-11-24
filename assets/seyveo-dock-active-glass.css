@@ -16,12 +16,10 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
  width:var(--sv-indicator-size,52px)!important;
  height:var(--sv-indicator-size,52px)!important;
  border-radius:50%!important;
- border:1px solid rgba(255,255,255,.30)!important;
- background:radial-gradient(circle at 50% 38%,
-   rgba(var(--sv-selected-glow,10,132,255),.12),transparent 76%),
-   linear-gradient(180deg,rgba(116,126,145,.13),rgba(96,109,129,.11))!important;
- box-shadow:inset 0 1.5px 3px rgba(31,42,58,.12),
-            inset 0 -1px 1px rgba(255,255,255,.32)!important;
+ border:var(--sv-inset-rim,1px solid rgba(255,255,255,.65))!important;
+ background:var(--sv-inset-fill,rgba(231,234,238,.66))!important;
+ box-shadow:inset 0 1.5px 2.4px rgba(31,42,58,.10),
+            inset 0 -1px 1px rgba(255,255,255,.65)!important;
  -webkit-backdrop-filter:blur(7px) saturate(110%)!important;
  backdrop-filter:blur(7px) saturate(110%)!important;
  opacity:0!important;
@@ -71,7 +69,7 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
 }
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"] footer.dock.sv-shared-dock > .sv-dock-active-indicator{
-  background:rgba(150,155,172,.17)!important;
+  background:#EDEEF0!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
@@ -79,9 +77,9 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
 /* Approved recessed selected state stays intact. Only the extra inward
    travel while a finger is held is reduced to a quiet, tactile microstep. */
 :root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock) > .sv-dock-active-indicator{
- box-shadow:inset 0 2.1px 3.2px rgba(31,42,58,.17),
-            inset 0 -1px .75px rgba(255,255,255,.47),
-            inset 0 0 0 .45px rgba(31,42,58,.055)!important;
+ box-shadow:inset 0 1.5px 2.4px rgba(31,42,58,.10),
+            inset 0 -1px 1px rgba(255,255,255,.65),
+            inset 0 0 0 .45px rgba(31,42,58,.035)!important;
  transition:transform 360ms cubic-bezier(.22,1,.36,1),
    width 360ms cubic-bezier(.22,1,.36,1),height 360ms cubic-bezier(.22,1,.36,1),
    top 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease,
@@ -90,9 +88,9 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
 :root[data-theme="light"] footer.dock.sv-shared-dock.sv-dock-indicator-pressing > .sv-dock-active-indicator{
  --sv-indicator-depth:.28px;
  --sv-indicator-scale:.992;
- box-shadow:inset 0 2.5px 3.4px rgba(31,42,58,.19),
-            inset 0 -1.05px .8px rgba(255,255,255,.49),
-            inset 0 0 0 .47px rgba(31,42,58,.06)!important;
+ box-shadow:inset 0 1.9px 2.7px rgba(31,42,58,.13),
+            inset 0 -1px 1px rgba(255,255,255,.65),
+            inset 0 0 0 .45px rgba(31,42,58,.04)!important;
  transition:transform 135ms ease-out,width 360ms cubic-bezier(.22,1,.36,1),
    height 360ms cubic-bezier(.22,1,.36,1),top 360ms cubic-bezier(.22,1,.36,1),
    opacity 200ms ease,box-shadow 135ms ease-out!important;
@@ -104,8 +102,8 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
 /* Search gets the same tiny touch movement; its open/recessed state is kept. */
 :root[data-theme="light"]:not(.sv-global-search-open) footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock) > #navManage#navManage:active{
  transform:translateY(.2px) scale(.992)!important;
- box-shadow:inset 0 1.8px 2.7px rgba(31,42,58,.16),
-            inset 0 -1px 1px rgba(255,255,255,.38)!important;
+ box-shadow:inset 0 1.5px 2.4px rgba(31,42,58,.10),
+            inset 0 -1px 1px rgba(255,255,255,.65)!important;
  transition:transform 135ms ease-out,box-shadow 135ms ease-out!important;
 }
 @media(prefers-reduced-motion:reduce){
