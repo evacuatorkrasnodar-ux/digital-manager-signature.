@@ -120,7 +120,9 @@ function createEntry(item){
  const callTarget=item.source==='task'&&!item.done?window.SEYVEO_CONTACTS?.taskTarget?.(item.title)||'':'';
  const clock=text('span','cal-entry-time');
  if(item.source==='task'){
-  clock.append(text('i','cal-entry-bullet'));btn.dataset.calendarTask=item.id;
+  if(mode==='month'&&monthLayout==='list'&&item.time)clock.textContent=item.time;
+  else clock.append(text('i','cal-entry-bullet'));
+  btn.dataset.calendarTask=item.id;
   if(callTarget){
    btn.dataset.calendarCall=callTarget;
    btn.setAttribute('aria-label','Подготовить звонок: '+callTarget);
