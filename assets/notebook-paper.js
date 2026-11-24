@@ -869,6 +869,65 @@ const nativeColorInput=$('notePaperNativeColor');
 const colorMenu=$('notePaperColorMenu');
 const colorDot=$('notePaperColorDot');
 const colorChoices=Array.from(dialog.querySelectorAll('[data-paper-color]'));
+// A finite window of real swatches replaces the old composited scroll viewport.
+// No overflow clipping, end cap, mask or white cover behind the confirmation.
+const paperColorStrip=dialog.querySelector('.sv-paper-color-strip');
+const paperStripColors=paperColorStrip?Array.from(paperColorStrip.querySelectorAll('button[data-paper-color]')):[];
+let paperStripStart=0,paperStripCount=6;
+function layoutPaperColors(reset=false){
+ if(!paperColorStrip||!paperStripColors.length||!paperColorStrip.clientWidth)return;
+ const cap=Number(getComputedStyle(paperColorStrip).getPropertyValue('--sv-color-slots'))||8;
+ paperStripCount=Math.max(1,Math.min(cap,Math.floor(paperColorStrip.clientWidth/30),paperStripColors.length));
+ paperStripStart=reset?0:Math.max(0,Math.min(paperStripStart,paperStripColors.length-paperStripCount));
+ paperColorStrip.style.setProperty('--sv-visible-count',String(paperStripCount));
+ paperStripColors.forEach((button,index)=>{button.hidden=index<paperStripStart||index>=paperStripStart+paperStripCount;});
+}
+function movePaperColors(delta){
+ const next=Math.max(0,Math.min(paperStripStart+delta,paperStripColors.length-paperStripCount));
+ if(next===paperStripStart)return;
+ paperStripStart=next;layoutPaperColors();
+}
+if(paperColorStrip){
+ let pointer=null,swiped=false,lastWheel=0;
+ paperColorStrip.addEventListener('pointerdown',event=>{
+  if(!event.isPrimary||event.button!==0)return;
+  pointer={id:event.pointerId,x:event.clientX,y:event.clientY};swiped=false;
+ });
+ paperColorStrip.addEventListener('pointermove',event=>{
+  if(!pointer||pointer.id!==event.pointerId||swiped)return;
+  const dx=event.clientX-pointer.x,dy=event.clientY-pointer.y;
+  if(Math.abs(dx)<24||Math.abs(dx)<Math.abs(dy)*1.25)return;
+  swiped=true;
+  try{paperColorStrip.setPointerCapture(event.pointerId)}catch{}
+  movePaperColors(dx<0?1:-1);
+ });
+ const finish=event=>{if(pointer?.id===event.pointerId)pointer=null;};
+ paperColorStrip.addEventListener('pointerup',finish);
+ paperColorStrip.addEventListener('pointercancel',finish);
+ paperColorStrip.addEventListener('lostpointercapture',finish);
+ paperColorStrip.addEventListener('click',event=>{
+  if(swiped&&event.detail!==0){event.preventDefault();event.stopImmediatePropagation();swiped=false;}
+ },true);
+ paperColorStrip.addEventListener('wheel',event=>{
+  const delta=Math.abs(event.deltaX)>Math.abs(event.deltaY)?event.deltaX:event.deltaY;
+  if(!delta)return;
+  event.preventDefault();
+  if(event.timeStamp-lastWheel<110&&lastWheel)return;
+  lastWheel=event.timeStamp;movePaperColors(delta>0?1:-1);
+ },{passive:false});
+ paperColorStrip.addEventListener('keydown',event=>{
+  const index=paperStripColors.indexOf(event.target);
+  if(index<0||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+  event.preventDefault();
+  const next=event.key==='Home'?0:event.key==='End'?paperStripColors.length-1:Math.max(0,Math.min(index+(event.key==='ArrowRight'?1:-1),paperStripColors.length-1));
+  if(next<paperStripStart)paperStripStart=next;
+  if(next>=paperStripStart+paperStripCount)paperStripStart=next-paperStripCount+1;
+  layoutPaperColors();paperStripColors[next]?.focus({preventScroll:true});
+ });
+ if(typeof ResizeObserver==='function')new ResizeObserver(()=>layoutPaperColors()).observe(paperColorStrip);
+ window.addEventListener('resize',()=>{if(dialog.open)layoutPaperColors();});
+}
+
 const gradientPresets=[...dialog.querySelectorAll('[data-paper-gradient]')];
 const gradientColorStart=$('noteGradientStartColor'),gradientColorEnd=$('noteGradientEndColor');
 const gradientHexStart=$('noteGradientStartHex'),gradientHexEnd=$('noteGradientEndHex');
@@ -1037,8 +1096,7 @@ function open(note=null){
  requestAnimationFrame(()=>{
   // Start each sheet at the beginning of the seamless palette: the white
   // swatch must be fully visible beside (not underneath) the gradient picker.
-  const swatches=dialog.querySelector('.sv-paper-color-strip');
-  if(swatches)swatches.scrollLeft=0;
+  layoutPaperColors(true);
   fitPaper();render();
  });
 }
