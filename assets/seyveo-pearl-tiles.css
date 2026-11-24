@@ -4,11 +4,11 @@
  * Circular controls, docks, switches, message bubbles and intentionally graphite
  * workspaces are outside this standard. */
 :root[data-theme="light"]{
- --sv-tile-surface:rgba(255,255,255,.76);
- --sv-tile-edge:rgba(192,201,212,.34);
+ --sv-tile-surface:var(--sv-white-pearl-surface);
+ --sv-tile-edge:var(--sv-white-pearl-rim-color);
  --sv-tile-selected:rgba(219,232,245,.82);
  --sv-tile-selected-edge:rgba(145,176,204,.43);
- --sv-tile-ink:#252a33;
+ --sv-tile-ink:var(--sv-white-pearl-ink);
  --sv-tile-radius:16px;
 }
 html:root[data-theme="light"] body :is(
@@ -89,6 +89,6 @@ html:root[data-theme="light"] body :is(
 ):disabled{opacity:.45!important}
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"]{
-  --sv-tile-surface:#fff;--sv-tile-selected:#e0ebf5;
+  --sv-tile-surface:var(--sv-white-pearl-surface);--sv-tile-selected:#e0ebf5;
  }
 }
