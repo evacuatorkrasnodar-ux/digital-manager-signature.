@@ -1017,7 +1017,7 @@
 /* The new assistant emblem is artwork inside the existing 50px button. */
 :root[data-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"],
 #seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"]{
- background-image:url('./seyveo-potok.svg?v=4')!important;
+ background-image:var(--sv-sayvi-mark-image, url('./seyveo-sayvi-user-upload.svg?v=3'))!important;
  background-position:center!important;
  background-size:100% 100%!important;
  background-repeat:no-repeat!important;
@@ -1367,12 +1367,12 @@
  }
 }
 
-/* The ribbon SVG applies to every present and future Card Engine family. */
+/* Keep original jade/platinum colors in both themes. */
 :root[data-theme="dark"] .sv-card-system--rendered img.sv-card-potok,
 :root[data-theme="dark"] .sv-card-system--rendered img.sv-potok-symbol,
 #seyveoCardStudio [data-preview-theme="dark"] img.sv-card-potok,
 #seyveoCardStudio [data-preview-theme="dark"] img.sv-potok-symbol{
- filter:invert(1)!important;
+ filter:none!important;
 }
 @media(max-width:365px){
  .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
