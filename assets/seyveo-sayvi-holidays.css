@@ -1,0 +1,9 @@
+/* Holiday mode targets Sayvi only. Other avatars, glass, dock and themes untouched. */
+html[data-sv-sayvi-holiday] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="dm-sayvi"] > .svcp-identity-v2 #svcpRoomAvatar,
+html[data-sv-sayvi-holiday] body #svcpWorkChatScreen :is(.svcp-directory-avatar,.sv-inbox-contact-avatar).is-sayvi{
+ background-image:var(--sv-sayvi-holiday-art)!important;
+ background-position:center!important;background-size:contain!important;background-repeat:no-repeat!important;
+ background-color:transparent!important;
+}
+html[data-sv-sayvi-holiday] body #svcpWorkChatScreen :is(.svcp-directory-avatar,.sv-inbox-contact-avatar).is-sayvi > .sv-sayvi-symbol{visibility:hidden!important}
+html body #svcpWorkChatScreen .sv-sayvi-holiday-select{font:inherit;color:inherit;max-width:100%;width:100%;box-sizing:border-box;padding:12px;border:1px solid var(--sv-white-pearl-rim-color,#ddd);border-radius:14px;background:var(--sv-white-pearl-surface,#f7f7f8)}

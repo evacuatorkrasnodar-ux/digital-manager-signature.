@@ -80,12 +80,12 @@ const AVATAR_3D=[
  ['Лисёнок','Мультики'],['Девочка','Мультики'],['Виноград','Фрукты'],['Клубника','Фрукты'],
  ['Персик','Фрукты'],['Яблоко','Фрукты'],['В очках','Мультики'],['Сердечки','Мультики']
 ];
-AVATAR_3D.push(...(window.SEYVEO_AVATAR_ART?.catalog||[]));
+AVATAR_3D.push(...(window.SEYVEO_AVATAR_ART?.catalog||[]),...(window.SEYVEO_SAYVI_HOLIDAY?.catalog||[]));
 /* Saved avatar IDs remain stable across collection upgrades. */
 const OWNER_AVATAR_KEY='seyveo-owner-avatar-v1',STAFF_AVATAR_KEY='seyveo-self-identity-avatar-v1';
 function atlasMark(index){
  const m=node('span','sv-atlas-thumb');
- if(!window.SEYVEO_AVATAR_ART?.paint(m,index))m.style.backgroundPosition=`${(index%4)*100/3}% ${Math.floor(index/4)*50}%`;
+ if(!window.SEYVEO_SAYVI_HOLIDAY?.paint(m,index)&&!window.SEYVEO_AVATAR_ART?.paint(m,index))m.style.backgroundPosition=`${(index%4)*100/3}% ${Math.floor(index/4)*50}%`;
  m.setAttribute('aria-hidden','true');
  return m;
 }
@@ -194,7 +194,7 @@ function showAvatarEditor(){
  }
  const categoryButtons=[];
  for(const [key,label] of [['all','Все'],['emoji','Эмодзи'],['people','Персонажи'],['animals','Животные'],['fantasy','Фантазия'],['sayvi','Сэйви']]){
-  if(key==='sayvi'&&AVATAR_3D.length<=76)continue;
+  if(key==='sayvi'&&!window.SEYVEO_SAYVI_HOLIDAY?.ready)continue;
   const b=node('button','sv-avatar-category',label);b.type='button';b.dataset.category=key;
   b.setAttribute('aria-pressed',String(key==='all'));
   b.addEventListener('click',()=>{category=key;paint()});categoryBar.append(b);categoryButtons.push(b);
@@ -210,6 +210,7 @@ function showAvatarEditor(){
   btn.dataset.mode=mode;tabs.append(btn);btns.push(btn);
  }
  for(let i=0;i<AVATAR_3D.length;i++){
+  if(i>=76&&!window.SEYVEO_SAYVI_HOLIDAY?.ready)continue;
   const choice=node('button','sv-new-avatar-choice');choice.type='button';
   choice.dataset.index=String(i);
   choice.dataset.category=avatarCategory(i);
@@ -716,6 +717,15 @@ function showSettings(){
  avatarEntry.prepend(avatarThumb);
  sectionHeading('Темы чатов');
  body.append(makeChatWallpapers());
+ const holiday=window.SEYVEO_SAYVI_HOLIDAY;
+ if(holiday?.ready){
+  sectionHeading('Настроение Сэйви');
+  const select=node('select','sv-sayvi-holiday-select');select.setAttribute('aria-label','Настроение Сэйви');
+  for(const [value,label] of [['auto','Автоматически по праздникам'],['off','Обычный значок'],...holiday.variants]){
+   const option=node('option',null,label);option.value=value;select.append(option);
+  }
+  select.value=holiday.mode;select.addEventListener('change',()=>holiday.setMode(select.value));body.append(select);
+ }
  sectionHeading('Сообщения');
  menuLink('Уведомления','Непрочитанные и тихие чаты','bell',()=>openSubSheet('notifications','settings'));
  // Quiet discovery for the owner only; never mix personal content with work data.
