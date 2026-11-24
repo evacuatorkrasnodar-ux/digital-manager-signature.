@@ -8,7 +8,7 @@ const dialog=$('noteScanDialog');if(!dialog)return;
 const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanText'),
  button=$('noteScanRecognize');
 let selected=null,localURL='',running=false,session=0,loading=null,consented=false,intoOpenNote=false;
-let leavingForDocs=false,editingScanText=false;
+let leavingForDocs=false,editingScanText=false,markPreviewURL='';
 let savedScan=null,menuPage='root',exportBusy=false,outputIntent='',preparedFile=null,preparedURL='';
 const consentBox=$('noteScanConsent'),keepLines=$('noteScanKeepLines');
 const toPaperButton=$('noteScanToPaper'),toTextButton=$('noteScanToText'),
@@ -219,7 +219,7 @@ more.addEventListener('click',()=>{
  menu.hidden=false;more.setAttribute('aria-expanded','true');
  (menu.querySelector('button:not(:disabled)')||more).focus({preventScroll:true});
 });
-menuOCR.addEventListener('click',()=>{closeMenu(true);button.click();});
+menuOCR.addEventListener('click',()=>{closeMenu(true);if(savedScan){openTextEditor();if(text.value.trim())return;}button.click();});
 menuLines.addEventListener('click',()=>{if(keepLines)keepLines.click();syncMenu();});
 dialog.addEventListener('click',event=>{
  if(!menu.hidden&&!menu.contains(event.target)&&!more.contains(event.target))closeMenu();
@@ -308,7 +308,7 @@ function textInOriginalLines(data){
 }
 window.SEYVEO_SCANNER_FORMAT=Object.freeze({cleanPhoneHeader,textInOriginalLines});
 function message(s){status.textContent=s||''}
-function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}}
+function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}if(markPreviewURL){URL.revokeObjectURL(markPreviewURL);markPreviewURL=''}}
 function reset(){
  clearPrepared();outputIntent='';editingScanText=false;delete dialog.dataset.editScanText;savedScan=null;delete dialog.dataset.savedScan;$('noteScanTitle').textContent='Сканировать';
  selected=null;consented=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
@@ -331,6 +331,13 @@ function openSaved(note,options={}){
   if(typeof original.scanText==='string')text.value=original.scanText;
   message('');syncMenu();
   if(options.editText)openTextEditor();
+  if(original.paper.strokes?.length||original.paper.texts?.length){
+   const token=session;
+   Promise.resolve(window.SEYVEO_PAPER?.scanAnnotationImage?.(original)).then(canvas=>canvas?canvasJpeg(canvas):null).then(blob=>{
+    if(!blob||!dialog.open||session!==token)return;
+    markPreviewURL=URL.createObjectURL(blob);preview.src=markPreviewURL;
+   }).catch(()=>{if(dialog.open&&session===token)message('Не удалось показать пометки. Оригинал сохранён.');});
+  }
   if(options.exportPDF)void prepareFormat('annotated');
   return true;
  }catch{if(dialog.open)dialog.close();return false;}
@@ -506,6 +513,7 @@ $('noteScanCancel').addEventListener('click',cancel);
 $('noteScanToText').addEventListener('click',toNote);
 $('noteScanToPaper').addEventListener('click',toPaper);
 $('noteScanBack').addEventListener('click',cancel);
+dialog.addEventListener('cancel',event=>{if(editingScanText){event.preventDefault();cancel();}});
 dialog.addEventListener('close',()=>{
  const handoff=leavingForDocs;leavingForDocs=false;
  session++;reset();intoOpenNote=false;
