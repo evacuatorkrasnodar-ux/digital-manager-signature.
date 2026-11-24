@@ -138,6 +138,8 @@
   renderManager(items,settings);
  }
  function renderManager(items,settings){
+  const hours=$('svStaffShiftHours');if(hours)hours.textContent=settings.start+'–'+settings.end;
+  const preview=$('svStaffWeekPreview');if(preview){preview.replaceChildren();['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].forEach((name,i)=>{const day=el('span','sv-staff-week-day',name);day.dataset.work=String(settings.days.includes((i+1)%7));day.setAttribute('aria-label',name+': '+(day.dataset.work==='true'?'смена':'выходной'));preview.append(day)});}
   if(manager.hidden)return;
   const dateInput=$('svcpManagerDayStart'),endInput=$('svcpManagerDayEnd');
   if(dateInput&&document.activeElement!==dateInput)dateInput.value=settings.start;

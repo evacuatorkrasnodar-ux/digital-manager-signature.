@@ -952,6 +952,8 @@
    button.setAttribute('aria-pressed',String(button.dataset.svstaffTab===tab));
   });
   if(staffTabs)staffTabs.dataset.active=tab;
+  if(staffReveal)staffReveal.dataset.staffTab=tab;
+  const scroller=$('svcpManagerPeopleScroll');if(scroller)scroller.scrollTop=0;
  }
  staffTabs?.addEventListener('click',event=>{
   const button=event.target.closest('[data-svstaff-tab]');
@@ -988,6 +990,10 @@
   const notice=$('svStaffInviteNotice'),button=$('svStaffInvite');if(!notice)return;
   notice.hidden=!notice.hidden;button.setAttribute('aria-expanded',String(!notice.hidden));
   if(!notice.hidden){const scroller=$('svcpManagerPeopleScroll');if(scroller)scroller.scrollTop=0;}
+ });
+ $('svStaffInviteDismiss')?.addEventListener('click',()=>{
+  const notice=$('svStaffInviteNotice');if(notice)notice.hidden=true;
+  $('svStaffInvite')?.setAttribute('aria-expanded','false');
  });
  staffReveal?.addEventListener('close',()=>{
   const notice=$('svStaffInviteNotice');if(notice)notice.hidden=true;

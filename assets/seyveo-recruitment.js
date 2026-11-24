@@ -8,10 +8,20 @@ const $=s=>root.querySelector(s);
 const el=(tag,cls,text)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x};
 const initial=()=>({vacancies:[],candidates:[]});
 function load(){try{const p=JSON.parse(localStorage.getItem(STORE)||'null');return p&&Array.isArray(p.vacancies)&&Array.isArray(p.candidates)?p:initial()}catch{return initial()}}
+const example=()=>({vacancies:[
+{id:'demo-v1',title:'Менеджер по продажам',city:'Краснодар',criteria:['Работа с клиентами','Ведение CRM','Подготовка предложений']},
+{id:'demo-v2',title:'Кассир',city:'Краснодар',criteria:['Работа с кассой','Обслуживание покупателей']}
+],candidates:[
+{id:'demo-c1',name:'Алексей Примеров',vacancyId:'demo-v1',source:'Учебный отклик',evidence:'В вымышленном резюме указаны работа с клиентами и ведение CRM.',stage:'Собеседование'},
+{id:'demo-c2',name:'Мария Демова',vacancyId:'demo-v2',source:'Учебный отклик',evidence:'В вымышленном резюме указан опыт работы с кассой.',stage:'Проверить опыт'},
+{id:'demo-c3',name:'Илья Образцов',vacancyId:'demo-v1',source:'Учебный отклик',evidence:'В вымышленном резюме указана подготовка предложений.',stage:'Новый'}
+]});
 let state=load();
-root.innerHTML=`<div class="svrec-head"><div><h3 class="svrec-title">Подбор персонала</h3><p class="svrec-desc">Вакансии, кандидаты и решения руководителя</p></div><span class="svrec-state">На этом устройстве</span></div>
+let demo=!state.vacancies.length&&!state.candidates.length;
+if(demo)state=example();
+root.innerHTML=`<div class="svrec-head"><div><h3 class="svrec-title">Подбор персонала</h3><p class="svrec-desc">Вакансии, кандидаты и решения руководителя</p></div><button type="button" class="svrec-mode" id="svrecMode" aria-pressed="false"></button></div>
 <div class="svrec-stats" aria-label="Состояние подбора"><div class="svrec-stat"><strong id="svrecVacancies">0</strong><small>Вакансий</small></div><div class="svrec-stat"><strong id="svrecCandidates">0</strong><small>Кандидатов</small></div><div class="svrec-stat"><strong id="svrecInterviews">0</strong><small>Интервью</small></div></div>
-<p class="svrec-status" id="svrecStatus" role="status" aria-live="polite">Сэйви поможет подготовить вакансию. Решение о найме принимает руководитель.</p>
+<div class="svrec-advice"><div class="svrec-advice-head"><span class="sv-sayvi-symbol" aria-hidden="true"></span><strong>Сэйви</strong></div><p class="svrec-status" id="svrecStatus" role="status" aria-live="polite">Сэйви поможет подготовить вакансию. Решение о найме принимает руководитель.</p></div><p id="svrecDemoNote" class="svrec-small" hidden>Все имена и отклики вымышлены. Изменения в примере не записываются в реальный подбор.</p>
 <section class="svrec-section"><div class="svrec-section-head"><h4 class="svrec-section-title">01 · Вакансия</h4></div>
 <form id="svrecVacancyForm" class="svrec-grid"><label class="svrec-field">Кого ищем<input name="title" maxlength="90" placeholder="Например, кассир" required></label><label class="svrec-field">Город<input name="city" maxlength="90" placeholder="Краснодар"></label><label class="svrec-field wide">Требования по работе<textarea name="criteria" maxlength="1200" required placeholder="По одному требованию с новой строки: опыт с кассой, работа с покупателями…"></textarea></label><div class="svrec-actions svrec-field wide"><button class="svrec-button primary" type="submit">Создать вакансию</button></div></form>
 <div id="svrecVacancyList" class="svrec-candidates"></div>
@@ -40,9 +50,13 @@ sections.forEach((section,i)=>{
  fold.append(summary,section);
 });
 function sayvi(message){$('#svrecStatus').textContent='Сэйви: '+message;}
-function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));return true}catch{sayvi('Не удалось сохранить изменения в браузере. Проверь свободное место.');return false}}
+function persist(){if(demo)return true;try{localStorage.setItem(STORE,JSON.stringify(state));return true}catch{sayvi('Не удалось сохранить изменения в браузере. Проверь свободное место.');return false}}
 function cardTitle(parent,title,sub){const h=el('div','svrec-cardhead'),name=el('div');name.append(el('strong',null,title),el('small',null,sub));h.append(name);parent.append(h);return h}
 function render(){
+ $('#svrecMode').textContent=demo?'Пример · выйти':'Показать пример';
+ $('#svrecMode').setAttribute('aria-pressed',String(demo));
+ $('#svrecDemoNote').hidden=!demo;
+ $('#svrecClear').textContent=demo?'Сбросить учебный пример':'Очистить локальный подбор';
  $('#svrecVacancies').textContent=String(state.vacancies.length);
  $('#svrecCandidates').textContent=String(state.candidates.length);
  $('#svrecInterviews').textContent=String(state.candidates.filter(x=>x.stage==='Собеседование').length);
@@ -66,13 +80,13 @@ function render(){
   const stages=el('div','svrec-pipeline');
   STAGES.forEach(stage=>{
    const b=el('button','svrec-stage',stage);b.type='button';b.setAttribute('aria-pressed',String(c.stage===stage));
-   b.addEventListener('click',()=>{c.stage=stage;if(!persist())return;render();sayvi('Этап «'+stage+'» сохранён локально. Это не сообщение кандидату и не решение о найме.');});
+   b.addEventListener('click',()=>{c.stage=stage;if(!persist())return;render();sayvi('Этап «'+stage+'» изменён. Это не сообщение кандидату и не решение о найме.');});
    stages.append(b);
   });
   card.append(stages);
   const remove=el('button','svrec-button','Удалить данные кандидата');remove.type='button';remove.addEventListener('click',()=>{
    if(!confirm('Удалить локальную запись кандидата?'))return;
-   state.candidates=state.candidates.filter(x=>x.id!==c.id);if(persist()){render();sayvi('Локальная запись удалена.');}
+   state.candidates=state.candidates.filter(x=>x.id!==c.id);if(persist()){render();sayvi('Запись удалена.');}
   });card.append(remove);out.append(card);
  });
 }
@@ -108,9 +122,16 @@ $('#svrecCandidateForm').addEventListener('submit',e=>{
  state.candidates.push(item);if(!persist()){state=load();return}form.reset();render();
  sayvi('Появился кандидат '+name+'. Я подготовила разбор профессиональных требований ниже. Уточни непроверенные сведения перед собеседованием.');
 });
+$('#svrecMode').addEventListener('click',()=>{
+ demo=!demo;state=demo?example():load();
+ $('#svrecVacancyForm').reset();$('#svrecCandidateForm').reset();render();
+ sayvi(demo?'Учебный подбор: два рабочих места и три вымышленных отклика. Попробуй менять этапы.':'Рабочие записи на этом устройстве. Решение о найме принимает руководитель.');
+});
 $('#svrecClear').addEventListener('click',()=>{
+ if(demo){state=example();render();sayvi('Учебный пример восстановлен. Рабочие записи не изменены.');return;}
  if(!confirm('Удалить все вакансии и записи кандидатов из этого браузера?'))return;
  state=initial();if(persist()){render();sayvi('Локальная история подбора очищена.');}
 });
 render();
+if(demo)sayvi('Учебный подбор: два рабочих места и три вымышленных отклика. Попробуй менять этапы.');
 })();
