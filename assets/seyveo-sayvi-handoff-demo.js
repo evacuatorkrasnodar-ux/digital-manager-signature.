@@ -72,6 +72,15 @@
   if(showCinema)small.style.setProperty('opacity','0','important');
 
   let done=false;
+  let publicLaunchCompletePending=false;
+  function completePublicLaunch(){
+    root.classList.remove('sv-home-launch-pending');
+    beginHomeGreetingLifetime();
+    if(publicLaunchCompletePending){
+      publicLaunchCompletePending=false;
+      window.dispatchEvent(new Event('seyveo:cinema-finished'));
+    }
+  }
   let animation=null;
   let introTimer=0;
   let safetyTimer=0;
@@ -264,6 +273,7 @@
     const keepHomeSphere=!spark&&(stayHome||!shouldDockHome())&&
       (!location.hash||location.hash==='#home')&&!home.hidden;
     const publicLift=keepHomeSphere&&!showCinema&&!noIntro&&!document.hidden&&root.classList.contains('sv-home-launch-pending');
+    publicLaunchCompletePending=publicLift;
     done=true;
     voiceButton?.remove();
     voiceButton=null;
@@ -331,10 +341,7 @@
       // Keep all Home information behind the first-paint gate until landing.
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
         if(canShowEmptySphere())enterEmptySphere();
-        else{
-          root.classList.remove('sv-home-launch-pending');
-          beginHomeGreetingLifetime();
-        }
+        else completePublicLaunch();
       }));
     }else{
       root.classList.remove('sv-home-launch-pending');
@@ -344,7 +351,7 @@
     // later live updates keep their normal transitions and touch behaviour.
     if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),4200);
     setTimeout(()=>root.classList.remove('sv-sayvi-handoff-arrived'),850);
-    window.dispatchEvent(new Event('seyveo:cinema-finished'));
+    if(!publicLift)window.dispatchEvent(new Event('seyveo:cinema-finished'));
   }
 
   function begin(){
@@ -669,13 +676,15 @@
   window.addEventListener('hashchange',()=>{
     if(!done&&location.hash&&location.hash!=='#home')finish();
     if(location.hash&&location.hash!=='#home'){
-      root.classList.remove('sv-cinema-stagger-enter','sv-home-launch-pending');
-      beginHomeGreetingLifetime();
+      root.classList.remove('sv-cinema-stagger-enter');
+      if(publicLaunchCompletePending)completePublicLaunch();
+      else root.classList.remove('sv-home-launch-pending');
     }
   });
   window.addEventListener('pagehide',()=>{
     if(!done)finish();
-    root.classList.remove('sv-home-launch-pending');
+    if(publicLaunchCompletePending)completePublicLaunch();
+    else root.classList.remove('sv-home-launch-pending');
   });
   let lastViewportWidth=window.innerWidth;
   window.addEventListener('resize',()=>{
@@ -971,10 +980,7 @@
       // Web Animations is interrupted or cannot start.
       root.classList.add('sv-home-empty-arrived');
       const firstLaunch=root.classList.contains('sv-home-launch-pending');
-      if(firstLaunch){
-        root.classList.remove('sv-home-launch-pending');
-        beginHomeGreetingLifetime();
-      }
+      if(firstLaunch)completePublicLaunch();
       window.dispatchEvent(new CustomEvent('seyveo:home-sayvi-arrived',{
         detail:{afterCards,firstLaunch}
       }));
@@ -1017,6 +1023,7 @@
     }
     if(!emptySphere)return;
     if(emptyEntering&&animate)return;
+    if(publicLaunchCompletePending)completePublicLaunch();
     // A genuine exit may expand the pearl dock; release the launch-only hold.
     root.classList.remove('sv-home-empty-at-launch');
     emptySphere=false;
