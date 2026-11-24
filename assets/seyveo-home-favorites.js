@@ -466,13 +466,14 @@ const show=()=>{
  const homeUsable=!home.hidden&&!document.hidden&&(!location.hash||location.hash==='#home');
  // During first launch the full-size sphere shows its brand logo before
  // the ordinary "arrived" state. Let shortcuts gently enter at that moment.
- const launchLogoVisible=root.classList.contains('sv-home-launch-logo-visible')&&
+ const launchLogoVisible=!root.classList.contains('sv-home-launch-pending')&&root.classList.contains('sv-home-launch-logo-visible')&&
   !root.classList.contains('sv-cinema-boot')&&
   !root.classList.contains('sv-home-prelayout');
  if(!firstHomeEntrancePlayed&&launchLogoVisible)launchPreviewActive=true;
  if(root.classList.contains('sv-home-empty-arrived')&&
     !root.classList.contains('sv-home-empty-arriving'))launchPreviewActive=false;
  const visible=curtainOpen?homeUsable:homeUsable&&
+ !root.classList.contains('sv-home-launch-pending')&&
  !root.classList.contains('seyveo-conversation')&&
  (root.classList.contains('sv-home-empty-arrived')||launchPreviewActive)&&
  (!root.classList.contains('sv-home-empty-arriving')||launchPreviewActive)&&
@@ -499,7 +500,7 @@ const show=()=>{
     if(!firstHomeEntrancePlayed&&!editing&&!curtainOpen){
      firstHomeEntrancePlayed=true;
      rail.classList.add('sv-home-favorites-enter');
-     setTimeout(()=>rail.classList.remove('sv-home-favorites-enter'),3100);
+     setTimeout(()=>rail.classList.remove('sv-home-favorites-enter'),600);
     }
     rail.style.visibility='';
    });
