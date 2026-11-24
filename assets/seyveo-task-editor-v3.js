@@ -417,7 +417,7 @@
    main.setAttribute('aria-label',empty?'Ввести название дела':'Изменить название дела');
    main.addEventListener('click',()=>title.focus({preventScroll:true}));
    const copy=document.createElement('div');copy.className='sv-task-smart-item-copy';
-   copy.append(createText('name',item.title));
+   copy.append(createText('name',window.SEYVEO_TASK_PLACE_EDITOR?.compactTitle?.(item.title)||item.title));
    if(multi){
     const whenText=item.date?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(new Date(item.date+'T12:00:00')):'';
     if(whenText||item.time)copy.append(createText('item-detail',[whenText,item.time].filter(Boolean).join(' · ')));
@@ -587,6 +587,7 @@
   updateSmartPreview();
  });
  observer.observe(dialog,{attributes:true,attributeFilter:['open']});
+ window.addEventListener('seyveo:task-place-updated',()=>{if(dialog.open)updateSmartPreview()});
  dialog.addEventListener('sv-task-editor-sync',()=>{sync();updateSmartPreview();sizePhrase()});
  dialog.addEventListener('close',()=>{
   if(recognition){try{recognition.stop()}catch{}recognition=null;voiceButton?.setAttribute('aria-pressed','false')}
@@ -601,5 +602,5 @@
   categoryOverrides.clear();categorySource='';
   form.scrollTop=0;
  });
- window.SEYVEO_TASK_SCREEN=Object.freeze({version:7,sync,titleForSave:effectiveTitle,draftsForSave,needsReview:batchNeedsReview});
+ window.SEYVEO_TASK_SCREEN=Object.freeze({version:7,sync,titleForSave:()=>window.SEYVEO_TASK_PLACE_EDITOR?.compactTitle?.(effectiveTitle(),true)||effectiveTitle(),draftsForSave,needsReview:batchNeedsReview});
 })();
