@@ -349,8 +349,10 @@
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-menu button{
  min-height:30px!important;margin:0!important;padding:5px 10px!important;
- border-radius:9px!important;border:1px solid #E7E9EE!important;
- background:#F7F8FA!important;color:#47505F!important;
+ border-radius:9px!important;border:var(--sv-white-pearl-edge,1px solid #E7E9EE)!important;
+ background:var(--sv-white-pearl-surface,#F7F8FA)!important;color:#47505F!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,none)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,none)!important;backdrop-filter:var(--sv-white-pearl-blur,none)!important;
  font:520 11px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-detail-data:not([hidden]){
@@ -854,10 +856,10 @@ html.sv-agenda-scroll-active .app{
 .sv-task-context-menu{
  box-sizing:border-box;position:fixed;z-index:2147481200;
  display:grid;gap:0;min-width:188px;max-width:min(260px,calc(100vw - 24px));
- padding:5px;border:1px solid rgba(75,76,84,.13);border-radius:15px;
- background:rgba(250,250,252,.97);color:#1C1C1E;
- box-shadow:0 13px 40px rgba(17,22,33,.16),0 2px 7px rgba(17,22,33,.06);
- -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+ padding:5px;border:var(--sv-white-pearl-edge,1px solid rgba(75,76,84,.13));border-radius:15px;
+ background:var(--sv-white-pearl-surface,rgba(250,250,252,.97));color:#1C1C1E;
+ box-shadow:var(--sv-white-pearl-dock-shadow,0 13px 40px rgba(17,22,33,.16),0 2px 7px rgba(17,22,33,.06));
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(20px));backdrop-filter:var(--sv-white-pearl-blur,blur(20px));
 }
 .sv-task-context-menu button{
  min-height:44px;padding:9px 13px;text-align:left;
