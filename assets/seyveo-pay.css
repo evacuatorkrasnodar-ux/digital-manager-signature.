@@ -437,3 +437,55 @@ html body #svWorkShell[data-active="wallet"] > .syp-view-switch > button:focus-v
 html:root[data-theme="dark"] body #svWorkShell[data-active="wallet"] > .syp-view-switch .syp-view-icon{
  color:var(--text,#f3f7fa)!important;
 }
+
+/* Wallet home polish: retain the shared Work header footprint and card identity. */
+html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch{
+ width:min(208px,calc(100% - 40px))!important;
+ height:60px!important;min-height:60px!important;
+}
+html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch > button{
+ height:60px!important;min-height:60px!important;gap:1px!important;
+}
+html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch .syp-view-icon svg{
+ width:24px!important;height:24px!important;stroke-width:1.55!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-card{
+ box-shadow:inset 0 1px 0 var(--syp-sheen),0 4px 12px rgba(32,61,50,.075)!important;
+}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="home"] .syp-actions{
+ gap:7px!important;margin:9px 0!important;
+}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="home"] .syp-actions > .syp-action{
+ min-height:54px!important;gap:4px!important;padding:5px 3px!important;
+ border:0!important;border-radius:11px!important;
+ background:#F5F6F7!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;transform:none!important;
+}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="home"] .syp-actions > .syp-action svg{
+ width:20px!important;height:20px!important;stroke:currentColor!important;stroke-width:1.5!important;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="home"] .syp-actions > .syp-action{
+ background:rgba(255,255,255,.055)!important;
+}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="home"] > .syp-panel{
+ margin:9px 0 0!important;padding:10px 12px!important;
+ border:1px solid var(--soft-line,rgba(130,145,155,.18))!important;border-radius:13px!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="home"] > .syp-panel h3{
+ display:flex!important;align-items:center!important;gap:6px!important;
+ font-size:13px!important;font-weight:600!important;margin:0 0 5px!important;
+}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-panel h3 > .syp-spark.sv-sayvi-symbol{
+ display:inline-block!important;flex:0 0 20px!important;
+ width:20px!important;min-width:20px!important;max-width:20px!important;
+ height:20px!important;min-height:20px!important;max-height:20px!important;
+ margin:0!important;padding:0!important;border:0!important;
+ background:transparent var(--sv-sayvi-mark-image,url("./seyveo-sayvi-user-upload.svg?v=3")) center / contain no-repeat!important;
+ box-shadow:none!important;filter:none!important;
+}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-panel h3 > .syp-spark::before,
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-panel h3 > .syp-spark::after{content:none!important;display:none!important;}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="home"] > .syp-note{
+ margin:10px 0 0!important;opacity:1!important;
+}
