@@ -71,7 +71,7 @@
  function syncCompanyName(){
   if(!company)return;
   let name='';
-  try{name=String(JSON.parse(localStorage.getItem('seyveo-company-passport-v1')||'null')?.name||'').trim();}catch{}
+  try{const api=window.SEYVEO_COMPANY_PASSPORT;name=String((api?.getRecord?api.getRecord():JSON.parse(localStorage.getItem('seyveo-company-passport-v1')||'null'))?.name||'').trim();}catch{}
   company.querySelector('.company-name').textContent=name||'Моя компания';
   company.setAttribute('aria-label','Открыть профиль компании'+(name?': '+name:''));
  }
