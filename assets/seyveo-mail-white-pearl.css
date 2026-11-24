@@ -571,3 +571,41 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-sender-options > .sv-mail-sender-option:disabled:not([aria-pressed="true"]){
  opacity:.65!important;
 }
+
+/* Drafts — same white list rhythm as received mail; file badge shares attachment palette. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-bar{margin:0!important;padding:0 3px!important;min-height:44px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-bar .sv-mail-drafts-count{color:#58616b!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-bar .sv-mail-drafts-select{color:#176ab4!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group{margin:0!important;gap:0!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row,html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row:last-child{
+ min-height:62px!important;padding:5px 3px!important;
+ border-bottom:1px solid rgba(35,45,55,.10)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-content{
+ display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;
+ gap:9px!important;min-height:50px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-copy{
+ display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-width:0!important;gap:4px!important;overflow:hidden!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-title{display:block!important;min-width:0!important;max-width:100%!important;color:#17191d!important;font-size:13.5px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-kind{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 30px!important;width:30px!important;height:34px!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:7px!important;
+ color:#fff!important;background:#747b85!important;
+ font:750 9px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-kind[data-file-kind="pdf"]{background:#A74747!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-kind[data-file-kind="word"]{background:#3A69AB!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-kind[data-file-kind="sheet"]{background:#3B805C!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-kind[data-file-kind="image"]{background:#607E91!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-details{align-items:center!important;gap:7px!important;min-height:18px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-details > .sv-mail-draft-attachment-count{
+ display:inline-flex!important;align-items:center!important;gap:3px!important;height:18px!important;
+ color:#59636d!important;font-size:11px!important;line-height:1!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-attachment-count > svg{
+ width:13px!important;height:13px!important;flex:0 0 13px!important;stroke:currentColor!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-account{color:#525c68!important}
