@@ -1105,3 +1105,12 @@ html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode=
 html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading[data-sv-edge-fade]::after{
  background:linear-gradient(to bottom,#17191D 0%,rgba(23,25,29,0) 100%)!important;
 }
+
+/* The calendar already supplies a bottom divider. Only hide the duplicate
+   line on the active day; retain its 1px space to avoid a scroll jump. */
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group + .sv-agenda-day-group > .sv-agenda-section-heading[data-sv-active-day]{
+ border-top-color:transparent!important;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group + .sv-agenda-day-group > .sv-agenda-section-heading[data-sv-active-day]{
+ border-top-color:transparent!important;
+}
