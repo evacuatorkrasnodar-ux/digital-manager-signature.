@@ -47,6 +47,7 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-
  max-width:44px!important;max-height:44px!important;
  background:transparent!important;border:0!important;border-radius:50%!important;
  box-shadow:none!important;outline:none!important;overflow:visible!important;
+ filter:none!important;-webkit-filter:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  -webkit-appearance:none!important;appearance:none!important;cursor:pointer!important;
  -webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important;
@@ -55,13 +56,12 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-
 html:root body dialog#notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-paper-save-control{color:#c69c09!important;}
 html:root body dialog#notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-paper-save-control::before,html:root body dialog#notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-paper-save-control::after{content:none!important;display:none!important;}
 html:root body dialog#notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-paper-save-control > svg{
- position:absolute!important;display:block!important;left:-8px!important;top:-8px!important;
- width:60px!important;height:60px!important;max-width:none!important;max-height:none!important;
+ position:absolute!important;display:block!important;left:0!important;top:0!important;
+ width:44px!important;height:44px!important;max-width:44px!important;max-height:44px!important;
  margin:0!important;padding:0!important;overflow:visible!important;background:transparent!important;
  border:0!important;box-shadow:none!important;filter:none!important;transform:none!important;pointer-events:none!important;
 }
 html:root body dialog#notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-paper-save-control > svg .sv-paper-save-face{fill:currentColor!important;stroke:none!important;}
-html:root body dialog#notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-paper-save-control > svg .sv-paper-save-shadow{fill:url(#svPaperSaveShadow)!important;stroke:none!important;}
 html:root body dialog#notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-paper-save-control > svg .sv-paper-save-check{fill:none!important;stroke:#fff!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;}
 html:root body dialog#notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-paper-save-control:focus-visible{outline:2px solid #87919e!important;outline-offset:3px!important;}
 html:root body dialog#notePaperDialog.sv-paper-studio[open].sv-paper-inking > #notePaperSave.sv-paper-save-control{opacity:0!important;visibility:hidden!important;pointer-events:none!important;}
