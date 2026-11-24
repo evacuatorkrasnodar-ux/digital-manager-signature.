@@ -313,7 +313,7 @@ html body #noteScanDialog[data-step="photo"] :is(
  .paper-scan-caption,#noteScanText,.paper-scan-actions){
  display:none!important;
 }
-/* Document preview: one physical sheet on a quiet viewing surface.
+/* Document preview: one physical sheet on the seamless screen.
    The image keeps its original aspect ratio (A4, receipt, landscape, etc.);
    the frame is presentation only and never enters the saved photo or OCR. */
 html:root body #noteScanDialog > .sv-scan-document-stage{
@@ -321,10 +321,10 @@ html:root body #noteScanDialog > .sv-scan-document-stage{
 }
 html:root body #noteScanDialog[data-step="photo"] > .sv-scan-document-stage{
  box-sizing:border-box!important;display:flex!important;
- flex:0 0 auto!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 auto!important;align-items:flex-start!important;justify-content:center!important;
  width:100%!important;min-width:0!important;
- padding:10px 12px!important;margin:4px 0 8px!important;
- background:#f7f8fa!important;border:0!important;border-radius:8px!important;
+ padding:4px 4px 8px!important;margin:4px 0 8px!important;
+ background:transparent!important;background-image:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
 }
 html:root body #noteScanDialog[data-step="photo"] #noteScanPreview.paper-scan-preview:not([hidden]){
  display:block!important;flex:0 1 auto!important;
@@ -335,9 +335,6 @@ html:root body #noteScanDialog[data-step="photo"] #noteScanPreview.paper-scan-pr
  outline:1px solid #d5d9df!important;outline-offset:0!important;
  background:#fff!important;
  box-shadow:0 2px 8px rgba(31,42,55,.08),0 1px 2px rgba(31,42,55,.04)!important;
-}
-html:root[data-theme="dark"] body #noteScanDialog[data-step="photo"] > .sv-scan-document-stage{
- background:#202124!important;
 }
 html:root[data-theme="dark"] body #noteScanDialog[data-step="photo"] #noteScanPreview.paper-scan-preview:not([hidden]){
  outline-color:#696c73!important;box-shadow:0 2px 10px rgba(0,0,0,.22)!important;
@@ -509,9 +506,11 @@ html:root[data-theme="dark"] body #noteScanDialog > #svScanMenu > button .sv-sca
 html:root body #noteScanDialog > #svScanMenu > button[aria-checked="false"] .sv-scan-menu-check{
  visibility:hidden!important;
 }
-/* Extra room for a saved sheet without stretching the source image. */
+/* Saved sheet starts immediately below the header. Never grow or center it
+   vertically inside a decorative panel; preserve intrinsic image proportions. */
 html:root body #noteScanDialog[data-saved-scan="true"][data-step="photo"] > .sv-scan-document-stage{
- flex:1 0 auto!important;min-height:0!important;
+ flex:0 0 auto!important;min-height:0!important;
+ align-items:flex-start!important;padding:4px 4px 8px!important;margin:4px 0 8px!important;
 }
 html:root body #noteScanDialog[data-saved-scan="true"][data-step="photo"] #noteScanPreview.paper-scan-preview:not([hidden]){
  max-height:min(70dvh,760px)!important;
