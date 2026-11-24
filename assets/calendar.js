@@ -352,6 +352,8 @@ function renderDay(){
 
 /* Week keeps seven-day navigation, with Apple's hourly schedule for the selected date. */
 let lastWeekTimelineFocus='';
+const WEEK_HOUR_PX=52;
+const weekMinutePx=minute=>minute*WEEK_HOUR_PX/60;
 function updateWeekHourLabels(root, minute){
  root.querySelectorAll('.cal-week-hour-row').forEach((row,hour)=>{
   row.toggleAttribute('data-now-near',minute!==null&&Math.abs(hour*60-minute)<16);
@@ -361,6 +363,7 @@ function renderWeekTimeline(list){
  const panel=$('calendarWeekTimeline'),allDay=$('calendarWeekAllDay');
  const root=$('calendarWeekHours'),scroll=$('calendarWeekTimelineScroll');
  panel.hidden=false;allDay.replaceChildren();root.replaceChildren();
+ root.style.setProperty('--cal-week-hour-height',WEEK_HOUR_PX+'px');
  const dayHeading=$('calendarWeekSelectedDay');
  if(dayHeading)dayHeading.textContent=niceFirst(fmtShort.format(focus))+' '+focus.getFullYear();
  const parseMinutes=time=>{
@@ -407,8 +410,8 @@ function renderWeekTimeline(list){
    const button=createEntry(slot.item);
    button.classList.add('cal-timeline-timed');
    button.dataset.tone=slot.item.source;
-   button.style.top=slot.start+'px';
-   button.style.height=Math.max(1,slot.end-slot.start-2)+'px';
+   button.style.top=weekMinutePx(slot.start)+'px';
+   button.style.height=Math.max(1,weekMinutePx(slot.end-slot.start)-2)+'px';
    button.style.left=(slot.lane*100/laneCount)+'%';
    button.style.width=laneCount>1&&slot.lane<laneCount-1?`calc(${100/laneCount}% - 3px)`:(100/laneCount)+'%';
    const explicitDuration=Number(slot.item.duration)>0;
@@ -417,7 +420,7 @@ function renderWeekTimeline(list){
    if(!explicitDuration){
     button.dataset.durationUnknown='true';
     if(laneCount>1)button.dataset.compactStacked='true';
-    button.style.height=Math.min(laneCount>1?28:24,Math.max(1,slot.end-slot.start-2))+'px';
+    button.style.height=Math.min(laneCount>1?24:22,Math.max(1,weekMinutePx(slot.end-slot.start)-2))+'px';
    }
    layer.append(button);
   }
@@ -425,7 +428,7 @@ function renderWeekTimeline(list){
  if(format(focus)===format(new Date())){
   const now=new Date(),minute=now.getHours()*60+now.getMinutes();
   const marker=text('div','cal-week-now-marker');
-  marker.style.top=minute+'px';
+  marker.style.top=weekMinutePx(minute)+'px';
   const label=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   marker.dataset.time=label;marker.setAttribute('aria-label','Сейчас '+label);
   layer.append(marker);
@@ -442,7 +445,7 @@ function renderWeekTimeline(list){
   // earliest meeting, or at 08:00 when the selected day has no appointments.
   const anchor=isToday?Math.max(0,minutesNow-150):
    scheduled.length?Math.max(0,scheduled[0].start-135):8*60;
-  const target=Math.max(0,Math.round(anchor/30)*30);
+  const target=weekMinutePx(Math.max(0,Math.round(anchor/30)*30));
   const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   if(lastWeekTimelineFocus&&!reducedMotion){
    scroll.scrollTo({top:target,behavior:'smooth'});
@@ -1220,7 +1223,7 @@ window.setInterval(()=>{
  const marker=page.querySelector('.cal-week-now-marker');
  if(marker&&mode==='week'&&iso()===format(new Date())){
   const now=new Date(),label=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-  marker.style.top=(now.getHours()*60+now.getMinutes())+'px';
+  marker.style.top=weekMinutePx(now.getHours()*60+now.getMinutes())+'px';
   marker.dataset.time=label;marker.setAttribute('aria-label','Сейчас '+label);
   updateWeekHourLabels($('calendarWeekHours'),now.getHours()*60+now.getMinutes());
  }else if(marker){marker.remove();updateWeekHourLabels($('calendarWeekHours'),null);}
