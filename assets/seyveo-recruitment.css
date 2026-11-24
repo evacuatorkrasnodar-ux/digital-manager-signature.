@@ -257,18 +257,18 @@ html:root body dialog.sv-recruit-page.seyveo-dock-host[open] > footer.dock{
 }
 
 /* Invitation uses the same full-page shell as candidate detail. */
-#svStaffInvitePage .sv-invite-form{display:grid;gap:14px;padding:0 0 12px;min-width:0}
+#svStaffInvitePage .sv-invite-form{display:grid;gap:12px;padding:0 0 12px;min-width:0}
 #svStaffInvitePage .sv-invite-identity{display:grid;justify-items:center;padding:0 0 2px}
 #svStaffInvitePage .sv-invite-avatar{position:relative;display:grid;place-items:center;width:84px;height:84px;border:0;border-radius:50%;background:#dceaf3;color:#335e7b;font-size:28px;font-weight:600;padding:0}
 #svStaffInvitePage .sv-invite-avatar img{width:84px;height:84px;border-radius:50%;object-fit:cover}
-#svStaffInvitePage .sv-invite-camera{position:absolute;right:0;bottom:0;width:27px;height:27px;display:grid;place-items:center;border-radius:50%;background:var(--sv-white-pearl-solid,#f6f6f8);color:#20242a;box-shadow:0 1px 4px #0002}
-#svStaffInvitePage .sv-invite-camera svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round}
+#svStaffInvitePage .sv-invite-camera{position:absolute;right:0;bottom:0;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:var(--sv-white-pearl-solid,#f6f6f8);color:#20242a;box-shadow:0 1px 4px #0002}
+#svStaffInvitePage .sv-invite-camera svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round}
 #svStaffInvitePage .sv-invite-link{border:0;background:transparent;color:#176ab4;min-height:36px;font:600 12px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
 #svStaffInvitePage .sv-invite-identity small{font-size:11px;color:var(--secondary)}
 #svStaffInvitePage .sv-invite-fields{display:grid;gap:8px;min-width:0}
 #svStaffInvitePage .sv-invite-fields label{display:grid;gap:5px;font-size:12px;color:var(--secondary);min-width:0}
-#svStaffInvitePage .sv-invite-fields input{box-sizing:border-box;width:100%;min-width:0;min-height:46px;padding:10px 12px;border:1px solid var(--soft-line);border-radius:14px;background:var(--card);color:var(--text);font:400 16px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;box-shadow:none}
-html:root[data-theme="light"] body #svStaffInvitePage .sv-invite-fields input{background:#f6f6f8!important;border:1px solid #e8eaee!important;color:#20242a!important}
+#svStaffInvitePage .sv-invite-fields input{box-sizing:border-box;width:100%;min-width:0;min-height:46px;padding:10px 12px;border:0;border-radius:14px;background:var(--card);color:var(--text);font:400 16px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;box-shadow:none}
+html:root[data-theme="light"] body #svStaffInvitePage .sv-invite-fields input{background:#f4f4f6!important;border:0!important;color:#20242a!important}
 #svStaffInvitePage h3{font-size:14px;font-weight:630;margin:0 0 8px}
 #svStaffInvitePage .sv-invite-access-list label{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:48px;border-bottom:1px solid var(--soft-line);gap:12px;font-size:13px;cursor:pointer}
 #svStaffInvitePage .sv-invite-access-list label input{position:absolute;right:0;width:48px;height:44px;opacity:0;cursor:pointer}
@@ -279,10 +279,14 @@ html:root body #svStaffInvitePage .sv-invite-access-list label input:checked+i{b
 #svStaffInvitePage .sv-invite-access-list label input:checked+i::after{transform:translateX(20px)}
 #svStaffInvitePage .sv-invite-access-list label input:focus-visible+i{outline:2px solid #6b9ac7;outline-offset:2px}
 #svStaffInvitePage .sv-invite-segments{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;border-radius:999px;background:var(--sv-white-pearl-surface,#38383a);border:var(--sv-white-pearl-edge,0);box-shadow:var(--sv-white-pearl-circle-shadow,none)}
-#svStaffInvitePage .sv-invite-segments button{min-height:34px;border:0;background:transparent;color:var(--secondary);border-radius:999px;font-size:12px;font-weight:600}
+#svStaffInvitePage .sv-invite-segments button{min-height:32px;border:0;background:transparent;color:var(--secondary);border-radius:999px;font-size:12px;font-weight:600}
 #svStaffInvitePage .sv-invite-segments button[aria-pressed="true"]{background:var(--sv-white-pearl-selected,#555);color:var(--text);box-shadow:var(--sv-white-pearl-selected-shadow,none)}
 #svStaffInvitePage .sv-invite-primary{min-height:44px;border-radius:999px;border:var(--sv-white-pearl-edge,0);background:var(--sv-white-pearl-surface,#38383a);box-shadow:var(--sv-white-pearl-circle-shadow,none);color:var(--text);font-size:13px;font-weight:630}
-html:root[data-theme="light"] body #svStaffInvitePage .sv-invite-primary{color:#176ab4}
+html:root body #svStaffInvitePage .sv-invite-primary:not(:disabled){background:#0071e3!important;color:#fff!important;border:0!important;box-shadow:none!important}
+html:root body #svStaffInvitePage .sv-invite-primary:disabled{color:var(--secondary)!important;cursor:default;box-shadow:none!important}
+#svStaffInvitePage .sv-invite-fields input:focus-visible{outline:2px solid #0071e3;outline-offset:1px}
+html:root body dialog#svStaffInvitePage > .sv-recruit-head{margin-bottom:4px}
+#svStaffInvitePage .sv-invite-primary:focus-visible{outline:2px solid #0071e3;outline-offset:3px}
 #svStaffInvitePage .sv-invite-result{display:grid;justify-items:center;text-align:center;gap:10px;padding:12px;border:1px solid var(--soft-line);border-radius:15px;font-size:14px}
 #svStaffInvitePage .sv-invite-result small{font-size:11px;line-height:1.45;color:var(--secondary)}
 #svStaffInvitePage #svInviteLink{font-size:12px;overflow-wrap:anywhere;margin:0}
