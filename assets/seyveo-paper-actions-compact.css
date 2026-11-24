@@ -201,7 +201,7 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-
 /* Saved handwriting: reserve the actual header row instead of placing it
    on top of the ink. The existing drawing/zoom geometry is measured from
    the stage by fitPaper; no stored vector coordinates are modified here. */
-html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-handwriting-page[open] > .sv-paper-top{
+html:root body dialog#notePaperDialog.sv-paper-studio:is(.sv-paper-handwriting-page,.sv-paper-scan-page)[open] > .sv-paper-top{
  position:relative!important;inset:auto!important;transform:none!important;
  box-sizing:border-box!important;flex:0 0 auto!important;
  width:100%!important;max-width:100%!important;min-width:0!important;
@@ -212,33 +212,45 @@ html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-handwriting-page[
  border:0!important;background:transparent!important;box-shadow:none!important;
  z-index:9!important;
 }
-html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-handwriting-page[open] > #notePaperStage.sv-paper-stage{
+html:root body dialog#notePaperDialog.sv-paper-studio:is(.sv-paper-handwriting-page,.sv-paper-scan-page)[open] > #notePaperStage.sv-paper-stage{
  position:relative!important;inset:auto!important;
  flex:1 1 0%!important;height:auto!important;min-height:0!important;
  padding:0!important;margin:0!important;overflow:hidden!important;
 }
-html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-handwriting-page[open] > .sv-paper-top > #notePaperBack{
+html:root body dialog#notePaperDialog.sv-paper-studio:is(.sv-paper-handwriting-page,.sv-paper-scan-page)[open] > .sv-paper-top > #notePaperBack{
  left:auto!important;justify-self:start!important;align-self:center!important;
 }
-html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-handwriting-page[open] > .sv-paper-top > .sv-paper-history{
+html:root body dialog#notePaperDialog.sv-paper-studio:is(.sv-paper-handwriting-page,.sv-paper-scan-page)[open] > .sv-paper-top > .sv-paper-history{
  align-self:center!important;justify-self:end!important;transform:none!important;
 }
-html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-handwriting-page[open] > .sv-paper-top > .sv-paper-history > button > svg{
+html:root body dialog#notePaperDialog.sv-paper-studio:is(.sv-paper-handwriting-page,.sv-paper-scan-page)[open] > .sv-paper-top > .sv-paper-history > button > svg{
  transform:none!important;
 }
 /* A short optical transition at the clipped stage edge, not a separate
    toolbar background. The rule pattern remains full width in the sheet. */
-html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-handwriting-page[open] > #notePaperStage::after{
+html:root body dialog#notePaperDialog.sv-paper-studio:is(.sv-paper-handwriting-page,.sv-paper-scan-page)[open] > #notePaperStage::after{
  content:""!important;display:block!important;position:absolute!important;
  left:0!important;right:0!important;top:0!important;height:12px!important;
  background:linear-gradient(to bottom,#212121,transparent)!important;
  pointer-events:none!important;z-index:6!important;
 }
-html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-handwriting-page.sv-paper-light-surface[open] > #notePaperStage::after{
+html:root body dialog#notePaperDialog.sv-paper-studio:is(.sv-paper-handwriting-page,.sv-paper-scan-page).sv-paper-light-surface[open] > #notePaperStage::after{
  background:linear-gradient(to bottom,#fff,transparent)!important;
 }
 @media(max-width:355px){
- html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-handwriting-page[open] > .sv-paper-top{
+ html:root body dialog#notePaperDialog.sv-paper-studio:is(.sv-paper-handwriting-page,.sv-paper-scan-page)[open] > .sv-paper-top{
   grid-template-columns:56px minmax(0,1fr) 56px!important;padding-inline:8px!important;gap:2px!important;
  }
+}
+
+/* Documents share the handwriting header's boundary. The photo itself
+   is kept intact; only the explicitly generated sample image is reframed. */
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page.sv-paper-light-surface[open] #notePaperStage > .sv-paper-width-control > .sv-paper-width-blade{
+ color:#9099a6!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page.sv-paper-light-surface[open] #notePaperStage > .sv-paper-width-control.sv-wedge-expanded > .sv-paper-width-blade{
+ color:#818c9a!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio.sv-paper-scan-page.sv-paper-light-surface[open] #notePaperStage > .sv-paper-width-control > .sv-paper-width-handle{
+ border-color:rgba(110,124,143,.45)!important;
 }
