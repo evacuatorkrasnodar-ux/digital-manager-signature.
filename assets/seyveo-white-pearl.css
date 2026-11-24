@@ -332,51 +332,6 @@ html:root[data-theme="light"] body :is(
  outline-offset:3px!important;
 }
 
-/* Bottom row has one vertical centre: 34px above the safe-area edge.
-   No opaque footer, glass layer, or backdrop below the palette or save. */
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom{
- box-sizing:border-box!important;
- height:calc(68px + env(safe-area-inset-bottom,0px))!important;
- min-height:calc(68px + env(safe-area-inset-bottom,0px))!important;
- padding-top:0!important;padding-bottom:env(safe-area-inset-bottom,0px)!important;
- align-items:center!important;
-}
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom,
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{
- background:transparent!important;background-image:none!important;
- box-shadow:none!important;border:0!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{transform:none!important;}
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom::before,
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom::after,
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette::before,
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette::after{
- content:none!important;display:none!important;
-}
-
-/* DRAWING · CLEAR PALETTE LANE.
-   The violet/blue haze in iOS was not a separate material: colorful swatches
-   were scrolling directly behind the translucent Save circle. Reserve a
-   genuine unpainted lane at the right, instead of using an opaque curtain,
-   white overlay, masking band, or a second surface. All colors remain
-   reachable by horizontal swiping INSIDE the shortened palette strip. */
-html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
- > footer.sv-paper-bottom > .sv-paper-palette > .sv-paper-swatches{
- box-sizing:border-box!important;
- flex:0 0 calc(100% - 68px)!important;
- width:calc(100% - 68px)!important;
- max-width:calc(100% - 68px)!important;
- min-width:0!important;
- margin-right:68px!important;
- padding-right:3px!important;
- overflow-x:auto!important;
- -webkit-mask-image:none!important;
- mask-image:none!important;
-}
-/* Hide color only behind the button, not behind the glass.
-   The circle still reads exactly the shared White Pearl token set. */
-
 /* NEW TASK · WHITE PEARL CONTINUITY
    Same approved Notebook material, not the old red confirmation button.
    Existing 44px geometry, task save and camera/voice/calendar handlers remain. */
@@ -473,28 +428,4 @@ html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-pap
 html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > .sv-paper-top > #notePaperBack::before{
  content:none!important;display:none!important;
 }
-html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{
- --sv-visible-colors:8;
- box-sizing:border-box!important;display:flex!important;align-items:center!important;
- gap:0!important;padding-right:60px!important;
-}
-html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .paper-color-control{
- position:relative!important;left:auto!important;top:auto!important;transform:none!important;
- flex:0 0 44px!important;
-}
-html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .sv-paper-swatches{
- flex:1 1 0!important;width:0!important;max-width:none!important;
- margin:0!important;padding:0!important;gap:0!important;
- scroll-snap-type:x mandatory!important;scroll-padding:0!important;
-}
-html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .sv-paper-swatches > button{
- flex:0 0 calc(100% / var(--sv-visible-colors))!important;
- width:calc(100% / var(--sv-visible-colors))!important;min-width:0!important;max-width:none!important;
- scroll-snap-align:start!important;
-}
-@media(max-width:370px){
- html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{--sv-visible-colors:7;}
-}
-@media(max-width:340px){
- html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{--sv-visible-colors:6;}
-}
+
