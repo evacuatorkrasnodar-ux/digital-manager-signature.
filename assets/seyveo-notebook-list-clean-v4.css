@@ -475,3 +475,23 @@ html:root body #svWorkShell[data-active="notes"] #notesList :is(.sv-nb4-open,.sv
 html:root body #svWorkShell[data-active="notes"] #svNotebookListMore:focus-visible{
  outline:2px solid #287fda!important;outline-offset:-3px!important;
 }
+
+/* A short optical fade at the real scroll boundary. Never extend the scroll
+   region into the header; no mask on the list (its fixed menus must stay clear).
+   Only visible once the reader has scrolled. */
+html:root body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden])::after{
+ content:""!important;display:block!important;position:absolute!important;
+ top:100%!important;left:0!important;right:0!important;height:18px!important;
+ background:linear-gradient(to bottom,#fff,rgba(255,255,255,0))!important;
+ border:0!important;box-shadow:none!important;pointer-events:none!important;
+ opacity:0;transition:opacity 120ms ease-out;z-index:1!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog.sv-nb-list-scrolled > #svNotebookListTools:not([hidden])::after{
+ opacity:1;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden])::after{
+ background:linear-gradient(to bottom,var(--bg,#17181b),transparent)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html:root body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden])::after{transition:none!important}
+}
