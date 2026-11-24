@@ -519,7 +519,7 @@
 #svReviewRoom .sv-review-content::-webkit-scrollbar{display:none}
 #svReviewRoom #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-field-eyebrow{color:#B56A26!important}
 #svReviewRoom #seyveoLivingMoment :is(.lm-hero-art,.lm-inline-art) > svg.lm-art-svg{
- color:#394550!important;stroke:currentColor!important;stroke-width:3!important;
+ color:#24272c!important;stroke:currentColor!important;stroke-width:2.05!important;
  width:32px!important;height:32px!important;opacity:1!important;filter:none!important;
 }
 #svReviewRoom #seyveoLivingMoment :is(.lm-hero-art,.lm-inline-art) > svg.lm-art-svg .lm-glyph-accent{
