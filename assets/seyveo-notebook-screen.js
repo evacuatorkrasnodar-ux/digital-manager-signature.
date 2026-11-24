@@ -88,10 +88,10 @@
   'Ч':[[[0,0],[0,20],[14,27],[34,23]],[[34,0],[34,48]]],
   'Я':[[[34,48],[34,0],[8,0],[0,12],[8,24],[34,24]],[[34,24],[0,48]]]
  };
- function inkWords(lines){
+ function inkWords(lines,lined=false){
   const result=[];
   lines.forEach((line,row)=>Array.from(line).forEach((letter,col)=>{
-   (glyphs[letter]||[]).forEach(points=>result.push(stroke(points.map(([x,y])=>[60+col*45+x,90+row*110+y+Math.round(Math.sin(col+row)*3)]))));
+   (glyphs[letter]||[]).forEach(points=>result.push(stroke(points.map(([x,y])=>[60+col*45+x,lined?84+row*132+y:90+row*110+y+Math.round(Math.sin(col+row)*3)]))));
   }));
   return result;
  }
@@ -106,9 +106,20 @@
   ctx.font='20px Arial';ctx.fillStyle='#737981';ctx.fillText('Вымышленный образец · SEYVEO',60,880);
   return canvas.toDataURL('image/jpeg',.78);
  }
+ const handwritingExamples=[['План дня',['ПЛАН ДНЯ','ДЕЛА','ИДЕИ']],['Идеи',['ИДЕИ','ПЛАН','РАСКЛАД']],['Список дел',['ДЕЛА','ПЛАН','ОТЧЕТ']],['Заметка от руки',['МЕЧТА','ПЛАН','ДЕЛО']]];
+ // Only untouched, explicitly marked test fixtures may be aligned. A real
+ // note or a sample the user has edited is returned unchanged.
+ function alignExample(note){
+  if(note?.sample!==true||note.noteKind!=='handwriting'||note.paper?.pattern!=='lines')return note;
+  const index=handwritingExamples.findIndex((_,i)=>note.id===mediaPrefix+i);
+  if(index<0||index%2)return note;
+  const lines=handwritingExamples[index][1];
+  if(JSON.stringify(note.paper.strokes)!==JSON.stringify(inkWords(lines)))return note;
+  return {...note,paper:{...note.paper,strokes:inkWords(lines,true)}};
+ }
  function mediaExamples(){
-  const hand=[['План дня',['ПЛАН ДНЯ','ДЕЛА','ИДЕИ']],['Идеи',['ИДЕИ','ПЛАН','РАСКЛАД']],['Список дел',['ДЕЛА','ПЛАН','ОТЧЕТ']],['Заметка от руки',['МЕЧТА','ПЛАН','ДЕЛО']]].map(([title,lines],i)=>({
-   title,text:title,noteKind:'handwriting',paper:paper(i%2?'blank':'lines',inkWords(lines))
+  const hand=handwritingExamples.map(([title,lines],i)=>({
+   title,text:title,noteKind:'handwriting',paper:paper(i%2?'blank':'lines',inkWords(lines,i%2===0))
   }));
   const art=[
    {title:'Горы и солнце',strokes:[stroke([[50,650],[270,290],[450,650],[610,390],[790,650]],'#27609b',9),stroke(ellipse(620,190,66,66),'#ffb525',14),stroke([[50,690],[790,690]],'#258463',8)]},
@@ -168,6 +179,6 @@
   if(button&&routes.has(button.id))page.close();
  },true);
  window.SEYVEO_NOTEBOOK_SCREEN=Object.freeze({
-  version:3,show:()=>page.show(),close:()=>page.close()
+  version:4,show:()=>page.show(),close:()=>page.close(),alignExample
  });
 })();
