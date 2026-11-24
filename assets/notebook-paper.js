@@ -394,7 +394,7 @@ function paint(target,obj,background=false){
    for(let y=0;y<pageH;y+=52){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
    for(let x=0;x<W;x+=52){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,pageH);ctx.stroke()}
   }
-  ctx.fillStyle=p.background==='dark'?'#202124':'#fff';ctx.fillRect(0,0,W,pageH);ctx.restore();
+  ctx.fillStyle=p.background==='dark'?'#212121':'#fff';ctx.fillRect(0,0,W,pageH);ctx.restore();
  }
  ctx.restore();
 }
@@ -446,7 +446,7 @@ function previewList(target,obj){
  paint(source,p,true);
  target.height=Math.round(target.width*60/46);
  const ctx=target.getContext('2d');if(!ctx)return;
- ctx.fillStyle=p.background==='dark'?'#202124':'#FFFFFF';
+ ctx.fillStyle=p.background==='dark'?'#212121':'#FFFFFF';
  ctx.fillRect(0,0,target.width,target.height);
  const crop=previewWindow(p,bitmap);
  const sx=crop.x*source.width/W,sy=crop.y*source.height/p.height;
