@@ -377,6 +377,7 @@
  // A single note owns an expandable vertical sheet. Stored Y coordinates
  // are document coordinates, while this canvas is only its visible window.
  let inkScrollY=0,inkPageHeight=0;
+ let legacyPaperPending=null;
  const touchPointers=new Map();let multiTouchPan=false,panLastY=0;
  let smoothUndo=null,smoothRedo=null;
  let inkToolsRevealTimer=0;
@@ -516,10 +517,17 @@
    ...(s.pressureSensitive===true?{pressureSensitive:true}:{}),
    points:s.points.map(p=>p.slice())}))};
   if(JSON.stringify(inlineInk).length>BYTE_LIMIT){report('Слишком много рукописного текста на этом листе.');return false}
-  const next=list.map(n=>n.id===id?{...n,inlineInk,inkPenColor:penColor,inkPenWidth:penWidth,
-   inkPenStyle:inkStyle,inkPenWidths:{...inkWidths},updatedAt:Date.now()}:n);
+  const next=list.map(n=>{
+   if(n.id!==id)return n;
+   const result={...n,inlineInk,inkPenColor:penColor,inkPenWidth:penWidth,
+    inkPenStyle:inkStyle,inkPenWidths:{...inkWidths},notePaperStyle:paperStyle,updatedAt:Date.now()};
+   if(legacyPaperPending&&n.paper){
+    result.legacyPaper=n.paper;delete result.paper;
+   }
+   return result;
+  });
   if(!api.putNotes(next)){report('Не удалось сохранить рукопись.');return false}
-  noteId=id;return true;
+  legacyPaperPending=null;noteId=id;return true;
  }
  function finish(event){
   if(pointerId===null||!active||event&&event.pointerId!==pointerId)return;
@@ -636,7 +644,8 @@
   touchPointers.clear();multiTouchPan=false;inkScrollY=0;inkPageHeight=0;
   paperSheet.hidden=true;
   const note=id?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===id):null;
-  paperStyle=normalizePaper(note?.notePaperStyle);syncPaper();
+  legacyPaperPending=note?.noteKind==='handwriting'&&note.paper&&!note.inlineInk?note.paper:null;
+  paperStyle=normalizePaper(note?.notePaperStyle||(legacyPaperPending?.pattern==='lines'?'lined':legacyPaperPending?.pattern==='grid'?'grid':'plain'));syncPaper();
   penColor=validColor(note?.inkPenColor)||'#171e29';
   inkStyle=INK_STYLE_NAMES.has(note?.inkPenStyle)?note.inkPenStyle:'pen';
   inkWidths={pen:5,marker:9,calligraphy:9};
@@ -647,16 +656,23 @@
    }
   penWidth=INK_WIDTHS.includes(Number(note?.inkPenWidth))?Number(note.inkPenWidth):inkWidths[inkStyle];
   inkWidths[inkStyle]=penWidth;
-  strokes=Array.isArray(note?.inlineInk?.strokes)?note.inlineInk.strokes.slice(0,STROKE_LIMIT)
+  const sourceInk=note?.inlineInk?.strokes||legacyPaperPending?.strokes;
+  strokes=Array.isArray(sourceInk)?sourceInk.slice(0,STROKE_LIMIT)
    .map(s=>({tool:s.tool==='eraser'?'eraser':INK_STYLE_NAMES.has(s.tool)?s.tool:'pen',
     width:Number.isFinite(Number(s.width))?Math.max(1,Math.min(70,Number(s.width))):5,
     color:validColor(s.color)||'#171e29',
     ...(Number.isFinite(Number(s.opacity))?{opacity:Math.max(.1,Math.min(1,Number(s.opacity)))}:{}),
     ...(s.pressureSensitive===true?{pressureSensitive:true}:{}),
     points:Array.isArray(s.points)?s.points.slice(0,POINT_LIMIT).map(p=>p.slice(0,3)):[]})):[];
-  if(strokes.length&&Number(note?.inlineInk?.version||1)<2)strokes=migrateLegacyInk(strokes);
+  if(legacyPaperPending&&strokes.length){
+   // Legacy paper coordinates start at the sheet edge; notebook ink starts
+   // beneath its title. Translate the complete stroke set without scaling.
+   const g=geometry(),field=getTarget().getBoundingClientRect();
+   const offset=g?Math.max(0,(field.top-g.rect.top+40)*W/g.width):240;
+   strokes=strokes.map(s=>({...s,points:s.points.map(p=>[p[0],p[1]+offset,...p.slice(2)])}));
+  }else if(strokes.length&&Number(note?.inlineInk?.version||1)<2)strokes=migrateLegacyInk(strokes);
   const lastPointY=strokes.reduce((max,stroke)=>Math.max(max,...stroke.points.map(point=>Number(point[1])||0)),0);
-  inkPageHeight=Math.max(0,Number(note?.inlineInk?.pageHeight)||0,lastPointY+100);
+  inkPageHeight=Math.max(0,Number(note?.inlineInk?.pageHeight)||0,Number(legacyPaperPending?.height)||0,lastPointY+100);
   ink.hidden=true;inkSafeArea.hidden=true;inkTools.hidden=true;dlg.classList.remove('sv-smart-inking');syncButtons();
   requestAnimationFrame(resize);
  }
