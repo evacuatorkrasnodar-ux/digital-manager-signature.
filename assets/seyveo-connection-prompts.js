@@ -80,8 +80,9 @@
   const button=item.button;
   const scope=typeof item.scope==='function'?item.scope():item.scope;
   const connected=verified(item.service,scope);
-  button.hidden=connected;
-  if(connected)return;
+  const allowed=typeof item.visible==='function'?item.visible():true;
+  button.hidden=connected||!allowed;
+  if(button.hidden)return;
   const content=displayCopy(item.service,scope);if(!content)return;
   item.heading.textContent=content.heading;
   item.caption.textContent=content.caption;
@@ -111,7 +112,7 @@
   arrow.append(svg('<path d="m9 5 7 7-7 7"/>','arrow'));
   button.replaceChildren(icon,copy,arrow);
   if(options.addClick!==false)button.addEventListener('click',()=>open(service));
-  const item={button,service,scope:options.scope,heading,caption};
+  const item={button,service,scope:options.scope,visible:options.visible,heading,caption};
   instances.add(item);
   // New prompts may still be detached while their host is being assembled.
   // Render them now; a later refresh can safely prune stale detached nodes.

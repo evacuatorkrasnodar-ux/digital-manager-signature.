@@ -485,6 +485,7 @@ function mailView(){
  // It hides only when a real provider reports verified authorization.
  window.SEYVEO_CONNECTION_PROMPTS?.register(connect,'mail',{
   scope:()=>mailScope,
+  visible:()=>page.dataset.svMailMode!=='editor'&&page.dataset.svMailMode!=='detail'&&page.dataset.svMailMode!=='contacts',
   addClick:false
  });
  const compose=create('button','sv-mail-icon-button sv-mail-compose');compose.type='button';

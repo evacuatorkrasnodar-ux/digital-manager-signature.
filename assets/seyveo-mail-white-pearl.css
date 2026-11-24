@@ -294,10 +294,17 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
  color:#0074D4!important;
 }
 
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-actions .sv-mail-assist-symbol,
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions .sv-mail-assist-symbol{
- background-color:#243D36!important;color:#243D36!important;
+/* One transparent, round canonical Sayvi mark; no square background. */
+html body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-detail-actions .sv-mail-assist-action,.sv-mail-editor-actions .sv-mail-polish-trigger) > .sv-mail-assist-symbol.sv-sayvi-symbol{
+ box-sizing:border-box!important;display:block!important;flex:0 0 23px!important;
+ width:23px!important;height:23px!important;min-width:23px!important;min-height:23px!important;
+ max-width:23px!important;max-height:23px!important;margin:0!important;padding:0!important;
+ background:transparent url("./seyveo-sayvi-avatar-crisp.png") center / contain no-repeat!important;
+ border:0!important;border-radius:50%!important;box-shadow:none!important;filter:none!important;
+ -webkit-mask:none!important;mask:none!important;overflow:hidden!important;
 }
+html body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-detail-actions .sv-mail-assist-action,.sv-mail-editor-actions .sv-mail-polish-trigger) > .sv-mail-assist-symbol.sv-sayvi-symbol::before,
+html body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-detail-actions .sv-mail-assist-action,.sv-mail-editor-actions .sv-mail-polish-trigger) > .sv-mail-assist-symbol.sv-sayvi-symbol::after{content:none!important;display:none!important}
 
 /* Folder list: equal secondary navigation, quiet mailbox tags, compact rhythm.
    Keep the dock and its safe-area implementation unchanged. */
@@ -336,4 +343,18 @@ html body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"
 }
 html body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"]{
  scroll-padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));
+}
+
+/* Connection prompt belongs to the mailbox list, never the reader or editor. */
+html body #sayviSurfacePage[data-sv-subject="mail"]:is([data-sv-mail-mode="editor"],[data-sv-mail-mode="detail"],[data-sv-mail-mode="contacts"]) .sv-mail-connect{
+ display:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor-header{
+ margin:0 0 8px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-sender-switch{
+ min-height:44px!important;align-items:center!important;padding:0!important;margin:0 0 5px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor .sv-mail-field-label{
+ color:#48535F!important;
 }
