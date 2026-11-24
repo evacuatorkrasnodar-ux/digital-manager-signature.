@@ -1402,6 +1402,63 @@ function focusTaskWriting(){
  const end=input.value.length;
  input.setSelectionRange(end,end);
 }
+/* Temporary, opt-in prototype dataset. Real local task records are used
+   so editing, filtering, completion and scrolling use their real handlers.
+   Never seed automatically or schedule any external operation. */
+const SV_TASK_SAMPLE_PREFIX='sv-task-example-20261124-';
+const SV_TASK_SAMPLES=[
+ [0,'08:30','Подготовить план на день','work','task','blue'],
+ [0,'09:00','Завтрак с семьёй','personal','event','green'],
+ [0,'10:00','Совещание по проекту','work','event','purple'],
+ [0,'11:30','Проверить документы по заказу','work','task','orange'],
+ [0,'12:30','Встреча с поставщиком','work','event','blue'],
+ [0,'14:00','Подготовить коммерческое предложение','work','task','yellow'],
+ [0,'16:00','Купить продукты','personal','task','green'],
+ [0,'18:30','Тренировка в спортзале','personal','event','red'],
+ [0,'20:00','Разобрать фотографии','personal','task','purple'],
+ [1,'09:00','Планёрка команды','work','event','blue'],
+ [1,'10:30','Проверить складские остатки','work','task','orange'],
+ [1,'12:00','Обед с другом','personal','event','green'],
+ [1,'15:00','Подготовить еженедельный отчёт','work','task','purple'],
+ [1,'18:00','Забрать заказ из пункта выдачи','personal','task','yellow'],
+ [2,'08:00','Утренняя прогулка','personal','event','green'],
+ [2,'11:00','Обсуждение нового проекта','work','event','blue'],
+ [2,'16:30','Составить список покупок','personal','task','orange'],
+ [3,'10:00','Встреча команды по итогам недели','work','event','purple'],
+ [4,'15:00','Посещение выставки','personal','event','red'],
+ [null,'','Навести порядок в рабочей папке','work','task','yellow']
+];
+const sampleButton=element('button','sv-task-example-launch','Добавить 20 примеров');
+sampleButton.type='button';sampleButton.hidden=true;
+form.querySelector('.sv-new-task-main')?.after(sampleButton);
+function syncTaskSampleButton(){
+ sampleButton.hidden=!!editingTaskId||!!input.value.trim()||read().some(t=>t.id.startsWith(SV_TASK_SAMPLE_PREFIX));
+}
+input.addEventListener('input',syncTaskSampleButton);
+dialog.addEventListener('sv-task-editor-sync',syncTaskSampleButton);
+sampleButton.addEventListener('click',()=>{
+ if(editingTaskId||input.value.trim())return;
+ const all=read();
+ if(all.some(t=>t.id.startsWith(SV_TASK_SAMPLE_PREFIX))){syncTaskSampleButton();return;}
+ if(all.length+SV_TASK_SAMPLES.length>MAX){
+  $('personalTaskStatus').textContent='Не хватает места для 20 примеров. Ваши дела не изменены.';return;
+ }
+ const today=svTaskISO(new Date()),createdAt=new Date().toISOString();
+ const examples=SV_TASK_SAMPLES.map(([offset,time,title,category,entryType,tone],i)=>({
+  id:SV_TASK_SAMPLE_PREFIX+i,title,due:offset===null?'':svTaskShiftDay(today,offset),
+  time,category,entryType,tone,done:false,createdAt,doneAt:'',
+  createdBy:'user',notes:'Вымышленный пример для проверки SEYVEO.',
+  remindBefore:0,showOnHome:false,repeat:'none',priority:'none'
+ }));
+ if(!save(all.concat(examples))){
+  $('personalTaskStatus').textContent='Не удалось сохранить примеры. Ваши дела не изменены.';return;
+ }
+ sampleButton.hidden=true;
+ taskEditorSavedOnExit=true;
+ if(dialog.open)dialog.close();
+ render();
+ window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
+});
 function openDialog(){
  pendingSourceNoteId='';editingTaskId='';taskEditorSavedOnExit=false;svTaskCategoryTouched=false;svTaskTypeTouched=false;
  showCreator(null);
