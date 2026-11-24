@@ -40,6 +40,7 @@ const exportIcon='<path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/>';
 const shareIcon='<path d="M12 15V3m-4 4 4-4 4 4M7 9H4v12h16V9h-3"/>';
 const chevron='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
 const menuEdit=menuButton('Редактировать',penIcon);
+const menuMarks=menuButton('Пометки',penIcon);
 const menuExport=menuButton('Сохранить как…',exportIcon);
 const menuShare=menuButton('Поделиться…',shareIcon);
 for(const node of [menuExport,menuShare])node.insertAdjacentHTML('beforeend',chevron);
@@ -50,15 +51,12 @@ const outAnnotated=menuButton('PDF · с пометками',docIcon);
 const outJpeg=menuButton('JPEG · оригинал',imageIcon);
 const outTxt=menuButton('TXT · текст',docIcon);
 const outTextPDF=menuButton('PDF · текст',docIcon);
-const groups={root:[menuEdit,menuOCR,menuLines,menuExport,menuShare],export:[menuBack,outWord,outPdf,outAnnotated,outTextPDF,outJpeg,outTxt],share:[menuBack,outWord,outPdf,outAnnotated,outTextPDF,outJpeg,outTxt]};
+const groups={root:[menuEdit,menuMarks,menuExport,menuShare],export:[menuBack,outWord,outPdf,outAnnotated,outTextPDF,outJpeg,outTxt],share:[menuBack,outWord,outPdf,outAnnotated,outTextPDF,outJpeg,outTxt]};
 const prepared=document.createElement('div');prepared.id='svScanPrepared';prepared.className='sv-menu-surface';prepared.hidden=true;
 const preparedName=document.createElement('strong');const preparedAction=document.createElement('button');preparedAction.type='button';
 const preparedCancel=document.createElement('button');preparedCancel.type='button';preparedCancel.textContent='Закрыть';
 const preparedArchive=document.createElement('button');preparedArchive.type='button';preparedArchive.textContent='В архив документов';
 prepared.append(preparedName,preparedAction,preparedArchive,preparedCancel);dialog.append(prepared);
-const quickEdit=document.createElement('button');quickEdit.id='svScanQuickEdit';quickEdit.type='button';quickEdit.hidden=true;
-quickEdit.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+penIcon+'</svg><span>Редактировать</span>';
-quickEdit.addEventListener('click',()=>toPaper());preview.parentElement.insertAdjacentElement('afterend',quickEdit);
 const textTools=document.createElement('div');textTools.id='svScanTextTools';textTools.hidden=true;
 const textOCR=document.createElement('button');textOCR.type='button';textOCR.textContent='Распознать текст';
 textOCR.addEventListener('click',()=>{if(text.value.trim()&&!window.confirm('Заменить текущий текст результатом распознавания?'))return;button.click();});
@@ -132,19 +130,38 @@ async function openPages(kind){
  }catch(e){if(dialog.open&&token===session)message(e?.message||'Не удалось открыть документ.');}
  finally{exportBusy=false;syncMenu();}
 }
-function saveScanText(){
- if(!editingScanText||!savedScan?.id||running)return;
- const api=window.SEYVEO_NOTES_API,list=api?.getNotes?.();
- if(!list?.some(n=>n.id===savedScan.id)){message('Документ не найден.');return;}
- const value=text.value.slice(0,8000);
- const updated=list.map(n=>n.id===savedScan.id?{...n,scanText:value,updatedAt:Date.now()}:n);
- if(!api.putNotes(updated)){message('Не удалось сохранить текст. Документ остаётся открытым.');return;}
- savedScan=updated.find(n=>n.id===savedScan.id);editingScanText=false;
- delete dialog.dataset.editScanText;outputIntent='';setStep('photo');message('Текст сохранён.');syncActions();
+async function saveScanText(){
+ if(!editingScanText||!selected||running||exportBusy)return;
+ const api=window.SEYVEO_NOTES_API;
+ if(!api?.getNotes||!api?.putNotes){message('Блокнот недоступен.');return;}
+ const value=text.value.slice(0,8000),token=session;
+ exportBusy=true;syncActions();
+ try{
+  let id=savedScan?.id;
+  let list=api.getNotes();
+  let updated;
+  if(id){
+   if(!list.some(n=>n.id===id))throw Error('Документ не найден.');
+   updated=list.map(n=>n.id===id?{...n,scanText:value,updatedAt:Date.now()}:n);
+  }else{
+   const paper=window.SEYVEO_PAPER;
+   if(!paper?.compressPhoto||!paper?.normalize)throw Error('Сохранение скана недоступно.');
+   const photo=await paper.compressPhoto(selected);
+   if(!dialog.open||session!==token)return;
+   list=api.getNotes();id=String(Date.now())+'-'+Math.random().toString(36).slice(2);
+   updated=[{id,title:'Скан документа',text:'Скан документа',noteKind:'art',scanDocument:true,scanText:value,paper:paper.normalize({photo,background:'light',pattern:'blank',strokes:[],texts:[]}),createdAt:Date.now()},...list];
+  }
+  if(!api.putNotes(updated))throw Error('Не удалось сохранить текст. Документ остаётся открытым.');
+  savedScan=updated.find(n=>n.id===id);dialog.dataset.savedScan='true';
+  $('noteScanTitle').textContent=savedScan.title||'Скан документа';
+  editingScanText=false;delete dialog.dataset.editScanText;outputIntent='';setStep('photo');message(''); 
+ }catch(e){if(dialog.open&&session===token)message(e?.message||'Не удалось сохранить документ.');}
+ finally{exportBusy=false;syncActions();}
 }
 function openTextEditor(){
+ if(running||exportBusy)return;
  editingScanText=true;dialog.dataset.editScanText='true';outputIntent='';
- text.value=typeof savedScan?.scanText==='string'?savedScan.scanText:'';
+ text.value=typeof savedScan?.scanText==='string'?savedScan.scanText:text.value;
  setStep('edit');syncActions();message(text.value?'':'Введите текст или нажмите «Распознать текст».');
 }
 function requestText(intent){
@@ -185,7 +202,8 @@ textExport.addEventListener('click',()=>{
  const [format,share]=outputIntent.split('-');if(['docx','txt','textpdf'].includes(format))void prepareFormat(format,share==='share');
 });
 menuBack.addEventListener('click',()=>page('root'));
-menuEdit.addEventListener('click',()=>{closeMenu();toPaper();});
+menuEdit.addEventListener('click',()=>{closeMenu();clearPrepared();openTextEditor();if(!text.value.trim())button.click();});
+menuMarks.addEventListener('click',()=>{closeMenu();toPaper();});
 menuExport.addEventListener('click',()=>page('export'));
 menuShare.addEventListener('click',()=>page('share'));
 for(const [node,format] of [[outWord,'docx'],[outPdf,'pdf'],[outAnnotated,'annotated'],[outTextPDF,'textpdf'],[outJpeg,'jpg'],[outTxt,'txt']])node.addEventListener('click',()=>{const share=menuPage==='share';void prepareFormat(format,share);});
@@ -200,10 +218,10 @@ function syncMenu(){
  more.hidden=!available||editingScanText;if(more.hidden)closeMenu();
  const inEdit=dialog.dataset.step==='edit';
  const blocked=!selected||running||exportBusy;
- quickEdit.hidden=!available||inEdit;quickEdit.disabled=blocked;
- textTools.hidden=!editingScanText;textDone.hidden=!editingScanText;textDone.disabled=running;textOCR.disabled=running;
+ menuOCR.hidden=true;menuLines.hidden=true;
+ textTools.hidden=!editingScanText;textDone.hidden=!editingScanText;textDone.disabled=running||exportBusy;textOCR.disabled=running||exportBusy;
  for(const node of new Set(Object.values(groups).flat())){node.hidden=!groups[menuPage].includes(node);node.disabled=blocked&&node!==menuBack;}
- if(menuPage==='root'){menuOCR.hidden=inEdit;menuLines.hidden=inEdit;}
+
 
  outAnnotated.disabled=blocked||!(savedScan?.paper?.strokes?.length||savedScan?.paper?.texts?.length);
  menuLines.setAttribute('aria-checked',String(keepLines?.checked!==false));
@@ -223,7 +241,7 @@ menuOCR.addEventListener('click',()=>{closeMenu(true);if(savedScan){openTextEdit
 menuLines.addEventListener('click',()=>{if(keepLines)keepLines.click();syncMenu();});
 dialog.addEventListener('click',event=>{
  if(!menu.hidden&&!menu.contains(event.target)&&!more.contains(event.target))closeMenu();
- if(consentBox&&!consentBox.hidden&&!consentBox.contains(event.target)&&!button.contains(event.target)&&!more.contains(event.target)&&!menu.contains(event.target)){
+ if(consentBox&&!consentBox.hidden&&!consentBox.contains(event.target)&&!button.contains(event.target)&&!textOCR.contains(event.target)&&!more.contains(event.target)&&!menu.contains(event.target)){
   consentBox.hidden=true;
  }
 });
@@ -433,7 +451,7 @@ async function recognize(){
   running=false;button.disabled=!selected;syncActions();
  }
 }
-function cancel(){if(editingScanText){if(text.value!==(savedScan?.scanText||'')&&!window.confirm('Выйти без сохранения текста?'))return;text.value=savedScan?.scanText||'';editingScanText=false;delete dialog.dataset.editScanText;setStep('photo');message('');return;}dialog.close()}
+function cancel(){if(exportBusy)return;if(editingScanText){if(text.value!==(savedScan?.scanText||'')&&!window.confirm('Выйти без сохранения текста?'))return;text.value=savedScan?.scanText||'';editingScanText=false;delete dialog.dataset.editScanText;setStep('photo');message('');return;}dialog.close()}
 function toNote(){
  const value=keepLines?.checked!==false?text.value.replace(/^\n+|\n+$/g,''):text.value.trim();
  if(!value.trim()){message('Сначала распознайте текст или введите его вручную.');return}
