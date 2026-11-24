@@ -81,8 +81,12 @@
   return true;
  }
  function extract(input,options={}){
-  const phrase=String(input||'').slice(0,500);
+  let phrase=String(input||'').slice(0,500);
   if(!meeting.test(phrase))return null;
+  // A natural landmark-first phrase is equivalent to a venue-first phrase.
+  // Normalize only the known branch pair, never an arbitrary address.
+  phrase=phrase.replace(/(?:на|в)\s+(?:трц\s+|тц\s+)?[«"]?красн(?:ой|ая)\s+площад(?:и|ь)[»"]?\s*,?\s+(?:в\s+)?кафе\s+[«"]?вкусно\s+(?:[—–-]\s*)?и\s+точка[»"]?/iu,
+   'в кафе «Вкусно — и точка», ТРЦ Красная Площадь');
   const cityMatch=phrase.match(/(?:^|[\s,.!?])(?:в\s+городе\s+|г\.\s*)([А-ЯЁ][А-ЯЁа-яё-]{2,}(?:\s+[А-ЯЁ][А-ЯЁа-яё-]+)?)/u)
    ||phrase.match(/(?:^|[\s,.!?])в\s+(Краснодаре|Москве|Сочи|Казани|Новосибирске|Екатеринбурге|Петербурге)(?=$|[\s,.!?])/iu);
   let city=cityMatch?(CITY_FORMS[cityMatch[1]?.toLocaleLowerCase('ru-RU')]||cityMatch[1]):'';
