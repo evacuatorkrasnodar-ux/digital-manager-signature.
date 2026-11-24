@@ -263,6 +263,7 @@
     // pointless trip to the dock and back after the written welcome.
     const keepHomeSphere=!spark&&(stayHome||!shouldDockHome())&&
       (!location.hash||location.hash==='#home')&&!home.hidden;
+    const publicLift=keepHomeSphere&&!showCinema&&!noIntro&&!document.hidden&&root.classList.contains('sv-home-launch-pending');
     done=true;
     voiceButton?.remove();
     voiceButton=null;
@@ -291,7 +292,7 @@
     clearTimeout(safetyTimer);
     if(spark)root.classList.add('sv-cinema-stagger-enter');
     root.classList.add('sv-sayvi-handoff-docked');
-    if(keepHomeSphere){
+    if(keepHomeSphere&&!publicLift){
       emptySphere=true;
       emptyEntering=false;
       emptyLeaving=false;
@@ -304,15 +305,15 @@
     if(spark)root.classList.add('sv-sayvi-handoff-arrived');
     restoreOrb();
     restoreDock();
-    if(keepHomeSphere)window.dispatchEvent(new Event('seyveo:home-sayvi-arrived'));
+    if(keepHomeSphere&&!publicLift)window.dispatchEvent(new Event('seyveo:home-sayvi-arrived'));
     if(smallOpacity)small.style.setProperty('opacity',smallOpacity,smallOpacityPriority);
     else small.style.removeProperty('opacity');
     root.classList.remove('sv-sayvi-handoff-inflight');
     if(revealHomeInfo)setTimeout(()=>root.classList.remove('sv-home-info-enter'),900);
     const cluster=document.getElementById('orbCluster');
     if(cluster){
-      cluster.setAttribute('aria-hidden',keepHomeSphere?'false':'true');
-      cluster.inert=!keepHomeSphere;
+      cluster.setAttribute('aria-hidden',keepHomeSphere&&!publicLift?'false':'true');
+      cluster.inert=!keepHomeSphere||publicLift;
     }
     if(spark){
       const flash=document.createElement('span');
@@ -325,7 +326,20 @@
       setTimeout(()=>flash.remove(),1050);
     }
     renderToday();
-    beginHomeGreetingLifetime();
+    if(publicLift){
+      // The ordinary launch reuses the original dock-to-Home flight.
+      // Keep all Home information behind the first-paint gate until landing.
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        if(canShowEmptySphere())enterEmptySphere();
+        else{
+          root.classList.remove('sv-home-launch-pending');
+          beginHomeGreetingLifetime();
+        }
+      }));
+    }else{
+      root.classList.remove('sv-home-launch-pending');
+      beginHomeGreetingLifetime();
+    }
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
     if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),4200);
@@ -627,9 +641,8 @@
   // No automatic spoken welcome: the public launch is intentionally silent.
   // An explicitly requested private preview (?sayvi-voice=1) remains separate.
 
-  // The normal Home enters immediately; the voice demo is opt-in only.
+  // Wait for an actual visible frame even on a cold standalone PWA launch.
   const launch=()=>{
-    if(!showCinema||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
     if(document.hidden){
       // iOS can construct a standalone Web App while it is still backgrounded.
       // Do not burn the opening before the first visible frame is possible.
@@ -641,6 +654,7 @@
       document.addEventListener('visibilitychange',onVisible);
       return;
     }
+    if(!showCinema||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
     if(localVoicePreview){
       prepareDock();
         showLocalVoicePreview();
@@ -654,10 +668,14 @@
   requestAnimationFrame(launch);
   window.addEventListener('hashchange',()=>{
     if(!done&&location.hash&&location.hash!=='#home')finish();
-    if(location.hash&&location.hash!=='#home')root.classList.remove('sv-cinema-stagger-enter');
+    if(location.hash&&location.hash!=='#home'){
+      root.classList.remove('sv-cinema-stagger-enter','sv-home-launch-pending');
+      beginHomeGreetingLifetime();
+    }
   });
   window.addEventListener('pagehide',()=>{
     if(!done)finish();
+    root.classList.remove('sv-home-launch-pending');
   });
   let lastViewportWidth=window.innerWidth;
   window.addEventListener('resize',()=>{
@@ -952,8 +970,13 @@
       // Never strand the weather behind the flight gate on Safari, even if
       // Web Animations is interrupted or cannot start.
       root.classList.add('sv-home-empty-arrived');
+      const firstLaunch=root.classList.contains('sv-home-launch-pending');
+      if(firstLaunch){
+        root.classList.remove('sv-home-launch-pending');
+        beginHomeGreetingLifetime();
+      }
       window.dispatchEvent(new CustomEvent('seyveo:home-sayvi-arrived',{
-        detail:{afterCards}
+        detail:{afterCards,firstLaunch}
       }));
       if(!canShowEmptySphere())leaveEmptySphere();
     };
