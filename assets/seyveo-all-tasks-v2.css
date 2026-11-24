@@ -21,8 +21,8 @@
    Keep 16px type on iPhone to avoid Safari zoom on focus. */
 #svAllTasksView .sv-tool-input{
  -webkit-appearance:none;appearance:none;
- box-sizing:border-box;flex:0 0 auto;align-self:center;width:min(86%,340px);height:40px;min-height:40px;
- margin:0 0 12px;padding:0 14px 0 35px;
+ box-sizing:border-box;flex:0 0 auto;align-self:center;width:calc(100% - 20px);height:40px;min-height:40px;
+ margin:0 0 4px;padding:0 14px 0 35px;
  border:1px solid rgba(255,255,255,.96);
  border-radius:999px;background-color:rgba(190,193,202,.12);color:#17191E;
  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238C949E' stroke-width='1.7' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='m15.3 15.3 4.7 4.7'/%3E%3C/svg%3E");
@@ -60,7 +60,9 @@ html:root[data-theme="light"] body #svAllTasksView .sv-tool-input{
 html:root body #svWorkShell[data-task-tool-mode="all"] #svAllTasksView .sv-tool-results{
  flex:1 1 0!important;min-height:0!important;
  margin-bottom:calc(max(12px,env(safe-area-inset-bottom,0px)) + 54px)!important;
- padding-bottom:8px!important;scroll-padding-bottom:8px!important;
+ padding:10px 0!important;scroll-padding:10px 0!important;
+ -webkit-mask-image:linear-gradient(to bottom,transparent,#000 9px,#000 calc(100% - 9px),transparent);
+ mask-image:linear-gradient(to bottom,transparent,#000 9px,#000 calc(100% - 9px),transparent);
 }
 html:root.sv-task-search-focus body #svWorkShell[data-task-tool-mode="all"] #svAllTasksView .sv-tool-results{margin-bottom:0!important;}
 
@@ -141,7 +143,7 @@ html:root.sv-task-search-focus body #svWorkShell[data-task-tool-mode="all"] #svA
 #svTaskActionCapsule .sv-task-all{background:rgba(255,255,255,.74)}
 #svTaskActionCapsule .sv-task-count{display:grid;place-items:center;align-self:center;height:32px;min-width:0;color:#707782;font-size:11.8px;line-height:1.15;white-space:nowrap}
 #svTaskActionCapsule .sv-task-count[data-has-selection="true"]{color:#3769A9;font-weight:570}
-#svTaskActionCapsule .sv-task-delete{color:#B34750}
+#svTaskActionCapsule .sv-task-delete:not(:disabled){color:#C43E42!important}
 #svTaskActionCapsule .sv-task-delete:disabled{color:#B6A4A8;opacity:.55}
 #svTaskActionCapsule .sv-task-cancel{color:#60636B}
 #svTaskActionCapsule button:active{background:rgba(130,135,148,.12)}
@@ -191,7 +193,7 @@ html:has(#svWorkShell[data-task-tool-mode="all"]) body > footer.dock.sv-shared-d
 }
 #svAllTasksView .sv-tool-chevron svg{width:18px;height:18px;display:block;}
 html:root[data-theme="light"] body #svTaskActionCapsule{
- border:var(--sv-white-pearl-edge)!important;
+ border:.8px solid rgba(158,170,185,.38)!important;
  background:var(--sv-white-pearl-surface)!important;
  box-shadow:var(--sv-white-pearl-dock-shadow)!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
