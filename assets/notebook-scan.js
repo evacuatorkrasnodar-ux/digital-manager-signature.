@@ -207,6 +207,21 @@ function toPaper(){
  window.SEYVEO_PAPER?.open();
  window.SEYVEO_PAPER?.importPhoto(file);
 }
+// Test a real OCR input without needing the camera or gallery.
+$('svNoteScanExample')?.addEventListener('click',()=>{
+ if(running||!dialog.open)return;
+ const canvas=document.createElement('canvas');canvas.width=1000;canvas.height=1200;
+ const ctx=canvas.getContext('2d');if(!ctx)return;
+ ctx.fillStyle='#fff';ctx.fillRect(0,0,1000,1200);
+ ctx.fillStyle='#20242b';ctx.font='bold 48px Arial';ctx.fillText('Учебный документ',70,120);
+ ctx.font='36px Arial';
+ ['Накладная № 014','Бумага — 5 пачек','Папки — 10 шт.','Всего: 2450 рублей','Вымышленный пример SEYVEO'].forEach((line,i)=>ctx.fillText(line,70,230+i*85));
+ const token=session;
+ canvas.toBlob(blob=>{
+  if(!blob||!dialog.open||session!==token)return;
+  select(new File([blob],'seyveo-scan-example.jpg',{type:'image/jpeg'}));
+ },'image/jpeg',.92);
+});
 for(const id of ['noteScanCamera','noteScanGallery']){
  $(id)?.addEventListener('change',event=>{
   const file=event.target.files?.[0];event.target.value='';
