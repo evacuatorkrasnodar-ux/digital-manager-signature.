@@ -393,7 +393,7 @@ svg.sv-paper-signature .sv-paper-icon-core{
  padding:0!important;margin:0!important;
  border:0!important;border-radius:0!important;
  outline:0!important;box-shadow:none!important;
- background:#202124!important;
+ background:#212121!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperStage>#notePaperSheet.paper-sheet{
  width:100%!important;height:100%!important;
@@ -2603,11 +2603,11 @@ html.sv-paper-drawing,
 html.sv-paper-drawing body,
 html:has(#notePaperDialog.sv-paper-studio[open]),
 html:has(#notePaperDialog.sv-paper-studio[open]) body{
- background:#202124!important;
+ background:#212121!important;
  background-image:none!important;
 }
 html body #notePaperDialog.sv-paper-studio[open]{
- background:#202124!important;
+ background:#212121!important;
  background-image:none!important;
 }
 html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-bottom,
