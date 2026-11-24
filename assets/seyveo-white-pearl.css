@@ -332,56 +332,6 @@ html:root[data-theme="light"] body :is(
  outline-offset:3px!important;
 }
 
-/* DRAWING · UNIFIED PEARL CONFIRM (21 Nov).
-   The existing Save/check button is one of our Notebook circles, not a
-   different solid-white style. Borrow the actual shared White Pearl tokens,
-   preserve its position and existing save handlers, and don't add a backing
-   rectangle, duplicate pseudo-surface, or another circle around the palette. */
-/* Transparent hit target. The actual gold circle and its contour shadow are SVG only. */
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm,
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm:is(:active,:hover,:focus){
- -webkit-appearance:none!important;appearance:none!important;
- box-sizing:border-box!important;display:grid!important;place-items:center!important;
- width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
- max-width:44px!important;max-height:44px!important;
- position:fixed!important;right:max(12px,env(safe-area-inset-right,0px))!important;
- bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
- padding:0!important;margin:0!important;
- border:0!important;border-radius:50%!important;
- background:none!important;background-color:transparent!important;background-image:none!important;color:#fff!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- -webkit-clip-path:none!important;clip-path:none!important;filter:none!important;
- overflow:visible!important;transform:none!important;transition:none!important;
- text-shadow:none!important;-webkit-tap-highlight-color:transparent!important;
-}
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm::before,
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm::after{
- content:none!important;display:none!important;background:none!important;box-shadow:none!important;
-}
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm svg{
- display:block!important;position:static!important;
- width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
- max-width:44px!important;max-height:44px!important;
- margin:0!important;padding:0!important;overflow:visible!important;
- background:none!important;border:0!important;box-shadow:none!important;
- fill:none!important;stroke:none!important;
- transform:none!important;translate:none!important;filter:none!important;
-}
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm svg > .sv-ink-gold-disc{
- display:block!important;fill:#c69c09!important;stroke:none!important;
- filter:drop-shadow(0 2px 3px rgba(84,65,13,.14))!important;
-}
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm svg > .sv-ink-check{
- stroke:#fff!important;stroke-width:1.0!important;fill:none!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
-}
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm:focus-visible{
- outline:2px solid rgba(55,65,76,.60)!important;outline-offset:3px!important;
-}
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open].sv-paper-inking > #notePaperSave.sv-ink-confirm{
- opacity:0!important;visibility:hidden!important;pointer-events:none!important;
-}
 /* Bottom row has one vertical centre: 34px above the safe-area edge.
    No opaque footer, glass layer, or backdrop below the palette or save. */
 html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom{
