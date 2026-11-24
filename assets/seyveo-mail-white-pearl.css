@@ -579,7 +579,7 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group{margin:0!important;gap:0!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row,html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row:last-child{
  min-height:62px!important;padding:5px 3px!important;
- border-bottom:1px solid rgba(35,45,55,.10)!important;
+ border-bottom:0!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-content{
  display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;
@@ -588,10 +588,10 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-copy{
  display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-width:0!important;gap:4px!important;overflow:hidden!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-title{display:block!important;min-width:0!important;max-width:100%!important;color:#17191d!important;font-size:13.5px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-title{display:block!important;min-width:0!important;max-width:100%!important;color:#17191d!important;font-size:14px!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-kind{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
- flex:0 0 30px!important;width:30px!important;height:34px!important;
+ flex:0 0 30px!important;width:30px!important;height:34px!important;align-self:center!important;
  margin:0!important;padding:0!important;border:0!important;border-radius:7px!important;
  color:#fff!important;background:#747b85!important;
  font:750 9px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
@@ -608,4 +608,20 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-attachment-count > svg{
  width:13px!important;height:13px!important;flex:0 0 13px!important;stroke:currentColor!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-account{color:#525c68!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-account{
+ color:#525c68!important;display:inline-flex!important;align-items:center!important;
+ align-self:center!important;height:18px!important;min-height:18px!important;line-height:1!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-attachment-count > span{
+ display:block!important;line-height:1!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row::after{
+ content:""!important;position:absolute!important;pointer-events:none!important;
+ left:3px!important;right:3px!important;bottom:0!important;height:1px!important;
+ background:rgba(35,45,55,.10)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row:has(.sv-mail-draft-kind)::after{left:42px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row.is-selecting::after{left:38px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row.is-selecting:has(.sv-mail-draft-kind)::after{left:77px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row.is-actions-open::after{visibility:hidden!important}
+
