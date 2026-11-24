@@ -535,6 +535,22 @@ for(const id of ['noteScanCamera','noteScanGallery']){
 // Soft wrapping only changes how long lines LOOK on a narrow iPhone screen.
 // Actual newlines and the user's "preserve lines" OCR choice stay untouched.
 keepLines?.addEventListener('change',()=>{text.wrap='soft';syncMenu();});
+// The document itself is the edit entry point, not another action button.
+preview.setAttribute('role','button');
+preview.setAttribute('aria-label','Редактировать текст документа');
+preview.tabIndex=0;
+function editFromScan(){
+ if(!selected||running||exportBusy||!consentBox.hidden||dialog.dataset.step!=='photo')return;
+ if(!menu.hidden){closeMenu(true);return;}
+ clearPrepared();
+ if(intoOpenNote){button.click();return;}
+ openTextEditor();
+ if(editingScanText)text.focus({preventScroll:true});
+}
+preview.addEventListener('click',editFromScan);
+preview.addEventListener('keydown',event=>{
+ if(event.key==='Enter'||event.key===' '){event.preventDefault();editFromScan();}
+});
 text.setAttribute('aria-label','Текст документа');
 text.addEventListener('focus',()=>{
  if(dialog.hasAttribute('data-scan-reading-text')&&!editingScanText&&!running&&!exportBusy){closeMenu();clearPrepared();activateTextEditor();}
