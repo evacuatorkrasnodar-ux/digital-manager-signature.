@@ -1141,8 +1141,8 @@ html body #calendarPage #calendarView#calendarView[data-mode="month"][data-month
 /* Detailed month grows per week according to the busiest day, not the whole month.
    All seven days in a week share one height, like the Apple Calendar reference. */
 html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month>.cal-month-grid{
- grid-template-rows:var(--cal-month-detail-rows,repeat(var(--cal-month-weeks,6),76px))!important;
- grid-auto-rows:76px!important;
+ grid-template-rows:var(--cal-month-detail-rows,repeat(var(--cal-month-weeks,6),49px))!important;
+ grid-auto-rows:49px!important;
  transition:height .32s cubic-bezier(.2,.75,.22,1),grid-template-rows .32s cubic-bezier(.2,.75,.22,1)!important;
 }
 html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day{padding-top:2px!important;gap:0!important}
@@ -1490,3 +1490,30 @@ html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout=
 html:root[data-theme="dark"] body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-more{
  color:#BCC2CC!important;
 }
+
+/* Detailed month only: compact blank weeks and clear two-line event chips. */
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day{
+ justify-content:flex-start!important;padding:3px 1px 1px!important;gap:0!important;
+}
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-labels{
+ flex:none!important;margin:1px 0 0!important;gap:1px!important;
+}
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-chip{
+ height:14px!important;min-height:14px!important;
+ padding:1px 2px 1px 7px!important;
+ font-size:10px!important;font-weight:600!important;line-height:12px!important;
+}
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-chip[data-has-time="true"]{
+ height:24px!important;min-height:24px!important;
+}
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-chip::before{
+ left:2px!important;top:5px!important;width:3px!important;height:3px!important;box-shadow:none!important;
+}
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-chip-time{
+ font:500 9px/10px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ opacity:1!important;
+}
+html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-more{
+ margin:0!important;font:600 9px/9px system-ui!important;color:#59616B!important;
+}
+html:root[data-theme="dark"] body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-more{color:#BCC2CC!important;}
