@@ -1059,6 +1059,7 @@ $('notePaperDuplicate')?.addEventListener('click',()=>{
 });
 function open(note=null){
   handwritingPage=note?.noteKind==='handwriting';
+  dialog.classList.toggle('sv-paper-handwriting-page',handwritingPage);
   if(handwritingPage)note=window.SEYVEO_NOTEBOOK_SCREEN?.alignExample?.(note)||note;
  dialog.classList.remove('sv-paper-inking');
  if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}
