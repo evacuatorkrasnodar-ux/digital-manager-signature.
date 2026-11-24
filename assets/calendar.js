@@ -362,7 +362,7 @@ function renderWeekTimeline(list){
  const root=$('calendarWeekHours'),scroll=$('calendarWeekTimelineScroll');
  panel.hidden=false;allDay.replaceChildren();root.replaceChildren();
  const dayHeading=$('calendarWeekSelectedDay');
- if(dayHeading)dayHeading.textContent=niceFirst(fmtShort.format(focus))+' '+focus.getFullYear()+' г.';
+ if(dayHeading)dayHeading.textContent=niceFirst(fmtShort.format(focus))+' '+focus.getFullYear();
  const parseMinutes=time=>{
   if(typeof time!=='string'||!/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(time))return null;
   const [hours,minutes]=time.split(':').map(Number);
