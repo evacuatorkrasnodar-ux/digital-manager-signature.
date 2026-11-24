@@ -8,7 +8,7 @@
  const HIDE_AFTER=30000;
  const getSource=()=>window.SAYVI_WEATHER;
  let panel=null,activeAnchor=null,activeDate='',timer=0,requestedRefresh=false,agendaMode=false,homeMode=false;
- let homeLayoutObserver=null,homeTextObserver=null,homeLayoutFrame=0;
+ let homeLayoutObserver=null,homeLayoutFrame=0;
  function scheduleHomePosition(){
   if(!panel||!homeMode||homeLayoutFrame)return;
   homeLayoutFrame=requestAnimationFrame(()=>{homeLayoutFrame=0;if(panel&&homeMode)position();});
@@ -63,10 +63,7 @@
  function close(immediate=false){
   clearTimeout(timer);timer=0;
   homeLayoutObserver?.disconnect();homeLayoutObserver=null;
-  homeTextObserver?.disconnect();homeTextObserver=null;
   if(homeLayoutFrame){cancelAnimationFrame(homeLayoutFrame);homeLayoutFrame=0;}
-  document.getElementById('svHomeLivingLine')?.removeEventListener('animationend',scheduleHomePosition);
-  document.getElementById('svHomeLivingLine')?.removeEventListener('transitionend',scheduleHomePosition);
   if(activeAnchor)activeAnchor.setAttribute('aria-expanded','false');
   activeAnchor=null;activeDate='';requestedRefresh=false;
   setCalendarWeatherMode(false);
@@ -358,26 +355,26 @@
   });
   // Keep source credits inside the detailed Sayvi station, not on
   // this small glanceable weather preview.
-  document.body.append(panel);
-  position();
-  if(!panel)return;
-  // The week row is positioned by weather-brief on the next animation frame.
   if(homeMode){
-   scheduleHomePosition();
-   const thought=document.getElementById('svHomeLivingLine');
-   const message=document.querySelector('#homePage #stage > .message');
-   thought?.addEventListener('animationend',scheduleHomePosition);
-   thought?.addEventListener('transitionend',scheduleHomePosition);
+   // Wait for the weekly row to settle before painting the card. Do not
+   // render first at a stale coordinate and then visibly jump.
+   const openedPanel=panel;
+   panel.style.visibility='hidden';
+   document.body.append(panel);
    if(typeof ResizeObserver==='function'){
     homeLayoutObserver=new ResizeObserver(scheduleHomePosition);
-    for(const node of [activeAnchor,thought,message])if(node)homeLayoutObserver.observe(node);
+    homeLayoutObserver.observe(activeAnchor);
    }
-   if(typeof MutationObserver==='function'){
-    homeTextObserver=new MutationObserver(scheduleHomePosition);
-    for(const node of [thought,message])if(node)homeTextObserver.observe(node,{attributes:true,subtree:true,childList:true,characterData:true,attributeFilter:['hidden','style','class','data-revealed','data-sv-presence','data-sv-space','data-sv-typing']});
-    homeTextObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
-   }
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(panel!==openedPanel||!homeMode)return;
+    position();
+    if(panel===openedPanel)panel.style.visibility='';
+   }));
+  }else{
+   document.body.append(panel);
+   position();
   }
+  if(!panel)return;
   resetTimer();
   panel.addEventListener('pointerdown',resetTimer,{passive:true});
   if(!day&&!requestedRefresh){requestedRefresh=true;src?.refresh?.();}
@@ -400,7 +397,8 @@
  },{capture:true,passive:true});
  window.addEventListener('resize',()=>{if(panel)position();},{passive:true});
  window.visualViewport?.addEventListener('resize',()=>{if(panel&&homeMode)requestAnimationFrame(()=>{if(panel&&homeMode)position();});},{passive:true});
- window.addEventListener('seyveo:home-shortcuts-layout',()=>{if(panel&&homeMode)requestAnimationFrame(()=>{if(panel&&homeMode)position();});});
+ window.addEventListener('seyveo:home-shortcuts-layout',scheduleHomePosition);
+ window.addEventListener('seyveo:home-weather-position',scheduleHomePosition);
  document.addEventListener('visibilitychange',()=>{if(document.hidden)close(true);});
  window.addEventListener('seyveo:route-changed',()=>close(true));
  window.addEventListener('seyveo:weather-updated',()=>{
