@@ -363,7 +363,8 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
 
 /* SEYVEO · shared rounded native-input replacement.
    Keep the existing input/select as the ONLY stored value; route supported
-   system-square controls through a consistent accessible graphite dialog.
+   system-square controls through a theme-aware accessible dialog.
+   Staff break selects are owned only by seyveo-staff-select.js.
    Calendar event and task forms already have their own custom pickers. */
 (()=>{
  'use strict';
@@ -371,9 +372,7 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
   pictureOperationDay:'Дата операции',
   svcpVacationEnd:'Окончание отпуска',
   svcpManagerDayStart:'Начало смены',
-  svcpManagerDayEnd:'Окончание смены',
-  svcpBreakAfter:'Начало перерыва',
-  svcpBreakMinutes:'Длительность перерыва'
+  svcpManagerDayEnd:'Окончание смены'
  };
  const fields=Object.entries(CONFIG).map(([id,title])=>({field:document.getElementById(id),title}))
   .filter(({field})=>field&&((field.tagName==='SELECT')||['date','time'].includes(field.type)));
@@ -553,8 +552,10 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
  // Keep button labels synchronized after initialization and when tabs are entered.
  [0,250,1200].forEach(delay=>setTimeout(()=>fields.forEach(({field})=>sync(field)),delay));
  document.addEventListener('click',event=>{
-  if(event.target.closest('#svcpStaffTabs,[data-svstaff-tab],#svcpManagerPeople>summary'))
+  if(event.target.closest('#svcpStaffTabs,[data-svstaff-tab],#svcpManagerPeopleOpen'))
    setTimeout(()=>fields.forEach(({field})=>sync(field)),0);
  },true);
  window.addEventListener('pageshow',()=>fields.forEach(({field})=>sync(field)));
+ window.addEventListener('seyveo:shift-updated',()=>fields.forEach(({field})=>sync(field)));
+ document.getElementById('svcpManagerSchedule')?.addEventListener('toggle',()=>fields.forEach(({field})=>sync(field)));
 })();

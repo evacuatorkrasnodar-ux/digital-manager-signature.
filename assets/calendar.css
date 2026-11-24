@@ -2105,3 +2105,35 @@ html body #calendarEventDialog.cal-form-dialog[open] .cal-event-sheet{
  border:0!important;border-radius:0!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
+
+/* The shared picker follows the active theme, never a hard-coded graphite
+   palette in White Pearl. Dark theme retains its original material. */
+html:root[data-theme="light"] body .sv-standard-picker-launch{
+ background:#f6f6f8!important;color:#20242a!important;border:1px solid #e8eaee!important;
+ font-weight:450!important;
+}
+html:root[data-theme="light"] body .sv-standard-picker-launch:is(:active,[aria-expanded="true"]){background:#eef1f4!important}
+html:root[data-theme="light"] body .sv-standard-picker-launch:focus-visible{outline:1.5px solid #6b9ac7!important;outline-offset:2px!important}
+html:root[data-theme="light"] body dialog#svStandardPickerDialog.sv-standard-picker-sheet[open]{
+ background:#fcfcfd!important;color:#20242a!important;border:var(--sv-menu-border,1px solid #e7e9ed)!important;
+ border-radius:22px!important;box-shadow:var(--sv-menu-shadow,0 12px 34px rgba(25,33,45,.16))!important;
+}
+html:root[data-theme="light"] body dialog#svStandardPickerDialog::backdrop{background:rgba(30,40,52,.18)!important}
+html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-picker-back{
+ background:var(--sv-white-pearl-surface,#f5f5f7)!important;color:#20242a!important;
+ border:var(--sv-white-pearl-edge,1px solid #e7e9ed)!important;box-shadow:var(--sv-white-pearl-circle-shadow,none)!important;
+}
+html:root[data-theme="light"] body #svStandardPickerDialog :is(.sv-standard-picker-head h2,.sv-standard-time-preview,.sv-standard-month strong,.sv-standard-month-arrow,.sv-standard-picker-day,.sv-standard-picker-option){color:#20242a!important}
+html:root[data-theme="light"] body #svStandardPickerDialog :is(.sv-standard-time-column>small,.sv-standard-time-colon,.sv-standard-picker-week span){color:#646c77!important}
+html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-time-wheel{background:#f2f3f5!important;border-radius:15px!important}
+html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-time-option{color:#454d58!important}
+html:root[data-theme="light"] body #svStandardPickerDialog :is(.sv-standard-time-option.is-selected,.sv-standard-picker-day.is-selected,.sv-standard-picker-option[aria-pressed="true"]){background:#e2edf8!important;color:#235d90!important}
+html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-picker-check{color:#176ab4!important}
+html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-picker-day.is-today:not(.is-selected){outline-color:#79a9d5!important}
+html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-picker-actions{border-top-color:#e8eaee!important}
+html:root[data-theme="light"] body #svStandardPickerDialog :is(.sv-standard-picker-done,.sv-standard-picker-secondary){
+ background:var(--sv-white-pearl-surface,#f5f5f7)!important;color:#176ab4!important;
+ border:var(--sv-white-pearl-edge,1px solid #e7e9ed)!important;border-radius:999px!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,none)!important;min-height:44px!important;
+}
+html:root[data-theme="light"] body #svStandardPickerDialog button:focus-visible{outline:1.5px solid #6b9ac7!important;outline-offset:1px!important}
