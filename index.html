@@ -4464,7 +4464,8 @@ $('notesList').addEventListener('scroll',()=>{
 },{passive:true});
 function renderNotes(){
  const container=$('notesList');container.replaceChildren();
- const notes=getNotes();
+ const noteTime=note=>new Date(note.updatedAt||note.createdAt||0).getTime()||0;
+ const notes=getNotes().slice().sort((a,b)=>noteTime(b)-noteTime(a));
  const n=notes.length;
  closeNotebookListMenu();
  $('svNotebookListTools').hidden=n===0;
