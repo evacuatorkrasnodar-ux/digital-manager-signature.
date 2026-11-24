@@ -1942,9 +1942,12 @@ function sync(){
  }
 }
 function captureMailOrigin(hash,context){
- const labels={'#home':'Главная','#life':'Мой мир','#manage':'Управление','#tasks':context==='business'?'Кабинет':'Дела','#sayvi-documents':'Документы','#sayvi-health':'Здоровье'};
  const origin=hash&&hash!=='#sayvi-mail'?hash:'#home';
- mailEntryOrigin={hash:origin,label:labels[origin]||'предыдущий экран',previousDestination:returnDestination};
+ // #tasks is shared by Cabinet, My Tasks and the employee workspace.
+ // Capture the visible tab before changing the URL, not the mailbox scope.
+ const workView=origin==='#tasks'?($('tasksPage')?.dataset.workView||(context==='business'?'business':'personal')):null;
+ const labels={'#home':'Главная','#life':'Мой мир','#manage':'Управление','#tasks':workView==='business'?'Кабинет':workView==='employee'?'Моя работа':'Мои дела','#sayvi-documents':'Документы','#sayvi-health':'Здоровье'};
+ mailEntryOrigin={hash:origin,workView,label:labels[origin]||'предыдущий экран',previousDestination:returnDestination};
 }
 function open(kind,context){
  const target=routes[kind];
@@ -1987,6 +1990,13 @@ back.addEventListener('click',()=>{
   if(mailEntryOrigin){
    const origin=mailEntryOrigin;mailEntryOrigin=null;
    returnDestination=origin.previousDestination;
+   // The Tasks controller consumes a pending destination on hashchange.
+   // A bare #tasks navigation would select personal regardless of origin.
+   const work=window.SEYVEO_UNIFIED_TASKS;
+   if(origin.hash==='#tasks'){
+    if(origin.workView==='business'&&typeof work?.openBusiness==='function'){work.openBusiness('preserve');return;}
+    if(origin.workView==='employee'&&typeof work?.openEmployee==='function'&&window.SEYVEO_PREVIEW?.isEmployee?.()){work.openEmployee();return;}
+   }
    location.hash=origin.hash;return;
   }
  }
