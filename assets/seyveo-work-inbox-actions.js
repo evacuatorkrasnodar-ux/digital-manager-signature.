@@ -1034,6 +1034,33 @@ const observer=new MutationObserver(()=>{
 });
 observer.observe(list,{childList:true});
 const conversation=$('svcpConversation');
+// One vertical baseline: Back is screen-relative, the actual call pair
+// is conversation-relative. Resolve the offset once per real layout change.
+let callAlignFrame=0;
+const alignCallControls=()=>{
+ callAlignFrame=0;
+ if(screen.hidden||screen.dataset.view!=='room')return;
+ const back=$('svcpWorkChatBack'),pair=conversation?.querySelector('.svcp-call-actions');
+ const parent=pair?.offsetParent;
+ if(!back||!pair||!parent||!back.getClientRects().length||!pair.getClientRects().length)return;
+ const target=back.getBoundingClientRect().top-parent.getBoundingClientRect().top-parent.clientTop+parent.scrollTop;
+ const top=Math.round(target*100)/100+'px';
+ if(pair.style.getPropertyValue('--svcp-call-control-top')!==top)
+  pair.style.setProperty('--svcp-call-control-top',top);
+};
+const scheduleCallAlignment=()=>{
+ if(!callAlignFrame)callAlignFrame=requestAnimationFrame(alignCallControls);
+};
+new MutationObserver(scheduleCallAlignment).observe(screen,{attributes:true,attributeFilter:['hidden','data-view','style']});
+if(conversation)new MutationObserver(scheduleCallAlignment).observe(conversation,{attributes:true,attributeFilter:['hidden','data-room-id','data-chat-wallpaper']});
+if(typeof ResizeObserver==='function'){
+ const callAlignObserver=new ResizeObserver(scheduleCallAlignment);
+ for(const node of [screen,conversation,$('svcpWorkChatBack')])if(node)callAlignObserver.observe(node);
+}
+window.addEventListener('resize',scheduleCallAlignment,{passive:true});
+window.visualViewport?.addEventListener('resize',scheduleCallAlignment,{passive:true});
+window.addEventListener('pageshow',scheduleCallAlignment);
+scheduleCallAlignment();
 if(conversation)new MutationObserver(updateHeaderAvatar).observe(conversation,{attributes:true,attributeFilter:['data-room-id']});
 decorateRows();
 document.addEventListener('pointerdown',e=>{
