@@ -389,3 +389,16 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="contacts"] .svmc-connection-action{background:transparent!important;color:#007aff!important;font-size:13px!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="contacts"] .svmc-connection-text strong,html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="contacts"] .svmc-option-copy strong{color:#171b21!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="contacts"] .svmc-connection-text small,html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="contacts"] .svmc-option-copy small{color:#59636d!important}
+
+/* Contacts — remove the empty right-hand header capsule, including its pearl edge. */
+html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="contacts"] .sv-mail-top-actions > .sv-mail-top-buttons,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="contacts"] .sv-mail-top-actions > .sv-mail-top-buttons[hidden],
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="contacts"] .sv-mail-top-actions > .sv-mail-top-buttons::before,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="contacts"] .sv-mail-top-actions > .sv-mail-top-buttons::after{
+ display:none!important;content:none!important;border:0!important;box-shadow:none!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="contacts"] .svmc-option > .svmc-sayvi-mark.sv-sayvi-symbol{
+ box-sizing:border-box!important;flex:0 0 20px!important;width:20px!important;height:20px!important;
+ min-width:20px!important;min-height:20px!important;margin:0!important;
+ background-size:25px 25px!important;background-position:center!important;
+}
