@@ -19,7 +19,7 @@ const dialog=$('notePaperDialog'),canvas=$('notePaperCanvas');
 if(!dialog||!canvas||!canvas.getContext('2d'))return;
 const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPattern'),status=$('notePaperStatus');
 const iosFingerInk=/iPhone|iPod/i.test(navigator.userAgent||'');
-let data={pattern:'blank',background:'dark',height:H,strokes:[],texts:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false,sayviHandoffBusy=false;
+let data={pattern:'blank',background:'dark',height:H,strokes:[],texts:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false,sayviHandoffBusy=false,handwritingPage=false;
 let hiddenTextIndex=-1;
 let activeColor='#f6f7fb',activeGradient=null,brushSize=5;
 let brushSizes={pen:5,pencil:3,brush:18,spray:48,oil:25,watercolor:30,marker:14,calligraphy:12,eraser:36};
@@ -455,7 +455,28 @@ function previewList(target,obj){
  // cannot introduce visible dark sidebars when a saved page is very tall.
  ctx.drawImage(source,sx,sy,sw,sh,0,0,target.width,target.height);
 }
-function fitPaper(){
+// The handwriting template shares the same 66-unit rule pitch as export.
+ // Align it with the saved vector coordinates, even on a different viewport.
+ function syncHandwritingRules(){
+  const active=handwritingPage&&data.pattern==='lines';
+  if(!active){
+   if(sheet.dataset.svHandwritingRules){
+    delete sheet.dataset.svHandwritingRules;
+    ['background-image','background-size','background-position','background-repeat'].forEach(k=>sheet.style.removeProperty(k));
+   }
+   return;
+  }
+  const h=sheet.clientHeight;
+  if(!h)return;
+  const pitch=66*h/(data.height||H);
+  const color=data.background==='dark'?'rgba(232,236,243,.23)':'rgba(79,96,123,.22)';
+  sheet.dataset.svHandwritingRules='1';
+  sheet.style.setProperty('background-image','linear-gradient(to bottom,transparent calc(100% - 1px),'+color+' calc(100% - 1px))','important');
+  sheet.style.setProperty('background-size','100% '+pitch+'px','important');
+  sheet.style.setProperty('background-position','0 0','important');
+  sheet.style.setProperty('background-repeat','repeat','important');
+ }
+ function fitPaper(){
  if(!dialog.open||!stage||!sheet)return;
  const rect=stage.getBoundingClientRect();
  if(rect.width<100||rect.height<100)return;
@@ -466,7 +487,7 @@ function fitPaper(){
  const height=Math.max(120,Math.floor(rect.height));
  const logicalHeight=Math.max(H,Math.min(MAX_PAGE_HEIGHT,Math.round(W*height/width)));
  if((data.height||H)<logicalHeight)data.height=logicalHeight;
- sheet.style.width=width+'px';sheet.style.height=height+'px';
+ sheet.style.width=width+'px';sheet.style.height=height+'px';syncHandwritingRules();
  // Retina: the old fixed-size bitmap was stretched across physical pixels.
  // Keep the original world coordinates, but rasterise at display resolution.
  const dpr=Math.min(3,Math.max(1,window.devicePixelRatio||1));
@@ -497,7 +518,7 @@ photoView?.addEventListener('load',()=>{
 });
 function render(redrawInk=true){
  dialog.classList.toggle('sv-paper-light-surface',data.background==='light');
- sheet.dataset.pattern=data.pattern;sheet.dataset.inkBackground=data.background;pattern.value=data.pattern;syncPatternMenu();
+ sheet.dataset.pattern=data.pattern;sheet.dataset.inkBackground=data.background;pattern.value=data.pattern;syncPatternMenu();syncHandwritingRules();
  if(photoView){photoView.hidden=!data.photo;if(data.photo&&photoView.src!==data.photo)photoView.src=data.photo;if(!data.photo)photoView.removeAttribute('src')}
  placePhotoPreview();
  if($('notePaperRemovePhoto'))$('notePaperRemovePhoto').hidden=!data.photo;
@@ -978,6 +999,8 @@ $('notePaperDuplicate')?.addEventListener('click',()=>{
  data.strokes.push(copy);rememberUndo({type:'add',count:1});changed=true;render();report('Последний штрих дублирован.');
 });
 function open(note=null){
+  handwritingPage=note?.noteKind==='handwriting';
+  if(handwritingPage)note=window.SEYVEO_NOTEBOOK_SCREEN?.alignExample?.(note)||note;
  dialog.classList.remove('sv-paper-inking');
  if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}
  liveTail=null;liveMid=null;
@@ -1008,7 +1031,7 @@ function open(note=null){
  brushSize=brushSizes.pen;
  if(extras)extras.hidden=true;if(moreButton)moreButton.setAttribute('aria-expanded','false');
  syncColorMenu();
- $('notePaperTitle').textContent=editID?'Мой лист':'Чистый лист';selectTool('pen',true);report('');
+ $('notePaperTitle').textContent=handwritingPage?(note.title||'Рукописная заметка'):(editID?'Мой лист':'Чистый лист');selectTool('pen',true);report('');
  if(!dialog.open)dialog.showModal();
  document.documentElement.classList.add('sv-paper-drawing');
  requestAnimationFrame(()=>{
