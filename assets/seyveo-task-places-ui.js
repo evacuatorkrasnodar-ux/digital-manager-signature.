@@ -421,7 +421,12 @@
     void lookup();
    });
    input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();apply.click()}});
-   row.append(input,apply);
+   const field=node('div','sv-place-refine-field');
+   const searchIcon=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   searchIcon.setAttribute('viewBox','0 0 24 24');searchIcon.setAttribute('aria-hidden','true');
+   searchIcon.setAttribute('focusable','false');searchIcon.setAttribute('class','sv-place-refine-search');
+   searchIcon.innerHTML='<circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4.2 4.2"/>';
+   field.append(searchIcon,input);row.append(field,apply);
    // Keep address refinement next to its trigger, before opening hours/menu.
    const strip=panel.querySelector('.sv-place-venue-details, .sv-place-manual-map');
    if(strip)panel.insertBefore(row,strip);
