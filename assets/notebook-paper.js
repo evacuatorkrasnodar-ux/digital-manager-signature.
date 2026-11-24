@@ -1450,5 +1450,24 @@ window.SEYVEO_PAPER=Object.freeze({
   }catch(error){report(error?.message||'Не удалось передать лист Сэйви. Попробуй снова.')}
   finally{sayviHandoffBusy=false}
  },
+ // Export a copy of a saved scan with vector annotations composited over
+ // the original image. Never change the saved page or its coordinates.
+ scanAnnotationImage:async note=>{
+  const p=normalize(note?.paper);
+  if(!p.photo)throw Error('Оригинал документа недоступен.');
+  const image=new Image();image.src=p.photo;
+  if(!image.complete||!image.naturalWidth)await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(Error('Не удалось открыть документ.'));});
+  const b=photoBounds(p,image);if(!b)throw Error('Не удалось определить границы документа.');
+  const scale=Math.min(2,2400/Math.max(W,p.height));
+  const layer=document.createElement('canvas');layer.width=Math.max(1,Math.round(W*scale));layer.height=Math.max(1,Math.round(p.height*scale));
+  paint(layer,p,false);
+  const out=document.createElement('canvas');const ratio=Math.min(1,2400/Math.max(image.naturalWidth,image.naturalHeight));
+  out.width=Math.max(1,Math.round(image.naturalWidth*ratio));out.height=Math.max(1,Math.round(image.naturalHeight*ratio));
+  const ctx=out.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,out.width,out.height);
+  ctx.drawImage(image,0,0,out.width,out.height);
+  const sx=layer.width/W,sy=layer.height/p.height;
+  ctx.drawImage(layer,b.x*sx,b.y*sy,b.width*sx,b.height*sy,0,0,out.width,out.height);
+  return out;
+ },
  open,preview:previewList,share,print,normalize,importPhoto,compressPhoto});
 })();
