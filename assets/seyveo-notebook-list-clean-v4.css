@@ -452,3 +452,64 @@ html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog
 html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #svNotebookListMenu:not([hidden]){background:#292b2f!important;border-color:rgba(255,255,255,.08)!important}
 /* The list is still the sole scrollport. The fixed collection toolbar
    is opaque so scrolling notes never paint through the count or menu. */
+
+/* Saved notes · common mobile reading grid, no separate footer panel. */
+html:root body #svWorkShell[data-active="notes"] #notesDialog{
+ --sv-nb-reading-inset:12px;
+ --sv-nb-preview-width:44px;
+ --sv-nb-preview-gap:11px;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-front{
+ grid-template-columns:minmax(0,1fr) calc(44px + var(--sv-nb-reading-inset))!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList button.sv-nb4-open{
+ padding-inline:var(--sv-nb-reading-inset) 0!important;
+ gap:var(--sv-nb-preview-gap)!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-preview{
+ flex-basis:var(--sv-nb-preview-width)!important;
+ width:var(--sv-nb-preview-width)!important;min-width:var(--sv-nb-preview-width)!important;
+ max-width:var(--sv-nb-preview-width)!important;border-radius:6px!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-details > p{
+ font-weight:600!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-details > p{
+ color:#22262b!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialog #notesList :is(.sv-nb4-excerpt,.sv-nb4-details > small){
+ color:#606975!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-note:not(:last-of-type) .sv-nb4-front::after{
+ left:var(--sv-nb-reading-inset)!important;right:var(--sv-nb-reading-inset)!important;
+ height:.5px!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-note.has-paper .sv-nb4-front::after{
+ left:calc(var(--sv-nb-reading-inset) + var(--sv-nb-preview-width) + var(--sv-nb-preview-gap))!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden]){
+ padding-inline:var(--sv-nb-reading-inset)!important;
+}
+html:root body #svWorkShell[data-active="notes"] #svNotebookListLabel{
+ font-size:13px!important;font-weight:600!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #svNotebookListLabel{
+ color:#515c68!important;
+}
+html:root body #svWorkShell[data-active="notes"] #svNotebookListMore{
+ height:44px!important;min-height:44px!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden]){
+ flex-basis:44px!important;min-height:44px!important;
+}
+html:root body #svWorkShell[data-active="notes"] #svNotebookListMenu:not([hidden]){
+ right:var(--sv-nb-reading-inset)!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog > #notesList.sv-note-clean-list:not(.is-empty){
+ padding-bottom:calc(116px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(116px + env(safe-area-inset-bottom,0px))!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesList :is(.sv-nb4-open,.sv-nb4-dots):focus-visible,
+html:root body #svWorkShell[data-active="notes"] #svNotebookListMore:focus-visible{
+ outline:2px solid #287fda!important;outline-offset:-3px!important;
+}
