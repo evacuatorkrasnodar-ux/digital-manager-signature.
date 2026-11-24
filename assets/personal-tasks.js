@@ -844,19 +844,9 @@ function svAgendaPauseDockMotion(){
  svAgendaShowDock();
 }
 function svAgendaSyncDockFromScroll(){
- const root=document.documentElement,y=list.scrollTop;
- const eligible=root.classList.contains('sv-agenda-scroll-active')&&svAgendaDockMedia.matches&&!dialog.open;
- const delta=y-svAgendaDockPreviousY;
- svAgendaDockPreviousY=y;
- if(!eligible||list.scrollHeight-list.clientHeight<60||y<8){
-  svAgendaDockTravel=0;svAgendaDockDirection=0;svAgendaShowDock();return;
- }
- if(Date.now()<svAgendaDockPauseUntil||Math.abs(delta)<.7)return;
- const direction=delta>0?1:-1;
- if(direction!==svAgendaDockDirection){svAgendaDockTravel=0;svAgendaDockDirection=direction;}
- svAgendaDockTravel+=Math.abs(delta);
- if(direction>0&&svAgendaDockTravel>=30&&y>35)root.classList.add('sv-agenda-dock-minimized');
- if(direction<0&&svAgendaDockTravel>=12)svAgendaShowDock();
+ // Navigation capsules never disappear or move during a vertical flick.
+ svAgendaDockPreviousY=list.scrollTop;
+ svAgendaShowDock();
 }
 function svAgendaJumpToDate(iso){
  svAgendaPauseDockMotion();
