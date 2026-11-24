@@ -521,8 +521,8 @@ html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-cont
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog:not(.sv-nb-selecting) > #notesList.sv-note-clean-list:not(.is-empty){
  margin-bottom:0!important;
- padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
- scroll-padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+ padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important;
  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 88px - env(safe-area-inset-bottom,0px)),transparent calc(100% - 72px - env(safe-area-inset-bottom,0px)),transparent 100%)!important;
  mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 88px - env(safe-area-inset-bottom,0px)),transparent calc(100% - 72px - env(safe-area-inset-bottom,0px)),transparent 100%)!important;
 }
