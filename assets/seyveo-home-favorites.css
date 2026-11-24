@@ -500,7 +500,7 @@ dialog.sv-home-favorites-editor .sv-home-favorites-tabs{
 dialog.sv-home-favorites-editor .sv-home-favorites-tabs button{
  border-radius:999px!important;
  background:transparent!important;
- color:#555a64!important;
+ color:var(--sv-white-pearl-segment-ink,#444B56)!important;
 }
 dialog.sv-home-favorites-editor .sv-home-favorites-tabs button[aria-selected=true]{
  background:rgba(255,255,255,.53)!important;
