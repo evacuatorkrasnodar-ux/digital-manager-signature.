@@ -142,19 +142,37 @@ html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] 
  background:#f6f6f8!important;background-image:none!important;color:#20242a!important;border:1px solid #e8eaee!important;color-scheme:light!important;
 }
 html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .sv-form-picker-menu{
- background:#fcfcfd!important;color:#252a33!important;border:1px solid #e7e9ed!important;box-shadow:var(--sv-menu-shadow)!important;border-radius:18px!important;
+ background:#fcfcfd!important;color:#252a33!important;border:1px solid #e7e9ed!important;box-shadow:0 5px 16px rgba(38,48,60,.09),0 1px 4px rgba(38,48,60,.04)!important;border-radius:18px!important;
 }
 html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .sv-form-picker-menu .sv-menu-choice{
  background:#f4f5f7!important;color:#252a33!important;border:1px solid #e9ebef!important;border-radius:12px!important;font-size:13px!important;
 }
 html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .sv-form-picker-menu .sv-menu-choice[aria-pressed="true"]{background:#e7eff8!important;color:#27669e!important}
 html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .sv-form-picker-native{position:absolute!important;min-height:0!important;height:1px!important;width:1px!important;min-width:0!important;opacity:0!important;padding:0!important;pointer-events:none!important}
+
 html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-paid{
- display:flex!important;align-items:center!important;gap:10px!important;font-size:13px!important;line-height:1.4!important;margin:0!important;min-height:32px;
+ position:relative!important;display:flex!important;justify-content:space-between!important;align-items:center!important;gap:12px!important;
+ font-size:13px!important;line-height:1.4!important;margin:0!important;min-height:44px!important;cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
+html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-paid .svcp-break-paid-caption{flex:1;min-width:0}
 html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-paid input{
- appearance:auto!important;width:19px!important;height:19px!important;min-height:19px!important;min-width:19px!important;flex:0 0 19px!important;margin:0!important;padding:0!important;accent-color:#377fb7;
+ position:absolute!important;right:0!important;width:48px!important;height:44px!important;min-height:0!important;min-width:0!important;
+ margin:0!important;padding:0!important;opacity:0!important;z-index:1;cursor:pointer;
 }
+html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-paid .svcp-break-switch{
+ position:relative;box-sizing:border-box;display:block;flex:0 0 48px;width:48px;height:28px;
+ border:1px solid rgba(130,139,150,.16);border-radius:999px;background:#a5a5ac;pointer-events:none;transition:background-color .18s ease;
+}
+html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-paid .svcp-break-switch::after{
+ content:"";position:absolute;width:24px;height:24px;left:1px;top:1px;border-radius:50%;background:#fff;
+ box-shadow:0 1px 3px rgba(0,0,0,.14);transition:transform .18s ease;
+}
+html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-paid input:checked + .svcp-break-switch{background:#34c759;border-color:transparent}
+html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-paid input:checked + .svcp-break-switch::after{transform:translateX(20px)}
+html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-paid input:focus-visible + .svcp-break-switch{outline:2px solid #6b9ac7;outline-offset:3px}
+html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-paid input:not(:checked) + .svcp-break-switch{background:#e4e5e9}
+@media(prefers-reduced-motion:reduce){html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-paid .svcp-break-switch,html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-paid .svcp-break-switch::after{transition:none}}
+
 html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel :is(.svcp-manager-schedule-save,.svcp-break-save){
  justify-self:start!important;width:auto!important;min-height:44px!important;margin:0!important;
 }
