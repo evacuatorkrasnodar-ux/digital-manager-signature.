@@ -34,7 +34,6 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
 
 /* One exact material for all top-level oval switches. */
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch,
-#svWorkShell #svWorkTabs,
 #tasksPage #unifiedTasksTabs:not([hidden]),
 #calendarPage #managerCalendarTabs:not([hidden]){
  box-sizing:border-box!important;
@@ -50,14 +49,7 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  isolation:isolate;
  overflow:hidden;
 }
-/* Work tabs once used a sliding background plate.
-   Direct selected styling matches Documents and avoids dark strips or jumps. */
-#svWorkShell #svWorkTabs::before{
- display:none!important;
- content:none!important;
-}
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab,
-#svWorkShell #svWorkTabs button,
 #tasksPage #unifiedTasksTabs:not([hidden]) button:not([hidden]),
 #calendarPage #managerCalendarTabs:not([hidden]) button:not([hidden]){
  box-sizing:border-box!important;
@@ -82,7 +74,6 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  transition:background-color .16s ease,color .16s ease!important;
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab[aria-pressed="true"],
-#svWorkShell #svWorkTabs button[aria-pressed="true"],
 #tasksPage #unifiedTasksTabs:not([hidden]) button[aria-pressed="true"],
 #calendarPage #managerCalendarTabs:not([hidden]) button[aria-pressed="true"]{
  color:var(--text)!important;
@@ -92,7 +83,6 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  box-shadow:none!important;
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab:focus-visible,
-#svWorkShell #svWorkTabs button:focus-visible,
 #tasksPage #unifiedTasksTabs:not([hidden]) button:focus-visible,
 #calendarPage #managerCalendarTabs:not([hidden]) button:focus-visible{
  outline:1.5px solid var(--text)!important;
@@ -135,12 +125,10 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  opacity:.6;
 }
 @media(max-width:340px){
- #svWorkShell #svWorkTabs button{font-size:10.5px!important;padding-inline:2px!important}
  #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab{font-size:12px!important}
 }
 @media(prefers-reduced-motion:reduce){
  #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab,
- #svWorkShell #svWorkTabs button,
  #tasksPage #unifiedTasksTabs button,
  #calendarPage #managerCalendarTabs button{
   transition:none!important;
@@ -255,13 +243,11 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  stroke-width:var(--sv-nav-weight)!important;
 }
 /* Align approved top-level switch geometry without moving its container. */
-#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch,
-#svWorkShell #svWorkTabs {
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch {
  height:var(--sv-nav-capsule)!important;min-height:var(--sv-nav-capsule)!important;
  border-radius:999px!important;
 }
-#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab,
-#svWorkShell #svWorkTabs button:not([hidden]) {
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab {
  height:var(--sv-nav-segment)!important;min-height:var(--sv-nav-segment)!important;
  border-radius:999px!important;
 }
@@ -283,7 +269,6 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
    label, semantics, click handlers, colored themes, dock and composer. */
 :root[data-theme="light"] :is(
  #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch,
- #svWorkShell #svWorkTabs,
  #tasksPage #unifiedTasksTabs:not([hidden]),
  #calendarPage #managerCalendarTabs:not([hidden]),
  #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters,
@@ -298,7 +283,6 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
 }
 :root[data-theme="light"] :is(
  #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab[aria-pressed="true"],
- #svWorkShell #svWorkTabs button[aria-pressed="true"],
  #tasksPage #unifiedTasksTabs:not([hidden]) button[aria-pressed="true"],
  #calendarPage #managerCalendarTabs:not([hidden]) button[aria-pressed="true"],
  #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters > button[aria-pressed="true"],
@@ -312,7 +296,6 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
 
 :root[data-theme="light"] :is(
  #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab,
- #svWorkShell #svWorkTabs button,
  #tasksPage #unifiedTasksTabs:not([hidden]) button,
  #calendarPage #managerCalendarTabs:not([hidden]) button,
  #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters > button,
