@@ -162,7 +162,7 @@
   glyph.setAttribute('aria-hidden','true');
   glyph.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h12a2.5 2.5 0 1 0-2.5-2.5M3 12h16a2 2 0 1 1-2 2M3 16h9a2.5 2.5 0 1 1-2.5 2.5"/></svg>';
   row.append(glyph);
-  const label=value+' м/с'+(index>=0&&ms>=.05?' · '+short[index]:'');
+  const label=value+' м/с'+(index>=0&&ms>=.05?' · '+(homeMode?short[index]:full[index]):'');
   add('sv-weather-peek-wind-value',label,row);
   row.title='Ветер: '+value+' м/с'+(index>=0&&ms>=.05?', '+full[index]:'');
   row.setAttribute('aria-label',row.title);
@@ -265,8 +265,12 @@
   panel.setAttribute('aria-label','Открыть подробный прогноз погоды от Сэйви');
   panel.dataset.weatherReady=day?'true':'false';
   if(!homeMode){
-   const eyebrow=add('sv-weather-peek-eyebrow','СЭЙВИ · ПОГОДА',panel);
-   eyebrow.setAttribute('aria-hidden','true');
+   const eyebrow=add('sv-weather-peek-eyebrow','',panel);
+   const brand=document.createElement('span');brand.className='sv-weather-peek-brand';
+   const mark=document.createElement('img');mark.className='sv-weather-peek-brand-mark';
+   mark.src='assets/seyveo-sayvi-user-upload.svg?v=3';mark.alt='';mark.decoding='async';
+   brand.append(mark);add('sv-weather-peek-brand-title','Погода',brand);
+   eyebrow.append(brand);eyebrow.setAttribute('aria-hidden','true');
   }
   const main=document.createElement('div');main.className='sv-weather-peek-main';
   if(day){
