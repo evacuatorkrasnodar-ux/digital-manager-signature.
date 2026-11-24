@@ -7,7 +7,10 @@ const brand=$('seyveoBrandPassport'),company=$('seyveoCompanyPassport');
 const previewBox=$('homePassportPopover'),brandTrigger=$('homeBrandTrigger'),ownerTrigger=$('homeWorldTrigger');
 const form=$('seyveoCompanyForm'),dialog=$('seyveoCompanyDialog'),studio=$('seyveoStudioDialog');
 if(!brand||!company||!form||!dialog||!studio)return;
-const KEY='seyveo-company-passport-v1';
+const COMPANY_DEMO=new URLSearchParams(location.search).get('seyveo-company-demo')==='1';
+const KEY=COMPANY_DEMO?'seyveo-company-passport-demo-v1':'seyveo-company-passport-v1';
+// Explicit developer preview, isolated from the user's real company record.
+const DEMO_CARD=Object.freeze({type:'org',name:'SEYVEO · Демо',legalName:'ООО «Учебный пример» (вымышленное)',owner:'Иван Примеров (вымышленное имя)',industry:'Цифровые технологии и автоматизация',city:'Краснодар',address:'Учебный адрес, дом 0',inn:'0000000000',kpp:'000000000',ogrn:'0000000000000',phone:'+7 000 000-00-00',email:'demo@example.invalid',website:'https://example.invalid',bank:'Учебный банк (не существует)',account:'00000000000000000000',bik:'000000000',corr:'00000000000000000000'});
 const LABELS={npd:'Самозанятый',ip:'Индивидуальный предприниматель',org:'Организация'};
 const PROPS=[
  ['name','Название для клиентов'],['legalName','Полное имя / юридическое наименование'],
@@ -20,11 +23,11 @@ const LENGTH={name:80,legalName:160,owner:100,industry:80,city:70,inn:12,kpp:9,o
 function load(){
  try{
   const raw=JSON.parse(localStorage.getItem(KEY)||'null');
-  if(!raw||typeof raw!=='object'||Array.isArray(raw))return {};
+  if(!raw||typeof raw!=='object'||Array.isArray(raw))return COMPANY_DEMO?{...DEMO_CARD}:{};
   const result={type:LABELS[raw.type]?raw.type:'npd'};
   for(const [key] of PROPS)result[key]=typeof raw[key]==='string'?raw[key].slice(0,LENGTH[key]):'';
   return result;
- }catch{return {}}
+ }catch{return COMPANY_DEMO?{...DEMO_CARD}:{}}
 }
 function store(card){try{localStorage.setItem(KEY,JSON.stringify(card));return true}catch{return false}}
 const clean=value=>String(value||'').trim();
@@ -64,7 +67,7 @@ function drawRows(){
  const identityKind=$('seyveoCompanyIdentityKind');
  if(identity)identity.hidden=!saved;
  if(identityName)identityName.textContent=clean(card.name);
- if(identityKind)identityKind.textContent=[LABELS[card.type]||'Компания',clean(card.industry)].filter(Boolean).join(' · ');
+ if(identityKind)identityKind.textContent=[COMPANY_DEMO?'Учебные данные':null,LABELS[card.type]||'Компания',clean(card.industry)].filter(Boolean).join(' · ');
  const data=new Map(selectedRows(card).filter(([label])=>label!=='Название для клиентов'&&label!=='Статус'));
  const sections=[
   ['Контакты',['Телефон','Электронная почта','Сайт']],
@@ -127,7 +130,7 @@ function drawRows(){
  $('seyveoCompanyQrOpen').disabled=!qrReady;
  $('seyveoCompanyQrHint').hidden=!saved||qrReady;
  const privacy=$('seyveoCompanyPrivacy');
- if(privacy)privacy.hidden=!saved;
+ if(privacy){privacy.hidden=!saved;if(COMPANY_DEMO)privacy.textContent='Учебная карточка. Все реквизиты вымышлены и непригодны для платежей или документов. Реальные данные не изменены.';}
 }
 function canCreateCompanyQr(card){
  if(!clean(card.name))return false;
@@ -300,7 +303,7 @@ function plain(kind){
   'Сведения о продукте представлены в приложении'
  ].join('\n');
  const card=load();
- return ['КАРТОЧКА КОМПАНИИ',...selectedRows(card).map(([k,v])=>k+': '+v),
+ return [COMPANY_DEMO?'УЧЕБНАЯ КАРТОЧКА — НЕ ДЛЯ ПЛАТЕЖЕЙ':'КАРТОЧКА КОМПАНИИ',...selectedRows(card).map(([k,v])=>k+': '+v),
   'Сведения внесены владельцем и не проверены по государственным реестрам.'].join('\n');
 }
 async function share(kind){
@@ -396,7 +399,7 @@ $('seyveoCompanyEditTop')?.addEventListener('click',()=>{
 brand.addEventListener('click',openStudio);
 company.addEventListener('click',openCompany);
 // The dialogs stay available from the existing brand and company controls.
-window.SEYVEO_COMPANY_PASSPORT=Object.freeze({open:openCompany});
+window.SEYVEO_COMPANY_PASSPORT=Object.freeze({open:openCompany,getRecord:load,isDemo:()=>COMPANY_DEMO});
 form.addEventListener('submit',save);
 form.querySelectorAll('input[name="companyTypeChoice"]').forEach(input=>input.addEventListener('change',()=>{
  $('seyveoCompanyType').value=input.value;toggleType();
