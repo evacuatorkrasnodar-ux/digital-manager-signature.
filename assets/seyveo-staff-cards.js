@@ -99,7 +99,7 @@ html:root[data-theme="light"] body > dialog#svStaffProfile[open]::backdrop{backg
 #svStaffProfile [hidden]{display:none!important}
 #svStaffProfile *{box-sizing:border-box}
 #svStaffProfile > .sv-recruit-head{margin-bottom:4px}
-#svStaffProfile .svstaff-content{max-width:none;width:auto;margin-inline:-5px;padding:4px 5px calc(90px + env(safe-area-inset-bottom,0px))!important}
+#svStaffProfile .svstaff-content{max-width:none;width:auto;margin-inline:-5px;padding:4px 5px calc(82px + env(safe-area-inset-bottom,0px))!important}
 html:root body > dialog#svStaffProfile.svstaff-modal.seyveo-dock-host[open] > footer.dock.sv-shared-dock{position:absolute!important;display:grid!important;visibility:visible!important;opacity:1!important;top:auto!important;bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;z-index:90!important;pointer-events:auto!important;transform:none!important;max-height:60px!important;background:transparent!important;background-image:none!important}
 #svStaffProfile > .svstaff-content{flex:1 1 0!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important}
 .svstaff-thumb,.svstaff-photo{overflow:hidden;background-size:cover;background-position:center;display:grid;place-items:center;color:var(--text)}
@@ -133,7 +133,7 @@ html:root body > dialog#svStaffProfile.svstaff-modal.seyveo-dock-host[open] > fo
  margin:0 0 16px;padding:0;background:transparent;border:0
 }
 .svstaff-section h3,.svstaff-peer-head h3,.svstaff-review h3{
- margin:0 0 12px;font-size:15px;line-height:1.3;font-weight:620;
+ margin:0 0 7px;font-size:15px;line-height:1.3;font-weight:620;
  letter-spacing:-.01em;color:var(--text)
 }
 .svstaff-event{display:flex;align-items:flex-start;gap:10px;margin:0 0 10px}
@@ -143,6 +143,8 @@ html:root body > dialog#svStaffProfile.svstaff-modal.seyveo-dock-host[open] > fo
 .svstaff-event-copy strong{font-size:12.5px;line-height:1.4;font-weight:550;color:var(--text)}
 .svstaff-event-copy small{font-size:10.5px;line-height:1.4;color:var(--secondary)}
 .svstaff-peer-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#svStaffProfile .svstaff-peer-head h3{margin:0 0 5px!important}
+#svStaffProfile :is(.svstaff-peer-empty,.svstaff-peer-disclaimer,.svstaff-review-note){margin:3px 0 7px;font-size:12px!important;line-height:1.45!important}
 .svstaff-peer-count{font-size:11px;color:var(--secondary)}
 .svstaff-peer-empty,.svstaff-peer-disclaimer,.svstaff-review-note{
  margin:4px 0 10px;padding:0;color:var(--secondary);font-size:11px;line-height:1.5
@@ -239,8 +241,9 @@ html:root body > dialog#svStaffProfile.svstaff-modal.seyveo-dock-host[open] > fo
 .svstaff-plan>summary::after{content:"›";font-size:21px;font-weight:400;color:var(--secondary)}
 .svstaff-plan[open]>summary::after{transform:rotate(90deg)}
 .svstaff-plan-content{padding:3px 0 10px}
-.svstaff-plan-content p{margin:5px 0;color:var(--secondary)}
-.svstaff-plan ol{margin:6px 0;padding-left:20px}
+#svStaffProfile .svstaff-plan-content :is(p,ol,li){font-size:13px!important;line-height:1.5!important}
+#svStaffProfile .svstaff-plan-content p{margin:6px 0;color:var(--secondary)}
+.svstaff-plan ol{margin:3px 0;padding-left:20px}
 .svstaff-demo-note{
  margin:20px 0 2px;padding:12px 0 0;
  border-top:1px solid rgba(190,196,204,.12);
