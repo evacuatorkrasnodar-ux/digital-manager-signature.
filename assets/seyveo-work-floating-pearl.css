@@ -2,7 +2,7 @@
    Single capsule / four equal slots. The selected segment IS the button,
    not a separate moving layer, so Safari has nothing to misalign.
    White theme: quiet porcelain / clear graphite text; no bevel or shadow.
-   38px visible height, with transparent 44px touch targets. */
+   38px outer height, 28px faces, exact 5px rim-to-face clearance (1px border + 4px padding). */
 @media(max-width:699px){
  html body .app.sv-dock-width-workspace:has(> #svWorkShell[data-shared-work="true"]){
   padding-left:0!important;padding-right:0!important;
@@ -14,12 +14,12 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]){
  box-sizing:border-box!important;
  order:1!important;position:relative!important;isolation:isolate!important;
  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
- grid-auto-rows:32px!important;align-items:center!important;
+ grid-template-rows:28px!important;grid-auto-rows:28px!important;align-items:center!important;
  align-content:center!important;justify-items:center!important;
  align-self:center!important;justify-content:stretch!important;
  width:calc(100% - 24px)!important;max-width:404px!important;min-width:0!important;
  height:38px!important;min-height:38px!important;max-height:38px!important;
- margin:4px auto 5px!important;padding:2px 3px!important;gap:0!important;
+ margin:4px auto 5px!important;padding:4px!important;gap:0!important;
  border:1px solid rgba(170,186,199,.26)!important;
  border-radius:999px!important;
  background:rgba(238,242,246,.52)!important;background-image:none!important;
@@ -58,8 +58,9 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-wor
  align-items:center!important;justify-content:center!important;align-self:center!important;
  /* All four faces use identical box metrics and the same grid center. */
  inset:auto!important;translate:none!important;scale:none!important;
+ grid-row:1!important;justify-self:stretch!important;
  flex:none!important;width:100%!important;min-width:0!important;
- height:32px!important;min-height:32px!important;max-height:32px!important;
+ height:28px!important;min-height:28px!important;max-height:28px!important;
  margin:0!important;padding:0 2px!important;
  border:1px solid transparent!important;border-radius:999px!important;
  background:transparent!important;background-image:none!important;
@@ -81,13 +82,13 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-wor
  border:1px solid transparent!important;box-shadow:none!important;filter:none!important;
  transform:none!important;
 }
-/* Invisible extra touch reach: 32px painted + 6px top/bottom = 44px. */
+/* Invisible extra touch reach: 28px painted + 8px top/bottom = 44px. */
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]::before{
  content:none!important;display:none!important;
 }
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]::after{
  content:""!important;display:block!important;position:absolute!important;
- inset:-6px 0!important;border:0!important;border-radius:0!important;
+ inset:-8px 0!important;border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
  box-shadow:none!important;pointer-events:auto!important;transform:none!important;
 }
