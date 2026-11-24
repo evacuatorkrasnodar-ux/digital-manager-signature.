@@ -671,11 +671,11 @@ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-mo
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-row :is(span,strong,.sv-company-value-link){font-size:12.5px!important;line-height:1.4!important}
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .sv-company-actions:not([hidden]){
  box-sizing:border-box!important;height:60px!important;min-height:60px!important;
- padding:3px!important;margin:4px 0 6px!important;border-radius:999px!important;align-items:center!important;
+ padding:3px!important;margin:4px 0 6px!important;border-radius:15px!important;align-items:center!important;
 }
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .sv-company-actions button:not([hidden]){
  min-height:52px!important;height:52px!important;gap:4px!important;align-items:center!important;justify-content:center!important;
- padding:4px!important;border-radius:999px!important;
+ padding:4px!important;border-radius:11px!important;
 }
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .sv-company-actions button svg{width:19px!important;height:19px!important;flex:0 0 19px!important;margin:0!important;stroke-width:1.6!important;}
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open][data-sv-company-filled="true"] #seyveoCompanyDemoToggle:not([hidden]){
