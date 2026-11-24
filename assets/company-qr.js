@@ -6,10 +6,11 @@ const open=$('seyveoCompanyQrOpen'),dialog=$('seyveoQrCardDialog'),host=$('seyve
 if(!open||!dialog||!host||!form)return;
 const KEY='seyveo-company-passport-v1';
 const esc=value=>String(value||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;').trim();
-function record(){try{return JSON.parse(localStorage.getItem(KEY)||'null')||{}}catch{return {}}}
+function record(){const api=window.SEYVEO_COMPANY_PASSPORT;if(api?.getRecord)return api.getRecord();try{return JSON.parse(localStorage.getItem(KEY)||'null')||{}}catch{return {}}}
 function safeWebsite(s){try{const url=new URL(String(s||''));return /^https?:$/.test(url.protocol)?url.href:''}catch{return ''}}
 function cardText(r){
  const lines=['BEGIN:VCARD','VERSION:3.0','FN:'+esc(r.name),'ORG:'+esc(r.name)];
+ if(window.SEYVEO_COMPANY_PASSPORT?.isDemo?.())lines.push('NOTE:Учебные данные. Не использовать для платежей и документов.');
  if(r.industry)lines.push('TITLE:'+esc(r.industry));
  if(r.phone)lines.push('TEL;TYPE=WORK,VOICE:'+esc(r.phone));
  if(r.email)lines.push('EMAIL;TYPE=WORK:'+esc(r.email));
@@ -31,7 +32,7 @@ function update(){
  }
  try{
   new window.QRCode(host,{text:cardText(r),width:210,height:210,colorDark:'#101617',colorLight:'#ffffff',correctLevel:window.QRCode.CorrectLevel.M});
-  $('seyveoQrStatus').textContent='Наведите камеру другого телефона на QR, чтобы добавить контакт.';
+  $('seyveoQrStatus').textContent=window.SEYVEO_COMPANY_PASSPORT?.isDemo?.()?'Учебная QR-визитка с вымышленными контактами.':'Наведите камеру другого телефона на QR, чтобы добавить контакт.';
   return true;
  }catch{
   $('seyveoQrStatus').textContent='Не удалось создать QR. Попробуйте сократить контактные данные.';
@@ -54,7 +55,7 @@ function renderMini(){
  try{new window.QRCode(miniCode,{text:cardText(r),width:66,height:66,colorDark:'#101617',colorLight:'#ffffff',correctLevel:window.QRCode.CorrectLevel.M})}catch{miniCode.replaceChildren()}
 }
 window.addEventListener('seyveo:company-changed',renderMini);
-window.addEventListener('storage',e=>{if(e.key===KEY)renderMini()});
+window.addEventListener('storage',e=>{if(e.key===KEY||e.key==='seyveo-company-passport-demo-v1')renderMini()});
 mini?.addEventListener('click',event=>{
  event.stopPropagation();
  if(!canShare(record())){
