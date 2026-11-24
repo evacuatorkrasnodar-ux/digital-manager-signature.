@@ -130,3 +130,64 @@ html:root body > dialog#svStaffInvitePage[open] > .sv-page-scroll{
  padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
  scroll-padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
 }
+
+/* Work tabs: retain the original shared header, segmented rail and dock.
+   Agenda and All Tasks already have their own dedicated scroll contract.
+   Notebook editors and the calendar's magnetic rail are deliberately excluded. */
+html:root body .app:has(> #svWorkShell[data-shared-work="true"][data-active="notes"]:not([hidden])),
+html:root body .app:has(> #svWorkShell[data-shared-work="true"][data-active="wallet"]:not([hidden])),
+html:root body .app:has(> #svWorkShell[data-shared-work="true"][data-active="business"]:not([hidden])){
+ box-sizing:border-box!important;height:100vh!important;height:100dvh!important;
+ min-height:0!important;max-height:100dvh!important;
+ padding-bottom:0!important;overflow:hidden!important;
+}
+html:root body #svWorkShell[data-shared-work="true"]:is([data-active="notes"],[data-active="wallet"],[data-active="business"]):not([hidden]){
+ flex:1 1 0!important;min-height:0!important;max-height:100%!important;
+ overflow:visible!important;
+}
+html:root body #svWorkShell[data-shared-work="true"]:is([data-active="notes"],[data-active="wallet"],[data-active="business"]) > :is(seyveo-work-head,#svWorkTabs){
+ flex:0 0 auto!important;
+}
+html:root body #svWorkShell[data-shared-work="true"][data-active="notes"] > #notesDialog.sv-notebook-content[open],
+html:root body #svWorkShell[data-shared-work="true"][data-active="wallet"] > dialog#seyveoPayDialog[open],
+html:root body #svWorkShell[data-shared-work="true"][data-active="business"] > #tasksPage:not([hidden]) > #unifiedBusinessTasksView:not([hidden]){
+ flex:1 1 0!important;min-height:0!important;min-width:0!important;
+ max-height:none!important;box-sizing:border-box!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch;
+ scroll-behavior:auto;
+ scroll-padding-bottom:calc(92px + env(safe-area-inset-bottom,0px));
+}
+html:root body #svWorkShell[data-shared-work="true"][data-active="notes"] > #notesDialog.sv-notebook-content[open]{
+ padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog > #notesList{
+ flex:0 0 auto!important;overflow:visible!important;max-height:none!important;
+}
+html:root body #svWorkShell[data-shared-work="true"][data-active="business"] > #tasksPage:not([hidden]) > #unifiedBusinessTasksView:not([hidden]){
+ padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
+}
+/* Wallet already owns a 104px under-dock inset in .syp-shell. Do not add it twice. */
+html:root body #svWorkShell[data-shared-work="true"][data-active="wallet"] > dialog#seyveoPayDialog[open]{
+ padding-bottom:0!important;
+}
+/* Tool chooser: keep the real back and save controls visible while the
+   catalog/guide scrolls, without changing their parent or handlers. */
+@media(max-width:720px){
+ html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open]{
+  overflow-y:auto!important;overflow-x:hidden!important;
+  overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch;
+  scroll-padding-top:64px;scroll-padding-bottom:72px;
+ }
+ html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head{
+  position:sticky!important;top:0!important;z-index:12!important;
+  background:var(--bg,#151b20)!important;
+ }
+ html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-footer{
+  position:sticky!important;bottom:0!important;z-index:12!important;
+  background:var(--bg,#151b20)!important;
+ }
+ html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] :is(.sv-cabinet-dialog-head,.sv-cabinet-footer){
+  background:#fff!important;
+ }
+}
