@@ -20,63 +20,11 @@ html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-
  border:0!important;
  box-shadow:none!important;
 }
-html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-ink-confirm{
- all:unset!important;
- -webkit-appearance:none!important;
- appearance:none!important;
- box-sizing:border-box!important;
- display:grid!important;
- place-items:center!important;
- flex:0 0 47px!important;
- width:47px!important;
- height:47px!important;
- min-width:47px!important;
- min-height:47px!important;
- margin:0!important;
- padding:0!important;
- position:fixed!important;
- right:9px!important;
- bottom:calc(11px + env(safe-area-inset-bottom,0px))!important;
- z-index:35!important;
- border:0!important;
- border-radius:50%!important;
- background:#38383A!important;
- color:#eef0f3!important;
- box-shadow:none!important;
- filter:none!important;
- text-shadow:none!important;
- isolation:isolate!important;
- overflow:hidden!important;
- -webkit-clip-path:circle(50% at center)!important;
- clip-path:circle(50% at center)!important;
- -webkit-tap-highlight-color:transparent!important;
- touch-action:manipulation!important;
- cursor:pointer!important;
-}
-html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-ink-confirm::before,
-html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-ink-confirm::after{
- content:none!important;
- display:none!important;
-}
-html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-ink-confirm svg{
- display:block!important;
- width:20px!important;
- height:20px!important;
- stroke:currentColor!important;
- stroke-width:1.7!important;
- fill:none!important;
- stroke-linecap:round!important;
- stroke-linejoin:round!important;
- transform:translate(1px,1px)!important;
- pointer-events:none!important;
-}
-html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-ink-confirm:active{
- background:#48484B!important;
-}
-html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-ink-confirm:focus-visible{
- outline:2px solid #fff!important;
- outline-offset:2px!important;
-}
+
+
+
+
+
 
 /* Palette now runs naturally underneath the separate floating Save circle.
    No end cap, fade, rectangle or clipped-color curtain beside the action. */
@@ -168,21 +116,8 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorDot.paper-color-
 }
 /* The Save circle is a floating tool, never a curtain across the swatches.
    Hide immediately during the live stroke; return smoothly on pen lift. */
-html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-ink-confirm{
- opacity:1!important;
- visibility:visible!important;
- transform:scale(1)!important;
- transition:opacity .17s ease,transform .17s ease,visibility 0s!important;
-}
-html body #notePaperDialog.sv-paper-studio[open].sv-paper-inking > #notePaperSave.sv-ink-confirm{
- opacity:0!important;
- visibility:hidden!important;
- transform:scale(.92)!important;
- pointer-events:none!important;
- transition-duration:0s!important;
-}
+
+
 @media(prefers-reduced-motion:reduce){
- html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-ink-confirm{
-  transition:none!important;
- }
+
 }
