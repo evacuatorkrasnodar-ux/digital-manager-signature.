@@ -172,6 +172,7 @@ function syncEditControls(){
  add.hidden=!editing||totalSlots()>=MAX_COUNT;
  personalRow.hidden=totalSlots()===0&&add.hidden;
  businessRow.hidden=!businessEnabled()||preference.businessItems.length===0;
+ rail.dataset.twoRows=String(!businessRow.hidden&&!personalRow.hidden);
 }
 function enterEdit(openPicker=false){
  if(home.hidden||!root.classList.contains('sv-home-empty-arrived'))return;
@@ -421,8 +422,8 @@ home.addEventListener('click',e=>{
  e.preventDefault();e.stopImmediatePropagation();
  if(Date.now()>=ignoreOutsideUntil)exitEdit();
 },true);
-renderItems();
 let homeShortcutTopLocked=false;
+renderItems();
 function place(force=false){
  if(rail.hidden||homeShortcutTopLocked&&!force)return;
  const weather=document.getElementById('svSayviHomeWeather');
@@ -436,10 +437,11 @@ function place(force=false){
  }
  // Always resolve the fallback before first paint. The row must not start at
  // the CSS placeholder position and jump when the weather finishes loading.
- if(wanted===null)wanted=maximum;
+ if(wanted===null||rail.dataset.twoRows==='true')wanted=maximum;
  const next=Math.min(wanted,maximum);
  rail.style.top=Math.round(next-stage.getBoundingClientRect().top)+'px';
- if(activeCurtainPosition)activeCurtainPosition();
+ if(activeCurtainPosition)activeCurtainPosition(true);
+ window.dispatchEvent(new Event('seyveo:home-shortcuts-layout'));
 }
 let firstHomeEntrancePlayed=false;
 let launchPreviewActive=false;
@@ -488,7 +490,10 @@ const show=()=>{
   }else if(!homeShortcutTopLocked){
    place(true);homeShortcutTopLocked=true;
   }
- }else homeShortcutTopLocked=false;
+ }else{
+  homeShortcutTopLocked=false;
+  if(!visible&&rail.dataset.twoRows==='true')window.dispatchEvent(new Event('seyveo:home-shortcuts-layout'));
+ }
 };
 function updateCount(){
  const pending=cardCount>0;
