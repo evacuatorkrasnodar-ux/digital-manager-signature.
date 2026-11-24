@@ -1078,7 +1078,7 @@ html:root body #svcpWorkChatScreen[data-view="room"]
    the header avatar or the existing call handlers. */
 html:root body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation > .svcp-call-actions{
- top:var(--svcp-shared-back-top)!important;
+ top:var(--svcp-call-control-top,var(--svcp-nav-back-y,var(--svcp-shared-back-top)))!important;
  right:max(12px,env(safe-area-inset-right,0px))!important;
 }
 html:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
