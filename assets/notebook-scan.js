@@ -504,6 +504,7 @@ function openSaved(note,options={}){
   const known=typeof original.scanText==='string'?original.scanText:window.SEYVEO_NOTEBOOK_SCREEN?.scanExampleText?.(original);
   if(typeof known==='string'){knownScanText=known;text.value=known;}
   message('');showDocument(!options.exportPDF);syncMenu();
+  if(!options.exportPDF&&typeof known==='string')void warmSharePDF();
   if(options.editText)openTextEditor();
   if(original.paper.strokes?.length||original.paper.texts?.length){
    const token=session;
@@ -623,6 +624,7 @@ async function recognize(){
   if(worker)try{await worker.terminate()}catch{}
   running=false;button.disabled=!selected;syncActions();
   if(dialog.open&&token===session&&sendToNotebook)void saveScanText(true);
+  else if(dialog.open&&token===session&&!editingScanText&&!outputIntent)void warmSharePDF();
  }
 }
 function cancel(){if(exportBusy)return;if(!consentBox.hidden){consentBox.hidden=true;pendingScanEdit=false;return;}if(running){session++;pendingScanEdit=false;autoReadExisting=false;message('Распознавание отменено.');offerManual();return;}if(editingScanText){if((!savedScan?.id||text.value!==editStartText)&&!window.confirm('Выйти без сохранения документа?'))return;if(!savedScan?.id){dialog.close();return;}text.blur();text.value=readableText()||'';editingScanText=false;delete dialog.dataset.editScanText;setStep('photo');showDocument(true);message('');return;}dialog.close()}
@@ -749,7 +751,7 @@ dialog.addEventListener('close',()=>{
 });
 window.SEYVEO_NOTE_SCANNER=Object.freeze({open,openSaved,scanIntoNote,refreshSaved:(note,position)=>{
  if(!dialog.open||savedScan?.id!==note?.id)return false;
- savedScan=note;shareCache=null;showDocument(true);syncActions();message('');
+ savedScan=note;shareCache=null;showDocument(true);syncActions();message('');void warmSharePDF();
  const surface=formattedRead.hidden?text:formattedRead;
  if(Number.isFinite(position))surface.scrollTop=position;
  return true;
