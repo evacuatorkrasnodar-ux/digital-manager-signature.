@@ -25,8 +25,7 @@ form.querySelectorAll('[data-invite-method]').forEach(button=>button.addEventLis
  method=button.dataset.inviteMethod;form.querySelectorAll('[data-invite-method]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));clearResult();
 }));
 open.addEventListener('click',()=>{
- if(dialog.open)return;clearResult();updateInitials();updateSubmit();dialog.showModal();$('svStaffInvitePageScroll').scrollTop=0;window.SEYVEO_DOCK_CONTINUITY?.refresh?.(dialog);
- requestAnimationFrame(()=>{if(dialog.open)window.SEYVEO_DOCK_CONTINUITY?.refresh?.(dialog);});
+ if(dialog.open)return;clearResult();updateInitials();updateSubmit();dialog.showModal();$('svStaffInvitePageScroll').scrollTop=0;
 });
 $('svStaffInviteBack').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('close',()=>{if($('svcpManagerPeople')?.open)open.focus({preventScroll:true});});
