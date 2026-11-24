@@ -312,7 +312,7 @@ function renderYear(){
   button.setAttribute('aria-label',niceFirst(fmtMonth.format(new Date(year,month,1))));
   const heading=document.createElement('span');
   heading.className='cal-year-month-title';
-  heading.textContent=new Intl.DateTimeFormat('ru-RU',{month:'short'}).format(new Date(year,month,1)).replace('.','');
+  heading.textContent=niceFirst(new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(year,month,1)));
   if(month===today.getMonth()&&year===today.getFullYear())heading.classList.add('is-current');
   button.append(heading);
   const days=document.createElement('span');days.className='cal-year-mini-grid';
