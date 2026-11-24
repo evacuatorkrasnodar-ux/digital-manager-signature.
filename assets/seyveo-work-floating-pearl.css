@@ -57,7 +57,8 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-wor
  display:flex!important;position:relative!important;
  align-items:center!important;justify-content:center!important;align-self:center!important;
  /* All four faces use identical box metrics and the same grid center. */
- inset:auto!important;translate:none!important;scale:none!important;
+ /* Optical correction measured on the actual rendered capsule: 1px up. */
+ inset:auto!important;top:-1px!important;translate:none!important;scale:none!important;
  grid-row:1!important;justify-self:stretch!important;
  flex:none!important;width:100%!important;min-width:0!important;
  height:28px!important;min-height:28px!important;max-height:28px!important;
@@ -127,7 +128,7 @@ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWork
  /* Selected segment remains visually identifiable, but no silver bevel. */
  background:var(--sv-white-pearl-selected)!important;
  border:1px solid rgba(255,255,255,.99)!important;
- box-shadow:var(--sv-white-pearl-selected-shadow)!important;
+ box-shadow:0 0 2px rgba(38,48,60,.035)!important;
 }
 /* Keep the approved Home contrast for unselected text too. */
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:not([hidden]):not([aria-pressed="true"]){
