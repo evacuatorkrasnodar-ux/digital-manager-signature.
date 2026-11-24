@@ -15,16 +15,16 @@ const example=()=>({vacancies:[
 {id:'demo-v1',title:'Менеджер по продажам',city:'Краснодар',criteria:['Работа с клиентами','Ведение CRM','Подготовка предложений']},
 {id:'demo-v2',title:'Кассир',city:'Краснодар',criteria:['Работа с кассой','Обслуживание покупателей']}
 ],candidates:[
-{id:'demo-c1',name:'Алексей Примеров',vacancyId:'demo-v1',source:'Учебный отклик',evidence:'В вымышленном резюме указаны работа с клиентами и ведение CRM.',stage:'Собеседование'},
-{id:'demo-c2',name:'Мария Демова',vacancyId:'demo-v2',source:'Учебный отклик',evidence:'В вымышленном резюме указан опыт работы с кассой.',stage:'Проверить опыт'},
-{id:'demo-c3',name:'Илья Образцов',vacancyId:'demo-v1',source:'Учебный отклик',evidence:'В вымышленном резюме указана подготовка предложений.',stage:'Новый'}
+{id:'demo-c1',name:'Алексей Примеров',vacancyId:'demo-v1',source:'Отклик',evidence:'В резюме указаны работа с клиентами и ведение CRM.',stage:'Собеседование'},
+{id:'demo-c2',name:'Мария Демова',vacancyId:'demo-v2',source:'Отклик',evidence:'В резюме указан опыт работы с кассой.',stage:'Проверить опыт'},
+{id:'demo-c3',name:'Илья Образцов',vacancyId:'demo-v1',source:'Отклик',evidence:'В резюме указана подготовка предложений.',stage:'Новый'}
 ]});
 let state=load();
 let demo=!state.vacancies.length&&!state.candidates.length;
 if(demo)state=example();
 root.innerHTML=`<div class="svrec-head"><div><h3 class="svrec-title">Подбор персонала</h3><p class="svrec-desc">Вакансии, кандидаты и решения руководителя</p></div><button type="button" class="svrec-mode" id="svrecMode" aria-pressed="false"></button></div>
 <div class="svrec-stats" aria-label="Состояние подбора"><div class="svrec-stat"><strong id="svrecVacancies">0</strong><small>Вакансий</small></div><div class="svrec-stat"><strong id="svrecCandidates">0</strong><small>Кандидатов</small></div><div class="svrec-stat"><strong id="svrecInterviews">0</strong><small>Интервью</small></div></div>
-<div class="svrec-advice"><div class="svrec-advice-head"><span class="sv-sayvi-symbol" aria-hidden="true"></span><strong>Сэйви</strong></div><p class="svrec-status" id="svrecStatus" role="status" aria-live="polite">Сэйви поможет подготовить вакансию. Решение о найме принимает руководитель.</p></div><p id="svrecDemoNote" class="svrec-small" hidden>Все имена и отклики вымышлены. Изменения в примере не записываются в реальный подбор.</p>
+<div class="svrec-advice"><div class="svrec-advice-head"><span class="sv-sayvi-symbol" aria-hidden="true"></span><strong>Сэйви</strong></div><p class="svrec-status" id="svrecStatus" role="status" aria-live="polite">Сэйви поможет подготовить вакансию. Решение о найме принимает руководитель.</p></div>
 <section class="svrec-section"><div class="svrec-section-head"><h4 class="svrec-section-title">01 · Вакансия</h4></div>
 <form id="svrecVacancyForm" class="svrec-grid"><label class="svrec-field">Кого ищем<input name="title" maxlength="90" placeholder="Например, кассир" required></label><label class="svrec-field">Город<input name="city" maxlength="90" placeholder="Краснодар"></label><label class="svrec-field wide">Требования по работе<textarea name="criteria" maxlength="1200" required placeholder="По одному требованию с новой строки: опыт с кассой, работа с покупателями…"></textarea></label><div class="svrec-actions svrec-field wide"><button class="svrec-button primary" type="submit">Создать вакансию</button></div></form>
 <div id="svrecVacancyList" class="svrec-candidates"></div>
@@ -89,14 +89,14 @@ function row(title,sub,initials,tag,fn){
 }
 function renderVacancyDetail(){
  const v=state.vacancies.find(x=>x.id===currentId);detailContent.replaceChildren();if(!v)return;
- detailContent.append(el('h3','svrec-detail-name',v.title),el('p','svrec-desc',(v.city||'Город не указан')+(demo?' · учебная вакансия':'')),el('h4','svrec-detail-heading','Требования'));
+ detailContent.append(el('h3','svrec-detail-name',v.title),el('p','svrec-desc',(v.city||'Город не указан')+(demo?' · Демо':'')),el('h4','svrec-detail-heading','Требования'));
  const list=el('ul','svrec-criteria');v.criteria.forEach(c=>list.append(el('li',null,c)));detailContent.append(list,el('p','svrec-small','Публикация требует подключения площадки и подтверждения работодателя.'));
 }
 function renderCandidateDetail(){
  const c=state.candidates.find(x=>x.id===currentId);detailContent.replaceChildren();if(!c)return;
  const vacancy=state.vacancies.find(v=>v.id===c.vacancyId);
  const identity=el('div','svrec-identity');
- identity.append(el('span','svrec-list-avatar',c.name.trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()),el('h3','svrec-detail-name',c.name),el('p','svrec-desc',(vacancy?.title||'Вакансия')+' · '+c.source),el('span','svrec-tag',c.stage));detailContent.append(identity);
+ identity.append(el('span','svrec-list-avatar',c.name.trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()),el('h3','svrec-detail-name',c.name),el('p','svrec-desc',(vacancy?.title||'Вакансия')+' · '+c.source+(demo?' · Демо':'')),el('span','svrec-tag',c.stage));detailContent.append(identity);
  detailContent.append(el('h4','svrec-detail-heading','Разбор Сэйви'),el('div','svrec-analysis',assess(c,vacancy)),el('h4','svrec-detail-heading','Этап подбора'));
  const stages=el('div','svrec-pipeline');
  STAGES.forEach(stage=>{const b=action(stage,()=>{const previous=c.stage;c.stage=stage;if(!persist()){c.stage=previous;return;}render();renderCandidateDetail();sayvi('Этап изменён. Решение принимает руководитель.');},'svrec-stage');b.setAttribute('aria-pressed',String(c.stage===stage));stages.append(b);});
@@ -105,9 +105,9 @@ function renderCandidateDetail(){
 function persist(){if(demo)return true;try{localStorage.setItem(STORE,JSON.stringify(state));return true}catch{sayvi('Не удалось сохранить изменения в браузере. Проверь свободное место.');return false}}
 function cardTitle(parent,title,sub){const h=el('div','svrec-cardhead'),name=el('div');name.append(el('strong',null,title),el('small',null,sub));h.append(name);parent.append(h);return h}
 function render(){
- $('#svrecMode').textContent=demo?'Пример · выйти':'Показать пример';
+ $('#svrecMode').textContent=demo?'Демо · выйти':'Демо';
  $('#svrecMode').setAttribute('aria-pressed',String(demo));
- $('#svrecDemoNote').hidden=!demo;
+
  $('#svrecClear').textContent=demo?'Сбросить учебный пример':'Очистить локальный подбор';
  $('#svrecVacancies').textContent=String(state.vacancies.length);
  $('#svrecCandidates').textContent=String(state.candidates.length);
@@ -158,7 +158,7 @@ $('#svrecCandidateForm').addEventListener('submit',e=>{
 $('#svrecMode').addEventListener('click',()=>{
  demo=!demo;state=demo?example():load();
  $('#svrecVacancyForm').reset();$('#svrecCandidateForm').reset();render();
- sayvi(demo?'Учебный подбор: два рабочих места и три вымышленных отклика. Попробуй менять этапы.':'Рабочие записи на этом устройстве. Решение о найме принимает руководитель.');
+ sayvi(demo?'Две открытые вакансии. Один кандидат на этапе собеседования.':'Решение о найме принимает руководитель.');
 });
 $('#svrecClear').addEventListener('click',()=>{
  if(demo){state=example();render();sayvi('Учебный пример восстановлен. Рабочие записи не изменены.');return;}
@@ -166,5 +166,5 @@ $('#svrecClear').addEventListener('click',()=>{
  state=initial();if(persist()){render();sayvi('Локальная история подбора очищена.');}
 });
 render();
-if(demo)sayvi('Учебный подбор: два рабочих места и три вымышленных отклика. Попробуй менять этапы.');
+if(demo)sayvi('Две открытые вакансии. Один кандидат на этапе собеседования.');
 })();

@@ -152,7 +152,7 @@
   list.replaceChildren();
   const relevant=items.filter(r=>r.status==='pending').slice().reverse();
   const count=$('svcpManagerRequestCount');if(count)count.textContent=relevant.length?'На рассмотрении · '+relevant.length:'Нет новых заявок';
-  if(!relevant.length){list.append(el('p','svcp-schedule-empty','Новых запросов нет. Здесь будут заявки Елены из учебного режима.'));return}
+  if(!relevant.length)return;
   for(const req of relevant){
    const date=parseDay(req.date);if(!date)continue;
    const row=el('article','svcp-manager-request'),info=el('div','svcp-manager-request-copy');
@@ -243,8 +243,8 @@
    req.status=action.dataset.decision==='approved'?'approved':'declined';req.reviewedAt=new Date().toISOString();
    if(!save(REQUEST_KEY,items)){$('svcpManagerScheduleStatus').textContent='Не удалось сохранить решение.';return}
    $('svcpManagerScheduleStatus').textContent=req.type==='swap'&&req.status==='approved'
-    ?'Запрос согласован в демо. Сотрудник на замену ещё не назначен.'
-    :'Решение сохранено в демо, без отправки уведомления на другой телефон.';
+    ?'Запрос согласован локально. Назначьте сотрудника на замену.'
+    :'Решение сохранено на устройстве. Уведомление не отправлено.';
    renderSchedule();return;
   }
   if(event.target.closest('#svcpManagerScheduleSave')){
@@ -256,7 +256,7 @@
    if(!save(PLAN_KEY,{days:editDays,start,end})){
     status.textContent='Не удалось сохранить график на устройстве.';return;
    }
-   status.textContent='График сохранён локально · для демонстрации. Реальная синхронизация ещё не подключена.';
+   status.textContent='График сохранён на устройстве.';
    renderSchedule();
   }
  });

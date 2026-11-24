@@ -7,16 +7,16 @@ const root=document.getElementById('seyveoStaffCards');
 if(!root)return;
 const people=[
  {id:'anna',name:'Анна С.',role:'Старший продавец',since:'2024-03-12',thanks:7,remarks:1,development:'Рост',skill:'Наставничество',hint:'Есть опыт наставничества',insight:'У Анны есть подтверждённый опыт помощи коллегам. Я предлагаю обсудить с ней возможность наставничества и дальнейшее профессиональное развитие.',next:['Обсудить интерес к роли наставника','Согласовать обучение новых коллег'],events:[
-  {date:'12 октября',type:'good',title:'Помогала обучать новых сотрудников',sub:'Подтверждённое достижение · учебный пример'},
-  {date:'20 сентября',type:'closed',title:'Рабочее замечание устранено после проверки',sub:'Закрыто · учебный пример'},
-  {date:'12 августа',type:'good',title:'Благодарность за помощь команде',sub:'Подтверждено · учебный пример'}],hair:'#292125',skin:'#dd9c7f',jacket:'#1d3540',back:'#cad3d0',female:true},
+  {date:'12 октября',type:'good',title:'Помогала обучать новых сотрудников',sub:'Подтверждённое достижение'},
+  {date:'20 сентября',type:'closed',title:'Рабочее замечание устранено после проверки',sub:'Закрыто'},
+  {date:'12 августа',type:'good',title:'Благодарность за помощь команде',sub:'Подтверждено'}],hair:'#292125',skin:'#dd9c7f',jacket:'#1d3540',back:'#cad3d0',female:true},
  {id:'mikhail',name:'Михаил К.',role:'Продавец',since:'2026-07-01',thanks:3,remarks:2,development:'Обучение',skill:'Работа с возвратами',hint:'Нужно уточнить один эпизод',insight:'У Михаила есть три подтверждённые благодарности. Одно рабочее замечание ещё не проверено: прежде чем делать выводы, я предлагаю выслушать его объяснение и разобрать процесс возвратов.',next:['Проверить обстоятельства открытого замечания','Предложить практическое обучение возвратам'],events:[
   {date:'18 октября',type:'review',title:'Замечание по возврату требует проверки',sub:'Не подтверждено · запросить объяснение'},
-  {date:'9 октября',type:'good',title:'Благодарность за помощь покупателю',sub:'Подтверждено · учебный пример'},
-  {date:'14 сентября',type:'closed',title:'Замечание закрыто после уточнения',sub:'Закрыто · учебный пример'}],hair:'#2c2524',skin:'#c58e69',jacket:'#45505d',back:'#c4d0cb',female:false},
+  {date:'9 октября',type:'good',title:'Благодарность за помощь покупателю',sub:'Подтверждено'},
+  {date:'14 сентября',type:'closed',title:'Замечание закрыто после уточнения',sub:'Закрыто'}],hair:'#2c2524',skin:'#c58e69',jacket:'#45505d',back:'#c4d0cb',female:false},
  {id:'elena',name:'Елена П.',role:'Кассир',since:'2022-10-05',thanks:9,remarks:0,development:'Развитие',skill:'Учёт товаров',hint:'Возможности профессионального роста',insight:'У Елены есть подтверждённый опыт в операционной работе и помощь коллегам. Я предлагаю обсудить её карьерные интересы и новые рабочие задачи, не делая выводов только по количеству благодарностей.',next:['Уточнить карьерные цели и интересы','Обсудить участие в улучшении учёта товаров'],events:[
-  {date:'21 октября',type:'good',title:'Благодарность за улучшение учёта',sub:'Подтверждённое достижение · учебный пример'},
-  {date:'4 сентября',type:'good',title:'Помогала разобраться со складскими остатками',sub:'Подтверждено · учебный пример'}],hair:'#483128',skin:'#deb08c',jacket:'#393b53',back:'#c4cbd7',female:true}
+  {date:'21 октября',type:'good',title:'Благодарность за улучшение учёта',sub:'Подтверждённое достижение'},
+  {date:'4 сентября',type:'good',title:'Помогала разобраться со складскими остатками',sub:'Подтверждено'}],hair:'#483128',skin:'#deb08c',jacket:'#393b53',back:'#c4cbd7',female:true}
 ];
 const photos=new Map();
 const RECOGNITION_KEY='seyveo-peer-recognition-demo-v1';
@@ -312,7 +312,7 @@ const body=el('div','svstaff-content');modal.append(body);
 let chosen=null,lastTrigger=null,leavingForChat=false;
 function summaryStats(target,p){
  const metrics=el('div','svstaff-metrics');
- [['star','svstaff-gold',String(peerRecognition(p.id).length),'Знаков команды · демо'],['clipboard','svstaff-silver',String(p.remarks),p.remarks===1?'Замечание · пример':'Замечаний · пример'],['growth','svstaff-green',p.development,'Навыки · пример']].forEach(([symbol,color,value,label])=>{
+ [['star','svstaff-gold',String(peerRecognition(p.id).length),'Знаков команды'],['clipboard','svstaff-silver',String(p.remarks),p.remarks===1?'Замечание':'Замечаний'],['growth','svstaff-green',p.development,'Навыки']].forEach(([symbol,color,value,label])=>{
   const item=el('div','svstaff-metric');item.append(icon(symbol,color),el('strong',null,value),el('small',null,label));metrics.append(item);
  });
  target.append(metrics);
@@ -463,7 +463,7 @@ function renderProfile(){
  const list=el('ol');p.next.forEach(x=>list.append(el('li',null,x)));
  planContent.append(list,el('p',null,'Шаги обсуждаются с сотрудником; решение принимает руководитель.'));
  plan.append(planContent);body.append(plan);
- body.append(el('p','svstaff-demo-note','Учебные данные. Заметки и поощрения требуют проверки; автоматической оценки персонала нет.'));
+ body.append(el('p','svstaff-demo-note','Демо · заметки и поощрения требуют проверки.'));
 
 }
 modal.addEventListener('close',()=>{chosen=null;if(!leavingForChat)lastTrigger?.focus?.();leavingForChat=false});

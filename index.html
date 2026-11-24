@@ -708,7 +708,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 #picturePage .seyveo-picture-back{appearance:none;display:inline-flex;align-items:center;justify-content:flex-start;gap:3px;min-width:58px;min-height:44px;margin:0 0 0 -4px;padding:0 6px 0 0;border:0;border-radius:12px;background:transparent;color:var(--text);font:inherit;font-size:13px;font-weight:530;line-height:1.2;cursor:pointer}
 #picturePage .seyveo-picture-back svg{width:18px;height:18px;stroke:var(--seyveo-emerald);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
 #picturePage .seyveo-picture-back:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
-</style><link rel="stylesheet" href="assets/seyveo-pay.css?v=15"><style id="seyveo-youtube-white-theme">:root[data-theme=light] .seyveo-youtube-white{background:#24372e;border-radius:6px;padding:2px}</style><link rel="stylesheet" href="assets/seyveo-family-chat.css?v=12"><link rel="stylesheet" href="assets/seyveo-business-command.css?v=122"><link rel="stylesheet" href="assets/seyveo-employee-schedule.css?v=8"><link rel="stylesheet" href="assets/seyveo-scroll-clean.css?v=5"><script src="assets/seyveo-scroll-glass.js?v=4" defer></script><link rel="stylesheet" href="assets/seyveo-fullscreen-workspaces.css?v=25"><link rel="stylesheet" href="assets/seyveo-typography.css?v=10">
+</style><link rel="stylesheet" href="assets/seyveo-pay.css?v=15"><style id="seyveo-youtube-white-theme">:root[data-theme=light] .seyveo-youtube-white{background:#24372e;border-radius:6px;padding:2px}</style><link rel="stylesheet" href="assets/seyveo-family-chat.css?v=12"><link rel="stylesheet" href="assets/seyveo-business-command.css?v=122"><link rel="stylesheet" href="assets/seyveo-employee-schedule.css?v=9"><link rel="stylesheet" href="assets/seyveo-scroll-clean.css?v=5"><script src="assets/seyveo-scroll-glass.js?v=4" defer></script><link rel="stylesheet" href="assets/seyveo-fullscreen-workspaces.css?v=25"><link rel="stylesheet" href="assets/seyveo-typography.css?v=10">
 <link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=22"><link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=10"><script src="assets/seyveo-type-scale.js?v=1" defer></script><link rel="stylesheet" href="assets/life-tiles-accents.css?v=35"><link rel="stylesheet" href="assets/seyveo-global-search.css?v=6"><script src="assets/seyveo-life-events.js?v=7"></script><script src="assets/my-world-air.js?v=10" defer></script><link rel="stylesheet" href="assets/seyveo-card-studio.css?v=20"><link rel="stylesheet" href="assets/seyveo-fan-workshop.css?v=11"><link rel="stylesheet" href="assets/seyveo-connect.css?v=6"><link rel="stylesheet" href="assets/seyveo-velvet-system.css?v=15"><link rel="stylesheet" href="assets/seyveo-card-mobile-density.css?v=7"><link rel="stylesheet" href="assets/seyveo-card-system.css?v=42"><link rel="stylesheet" href="assets/seyveo-discovery.css?v=1"><link rel="stylesheet" href="assets/seyveo-recruitment.css?v=5"><link rel="stylesheet" href="assets/sayvi-onboarding.css?v=20261113-live2"><link rel="stylesheet" href="assets/seyveo-liquid-glass-26.css?v=24"><link rel="stylesheet" href="assets/seyveo-home-presence.css?v=11"><style id="sv-cabinet-screen-polish">
 /* SEYVEO 26 — quiet, flat actions; shared proportions across the cabinet. */
 #tasksPage[data-work-view="business"] .tasks-heading{margin-bottom:14px!important}
@@ -1540,7 +1540,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
   </div>
  </section>
  <section id="svcpTeam" class="svcp-panel" data-svcp-panel="team" role="region" aria-label="Сотрудники" hidden>
-  <p class="svcp-people-note">Команда · учебные карточки</p>
+  <p class="svcp-people-note" hidden>Демо</p>
   <div class="svcp-people-switch" role="group" aria-label="Внутренний переключатель подразделов" hidden>
    <button type="button" data-svcp-people="team" aria-pressed="true">Команда</button>
    <button type="button" data-svcp-people="hiring" aria-pressed="false">Подбор</button>
@@ -1603,9 +1603,9 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <details class="seyveo-manage-fold"><summary class="manage-row"><span class="manage-text"><strong>Кадры</strong><small>Вакансии · Собеседования · Приём · Адаптация</small></span><span class="manage-chevron" aria-hidden="true">›</span></summary>
 <div class="seyveo-manage-fold-body seyveo-business-tools">
 <div id="seyveoRecruitment" aria-label="Центр подбора сотрудников"></div>
-<details class="seyveo-hr-fold"><summary><strong>Собеседование с Сэйви</strong><small>Диалог · Кейсы · Результаты</small></summary><p>Сэйви помогает подготовить вопросы по требованиям вакансии и собрать проверяемые ответы. Учебное интервью не отправляет данные наружу; решение принимает человек.</p><button type="button" id="seyveoHrDemoOpen" class="svhr-demo-trigger">Открыть учебное собеседование</button></details>
+<details class="seyveo-hr-fold"><summary><strong>Собеседование с Сэйви</strong><small>Диалог · Кейсы · Результаты</small></summary><p>Сэйви подготовит вопросы по вакансии и соберёт ответы. Решение принимает руководитель.</p><button type="button" id="seyveoHrDemoOpen" class="svhr-demo-trigger">Начать собеседование</button></details>
 <details class="seyveo-hr-fold"><summary><strong>Карточки сотрудников</strong><small>История · Достижения · Развитие</small></summary><div id="seyveoStaffCards"></div></details>
-<details class="seyveo-hr-fold"><summary><strong>Приём и наставник</strong><small>Первый день · Адаптация · Обучение</small></summary><p>После решения руководителя Сэйви помогает подготовить первый день и инструкции. Настоящие приглашения, доступы и кадровые документы потребуют отдельного защищённого подключения.</p></details>
+<details class="seyveo-hr-fold"><summary><strong>Приём и наставник</strong><small>Первый день · Адаптация · Обучение</small></summary><p>Подготовка первого рабочего дня, инструкций и плана адаптации.</p></details>
 </div></details></div></div></section></div></div>
 </div><section id="manageThemeScreen" class="manage-theme-screen" hidden aria-labelledby="manageThemeTitle">
 <header class="manage-theme-head sv-continuity-titlebar"><button type="button" id="manageThemeBack" class="manage-theme-back" aria-label="Вернуться в управление"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span class="manage-theme-back-copy">Управление</span></button><h2 id="manageThemeTitle" tabindex="-1">Тема</h2><span class="sv-continuity-space" aria-hidden="true"></span></header>
@@ -1957,13 +1957,13 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
     <button type="button" data-svstaff-tab="schedule" aria-pressed="false">Графики</button>
     <button type="button" data-svstaff-tab="hiring" aria-pressed="false">Подбор</button>
    </nav>
-   <section id="svStaffInviteNotice" class="sv-staff-invite-notice" hidden aria-label="Пример приглашения"><strong>Приглашение в команду</strong><small>Учебный пример · не отправлено</small><div class="sv-staff-example-row"><span>Компания</span><b>SEYVEO · Демо</b></div><div class="sv-staff-example-row"><span>Сотрудник</span><b>Алексей Примеров</b></div><div class="sv-staff-example-row"><span>Роль</span><b>Менеджер</b></div><div class="sv-staff-example-row"><span>Почта</span><b>employee@example.invalid</b></div><p>Отправка станет доступна после подключения защищённых рабочих аккаунтов.</p><button id="svStaffInviteDismiss" type="button">Закрыть пример</button></section>
+   <section id="svStaffInviteNotice" class="sv-staff-invite-notice" hidden aria-label="Пример приглашения"><strong>Приглашение в команду</strong><small>Черновик · не отправлено</small><div class="sv-staff-example-row"><span>Компания</span><b>SEYVEO · Демо</b></div><div class="sv-staff-example-row"><span>Сотрудник</span><b>Алексей Примеров</b></div><div class="sv-staff-example-row"><span>Роль</span><b>Менеджер</b></div><div class="sv-staff-example-row"><span>Почта</span><b>employee@example.invalid</b></div><p>Отправка станет доступна после подключения защищённых рабочих аккаунтов.</p><button id="svStaffInviteDismiss" type="button">Закрыть</button></section>
    <section id="svcpStaffSchedulePanel" class="svstaff-schedule-panel" hidden aria-label="Рабочие графики">
-   <div class="sv-staff-schedule-summary"><div><strong>Елена П.</strong><small>Кассир · учебный график</small></div><span id="svStaffShiftHours">09:00–17:30</span></div><div id="svStaffWeekPreview" class="sv-staff-week-preview" aria-label="Рабочие дни учебного графика"></div><p class="sv-staff-schedule-caption">График и решения сохраняются только на этом устройстве.</p>
+   <div class="sv-staff-schedule-summary"><div><strong>Елена П.</strong><small>Кассир</small></div><span id="svStaffShiftHours">09:00–17:30</span></div><div id="svStaffWeekPreview" class="sv-staff-week-preview" aria-label="Рабочие дни учебного графика"></div>
    <details id="svcpManagerSchedule" class="svcp-manager-schedule">
     <summary>Смены и заявки <span aria-hidden="true">›</span></summary>
     <div class="svcp-manager-schedule-inner">
-     <small>Учебный график для этого устройства. Личные события сотрудника здесь не открываются.</small>
+     
      <div class="svcp-manager-weekdays" role="group" aria-label="Рабочие дни">
       <button type="button" data-svcp-manager-day="1" aria-pressed="true">Пн</button>
       <button type="button" data-svcp-manager-day="2" aria-pressed="true">Вт</button>
@@ -1980,13 +1980,13 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
      <button id="svcpManagerScheduleSave" type="button" class="svcp-manager-schedule-save">Сохранить график</button>
      <small id="svcpManagerRequestCount">Нет новых заявок</small>
      <div id="svcpManagerRequestList" class="svcp-manager-request-list" aria-live="polite"></div>
-     <p id="svcpManagerScheduleStatus" class="svcp-manager-schedule-status" role="status">Изменения и решения сохраняются локально, без отправки сотруднику.</p>
+     <p id="svcpManagerScheduleStatus" class="svcp-manager-schedule-status" role="status"></p>
     </div>
    </details>
    <details class="svcp-break-setup" id="svcpBreakSetup">
     <summary>Перерывы <span aria-hidden="true">›</span></summary>
     <div class="svcp-break-setup-inner">
-     <p>Настраивается руководителем один раз. Перерыв включается и заканчивается автоматически от начала смены.</p>
+     <p>Перерыв рассчитывается автоматически от начала смены.</p>
      <div class="svcp-break-controls">
       <label>Через сколько после начала смены
        <select id="svcpBreakAfter"><option value="120">Через 2 часа</option><option value="180">Через 3 часа</option><option value="240" selected>Через 4 часа</option><option value="300">Через 5 часов</option><option value="360">Через 6 часов</option></select>
@@ -1997,7 +1997,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
      </div>
      <label class="svcp-break-paid"><span class="svcp-break-paid-caption">Учитывать перерыв как рабочее время</span><input id="svcpBreakPaid" type="checkbox" role="switch"><span class="svcp-break-switch" aria-hidden="true"></span></label>
      <button type="button" id="svcpBreakSave" class="svcp-break-save">Сохранить перерыв</button>
-     <p id="svcpBreakStatus" class="svcp-break-status" role="status" aria-live="polite">График действует для следующих смен. Демо · только это устройство.</p>
+     <p id="svcpBreakStatus" class="svcp-break-status" role="status" aria-live="polite">График действует для следующих смен.</p>
     </div>
    </details>
    </section>
@@ -5634,7 +5634,7 @@ byId('svcpBreakSave')?.addEventListener('click',()=>{
  }catch{if(info)info.textContent='Не удалось сохранить график. Проверь хранилище.'}
 });
 syncManager();render();
-})();</script><script src="assets/seyveo-hr-demo.js?v=2"></script><script src="assets/seyveo-staff-cards.js?v=18"></script><dialog id="seyveoPayDialog" class="syp-dialog" aria-label="SEYVEO PAY — умный кошелёк, демонстрация">
+})();</script><script src="assets/seyveo-hr-demo.js?v=3"></script><script src="assets/seyveo-staff-cards.js?v=19"></script><dialog id="seyveoPayDialog" class="syp-dialog" aria-label="SEYVEO PAY — умный кошелёк, демонстрация">
 <div class="syp-shell">
 <header class="syp-top">
 <div><p class="syp-kicker">SEYVEO / PRIVATE WALLET</p><h2 class="syp-title">Мой кошелёк</h2><p class="syp-desc">Все твои карты. Один умный помощник.</p></div>
@@ -5670,12 +5670,12 @@ syncManager();render();
 <section class="syp-screen" data-syp-screen="history" hidden><div class="syp-panel"><h3>История покупок</h3><p>Здесь появятся подтверждённые операции и доступные чеки после официального подключения банков. Сейчас операций нет.</p></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
 </div></dialog><script src="assets/seyveo-pay.js?v=10"></script><script src="assets/seyveo-chat-polls.js?v=6"></script><script src="assets/seyveo-chat-themes.js?v=6"></script><script src="assets/seyveo-family-chat.js?v=6"></script><script src="assets/seyveo-avatar-art.js?v=1"></script>
 <script src="assets/seyveo-sayvi-holidays.js?v=2"></script>
-<script src="assets/seyveo-business-command.js?v=244-avatar-colors"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261124-sayvi-live"></script><script src="assets/seyveo-unified-tasks.js?v=91"></script><script src="assets/seyveo-employee-schedule.js?v=3"></script><script src="assets/seyveo-dock-continuity.js?v=6"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=33"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=22"></script>
+<script src="assets/seyveo-business-command.js?v=244-avatar-colors"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261124-sayvi-live"></script><script src="assets/seyveo-unified-tasks.js?v=91"></script><script src="assets/seyveo-employee-schedule.js?v=4"></script><script src="assets/seyveo-dock-continuity.js?v=6"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=33"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=22"></script>
 <script src="assets/seyveo-learning-lab.js?v=1" defer></script>
 <dialog id="seyveoOfflineDialog" class="seyveo-offline-dialog" aria-labelledby="seyveoOfflineHeading"><div class="seyveo-offline-shell"><header class="seyveo-offline-head"><div><span class="seyveo-offline-kicker">SEYVEO ONE · УПРАВЛЕНИЕ</span><h2 id="seyveoOfflineHeading">Сэйви офлайн</h2><p>Сэйви рядом, даже когда нет интернета</p></div><button type="button" id="seyveoOfflineClose" aria-label="Закрыть">×</button></header><div id="seyveoOfflineChoices" class="seyveo-offline-choices"></div><div class="seyveo-offline-summary"><span>Полный офлайн-комплект</span><strong id="seyveoOfflineSize">0 МБ</strong><small id="seyveoOfflineNotice">Предварительная оценка. Готовые пакеты ещё не опубликованы.</small></div><button type="button" id="seyveoOfflineConfirm" class="seyveo-offline-save">Понятно</button><p class="seyveo-offline-foot">Офлайн-комплект будет доступен для отдельной установки после публикации проверенных файлов. Личная память хранится отдельно.</p></div></dialog><link rel="stylesheet" href="assets/seyveo-offline-manager.css?v=5"><link rel="stylesheet" href="assets/seyveo-silver-flat-surfaces.css?v=5"><link rel="stylesheet" href="assets/seyveo-mail-guard.css?v=10"><link rel="stylesheet" href="assets/seyveo-smart-contacts.css?v=6"><link rel="stylesheet" href="assets/seyveo-mail-drafts-clean.css?v=2"><link rel="stylesheet" href="assets/seyveo-mail-bulk-clean.css?v=5"><link rel="stylesheet" href="assets/seyveo-notebook-home-scene.css?v=10"><link rel="stylesheet" href="assets/seyveo-home-work-actions-flat.css?v=71"><link rel="stylesheet" href="assets/seyveo-documents-graphite-flat.css?v=10"><link rel="stylesheet" href="assets/seyveo-header-search-flat.css?v=2"><link rel="stylesheet" href="assets/seyveo-phonebook.css?v=5"><link rel="stylesheet" href="assets/seyveo-health-graphite-flat.css?v=83"><link rel="stylesheet" href="assets/seyveo-medical-passport.css?v=10"><script src="assets/seyveo-offline-manager.js?v=2" defer></script>
 
 
-<script src="assets/seyveo-recruitment.js?v=4" defer></script><script src="assets/seyveo-staff-select.js?v=2" defer></script><script>
+<script src="assets/seyveo-recruitment.js?v=5" defer></script><script src="assets/seyveo-staff-select.js?v=2" defer></script><script>
 /* Open the actual SEYVEO Browser from an answer in the separate Sayvi chat.
    The URL is only a short search phrase, never a conversation transcript. */
 window.addEventListener('load',()=>{
