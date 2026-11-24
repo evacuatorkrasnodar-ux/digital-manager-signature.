@@ -499,8 +499,16 @@ const show=()=>{
     if(rail.hidden)return;
     if(!firstHomeEntrancePlayed&&!editing&&!curtainOpen){
      firstHomeEntrancePlayed=true;
+     // One sequence across both rows, starting only after the sphere lands.
+     // Hidden smart/Business slots never consume a beat.
+     const tiles=Array.from(rail.querySelectorAll('.sv-home-favorite-tile')).filter(tile=>!tile.closest('[hidden]'));
+     tiles.forEach((tile,index)=>tile.style.setProperty('--sv-shortcut-enter-delay',index*420+'ms'));
      rail.classList.add('sv-home-favorites-enter');
-     setTimeout(()=>rail.classList.remove('sv-home-favorites-enter'),600);
+     const duration=1200+Math.max(0,tiles.length-1)*420;
+     setTimeout(()=>{
+      rail.classList.remove('sv-home-favorites-enter');
+      tiles.forEach(tile=>tile.style.removeProperty('--sv-shortcut-enter-delay'));
+     },duration+80);
     }
     rail.style.visibility='';
    });
