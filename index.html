@@ -4361,6 +4361,8 @@ async function deleteAllNotebookNotes(){
  notesMessage(`Удалено записей: ${count}.`);
  await Promise.allSettled(notes.map(note=>window.SEYVEO_NOTE_ATTACHMENTS?.deleteForNote(note.id)));
 }
+// Keep the collection popup outside the notebook scroll stacking context.
+document.body.append($('svNotebookListMenu'));
 function closeNotebookListMenu(){
  $('svNotebookListMenu').hidden=true;
  $('svNotebookListMore').setAttribute('aria-expanded','false');
@@ -4369,14 +4371,21 @@ $('svNotebookListMore').addEventListener('click',()=>{
  const menu=$('svNotebookListMenu');
  const opening=menu.hidden;
  closeNotebookListMenu();
- if(opening){menu.hidden=false;$('svNotebookListMore').setAttribute('aria-expanded','true');}
+ if(opening&&$('notesDialog').open){
+  const rect=$('svNotebookListMore').getBoundingClientRect();
+  const width=Math.min(190,window.innerWidth-24);
+  const left=Math.max(12,Math.min(window.innerWidth-width-12,rect.right-width));
+  menu.style.setProperty('--sv-nb-collection-top',Math.round(rect.bottom+2)+'px');
+  menu.style.setProperty('--sv-nb-collection-left',Math.round(left)+'px');
+  menu.hidden=false;$('svNotebookListMore').setAttribute('aria-expanded','true');
+ }
 });
 $('svNotebookDeleteAll').addEventListener('click',()=>{
  closeNotebookListMenu();
  void deleteAllNotebookNotes();
 });
 document.addEventListener('pointerdown',event=>{
- if(!$('svNotebookListMenu').hidden&&!event.target.closest?.('#svNotebookListTools'))closeNotebookListMenu();
+ if(!$('svNotebookListMenu').hidden&&!event.target.closest?.('#svNotebookListTools,#svNotebookListMenu'))closeNotebookListMenu();
 },true);
 document.addEventListener('keydown',event=>{
  if(event.key==='Escape'&&!$('svNotebookListMenu').hidden){
@@ -4384,6 +4393,11 @@ document.addEventListener('keydown',event=>{
  }
 });
 $('notesDialog').addEventListener('close',closeNotebookListMenu);
+window.addEventListener('seyveo:route-changed',closeNotebookListMenu);
+window.addEventListener('resize',closeNotebookListMenu,{passive:true});
+window.visualViewport?.addEventListener('resize',closeNotebookListMenu,{passive:true});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)closeNotebookListMenu();});
+new MutationObserver(()=>{if(!$('notesDialog').open||$('svWorkShell')?.dataset.active!=='notes')closeNotebookListMenu();}).observe($('notesDialog'),{attributes:true,attributeFilter:['open','hidden']});
 function closeNoteRowMenus(){
  const list=$('notesList');
  list.querySelectorAll('.sv-nb4-actions').forEach(el=>el.hidden=true);
@@ -5963,7 +5977,7 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=5"></script><script src="assets/seyveo-note-attachments.js?v=9"></script><script src="assets/seyveo-note-menu-dismiss.js?v=5"></script><script src="assets/seyveo-chat-jump.js?v=4"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=13"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=45"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=5"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=26"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=20261124-notebook-reading-grid"><link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=20261124-gesture-rows"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=20261124-mobile-compact"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=20261124-reading-polish"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
+</script><script src="assets/seyveo-note-richtext.js?v=5"></script><script src="assets/seyveo-note-attachments.js?v=9"></script><script src="assets/seyveo-note-menu-dismiss.js?v=5"></script><script src="assets/seyveo-chat-jump.js?v=4"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=13"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=45"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=5"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=26"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=20261124-notebook-reading-grid"><link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=20261124-popup-layer"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=20261124-mobile-compact"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=20261124-reading-polish"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-dock-active-glass.css?v=14">
 <script src="assets/seyveo-dock-active-glass.js?v=4"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=2">
