@@ -8,6 +8,11 @@
  const HIDE_AFTER=30000;
  const getSource=()=>window.SAYVI_WEATHER;
  let panel=null,activeAnchor=null,activeDate='',timer=0,requestedRefresh=false,agendaMode=false,homeMode=false;
+ let homeLayoutObserver=null,homeTextObserver=null,homeLayoutFrame=0;
+ function scheduleHomePosition(){
+  if(!panel||!homeMode||homeLayoutFrame)return;
+  homeLayoutFrame=requestAnimationFrame(()=>{homeLayoutFrame=0;if(panel&&homeMode)position();});
+ }
  function resetTimer(){clearTimeout(timer);if(panel)timer=setTimeout(()=>close(),HIDE_AFTER);}
  function setCalendarWeatherMode(on){
   agendaMode=!!on;
@@ -57,6 +62,9 @@
  }).format(new Date(ms));
  function close(immediate=false){
   clearTimeout(timer);timer=0;
+  homeLayoutObserver?.disconnect();homeLayoutObserver=null;
+  homeTextObserver?.disconnect();homeTextObserver=null;
+  if(homeLayoutFrame){cancelAnimationFrame(homeLayoutFrame);homeLayoutFrame=0;}
   if(activeAnchor)activeAnchor.setAttribute('aria-expanded','false');
   activeAnchor=null;activeDate='';requestedRefresh=false;
   setCalendarWeatherMode(false);
@@ -84,42 +92,37 @@
   const dock=document.querySelector('body > footer.dock.sv-shared-dock');
   const dockTop=dock&&!dock.hidden?dock.getBoundingClientRect().top:viewTop+viewHeight-72;
   const maxBottom=Math.min(viewTop+viewHeight-12,dockTop-12);
-  /* Home is a different placement from Agenda. Align the compact card
-     with the centre of the actual Sayvi sphere, never below or over the
-     shortcuts. The sphere itself fades, but its geometry stays reserved. */
+  /* Home: center the card in the real gap between Sayvi's visible
+     text (including its action) and the existing weekly weather row.
+     Do not move the sphere, shortcuts or dock. */
   let y;
   if(homeMode){
-   const sphere=document.querySelector('#homePage #orb');
-   const sphereRect=sphere?.getBoundingClientRect();
-   const stageRect=document.querySelector('#homePage #stage')?.getBoundingClientRect();
-   const sphereMiddle=sphereRect?.height>36?
-    sphereRect.top+sphereRect.height/2:
-    (stageRect?.top||viewTop)+Math.min(210,viewHeight*.31);
    const favorites=document.querySelector('#svHomeFavorites');
    const favoritesRect=favorites&&!favorites.hidden?favorites.getBoundingClientRect():null;
-   // The weekly forecast is the existing anchor. Reserve its actual painted
-   // row before positioning the expanded card; never move the shortcuts.
    const weekTop=rect.height>0&&rect.top>viewTop?rect.top-12:maxBottom;
    const bottomLimit=Math.min(maxBottom,weekTop,
     favoritesRect?.top?favoritesRect.top-14:maxBottom);
    const baseTop=viewTop+Math.max(42,Math.min(68,viewHeight*.09));
-   // Keep the visible greeting clear as well. On exceptionally short
-   // viewports the card may use its reserved sphere area and scroll.
-   let greetingBottom=baseTop;
-   for(const el of document.querySelectorAll('#homePage :is(#kicker,#headline,#subline)')){
-    const style=getComputedStyle(el),b=el.getBoundingClientRect();
-    if(b.height>0&&style.display!=='none'&&style.visibility!=='hidden'&&
-       Number(style.opacity)>0.05&&b.bottom<bottomLimit)
-     greetingBottom=Math.max(greetingBottom,b.bottom+12);
+   let allowedTop=baseTop;
+   const visibleText=el=>{
+    if(!el||el.closest('[hidden]'))return false;
+    for(let node=el;node&&node.id!=='homePage';node=node.parentElement){
+     const style=getComputedStyle(node);
+     if(style.display==='none'||style.visibility==='hidden'||Number(style.opacity)<=.05)return false;
+    }
+    return true;
+   };
+   for(const el of document.querySelectorAll('#homePage :is(.sv-sayvi-home-online,#kicker,#headline,#subline,#svHomeLivingLine)')){
+    if(!visibleText(el))continue;
+    const b=el.getBoundingClientRect();
+    if(b.height>0&&b.bottom<bottomLimit)
+     allowedTop=Math.max(allowedTop,b.bottom+12);
    }
-   const allowedTop=bottomLimit-greetingBottom>=180?greetingBottom:baseTop;
    const available=Math.max(1,Math.floor(bottomLimit-allowedTop));
    panel.style.setProperty('--sv-home-peek-room',available+'px');
-   // offsetHeight is the untransformed box: entry animation must not
-   // under-report the final height and overlap the weekly forecast.
    const height=panel.offsetHeight;
-   const upper=Math.max(allowedTop,bottomLimit-height);
-   y=Math.max(allowedTop,Math.min(sphereMiddle-height/2,upper));
+   // Equal free margins above and below, using the untransformed height.
+   y=allowedTop+Math.max(0,(bottomLimit-allowedTop-height)/2);
   }else{
    /* Agenda keeps its own central placement below the date rail. */
    const desiredTop=viewTop+(viewHeight-bounds.height)/2;
@@ -361,7 +364,19 @@
   document.body.append(panel);
   position();
   // The week row is positioned by weather-brief on the next animation frame.
-  if(homeMode)requestAnimationFrame(()=>{if(panel&&homeMode)position();});
+  if(homeMode){
+   scheduleHomePosition();
+   const thought=document.getElementById('svHomeLivingLine');
+   const message=document.querySelector('#homePage #stage > .message');
+   if(typeof ResizeObserver==='function'){
+    homeLayoutObserver=new ResizeObserver(scheduleHomePosition);
+    for(const node of [activeAnchor,thought,message])if(node)homeLayoutObserver.observe(node);
+   }
+   if(typeof MutationObserver==='function'){
+    homeTextObserver=new MutationObserver(scheduleHomePosition);
+    for(const node of [thought,message])if(node)homeTextObserver.observe(node,{attributes:true,subtree:true,childList:true,characterData:true,attributeFilter:['hidden','style','class']});
+   }
+  }
   resetTimer();
   panel.addEventListener('pointerdown',resetTimer,{passive:true});
   if(!day&&!requestedRefresh){requestedRefresh=true;src?.refresh?.();}
