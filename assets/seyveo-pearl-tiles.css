@@ -1,0 +1,94 @@
+/* SEYVEO Pearl Tile · shared rectangular action material.
+ * Use .sv-pearl-tile for future rectangular buttons.
+ * Existing sizing, layout, visibility, handlers and semantic controls are preserved.
+ * Circular controls, docks, switches, message bubbles and intentionally graphite
+ * workspaces are outside this standard. */
+:root[data-theme="light"]{
+ --sv-tile-surface:rgba(255,255,255,.76);
+ --sv-tile-edge:rgba(192,201,212,.34);
+ --sv-tile-selected:rgba(219,232,245,.82);
+ --sv-tile-selected-edge:rgba(145,176,204,.43);
+ --sv-tile-ink:#252a33;
+ --sv-tile-radius:16px;
+}
+html:root[data-theme="light"] body :is(
+ dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > button,
+ #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button,
+ #tasksPage .svcp-work-shortcuts > button,
+ #managePage .svcp-preview-options > button,
+ #managePage .svcp-preview-role-actions > button,
+ .seyveo-browser.is-unified.is-browser-home .seyveo-browser-shortcuts > button:not([data-custom-site]),
+ #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu :is(.sv-unified-pattern-choice,.sv-unified-shape-choice),
+ .sv-menu-surface .sv-menu-choice,
+ .sv-pearl-tile
+){
+ box-sizing:border-box!important;
+ background:var(--sv-tile-surface)!important;
+ background-image:none!important;
+ border:1px solid var(--sv-tile-edge)!important;
+ border-radius:var(--sv-tile-radius)!important;
+ color:var(--sv-tile-ink)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ transform:none!important;
+ transition:none!important;
+ -webkit-tap-highlight-color:transparent;
+}
+html:root[data-theme="light"] body :is(
+ dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > button,
+ #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button,
+ #tasksPage .svcp-work-shortcuts > button,
+ #managePage .svcp-preview-options > button,
+ #managePage .svcp-preview-role-actions > button,
+ .seyveo-browser.is-unified.is-browser-home .seyveo-browser-shortcuts > button:not([data-custom-site]),
+ #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu :is(.sv-unified-pattern-choice,.sv-unified-shape-choice),
+ .sv-menu-surface .sv-menu-choice,
+ .sv-pearl-tile
+):is([aria-pressed="true"],[aria-selected="true"],[aria-expanded="true"]){
+ background:var(--sv-tile-selected)!important;
+ border-color:var(--sv-tile-selected-edge)!important;
+}
+html:root[data-theme="light"] body :is(
+ dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > button,
+ #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button,
+ #tasksPage .svcp-work-shortcuts > button,
+ #managePage .svcp-preview-options > button,
+ #managePage .svcp-preview-role-actions > button,
+ .seyveo-browser.is-unified.is-browser-home .seyveo-browser-shortcuts > button:not([data-custom-site]),
+ #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu :is(.sv-unified-pattern-choice,.sv-unified-shape-choice),
+ .sv-menu-surface .sv-menu-choice,
+ .sv-pearl-tile
+):active{
+ transform:none!important;translate:none!important;scale:1!important;
+ box-shadow:none!important;
+}
+html:root[data-theme="light"] body :is(
+ dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > button,
+ #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button,
+ #tasksPage .svcp-work-shortcuts > button,
+ #managePage .svcp-preview-options > button,
+ #managePage .svcp-preview-role-actions > button,
+ .seyveo-browser.is-unified.is-browser-home .seyveo-browser-shortcuts > button:not([data-custom-site]),
+ #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu :is(.sv-unified-pattern-choice,.sv-unified-shape-choice),
+ .sv-menu-surface .sv-menu-choice,
+ .sv-pearl-tile
+):focus-visible{
+ outline:2px solid #397bc6!important;outline-offset:2px!important;
+}
+html:root[data-theme="light"] body :is(
+ dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > button,
+ #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button,
+ #tasksPage .svcp-work-shortcuts > button,
+ #managePage .svcp-preview-options > button,
+ #managePage .svcp-preview-role-actions > button,
+ .seyveo-browser.is-unified.is-browser-home .seyveo-browser-shortcuts > button:not([data-custom-site]),
+ #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu :is(.sv-unified-pattern-choice,.sv-unified-shape-choice),
+ .sv-menu-surface .sv-menu-choice,
+ .sv-pearl-tile
+):disabled{opacity:.45!important}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"]{
+  --sv-tile-surface:#fff;--sv-tile-selected:#e0ebf5;
+ }
+}
