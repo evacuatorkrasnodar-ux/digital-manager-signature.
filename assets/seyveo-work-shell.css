@@ -986,3 +986,26 @@ html body #svWorkShell[data-active="business"] #tasksPage .svcp-manager-chevron{
  display:grid!important;place-items:center!important;
  flex:0 0 22px!important;width:22px!important;
 }
+
+/* Cabinet root: shared inset and text-aligned hairlines, without changing chrome. */
+html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView #svCabinetToolbar.sv-cabinet-toolbar{
+ padding-inline:16px!important;
+}
+html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView :is(#svCabinetContinueWithSayvi.sv-cabinet-resume:not([hidden]),.svcp-manager-actions > .svcp-manager-row,.svcp-manager-actions > .svcp-manager-staff > summary){
+ box-sizing:border-box!important;
+ position:relative;
+ padding-left:16px!important;padding-right:16px!important;
+ gap:10px!important;
+ border-bottom:0!important;
+}
+html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView :is(#svCabinetContinueWithSayvi.sv-cabinet-resume:not([hidden]),.svcp-manager-actions > .svcp-manager-row,.svcp-manager-actions > .svcp-manager-staff > summary)::after{
+ content:"";position:absolute;left:54px;right:16px;bottom:0;
+ height:1px;background:var(--soft-line);pointer-events:none;
+}
+html:root[data-theme="light"] body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView :is(#svCabinetContinueWithSayvi.sv-cabinet-resume:not([hidden]),.svcp-manager-actions > .svcp-manager-row,.svcp-manager-actions > .svcp-manager-staff > summary)::after{
+ background:rgba(37,48,60,.11);
+}
+html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .sv-cabinet-dragging::after,
+html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .sv-cabinet-dragging > summary::after{
+ visibility:hidden;
+}
