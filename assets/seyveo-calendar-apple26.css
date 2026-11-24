@@ -854,7 +854,7 @@ html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
 }
 
 
-/* Calendar mode popover: the approved dock's pale silver glass, with
+/* Calendar mode popover: the shared opaque reading-menu material, with
    Apple-like outlined view icons and a clean gap below the + button. */
 html:root[data-theme="light"] body #svWorkShell > #calendarCreateMenu:not([hidden]),
 html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu:not([hidden]),
@@ -865,13 +865,13 @@ html:not([data-theme]) body #calendarPage > #calendarCreateMenu:not([hidden]){
  display:flex!important;flex-direction:column!important;
  box-sizing:border-box!important;width:min(236px,calc(100vw - 28px))!important;
  max-width:calc(100vw - 28px)!important;height:auto!important;
- margin:0!important;padding:6px!important;gap:0!important;
- border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.99))!important;border-radius:19px!important;
- background:var(--sv-white-pearl-surface,rgba(242,241,240,.93))!important;background-image:none!important;
+ margin:0!important;padding:7px!important;gap:1px!important;
+ border:var(--sv-menu-border,1px solid #E5E7EB)!important;border-radius:var(--sv-menu-radius,20px)!important;
+ background:var(--sv-menu-bg,#FCFCFD)!important;background-image:none!important;
  color:#191C21!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(16px) saturate(100%))!important;
- backdrop-filter:var(--sv-white-pearl-blur,blur(16px) saturate(100%))!important;
- box-shadow:var(--sv-white-pearl-dock-shadow,0 5px 17px rgba(82,69,57,.105),0 1px 3px rgba(65,53,44,.035),inset 0 1px 0 rgba(255,255,255,.82))!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:var(--sv-menu-shadow,0 10px 28px rgba(38,48,60,.10))!important;
  overflow:hidden!important;transform:none!important;
 }
 html body #svWorkShell > #calendarCreateMenu #calendarViewModes,
@@ -924,7 +924,7 @@ html body #calendarPage > #calendarCreateMenu #calendarViewModes > button[aria-p
 /* Exact dock material: avoid the older opaque selected-row override. */
 html:root[data-theme="light"] body #svWorkShell > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"],
 html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"]{
- background:rgba(255,255,255,.72)!important;color:#17191D!important;
+ background:var(--sv-menu-item-selected,#EDEEF0)!important;color:#17191D!important;
 }
 
 
@@ -1061,7 +1061,7 @@ html body #calendarPage > #calendarCreateMenu #calendarMonthModes > button{
 }
 html:root[data-theme="light"] body #svWorkShell > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"],
 html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"]{
- background:rgba(255,255,255,.72)!important;color:#17191D!important;
+ background:var(--sv-menu-item-selected,#EDEEF0)!important;color:#17191D!important;
 }
 html body #svWorkShell > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"]::after,
 html body #calendarPage > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"]::after{
