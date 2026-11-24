@@ -365,7 +365,7 @@ html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog
 /* A small stationary collection toolbar under the existing Work capsule.
    Destructive actions are deliberately behind an explicit menu + confirm. */
 html:root body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools[hidden],
-html:root body #svWorkShell[data-active="notes"] #svNotebookListMenu[hidden]{display:none!important}
+html:root body > #svNotebookListMenu[hidden]{display:none!important}
 html:root body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden]){
  display:flex!important;position:relative!important;z-index:6!important;
  box-sizing:border-box!important;flex:0 0 40px!important;min-height:40px!important;
@@ -385,26 +385,26 @@ html:root body #svWorkShell[data-active="notes"] #svNotebookListMore{
 html:root body #svWorkShell[data-active="notes"] #svNotebookListMore svg{
  width:21px!important;height:21px!important;fill:currentColor!important;stroke:none!important;
 }
-html:root body #svWorkShell[data-active="notes"] #svNotebookListMenu:not([hidden]){
- position:absolute!important;top:calc(100% + 2px)!important;right:16px!important;z-index:12!important;
+html:root body > #svNotebookListMenu:not([hidden]){
+ position:fixed!important;top:var(--sv-nb-collection-top,0px)!important;left:var(--sv-nb-collection-left,0px)!important;right:auto!important;bottom:auto!important;z-index:2147482000!important;
  display:block!important;width:218px!important;max-width:calc(100% - 32px)!important;
  box-sizing:border-box!important;padding:5px!important;margin:0!important;
  background:#fff!important;border:1px solid rgba(30,40,50,.06)!important;border-radius:15px!important;
  box-shadow:0 8px 26px rgba(20,30,45,.13)!important;
 }
-html:root body #svWorkShell[data-active="notes"] #svNotebookDeleteAll{
+html:root body > #svNotebookListMenu #svNotebookDeleteAll{
  display:flex!important;align-items:center!important;gap:10px!important;width:100%!important;
  min-height:44px!important;margin:0!important;padding:0 11px!important;
  border:0!important;border-radius:10px!important;box-shadow:none!important;background:transparent!important;
  color:#e33c41!important;font:500 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  text-align:left!important;
 }
-html:root body #svWorkShell[data-active="notes"] #svNotebookDeleteAll svg{
+html:root body > #svNotebookListMenu #svNotebookDeleteAll svg{
  flex:0 0 19px!important;width:19px!important;height:19px!important;fill:none!important;
  stroke:currentColor!important;stroke-width:1.6!important;stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden]){background:var(--bg,#17181b)!important}
-html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #svNotebookListMenu:not([hidden]){background:#292b2f!important;border-color:rgba(255,255,255,.08)!important}
+html:root[data-theme="dark"] body > #svNotebookListMenu:not([hidden]){background:#292b2f!important;border-color:rgba(255,255,255,.08)!important}
 /* The list is still the sole scrollport. The fixed collection toolbar
    is opaque so scrolling notes never paint through the count or menu. */
 
@@ -436,7 +436,7 @@ html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialo
  color:#606975!important;
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-note:not(:last-of-type) .sv-nb4-front::after{
- left:var(--sv-nb-reading-inset)!important;right:var(--sv-nb-reading-inset)!important;
+ left:var(--sv-nb-reading-inset)!important;right:auto!important;
  height:.5px!important;
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-note.has-paper .sv-nb4-front::after{
@@ -457,7 +457,7 @@ html:root body #svWorkShell[data-active="notes"] #svNotebookListMore{
 html:root body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden]){
  flex-basis:44px!important;min-height:44px!important;
 }
-html:root body #svWorkShell[data-active="notes"] #svNotebookListMenu:not([hidden]){
+html:root body > #svNotebookListMenu:not([hidden]){
  right:var(--sv-nb-reading-inset)!important;
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog > #notesList.sv-note-clean-list:not(.is-empty){
@@ -490,9 +490,9 @@ html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog
 }
 
 /* Collection menu · compact companion of the shared pearl menu material. */
-html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookListMenu:not([hidden]){
+html:root body > #svNotebookListMenu:not([hidden]){
  width:190px!important;max-width:calc(100% - 24px)!important;
- right:var(--sv-nb-reading-inset,12px)!important;top:calc(100% + 2px)!important;
+ right:auto!important;top:var(--sv-nb-collection-top,0px)!important;
  padding:4px!important;border-radius:16px!important;
  background:var(--sv-menu-bg,#fcfcfd)!important;
  border:var(--sv-menu-border,1px solid rgba(226,229,234,.65))!important;
@@ -500,13 +500,13 @@ html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookListMen
  -webkit-backdrop-filter:var(--sv-menu-blur,none)!important;
  backdrop-filter:var(--sv-menu-blur,none)!important;
 }
-html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookDeleteAll{
+html:root body > #svNotebookListMenu #svNotebookDeleteAll{
  box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
  gap:8px!important;min-height:44px!important;padding:0 8px!important;
  font:500 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  text-align:center!important;
 }
-html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookDeleteAll svg{
+html:root body > #svNotebookListMenu #svNotebookDeleteAll svg{
  flex:0 0 18px!important;width:18px!important;height:18px!important;
 }
 
@@ -532,3 +532,7 @@ html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-open{
  -webkit-touch-callout:none!important;
 }
+
+/* The collection menu lives outside the list's scroll and fade layers. */
+html:root body > #svNotebookListMenu[hidden]{display:none!important;visibility:hidden!important;pointer-events:none!important;}
+html:root body > #svNotebookListMenu:not([hidden]){visibility:visible!important;pointer-events:auto!important;overflow:visible!important;}
