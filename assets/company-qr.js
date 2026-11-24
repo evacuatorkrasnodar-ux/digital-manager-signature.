@@ -2336,9 +2336,16 @@ function update(){
  if(!canShare(r)){$('seyveoQrStatus').textContent='Сначала сохраните название и контакт компании.';return false}
  $('seyveoQrCompanyName').textContent=r.name;
  $('seyveoQrCompanySubtitle').textContent=r.industry||'Цифровая визитка';
- $('seyveoQrCompanyContacts').textContent=[r.phone,r.email,r.website,r.city].filter(Boolean).join(' · ');
+ const contacts=$('seyveoQrCompanyContacts');
+ const rows=[[r.phone,r.email],[r.website,r.city]].map(row=>row.filter(Boolean)).filter(row=>row.length);
+ contacts.replaceChildren(...rows.map(row=>{
+  const line=document.createElement('span');
+  line.className='sv-qr-contact-line';
+  line.textContent=row.join(' · ');
+  return line;
+ }));
  try{
-  drawQr(host,cardText(r),210);
+  drawQr(host,cardText(r),242);
   if(save)save.disabled=false;
   $('seyveoQrStatus').textContent=window.SEYVEO_COMPANY_PASSPORT?.isDemo?.()?'Учебная QR-визитка с вымышленными контактами.':'Наведите камеру другого телефона на QR, чтобы добавить контакт.';
   return true;
