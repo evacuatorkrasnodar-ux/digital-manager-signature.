@@ -798,7 +798,7 @@ function svAgendaGetAnchors(){
   const listTop=list.getBoundingClientRect().top;
   const currentScroll=list.scrollTop;
   svAgendaAnchorCache=[...list.querySelectorAll('.sv-agenda-section-heading[data-weather-date]')]
-   .map(heading=>({iso:heading.dataset.weatherDate,top:Math.max(0,currentScroll+heading.getBoundingClientRect().top-listTop)}));
+   .map(heading=>({iso:heading.dataset.weatherDate,top:Math.max(0,currentScroll+(heading.closest('.sv-agenda-day-group')||heading).getBoundingClientRect().top-listTop)}));
  }
  return svAgendaAnchorCache;
 }
@@ -871,8 +871,8 @@ function svAgendaSyncFromScroll(){
  if(scrollRange<35)return; // All days fit on screen: retain the explicitly chosen date.
  // A long inertial flick stays on the browser's native compositor. Only
  // the current date is synchronized, via a binary search over cached anchors.
- const lastScreen=scrollRange-list.scrollTop<3;
- const focus=list.scrollTop+(lastScreen?list.clientHeight*.86:Math.min(85,Math.max(42,list.clientHeight*.22)));
+ // Match the pinned heading, rather than selecting the next visible day early.
+ const focus=list.scrollTop+1;
  const current=svAgendaAnchorAt(focus);
  const iso=current?.iso;
  if(iso&&iso!==svTaskSelectedDate)svAgendaMarkSelected(iso);
@@ -1065,9 +1065,9 @@ function svAgendaSection(iso,titleOverride){
  }
  return header;
 }
-function svAgendaAddRows(items){
+function svAgendaAddRows(items,target=list){
  items.sort((a,b)=>(a.time||'00:00').localeCompare(b.time||'00:00')||a.title.localeCompare(b.title,'ru'));
- items.forEach(item=>list.append(row(item)));
+ items.forEach(item=>target.append(row(item)));
 }
 function svAgendaRenderList(rows){
  const selected=svTaskSelectedDate||svTaskISO(new Date());
@@ -1081,13 +1081,17 @@ function svAgendaRenderList(rows){
  // Chronological sections permit scrolling both backward and forward in time.
  for(const iso of [...dated.keys()].sort()){
   const items=dated.get(iso);
-  list.append(svAgendaSection(iso));
-  if(items.length)svAgendaAddRows(items);
-  else if(iso===selected)list.append(element('p','sv-agenda-empty-day',rows.length?'На этот день дел нет. Ближайшие дела ниже.':'Пока нет дел. Нажми +, чтобы добавить первое.'));
+  const group=element('section','sv-agenda-day-group');
+  group.append(svAgendaSection(iso));
+  if(items.length)svAgendaAddRows(items,group);
+  else if(iso===selected)group.append(element('p','sv-agenda-empty-day',rows.length?'На этот день дел нет. Ближайшие дела ниже.':'Пока нет дел. Нажми +, чтобы добавить первое.'));
+  list.append(group);
  }
  if(undated.length){
-  list.append(svAgendaSection(null,'Без даты'));
-  svAgendaAddRows(undated);
+  const group=element('section','sv-agenda-day-group');
+  group.append(svAgendaSection(null,'Без даты'));
+  svAgendaAddRows(undated,group);
+  list.append(group);
  }
 }
 
@@ -1305,9 +1309,11 @@ function render(){
   list.scrollTop=matching?Math.max(0,matching.top+offsetWithinDay):previousScroll;
  }
  if(hasDeferred){
-  list.append(svAgendaSection(null,'Отложено'));
-  postponed.forEach(task=>list.append(row(task,false,true)));
-  preview.forEach(item=>list.append(deferredPreviewRow(item)));
+  const group=element('section','sv-agenda-day-group');
+  group.append(svAgendaSection(null,'Отложено'));
+  postponed.forEach(task=>group.append(row(task,false,true)));
+  preview.forEach(item=>group.append(deferredPreviewRow(item)));
+  list.append(group);
  }
  list.classList.remove('is-empty');
  const overview=$('tasksOverview');
