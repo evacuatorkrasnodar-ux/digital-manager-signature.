@@ -149,10 +149,14 @@ html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
 }
 html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBack{
  justify-self:start!important;
+ position:relative!important;left:-8px!important;right:auto!important;
  width:44px!important;height:44px!important;
 }
 html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history > button{
  height:44px!important;min-height:44px!important;max-height:44px!important;
+}
+html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history > button > svg{
+ transform:translateY(-2px)!important;
 }
 html:root body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > #notePaperSayvi > img.sv-newdock-potok{
  width:34px!important;height:34px!important;
@@ -163,4 +167,12 @@ html:root body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewD
  html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
   grid-template-columns:56px minmax(0,1fr) 56px!important;
  }
+}
+
+/* Keep a normal precision pointer at rest; no orphan brush ring on the page. */
+html:root body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-cursor-visible) #notePaperStage > #notePaperSheet #notePaperCanvas{
+ cursor:crosshair!important;
+}
+@media(max-width:355px){
+ html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBack{left:-4px!important;}
 }
