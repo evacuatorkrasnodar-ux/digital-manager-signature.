@@ -593,10 +593,10 @@ html body #calendarPage #calendarWeekTimelineScroll{
  scrollbar-width:none!important;background:#FFF!important;
 }
 #calendarPage #calendarWeekTimelineScroll::-webkit-scrollbar{display:none!important}
-#calendarPage .cal-week-hours{position:relative!important;width:100%!important;min-height:1440px!important}
+#calendarPage .cal-week-hours{position:relative!important;width:100%!important;min-height:calc(24 * var(--cal-week-hour-height,52px))!important}
 #calendarPage .cal-week-hour-row{
  position:relative!important;box-sizing:border-box!important;
- height:60px!important;border:0!important;
+ height:var(--cal-week-hour-height,52px)!important;border:0!important;
  border-bottom:1px solid #EAECEF!important;background:transparent!important;
 }
 #calendarPage .cal-week-hour-row::before{
@@ -1371,7 +1371,7 @@ html body #calendarPage #calendarWeekTimeline .cal-week-event-layer{
    Keep the hour geometry and the seamless scroll-under-dock contract intact. */
 html body #calendarPage #calendarWeekSelectedDay{
  flex:0 0 auto!important;box-sizing:border-box!important;
- margin:0!important;padding:7px 8px 8px!important;
+ margin:0!important;padding:4px 8px 5px!important;
  border-top:1px solid #E8EAEE!important;
  text-align:center!important;color:#252931!important;
  font:600 13px/18px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
@@ -1380,7 +1380,7 @@ html body #calendarPage #calendarWeekTimeline .cal-week-hour-label{
  color:#686F79!important;
 }
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-calendar-tone]{
- border:0!important;border-radius:5px!important;padding:3px 7px 1px 12px!important;
+ border:0!important;border-radius:5px!important;padding:1px 7px 0 12px!important;
 }
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-calendar-tone]::before{
  content:""!important;display:block!important;position:absolute!important;
@@ -1389,7 +1389,7 @@ html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-calendar-
  background:var(--cal-item-accent)!important;pointer-events:none!important;
 }
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed .cal-entry-copy strong{
- font:600 13px/14px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font:600 14px/14px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"]{
  flex-direction:row!important;align-items:center!important;gap:5px!important;
@@ -1408,8 +1408,13 @@ html:root[data-theme="dark"] body #calendarPage #calendarWeekTimeline .cal-week-
 /* Parallel compact events: keep the full card width available for the title. */
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"][data-compact-stacked="true"]{
  flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
- gap:0!important;padding:2px 7px 2px 12px!important;
+ gap:0!important;padding:1px 7px 0 12px!important;
 }
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"][data-compact-stacked="true"] .cal-entry-copy{
  flex:none!important;width:100%!important;
+}
+
+/* Compact 52px hours: fit both title and time within a 24px half-hour card. */
+html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
+ line-height:9px!important;
 }
