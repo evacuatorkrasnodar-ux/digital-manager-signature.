@@ -77,7 +77,7 @@ prepared.append(preparedHead,preparedAction,preparedDestinations,roomList,prepar
 function showShareDestinations(){
  roomList.hidden=true;roomList.replaceChildren();
  const nativeShare=canShareFile(preparedFile),internal=prepared.dataset.mode==='internal';
- preparedDestinations.hidden=false;preparedDownload.hidden=internal&&nativeShare;preparedArchive.hidden=false;preparedFormats.hidden=false;
+ preparedDestinations.hidden=!internal;preparedDownload.hidden=!internal&&nativeShare;preparedArchive.hidden=!internal;preparedFormats.hidden=!internal;
  preparedAction.hidden=internal||!nativeShare;
  workChoice.hidden=!window.SEYVEO_BUSINESS_COMMAND?.prepareSharedFile||!(window.SEYVEO_BUSINESS_COMMAND.listRooms?.()||[]).some(r=>r.id!=='dm-sayvi');
  familyChoice.hidden=!window.SEYVEO_FAMILY_CHAT?.prepareSharedFile;
@@ -162,12 +162,14 @@ function showPreparedFile(file,preferNative=false){
  showShareDestinations();
  preparedAction.innerHTML='<span>Поделиться</span><svg viewBox="0 0 24 24" aria-hidden="true">'+shareIcon+'</svg>';preparedAction.dataset.share='true';
  prepared.hidden=false;
- const first=Array.from(preparedDestinations.children).find(n=>!n.hidden);
+ const first=preparedDestinations.hidden?null:Array.from(preparedDestinations.children).find(n=>!n.hidden);
  (preferNative&&!preparedAction.hidden?preparedAction:first||(preparedAction.hidden?preparedDownload:preparedAction)).focus({preventScroll:true});
  message('');
 }
 function showPrepared(blob,extension,share){
- showPreparedFile(new File([blob],fileBase()+'.'+extension,{type:blob.type}));
+ const file=new File([blob],fileBase()+'.'+extension,{type:blob.type});
+ if(share&&nativeShareFile(file))return;
+ showPreparedFile(file,share);
 }
 // Prebuild the default PDF before the user taps Share. Safari requires a
 // fresh user gesture for its native share sheet, not a delayed synthetic click.
