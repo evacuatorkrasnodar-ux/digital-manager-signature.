@@ -81,7 +81,7 @@ function selfAvatarFor(person){
  // Older artistic presets remain in storage, but never become default faces.
  // Only an artwork freshly selected by the profile owner is shown in chats.
  if(raw?.kind==='atlas'&&raw.customChosen===true&&Number.isInteger(raw.index)&&
-    raw.index>=0&&raw.index<12)return {kind:'atlas',index:raw.index};
+    raw.index>=0&&raw.index<76)return {kind:'atlas',index:raw.index};
  return {kind:'monogram'};
 }
 function activeSelfAvatarPerson(){
@@ -95,7 +95,7 @@ function ownerAvatarPreview(){
     &&PHOTO_DATA_PATTERN.test(own.data))return {kind:'photo',data:own.data};
   if(own?.kind==='preset'&&own.customChosen===true&&/^3d-\d{1,2}$/.test(own.id||'')){
    const index=Number(own.id.slice(3));
-   if(index>=0&&index<12)return {kind:'atlas',index};
+   if(index>=0&&index<76)return {kind:'atlas',index};
   }
  }catch{}
  return {kind:'monogram'};
@@ -113,7 +113,7 @@ function drawPortrait(node,photo,letter){
  node.replaceChildren();
  node.classList.remove('svcp-atlas-avatar','svcp-collection-avatar');
  const isPhoto=photo?.kind==='photo'&&typeof photo.data==='string';
- const isAtlas=photo?.kind==='atlas'&&Number.isInteger(photo.index)&&photo.index>=0&&photo.index<12;
+ const isAtlas=photo?.kind==='atlas'&&Number.isInteger(photo.index)&&photo.index>=0&&photo.index<76;
  const target=document.createElement(isPhoto?'img':'span');
  target.className=isPhoto?'svcp-native-avatar-photo':isAtlas
   ?'svcp-native-avatar svcp-atlas-avatar':'svcp-native-avatar svcp-native-initial';
@@ -121,7 +121,7 @@ function drawPortrait(node,photo,letter){
  if(isPhoto){target.src=photo.data;target.alt='';target.draggable=false;}
  else if(isAtlas){
   target.textContent='';
-  target.style.backgroundPosition=((photo.index%4)*100/3)+'% '+(Math.floor(photo.index/4)*50)+'%';
+  if(!window.SEYVEO_AVATAR_ART?.paint(target,photo.index))target.style.backgroundPosition=((photo.index%4)*100/3)+'% '+(Math.floor(photo.index/4)*50)+'%';
  }else target.textContent=String(letter||'•').trim().slice(0,2).toLocaleUpperCase('ru-RU');
  node.append(target);
  node.classList.add('svcp-native-avatar-host');

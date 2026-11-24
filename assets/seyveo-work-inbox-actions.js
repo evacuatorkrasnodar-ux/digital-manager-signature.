@@ -74,18 +74,18 @@ function automaticAvatarColor(name){
  for(const letter of value)hash=(hash*31+letter.codePointAt(0))>>>0;
  return AVATAR_COLORS[hash%AVATAR_COLORS.length];
 }
-// 12 original portrait tiles are offered as options, never assigned as defaults.
+// Original avatar IDs are stable; the restored collection is additive.
 const AVATAR_3D=[
  ['Космонавт','Космос'],['Супергерой','Герои'],['Путешественница','Космос'],['Робот','Космос'],
  ['Лисёнок','Мультики'],['Девочка','Мультики'],['Виноград','Фрукты'],['Клубника','Фрукты'],
  ['Персик','Фрукты'],['Яблоко','Фрукты'],['В очках','Мультики'],['Сердечки','Мультики']
 ];
-/* Rebuilt in small reviewed batches: only verified original portraits are selectable.
-   Saved removed indices are left in storage but gracefully show monogram until changed. */
+AVATAR_3D.push(...(window.SEYVEO_AVATAR_ART?.catalog||[]));
+/* Saved avatar IDs remain stable across collection upgrades. */
 const OWNER_AVATAR_KEY='seyveo-owner-avatar-v1',STAFF_AVATAR_KEY='seyveo-self-identity-avatar-v1';
 function atlasMark(index){
  const m=node('span','sv-atlas-thumb');
- m.style.backgroundPosition=`${(index%4)*100/3}% ${Math.floor(index/4)*50}%`;
+ if(!window.SEYVEO_AVATAR_ART?.paint(m,index))m.style.backgroundPosition=`${(index%4)*100/3}% ${Math.floor(index/4)*50}%`;
  m.setAttribute('aria-hidden','true');
  return m;
 }
