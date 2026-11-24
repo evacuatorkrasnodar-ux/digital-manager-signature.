@@ -355,28 +355,6 @@ html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-pap
  content:none!important;display:none!important;
 }
 
-/* DRAWING · CLEAR PALETTE LANE.
-   The violet/blue haze in iOS was not a separate material: colorful swatches
-   were scrolling directly behind the translucent Save circle. Reserve a
-   genuine unpainted lane at the right, instead of using an opaque curtain,
-   white overlay, masking band, or a second surface. All colors remain
-   reachable by horizontal swiping INSIDE the shortened palette strip. */
-html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
- > footer.sv-paper-bottom > .sv-paper-palette > .sv-paper-swatches{
- box-sizing:border-box!important;
- flex:0 0 calc(100% - 68px)!important;
- width:calc(100% - 68px)!important;
- max-width:calc(100% - 68px)!important;
- min-width:0!important;
- margin-right:68px!important;
- padding-right:3px!important;
- overflow-x:auto!important;
- -webkit-mask-image:none!important;
- mask-image:none!important;
-}
-/* Hide color only behind the button, not behind the glass.
-   The circle still reads exactly the shared White Pearl token set. */
-
 /* NEW TASK · WHITE PEARL CONTINUITY
    Same approved Notebook material, not the old red confirmation button.
    Existing 44px geometry, task save and camera/voice/calendar handlers remain. */
@@ -473,28 +451,43 @@ html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-pap
 html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > .sv-paper-top > #notePaperBack::before{
  content:none!important;display:none!important;
 }
-html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{
+/* One measured-width grid for the picker and scroll strip.
+   Equal complete slots cannot shrink below the visible swatch diameter.
+   No swatch overlap, cover plate, mask, or color behind the Save button. */
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom{
+ padding-left:max(8px,env(safe-area-inset-left,0px))!important;
+ padding-right:calc(max(12px,env(safe-area-inset-right,0px)) + 52px)!important;
+}
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{
  --sv-visible-colors:8;
- box-sizing:border-box!important;display:flex!important;align-items:center!important;
- gap:0!important;padding-right:60px!important;
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:44px minmax(0,1fr)!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ align-items:center!important;gap:0!important;padding:0!important;
 }
-html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .paper-color-control{
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .paper-color-control{
  position:relative!important;left:auto!important;top:auto!important;transform:none!important;
- flex:0 0 44px!important;
+ width:44px!important;min-width:44px!important;
 }
-html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .sv-paper-swatches{
- flex:1 1 0!important;width:0!important;max-width:none!important;
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .sv-paper-swatches{
+ box-sizing:border-box!important;display:grid!important;grid-auto-flow:column!important;
+ grid-template-columns:none!important;
+ grid-auto-columns:max(30px,calc(100% / var(--sv-visible-colors)))!important;
+ align-items:center!important;justify-content:start!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
  margin:0!important;padding:0!important;gap:0!important;
+ height:44px!important;overflow-x:auto!important;overflow-y:hidden!important;
+ background:transparent!important;box-shadow:none!important;
+ -webkit-mask-image:none!important;mask-image:none!important;
  scroll-snap-type:x mandatory!important;scroll-padding:0!important;
 }
-html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .sv-paper-swatches > button{
- flex:0 0 calc(100% / var(--sv-visible-colors))!important;
- width:calc(100% / var(--sv-visible-colors))!important;min-width:0!important;max-width:none!important;
- scroll-snap-align:start!important;
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .sv-paper-swatches > button[data-paper-color]{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:100%!important;min-width:30px!important;max-width:none!important;
+ height:38px!important;margin:0!important;padding:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ transform:none!important;scroll-snap-align:start!important;
 }
-@media(max-width:370px){
- html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{--sv-visible-colors:7;}
-}
-@media(max-width:340px){
- html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{--sv-visible-colors:6;}
-}
+@media(max-width:370px){html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{--sv-visible-colors:7;}}
+@media(max-width:340px){html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{--sv-visible-colors:6;}}
+
