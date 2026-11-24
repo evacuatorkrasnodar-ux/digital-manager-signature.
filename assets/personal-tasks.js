@@ -267,6 +267,7 @@ function renderContacts(){
   dial.href='tel:'+c.phone;dial.setAttribute('aria-label','Позвонить: '+c.name+', '+c.phone);
   const avatar=element('span','sv-phonebook-avatar',
    c.name.split(/\s+/).slice(0,2).map(x=>x.charAt(0).toLocaleUpperCase('ru-RU')).join(''));
+  if(window.SEYVEO_AVATAR_COLORS)avatar.style.setProperty('--sv-avatar-auto-bg',window.SEYVEO_AVATAR_COLORS.tint(avatar.textContent));
   const copy=element('span','sv-phonebook-person-copy');
   copy.append(element('strong','',c.name),element('small','',c.phone));
   const callIcon=element('span','sv-phonebook-call');callIcon.append(phonebookIcon('call'));
