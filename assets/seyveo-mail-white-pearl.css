@@ -625,3 +625,43 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row.is-selecting:has(.sv-mail-draft-kind)::after{left:77px!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row.is-actions-open::after{visibility:hidden!important}
 
+/* One stable navigation axis in all Mail stages, including Smart Contacts. */
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace,
+html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="contacts"] .sv-mail-workspace.sv-mail-contacts-active{
+ padding-left:1px!important;padding-right:1px!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-detail,.sv-mail-editor){
+ padding-left:2px!important;padding-right:2px!important;padding-top:0!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions,
+html:root body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-detail-bar,.sv-mail-editor-header){
+ box-sizing:border-box!important;height:48px!important;min-height:48px!important;max-height:48px!important;
+ align-items:center!important;gap:4px!important;margin-top:0!important;border:0!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions{padding:0 2px!important}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-detail-bar,.sv-mail-editor-header){padding:0!important}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-top-actions > #sayviSurfaceBack,.sv-mail-top-buttons > .sv-mail-icon-button,.sv-mail-detail-bar > .sv-mail-icon-button,.sv-mail-detail-tools > .sv-mail-icon-button,.sv-mail-editor-header > .sv-mail-editor-back,.sv-mail-file-preview-head > .sv-mail-icon-button):not([hidden]){
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;line-height:0!important;
+ align-self:center!important;transform:none!important;translate:none!important;scale:none!important;
+ transition:none!important;animation:none!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-top-actions > #sayviSurfaceBack,.sv-mail-top-buttons > .sv-mail-icon-button,.sv-mail-detail-bar > .sv-mail-icon-button,.sv-mail-detail-tools > .sv-mail-icon-button,.sv-mail-editor-header > .sv-mail-editor-back,.sv-mail-file-preview-head > .sv-mail-icon-button) > svg{
+ box-sizing:border-box!important;display:block!important;flex:none!important;position:static!important;
+ width:19px!important;height:19px!important;min-width:19px!important;min-height:19px!important;
+ max-width:19px!important;max-height:19px!important;margin:0!important;padding:0!important;
+ transform:none!important;translate:none!important;scale:none!important;transition:none!important;animation:none!important;
+ stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack > span{display:none!important}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-tools{align-items:center!important;gap:4px!important}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons{align-items:center!important;height:44px!important;min-height:44px!important;max-height:44px!important}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons[hidden],html:root body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-top-actions > #sayviSurfaceBack,.sv-mail-top-buttons > .sv-mail-icon-button,.sv-mail-detail-bar > .sv-mail-icon-button,.sv-mail-detail-tools > .sv-mail-icon-button,.sv-mail-editor-header > .sv-mail-editor-back,.sv-mail-file-preview-head > .sv-mail-icon-button)[hidden]{display:none!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-top-actions > #sayviSurfaceBack,.sv-mail-top-buttons > .sv-mail-icon-button,.sv-mail-detail-bar > .sv-mail-icon-button,.sv-mail-detail-tools > .sv-mail-icon-button,.sv-mail-editor-header > .sv-mail-editor-back,.sv-mail-file-preview-head > .sv-mail-icon-button):not([hidden]):is(:active,:hover){
+ transform:none!important;translate:none!important;scale:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-top-actions > #sayviSurfaceBack,.sv-mail-detail-bar > .sv-mail-icon-button,.sv-mail-detail-tools > .sv-mail-icon-button,.sv-mail-editor-header > .sv-mail-editor-back,.sv-mail-file-preview-head > .sv-mail-icon-button):is(:active,:hover){
+ background:var(--sv-white-pearl-surface)!important;box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+}
