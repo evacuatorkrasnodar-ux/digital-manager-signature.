@@ -493,3 +493,54 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[o
   transition:none!important;
  }
 }
+
+/* Drawing: use the same circular back and gold confirmation as Notebook.
+   The palette is an independent native horizontal scroller, with complete
+   visible color slots at rest and every original swatch still accessible. */
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > .sv-paper-top > #notePaperBack,
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > .sv-paper-top > #notePaperBack:is(:active,:hover){
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ border-radius:50%!important;
+ background:var(--sv-white-pearl-surface,rgba(242,244,246,.72))!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ color:#20252b!important;transform:none!important;
+}
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > .sv-paper-top > #notePaperBack::before{
+ content:none!important;display:none!important;
+}
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm,
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm:active{
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ max-width:44px!important;max-height:44px!important;
+ border:var(--sv-note-gold-edge,.75px solid rgba(118,87,9,.16))!important;
+ background:#c69c09!important;color:#fff!important;
+ box-shadow:var(--sv-note-gold-shadow,0 2px 6px rgba(98,72,10,.13))!important;
+}
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > #notePaperSave.sv-ink-confirm svg{
+ stroke:#fff!important;transform:none!important;
+}
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{
+ --sv-visible-colors:8;
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ gap:0!important;padding-right:60px!important;
+}
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .paper-color-control{
+ position:relative!important;left:auto!important;top:auto!important;transform:none!important;
+ flex:0 0 44px!important;
+}
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .sv-paper-swatches{
+ flex:1 1 0!important;width:0!important;max-width:none!important;
+ margin:0!important;padding:0!important;gap:0!important;
+ scroll-snap-type:x mandatory!important;scroll-padding:0!important;
+}
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette > .sv-paper-swatches > button{
+ flex:0 0 calc(100% / var(--sv-visible-colors))!important;
+ width:calc(100% / var(--sv-visible-colors))!important;min-width:0!important;max-width:none!important;
+ scroll-snap-align:start!important;
+}
+@media(max-width:370px){
+ html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{--sv-visible-colors:7;}
+}
+@media(max-width:340px){
+ html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] > footer.sv-paper-bottom > .sv-paper-palette{--sv-visible-colors:6;}
+}
