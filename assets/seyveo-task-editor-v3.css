@@ -1628,3 +1628,13 @@ html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-info-chevro
 html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-info-toggle[aria-expanded="true"] .sv-place-info-chevron{
  transform:rotate(180deg)!important;
 }
+
+/* New Task · readable expanded place details, with standard blue link actions. */
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-info-content .sv-place-info-note{
+ font:400 13px/1.48 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#565f6b!important;letter-spacing:0!important;overflow-wrap:anywhere!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-info-content :is(.sv-place-info-source,.sv-place-menu-link){
+ color:#176ab4!important;font:540 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-decoration:none!important;
+}
