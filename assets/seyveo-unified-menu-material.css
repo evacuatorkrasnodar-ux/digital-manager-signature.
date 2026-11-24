@@ -649,3 +649,50 @@ html:root body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu #no
 html:root body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu #notePaperColorTrigger > svg{
  flex:0 0 18px!important;width:18px!important;height:18px!important;stroke:currentColor!important;fill:none!important;
 }
+
+/* Drawing workspace · flat action list and semantic blue selection.
+   The canvas, placement, original handlers and all other menus stay unchanged. */
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu:not([hidden]){
+ padding:11px 12px!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-polish-menu-heading{margin-bottom:5px!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-unified-workspace-frames{gap:5px!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-polish-menu-pane[data-sv-menu-panel="drawing"]:not([hidden]){gap:5px!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-unified-workspace-section{gap:4px!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu :is(.sv-unified-pattern-choice,.sv-unified-shape-choice){
+ background:transparent!important;border-color:var(--sv-menu-item-border)!important;box-shadow:none!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-unified-pattern-choice{height:49px!important;min-height:49px!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-unified-shape-choice{height:44px!important;min-height:44px!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu :is(.sv-unified-pattern-choice,.sv-unified-shape-choice) svg{
+ width:19px!important;height:19px!important;stroke-width:1.6!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu :is(.sv-unified-pattern-choice,.sv-unified-shape-choice)[aria-pressed="true"],
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-backgrounds > button[aria-pressed="true"]{
+ background:rgba(48,132,215,.15)!important;border-color:rgba(48,132,215,.22)!important;
+ color:#176ab4!important;box-shadow:none!important;
+}
+html:root[data-theme="dark"] body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu :is(.sv-unified-pattern-choice,.sv-unified-shape-choice,.sv-newdock-backgrounds > button)[aria-pressed="true"]{
+ color:#8bc3ff!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-polish-menu-pane[data-sv-menu-panel="actions"]:not([hidden]){
+ gap:0!important;padding-top:4px!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > button:not([data-sv-retired="true"]):not(.sv-newdock-clear),
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu #notePaperColorTrigger.sv-newdock-gradient-action{
+ height:40px!important;min-height:40px!important;padding:6px 10px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ color:var(--sv-menu-text)!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > button:not(:disabled):not(.sv-newdock-clear):active{
+ background:var(--sv-menu-item)!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > button > svg,
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu #notePaperColorTrigger > svg{
+ width:18px!important;height:18px!important;flex:0 0 18px!important;stroke-width:1.6!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > .sv-newdock-clear{
+ background:transparent!important;box-shadow:none!important;border:0!important;
+ color:#c43e42!important;height:40px!important;min-height:40px!important;
+}
+html:root[data-theme="dark"] body dialog#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-newdock-clear{color:#ff898b!important;}
