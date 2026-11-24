@@ -160,9 +160,9 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
    Previously the weaker pearl text selector lost to the default white-on-blue
    rule: the name became invisible on a white capsule. No geometry changes. */
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
- background:rgba(242,241,240,.93)!important;
- border:1px solid rgba(255,255,255,.99)!important;
- box-shadow:0 3px 12px rgba(82,69,57,.10),inset 0 1px 0 rgba(255,255,255,.82)!important;
+ background:var(--sv-white-pearl-surface,rgba(247,247,248,.92))!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
  -webkit-backdrop-filter:blur(16px) saturate(100%)!important;
  backdrop-filter:blur(16px) saturate(100%)!important;
 }
@@ -308,10 +308,10 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
  -webkit-filter:none!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > .svcp-call-button:not([hidden]){
- background:rgba(242,241,240,.93)!important;
+ background:var(--sv-white-pearl-surface,rgba(247,247,248,.92))!important;
  background-image:none!important;
- border:1px solid rgba(255,255,255,.99)!important;
- box-shadow:0 4px 15px rgba(82,69,57,.115),inset 0 1px 0 rgba(255,255,255,.86)!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
  color:var(--sv-white-pearl-ink,#0b0b0d)!important;
  -webkit-backdrop-filter:blur(16px) saturate(100%)!important;
  backdrop-filter:blur(16px) saturate(100%)!important;
@@ -416,7 +416,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]
  > .svcp-call-actions > .svcp-call-button:not([hidden]){
- box-shadow:0 4px 15px rgba(82,69,57,.115),inset 0 1px 0 rgba(255,255,255,.86)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
 }
 
 
