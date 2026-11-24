@@ -95,11 +95,11 @@
   }));
   return result;
  }
- function documentPhoto(heading,lines){
+ function documentPhoto(heading,lines,framed=false){
   const canvas=document.createElement('canvas');canvas.width=720;canvas.height=960;
   const ctx=canvas.getContext('2d');if(!ctx)return '';
-  ctx.fillStyle='#e8e6e1';ctx.fillRect(0,0,720,960);
-  ctx.fillStyle='#fffefb';ctx.fillRect(24,24,672,912);
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,720,960);
+  if(framed){ctx.fillStyle='#e8e6e1';ctx.fillRect(0,0,720,960);ctx.fillStyle='#fffefb';ctx.fillRect(24,24,672,912);}
   ctx.fillStyle='#262b33';ctx.font='bold 34px Arial';ctx.fillText(heading,60,108);
   ctx.strokeStyle='#c7c9cc';ctx.beginPath();ctx.moveTo(60,145);ctx.lineTo(660,145);ctx.stroke();
   ctx.font='24px Arial';lines.forEach((line,i)=>ctx.fillText(line,60,202+i*47));
@@ -117,6 +117,18 @@
   if(JSON.stringify(note.paper.strokes)!==JSON.stringify(inkWords(lines)))return note;
   return {...note,paper:{...note.paper,strokes:inkWords(lines,true)}};
  }
+  const docs=[
+   ['Скан · список покупок',['Хлеб — 1 шт.','Молоко — 2 шт.','Яблоки — 1 кг','Кофе — 1 пачка']],
+   ['Скан · накладная',['Учебная накладная № 014','Бумага — 5 пачек','Папки — 10 шт.','Всего: 2 450 руб.']]
+  ];
+ function polishScanExample(note){
+  if(note?.sample!==true||note.sampleKind!=='scan-photo'||note.paper?.strokes?.length||note.paper?.texts?.length)return note;
+  const i=docs.findIndex((_,index)=>note.id===mediaPrefix+(8+index));
+  if(i<0)return note;
+  const [title,lines]=docs[i],heading=title.replace('Скан · ','');
+  if(note.paper.photo!==documentPhoto(heading,lines,true))return note;
+  return {...note,paper:{...note.paper,photo:documentPhoto(heading,lines)}};
+ }
  function mediaExamples(){
   const hand=handwritingExamples.map(([title,lines],i)=>({
    title,text:title,noteKind:'handwriting',paper:paper(i%2?'blank':'lines',inkWords(lines,i%2===0))
@@ -127,10 +139,7 @@
    {title:'Схема проекта',strokes:[stroke([[70,140],[320,260]],'#27609b',6,'rect'),stroke([[520,140],[770,260]],'#258463',6,'rect'),stroke([[320,200],[520,200]],'#171e29',6,'arrow'),stroke([[420,260],[420,490]],'#171e29',6,'arrow'),stroke([[260,490],[580,610]],'#7954a3',6,'rect')],texts:[{text:'Идея',x:100,y:170,size:36,width:200,color:'#27609b'},{text:'План',x:550,y:170,size:36,width:200,color:'#258463'},{text:'Результат',x:290,y:520,size:36,width:270,color:'#7954a3'}]},
    {title:'Геометрия',strokes:[stroke([[90,150],[360,420]],'#3b77df',9,'rect'),stroke(ellipse(570,290,135,135),'#ff7a27',10),stroke([[125,780],[270,510],[415,780],[125,780]],'#258463',10),stroke([[520,650],[680,800]],'#7954a3',9,'diamond')]}
   ].map((item,i)=>({title:item.title,text:'Рисунок',noteKind:'art',paper:paper(i===2?'grid':'blank',item.strokes,{texts:item.texts||[]})}));
-  const docs=[
-   ['Скан · список покупок',['Хлеб — 1 шт.','Молоко — 2 шт.','Яблоки — 1 кг','Кофе — 1 пачка']],
-   ['Скан · накладная',['Учебная накладная № 014','Бумага — 5 пачек','Папки — 10 шт.','Всего: 2 450 руб.']]
-  ];
+
   const scans=docs.map(([title,lines])=>({title,text:'Рисунок',noteKind:'art',sampleKind:'scan-photo',paper:paper('blank',[],{photo:documentPhoto(title.replace('Скан · ',''),lines),photoLayout:{x:420,y:594,scale:.9}})}));
   const recognized=[
    {text:'Скан · распознанный список\\n\\nЧай\\nПеченье\\nБумажные салфетки\\nВода',preserveLines:true,sampleKind:'scan-text'},
@@ -179,6 +188,6 @@
   if(button&&routes.has(button.id))page.close();
  },true);
  window.SEYVEO_NOTEBOOK_SCREEN=Object.freeze({
-  version:4,show:()=>page.show(),close:()=>page.close(),alignExample
+  version:4,show:()=>page.show(),close:()=>page.close(),alignExample,polishScanExample
  });
 })();
