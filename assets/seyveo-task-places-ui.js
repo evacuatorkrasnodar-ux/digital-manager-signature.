@@ -202,6 +202,14 @@
   query=proposal?.query||'';sourceQuery=query;status=place?'found':'idle';request++;render();resolvePlacePhoto();
  }
  function placeForSave(){return confirmed?places.cleanPlace(place):null}
+ // Remove a redundant address only after it has a separate place card.
+ // Never discard a person's name, other instructions or an unconfirmed address.
+ function compactTitle(value,forSave=false){
+  if(!place||forSave&&!confirmed||place.source!=='known-address'||!proposal?.venueName)return value;
+  const raw=String(value||'');
+  const branch=/^встреча\s+(?:в кафе\s+[«"]?вкусно\s*(?:[—–-]\s*)?и\s+точка[»"]?\s*,\s*(?:краснодар\s*,\s*)?(?:трц|тц)\s+[«"]?красная площадь[»"]?(?:\s*,\s*(?:ул\.?\s*)?дзержинского\s*,?\s*100)?|на красной площади\s+кафе\s+[«"]?вкусно\s*(?:[—–-]\s*)?и\s+точка[»"]?)\s*[.]?$/iu;
+  return branch.test(raw)?'Встреча в кафе «Вкусно — и точка»':value;
+ }
  // A place suggested for a date or business meeting still needs the person's
  // explicit confirmation before it can become a task destination.
  function suggest(candidate){
@@ -227,7 +235,7 @@
   if(panel.hidden)return;
   const heading=node('div','sv-place-heading');
   heading.append(node('strong','','Место'));
-  if(place)heading.append(node('span','',confirmed?'Место подтверждено':'Уточни адрес'));
+  if(place)heading.append(node('span','',confirmed?'Подтверждено':'Подтверди место'));
   else if(proposal){
    if(proposal.explicitCity)heading.append(node('span','','Поиск: '+proposal.city));
    else{
@@ -272,7 +280,9 @@
      photo.textContent='Фото временно недоступно';
      photo.setAttribute('aria-label','Фото недоступно — открыть источник');
     });
-    photo.append(img);visual.append(photo);
+    photo.append(img);
+    if(info?.label?.startsWith('Вход в ТРЦ'))photo.append(node('span','sv-place-photo-label','Вход в ТРЦ'));
+    visual.append(photo);
    }
    const link=document.createElement('button');link.type='button';link.className='sv-place-map';
    link.setAttribute('aria-label','Увеличить карту внутри SEYVEO');
@@ -456,5 +466,5 @@
  const openObserver=new MutationObserver(()=>{if(dialog.open)sync()});
  openObserver.observe(dialog,{attributes:true,attributeFilter:['open']});
  dialog.addEventListener('close',reset);
- window.SEYVEO_TASK_PLACE_EDITOR=Object.freeze({reset,load,suggest,placeForSave,lookup,sync});
+ window.SEYVEO_TASK_PLACE_EDITOR=Object.freeze({reset,load,suggest,placeForSave,compactTitle,lookup,sync});
 })();
