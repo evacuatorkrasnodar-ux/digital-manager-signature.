@@ -237,7 +237,7 @@
   if(panel.hidden)return;
   const heading=node('div','sv-place-heading');
   heading.append(node('strong','','Место'));
-  if(place)heading.append(node('span','',confirmed?'Подтверждено':'Подтверди место'));
+  if(place){if(confirmed)heading.append(node('span','','Подтверждено'));}
   else if(proposal){
    if(proposal.explicitCity)heading.append(node('span','','Поиск: '+proposal.city));
    else{
@@ -321,7 +321,8 @@
      const toggle=node('button','sv-place-info-toggle');toggle.type='button';
      const id='sv-place-info-'+strip.children.length;
      toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls',id);
-     toggle.append(node('span','sv-place-info-label',label),node('strong','sv-place-info-value',value),node('span','sv-place-info-chevron','⌄'));
+     const chevron=node('span','sv-place-info-chevron');chevron.setAttribute('aria-hidden','true');chevron.append(viewerIcon('down'));
+     toggle.append(node('span','sv-place-info-label',label),node('strong','sv-place-info-value',value),chevron);
      const content=node('div','sv-place-info-content');content.id=id;content.hidden=true;
      toggle.addEventListener('click',()=>{
       content.hidden=!content.hidden;toggle.setAttribute('aria-expanded',String(!content.hidden));
