@@ -1676,9 +1676,7 @@ function mailView(){
    mailFolder==='overview'?'':
    mailFolder==='drafts'?'': // Draft count already belongs to the selected folder tab.
    mailFolder==='sent'?'Отправка пока недоступна':
-   mailFolder==='inbox'?'Входящие · предварительный просмотр':
-   mailFolder==='starred'?'Важные · предварительный просмотр':
-   mailFolder==='archive'?'Архив · предварительный просмотр':
+   ['inbox','starred','archive'].includes(mailFolder)?'':
    mailFolder==='review'?'Ожидают вашего решения · учебные письма':
    mailFolder==='promotions'?'Рассылки · учебные письма':
    mailFolder==='spam'?'Спам · учебные письма':'';

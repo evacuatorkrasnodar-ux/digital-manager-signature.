@@ -298,3 +298,42 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions .sv-mail-assist-symbol{
  background-color:#243D36!important;color:#243D36!important;
 }
+
+/* Folder list: equal secondary navigation, quiet mailbox tags, compact rhythm.
+   Keep the dock and its safe-area implementation unchanged. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders:not([hidden]){
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ align-items:center!important;justify-items:stretch!important;gap:0!important;
+ width:100%!important;min-height:44px!important;box-sizing:border-box!important;
+ margin:0!important;padding:0!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link{
+ width:100%!important;min-width:0!important;justify-content:center!important;
+ font-size:12px!important;color:#4B535E!important;padding:5px 1px 8px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[aria-current="page"]{color:#17191D!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-account-tag,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-line .sv-mail-account-tag{
+ box-sizing:border-box!important;min-height:16px!important;height:16px!important;
+ border:0!important;border-radius:6px!important;background:#EEF0F3!important;
+ background-image:none!important;color:#525C68!important;box-shadow:none!important;
+ padding:0 6px!important;font:540 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-toolbar{
+ min-height:44px!important;margin:0!important;padding:0 3px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-toolbar .sv-mail-bulk-counter{color:#58616B!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-toolbar .sv-mail-bulk-select{color:#176AB4!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-list > .sv-mail-letter-group{margin:0!important}
+@media(max-width:360px){
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link{font-size:11px!important}
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-line .sv-mail-account-tag{font-size:9px!important;padding:0 4px!important}
+}
+/* Reserve a real scrollable tail for the last message, not a fixed overlay.
+   Selection mode already has its own 100px clearance. */
+html body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-workspace:not(.sv-mail-bulk-active){
+ padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"]{
+ scroll-padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));
+}
