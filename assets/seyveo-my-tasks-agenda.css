@@ -1157,3 +1157,17 @@ html:root body #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-
 html:root body #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-weather-icon svg{
  width:20px!important;height:20px!important;
 }
+
+/* Calendar navigation: reserve only real scrollable space after the final
+   dated section, with no overlay or fixed background behind the dock. */
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList > .sv-agenda-scroll-tail{
+ display:block!important;box-sizing:border-box!important;
+ height:var(--sv-agenda-tail-height,0px)!important;
+ min-height:var(--sv-agenda-tail-height,0px)!important;
+ max-height:none!important;flex:none!important;
+ width:100%!important;padding:0!important;margin:0!important;border:0!important;
+ background:transparent!important;box-shadow:none!important;pointer-events:none!important;
+}
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList.personal-tasks-list{
+ overflow-anchor:none;
+}
