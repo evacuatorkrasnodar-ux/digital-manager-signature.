@@ -571,12 +571,22 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-tabs > button{
  padding:0!important;margin:0!important;transform:none!important;
  border:0!important;border-radius:15px!important;box-shadow:none!important;
 }
+/* Pearl Tile material, adapted to the existing segmented capsule. */
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-tabs:not([hidden]){
- background:#ededf0!important;border:0!important;box-shadow:none!important;
+ background:var(--sv-tile-surface,rgba(255,255,255,.76))!important;
+ border:1px solid var(--sv-tile-edge,rgba(192,201,212,.34))!important;
+ box-shadow:none!important;
  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
-html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-tabs button[aria-selected="true"]{
- background:#fff!important;border:0!important;box-shadow:none!important;
+html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-tabs > button{
+ color:var(--sv-tile-ink,#252a33)!important;
+ background:transparent!important;border:1px solid transparent!important;
+ box-shadow:none!important;transition:none!important;transform:none!important;
+}
+html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-tabs > button[aria-selected="true"]{
+ background:var(--sv-tile-selected,rgba(219,232,245,.82))!important;
+ border:1px solid var(--sv-tile-selected-edge,rgba(145,176,204,.43))!important;
+ box-shadow:none!important;
 }
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-head{
  background:#fff!important;border-radius:22px!important;
