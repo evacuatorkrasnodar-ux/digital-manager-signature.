@@ -869,37 +869,72 @@ function svAgendaSyncPinnedDate(){
  slot.replaceChildren(svAgendaSection(current.iso,current.iso?undefined:current.heading.querySelector('strong')?.textContent||'Без даты'));
  document.dispatchEvent(new Event('seyveo:agenda-pinned-date-changed'));
 }
-/* Let even the last dated section reach the pinned heading. Grow only the
- * scrollable tail that is missing, never the page or the dock backdrop. */
+/* Every dated section must be able to reach the top of the actual list. */
 function svAgendaEnsureReachable(top){
  if(!list.clientHeight||!Number.isFinite(top))return;
- const missing=Math.ceil(top-Math.max(0,list.scrollHeight-list.clientHeight));
- if(missing<=0)return;
  let tail=list.querySelector(':scope > .sv-agenda-scroll-tail');
  if(!tail){
   tail=element('div','sv-agenda-scroll-tail');
   tail.setAttribute('aria-hidden','true');
-  tail.style.cssText='display:block;flex:none;width:100%;height:0;padding:0;margin:0;border:0;pointer-events:none;background:transparent';
   list.append(tail);
  }
- tail.style.height=(tail.getBoundingClientRect().height+missing+2)+'px';
- svAgendaAnchorCache=null;
+ const missing=Math.ceil(top-Math.max(0,list.scrollHeight-list.clientHeight));
+ if(missing>0){
+  const height=Math.ceil(tail.getBoundingClientRect().height)+missing+3;
+  tail.style.setProperty('--sv-agenda-tail-height',height+'px');
+  svAgendaAnchorCache=null;
+ }
+}
+function svAgendaPrepareTail(){
+ if(!list.clientHeight)return;
+ const last=svAgendaGetAnchors().filter(item=>item.iso).pop();
+ if(last)svAgendaEnsureReachable(last.top);
+}
+let svAgendaDateJumpToken=0,svAgendaDateJumpFrame=0;
+function svAgendaCancelDateJump(){
+ ++svAgendaDateJumpToken;
+ if(svAgendaDateJumpFrame)cancelAnimationFrame(svAgendaDateJumpFrame);
+ svAgendaDateJumpFrame=0;
+ svAgendaJumpThrough=0;
 }
 function svAgendaScrollToDate(iso){
+ svAgendaCancelDateJump();
  svAgendaAnchorCache=null;
+ svAgendaPrepareTail();
  const anchor=svAgendaGetAnchors().find(item=>item.iso===iso);
  if(!anchor)return false;
- const target=Math.max(0,anchor.top);
+ const target=Math.ceil(Math.max(0,anchor.top));
  svAgendaEnsureReachable(target);
- const distance=Math.abs(target-list.scrollTop);
- // Never animate through dozens of days. Close days glide; distant ones
- // jump directly with the selected calendar date already in place.
- const glide=!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&distance<=list.clientHeight*2.5;
- const duration=glide?540:100;
- const until=Date.now()+duration;
- svAgendaJumpThrough=until;
- list.scrollTo({top:target,behavior:glide?'smooth':'instant'});
- window.setTimeout(()=>{if(svAgendaJumpThrough===until)svAgendaJumpThrough=0;},duration);
+ const start=list.scrollTop,distance=target-start;
+ const glide=!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&Math.abs(distance)<=list.clientHeight*2.5;
+ const token=svAgendaDateJumpToken;
+ const duration=glide?Math.min(420,Math.max(180,Math.abs(distance)*.8)):0;
+ const started=performance.now();
+ svAgendaJumpThrough=Infinity;
+ const finish=()=>{
+  if(token!==svAgendaDateJumpToken)return;
+  svAgendaAnchorCache=null;
+  const finalAnchor=svAgendaGetAnchors().find(item=>item.iso===iso);
+  if(finalAnchor){
+   const finalTop=Math.ceil(finalAnchor.top);
+   svAgendaEnsureReachable(finalTop);
+   list.scrollTo({top:finalTop,behavior:'instant'});
+  }
+  svAgendaSyncPinnedDate();
+  svAgendaMarkSelected(iso);
+  svAgendaDateJumpFrame=0;
+  svAgendaJumpThrough=Date.now()+100;
+ };
+ const advance=now=>{
+  if(token!==svAgendaDateJumpToken)return;
+  const progress=duration?Math.min(1,(now-started)/duration):1;
+  const eased=1-Math.pow(1-progress,3);
+  list.scrollTo({top:start+distance*eased,behavior:'instant'});
+  if(progress<1){svAgendaDateJumpFrame=requestAnimationFrame(advance);return;}
+  finish();
+ };
+ if(duration&&Math.abs(distance)>1)svAgendaDateJumpFrame=requestAnimationFrame(advance);
+ else finish();
  return true;
 }
 /* Minimize the approved 60px dock only while a touch user reads My Tasks.
@@ -1406,6 +1441,7 @@ function render(){
   const action=findContinuation(completed,all);
   if(action)list.prepend(continuationPrompt(completed,action));
  }
+ svAgendaPrepareTail();
  // Restore after all sections and optional prompts have been inserted.
  if(wasRendered){
   svAgendaAnchorCache=null;
@@ -2264,7 +2300,7 @@ function svAgendaOpenAtToday(){
  if(svAgendaWasOpen)return;
  svAgendaWasOpen=true;
  if(svAgendaExplicitFocus){svAgendaExplicitFocus=false;return;}
- svAgendaStopRoulette();clearTimeout(svAgendaTodayTimer);
+ svAgendaStopRoulette();svAgendaCancelDateJump();clearTimeout(svAgendaTodayTimer);
  svAgendaUserInteracted=false;svAgendaInitiallyAligned=false;
  svAgendaOpeningUntil=Date.now()+900;
  svTaskSelectedDate=svTaskISO(new Date());svTaskWindowStart=svTaskSelectedDate;
@@ -2275,10 +2311,14 @@ new MutationObserver(()=>{svAgendaAnchorCache=null;})
  .observe(list,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
 if(window.ResizeObserver)new ResizeObserver(()=>{
  svAgendaAnchorCache=null;
+ svAgendaPrepareTail();
  if(!svAgendaInitiallyAligned)requestAnimationFrame(svAgendaAlignInitial);
 }).observe(list);
 window.addEventListener('resize',()=>{svAgendaAnchorCache=null;if(!svAgendaInitiallyAligned)requestAnimationFrame(svAgendaAlignInitial);},{passive:true});
 document.fonts?.ready?.then(()=>{svAgendaAnchorCache=null;if(!svAgendaInitiallyAligned)requestAnimationFrame(svAgendaAlignInitial);});
+list.addEventListener('pointerdown',svAgendaCancelDateJump,{passive:true});
+list.addEventListener('touchstart',svAgendaCancelDateJump,{passive:true});
+list.addEventListener('wheel',svAgendaCancelDateJump,{passive:true});
 list.addEventListener('scroll',()=>{
  svAgendaSyncDockFromScroll();
  if(svAgendaInitiallyAligned&&!svAgendaRolling)svAgendaQueueToday();
