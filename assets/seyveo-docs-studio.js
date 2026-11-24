@@ -1034,5 +1034,5 @@ function mount(target,{
 function openImageForSignature(file){
  return activeStudio?activeStudio(file):Promise.resolve(false);
 }
-window.SEYVEO_DOCS_STUDIO=Object.freeze({mount,reset,openImageForSignature,openScanWork:payload=>activeHandoff?activeHandoff(payload):Promise.resolve(false)});
+window.SEYVEO_DOCS_STUDIO=Object.freeze({mount,reset,openImageForSignature,textPdf,openScanWork:payload=>activeHandoff?activeHandoff(payload):Promise.resolve(false)});
 })();
