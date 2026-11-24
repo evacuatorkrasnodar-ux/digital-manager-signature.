@@ -378,6 +378,7 @@
  // are document coordinates, while this canvas is only its visible window.
  let inkScrollY=0,inkPageHeight=0;
  let legacyPaperPending=null;
+ let legacyRuleOrigin=null;
  const touchPointers=new Map();let multiTouchPan=false,panLastY=0;
  let smoothUndo=null,smoothRedo=null;
  let inkToolsRevealTimer=0;
@@ -419,7 +420,12 @@
  function syncPaperOffset(){
   const g=geometry();if(!g)return;
   const textScroll=mode==='text'?(getTarget().scrollTop||0):0;
-  paperSheet.style.setProperty('--sv-note-paper-scroll',-(textScroll+inkScrollY*g.width/W)+'px');
+  const isLegacyRule=mode!=='text'&&paperStyle==='lined'&&Number.isFinite(legacyRuleOrigin);
+  const scale=g.width/W;
+  const pitch=isLegacyRule?66*scale:24;
+  const phase=isLegacyRule?legacyRuleOrigin*scale-(parseFloat(paperSheet.style.top)||0):0;
+  paperSheet.style.setProperty('--sv-note-rule-pitch',pitch+'px');
+  paperSheet.style.setProperty('--sv-note-paper-scroll',(phase-textScroll-inkScrollY*scale)+'px');
  }
  // Version 1 ink used text-field coordinates, including its title offset and
  // side padding. Convert saved strokes ONCE in memory before saving version 2,
@@ -511,7 +517,7 @@
   const api=window.SEYVEO_NOTES_API,editor=window.SEYVEO_NOTES_EDITOR;
   const id=editor?.ensureRecord?.();if(!id||!api)return false;
   const list=api.getNotes(),old=list.find(n=>n.id===id);if(!old)return false;
-  const inlineInk={version:2,width:W,pageHeight:Math.ceil(inkPageHeight),strokes:strokes.map(s=>({
+  const inlineInk={version:2,width:W,pageHeight:Math.ceil(inkPageHeight),...(Number.isFinite(legacyRuleOrigin)?{ruleOrigin:legacyRuleOrigin}:{}),strokes:strokes.map(s=>({
    tool:s.tool,width:s.width,color:validColor(s.color)||'#171e29',
    ...(Number.isFinite(s.opacity)?{opacity:s.opacity}:{}),
    ...(s.pressureSensitive===true?{pressureSensitive:true}:{}),
@@ -645,6 +651,7 @@
   paperSheet.hidden=true;
   const note=id?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===id):null;
   legacyPaperPending=note?.noteKind==='handwriting'&&note.paper&&!note.inlineInk?note.paper:null;
+  legacyRuleOrigin=Number.isFinite(note?.inlineInk?.ruleOrigin)?note.inlineInk.ruleOrigin:null;
   paperStyle=normalizePaper(note?.notePaperStyle||(legacyPaperPending?.pattern==='lines'?'lined':legacyPaperPending?.pattern==='grid'?'grid':'plain'));syncPaper();
   penColor=validColor(note?.inkPenColor)||'#171e29';
   inkStyle=INK_STYLE_NAMES.has(note?.inkPenStyle)?note.inkPenStyle:'pen';
@@ -670,6 +677,7 @@
    const g=geometry(),field=getTarget().getBoundingClientRect();
    const offset=g?Math.max(0,(field.top-g.rect.top+40)*W/g.width):240;
    strokes=strokes.map(s=>({...s,points:s.points.map(p=>[p[0],p[1]+offset,...p.slice(2)])}));
+   if(legacyPaperPending.pattern==='lines')legacyRuleOrigin=offset;
   }else if(strokes.length&&Number(note?.inlineInk?.version||1)<2)strokes=migrateLegacyInk(strokes);
   const lastPointY=strokes.reduce((max,stroke)=>Math.max(max,...stroke.points.map(point=>Number(point[1])||0)),0);
   inkPageHeight=Math.max(0,Number(note?.inlineInk?.pageHeight)||0,Number(legacyPaperPending?.height)||0,lastPointY+100);
