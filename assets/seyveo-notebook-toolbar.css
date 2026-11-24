@@ -131,47 +131,11 @@
 }
 
 /* Ink thickness · right-hand track with a live white numbered thumb. */
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size{
- left:auto!important;
- right:max(5px,env(safe-area-inset-right,0px))!important;
- top:50%!important;
- transform:translateY(-50%)!important;
- z-index:8!important;
- width:44px!important;
- height:min(200px,38dvh)!important;
- overflow:visible!important;
- pointer-events:none!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input[type="range"]{
- left:50%!important;top:50%!important;
- transform:translate(-50%,-50%) rotate(-90deg)!important;
- width:min(190px,36dvh)!important;height:30px!important;
- background:transparent!important;
- pointer-events:auto!important;touch-action:none!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size::after{
- content:attr(data-width);
- box-sizing:border-box!important;display:grid!important;place-items:center!important;
- position:absolute!important;
- left:50%!important;top:calc(50% + var(--sv-thumb-offset,0px))!important;
- transform:translate(-50%,-50%) scale(1)!important;
- width:28px!important;height:28px!important;
- min-width:28px!important;min-height:28px!important;
- padding:0!important;margin:0!important;
- background:#fff!important;color:#252b32!important;
- border:1px solid rgba(38,42,48,.11)!important;
- border-radius:50%!important;
- box-shadow:0 2px 7px rgba(0,0,0,.22)!important;
- font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
- font-size:11px!important;font-weight:700!important;font-variant-numeric:tabular-nums!important;
- line-height:1!important;text-align:center!important;
- opacity:1!important;pointer-events:none!important;
- transition:top .08s linear!important;
-}
+
+
+
 @media(prefers-reduced-motion:reduce){
- #notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size::after{
-  transition:none!important;
- }
+
 }
 
 /* Icon-only controls: override all legacy caption styles. */
@@ -181,32 +145,12 @@
 
 /* v5: one thumb only. The native input still owns touch & keyboard input,
    but its thumb is visually transparent; the numbered thumb is the sole UI. */
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input[type="range"]{
- -webkit-appearance:none!important;appearance:none!important;
- border-radius:0!important;box-shadow:none!important;
- outline-offset:5px!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-webkit-slider-runnable-track{
- height:2px!important;background:rgba(235,240,245,.46)!important;
- border-radius:99px!important;box-shadow:none!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-webkit-slider-thumb{
- -webkit-appearance:none!important;appearance:none!important;
- box-sizing:border-box!important;width:28px!important;height:28px!important;
- margin-top:-13px!important;border:0!important;border-radius:50%!important;
- background:transparent!important;box-shadow:none!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-moz-range-track{
- height:2px!important;background:rgba(235,240,245,.46)!important;
- border-radius:99px!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-moz-range-thumb{
- width:28px!important;height:28px!important;
- background:transparent!important;border:0!important;box-shadow:none!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size::after{
- transition:none!important;
-}
+
+
+
+
+
+
 
 /* SEYVEO signature icons v6 · one optical grid, stroke and ink. */
 #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary{
@@ -461,21 +405,15 @@ svg.sv-paper-signature .sv-paper-icon-core{
  border:0!important;outline:0!important;box-shadow:none!important;
 }
 #notePaperDialog.sv-paper-studio[open]>.sv-paper-top,
-#notePaperDialog.sv-paper-studio[open]>.sv-paper-bottom,
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size{
+#notePaperDialog.sv-paper-studio[open]>.sv-paper-bottom{
  transition:opacity .16s ease,visibility .16s ease,transform .16s ease!important;
 }
 #notePaperDialog.sv-paper-studio[open].sv-paper-inking>.sv-paper-top{
  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
  transform:translateY(-5px)!important;transition-delay:0ms!important;
 }
-#notePaperDialog.sv-paper-studio[open].sv-paper-inking #notePaperStage>.sv-paper-size{
- opacity:0!important;visibility:hidden!important;pointer-events:none!important;
- transition-delay:60ms!important;
-}
-#notePaperDialog.sv-paper-studio[open].sv-paper-inking #notePaperStage>.sv-paper-size input{
- pointer-events:none!important;
-}
+
+
 #notePaperDialog.sv-paper-studio[open].sv-paper-inking>.sv-paper-bottom{
  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
  transform:translateY(5px)!important;transition-delay:115ms!important;
@@ -487,8 +425,7 @@ svg.sv-paper-signature .sv-paper-icon-core{
 }
 @media(prefers-reduced-motion:reduce){
  #notePaperDialog.sv-paper-studio[open]>.sv-paper-top,
- #notePaperDialog.sv-paper-studio[open]>.sv-paper-bottom,
- #notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size{
+ #notePaperDialog.sv-paper-studio[open]>.sv-paper-bottom{
   transition:none!important;
  }
 }
@@ -937,19 +874,8 @@ svg.sv-paper-signature .sv-paper-icon-core{
  outline:0!important;outline-offset:0!important;
  box-shadow:0 0 0 1.4px rgba(213,222,233,.54)!important;
 }
-#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save{
- box-sizing:border-box!important;
- width:47px!important;height:47px!important;
- min-width:47px!important;min-height:47px!important;
- border:1px solid rgba(235,241,248,.10)!important;
- border-radius:50%!important;
- background:rgba(155,169,187,.21)!important;
- color:#f1f5f9!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save:active{
- background:rgba(173,187,202,.32)!important;
-}
+
+
 #notePaperDialog.sv-paper-studio[open] .paper-color-control #notePaperColorMenu:not([hidden]){
  box-sizing:border-box!important;
  display:flex!important;flex-direction:column!important;
@@ -1192,41 +1118,10 @@ svg.sv-paper-signature .sv-paper-icon-core{
 
 
 /* v18 · Flat Save action: one quiet surface, no stacked pseudo layers. */
-#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save{
- -webkit-appearance:none!important;
- appearance:none!important;
- display:grid!important;place-items:center!important;
- box-sizing:border-box!important;
- width:47px!important;height:47px!important;
- min-width:47px!important;min-height:47px!important;
- border:0!important;outline:0!important;border-radius:50%!important;
- background:#373b42!important;
- background-image:none!important;
- color:#e9edf2!important;
- box-shadow:none!important;
- filter:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
- text-shadow:none!important;
- transform:none!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save::before,
-#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save::after{
- content:none!important;display:none!important;
- background:none!important;border:0!important;box-shadow:none!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save svg{
- display:block!important;
- width:20px!important;height:20px!important;
- fill:none!important;stroke:currentColor!important;
- stroke-width:1.7!important;stroke-linecap:round!important;
- stroke-linejoin:round!important;
- filter:none!important;box-shadow:none!important;transform:none!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save:active{
- background:#454a52!important;
- box-shadow:none!important;transform:none!important;
-}
+
+
+
+
 
 
 /* v19 · Seven precisely spaced tools, including Duplicate Stroke.
@@ -2199,18 +2094,13 @@ svg.sv-paper-signature .sv-paper-icon-core{
  fill:none!important;stroke:currentColor!important;
  stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;
 }
-#notePaperDialog.sv-paper-studio[open] .sv-paper-back,
-#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save{
+#notePaperDialog.sv-paper-studio[open] .sv-paper-back{
  background:#38383A!important;background-image:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  box-shadow:none!important;
 }
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-webkit-slider-runnable-track{
- background:rgba(220,226,233,.26)!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-moz-range-track{
- background:rgba(220,226,233,.26)!important;
-}
+
+
 @media(max-width:370px){
  #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock{
   --sv-nd-size:36px!important;--sv-nd-gap:3px!important;
@@ -2315,17 +2205,8 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > :is(#notePape
 #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu button[aria-pressed="true"]{
  background:#505052!important;
 }
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size::after{
- background:#F5F5F6!important;
- color:#28282A!important;
- box-shadow:none!important;
- border:1px solid rgba(0,0,0,.10)!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save{
- background:#38383A!important;
- border:0!important;
- box-shadow:none!important;
-}
+
+
 
 /* SEYVEO Ink Studio · Undo as a bare icon, 2026-11-09.
    Only the right-side Undo: preserve a full 44px touch target and layout. */
@@ -2660,24 +2541,10 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper
 
 /* SEYVEO Paper · graphite thickness handle and optical Save alignment · v38.
    Scope: two existing controls only; native range behavior stays unchanged. */
-html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size::after{
- background:#38383A!important;
- background-image:none!important;
- color:#FFFFFF!important;
- border:1px solid rgba(244,245,247,.35)!important;
- box-shadow:none!important;
- text-shadow:none!important;
- font-variant-numeric:tabular-nums!important;
-}
-html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size input::-webkit-slider-runnable-track{
- background:rgba(223,227,234,.40)!important;
-}
-html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size input::-moz-range-track{
- background:rgba(223,227,234,.40)!important;
-}
-html body #notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save svg{
- transform:translate(1px,1px)!important;
-}
+
+
+
+
 
 
 /* Approved polish · silver tool capsule only (18 Nov).
@@ -2726,25 +2593,7 @@ html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-
 
 /* iPhone ink editor · strictly circular Save compositing.
    Safari must not paint a rectangular native/button layer around this glyph. */
-html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom
- #notePaperSave.sv-paper-save{
- position:relative!important;
- display:grid!important;
- width:47px!important;height:47px!important;
- min-width:47px!important;min-height:47px!important;
- padding:0!important;
- border:0!important;border-radius:50%!important;
- background-color:#38383A!important;
- background-image:none!important;
- box-shadow:none!important;
- outline:0!important;
- overflow:hidden!important;
- isolation:isolate!important;
- -webkit-clip-path:circle(50% at 50% 50%)!important;
- clip-path:circle(50% at 50% 50%)!important;
- -webkit-appearance:none!important;
- appearance:none!important;
-}
+
 
 
 /* Ink Studio iPhone safe-area: the full-screen dialog and the document root
