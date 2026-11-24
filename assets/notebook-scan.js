@@ -37,7 +37,6 @@ const shareIcon='<path d="M12 15V3m-4 4 4-4 4 4M7 9H4v12h16V9h-3"/>';
 
 
 const menuShare=menuButton('Поделиться',shareIcon);
-const menuInternal=menuButton('В SEYVEO','<path d="M20 11.5a8 8 0 0 1-8 8H5l1.5-4A8 8 0 1 1 20 11.5Z"/>');
 const menuPrint=menuButton('Печать','<path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-4a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v4a2 2 0 0 1-2 2h-2M7 14h10v7H7zM17 11h1"/>');
 
 const menuBack=menuButton('Назад',arrowIcon);
@@ -46,7 +45,7 @@ const outPdf=menuButton('PDF',docIcon);
 const outJpeg=menuButton('Фото (JPEG)',imageIcon);
 const outTxt=menuButton('Текст (TXT)',docIcon);
 const outTextPDF=menuButton('PDF',docIcon);
-const groups={root:[menuShare,menuInternal,menuPrint],share:[menuBack,outTextPDF,outPdf,outWord,outJpeg,outTxt]};
+const groups={root:[menuShare,menuPrint],share:[menuBack,outTextPDF,outPdf,outWord,outJpeg,outTxt]};
 for(const node of [...groups.root,...groups.share])menu.append(node);
 const prepared=document.createElement('div');prepared.id='svScanPrepared';prepared.className='sv-menu-surface';prepared.hidden=true;
 const preparedName=document.createElement('strong');const preparedAction=document.createElement('button');preparedAction.type='button';
@@ -341,7 +340,6 @@ menuBack.addEventListener('click',()=>page('root'));
 
 
 menuShare.addEventListener('click',()=>shareDocument(true));
-menuInternal.addEventListener('click',()=>shareDocument(false));
 menuPrint.addEventListener('click',()=>void printScan());
 for(const [node,format] of [[outWord,'docx'],[outPdf,'pdf'],[outTextPDF,'textpdf'],[outJpeg,'jpg'],[outTxt,'txt']])node.addEventListener('click',()=>{const share=menuPage==='share';const withMarks=format==='pdf'&&(savedScan?.paper?.strokes?.length||savedScan?.paper?.texts?.length);void prepareFormat(withMarks?'annotated':format,share);});
 dialog.append(more,menu);
