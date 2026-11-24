@@ -107,46 +107,11 @@ function create(tag,klass,words){
 }
 /* One hand-drawn monochrome symbol language, shared by the hero and its
  * quiet secondary rail. No emoji, picture files, WebGL or animated filters. */
-const glyph=Object.freeze({
- contract: [
-  '<path d="M29 11h29l15 15v53c0 4-3 7-7 7H30c-4 0-7-3-7-7V18c0-4 3-7 6-7Z"/>',
-  '<path d="M58 12v15h15"/>',
-  '<path d="M35 43h25M35 53h22M35 63h12"/>',
-  '<path d="m54 70 5 5 11-12" class="lm-glyph-accent"/>'
- ].join(''),
- work: [
-  '<circle cx="48" cy="47" r="36"/>',
-  '<path d="M22 72 15 82l19-5" class="lm-glyph-accent"/>',
-  '<text x="48" y="58" text-anchor="middle" fill="currentColor" stroke="none" font-family="system-ui,sans-serif" font-size="33" font-weight="500">Е</text>'
- ].join(''),
- mail: [
-  '<rect x="11.5" y="23" width="73" height="52" rx="10"/>',
-  '<path d="M15 31 43.5 54a7 7 0 0 0 9 0L81 31"/>',
-  '<path d="m16 68 22-18m42 18L58 50" class="lm-glyph-accent"/>'
- ].join(''),
- health: [
-  '<path d="M48 81 20.2 54.5C1.1 36.2 15 14.3 32.1 19.3 39 21.3 44 26.8 48 33c4-6.2 9-11.7 15.9-13.7 17.1-5 31 16.9 11.9 35.2Z"/>',
-  '<path d="M23 48h14l6-11 10 22 6-11h14" class="lm-glyph-accent"/>'
- ].join(''),
- breath: [
-  '<path d="M13 35c12-16 21 11 33-1 12-12 20-8 37-3"/>',
-  '<path d="M10 49c13-12 24 8 38-2 15-12 22-4 37-1"/>',
-  '<path d="M18 64c13-11 24 4 37-3 10-6 18-5 24-2"/>'
- ].join(''),
- task: [
-  '<rect x="16" y="14" width="64" height="69" rx="11"/>',
-  '<path d="M32 31h33M32 44h24M32 57h12"/>',
-  '<path d="m49 67 9 8 15-18" class="lm-glyph-accent"/>'
- ].join('')
-});
-function icon(kind){
- const s=document.createElementNS('http://www.w3.org/2000/svg','svg');
- const type=Object.hasOwn(glyph,kind)?kind:'task';
- s.setAttribute('viewBox','0 0 96 96');
- s.setAttribute('aria-hidden','true');
- s.setAttribute('focusable','false');
- s.setAttribute('class','lm-art-svg lm-art-svg--'+type);
- s.innerHTML=glyph[type];
+// The same approved application glyphs as Home and Card Studio.
+function icon(kind,sourceApp){
+ const icons=window.SEYVEO_APP_ICONS;
+ const s=icons.svg(icons.sourceFor(kind,sourceApp));
+ s.classList.add('lm-art-svg','lm-art-svg--'+kind);
  return s;
 }
 
@@ -268,7 +233,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const main=create('section','lm-primary');
  const hero=create('div','lm-hero');
  const artwork=create('div','lm-hero-art lm-hero-art--'+primary.kind);
- artwork.append(icon(primary.kind));
+ artwork.append(icon(primary.kind,primary.sourceApp));
  const copy=create('div','lm-primary-copy');
  const headline=create('strong','lm-primary-title',primary.title);
  const description=create('p','lm-primary-subtitle',primary.body);
@@ -1051,7 +1016,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    if(real)seenQueueRows.add(item.eventId);
    row.setAttribute('aria-label','Выбрать дело: '+item.title);
    const mark=create('span','lm-inline-art');
-   mark.append(icon(item.kind));
+   mark.append(icon(item.kind,item.sourceApp));
    const words=create('span','lm-inline-copy');
    const heading=create('span','sv-lm-inline-heading');
    heading.append(create('span','lm-inline-title',item.title));
@@ -1077,7 +1042,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   field.dataset.lmSubject=item.kind;
   window.SEYVEO_CARD_ENGINE?.decorateHome?.(field,item.kind,real);
   artwork.className='lm-hero-art lm-hero-art--'+item.kind;
-  artwork.replaceChildren(icon(item.kind));
+  artwork.replaceChildren(icon(item.kind,item.sourceApp));
   label.textContent=item.category;
   const hasClock=real&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time||'');
   const exampleClock=!real&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.sampleTime||'');
