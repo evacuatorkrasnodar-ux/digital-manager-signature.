@@ -413,12 +413,47 @@
  .sv-weather-peek .sv-weather-peek-rain-detail-label{font-size:11px!important}
 }
 
-/* Light Home weather: calm Pearl material, without a heavy grey halo. */
+/* Home weather · clean Pearl surface and quiet data hierarchy. */
 :root[data-theme="light"] .sv-weather-peek[data-origin="home"]{
- background:#fafbfc!important;
+ background:#fff!important;
  border:.75px solid rgba(215,220,227,.55)!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-:root[data-theme="light"] .sv-weather-peek[data-origin="home"] .sv-weather-peek-info{
- border-left-color:rgba(94,109,130,.14)!important;
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-info{
+ border-left:0!important;
+ padding-left:9px!important;
 }
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-city{
+ font-size:17px!important;
+ font-weight:620!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-info .sv-weather-peek-city::after{
+ content:"";width:6px;height:6px;right:3px;top:7px;
+ border-top:1.35px solid currentColor;border-right:1.35px solid currentColor;
+ color:#8995a3;transform:rotate(45deg);
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-wind-icon{
+ width:16px!important;height:16px!important;flex-basis:16px!important;
+ color:#7894a8;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-wind-icon svg{
+ width:16px!important;height:16px!important;stroke-width:1.7;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-geo-meter{
+ width:49px!important;height:49px!important;
+ min-width:49px!important;min-height:49px!important;flex-basis:49px!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-geo-meter[data-level="quiet"]{
+ --sv-geo-color:#73a99a;
+}
+:root[data-theme="light"] .sv-weather-peek[data-origin="home"] .sv-weather-peek-geo-core{
+ background:#fff!important;
+}
+:root[data-theme="light"] .sv-weather-peek[data-origin="home"] .sv-weather-peek-geo-meter:not([data-level="unknown"]) .sv-weather-peek-geo-number{
+ color:#293744!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-geo-status-dot{display:none!important;}
+/* Offset the slightly larger data rings without expanding the card. */
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-geo-figure{gap:3px!important;}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-geo-heading{margin-bottom:5px!important;}
+
