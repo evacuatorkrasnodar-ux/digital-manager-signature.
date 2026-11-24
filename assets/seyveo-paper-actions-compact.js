@@ -6,15 +6,14 @@
  const panel=document.querySelector('#notePaperSettingsMenu [data-sv-menu-panel="actions"]');
  if(!dialog||!panel)return;
 
- // Drawing relies on the existing native color palette. Keep the older
- // custom gradient trigger wired for legacy callers, but never show it as
- // an additional visible control.
+ // Keep the original gradient command visible in Settings, not in the bottom row.
  const gradient=document.getElementById('notePaperColorTrigger');
  if(gradient){
-  gradient.dataset.svRetired='true';gradient.hidden=true;
-  gradient.style.setProperty('display','none','important');
+  delete gradient.dataset.svRetired;gradient.hidden=false;
+  gradient.style.removeProperty('display');
+  gradient.classList.add('sv-newdock-menu-action');
+  gradient.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M7 17 17 7M7 12l5-5M12 17l5-5"/></svg><span>Градиенты</span>';
  }
-
  // This is the complete everyday Drawing menu, ordered by actual workflow.
  // The original nodes keep all of their listeners and tool state.
  const actions=[
@@ -22,6 +21,7 @@
   document.getElementById('notePaperAddPhoto'),
   panel.querySelector('[data-paper-tool="lasso"]')||
    document.querySelector('#notePaperSettingsMenu [data-paper-tool="lasso"]'),
+  gradient,
   document.getElementById('notePaperClearSheet')
  ].filter(Boolean);
  for(const node of actions)panel.append(node);
