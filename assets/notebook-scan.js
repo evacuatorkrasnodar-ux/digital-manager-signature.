@@ -47,6 +47,7 @@ const menuBack=menuButton('Назад',arrowIcon);
 const editNote=menuButton('Блокнот',docIcon);
 const editPaper=menuButton('Рисование · пометки',penIcon);
 const editWord=menuButton('Word · текст',docIcon);
+const editManual=menuButton('Ввести текст вручную',penIcon);
 const editPdf=menuButton('PDF · пометки',penIcon);
 const editPages=menuButton('PDF · страницы',docIcon);
 const editSign=menuButton('PDF · подпись',penIcon);
@@ -55,7 +56,7 @@ const outPdf=menuButton('PDF · оригинал',docIcon);
 const outAnnotated=menuButton('PDF · с пометками',docIcon);
 const outJpeg=menuButton('JPEG · оригинал',imageIcon);
 const outTxt=menuButton('TXT · текст',docIcon);
-const groups={root:[menuOCR,menuLines,menuEdit,menuExport,menuShare],edit:[menuBack,editNote,editPaper,editWord,editPdf,editPages,editSign],export:[menuBack,outWord,outPdf,outAnnotated,outJpeg,outTxt],share:[menuBack,outWord,outPdf,outAnnotated,outJpeg,outTxt]};
+const groups={root:[menuOCR,menuLines,menuEdit,menuExport,menuShare],edit:[menuBack,editNote,editPaper,editWord,editManual,editPdf,editPages,editSign],export:[menuBack,outWord,outPdf,outAnnotated,outJpeg,outTxt],share:[menuBack,outWord,outPdf,outAnnotated,outJpeg,outTxt]};
 const prepared=document.createElement('div');prepared.id='svScanPrepared';prepared.className='sv-menu-surface';prepared.hidden=true;
 const preparedName=document.createElement('strong');const preparedAction=document.createElement('button');preparedAction.type='button';
 const preparedCancel=document.createElement('button');preparedCancel.type='button';preparedCancel.textContent='Закрыть';
@@ -167,7 +168,8 @@ menuEdit.addEventListener('click',()=>page('edit'));
 menuExport.addEventListener('click',()=>page('export'));
 menuShare.addEventListener('click',()=>page('share'));
 editNote.addEventListener('click',()=>{if(dialog.dataset.step==='edit'&&text.value.trim()){closeMenu();toNote();}else requestText('note');});
-editWord.addEventListener('click',()=>{if(dialog.dataset.step==='edit'&&text.value.trim()){closeMenu();handoffToDocs({kind:'word',text:text.value,title:fileBase()});}else requestText('word-editor');});
+editWord.addEventListener('click',()=>{if(dialog.dataset.step==='edit'){closeMenu();if(text.value.trim())handoffToDocs({kind:'word',text:text.value,title:fileBase()});else{outputIntent='word-editor';syncActions();text.focus();}}else requestText('word-editor');});
+editManual.addEventListener('click',()=>{closeMenu();clearPrepared();outputIntent='word-editor';setStep('edit');syncActions();text.focus();message('Введите или вставьте текст документа.');});
 editPages.addEventListener('click',()=>void openPages('pages'));
 editSign.addEventListener('click',()=>void openPages('sign'));
 editPaper.addEventListener('click',()=>{closeMenu();toPaper();});
@@ -186,7 +188,7 @@ function syncMenu(){
  const blocked=!selected||running||exportBusy;
  for(const node of new Set(Object.values(groups).flat())){node.hidden=!groups[menuPage].includes(node);node.disabled=blocked&&node!==menuBack;}
  if(menuPage==='root'){menuOCR.hidden=inEdit;menuLines.hidden=inEdit;}
- if(menuPage==='edit'){editPaper.disabled=blocked||inEdit;editPdf.disabled=blocked||inEdit;}
+ if(menuPage==='edit'){editPaper.disabled=blocked;editPdf.disabled=blocked;editManual.hidden=inEdit;}
  outAnnotated.disabled=blocked||!(savedScan?.paper?.strokes?.length||savedScan?.paper?.texts?.length);
  menuLines.setAttribute('aria-checked',String(keepLines?.checked!==false));
  const format=outputIntent.split('-')[0];
