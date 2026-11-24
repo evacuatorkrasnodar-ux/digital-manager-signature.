@@ -38,15 +38,39 @@ const menuMarkup=menuButton('Разметка','<path d="m8 14 9-9 3 3-9 9-5 1 2
 
 const menuShare=menuButton('Поделиться',shareIcon);
 const menuPrint=menuButton('Печать','<path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-4a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v4a2 2 0 0 1-2 2h-2M7 14h10v7H7zM17 11h1"/>');
-menuMarkup.classList.add('sv-scan-menu-section-end');
+
 const menuBack=menuButton('Назад',arrowIcon);
 const outWord=menuButton('Word (.docx)',docIcon);
 const outPdf=menuButton('PDF',docIcon);
 const outJpeg=menuButton('Фото (JPEG)',imageIcon);
 const outTxt=menuButton('Текст (TXT)',docIcon);
 const outTextPDF=menuButton('PDF',docIcon);
-const groups={root:[menuMarkup,menuShare,menuPrint],share:[menuBack,outTextPDF,outPdf,outWord,outJpeg,outTxt]};
+const groups={root:[menuShare,menuPrint],share:[menuBack,outTextPDF,outPdf,outWord,outJpeg,outTxt]};
 for(const node of [...groups.root,...groups.share])menu.append(node);
+const contextMenu=document.createElement('div');contextMenu.id='svScanContext';contextMenu.className='sv-menu-surface';contextMenu.hidden=true;
+contextMenu.setAttribute('role','group');contextMenu.setAttribute('aria-label','Редактирование документа');
+const contextText=document.createElement('button');contextText.type='button';
+contextText.innerHTML='<span>Текст</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M12 5v14M8 19h8"/></svg>';
+contextMenu.append(contextText,menuMarkup);dialog.append(contextMenu);
+function closeContext(){contextMenu.hidden=true;}
+function showContext(event){
+ if(!selected||running||exportBusy||editingScanText||!consentBox.hidden||dialog.dataset.step!=='photo')return;
+ closeMenu();clearPrepared();
+ if(!contextMenu.hidden){closeContext();return;}
+ contextMenu.hidden=false;
+ const r=dialog.getBoundingClientRect(),w=contextMenu.offsetWidth,h=contextMenu.offsetHeight;
+ const anchor=event.currentTarget.getBoundingClientRect();
+ const x=event.detail===0||!Number.isFinite(event.clientX)?anchor.left+Math.min(anchor.width/2,100):event.clientX;
+ const y=event.detail===0||!Number.isFinite(event.clientY)?anchor.top+24:event.clientY;
+ contextMenu.style.left=Math.max(10,Math.min(r.width-w-10,x-r.left-w/2))+'px';
+ contextMenu.style.top=Math.max(70,Math.min(r.height-h-12,y-r.top-h-12>=70?y-r.top-h-12:y-r.top+16))+'px';
+}
+contextText.addEventListener('click',()=>{
+ closeContext();
+ if(intoOpenNote){button.click();return;}
+ openTextEditor();
+ if(editingScanText)text.focus({preventScroll:true});
+});
 const prepared=document.createElement('div');prepared.id='svScanPrepared';prepared.className='sv-menu-surface';prepared.hidden=true;
 const preparedName=document.createElement('strong');const preparedAction=document.createElement('button');preparedAction.type='button';
 const preparedCancel=document.createElement('button');preparedCancel.type='button';preparedCancel.textContent='Закрыть';
@@ -201,7 +225,7 @@ textExport.addEventListener('click',()=>{
  const [format,share]=outputIntent.split('-');if(['docx','txt','textpdf'].includes(format))void prepareFormat(format,share==='share');
 });
 menuBack.addEventListener('click',()=>page('root'));
-menuMarkup.addEventListener('click',()=>{closeMenu();toPaper('marker');});
+menuMarkup.addEventListener('click',()=>{closeContext();toPaper('marker');});
 
 menuShare.addEventListener('click',()=>page('share'));
 menuPrint.addEventListener('click',()=>void printScan());
@@ -233,13 +257,14 @@ function syncMenu(){
  const inEdit=dialog.dataset.step==='edit';
  const blocked=!selected||running||exportBusy;
  textDone.hidden=!editingScanText;textDone.disabled=running||exportBusy;
- text.readOnly=running||exportBusy;
+ text.readOnly=running||exportBusy||dialog.hasAttribute('data-scan-reading-text');
 
  for(const node of new Set(Object.values(groups).flat())){node.hidden=!groups[menuPage].includes(node);node.disabled=blocked&&node!==menuBack;}
 
 
  menu.dataset.page=menuPage;
- menuMarkup.hidden=menuPage!=='root'||inEdit;
+ contextText.disabled=blocked;menuMarkup.disabled=blocked;
+ if(blocked||inEdit||!available)closeContext();
  const hasMarks=!!(savedScan?.paper?.strokes?.length||savedScan?.paper?.texts?.length);
  const shareTextPDF=!!text.value.trim()&&dialog.hasAttribute('data-scan-reading-text')&&!hasMarks;
  outPdf.querySelector('span').textContent=hasMarks?'PDF с разметкой':'PDF';
@@ -253,11 +278,12 @@ function syncMenu(){
 more.addEventListener('click',()=>{
  if(consentBox&&!consentBox.hidden){consentBox.hidden=true;pendingScanEdit=false;more.focus({preventScroll:true});return;}
  if(!menu.hidden){closeMenu(true);return;}
- clearPrepared();page('root');if(more.hidden)return;
+ closeContext();clearPrepared();page('root');if(more.hidden)return;
  menu.hidden=false;more.setAttribute('aria-expanded','true');
  (menu.querySelector('button:not([hidden]):not(:disabled)')||more).focus({preventScroll:true});
 });
 dialog.addEventListener('click',event=>{
+ if(!contextMenu.hidden&&!contextMenu.contains(event.target)&&event.target!==preview&&event.target!==text)closeContext();
  if(!menu.hidden&&!menu.contains(event.target)&&!more.contains(event.target))closeMenu();
  if(consentBox&&!consentBox.hidden&&!consentBox.contains(event.target)&&!button.contains(event.target)&&!more.contains(event.target)&&!menu.contains(event.target)){
   consentBox.hidden=true;pendingScanEdit=false;
@@ -267,6 +293,7 @@ dialog.addEventListener('keydown',event=>{
  if(event.key==='Escape'&&consentBox&&!consentBox.hidden){
   event.preventDefault();event.stopPropagation();$('noteScanConsentNo').click();return;
  }
+ if(event.key==='Escape'&&!contextMenu.hidden){event.preventDefault();event.stopPropagation();closeContext();return;}
  if(event.key==='Escape'&&!prepared.hidden){event.preventDefault();event.stopPropagation();clearPrepared();return;}
  if(event.key==='Escape'&&!menu.hidden){event.preventDefault();event.stopPropagation();closeMenu(true);}
 });
@@ -346,7 +373,7 @@ window.SEYVEO_SCANNER_FORMAT=Object.freeze({cleanPhoneHeader,textInOriginalLines
 function message(s){status.textContent=s||''}
 function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}if(markPreviewURL){URL.revokeObjectURL(markPreviewURL);markPreviewURL=''}}
 function reset(){
- clearPrepared();outputIntent='';editingScanText=false;pendingScanEdit=false;delete dialog.dataset.editScanText;savedScan=null;knownScanText=null;editStartText='';showDocument(false);delete dialog.dataset.savedScan;$('noteScanTitle').textContent='Сканировать';
+ closeContext();clearPrepared();outputIntent='';editingScanText=false;pendingScanEdit=false;delete dialog.dataset.editScanText;savedScan=null;knownScanText=null;editStartText='';showDocument(false);delete dialog.dataset.savedScan;$('noteScanTitle').textContent='Сканировать';
  selected=null;autoReadExisting=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
  if(consentBox)consentBox.hidden=true;
  text.value='';text.wrap='soft';button.disabled=true;
@@ -483,7 +510,7 @@ async function recognize(){
   running=false;button.disabled=!selected;syncActions();
  }
 }
-function cancel(){if(exportBusy)return;if(!consentBox.hidden){consentBox.hidden=true;pendingScanEdit=false;return;}if(running){session++;pendingScanEdit=false;autoReadExisting=false;message('Распознавание отменено.');offerManual();return;}if(editingScanText){if((!savedScan?.id||text.value!==editStartText)&&!window.confirm('Выйти без сохранения документа?'))return;if(!savedScan?.id){dialog.close();return;}text.blur();text.value=readableText()||'';editingScanText=false;delete dialog.dataset.editScanText;setStep('photo');showDocument(true);message('');return;}dialog.close()}
+function cancel(){if(!contextMenu.hidden){closeContext();return;}if(exportBusy)return;if(!consentBox.hidden){consentBox.hidden=true;pendingScanEdit=false;return;}if(running){session++;pendingScanEdit=false;autoReadExisting=false;message('Распознавание отменено.');offerManual();return;}if(editingScanText){if((!savedScan?.id||text.value!==editStartText)&&!window.confirm('Выйти без сохранения документа?'))return;if(!savedScan?.id){dialog.close();return;}text.blur();text.value=readableText()||'';editingScanText=false;delete dialog.dataset.editScanText;setStep('photo');showDocument(true);message('');return;}dialog.close()}
 function toNote(){
  const value=keepLines?.checked!==false?text.value.replace(/^\n+|\n+$/g,''):text.value.trim();
  if(!value.trim()){message('Сначала распознайте текст или введите его вручную.');return}
@@ -535,27 +562,22 @@ for(const id of ['noteScanCamera','noteScanGallery']){
 // Soft wrapping only changes how long lines LOOK on a narrow iPhone screen.
 // Actual newlines and the user's "preserve lines" OCR choice stay untouched.
 keepLines?.addEventListener('change',()=>{text.wrap='soft';syncMenu();});
-// The document itself is the edit entry point, not another action button.
+// The page opens a local editing choice; the header menu is for document actions.
 preview.setAttribute('role','button');
-preview.setAttribute('aria-label','Редактировать текст документа');
+preview.setAttribute('aria-label','Действия с документом');
 preview.tabIndex=0;
-function editFromScan(){
- if(!selected||running||exportBusy||!consentBox.hidden||dialog.dataset.step!=='photo')return;
- if(!menu.hidden){closeMenu(true);return;}
- clearPrepared();
- if(intoOpenNote){button.click();return;}
- openTextEditor();
- if(editingScanText)text.focus({preventScroll:true});
-}
-preview.addEventListener('click',editFromScan);
+preview.addEventListener('click',showContext);
 preview.addEventListener('keydown',event=>{
- if(event.key==='Enter'||event.key===' '){event.preventDefault();editFromScan();}
+ if(event.key==='Enter'||event.key===' '){event.preventDefault();showContext(event);}
 });
 text.setAttribute('aria-label','Текст документа');
-text.addEventListener('focus',()=>{
- if(dialog.hasAttribute('data-scan-reading-text')&&!editingScanText&&!running&&!exportBusy){closeMenu();clearPrepared();activateTextEditor();}
+text.addEventListener('click',event=>{
+ if(dialog.hasAttribute('data-scan-reading-text')&&!editingScanText)showContext(event);
 });
-text.addEventListener('input',()=>{if(dialog.hasAttribute('data-scan-reading-text')&&!editingScanText){const entered=text.value;activateTextEditor();editStartText=readableText()||'';text.value=entered;}syncActions();});
+text.addEventListener('keydown',event=>{
+ if(dialog.hasAttribute('data-scan-reading-text')&&!editingScanText&&(event.key==='Enter'||event.key===' ')){event.preventDefault();showContext(event);}
+});
+text.addEventListener('input',syncActions);
 manualButton?.addEventListener('click',()=>{
  if(!selected||running)return;
  if(pendingScanEdit||autoReadExisting||(!intoOpenNote&&!outputIntent)){autoReadExisting=false;activateTextEditor();}else setStep('edit');syncActions();
@@ -585,7 +607,7 @@ $('noteScanCancel').addEventListener('click',cancel);
 $('noteScanToText').addEventListener('click',toNote);
 $('noteScanToPaper').addEventListener('click',toPaper);
 $('noteScanBack').addEventListener('click',cancel);
-dialog.addEventListener('cancel',event=>{if(editingScanText||running||exportBusy||!consentBox.hidden){event.preventDefault();cancel();}});
+dialog.addEventListener('cancel',event=>{if(!contextMenu.hidden||editingScanText||running||exportBusy||!consentBox.hidden){event.preventDefault();cancel();}});
 dialog.addEventListener('close',()=>{
  const handoff=leavingForDocs;leavingForDocs=false;
  session++;reset();intoOpenNote=false;
