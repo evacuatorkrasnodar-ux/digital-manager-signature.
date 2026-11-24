@@ -133,22 +133,21 @@ html:root body > dialog#svStaffInvitePage[open] > .sv-page-scroll{
 
 /* Work tabs: retain the original shared header, segmented rail and dock.
    Agenda and All Tasks already have their own dedicated scroll contract.
-   Notebook editors and the calendar's magnetic rail are deliberately excluded. */
-html:root body .app:has(> #svWorkShell[data-shared-work="true"][data-active="notes"]:not([hidden])),
+   Notebook owns its separate list scrollport in notebook-list-clean-v4.css;
+   do not apply a second scroll container or outer dock inset to it. */
 html:root body .app:has(> #svWorkShell[data-shared-work="true"][data-active="wallet"]:not([hidden])),
 html:root body .app:has(> #svWorkShell[data-shared-work="true"][data-active="business"]:not([hidden])){
  box-sizing:border-box!important;height:100vh!important;height:100dvh!important;
  min-height:0!important;max-height:100dvh!important;
  padding-bottom:0!important;overflow:hidden!important;
 }
-html:root body #svWorkShell[data-shared-work="true"]:is([data-active="notes"],[data-active="wallet"],[data-active="business"]):not([hidden]){
+html:root body #svWorkShell[data-shared-work="true"]:is([data-active="wallet"],[data-active="business"]):not([hidden]){
  flex:1 1 0!important;min-height:0!important;max-height:100%!important;
  overflow:visible!important;
 }
-html:root body #svWorkShell[data-shared-work="true"]:is([data-active="notes"],[data-active="wallet"],[data-active="business"]) > :is(seyveo-work-head,#svWorkTabs){
+html:root body #svWorkShell[data-shared-work="true"]:is([data-active="wallet"],[data-active="business"]) > :is(seyveo-work-head,#svWorkTabs){
  flex:0 0 auto!important;
 }
-html:root body #svWorkShell[data-shared-work="true"][data-active="notes"] > #notesDialog.sv-notebook-content[open],
 html:root body #svWorkShell[data-shared-work="true"][data-active="wallet"] > dialog#seyveoPayDialog[open],
 html:root body #svWorkShell[data-shared-work="true"][data-active="business"] > #tasksPage:not([hidden]) > #unifiedBusinessTasksView:not([hidden]){
  flex:1 1 0!important;min-height:0!important;min-width:0!important;
@@ -157,12 +156,6 @@ html:root body #svWorkShell[data-shared-work="true"][data-active="business"] > #
  overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch;
  scroll-behavior:auto;
  scroll-padding-bottom:calc(92px + env(safe-area-inset-bottom,0px));
-}
-html:root body #svWorkShell[data-shared-work="true"][data-active="notes"] > #notesDialog.sv-notebook-content[open]{
- padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
-}
-html:root body #svWorkShell[data-active="notes"] #notesDialog > #notesList{
- flex:0 0 auto!important;overflow:visible!important;max-height:none!important;
 }
 html:root body #svWorkShell[data-shared-work="true"][data-active="business"] > #tasksPage:not([hidden]) > #unifiedBusinessTasksView:not([hidden]){
  padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
