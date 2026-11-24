@@ -55,8 +55,8 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-wor
  box-sizing:border-box!important;
  display:flex!important;position:relative!important;
  align-items:center!important;justify-content:center!important;align-self:center!important;
- /* Subtle optical correction only: 0.5px below true mathematical center. */
- top:.5px!important;
+ /* Keep the selected segment centered on the fixed capsule axis. */
+ top:0!important;
  flex:none!important;width:100%!important;min-width:0!important;
  height:32px!important;min-height:32px!important;max-height:32px!important;
  margin:0!important;padding:0 2px!important;
