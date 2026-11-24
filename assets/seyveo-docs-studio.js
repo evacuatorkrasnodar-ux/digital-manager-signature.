@@ -66,13 +66,13 @@ function pictorialSteps(steps){
  });
  return group;
 }
-let scans=[],mode='',temporaryUrls=[],generation=0,operationEpoch=0,importBusy=false,selectedScan=0,activeStudio=null;
+let scans=[],mode='',temporaryUrls=[],generation=0,operationEpoch=0,importBusy=false,selectedScan=0,activeStudio=null,activeHandoff=null;
 function cleanUrls(){
  for(const url of temporaryUrls)URL.revokeObjectURL(url);
  temporaryUrls=[];
 }
 function reset(){
- generation++;operationEpoch++;importBusy=false;activeStudio=null;
+ generation++;operationEpoch++;importBusy=false;activeStudio=null;activeHandoff=null;
  cleanUrls();scans=[];mode='';selectedScan=0;
 }
 const fromBase64=data=>{
@@ -208,7 +208,7 @@ function mount(target,{
   action.setAttribute('aria-expanded','false');
   action.setAttribute('aria-controls','svDocToolPanel');
  }
- let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='';
+ let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='',documentName='SEYVEO-документ',fromScan=false;
  const clear=()=>{
   panel.replaceChildren();cleanUrls();
  };
@@ -494,7 +494,7 @@ function mount(target,{
   panel.append(counter,info,status(''));
  }
  function renderCreate(){
-  panel.append(heading('Создать документ','Начните с шаблона или чистого листа'));
+  panel.append(heading(fromScan?'Редактор Word':'Создать документ',fromScan?'Распознанный текст · редактирование в SEYVEO':'Начните с шаблона или чистого листа'));
 
   const templates=[
    {
@@ -575,7 +575,9 @@ function mount(target,{
   const editorTop=$('div','sv-doc-create-editor-heading');
   editorTop.append($('strong','','Ваш документ'),
    $('small','','Редактируемый текст'));
-  editing.append(editorTop,body);
+  const filename=$('input','sv-doc-tool-text');filename.type='text';filename.value=documentName;filename.maxLength=100;filename.setAttribute('aria-label','Название документа');filename.placeholder='Название документа';
+  filename.addEventListener('input',()=>{documentName=filename.value;});
+  editing.append(editorTop,filename,body);
 
   const formatLabel=$('div','sv-doc-create-subhead');
   formatLabel.append($('strong','','Формат'),
@@ -606,16 +608,17 @@ function mount(target,{
     button.setAttribute('aria-pressed',String(id===documentFormat)));
    saveButton.textContent=documentFormat==='pdf'?'Сохранить PDF':'Сохранить Word';
   }
+  function safeDocumentName(){return documentName.replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').trim()||'SEYVEO-документ';}
   function preparedFile(){
    if(!body.value.trim()||body.value.length>12000){
     message('Напишите текст документа.');return null;
    }
    try{
     if(documentFormat==='pdf'){
-     return {blob:textPdf(body.value),name:'SEYVEO-документ.pdf',label:'PDF'};
+     return {blob:textPdf(body.value),name:safeDocumentName()+'.pdf',label:'PDF'};
     }
     return {blob:window.SEYVEO_DOCS_EXPORT.docxFromText(body.value),
-     name:'SEYVEO-документ.docx',label:'Word'};
+     name:safeDocumentName()+'.docx',label:'Word'};
    }catch(error){
     message(error?.message||'Не удалось подготовить документ.');
     return null;
@@ -636,7 +639,7 @@ function mount(target,{
    );
   }
   syncFormat();
-  const footer=controls(saveButton,shareButton);
+  const footer=controls(saveButton,shareButton,button('В архив',()=>{const ready=preparedFile();if(ready)onImport(asFile(ready.blob,ready.name));}));
   const revealEditor=()=>{
    editing.hidden=false;formatLabel.hidden=false;
    formatSwitch.hidden=false;footer.hidden=false;
@@ -650,7 +653,8 @@ function mount(target,{
   panel.dataset.createStage=initialDraft?'editing':'choose';
   const sayvi=button('',()=>onSayvi('create'),'sv-doc-create-sayvi');
   sayvi.append(art('create',true),$('span','','Создать с Сэйви'));
-  panel.append(sectionTitle,examples,editing,formatLabel,formatSwitch,footer,sayvi);
+  if(!fromScan)panel.append(sectionTitle,examples);
+  panel.append(editing,formatLabel,formatSwitch,footer,sayvi);
   const info=$('details','sv-doc-tool-help');
   info.append($('summary','','О шаблонах'),
    warn('Шаблоны учебные. Это простой текстовый редактор, не проверка договора. PDF сохраняется как изображение текста на страницах, Word — редактируемый DOCX.'));
@@ -975,10 +979,33 @@ function mount(target,{
   }catch{return false;}
  }
  activeStudio=openSignImage;
+ activeHandoff=async payload=>{
+  if(!payload||!panel.isConnected)return false;
+  if(payload.kind==='word'){
+   const value=String(payload.text||'').slice(0,12000);
+   if(!value.trim())return false;
+   documentDraft=value;documentFormat='docx';documentTemplate='';fromScan=true;
+   documentName=String(payload.title||'Скан').slice(0,100);
+   operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();
+   panel.scrollIntoView?.({block:'nearest'});return true;
+  }
+  if(payload.kind==='pages'||payload.kind==='sign'){
+   const file=payload.file;if(!(file instanceof Blob)||!/^image\/(jpeg|png|webp)$/i.test(file.type))return false;
+   const at=generation,epoch=++operationEpoch;
+   try{
+    const image=await imageOf(file);
+    if(at!==generation||epoch!==operationEpoch||!panel.isConnected)return false;
+    scans=[jpegOf(canvasOf(image))];selectedScan=0;mode=payload.kind==='sign'?'sign':'scan';
+    panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();
+    panel.scrollIntoView?.({block:'nearest'});return true;
+   }catch{return false;}
+  }
+  return false;
+ };
  return true;
 }
 function openImageForSignature(file){
  return activeStudio?activeStudio(file):Promise.resolve(false);
 }
-window.SEYVEO_DOCS_STUDIO=Object.freeze({mount,reset,openImageForSignature});
+window.SEYVEO_DOCS_STUDIO=Object.freeze({mount,reset,openImageForSignature,openScanWork:payload=>activeHandoff?activeHandoff(payload):Promise.resolve(false)});
 })();
