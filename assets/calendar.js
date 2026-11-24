@@ -80,7 +80,7 @@ const MONTH_LAYOUTS=['compact','stacked','details','list'];
 const DETAILS_MAX_LABELS=4;
 // A detailed week reserves the exact height of its tallest day, including
 // real time labels and the overflow counter, rather than clipping entries.
-const detailsWeekHeight=contentHeight=>Math.max(76,39+contentHeight);
+const detailsWeekHeight=contentHeight=>Math.max(49,35+contentHeight);
 let monthLayout=MONTH_LAYOUTS.includes(raw(MONTH_LAYOUT_STORE))?raw(MONTH_LAYOUT_STORE):'compact';
 /* Return to the real source page; never use history.back() to leave SEYVEO. */
 let calendarReturnRoute='#life';
@@ -252,9 +252,9 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
     }
     chip.title=entry.title+(timed?' · '+entry.time:'');
     tags.append(chip);
-    contentHeight+=monthLayout==='stacked'?5:timed?29:17;
+    contentHeight+=monthLayout==='stacked'?5:timed?25:15;
    });
-   if(entries.length>maxTags){tags.append(text('span','cal-day-more','+'+(entries.length-maxTags)));contentHeight+=monthLayout==='stacked'?11:13;}
+   if(entries.length>maxTags){tags.append(text('span','cal-day-more','+'+(entries.length-maxTags)));contentHeight+=11;}
    btn.dataset.monthContentHeight=String(contentHeight);
    btn.append(tags);
    btn.dataset.hasEntries='true';
@@ -273,7 +273,7 @@ function renderMonth(){
  grid.style.setProperty('--cal-month-max-height',String(weeks*98)+'px');
  grid.style.setProperty('--cal-month-min-height',String(weeks*72)+'px');
  // Detailed and stacked weeks grow only when their busiest day has more entries.
- const rowHeight={compact:49,stacked:49,details:76,list:49}[monthLayout];
+ const rowHeight={compact:49,stacked:49,details:49,list:49}[monthLayout];
  const rowHeights=[];
  let busiestDay=0;
  const isoWeekNumber=date=>{
@@ -296,8 +296,8 @@ function renderMonth(){
   }
  }
  grid.style.setProperty('--cal-month-detail-rows',rowHeights.map(height=>height+'px').join(' '));
- // Calendar's shared canvas reserves 8px above and 2px below its row tracks.
- const height=monthLayout==='details'?rowHeights.reduce((sum,row)=>sum+row,10):monthLayout==='stacked'?rowHeights.reduce((sum,row)=>sum+row,0):weeks*rowHeight;
+ // Variable-height month modes use the exact sum of their week tracks.
+ const height=monthLayout==='details'||monthLayout==='stacked'?rowHeights.reduce((sum,row)=>sum+row,0):weeks*rowHeight;
  grid.style.setProperty('--cal-month-layout-height',String(height)+'px');
  $('calendarMonth').hidden=false;
  $('calendarWeek').hidden=true;
