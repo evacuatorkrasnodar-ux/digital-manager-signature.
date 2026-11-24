@@ -287,8 +287,8 @@
  max-height:min(355px,calc(100dvh - 170px),var(--sv-home-peek-room,355px))!important;
  padding:12px 15px 11px!important;
  border-radius:25px!important;
- box-shadow:0 19px 44px rgba(24,32,45,.13),
-   0 5px 13px rgba(24,32,45,.07),
+ box-shadow:0 8px 24px rgba(24,32,45,.075),
+   0 2px 7px rgba(24,32,45,.045),
    inset 0 1px 0 rgba(255,255,255,.96)!important;
 }
 .sv-weather-peek[data-origin="home"] .sv-weather-peek-main{
@@ -411,4 +411,14 @@
 @media(max-width:355px){
  .sv-weather-peek .sv-weather-peek-rain-state{font-size:11px!important}
  .sv-weather-peek .sv-weather-peek-rain-detail-label{font-size:11px!important}
+}
+
+/* Light Home weather: calm Pearl material, without a heavy grey halo. */
+:root[data-theme="light"] .sv-weather-peek[data-origin="home"]{
+ background:#fafbfc!important;
+ border:.75px solid rgba(215,220,227,.55)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+:root[data-theme="light"] .sv-weather-peek[data-origin="home"] .sv-weather-peek-info{
+ border-left-color:rgba(94,109,130,.14)!important;
 }
