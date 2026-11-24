@@ -3,9 +3,9 @@
    recessed material now carry into Notebook, Ink Studio, Health and the
    alternate Browser/Music modes of the one shared footer. No layout changes. */
 :root[data-theme="light"]{
- --sv-inset-rim:1px solid rgba(255,255,255,.30);
- --sv-inset-fill:radial-gradient(circle at 50% 38%,rgba(116,126,145,.12),transparent 76%),linear-gradient(180deg,rgba(116,126,145,.13),rgba(96,109,129,.11));
- --sv-inset-depth:inset 0 2.1px 3.2px rgba(31,42,58,.17),inset 0 -1px .75px rgba(255,255,255,.47),inset 0 0 0 .45px rgba(31,42,58,.055);
+ --sv-inset-rim:1px solid rgba(255,255,255,.65);
+ --sv-inset-fill:rgba(231,234,238,.66);
+ --sv-inset-depth:inset 0 1.5px 2.4px rgba(31,42,58,.10),inset 0 -1px 1px rgba(255,255,255,.65),inset 0 0 0 .45px rgba(31,42,58,.035);
  --sv-inset-blur:blur(7px) saturate(110%);
 }
 :root[data-theme="dark"]{
