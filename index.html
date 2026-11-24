@@ -1,4 +1,30 @@
 <!doctype html><html lang="ru" class="sv-work-first-paint" data-theme="light" data-palette="white"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#ffffff">
+<script>
+/* Public Home starts with the actual dock; hide legacy fallback copy before first paint. */
+(()=>{const p=new URLSearchParams(location.search);
+ if((!location.hash||location.hash==='#home')&&p.get('sayvi-intro')!=='0'&&p.get('sayvi-voice')!=='1'){
+  const root=document.documentElement;
+  root.classList.add('sv-home-launch-pending');
+  setTimeout(()=>{if(!root.classList.contains('sv-sayvi-handoff-demo'))root.classList.remove('sv-home-launch-pending')},8000);
+ }
+})();
+</script>
+<style id="sv-home-first-paint-guard">
+html:root.sv-home-launch-pending body #homePage > :not(#stage),
+html:root.sv-home-launch-pending body #homePage #stage > :not(#orbCluster){
+ opacity:0!important;visibility:hidden!important;pointer-events:none!important;animation:none!important;transition:none!important;
+}
+html:root.sv-home-launch-pending:not(.sv-home-empty-arriving) body #homePage #orbCluster{
+ opacity:0!important;visibility:hidden!important;pointer-events:none!important;animation:none!important;transition:none!important;
+}
+html:root.sv-home-launch-pending:not(.sv-home-empty-lifted) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
+ max-width:var(--sv-feng-capsule)!important;animation:none!important;
+}
+html:root.sv-home-launch-pending:not(.sv-home-empty-lifted) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton,
+html:root.sv-home-launch-pending:not(.sv-home-empty-lifted) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton.sv-sayvi-velvet-ready > .sv-sayvi-velvet-sphere{
+ opacity:1!important;
+}
+</style>
 <style id="sv-work-first-paint-guard">
 /* Keep legacy Work markup offscreen until the unified shell and deferred
    agenda renderer have completed their first synchronous pass. */
@@ -894,7 +920,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 
 </div>
 </section>
-</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Общаться с Сэйви: нажмите для сообщения, удерживайте для голоса"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature-light.svg?v=24" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Сэйви · на связи</div><h2 id="headline">Добро пожаловать в SEYVEO</h2><p id="subline">Здесь будут ваши дела, сообщения и полезные рекомендации.</p><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true"><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
+</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Общаться с Сэйви: нажмите для сообщения, удерживайте для голоса"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature-light.svg?v=24" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Сэйви · на связи</div><h2 id="headline"></h2><p id="subline"></p><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true"><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
 <aside id="seyveoNameTip" class="seyveo-name-tip" role="note" hidden><span><strong>Я Сэйви.</strong> Можешь называть меня Сэй.</span><button id="seyveoNameTipClose" type="button" aria-label="Скрыть подсказку об имени">Понятно</button></aside>
 <section id="svSmartStartHome" class="sv-smart-start-home" hidden aria-labelledby="svSmartStartHomeTitle">
  <p class="sv-smart-start-home-kicker">SEYVEO · знакомство</p>
@@ -5348,7 +5374,7 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();
 // launch cover previously started the logo animation before it was visible.
 let homeLaunchLogoShown=false;
 function presentHomeLaunchLogo(){
- if(homeLaunchLogoShown)return;
+ if(homeLaunchLogoShown||document.documentElement.classList.contains('sv-home-launch-pending'))return;
  requestAnimationFrame(()=>requestAnimationFrame(()=>{
   const root=document.documentElement,orb=$('orb');
   const large=(orb?.getBoundingClientRect().width||0)>=190;
@@ -5641,7 +5667,7 @@ window.addEventListener('load',()=>{
   }
  }catch(error){console.warn('SEYVEO Browser search handoff failed.',error)}
 },{once:true});
-</script><script src="assets/seyveo-home-presence.js?v=23"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=46"></script><script src="assets/seyveo-work-shell.js?v=124"></script><script src="assets/seyveo-task-smart-nl.js?v=9"></script><script src="assets/seyveo-task-places.js?v=20"></script><script src="assets/seyveo-search-hub.js?v=1"></script><script src="assets/seyveo-task-ai-policy.js?v=2"></script><script src="assets/seyveo-task-ai.js?v=2"></script><script src="assets/seyveo-task-travel-core.js?v=2"></script><script src="assets/seyveo-task-editor-v3.js?v=24"></script><script src="assets/seyveo-task-places-ui.js?v=29"></script><script src="assets/seyveo-meeting-place-picker.js?v=3"></script><script src="assets/seyveo-task-travel-ui.js?v=3"></script><script src="assets/seyveo-task-travel-reminders.js?v=1"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
+</script><script src="assets/seyveo-home-presence.js?v=20261124-ordered-launch"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=46"></script><script src="assets/seyveo-work-shell.js?v=124"></script><script src="assets/seyveo-task-smart-nl.js?v=9"></script><script src="assets/seyveo-task-places.js?v=20"></script><script src="assets/seyveo-search-hub.js?v=1"></script><script src="assets/seyveo-task-ai-policy.js?v=2"></script><script src="assets/seyveo-task-ai.js?v=2"></script><script src="assets/seyveo-task-travel-core.js?v=2"></script><script src="assets/seyveo-task-editor-v3.js?v=24"></script><script src="assets/seyveo-task-places-ui.js?v=29"></script><script src="assets/seyveo-meeting-place-picker.js?v=3"></script><script src="assets/seyveo-task-travel-ui.js?v=3"></script><script src="assets/seyveo-task-travel-reminders.js?v=1"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
 (function(){
  const dlg=document.getElementById('noteReviewDialog'),field=document.getElementById('noteReviewText');if(!dlg||!field)return;
  // Keyboard visibility is measured from the resting visual viewport, not a
@@ -5808,7 +5834,7 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-my-broadcast.css?v=5">
 <script src="assets/seyveo-my-broadcast.js?v=9"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=81">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=20261124-compact-greeting"></script><link rel="stylesheet" href="assets/seyveo-review-cards.css?v=47"><script src="assets/seyveo-review-cards.js?v=26"></script>
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=20261124-ordered-launch"></script><link rel="stylesheet" href="assets/seyveo-review-cards.css?v=47"><script src="assets/seyveo-review-cards.js?v=26"></script>
 <link rel="stylesheet" href="assets/seyveo-progressive-discovery.css?v=2">
 <script src="assets/seyveo-progressive-discovery.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-home-status-light.css?v=2">
@@ -5818,7 +5844,7 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-weather-peek.css?v=20261124-steady-weather">
 <script src="assets/seyveo-weather-peek.js?v=20261124-steady-weather"></script>
 <script src="assets/seyveo-writing-focus.js?v=1"></script>
-<link rel="stylesheet" href="assets/seyveo-home-calm.css?v=12"><script src="assets/seyveo-home-calm.js?v=12"></script><link rel="stylesheet" href="assets/seyveo-home-favorites.css?v=43"><script src="assets/seyveo-home-favorites.js?v=36" defer></script><script src="assets/seyveo-share-inbox.js?v=2" defer></script><script src="assets/seyveo-orientation-lab.js?v=2"></script>
+<link rel="stylesheet" href="assets/seyveo-home-calm.css?v=12"><script src="assets/seyveo-home-calm.js?v=12"></script><link rel="stylesheet" href="assets/seyveo-home-favorites.css?v=20261124-ordered-launch"><script src="assets/seyveo-home-favorites.js?v=20261124-ordered-launch" defer></script><script src="assets/seyveo-share-inbox.js?v=2" defer></script><script src="assets/seyveo-orientation-lab.js?v=2"></script>
 <link rel="stylesheet" href="assets/seyveo-paper-recognition.css?v=5"><script src="assets/seyveo-paper-recognition.js?v=9"></script>
 <link rel="stylesheet" href="assets/seyveo-paper-gestures.css?v=6"><link rel="stylesheet" href="assets/seyveo-ink-confirm.css?v=9">
 <link rel="stylesheet" href="assets/seyveo-paper-wedge.css?v=1">
