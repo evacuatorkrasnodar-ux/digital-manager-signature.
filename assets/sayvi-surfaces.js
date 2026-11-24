@@ -1627,8 +1627,12 @@ function mailView(){
   section.classList.toggle('sv-mail-contacts-active',contactsActive);
   section.dataset.mailFolder=mailFolder;
   section.classList.toggle('sv-mail-composing',mailEditorOpen);
-  introCopy.hidden=mailEditorOpen||!!mailCurrent;
-  top.hidden=mailEditorOpen||!!mailCurrent;
+  introCopy.hidden=!contactsActive&&(mailEditorOpen||!!mailCurrent);
+  top.hidden=!contactsActive&&(mailEditorOpen||!!mailCurrent);
+  introCopy.querySelector('.sv-mail-introduction-title').textContent=contactsActive?'Умные контакты':'Почта';
+  if(contactsActive){back.setAttribute('aria-label','Назад к почте');guardOpen=false;}
+  else updateBackDestination();
+  topButtons.hidden=contactsActive;
   connect.hidden=mailEditorOpen||!!mailCurrent||contactsActive;
   const setupScope=inviteScope();
   contactsInvite.hidden=mailEditorOpen||!!mailCurrent||contactsActive||!setupScope;
@@ -1643,7 +1647,7 @@ function mailView(){
    button.addEventListener('click',()=>selectScope(key));
    scopeNav.append(button);
   }
-  scopeNav.hidden=mailEditorOpen||!!mailCurrent;
+  scopeNav.hidden=mailEditorOpen||!!mailCurrent||contactsActive;
   nav.replaceChildren();extraNav.replaceChildren();
   for(const [key,label] of tabs.slice(0,4)){
    const button=create('button','sv-mail-folder');
@@ -1671,7 +1675,7 @@ function mailView(){
   // Scope switches between personal and work mailbox authorization.
   renderGate();
   window.SEYVEO_CONNECTION_PROMPTS?.refresh();
-  compose.hidden=mailEditorOpen||!!mailCurrent;
+  compose.hidden=mailEditorOpen||!!mailCurrent||contactsActive;
   info.textContent=mailEditorOpen?'':
    mailCurrent?'Просмотр учебного письма':
    mailFolder==='overview'?'':
