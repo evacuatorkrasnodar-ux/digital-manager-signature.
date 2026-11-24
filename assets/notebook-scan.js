@@ -8,6 +8,7 @@ const dialog=$('noteScanDialog');if(!dialog)return;
 const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanText'),
  button=$('noteScanRecognize');
 let selected=null,localURL='',running=false,session=0,loading=null,consented=false,intoOpenNote=false;
+let savedScan=null;
 const consentBox=$('noteScanConsent'),keepLines=$('noteScanKeepLines');
 const toPaperButton=$('noteScanToPaper'),toTextButton=$('noteScanToText'),
  manualButton=$('noteScanManual');
@@ -84,12 +85,28 @@ window.SEYVEO_SCANNER_FORMAT=Object.freeze({cleanPhoneHeader,textInOriginalLines
 function message(s){status.textContent=s||''}
 function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}}
 function reset(){
+ savedScan=null;delete dialog.dataset.savedScan;$('noteScanTitle').textContent='Сканировать';
  selected=null;consented=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
  if(consentBox)consentBox.hidden=true;
  text.value='';text.wrap='soft';button.disabled=true;
  setStep('pick');syncActions();message('');
 }
 function open(){if(dialog.open)return;intoOpenNote=false;reset();dialog.showModal()}
+function openSaved(note){
+ if(dialog.open||!note?.paper?.photo)return false;
+ try{
+  const original=window.SEYVEO_NOTEBOOK_SCREEN?.polishScanExample?.(note)||note;
+  const parts=original.paper.photo.split(',');
+  if(!/^data:image\/(jpeg|png|webp);base64$/.test(parts[0]))return false;
+  const bytes=Uint8Array.from(atob(parts[1]),c=>c.charCodeAt(0));
+  intoOpenNote=false;reset();dialog.showModal();
+  select(new File([bytes],'document.jpg',{type:parts[0].slice(5,-7)}));
+  savedScan=original;dialog.dataset.savedScan='true';
+  $('noteScanTitle').textContent=note.title||'Скан документа';
+  message(note.paper.strokes?.length||note.paper.texts?.length?'Оригинал документа. Сохранённые пометки доступны в редакторе пометок.':'Сохранённый документ');
+  return true;
+ }catch{if(dialog.open)dialog.close();return false;}
+}
 function scanIntoNote(){
  if(dialog.open||!$('noteReviewDialog')?.open)return false;
  intoOpenNote=true;reset();dialog.showModal();
@@ -202,10 +219,11 @@ function toNote(){
 }
 function toPaper(){
  if(!selected){message('Сначала выберите изображение.');return}
- const file=selected;
+ const file=selected,existing=savedScan;
+ if(typeof window.SEYVEO_PAPER?.open!=='function'){message('Редактор пометок недоступен.');return;}
  dialog.close();
- window.SEYVEO_PAPER?.open(null,{scan:true});
- window.SEYVEO_PAPER?.importPhoto(file);
+ if(existing)window.SEYVEO_PAPER.open(existing,{scan:true});
+ else{window.SEYVEO_PAPER.open(null,{scan:true});window.SEYVEO_PAPER.importPhoto(file);}
 }
 // Test a real OCR input without needing the camera or gallery.
 $('svNoteScanExample')?.addEventListener('click',()=>{
@@ -264,5 +282,5 @@ dialog.addEventListener('close',()=>{
  if(!$('noteReviewDialog').open&&!$('notePaperDialog').open)
   window.SEYVEO_NOTES_API?.openNotes();
 });
-window.SEYVEO_NOTE_SCANNER=Object.freeze({open,scanIntoNote});
+window.SEYVEO_NOTE_SCANNER=Object.freeze({open,openSaved,scanIntoNote});
 })();
