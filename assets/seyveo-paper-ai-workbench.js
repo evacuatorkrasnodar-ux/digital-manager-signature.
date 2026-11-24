@@ -20,8 +20,8 @@
   <section class="sv-pa-quick-section" aria-label="Помощь с рисунком">
    <div class="sv-pa-quick-title">Инструменты</div>
    <div class="sv-pa-quick-grid" role="group" aria-label="Творческие действия с рисунком">
-    <button type="button" data-pa-quick="smooth"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16c3-7 5 4 9-3s6-5 9-8M3 20h18"/></svg><span>Выровнять линии</span></button>
-    <button type="button" data-pa-quick="shape"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15c1-8 10-12 14-3s-5 10-10 4M5 5h4M5 5v4M15 19h4v-4"/></svg><span>Узнать фигуру</span></button>
+    <button type="button" data-pa-quick="smooth"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 7.5c2.8-4.8 5.2 4.8 8.4 0s5.8 4.8 8.6 0"/><path d="M3.5 17h17"/></svg><span>Выровнять линии</span></button>
+    <button type="button" data-pa-quick="shape"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 8V5.5a2 2 0 0 1 2-2H8m8 0h2.5a2 2 0 0 1 2 2V8m0 8v2.5a2 2 0 0 1-2 2H16m-8 0H5.5a2 2 0 0 1-2-2V16"/><path d="m12 7.5 4.8 8.5H7.2L12 7.5Z"/></svg><span>Узнать фигуру</span></button>
 
    </div>
   </section>
