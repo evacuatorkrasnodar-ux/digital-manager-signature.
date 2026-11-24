@@ -665,3 +665,22 @@ html:root body #noteScanDialog > #svScanPrepared > button[hidden]{display:none!i
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-scan-document] .sv-note-home-new-dock{display:none!important;}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-scan-document] #svNoteTitle{cursor:default!important;}
 html:root body #noteScanDialog[data-scan-reading-text] > #noteScanText{cursor:pointer!important;caret-color:transparent!important;}
+
+/* Preserve the text and marker formatting of the actual Notebook editor. */
+html:root body #noteScanDialog > #svScanFormattedRead[hidden]{display:none!important;}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-scan-formatted-read] > #noteScanText{display:none!important;}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-scan-formatted-read] > #svScanFormattedRead{
+ box-sizing:border-box!important;display:block!important;flex:1 1 auto!important;
+ width:100%!important;min-width:0!important;min-height:180px!important;
+ margin:8px 0 0!important;padding:8px 0 16px!important;overflow-y:auto!important;
+ color:var(--text,#171e29)!important;background:transparent!important;
+ font:400 16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+ white-space:pre-wrap!important;overflow-wrap:anywhere!important;cursor:pointer!important;
+}
+#svScanFormattedRead :is(h2,h3){font-size:20px;line-height:1.35;font-weight:650;margin:0 0 .35em;}
+#svScanFormattedRead [data-sv-marker-tone="lemon"]{--scan-marker:#ffe58a}
+#svScanFormattedRead [data-sv-marker-tone="mint"]{--scan-marker:#ace8cd}
+#svScanFormattedRead [data-sv-marker-tone="sky"]{--scan-marker:#b7dbff}
+#svScanFormattedRead [data-sv-marker-tone="rose"]{--scan-marker:#ffc0d6}
+#svScanFormattedRead [data-sv-marker="highlight"]{background:var(--scan-marker,#ffe58a);color:#171e29;border-radius:3px;}
+#svScanFormattedRead [data-sv-marker="underline"]{text-decoration:underline;text-decoration-color:var(--scan-marker,#ffe58a);text-decoration-thickness:3px;text-underline-offset:3px;}
