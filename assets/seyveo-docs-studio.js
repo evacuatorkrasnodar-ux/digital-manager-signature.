@@ -1008,6 +1008,14 @@ function mount(target,{
    operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();
    panel.scrollIntoView?.({block:'nearest'});return true;
   }
+  if(payload.kind==='pdf-file'){
+   const at=generation,epoch=++operationEpoch;
+   if(!window.SEYVEO_DOCS_EXPORT?.readScanPdf)throw Error('Редактор страниц недоступен.');
+   const pages=await window.SEYVEO_DOCS_EXPORT.readScanPdf(payload.file);
+   if(at!==generation||epoch!==operationEpoch||!panel.isConnected)return false;
+   scans=pages;selectedScan=0;mode='scan';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();
+   panel.scrollIntoView?.({block:'nearest'});return true;
+  }
   if(payload.kind==='pages'||payload.kind==='sign'){
    const file=payload.file;if(!(file instanceof Blob)||!/^image\/(jpeg|png|webp)$/i.test(file.type))return false;
    const at=generation,epoch=++operationEpoch;
