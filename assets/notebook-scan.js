@@ -44,6 +44,7 @@ function syncMenu(){
  menuLines.disabled=running;menuLines.setAttribute('aria-checked',String(keepLines?.checked!==false));
 }
 more.addEventListener('click',()=>{
+ if(consentBox&&!consentBox.hidden){consentBox.hidden=true;more.focus({preventScroll:true});return;}
  if(!menu.hidden){closeMenu(true);return;}
  syncMenu();if(more.hidden)return;
  menu.hidden=false;more.setAttribute('aria-expanded','true');
@@ -54,8 +55,14 @@ menuPaper.addEventListener('click',()=>{closeMenu();toPaperButton?.click();});
 menuLines.addEventListener('click',()=>{if(keepLines)keepLines.click();syncMenu();});
 dialog.addEventListener('click',event=>{
  if(!menu.hidden&&!menu.contains(event.target)&&!more.contains(event.target))closeMenu();
+ if(consentBox&&!consentBox.hidden&&!consentBox.contains(event.target)&&!button.contains(event.target)&&!more.contains(event.target)&&!menu.contains(event.target)){
+  consentBox.hidden=true;
+ }
 });
 dialog.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&consentBox&&!consentBox.hidden){
+  event.preventDefault();event.stopPropagation();$('noteScanConsentNo').click();return;
+ }
  if(event.key==='Escape'&&!menu.hidden){event.preventDefault();event.stopPropagation();closeMenu(true);}
 });
 
