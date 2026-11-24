@@ -105,6 +105,18 @@
 .sv-weather-peek .sv-weather-peek-low{
  font-size:10.5px!important;letter-spacing:.005em!important;
 }
+/* Wind: one quiet detail in the existing weather summary, not a new tile. */
+.sv-weather-peek .sv-weather-peek-wind{
+ display:inline-flex;align-items:center;gap:4px;
+ min-width:0;line-height:1.2;font-size:10.5px;font-weight:510;
+ color:#606b77;white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.sv-weather-peek .sv-weather-peek-wind-icon{
+ display:grid;place-items:center;flex:0 0 14px;width:14px;height:14px;color:#8aa5b7;
+}
+.sv-weather-peek .sv-weather-peek-wind-icon svg{display:block;width:14px;height:14px}
+:root[data-theme="dark"] .sv-weather-peek .sv-weather-peek-wind{color:#B7BDC7}
+:root[data-theme="dark"] .sv-weather-peek .sv-weather-peek-wind-icon{color:#A4BCCD}
 /* All Kp readings are presented at rest: no extra tap, no long copy. */
 .sv-weather-peek .sv-weather-peek-geo{
  box-sizing:border-box!important;
