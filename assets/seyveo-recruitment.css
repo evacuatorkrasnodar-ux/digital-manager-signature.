@@ -208,15 +208,24 @@ html body .sv-recruit-head h2{margin:0!important;padding:0!important;text-align:
 html body .sv-recruit-head button{box-sizing:border-box;display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border-radius:50%;border:var(--sv-white-pearl-edge,0);background:var(--sv-white-pearl-surface,#38383a);color:var(--sv-white-pearl-ink,#fff);box-shadow:var(--sv-white-pearl-circle-shadow,none)}
 html body .sv-recruit-head button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 html body dialog.sv-recruit-page > .sv-page-scroll{display:block;flex:1 1 auto;min-height:0;min-width:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box;margin-inline:-8px;padding-inline:8px;padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))}
-#seyveoRecruitment{gap:8px}
-#seyveoRecruitment .svrec-list-row{display:flex;align-items:center;gap:9px;width:100%;min-height:62px;text-align:left;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;background:transparent;box-shadow:none;padding:8px 0;color:var(--text);font:inherit}
+#seyveoRecruitment{gap:4px;padding-bottom:10px}
+#seyveoRecruitment .svrec-list-row{display:flex;align-items:center;gap:9px;width:100%;min-height:56px;text-align:left;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;background:transparent;box-shadow:none;padding:8px 0;color:var(--text);font:inherit}
 #seyveoRecruitment .svrec-list-copy{display:grid;gap:4px;flex:1;min-width:0}
 #seyveoRecruitment .svrec-list-copy strong{font-size:14px;font-weight:620;overflow-wrap:anywhere}
 #seyveoRecruitment .svrec-list-copy small{font-size:11px;color:var(--secondary)}
 .svrec-list-avatar{display:grid;place-items:center;border-radius:50%;width:42px;height:42px;flex:0 0 42px;background:#dceaf3;color:#335e7b;font-size:15px;font-weight:600}
 #seyveoRecruitment .svrec-list-arrow{flex:none;color:var(--secondary);font-size:19px;padding-inline:2px}
 #seyveoRecruitment .svrec-list-row .svrec-tag{max-width:90px;flex:0 1 auto;font-size:10px;white-space:normal;overflow-wrap:anywhere}
-#seyveoRecruitment .svrec-section>.svrec-button{justify-self:start}
+#seyveoRecruitment .svrec-section>.svrec-button{justify-self:stretch;width:100%;min-height:44px}
+#seyveoRecruitment .svrec-section{gap:8px;padding:0 0 10px}
+#seyveoRecruitment .svrec-fold-label{min-height:44px;padding:6px 0}
+#seyveoRecruitment .svrec-stats{margin:0;padding:10px 0;border-top:0}
+#seyveoRecruitment .svrec-advice{padding:9px 0 11px;background:transparent;color:var(--text);border:0;border-radius:0;box-shadow:none}
+html:root[data-theme="light"] body #seyveoRecruitment .svrec-advice{background:transparent;color:var(--text);border:0;box-shadow:none}
+#seyveoRecruitment .svrec-advice-head .sv-sayvi-symbol{width:24px!important;height:24px!important;flex-basis:24px!important}
+#seyveoRecruitment .svrec-advice .svrec-status:not(:empty){margin:5px 0 0;font-size:12px;line-height:1.5}
+#seyveoRecruitment .svrec-small{font-size:11px;line-height:1.45}
+#seyveoRecruitment .svrec-desc{font-size:12px;line-height:1.45}
 #svRecruitDetail .svrec-grid{padding-top:12px}
 #svRecruitDetail .svrec-detail-content{display:grid;gap:10px;padding:8px 0}
 #svRecruitDetail .svrec-identity{display:grid;justify-items:center;text-align:center;gap:8px;padding:8px 0 16px}
