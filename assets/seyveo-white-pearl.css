@@ -117,10 +117,23 @@ html:root[data-theme="light"] body :is(
 /* Notebook Done uses the same solid blue confirmation in both themes. */
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  > .sv-note-nav-actions > button#svNoteDone.sv-note-nav-circle:is(:not(:active),:active){
+ appearance:none!important;-webkit-appearance:none!important;
  background:#237bd3!important;background-image:none!important;color:#fff!important;
- border:.75px solid rgba(20,97,173,.18)!important;
+ background-clip:border-box!important;border:0!important;
  box-shadow:0 2px 6px rgba(32,92,155,.13)!important;
- transform:none!important;
+ filter:none!important;-webkit-filter:none!important;
+ transform:none!important;transition:none!important;
+}
+
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > .sv-note-nav-actions > button#svNoteDone.sv-note-nav-circle:not(:focus-visible){
+ outline:none!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > .sv-note-nav-actions > button#svNoteDone.sv-note-nav-circle::before,
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > .sv-note-nav-actions > button#svNoteDone.sv-note-nav-circle::after{
+ content:none!important;display:none!important;
 }
 
 /* New Note remains a stationary White Pearl circle in ALL pointer states.
