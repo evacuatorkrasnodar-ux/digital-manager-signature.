@@ -1,11 +1,17 @@
 <!doctype html><html lang="ru" class="sv-work-first-paint" data-theme="light" data-palette="white"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#ffffff">
 <script>
-/* Public Home starts with the actual dock; hide legacy fallback copy before first paint. */
+/* Cold Home starts with the large Sayvi already in its final position.
+   Suppress only the old fallback content until the first render is ready. */
 (()=>{const p=new URLSearchParams(location.search);
  if((!location.hash||location.hash==='#home')&&p.get('sayvi-intro')!=='0'&&p.get('sayvi-voice')!=='1'){
   const root=document.documentElement;
-  root.classList.add('sv-home-launch-pending');
-  setTimeout(()=>{if(!root.classList.contains('sv-sayvi-handoff-demo'))root.classList.remove('sv-home-launch-pending')},8000);
+  root.classList.add('sv-home-launch-pending','sv-sayvi-handoff-demo');
+  setTimeout(()=>{
+   if(root.classList.contains('sv-home-launch-pending')){
+    root.classList.remove('sv-home-launch-pending');
+    if(!root.classList.contains('sv-sayvi-handoff-docked'))root.classList.remove('sv-sayvi-handoff-demo');
+   }
+  },8000);
  }
 })();
 </script>
@@ -13,16 +19,6 @@
 html:root.sv-home-launch-pending body #homePage > :not(#stage),
 html:root.sv-home-launch-pending body #homePage #stage > :not(#orbCluster){
  opacity:0!important;visibility:hidden!important;pointer-events:none!important;animation:none!important;transition:none!important;
-}
-html:root.sv-home-launch-pending:not(.sv-home-empty-arriving) body #homePage #orbCluster{
- opacity:0!important;visibility:hidden!important;pointer-events:none!important;animation:none!important;transition:none!important;
-}
-html:root.sv-home-launch-pending:not(.sv-home-empty-lifted) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
- max-width:var(--sv-feng-capsule)!important;animation:none!important;
-}
-html:root.sv-home-launch-pending:not(.sv-home-empty-lifted) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton,
-html:root.sv-home-launch-pending:not(.sv-home-empty-lifted) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton.sv-sayvi-velvet-ready > .sv-sayvi-velvet-sphere{
- opacity:1!important;
 }
 </style>
 <style id="sv-work-first-paint-guard">
@@ -5834,7 +5830,7 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-my-broadcast.css?v=5">
 <script src="assets/seyveo-my-broadcast.js?v=9"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=81">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=20261124-ordered-launch2"></script><link rel="stylesheet" href="assets/seyveo-review-cards.css?v=47"><script src="assets/seyveo-review-cards.js?v=26"></script>
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=20261124-instant-sayvi"></script><link rel="stylesheet" href="assets/seyveo-review-cards.css?v=47"><script src="assets/seyveo-review-cards.js?v=26"></script>
 <link rel="stylesheet" href="assets/seyveo-progressive-discovery.css?v=2">
 <script src="assets/seyveo-progressive-discovery.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-home-status-light.css?v=2">
