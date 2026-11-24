@@ -463,6 +463,10 @@
   if(document.scrollingElement)document.scrollingElement.scrollTop=0;
   const viewport=document.querySelector('.app');
   if(viewport&&viewport.scrollTop>0)viewport.scrollTop=0;
+  // Reset only on an explicit route switch, not a data refresh or editor close.
+  for(const pane of [notesPage,walletDialog,document.getElementById('unifiedBusinessTasksView')]){
+   if(pane&&pane.scrollTop>0)pane.scrollTop=0;
+  }
  }
  const oldTab=(parent,attribute,name)=>parent.querySelector('['+attribute+'="'+name+'"]');
  function activeSection(){
