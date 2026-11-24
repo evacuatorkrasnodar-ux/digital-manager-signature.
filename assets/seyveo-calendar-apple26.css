@@ -1582,6 +1582,6 @@ html:root body #calendarPage:not([hidden]) #calendarView[data-mode="month"][data
  overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
  margin-bottom:0!important;padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
  scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
- -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 90px - env(safe-area-inset-bottom,0px)),rgba(0,0,0,.22) calc(100% - 62px - env(safe-area-inset-bottom,0px)),transparent calc(100% - 38px - env(safe-area-inset-bottom,0px)),transparent 100%);
- mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 90px - env(safe-area-inset-bottom,0px)),rgba(0,0,0,.22) calc(100% - 62px - env(safe-area-inset-bottom,0px)),transparent calc(100% - 38px - env(safe-area-inset-bottom,0px)),transparent 100%);
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 72px - env(safe-area-inset-bottom,0px)),rgba(0,0,0,.18) calc(100% - 50px - env(safe-area-inset-bottom,0px)),transparent calc(100% - 42px - env(safe-area-inset-bottom,0px)),transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 72px - env(safe-area-inset-bottom,0px)),rgba(0,0,0,.18) calc(100% - 50px - env(safe-area-inset-bottom,0px)),transparent calc(100% - 42px - env(safe-area-inset-bottom,0px)),transparent 100%);
 }
