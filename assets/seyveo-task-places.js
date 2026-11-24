@@ -485,9 +485,9 @@
   const hours=curated?'10:00–22:00':place.openingHours||'';
   if(!hours&&!curated)return null;
   return {hours,hoursSourceURL:curated?'https://krasnodar.red-square.ru/visitors/kafe_i_restorany/vkusno_-_i_tochka_1_etazh-171408/':'',
-   hoursNote:curated?'По официальному сайту ТРЦ, для посещения зала на 1-м этаже. В справочниках для «Авто» встречается 06:00–04:00. Перед визитом уточни график.':'По данным открытой карты; график может измениться.',
+   hoursNote:curated?'График зала на 1-м этаже — по сайту ТРЦ. Для «Авто» в справочниках указан другой график: 06:00–04:00. Уточни перед визитом.':'По данным открытой карты; график может измениться.',
    menuURL:curated?.menuURL||'',menuPreview:[],
-   menuNote:curated?'Актуальное меню на официальном сайте сети; цены зависят от ресторана.':''};
+   menuNote:curated?'Цены зависят от ресторана. Актуальное меню — на сайте сети.':''};
  }
  const photoCache=new Map();
  const metadataCache=new Map();
