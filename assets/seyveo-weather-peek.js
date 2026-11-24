@@ -87,7 +87,6 @@
   const viewHeight=viewport?.height||window.innerHeight;
   const viewWidth=viewport?.width||window.innerWidth;
   const viewLeft=viewport?.offsetLeft||0;
-  const topSafe=Math.max(viewTop+12,viewTop+(agendaMode?rect.bottom-viewTop+12:12));
   const dock=document.querySelector('body > footer.dock.sv-shared-dock');
   const dockTop=dock&&!dock.hidden?dock.getBoundingClientRect().top:viewTop+viewHeight-72;
   const maxBottom=Math.min(viewTop+viewHeight-12,dockTop-12);
@@ -117,11 +116,22 @@
    y=Math.max(safeTop,bottomLimit-height-28);
 
   }else{
-   /* Agenda keeps its own central placement below the date rail. */
-   const desiredTop=viewTop+(viewHeight-bounds.height)/2;
-   y=Math.max(topSafe,Math.min(desiredTop,Math.max(topSafe,maxBottom-bounds.height)));
+   /* Agenda: anchor to the tapped weather badge. Prefer below, flip
+      above if needed, and constrain the card to the visible viewport. */
+   const safeTop=viewTop+12;
+   const below=Math.max(0,maxBottom-Math.max(safeTop,rect.bottom+8));
+   const above=Math.max(0,Math.min(maxBottom,rect.top-8)-safeTop);
+   panel.style.removeProperty('--sv-agenda-peek-room');
+   const naturalHeight=panel.offsetHeight;
+   const useBelow=below>=naturalHeight||below>=above;
+   const room=Math.floor(useBelow?below:above);
+   if(room<120){close(true);return;}
+   panel.style.setProperty('--sv-agenda-peek-room',room+'px');
+   y=useBelow?Math.max(safeTop,rect.bottom+8):Math.max(safeTop,Math.min(maxBottom,rect.top-8)-panel.offsetHeight);
   }
-  const x=viewLeft+Math.max(12,(viewWidth-bounds.width)/2);
+  const width=panel.offsetWidth;
+  const x=homeMode?viewLeft+Math.max(12,(viewWidth-bounds.width)/2):
+   Math.max(viewLeft+12,Math.min(rect.right-width,viewLeft+viewWidth-width-12));
   const top=Math.round(y)+'px',left=Math.round(x)+'px';
   if(panel.style.top!==top)panel.style.top=top;
   if(panel.style.left!==left)panel.style.left=left;
@@ -399,7 +409,7 @@
   if(agendaMode&&event.target?.closest?.('#svTasksDateNav'))resetTimer();
  },{capture:true,passive:true});
  window.addEventListener('resize',()=>{if(panel)position();},{passive:true});
- window.visualViewport?.addEventListener('resize',()=>{if(panel&&homeMode)requestAnimationFrame(()=>{if(panel&&homeMode)position();});},{passive:true});
+ window.visualViewport?.addEventListener('resize',()=>{if(panel)requestAnimationFrame(()=>{if(panel)position();});},{passive:true});
  window.addEventListener('seyveo:home-shortcuts-layout',scheduleHomePosition);
  window.addEventListener('seyveo:home-weather-position',scheduleHomePosition);
  document.addEventListener('visibilitychange',()=>{if(document.hidden)close(true);});
