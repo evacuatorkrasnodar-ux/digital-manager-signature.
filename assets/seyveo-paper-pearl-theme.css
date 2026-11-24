@@ -53,14 +53,14 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-pape
 /* Delicate but legible thickness ruler on white.
    On dark pages the approved wedge stays exactly as before. */
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size::before{
- background:#a5aab4!important;opacity:.70!important;
+ background:#a5aab4!important;opacity:.52!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size.sv-wedge-expanded::before{
  background:#868d98!important;opacity:.75!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size::after{
- background:#fff!important;border:1px solid #d1d5dc!important;
- box-shadow:0 1px 5px rgba(42,48,60,.18)!important;
+ background:#fff!important;border:1px solid #d9dde3!important;
+ box-shadow:0 1px 3px rgba(42,48,60,.10)!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size input::-webkit-slider-runnable-track{
  background:#c5cad2!important;
@@ -222,8 +222,8 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-pape
  color:#a0a6b0!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #svPaperNewDock > #notePaperSayvi > img.sv-newdock-potok{
- filter:brightness(0)!important;
- opacity:.82!important;
+ filter:none!important;
+ opacity:1!important;
 }
 /* Calendar reference: white, almost invisible edge, black glyph; retain the
    already approved 47px Ink Studio geometry and the graphite dark theme. */
