@@ -14,7 +14,7 @@ const WORKSPACES=new Set([
  'calendarEventDialog','personalTaskDialog','manageRoadmapDialog',
  'manageConnectionsDialog','manageDataDialog','assistantChatHistoryDialog',
  'homeWidgetsManageDialog','seyveoAccountDemo','seyveoPulseDialog','seyveoStudioDialog',
- 'svcpManagerPeople','svRecruitDetail','svHrInterview','seyveoCompanyDialog','seyveoQrCardDialog','seyveoAvatarDialog','homeWidgetDetails',
+ 'svcpManagerPeople','svStaffProfile','svRecruitDetail','svHrInterview','seyveoCompanyDialog','seyveoQrCardDialog','seyveoAvatarDialog','homeWidgetDetails',
  'pictureBreakdownDialog','assistantQuickSettings','onboardDialog','seyveoPayDialog'
 ]);
 const ROUTES=new Set(['navHome','navTasks','navPicture','navManage','assistantButton']);
