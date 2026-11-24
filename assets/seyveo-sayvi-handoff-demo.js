@@ -113,9 +113,16 @@
   function beginHomeGreetingLifetime(){
     if(homeGreetingStartedAt||!message)return;
     homeGreetingStartedAt=Date.now();
-    homeGreetingDeadline=homeGreetingStartedAt+homeGreetingMaxMs;
-    homeGreetingTimer=setTimeout(expireHomeGreeting,homeGreetingMaxMs);
+    // Empty Home greets first, then hands the same visual space to weather.
+    // Pending-card Home retains its original greeting lifetime.
+    const lifetime=root.classList.contains('sv-home-empty-sphere')?homeGreetingMinMs:homeGreetingMaxMs;
+    homeGreetingDeadline=homeGreetingStartedAt+lifetime;
+    homeGreetingTimer=setTimeout(expireHomeGreeting,lifetime);
   }
+  window.addEventListener('seyveo:home-sayvi-arrived',()=>{
+    if(root.classList.contains('sv-home-empty-sphere')&&homeGreetingStartedAt&&!homeGreetingDismissed)
+      engageHomeGreeting();
+  });
   // On an entirely empty, idle Home, a rare quiet suggestion may gently
   // replace the welcome after one minute without interrupting any card.
   window.addEventListener('seyveo:home-idle-prompt',()=>{
