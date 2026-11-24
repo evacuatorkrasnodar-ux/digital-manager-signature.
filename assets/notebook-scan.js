@@ -8,6 +8,7 @@ const dialog=$('noteScanDialog');if(!dialog)return;
 const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanText'),
  button=$('noteScanRecognize');
 let selected=null,localURL='',running=false,session=0,loading=null,consented=false,intoOpenNote=false;
+let leavingForDocs=false;
 let savedScan=null,menuPage='root',exportBusy=false,outputIntent='',preparedFile=null,preparedURL='';
 const consentBox=$('noteScanConsent'),keepLines=$('noteScanKeepLines');
 const toPaperButton=$('noteScanToPaper'),toTextButton=$('noteScanToText'),
@@ -47,16 +48,19 @@ const editNote=menuButton('Блокнот',docIcon);
 const editPaper=menuButton('Рисование · пометки',penIcon);
 const editWord=menuButton('Word · текст',docIcon);
 const editPdf=menuButton('PDF · пометки',penIcon);
+const editPages=menuButton('PDF · страницы',docIcon);
+const editSign=menuButton('PDF · подпись',penIcon);
 const outWord=menuButton('Word (.docx)',docIcon);
 const outPdf=menuButton('PDF · оригинал',docIcon);
 const outAnnotated=menuButton('PDF · с пометками',docIcon);
 const outJpeg=menuButton('JPEG · оригинал',imageIcon);
 const outTxt=menuButton('TXT · текст',docIcon);
-const groups={root:[menuOCR,menuLines,menuEdit,menuExport,menuShare],edit:[menuBack,editNote,editPaper,editWord,editPdf],export:[menuBack,outWord,outPdf,outAnnotated,outJpeg,outTxt],share:[menuBack,outWord,outPdf,outAnnotated,outJpeg,outTxt]};
+const groups={root:[menuOCR,menuLines,menuEdit,menuExport,menuShare],edit:[menuBack,editNote,editPaper,editWord,editPdf,editPages,editSign],export:[menuBack,outWord,outPdf,outAnnotated,outJpeg,outTxt],share:[menuBack,outWord,outPdf,outAnnotated,outJpeg,outTxt]};
 const prepared=document.createElement('div');prepared.id='svScanPrepared';prepared.className='sv-menu-surface';prepared.hidden=true;
 const preparedName=document.createElement('strong');const preparedAction=document.createElement('button');preparedAction.type='button';
 const preparedCancel=document.createElement('button');preparedCancel.type='button';preparedCancel.textContent='Закрыть';
-prepared.append(preparedName,preparedAction,preparedCancel);dialog.append(prepared);
+const preparedArchive=document.createElement('button');preparedArchive.type='button';preparedArchive.textContent='В архив документов';
+prepared.append(preparedName,preparedAction,preparedArchive,preparedCancel);dialog.append(prepared);
 const textExport=document.createElement('button');textExport.id='svScanTextExport';textExport.type='button';textExport.hidden=true;
 $('noteScanText').insertAdjacentElement('afterend',textExport);
 function clearPrepared(){
@@ -107,6 +111,22 @@ preparedAction.addEventListener('click',()=>{
  }else downloadPrepared();
 });
 preparedCancel.addEventListener('click',clearPrepared);
+function handoffToDocs(payload){
+ const center=window.SEYVEO_DOCUMENT_CENTER;
+ if(!center?.openScanWork?.(payload)){message('Не удалось открыть Документы. Скан остаётся здесь.');return false;}
+ leavingForDocs=true;dialog.close();return true;
+}
+preparedArchive.addEventListener('click',()=>{if(preparedFile)handoffToDocs({kind:'archive',file:preparedFile});});
+async function openPages(kind){
+ if(!selected||running||exportBusy)return;
+ closeMenu(true);clearPrepared();
+ const token=session;exportBusy=true;syncMenu();
+ try{
+  const canvas=await sourceCanvas(true);const jpeg=await canvasJpeg(canvas);
+  if(dialog.open&&token===session)handoffToDocs({kind,file:new File([jpeg],fileBase()+'.jpg',{type:'image/jpeg'})});
+ }catch(e){if(dialog.open&&token===session)message(e?.message||'Не удалось открыть документ.');}
+ finally{exportBusy=false;syncMenu();}
+}
 function requestText(intent){
  closeMenu(true);clearPrepared();outputIntent=intent;
  if(dialog.dataset.step==='edit'&&text.value.trim()){syncActions();return;}
@@ -139,6 +159,7 @@ async function prepareFormat(format,share=false){
  finally{exportBusy=false;syncMenu();}
 }
 textExport.addEventListener('click',()=>{
+ if(outputIntent==='word-editor'){handoffToDocs({kind:'word',text:text.value,title:fileBase()});return;}
  const [format,share]=outputIntent.split('-');if(['docx','txt'].includes(format))void prepareFormat(format,share==='share');
 });
 menuBack.addEventListener('click',()=>page('root'));
@@ -146,7 +167,9 @@ menuEdit.addEventListener('click',()=>page('edit'));
 menuExport.addEventListener('click',()=>page('export'));
 menuShare.addEventListener('click',()=>page('share'));
 editNote.addEventListener('click',()=>{if(dialog.dataset.step==='edit'&&text.value.trim()){closeMenu();toNote();}else requestText('note');});
-editWord.addEventListener('click',()=>requestText('docx'));
+editWord.addEventListener('click',()=>{if(dialog.dataset.step==='edit'&&text.value.trim()){closeMenu();handoffToDocs({kind:'word',text:text.value,title:fileBase()});}else requestText('word-editor');});
+editPages.addEventListener('click',()=>void openPages('pages'));
+editSign.addEventListener('click',()=>void openPages('sign'));
 editPaper.addEventListener('click',()=>{closeMenu();toPaper();});
 editPdf.addEventListener('click',()=>{closeMenu();toPaper('pdf');});
 for(const [node,format] of [[outWord,'docx'],[outPdf,'pdf'],[outAnnotated,'annotated'],[outJpeg,'jpg'],[outTxt,'txt']])node.addEventListener('click',()=>{const share=menuPage==='share';void prepareFormat(format,share);});
@@ -167,9 +190,9 @@ function syncMenu(){
  outAnnotated.disabled=blocked||!(savedScan?.paper?.strokes?.length||savedScan?.paper?.texts?.length);
  menuLines.setAttribute('aria-checked',String(keepLines?.checked!==false));
  const format=outputIntent.split('-')[0];
- textExport.hidden=!inEdit||!['docx','txt'].includes(format);
+ textExport.hidden=!inEdit||!['docx','txt','word'].includes(format);
  textExport.disabled=blocked||!text.value.trim();
- textExport.textContent=(outputIntent.endsWith('-share')?'Подготовить для отправки: ':'Сохранить как ')+(format==='docx'?'Word (.docx)':'TXT');
+ textExport.textContent=outputIntent==='word-editor'?'Открыть редактор Word':(outputIntent.endsWith('-share')?'Подготовить для отправки: ':'Сохранить как ')+(format==='docx'?'Word (.docx)':'TXT');
 }
 more.addEventListener('click',()=>{
  if(consentBox&&!consentBox.hidden){consentBox.hidden=true;more.focus({preventScroll:true});return;}
@@ -463,8 +486,9 @@ $('noteScanToText').addEventListener('click',toNote);
 $('noteScanToPaper').addEventListener('click',toPaper);
 $('noteScanBack').addEventListener('click',cancel);
 dialog.addEventListener('close',()=>{
+ const handoff=leavingForDocs;leavingForDocs=false;
  session++;reset();intoOpenNote=false;
- if(!$('noteReviewDialog').open&&!$('notePaperDialog').open)
+ if(!handoff&&!$('noteReviewDialog').open&&!$('notePaperDialog').open)
   window.SEYVEO_NOTES_API?.openNotes();
 });
 window.SEYVEO_NOTE_SCANNER=Object.freeze({open,openSaved,scanIntoNote,resumePhoto:file=>{if(!file||dialog.open)return false;open();select(file);return true;}});
