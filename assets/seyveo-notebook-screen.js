@@ -130,6 +130,16 @@
   if(note.paper.photo!==documentPhoto(heading,lines,true))return note;
   return {...note,paper:{...note.paper,photo:documentPhoto(heading,lines)}};
  }
+ // Known source text for our own generated fixture, not simulated OCR.
+ // Check identity AND image bytes; never use this for a real photograph.
+ function scanExampleText(note){
+  if(note?.sample!==true||note.sampleKind!=='scan-photo')return null;
+  const i=docs.findIndex((_,index)=>note.id===mediaPrefix+(8+index));
+  if(i<0)return null;
+  const [title,lines]=docs[i],heading=title.replace('Скан · ','');
+  if(note.paper?.photo!==documentPhoto(heading,lines)&&note.paper?.photo!==documentPhoto(heading,lines,true))return null;
+  return [heading,'',...lines].join('\n');
+ }
  function mediaExamples(){
   const hand=handwritingExamples.map(([title,lines],i)=>({
    title,text:title,noteKind:'handwriting',paper:paper(i%2?'blank':'lines',inkWords(lines,i%2===0))
@@ -189,6 +199,6 @@
   if(button&&routes.has(button.id))page.close();
  },true);
  window.SEYVEO_NOTEBOOK_SCREEN=Object.freeze({
-  version:4,show:()=>page.show(),close:()=>page.close(),alignExample,polishScanExample
+  version:4,show:()=>page.show(),close:()=>page.close(),alignExample,polishScanExample,scanExampleText
  });
 })();
