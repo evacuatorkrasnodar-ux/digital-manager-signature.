@@ -204,6 +204,8 @@
   (!location.hash||location.hash==='#home')&&
   !document.documentElement.classList.contains('seyveo-conversation');
  const quietHome=()=>ready&&homeVisible()&&!voicePhase&&
+  !root.classList.contains('sv-home-launch-pending')&&
+  root.classList.contains('sv-home-greeting-expired')&&
   root.classList.contains('sv-home-empty-sphere')&&
   root.classList.contains('sv-home-empty-arrived')&&
   !root.classList.contains('sv-broadcast-onboarding')&&
@@ -494,6 +496,7 @@
  window.addEventListener('seyveo:route-changed',()=>{dropIdle();update();});
  window.addEventListener('seyveo:home-sayvi-arrived',event=>{
   dropIdle();
+  if(event.detail?.firstLaunch)idleSince=Date.now()+3500;
   if(event.detail?.afterCards){
    celebrationPending=true;
    clearTimeout(celebrationTimer);
