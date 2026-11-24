@@ -111,6 +111,7 @@ function renderPreview(parent,file){
  // revokes only its own local blob URL. Keep the existing browser fallback.
  const opened=window.SEYVEO_DOCS_VIEWER?.mount?.(parent,file,{
   onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
+  onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
   onSayvi:intent=>goSayvi(intent)
  });
  if(opened&&typeof opened.destroy==='function'){
