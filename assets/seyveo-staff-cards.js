@@ -309,6 +309,7 @@ close.setAttribute('aria-label','Назад к сотрудникам');
 close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';
 const spacer=el('span');spacer.setAttribute('aria-hidden','true');top.append(close,el('h2',null,'Карточка сотрудника'),spacer);modal.append(top);
 const body=el('div','svstaff-content sv-page-scroll');modal.append(body);
+window.SEYVEO_SCROLL_GLASS?.register(modal);
 let chosen=null,lastTrigger=null,leavingForChat=false;
 function summaryStats(target,p){
  const metrics=el('div','svstaff-metrics');
