@@ -38,9 +38,7 @@ const penIcon='<path d="m5 15 12-12 4 4L9 19l-5 1 1-5Zm10-10 4 4"/>';
 const docIcon='<path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/>';
 const imageIcon='<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="2"/><path d="m4 17 5-5 4 4 3-3 5 5"/>';
 const arrowIcon='<path d="m14 6-6 6 6 6"/>';
-const exportIcon='<path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/>';
 const shareIcon='<path d="M12 15V3m-4 4 4-4 4 4M7 9H4v12h16V9h-3"/>';
-const chevron='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
 const menuEdit=menuButton('Редактировать',penIcon);
 
 const menuOriginal=menuButton('Показать оригинал',imageIcon);
@@ -49,12 +47,12 @@ const menuPrint=menuButton('Печать','<path d="M7 8V3h10v5M7 17H5a2 2 0 0 1
 menuEdit.classList.add('sv-scan-menu-section-end');
 const menuBack=menuButton('Назад',arrowIcon);
 const outWord=menuButton('Word (.docx)',docIcon);
-const outPdf=menuButton('PDF · оригинал',docIcon);
+const outPdf=menuButton('PDF',docIcon);
 const outAnnotated=menuButton('PDF · с пометками',docIcon);
-const outJpeg=menuButton('JPEG · оригинал',imageIcon);
-const outTxt=menuButton('TXT · текст',docIcon);
-const outTextPDF=menuButton('PDF · текст',docIcon);
-const groups={root:[menuEdit,menuOriginal,menuShare,menuPrint],share:[menuBack,outTextPDF,outPdf,outAnnotated,outWord,outJpeg,outTxt]};
+const outJpeg=menuButton('Фото (JPEG)',imageIcon);
+const outTxt=menuButton('Текст (TXT)',docIcon);
+const outTextPDF=menuButton('PDF',docIcon);
+const groups={root:[menuEdit,menuOriginal,menuShare,menuPrint],share:[menuBack,outTextPDF,outPdf,outWord,outJpeg,outTxt]};
 for(const node of groups.root)menu.append(node);
 const prepared=document.createElement('div');prepared.id='svScanPrepared';prepared.className='sv-menu-surface';prepared.hidden=true;
 const preparedName=document.createElement('strong');const preparedAction=document.createElement('button');preparedAction.type='button';
@@ -112,7 +110,7 @@ function canvasJpeg(canvas){
 function showPrepared(blob,extension,share){
  clearPrepared();preparedFile=new File([blob],fileBase()+'.'+extension,{type:blob.type});
  preparedName.textContent=preparedFile.name;
- const canShare=!!(navigator.share&&navigator.canShare?.({files:[preparedFile]}));
+ let canShare=false;try{canShare=!!(navigator.share&&navigator.canShare?.({files:[preparedFile]}));}catch{}
  preparedAction.hidden=!canShare;preparedAction.textContent='Поделиться';preparedAction.dataset.share='true';
  prepared.hidden=false;(preparedAction.hidden?preparedDownload:preparedAction).focus({preventScroll:true});
  message('');
@@ -234,7 +232,7 @@ menuEdit.addEventListener('click',()=>{closeMenu();clearPrepared();if(intoOpenNo
 menuOriginal.addEventListener('click',()=>{closeMenu();showDocument(!dialog.hasAttribute('data-scan-reading-text'));});
 menuShare.addEventListener('click',()=>page('share'));
 menuPrint.addEventListener('click',()=>void printScan());
-for(const [node,format] of [[outWord,'docx'],[outPdf,'pdf'],[outAnnotated,'annotated'],[outTextPDF,'textpdf'],[outJpeg,'jpg'],[outTxt,'txt']])node.addEventListener('click',()=>{const share=menuPage==='share';void prepareFormat(format,share);});
+for(const [node,format] of [[outWord,'docx'],[outPdf,'pdf'],[outAnnotated,'annotated'],[outTextPDF,'textpdf'],[outJpeg,'jpg'],[outTxt,'txt']])node.addEventListener('click',()=>{const share=menuPage==='share';const withMarks=format==='pdf'&&(savedScan?.paper?.strokes?.length||savedScan?.paper?.texts?.length);void prepareFormat(withMarks?'annotated':format,share);});
 dialog.append(more,menu);
 async function printScan(){
  if(!selected||running||exportBusy)return;
@@ -269,8 +267,10 @@ function syncMenu(){
 
  menu.dataset.page=menuPage;
  menuOriginal.hidden=menuPage!=='root'||inEdit||typeof savedScan?.scanText!=='string';
- outAnnotated.hidden=menuPage!=='share'||!(savedScan?.paper?.strokes?.length||savedScan?.paper?.texts?.length);
- outTextPDF.hidden=menuPage!=='share'||!text.value.trim();
+ outAnnotated.hidden=true;
+ const shareTextPDF=!!text.value.trim()&&dialog.hasAttribute('data-scan-reading-text');
+ outTextPDF.hidden=menuPage!=='share'||!shareTextPDF;
+ outPdf.hidden=menuPage!=='share'||shareTextPDF;
  outAnnotated.disabled=blocked||!(savedScan?.paper?.strokes?.length||savedScan?.paper?.texts?.length);
  menuLines.setAttribute('aria-checked',String(keepLines?.checked!==false));
  const format=outputIntent.split('-')[0];
