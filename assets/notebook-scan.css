@@ -365,3 +365,13 @@ html body dialog#noteScanDialog.paper-scan-dialog[open] > #noteScanBack{
   max-height:min(28dvh,220px)!important;
  }
 }
+
+/* Temporary OCR test source: only on the initial photo selection stage. */
+html:root body #noteScanDialog #svNoteScanExample{display:none!important}
+html:root body #noteScanDialog[data-step="pick"] #svNoteScanExample{
+ display:block!important;min-height:44px!important;margin:6px auto!important;
+ padding:8px 16px!important;border:0!important;background:transparent!important;
+ box-shadow:none!important;color:var(--text)!important;
+ font:500 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root[data-theme="light"] body #noteScanDialog[data-step="pick"] #svNoteScanExample{color:#176ab4!important}
