@@ -21,23 +21,14 @@ const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPa
 const iosFingerInk=/iPhone|iPod/i.test(navigator.userAgent||'');
 let data={pattern:'blank',background:'dark',height:H,strokes:[],texts:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false,sayviHandoffBusy=false,handwritingPage=false;
 let hiddenTextIndex=-1;
-let scanReturnFile=null,scanReturnPDF=false,scanSaved=false,scanReturnText=false;
+let scanReturnFile=null,scanReturnPDF=false,scanSaved=false;
 const isScan=()=>dialog.classList.contains('sv-paper-scan-page');
 const scanDone=document.createElement('button');
 scanDone.id='svScanAnnotationDone';scanDone.type='button';scanDone.hidden=true;
 scanDone.setAttribute('aria-label','Сохранить пометки');
 scanDone.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.3l4.3 4.3 8.7-9.2"/></svg>';
-const scanHeading=document.createElement('span');scanHeading.id='svScanAnnotationTitle';scanHeading.textContent='Редактирование';scanHeading.hidden=true;
-const scanTextTool=document.createElement('button');scanTextTool.id='svScanAnnotationText';scanTextTool.type='button';scanTextTool.textContent='Текст';scanTextTool.hidden=true;
-dialog.querySelector('.sv-paper-top').append(scanHeading,scanDone,scanTextTool);
-scanTextTool.addEventListener('click',()=>{
- if(pending||!data.photo)return;
- if(changed||!editID){
-  if(!window.confirm('Сохранить документ и перейти к редактированию текста?'))return;
-  scanReturnText=true;$('notePaperSave').click();
-  if(dialog.open)scanReturnText=false;
- }else{scanReturnText=true;dialog.close();}
-});
+const scanHeading=document.createElement('span');scanHeading.id='svScanAnnotationTitle';scanHeading.textContent='Разметка';scanHeading.hidden=true;
+dialog.querySelector('.sv-paper-top').append(scanHeading,scanDone);
 scanDone.addEventListener('click',()=>$('notePaperSave').click());
 function resetScanGeometry(){
  for(const k of ['width','height','left','top'])sheet.style.removeProperty('--sv-scan-'+k);
@@ -1108,7 +1099,7 @@ function open(note=null,options={}){
   const scanPage=options?.scan===true||note?.scanDocument===true||note?.sampleKind==='scan-photo';
   dialog.classList.toggle('sv-paper-handwriting-page',handwritingPage);
   dialog.classList.toggle('sv-paper-scan-page',scanPage);
- resetScanGeometry();scanDone.hidden=!scanPage;scanHeading.hidden=!scanPage;scanTextTool.hidden=!scanPage;scanReturnText=false;
+ resetScanGeometry();scanDone.hidden=!scanPage;scanHeading.hidden=!scanPage;
  scanReturnFile=scanPage?(options?.sourceFile||null):null;
  scanReturnPDF=scanPage&&options?.exportPDF===true;scanSaved=false;
  $('notePaperBack').setAttribute('aria-label',scanPage?'Вернуться к документу':'Вернуться в Блокнот');
@@ -1163,7 +1154,7 @@ function discard(){
 }
 $('notePaperCancel').addEventListener('click',discard);$('notePaperBack').addEventListener('click',discard);
 dialog.addEventListener('cancel',e=>{if(changed&&!window.confirm('Закрыть лист без сохранения?'))e.preventDefault()});
-dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');dialog.classList.remove('sv-paper-inking');if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}liveTail=null;liveMid=null;closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;const original=isScan()&&editID?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===editID):null;const scanner=window.SEYVEO_NOTE_SCANNER;if(original&&scanner?.openSaved?.(original,{exportPDF:scanReturnPDF&&scanSaved,editText:scanReturnText,showMarkup:!scanReturnText}))return;if(isScan()&&scanReturnFile&&scanner?.resumePhoto?.(scanReturnFile))return;window.SEYVEO_NOTES_API?.openNotes()}});
+dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');dialog.classList.remove('sv-paper-inking');if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}liveTail=null;liveMid=null;closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;const original=isScan()&&editID?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===editID):null;const scanner=window.SEYVEO_NOTE_SCANNER;if(original&&scanner?.openSaved?.(original,{exportPDF:scanReturnPDF&&scanSaved}))return;if(isScan()&&scanReturnFile&&scanner?.resumePhoto?.(scanReturnFile))return;window.SEYVEO_NOTES_API?.openNotes()}});
 $('notePaperSave').addEventListener('click',()=>{
  if(pending)return;
  if(isScan()&&!data.photo){report('Дождитесь загрузки документа.');return;}
