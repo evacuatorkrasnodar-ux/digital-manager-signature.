@@ -129,5 +129,5 @@ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWork
 }
 /* Keep the approved Home contrast for unselected text too. */
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:not([hidden]):not([aria-pressed="true"]){
- color:#555a64!important;
+ color:var(--sv-white-pearl-segment-ink,#444B56)!important;
 }
