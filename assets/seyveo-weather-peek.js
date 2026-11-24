@@ -94,8 +94,7 @@
   const dock=document.querySelector('body > footer.dock.sv-shared-dock');
   const dockTop=dock&&!dock.hidden?dock.getBoundingClientRect().top:viewTop+viewHeight-72;
   const maxBottom=Math.min(viewTop+viewHeight-12,dockTop-12);
-  /* Home: center the card in the real gap between Sayvi's visible
-     text (including its action) and the existing weekly weather row.
+  /* Home: anchor the full card directly above the weekly weather row.
      Do not move the sphere, shortcuts or dock. */
   let y;
   if(homeMode){
@@ -116,38 +115,9 @@
    if(physicalRoom<180){close(true);return;}
    panel.style.setProperty('--sv-home-peek-room',physicalRoom+'px');
    const height=panel.offsetHeight;
-   // Center between the actual thought/action and the week, not the
-   // sphere or viewport. The thought's entrance fade is not a layout change.
-   let upperEdge=viewTop+Math.max(42,Math.min(68,viewHeight*.09))-12;
-   const root=document.documentElement;
-   const thought=document.getElementById('svHomeLivingLine');
-   const boxes=[];
-   function reserve(el){
-    if(!el||el.closest('[hidden]')||getComputedStyle(el).display==='none')return;
-    const box=el.getBoundingClientRect();
-    if(box.height>0&&box.width>0&&box.bottom>viewTop&&box.top<bottomLimit)
-     boxes.push(box);
-   }
-   reserve(document.querySelector('#homePage .sv-sayvi-home-online'));
-   if(!root.classList.contains('sv-home-greeting-expired')&&!root.classList.contains('sv-home-greeting-fading')){
-    reserve(document.getElementById('headline'));
-    reserve(document.getElementById('subline'));
-   }
-   if(thought&&!thought.hidden&&getComputedStyle(thought).display!=='none'){
-    // Measure both the real text face and its action, even at opacity 0
-    // during the entrance. Ignore the invisible expired greeting entirely.
-    reserve(thought.querySelector('.sv-home-living-copy'));
-    reserve(thought.querySelector('.sv-home-living-actions'));
-    reserve(thought.querySelector('.sv-home-living-action'));
-   }
-   // Upper text belongs above the weather card. Ignore lower/off-screen
-   // legacy boxes that cannot possibly leave space for a full card.
-   const latestTop=bottomLimit-height;
-   for(const box of boxes){
-    if(box.bottom+12<=latestTop)upperEdge=Math.max(upperEdge,box.bottom);
-   }
-   const allowedTop=Math.min(latestTop,Math.max(safeTop,upperEdge+12));
-   y=allowedTop+Math.max(0,(bottomLimit-allowedTop-height)/2);
+   // Anchor directly above the week. Prefer 40px clearance, retaining
+   // at least the existing 12px safety gap when the viewport is short.
+   y=Math.max(safeTop,bottomLimit-height-28);
 
   }else{
    /* Agenda keeps its own central placement below the date rail. */
