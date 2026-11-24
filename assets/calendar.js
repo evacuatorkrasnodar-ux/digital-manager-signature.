@@ -416,7 +416,8 @@ function renderWeekTimeline(list){
    button.append(text('span','cal-timeline-time-label',slot.item.time+(explicitDuration?' – '+endLabel:'')));
    if(!explicitDuration){
     button.dataset.durationUnknown='true';
-    button.style.height=Math.min(24,Math.max(1,slot.end-slot.start-2))+'px';
+    if(laneCount>1)button.dataset.compactStacked='true';
+    button.style.height=Math.min(laneCount>1?28:24,Math.max(1,slot.end-slot.start-2))+'px';
    }
    layer.append(button);
   }
