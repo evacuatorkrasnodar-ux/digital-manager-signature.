@@ -184,3 +184,10 @@ html:root body #svWorkShell[data-shared-work="true"][data-active="wallet"] > dia
   background:#fff!important;
  }
 }
+
+/* Shared under-dock fade. The measured stops reproduce the approved calendar
+   List transition; only alpha changes, no painted backdrop or blur layer. */
+html:root body [data-sv-dock-fade="true"]{
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - var(--sv-fade-start,72px)),rgba(0,0,0,.18) calc(100% - var(--sv-fade-mid,50px)),transparent calc(100% - var(--sv-fade-end,42px)),transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - var(--sv-fade-start,72px)),rgba(0,0,0,.18) calc(100% - var(--sv-fade-mid,50px)),transparent calc(100% - var(--sv-fade-end,42px)),transparent 100%)!important;
+}
