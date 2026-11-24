@@ -555,27 +555,31 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
 }
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-auto[aria-pressed="true"] svg{stroke:#087DF1!important}
-/* The selected segment sits inside the same 38px track, with equal insets. */
+/* Flat, symmetric segmented control. */
 dialog#svHomeFavoritesEditor .sv-home-favorites-tabs:not([hidden]){
  box-sizing:border-box!important;display:grid!important;
- grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:30px!important;
- height:38px!important;min-height:38px!important;max-height:38px!important;
- align-items:center!important;align-content:center!important;gap:2px!important;
- padding:3px!important;border-radius:999px!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ grid-template-rows:minmax(0,1fr)!important;
+ height:36px!important;min-height:36px!important;max-height:36px!important;
+ align-items:stretch!important;gap:0!important;padding:3px!important;
+ border:0!important;border-radius:18px!important;
+ background:rgba(127,127,127,.10)!important;box-shadow:none!important;
 }
 dialog#svHomeFavoritesEditor .sv-home-favorites-tabs > button{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
- height:30px!important;min-height:30px!important;max-height:30px!important;
- padding:0 6px!important;margin:0!important;transform:none!important;
+ width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
+ padding:0!important;margin:0!important;transform:none!important;
+ border:0!important;border-radius:15px!important;box-shadow:none!important;
 }
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-tabs:not([hidden]){
- background:var(--sv-white-pearl-surface)!important;border:var(--sv-white-pearl-edge)!important;
- box-shadow:var(--sv-white-pearl-dock-shadow)!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+ background:#ededf0!important;border:0!important;box-shadow:none!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-tabs button[aria-selected="true"]{
- background:var(--sv-white-pearl-selected,rgba(255,255,255,.96))!important;
- border:var(--sv-white-pearl-edge)!important;box-shadow:var(--sv-white-pearl-selected-shadow)!important;
+ background:#fff!important;border:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-head{
+ background:#fff!important;border-radius:22px!important;
 }
 /* Application tiles have their own quiet card material, not the
    round-button Pearl finish. Selection is a restrained blue tint. */
