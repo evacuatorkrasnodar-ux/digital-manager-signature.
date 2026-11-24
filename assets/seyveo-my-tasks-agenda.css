@@ -1060,12 +1060,12 @@ html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode=
    No separate overlay: the next day pushes the previous label away. */
 html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading{
  display:flex!important;position:sticky!important;top:0!important;z-index:3!important;
- min-height:34px!important;margin:0!important;padding-block:5px!important;
+ min-height:40px!important;margin:0!important;padding-block:8px!important;
  background:#fff!important;box-shadow:none!important;
 }
 html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading{background:#17191D!important;}
  html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList.personal-tasks-list{
- padding-top:0!important;scroll-padding-top:34px!important;
+ padding-top:0!important;scroll-padding-top:40px!important;
  isolation:isolate;overflow-y:auto!important;
 }
 html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate{
@@ -1078,12 +1078,22 @@ html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([d
  left:30px!important;right:16px!important;bottom:0!important;height:1px!important;
  background:rgba(60,70,82,.09)!important;pointer-events:none!important;z-index:2!important;
 }
-#tasksPage #personalTaskList .sv-agenda-day-group + .sv-agenda-day-group > .sv-agenda-section-heading{
- border-top:1px solid rgba(60,70,82,.13)!important;
+/* A distinct date hierarchy without surrounding cards or colored panels. */
+#tasksPage #personalTaskList .sv-agenda-day-group + .sv-agenda-day-group{
+ margin-top:12px!important;
+}
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group + .sv-agenda-day-group > .sv-agenda-section-heading{
+ border-top:1px solid rgba(60,70,82,.21)!important;
+}
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-section-heading strong{
+ font-size:15px!important;font-weight:700!important;letter-spacing:.005em!important;
+}
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-section-date{
+ font-size:13px!important;font-weight:550!important;
 }
 html:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-day-group > .personal-task-row.sv-agenda-entry:not(:last-child)::after{
  background:rgba(255,255,255,.09)!important;
 }
-html:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-day-group + .sv-agenda-day-group > .sv-agenda-section-heading{
- border-top-color:rgba(255,255,255,.15)!important;
+html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group + .sv-agenda-day-group > .sv-agenda-section-heading{
+ border-top-color:rgba(255,255,255,.21)!important;
 }
