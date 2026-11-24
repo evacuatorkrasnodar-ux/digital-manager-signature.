@@ -3,6 +3,8 @@
 'use strict';
 const $=id=>document.getElementById(id),dialog=$('svStaffInvitePage'),form=$('svStaffInviteForm'),open=$('svStaffInvite'),photo=$('svInvitePhoto'),image=$('svInvitePhotoPreview'),initials=$('svInviteInitials'),result=$('svInviteResult');
 if(!dialog||!form||!open)return;
+// Like staff and candidate detail, mount outside the cabinet's clipped shell.
+if(dialog.parentElement!==document.body)document.body.appendChild(dialog);
 let method='link',photoUrl=null;
 function clearResult(){result.hidden=true;$('svInviteQr').replaceChildren();$('svInviteQr').hidden=true;$('svInviteLink').hidden=true;}
 function updateInitials(){initials.textContent=form.elements.name.value.trim().split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'+';}
@@ -22,6 +24,7 @@ form.querySelectorAll('[data-invite-method]').forEach(button=>button.addEventLis
 }));
 open.addEventListener('click',()=>{
  if(dialog.open)return;clearResult();updateInitials();dialog.showModal();$('svStaffInvitePageScroll').scrollTop=0;window.SEYVEO_DOCK_CONTINUITY?.refresh?.();
+ requestAnimationFrame(()=>{if(dialog.open)window.SEYVEO_DOCK_CONTINUITY?.refresh?.();});
 });
 $('svStaffInviteBack').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('close',()=>{if($('svcpManagerPeople')?.open)open.focus({preventScroll:true});});
