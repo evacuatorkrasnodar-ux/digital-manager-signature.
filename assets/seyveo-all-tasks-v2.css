@@ -202,3 +202,22 @@ html:root[data-theme="light"] body #svTaskActionCapsule{
 html:root[data-theme="light"] body #svTaskActionCapsule .sv-task-all{
  background:var(--sv-white-pearl-selected,rgba(255,255,255,.74))!important;
 }
+/* Idle bulk actions quietly leave the reading surface during native scrolling.
+   The reserved list space never changes. Selected tasks keep actions visible. */
+#svTaskActionCapsule{
+ opacity:1;
+ transition:opacity .20s ease,transform .24s cubic-bezier(.22,.75,.25,1),visibility 0s;
+}
+#svTaskActionCapsule.sv-bulk-scrolling:not(:focus-within){
+ opacity:0!important;
+ transform:translate(-50%,12px)!important;
+ visibility:hidden;
+ pointer-events:none!important;
+ transition:opacity .18s ease,transform .22s ease,visibility 0s linear .22s;
+}
+@media(prefers-reduced-motion:reduce){
+ #svTaskActionCapsule,#svTaskActionCapsule.sv-bulk-scrolling:not(:focus-within){
+  transition:none!important;
+  transform:translateX(-50%)!important;
+ }
+}
