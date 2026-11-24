@@ -2,12 +2,14 @@
 (()=>{
 'use strict';
 const ids=['seyveoCompanyDialog','seyveoQrCardDialog','seyveoContactsDialog','picturePage','svcpManagerPeople','svStaffInvitePage','svRecruitDetail','svHrInterview'];
-for(const id of ids){
- const screen=document.getElementById(id);
- const body=document.getElementById(id+'Scroll');
- if(!screen||!body)continue;
+const mounted=new WeakSet();
+function register(screen){
+ if(!screen||mounted.has(screen))return;
+ const body=Array.from(screen.children).find(el=>el.classList.contains('sv-page-scroll'));
+ if(!body)return;
  const header=Array.from(screen.children).find(el=>el.matches('header,.seyveo-passport-dialog-head'));
- if(!header)continue;
+ if(!header)return;
+ mounted.add(screen);
  const isActive=()=>screen.tagName==='DIALOG'?screen.open:!screen.hidden;
  const material=document.createElement('span');
  material.className='sv-scroll-glass-material';
@@ -47,4 +49,8 @@ for(const id of ids){
  window.addEventListener('resize',measure,{passive:true});
  if(isActive())measure();
 }
+function init(){for(const id of [...ids,'svStaffProfile'])register(document.getElementById(id));}
+window.SEYVEO_SCROLL_GLASS=Object.freeze({register});
+init();
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
 })();
