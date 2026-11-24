@@ -1092,3 +1092,16 @@ html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode=
 html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group + .sv-agenda-day-group > .sv-agenda-section-heading{
  border-top-color:#41454C!important;
 }
+
+/* Soften only the lower edge of the currently pinned date caption.
+   No bottom mask, dock background, or scroll geometry change. */
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading[data-sv-edge-fade]::after{
+ content:""!important;display:block!important;position:absolute!important;
+ top:100%!important;bottom:auto!important;left:0!important;right:0!important;height:12px!important;
+ background:linear-gradient(to bottom,#fff 0%,rgba(255,255,255,0) 100%)!important;
+ pointer-events:none!important;border:0!important;
+ opacity:var(--sv-agenda-edge-opacity,1)!important;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading[data-sv-edge-fade]::after{
+ background:linear-gradient(to bottom,#17191D 0%,rgba(23,25,29,0) 100%)!important;
+}
