@@ -52,15 +52,21 @@ html:root[data-theme="light"] body #svAllTasksView .sv-tool-input{
  box-sizing:border-box;display:block;flex:1 1 auto;min-width:0;min-height:0;
  overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;
  overscroll-behavior-y:contain;scrollbar-width:none;
- padding:0 0 calc(84px + env(safe-area-inset-bottom,0px));
+ padding:0 0 8px;
  background:transparent;border:0;box-shadow:none;
 }
 #svAllTasksView .sv-tool-results::-webkit-scrollbar{display:none}
-html.sv-task-selection-active #svAllTasksView .sv-tool-results{padding-bottom:76px}
+/* Reserve physical space for the stationary action capsule, not extra scrolling padding. */
+html:root body #svWorkShell[data-task-tool-mode="all"] #svAllTasksView .sv-tool-results{
+ flex:1 1 0!important;min-height:0!important;
+ margin-bottom:calc(max(12px,env(safe-area-inset-bottom,0px)) + 54px)!important;
+ padding-bottom:8px!important;scroll-padding-bottom:8px!important;
+}
+html:root.sv-task-search-focus body #svWorkShell[data-task-tool-mode="all"] #svAllTasksView .sv-tool-results{margin-bottom:0!important;}
 
 #svAllTasksView .sv-tool-result{
  box-sizing:border-box;display:flex;align-items:center;gap:11px;
- min-height:70px;padding:11px 14px;border-bottom:1px solid #E7EAF0;
+ min-height:70px;padding:11px 14px;border-bottom:.5px solid #E7EAF0;
  background:transparent;
 }
 #svAllTasksView .sv-tool-result:last-child{border-bottom-color:transparent}
@@ -169,4 +175,28 @@ html:has(#svWorkShell[data-task-tool-mode="all"]) body > footer.dock.sv-shared-d
   background:#FFF!important;background-image:none!important;
   border:0!important;border-radius:0!important;box-shadow:none!important;
  }
+}
+
+/* Full-width task action: the check circle remains a separate control.
+   Restore remains an explicitly named action for completed tasks. */
+#svAllTasksView .sv-tool-result > button.sv-tool-open-row{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ flex:1 1 0!important;min-width:0!important;gap:12px!important;
+ text-align:left!important;padding:0!important;margin:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+ color:#8995a3!important;transform:none!important;
+}
+#svAllTasksView .sv-tool-chevron{
+ display:grid;place-items:center;flex:0 0 20px;width:20px;height:24px;
+}
+#svAllTasksView .sv-tool-chevron svg{width:18px;height:18px;display:block;}
+html:root[data-theme="light"] body #svTaskActionCapsule{
+ border:var(--sv-white-pearl-edge)!important;
+ background:var(--sv-white-pearl-surface)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+html:root[data-theme="light"] body #svTaskActionCapsule .sv-task-all{
+ background:var(--sv-white-pearl-selected,rgba(255,255,255,.74))!important;
 }
