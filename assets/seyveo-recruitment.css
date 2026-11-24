@@ -298,8 +298,7 @@ html:root body dialog#svStaffInvitePage > .sv-recruit-head{margin-bottom:4px}
 #svStaffInvitePage #svInviteQr{max-width:100%}
 @media(prefers-reduced-motion:reduce){#svStaffInvitePage .sv-invite-access-list label i::after{transition:none}}
 
-/* Invitation is a full-bleed top-layer destination, not an inset card.
-   Its real dock remains fixed over the one scrolling canvas. */
+/* Invitation is a full-bleed focused form without the shared dock. */
 html:root body > dialog#svStaffInvitePage.sv-recruit-page[open]{
  position:fixed!important;inset:0!important;margin:0!important;transform:none!important;
  width:auto!important;min-width:0!important;max-width:none!important;box-sizing:border-box!important;
@@ -311,13 +310,10 @@ html:root body > dialog#svStaffInvitePage.sv-recruit-page[open]{
 html:root[data-theme="light"] body > dialog#svStaffInvitePage.sv-recruit-page[open]{background:#fff!important}
 html:root body > dialog#svStaffInvitePage[open]::backdrop{background:var(--bg,#fff)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 html:root[data-theme="light"] body > dialog#svStaffInvitePage[open]::backdrop{background:#fff!important}
-html:root body > dialog#svStaffInvitePage.seyveo-dock-host[open] > footer.dock{
- position:fixed!important;display:grid!important;visibility:visible!important;opacity:1!important;
- top:auto!important;bottom:var(--seyveo-dock-bottom,7px)!important;z-index:90!important;pointer-events:auto!important;
- background:transparent!important;background-image:none!important;
-}
+html:root body > dialog#svStaffInvitePage[open] > footer.dock{display:none!important}
+
 html:root body > dialog#svStaffInvitePage[open] > #svStaffInvitePageScroll{
  flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;
- padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
- scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
+ padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
 }
