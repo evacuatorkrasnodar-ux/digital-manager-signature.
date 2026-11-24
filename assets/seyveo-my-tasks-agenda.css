@@ -685,25 +685,11 @@ html.sv-agenda-scroll-active .app{
  display:none;
 }
 
-/* iPhone agenda reading mode: the approved dock remains a single 60px unit.
-   Only its position/visibility changes, never its materials or icons. */
-@media (max-width:699px) and (hover:none) and (pointer:coarse){
- html.sv-agenda-scroll-active body > footer.dock.sv-shared-dock{
-  transition:transform .22s cubic-bezier(.22,.8,.28,1),opacity .16s ease!important;
- }
- :root.sv-agenda-scroll-active.sv-agenda-dock-minimized :is(
-  body > footer.dock.sv-shared-dock,
-  body dialog.seyveo-dock-host[open]:not([data-space="health"]):not(#svStaffProfile) > footer.dock.sv-shared-dock
- ){
-  transform:translate3d(0,calc(100% + 24px + env(safe-area-inset-bottom,0px)),0)!important;
-  opacity:0!important;
-  pointer-events:none!important;
- }
+/* Stationary navigation: both the shared upper capsule and the existing
+   dock keep their original geometry while the task list scrolls. */
+#svWorkShell[data-agenda-scroll="true"] > :is(seyveo-work-head,#svWorkTabs){
+ flex:0 0 auto!important;
 }
-@media (prefers-reduced-motion:reduce){
- html.sv-agenda-scroll-active body > footer.dock.sv-shared-dock{transition:none!important}
-}
-
 
 /* SEYVEO motion polish · calm transitions without moving approved geometry.
    Native touch momentum stays native; never apply CSS smooth scrolling globally. */
