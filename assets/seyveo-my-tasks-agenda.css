@@ -164,7 +164,7 @@
  border-radius:0!important;box-shadow:none!important;
  overflow:visible!important;
 }
-#tasksPage #personalTaskList .sv-agenda-section-heading{
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading{
  box-sizing:border-box!important;display:flex!important;
  align-items:center!important;justify-content:flex-start!important;
  gap:6px!important;width:100%!important;
@@ -173,42 +173,42 @@
  position:relative!important;
  color:#17191E!important;letter-spacing:0!important;
 }
-#tasksPage #personalTaskList .sv-agenda-section-heading::before{display:none!important;content:none!important}
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading::before{display:none!important;content:none!important}
 /* Thin section dividers: equal visual gutters, independent of content length. */
-#tasksPage #personalTaskList .sv-agenda-section-heading:not(:first-child)::after{
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading:not(:first-child)::after{
  content:"";display:block;position:absolute;top:0;left:0;right:0;height:1px;
  background:#E7EAF0;pointer-events:none;
 }
 @media(max-width:767px){
- #tasksPage #personalTaskList .sv-agenda-section-heading:not(:first-child)::after{right:0}
+ #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading:not(:first-child)::after{right:0}
 }
-#tasksPage #personalTaskList .sv-agenda-section-heading:first-child{
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading:first-child{
  margin-top:0!important;border-top:0!important;
 }
-#tasksPage #personalTaskList .sv-agenda-section-heading:first-child::before{display:none;}
-#tasksPage #personalTaskList .sv-agenda-section-heading strong{
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading:first-child::before{display:none;}
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading strong{
  font:700 13px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
  text-transform:uppercase!important;
 }
-#tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-section-date{
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading .sv-agenda-section-date{
  color:#858B95!important;
  font:520 12.5px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
  font-variant-numeric:tabular-nums;
 }
 /* Apple Calendar: Today is a compact, prominent caption right below the day rail. */
-#tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"]{
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-today="true"]{
  margin-top:0!important;padding:3px 13px 5px!important;
 }
-#tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] strong,
-#tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-section-date{
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-today="true"] strong,
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-today="true"] .sv-agenda-section-date{
  color:#109BDD!important;
  line-height:1.2!important;
 }
-#tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] strong{
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-today="true"] strong{
  font-size:13px!important;font-weight:660!important;letter-spacing:.003em!important;
  text-transform:uppercase!important;
 }
-#tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-section-date{
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-today="true"] .sv-agenda-section-date{
  font-size:12.5px!important;font-weight:520!important;
 }
 #tasksPage #personalTaskList .sv-agenda-empty-day{
@@ -409,7 +409,7 @@
 }
 @media(max-width:380px){
  #tasksPage #svTasksDateNav .sv-agenda-week{padding-inline:0}
- #tasksPage #personalTaskList .sv-agenda-section-heading{padding-inline:8px!important}
+ #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading{padding-inline:8px!important}
  #tasksPage #personalTaskList .sv-agenda-entry{padding-inline:8px!important}
  #tasksPage #personalTaskList .sv-agenda-empty-day{padding-inline:10px!important}
  #tasksPage #svTasksDateNav .sv-agenda-day-number{width:34px;height:34px;font-size:19px}
@@ -443,15 +443,15 @@
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-filter[data-kind="personal"]{
  background:#363941;color:#D8D8E1;border-color:#4E515C;
 }
-:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading{
+:root[data-theme="dark"] #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading{
  color:#F4F5F7!important;border-top-color:#42464F!important;
 }
-:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading:not(:first-child)::after{background:#42464F}
-:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-section-date{
+:root[data-theme="dark"] #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading:not(:first-child)::after{background:#42464F}
+:root[data-theme="dark"] #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading .sv-agenda-section-date{
  color:#A5AAB4!important;
 }
-:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] strong,
-:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-section-date{
+:root[data-theme="dark"] #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-today="true"] strong,
+:root[data-theme="dark"] #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-today="true"] .sv-agenda-section-date{
  color:#69C5F4!important;
 }
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-empty-day{
@@ -564,25 +564,25 @@
 
 
 /* Sayvi Weather: tiny real daily forecast aligned to the right of each agenda date. */
-#tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather{
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading .sv-agenda-weather{
  box-sizing:border-box;display:inline-flex!important;align-items:center;justify-content:flex-end;
  flex:0 0 auto;gap:2px;margin-left:auto;padding-left:4px;
  white-space:nowrap;font:600 11.5px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
  font-variant-numeric:tabular-nums;color:#252A32!important;
 }
-#tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather[hidden]{display:none!important}
-#tasksPage #personalTaskList .sv-agenda-weather-high{font-weight:660;color:#252A32}
-#tasksPage #personalTaskList .sv-agenda-weather-low{font-weight:500;color:#9196A0}
-#tasksPage #personalTaskList .sv-agenda-weather-icon{
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading .sv-agenda-weather[hidden]{display:none!important}
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-weather-high{font-weight:660;color:#252A32}
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-weather-low{font-weight:500;color:#9196A0}
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-weather-icon{
  display:inline-grid;place-items:center;width:23px;height:23px;flex:0 0 23px;margin-left:2px;
 }
-#tasksPage #personalTaskList .sv-agenda-weather-icon svg{display:block;width:23px;height:23px;overflow:visible}
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-weather-icon svg{display:block;width:23px;height:23px;overflow:visible}
 /* Source credit stays out of the agenda list. On touch, tapping the forecast reveals it. */
 @media (hover:none) and (pointer:coarse){
- #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather{
+ #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather{
   position:relative;cursor:pointer;touch-action:manipulation;
  }
- #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather::before{
+ #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather::before{
   content:"";position:absolute;inset:-9px -3px;
  }
 }
@@ -600,9 +600,9 @@
  color:#202329;text-decoration:none;font-weight:600;
 }
 .sv-agenda-weather-popover-links a:last-child{font-size:10.5px;color:#868B94;font-weight:500}
-:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather,
-:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-weather-high{color:#F3F4F6!important}
-:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-weather-low{color:#B1B5BF}
+:root[data-theme="dark"] #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading .sv-agenda-weather,
+:root[data-theme="dark"] #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-weather-high{color:#F3F4F6!important}
+:root[data-theme="dark"] #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-weather-low{color:#B1B5BF}
 :root[data-theme="dark"] .sv-agenda-weather-popover{
  background:#292B2E;border-color:#47494E;color:#F3F4F6;
 }
@@ -610,12 +610,12 @@
 :root[data-theme="dark"] .sv-agenda-weather-popover-links a{color:#F3F4F6}
 :root[data-theme="dark"] .sv-agenda-weather-popover-links a:last-child{color:#C0C3CA}
 @media(max-width:380px){
- #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather{
+ #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading .sv-agenda-weather{
   font-size:10.5px!important;gap:1px;padding-left:2px;
  }
- #tasksPage #personalTaskList .sv-agenda-weather-icon,
- #tasksPage #personalTaskList .sv-agenda-weather-icon svg{width:20px;height:20px}
- #tasksPage #personalTaskList .sv-agenda-weather-icon{flex-basis:20px;margin-left:1px}
+ #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-weather-icon,
+ #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-weather-icon svg{width:20px;height:20px}
+ #tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-weather-icon{flex-basis:20px;margin-left:1px}
 }
 
 /* Linked Apple-style agenda scrolling: the shared header, tab capsule and
@@ -915,8 +915,8 @@ html body #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] #svWo
 }
 
 /* Today's weather is a quiet, accessible tap target. Other dates stay informational. */
-#tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather{cursor:pointer!important;-webkit-tap-highlight-color:transparent;}
-#tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather:focus-visible{outline:2px solid #6e8299;outline-offset:3px;border-radius:5px}
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather{cursor:pointer!important;-webkit-tap-highlight-color:transparent;}
+#tasksPage :is(#personalTaskList,#svAgendaPinnedDate) .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather:focus-visible{outline:2px solid #6e8299;outline-offset:3px;border-radius:5px}
 
 /* SEYVEO · TEMPORARY 10-DAY / DAY & NIGHT · minimal iPhone forecast.
    One actual date tile: day above night, tiny weather sign plus degrees.
@@ -1048,66 +1048,33 @@ html[data-sv-weather-mode="true"] #tasksPage #svTasksDateNav
  }
 }
 
-/* Agenda day headers pin below the fixed date rail, then yield to the next day.
-   No extra footer or separate overlay; all entries keep their native scroll. */
+/* One independent date row. The list never paints over the calendar or its
+   caption, and changing days replaces text rather than pushing two headers. */
 #tasksPage #personalTaskList .sv-agenda-day-group{
  display:block;position:relative;width:100%;margin:0;padding:0;
  border:0;background:transparent;overflow:visible;
 }
-html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading{
- position:-webkit-sticky!important;position:sticky!important;
- top:0!important;z-index:4!important;
- min-height:34px!important;margin:0!important;
- padding-block:5px!important;
- background:#fff!important;
+#tasksPage #svAgendaPinnedDate{display:none;}
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate{
+ display:block!important;flex:0 0 auto!important;min-height:34px!important;
+ position:relative!important;z-index:2!important;
+ margin:0!important;padding:0!important;border:0!important;
+ background:#fff!important;box-shadow:none!important;
 }
-html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group:not(:first-child) > .sv-agenda-section-heading::after{
- content:"";display:block;position:absolute;top:0;left:0;right:0;height:1px;
- background:#E7EAF0;pointer-events:none;
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate .sv-agenda-section-heading{
+ display:flex!important;position:relative!important;min-height:34px!important;
+ padding-block:5px!important;margin:0!important;border:0!important;
+ background:transparent!important;box-shadow:none!important;
 }
-html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading{
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate .sv-agenda-section-heading::before,
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate .sv-agenda-section-heading::after{
+ content:none!important;display:none!important;
+}
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading{display:none!important;}
+html:root body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList.personal-tasks-list{
+ padding-top:0!important;scroll-padding-top:0!important;
+ isolation:isolate;overflow-y:auto!important;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate{
  background:#17191D!important;
 }
-html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading::after{background:#42464F;}
-
-/* Keep the pinned date seam opaque: no moving text in the thin gap
-   between the calendar rail and the sticky day header. */
-html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list{
- padding-top:0!important;
- scroll-padding-top:0!important;
- isolation:isolate;
-}
-html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading{
- top:0!important;
- z-index:8!important;
-}
-html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading::before{
- content:""!important;
- display:block!important;
- position:absolute!important;
- top:-8px;left:0;right:0;height:8px;
- background:inherit!important;
- pointer-events:none;
-}
-
-/* Soften the moving row's exit beneath the pinned date. The upper seam
-   remains opaque; the lower seam fades only the moving content. */
-html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading{
- --sv-agenda-header-rgb:255,255,255;
- padding-bottom:8px!important;
-}
-html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group:not(:first-child) > .sv-agenda-section-heading{
- box-shadow:none!important;
- border-top:0!important;
-}
-html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading::after,
-html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group:not(:first-child) > .sv-agenda-section-heading::after{
- content:""!important;display:block!important;position:absolute!important;
- top:auto!important;bottom:-12px!important;left:0;right:0;height:12px!important;
- background:linear-gradient(to bottom,rgba(var(--sv-agenda-header-rgb),1) 0%,rgba(var(--sv-agenda-header-rgb),.86) 30%,rgba(var(--sv-agenda-header-rgb),0) 100%)!important;
- pointer-events:none!important;
-}
-html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading{
- --sv-agenda-header-rgb:23,25,29;
-}
-
