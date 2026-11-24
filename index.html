@@ -4379,6 +4379,17 @@ document.addEventListener('keydown',event=>{
  }
 });
 $('notesDialog').addEventListener('close',closeNotebookListMenu);
+function closeNoteRowMenus(){
+ const list=$('notesList');
+ list.querySelectorAll('.sv-nb4-actions').forEach(el=>el.hidden=true);
+ list.querySelectorAll('.sv-nb4-open,.sv-nb4-more').forEach(el=>el.setAttribute('aria-expanded','false'));
+}
+document.addEventListener('pointerdown',event=>{
+ if(!event.target.closest?.('.sv-nb4-actions,.sv-nb4-more,.sv-nb4-open'))closeNoteRowMenus();
+},true);
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeNoteRowMenus();});
+$('notesList').addEventListener('scroll',closeNoteRowMenus,{passive:true});
+$('notesDialog').addEventListener('close',closeNoteRowMenus);
 $('notesList').addEventListener('scroll',()=>{
  closeNotebookListMenu();
  $('notesDialog').classList.toggle('sv-nb-list-scrolled',$('notesList').scrollTop>1);
@@ -4433,7 +4444,7 @@ function renderNotes(){
   swipeMore.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11v8h12v-8M12 3v11M8.5 6.5 12 3l3.5 3.5"/></svg><span>Ещё</span>';
   const controls=document.createElement('div');controls.className='sv-nb4-front';
   let suppressNoteClickUntil=0;
-  const open=document.createElement('button');open.type='button';open.className='sv-nb4-open';open.setAttribute('aria-label','Открыть запись');
+  const open=document.createElement('button');open.type='button';open.className='sv-nb4-open';open.setAttribute('aria-label','Открыть запись: '+content.textContent);open.setAttribute('aria-haspopup','true');open.setAttribute('aria-expanded','false');
   const copy=document.createElement('span');copy.className='sv-nb4-details';copy.append(content);if(excerpt)copy.append(excerpt);copy.append(date);
   if(thumbnail)open.append(thumbnail);
   open.append(copy);
@@ -4457,32 +4468,30 @@ function renderNotes(){
     detail:{text:note.text,...(hint?{date:hint.date}:{})}
    }));
   });
-  const more=document.createElement('button');more.type='button';more.className='sv-nb4-dots';
-  more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.75"/><circle cx="12" cy="12" r="1.75"/><circle cx="19" cy="12" r="1.75"/></svg>';more.setAttribute('aria-label','Действия с записью');
-  more.setAttribute('aria-expanded','false');
   const menu=document.createElement('div');menu.className='sv-nb4-actions';menu.hidden=true;
   function action(label,callback,cls=''){
    const button=document.createElement('button');button.type='button';button.textContent=label;
    if(cls)button.className=cls;
    button.addEventListener('click',()=>{
-    menu.hidden=true;more.setAttribute('aria-expanded','false');swipeMore.setAttribute('aria-expanded','false');callback();
+    menu.hidden=true;open.setAttribute('aria-expanded','false');swipeMore.setAttribute('aria-expanded','false');callback();
    });
    menu.append(button);
   }
   action('Поделиться',()=>{shareNote(note)});
   action('Распечатать',()=>{printNote(note)});
   action('Удалить',()=>deleteNoteWithUndo(note),'sv-nb4-danger');
-  function toggleActions(fromSwipe=false){
-   if(!fromSwipe&&Date.now()<suppressNoteClickUntil)return;
+  function toggleActions(fromSwipe=false,forceOpen=false){
+   if(!fromSwipe&&!forceOpen&&Date.now()<suppressNoteClickUntil)return;
+   if(forceOpen&&!menu.hidden)return;
+   const rect=(fromSwipe?swipeMore:open).getBoundingClientRect();
    container.querySelectorAll('.sv-nb4-slide.is-open').forEach(el=>el.classList.remove('is-open'));
    const expanding=menu.hidden;
    container.querySelectorAll('.sv-nb4-actions').forEach(el=>{el.hidden=true});
-   container.querySelectorAll('.sv-nb4-dots').forEach(el=>el.setAttribute('aria-expanded','false'));
+   container.querySelectorAll('.sv-nb4-open').forEach(el=>el.setAttribute('aria-expanded','false'));
    container.querySelectorAll('.sv-nb4-more').forEach(el=>el.setAttribute('aria-expanded','false'));
    if(expanding){
     // Use viewport coordinates: the scrolling list clips absolute menus,
     // especially the last saved note and its Delete action.
-    const rect=(fromSwipe?swipeMore:more).getBoundingClientRect();
     const viewportWidth=window.innerWidth||document.documentElement?.clientWidth||390;
     const viewportHeight=window.innerHeight||document.documentElement?.clientHeight||720;
     const menuWidth=Math.min(190,viewportWidth-24);
@@ -4496,10 +4505,35 @@ function renderNotes(){
     menu.style.setProperty('--sv-nb-actions-top',Math.round(top)+'px');
     menu.style.setProperty('--sv-nb-actions-left',Math.round(left)+'px');
    }
-   menu.hidden=!expanding;more.setAttribute('aria-expanded',String(expanding));
+   menu.hidden=!expanding;open.setAttribute('aria-expanded',String(expanding));
    swipeMore.setAttribute('aria-expanded',String(expanding));
   }
-  more.addEventListener('click',()=>toggleActions(false));
+  // Long press or right click exposes the same actions as a left swipe.
+  let holdTimer=0,holdPoint=null;
+  function cancelHold(){clearTimeout(holdTimer);holdTimer=0;holdPoint=null;}
+  function showContext(){
+   suppressNoteClickUntil=Date.now()+750;
+   toggleActions(false,true);
+  }
+  open.addEventListener('pointerdown',event=>{
+   if(!event.isPrimary||event.button!==0)return;
+   cancelHold();
+   holdPoint={id:event.pointerId,x:event.clientX,y:event.clientY};
+   holdTimer=setTimeout(()=>{cancelHold();showContext();},550);
+  });
+  open.addEventListener('pointermove',event=>{
+   if(holdPoint&&event.pointerId===holdPoint.id&&
+    Math.hypot(event.clientX-holdPoint.x,event.clientY-holdPoint.y)>8)cancelHold();
+  });
+  for(const name of ['pointerup','pointercancel','pointerleave'])open.addEventListener(name,cancelHold);
+  open.addEventListener('contextmenu',event=>{
+   event.preventDefault();cancelHold();showContext();
+  });
+  open.addEventListener('keydown',event=>{
+   if(event.key==='ContextMenu'||(event.shiftKey&&event.key==='F10')){
+    event.preventDefault();showContext();
+   }
+  });
   swipeMore.addEventListener('click',()=>toggleActions(true));
   // Ignore vertical scrolling. Only a deliberate horizontal gesture reveals
   // the red action; a normal tap still opens the saved page.
@@ -4519,7 +4553,7 @@ function renderNotes(){
     touch.dragging=true;swipe.classList.add('is-dragging');
     for(const other of container.querySelectorAll('.sv-nb4-slide.is-open'))if(other!==swipe)other.classList.remove('is-open');
     container.querySelectorAll('.sv-nb4-actions').forEach(el=>{el.hidden=true});
-    container.querySelectorAll('.sv-nb4-dots').forEach(el=>el.setAttribute('aria-expanded','false'));
+    container.querySelectorAll('.sv-nb4-open').forEach(el=>el.setAttribute('aria-expanded','false'));
     container.querySelectorAll('.sv-nb4-more').forEach(el=>el.setAttribute('aria-expanded','false'));
    }
    // Claim horizontal drags on Safari, but never block vertical scrolling.
@@ -4558,7 +4592,7 @@ function renderNotes(){
     try{controls.setPointerCapture(event.pointerId)}catch{}
     container.querySelectorAll('.sv-nb4-slide.is-open').forEach(el=>{if(el!==swipe)el.classList.remove('is-open')});
     container.querySelectorAll('.sv-nb4-actions').forEach(el=>{el.hidden=true});
-    container.querySelectorAll('.sv-nb4-dots,.sv-nb4-more').forEach(el=>el.setAttribute('aria-expanded','false'));
+    container.querySelectorAll('.sv-nb4-open,.sv-nb4-more').forEach(el=>el.setAttribute('aria-expanded','false'));
    }
    event.preventDefault();
    const offset=Math.max(-168,Math.min(0,(pointerDrag.startOpen?-168:0)+dx));
@@ -4579,7 +4613,7 @@ function renderNotes(){
   controls.addEventListener('pointerup',finishPointerSwipe);
   controls.addEventListener('pointercancel',finishPointerSwipe);
   if(!note.paper)menu.prepend(calendar);
-  controls.append(open,more);swipe.append(swipeMore,swipeDelete,controls);
+  controls.append(open);swipe.append(swipeMore,swipeDelete,controls);
   card.append(swipe,menu);container.append(card);
  });
 }
