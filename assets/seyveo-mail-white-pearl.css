@@ -35,14 +35,22 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
  transform:none!important;transition:none!important;animation:none!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > .sv-mail-icon-button{
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > button.sv-mail-icon-button:is(.sv-mail-compose,.sv-mail-shield-toggle){
  box-sizing:border-box!important;display:grid!important;place-items:center!important;flex:0 0 44px!important;
  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;max-width:44px!important;max-height:44px!important;
- margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;box-shadow:none!important;color:var(--sv-white-pearl-ink)!important;
+ -webkit-appearance:none!important;appearance:none!important;filter:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;transform:none!important;transition:none!important;animation:none!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > .sv-mail-icon-button[hidden]{display:none!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > button.sv-mail-icon-button:is(.sv-mail-compose,.sv-mail-shield-toggle):is(:hover,:active,:focus,[aria-expanded="true"]){
+ background:transparent!important;background-image:none!important;box-shadow:none!important;border:0!important;filter:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > button.sv-mail-icon-button:is(.sv-mail-compose,.sv-mail-shield-toggle)::before,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > button.sv-mail-icon-button:is(.sv-mail-compose,.sv-mail-shield-toggle)::after{
+ content:none!important;display:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > button.sv-mail-icon-button:is(.sv-mail-compose,.sv-mail-shield-toggle)[hidden]{display:none!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions :is(#sayviSurfaceBack,.sv-mail-icon-button) svg{
  width:19px!important;height:19px!important;stroke:currentColor!important;stroke-width:1.55!important;fill:none!important;
 }
