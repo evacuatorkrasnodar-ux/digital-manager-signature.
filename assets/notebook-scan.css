@@ -708,3 +708,40 @@ html:root body #noteScanDialog > #svScanPrepared > :is(#svScanShareDestinations,
  stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html:root body #noteScanDialog > #svScanPrepared button:disabled{opacity:.45!important;}
+
+/* Scan reader and shared Notebook editor are two states of one document.
+   Identical header coordinates and text gutters; no entrance animation,
+   automatic centering or body reflow when the keyboard is requested. */
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-scan-reading-text]{
+ padding:max(84px,calc(env(safe-area-inset-top,0px) + 56px)) 0 0!important;
+ gap:0!important;overflow:hidden!important;
+ transform:none!important;animation:none!important;transition:none!important;
+}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-scan-reading-text] > #noteScanTitle{
+ position:absolute!important;top:max(26px,env(safe-area-inset-top,0px))!important;
+ left:50%!important;transform:translateX(-50%)!important;
+ width:min(260px,calc(100vw - 168px))!important;height:44px!important;min-height:44px!important;
+ padding:0 2px!important;margin:0!important;
+ font:600 18px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ letter-spacing:-.012em!important;
+}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-scan-reading-text] > :is(#noteScanBack,#svScanMore){
+ top:max(26px,env(safe-area-inset-top,0px))!important;
+ transform:none!important;animation:none!important;transition:none!important;
+}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-scan-reading-text] > #noteScanBack{left:19px!important;}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-scan-reading-text] > #svScanMore{right:19px!important;}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-scan-reading-text] > :is(#noteScanText,#svScanFormattedRead):not([hidden]){
+ box-sizing:border-box!important;flex:1 1 0!important;min-height:0!important;
+ margin:0!important;
+ padding:5px max(12px,env(safe-area-inset-right,0px)) calc(76px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))!important;
+ font:400 16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ letter-spacing:0!important;overflow-y:auto!important;
+}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-scan-reading-text][data-scan-formatted-read] > #noteScanText{display:none!important;}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-scan-document]{
+ animation:none!important;transition:none!important;transform:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-scan-document] :is(#noteReviewBack,.sv-note-nav-actions,#noteReviewText,#svNoteRichEditor){
+ animation:none!important;transition:none!important;
+}
