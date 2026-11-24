@@ -56,15 +56,16 @@ html:root[data-theme="light"] body #svAllTasksView .sv-tool-input{
  background:transparent;border:0;box-shadow:none;
 }
 #svAllTasksView .sv-tool-results::-webkit-scrollbar{display:none}
-/* Reserve physical space for the stationary action capsule, not extra scrolling padding. */
+/* Full-height reading surface: the action capsule floats independently.
+   End padding belongs to the scrolling content, not to a fixed white footer. */
 html:root body #svWorkShell[data-task-tool-mode="all"] #svAllTasksView .sv-tool-results{
- flex:1 1 0!important;min-height:0!important;
- margin-bottom:calc(max(12px,env(safe-area-inset-bottom,0px)) + 54px)!important;
- padding:10px 0!important;scroll-padding:10px 0!important;
- -webkit-mask-image:linear-gradient(to bottom,transparent,#000 9px,#000 calc(100% - 9px),transparent);
- mask-image:linear-gradient(to bottom,transparent,#000 9px,#000 calc(100% - 9px),transparent);
+ flex:1 1 0!important;min-height:0!important;margin-bottom:0!important;
+ padding:16px 0 calc(max(12px,env(safe-area-inset-bottom,0px)) + 60px)!important;
+ scroll-padding:16px 0 calc(max(12px,env(safe-area-inset-bottom,0px)) + 60px)!important;
+ -webkit-mask-image:linear-gradient(to bottom,transparent,#000 16px,#000 calc(100% - 16px),transparent);
+ mask-image:linear-gradient(to bottom,transparent,#000 16px,#000 calc(100% - 16px),transparent);
 }
-html:root.sv-task-search-focus body #svWorkShell[data-task-tool-mode="all"] #svAllTasksView .sv-tool-results{margin-bottom:0!important;}
+html:root.sv-task-search-focus body #svWorkShell[data-task-tool-mode="all"] #svAllTasksView .sv-tool-results{padding-bottom:16px!important;scroll-padding-bottom:16px!important;}
 
 #svAllTasksView .sv-tool-result{
  box-sizing:border-box;display:flex;align-items:center;gap:11px;
@@ -208,15 +209,15 @@ html:root[data-theme="light"] body #svTaskActionCapsule .sv-task-all{
  opacity:1;
  transition:opacity .20s ease,transform .24s cubic-bezier(.22,.75,.25,1),visibility 0s;
 }
-#svTaskActionCapsule.sv-bulk-scrolling:not(:focus-within){
+html:root body #svTaskActionCapsule.sv-bulk-scrolling{
  opacity:0!important;
  transform:translate(-50%,12px)!important;
- visibility:hidden;
+ visibility:hidden!important;
  pointer-events:none!important;
  transition:opacity .18s ease,transform .22s ease,visibility 0s linear .22s;
 }
 @media(prefers-reduced-motion:reduce){
- #svTaskActionCapsule,#svTaskActionCapsule.sv-bulk-scrolling:not(:focus-within){
+ #svTaskActionCapsule,html:root body #svTaskActionCapsule.sv-bulk-scrolling{
   transition:none!important;
   transform:translateX(-50%)!important;
  }
