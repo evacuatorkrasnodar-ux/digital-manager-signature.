@@ -1,25 +1,20 @@
-/* SEYVEO · handwriting entry point. Reuse the approved editors.
- * Existing vector paper notes retain their original IDs and strokes.
- * New handwriting starts in the unified smart notebook, not a second dialog. */
+/* Handwriting is a mode of the unified Notebook. Unsupported old art-like
+   sheets keep their original editor rather than dropping vector content. */
 (()=>{
  'use strict';
  if(window.SEYVEO_HANDWRITING)return;
  function open(note=null){
-  const api=window.SEYVEO_NOTES_API;
+  const api=window.SEYVEO_NOTES_API,ink=window.SEYVEO_SMART_NOTE_INK;
   if(note){
-   if(note.noteKind!=='handwriting'||!note.paper)return false;
-   if(typeof window.SEYVEO_PAPER?.open==='function'){
-    window.SEYVEO_PAPER.open(note);
-    return true;
+   const p=note.paper;
+   const compatible=!p||(!p.photo&&!(p.texts||[]).length&&['blank','lines','grid'].includes(p.pattern)&&
+    Array.isArray(p.strokes)&&p.strokes.every(s=>['pen','eraser'].includes(s.tool)&&!s.gradient&&!s.pressureSensitive&&Number(s.width)<=70&&Array.isArray(s.points)&&s.points.length<=1200));
+   if(compatible&&api?.editSavedNote&&ink?.open){
+    api.editSavedNote(note.id);ink.open();return true;
    }
-  }else if(typeof api?.reviewText==='function'&&typeof window.SEYVEO_SMART_NOTE_INK?.open==='function'){
-   api.reviewText('');
-   window.SEYVEO_SMART_NOTE_INK.open();
-   return true;
-  }
-  api?.openNotes?.();
-  api?.message?.('Редактор не загрузился. Обновите страницу.');
-  return false;
+   if(p&&window.SEYVEO_PAPER?.open){window.SEYVEO_PAPER.open(note);return true;}
+  }else if(api?.reviewText&&ink?.open){api.reviewText('');ink.open();return true;}
+  api?.openNotes?.();api?.message?.('Редактор не загрузился. Обновите страницу.');return false;
  }
  window.SEYVEO_HANDWRITING=Object.freeze({open});
 })();
