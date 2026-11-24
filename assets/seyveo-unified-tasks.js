@@ -1093,24 +1093,8 @@
  const resetButton=$('svCabinetReset'),status=$('svCabinetStatus');
  if(!root||!list||!dialog||!launch||!empty||!catalogHost||!search||!guideHost)return;
  const KEY='seyveo-cabinet-layout-v1';
- // This is a voluntary Sayvi conversation, NOT the status of the saved tool layout.
- // Saving the layout must never remove the user's way back into Sayvi setup.
- const resume=$('svCabinetContinueWithSayvi');
- function syncResume(){
-  if(!resume)return;
-  resume.hidden=false;
-  const label=resume.querySelector('.sv-cabinet-resume-copy strong');
-  if(label)label.textContent='Настроить с Сэйви';
-  const note=resume.querySelector('.sv-cabinet-resume-copy small');
-  if(note)note.textContent='Вместе подберём инструменты и задачи';
- }
- resume?.addEventListener('click',()=>{
-  // The retired inline-chat walkthrough opens a different standalone page.
-  // Keep the person in the actual cabinet's goal-first constructor instead.
-  open();
- });
- window.addEventListener('storage',event=>{if(event.key===KEY)syncResume()});
- syncResume();
+ // Cabinet setup has one visible entry: the shared header plus.
+ const setupHint=$('svCabinetSetupHint');
  const ready=[
   {id:'pulse',name:'Пульс бизнеса',category:'Управление',description:'Клиенты, продажи, показатели',tags:'директор аналитика руководитель результаты выручка'},
   {id:'chats',name:'Чаты команды',category:'Общение',description:'Рабочие переписки',tags:'мессенджер сообщения коллектив связь персонал'},
@@ -1249,6 +1233,7 @@
   if($('svCabinetDisclosure'))$('svCabinetDisclosure').textContent=GOALS[id].description;
   cancelButton?.setAttribute('aria-label','Назад к выбору инструментов');
   catalogHost.hidden=true;
+  if(setupHint)setupHint.hidden=true;
   if(searchWrap)searchWrap.hidden=true;
   guideHost.hidden=false;
   renderGuide();
@@ -1264,6 +1249,7 @@
   guideHost.hidden=true;guideHost.replaceChildren();
   dialog.querySelector('.sv-cabinet-footer > .sv-cabinet-guide-action')?.remove();
   catalogHost.hidden=false;
+  if(setupHint)setupHint.hidden=false;
   if(searchWrap)searchWrap.hidden=false;
   renderCatalog();
   return previousGoal;
@@ -1331,7 +1317,7 @@
   if(!draft)return;
   try{localStorage.setItem(KEY,JSON.stringify({version:1,order:draft.slice()}))}
   catch{if(status)status.textContent='Не получилось сохранить настройку на этом устройстве.';return}
-  selected=draft.slice();apply();syncResume();cancel();
+  selected=draft.slice();apply();cancel();
  }
  launch.addEventListener('click',open);
  empty.querySelector('[data-sv-cabinet-open]')?.addEventListener('click',open);
@@ -1561,7 +1547,7 @@
   if(existing&&!options.force)return {applied:false,reason:'existing-layout',tools:suggested};
   try{
    localStorage.setItem(KEY,JSON.stringify({version:1,order:suggested}));
-   selected=suggested.slice();apply();syncResume();
+   selected=suggested.slice();apply();
    return {applied:true,reason:'prepared',tools:suggested};
   }catch{
    return {applied:false,reason:'storage-unavailable',tools:suggested};
