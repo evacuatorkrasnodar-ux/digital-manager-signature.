@@ -7,8 +7,11 @@ const brand=$('seyveoBrandPassport'),company=$('seyveoCompanyPassport');
 const previewBox=$('homePassportPopover'),brandTrigger=$('homeBrandTrigger'),ownerTrigger=$('homeWorldTrigger');
 const form=$('seyveoCompanyForm'),dialog=$('seyveoCompanyDialog'),studio=$('seyveoStudioDialog');
 if(!brand||!company||!form||!dialog||!studio)return;
-const COMPANY_DEMO=new URLSearchParams(location.search).get('seyveo-company-demo')==='1';
-const KEY=COMPANY_DEMO?'seyveo-company-passport-demo-v1':'seyveo-company-passport-v1';
+const REAL_KEY='seyveo-company-passport-v1',DEMO_KEY='seyveo-company-passport-demo-v1';
+const DEMO_SESSION='seyveo-company-demo-session';
+let COMPANY_DEMO=false;
+try{COMPANY_DEMO=new URLSearchParams(location.search).get('seyveo-company-demo')==='1'||sessionStorage.getItem(DEMO_SESSION)==='1';}catch{}
+let KEY=COMPANY_DEMO?DEMO_KEY:REAL_KEY;
 // Explicit developer preview, isolated from the user's real company record.
 const DEMO_CARD=Object.freeze({type:'org',name:'SEYVEO · Демо',legalName:'ООО «Учебный пример» (вымышленное)',owner:'Иван Примеров (вымышленное имя)',industry:'Цифровые технологии и автоматизация',city:'Краснодар',address:'Учебный адрес, дом 0',inn:'0000000000',kpp:'000000000',ogrn:'0000000000000',phone:'+7 000 000-00-00',email:'demo@example.invalid',website:'https://example.invalid',bank:'Учебный банк (не существует)',account:'00000000000000000000',bik:'000000000',corr:'00000000000000000000'});
 const LABELS={npd:'Самозанятый',ip:'Индивидуальный предприниматель',org:'Организация'};
@@ -130,7 +133,9 @@ function drawRows(){
  $('seyveoCompanyQrOpen').disabled=!qrReady;
  $('seyveoCompanyQrHint').hidden=!saved||qrReady;
  const privacy=$('seyveoCompanyPrivacy');
- if(privacy){privacy.hidden=!saved;if(COMPANY_DEMO)privacy.textContent='Учебная карточка. Все реквизиты вымышлены и непригодны для платежей или документов. Реальные данные не изменены.';}
+ if(privacy){privacy.hidden=!saved;privacy.textContent=COMPANY_DEMO?'Учебная карточка. Все реквизиты вымышлены и непригодны для платежей или документов. Реальные данные не изменены.':'Сведения сохранены на устройстве. Перед отправкой проверьте их точность.';}
+ const demoButton=$('seyveoCompanyDemoToggle');
+ if(demoButton){demoButton.hidden=saved&&!COMPANY_DEMO;demoButton.textContent=COMPANY_DEMO?'Выйти из учебного примера':'Учебный пример';}
 }
 function canCreateCompanyQr(card){
  if(!clean(card.name))return false;
@@ -260,6 +265,14 @@ function openCompany(){
   dialog.querySelector('button.sv-nav-done,button.seyveo-dialog-close')
    ?.focus({preventScroll:true});
  });
+}
+function toggleCompanyDemo(){
+ if(companyEditing())return;
+ COMPANY_DEMO=!COMPANY_DEMO;KEY=COMPANY_DEMO?DEMO_KEY:REAL_KEY;
+ try{if(COMPANY_DEMO)sessionStorage.setItem(DEMO_SESSION,'1');else sessionStorage.removeItem(DEMO_SESSION);}catch{}
+ if(!COMPANY_DEMO){try{const url=new URL(location.href);url.searchParams.delete('seyveo-company-demo');history.replaceState(history.state,'',url.href);}catch{}}
+ restoreCompanyForm();restorePrivateContext();setCompanyMode('view');drawRows();fillPreview();status(dialog,'');dialog.scrollTop=0;
+ window.dispatchEvent(new CustomEvent('seyveo:company-changed'));
 }
 function openStudio(){
  status(studio,'');
@@ -400,6 +413,7 @@ brand.addEventListener('click',openStudio);
 company.addEventListener('click',openCompany);
 // The dialogs stay available from the existing brand and company controls.
 window.SEYVEO_COMPANY_PASSPORT=Object.freeze({open:openCompany,getRecord:load,isDemo:()=>COMPANY_DEMO});
+$('seyveoCompanyDemoToggle')?.addEventListener('click',toggleCompanyDemo);
 form.addEventListener('submit',save);
 form.querySelectorAll('input[name="companyTypeChoice"]').forEach(input=>input.addEventListener('change',()=>{
  $('seyveoCompanyType').value=input.value;toggleType();
