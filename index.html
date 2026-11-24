@@ -4372,7 +4372,17 @@ function renderNotes(){
    const [y,m,d]=note.calendarDate.split('-').map(Number);
    date.textContent='На '+new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',year:'numeric'}).format(new Date(y,m-1,d));
   }else date.textContent=Number.isNaN(when.getTime())?'Моя запись':new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(when);
-  const content=document.createElement('p');content.textContent=note.noteKind==='handwriting'?(note.title||'Рукописная заметка'):note.noteKind==='art'?(note.sample&&note.title?note.title:'Рисунок'):note.paper?'Рукописный лист':(note.text.trim()?note.text:note.inlineInk?.strokes?.length?'Заметка от руки':(note.attachmentsCount?'Вложения · '+note.attachmentsCount:'Пустая заметка'));
+  // Preview the real first meaningful line, not the blank line between
+  // a note title and its body. Never modify the stored note.
+  const lines=String(note.text||'').split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+  const content=document.createElement('p');
+  const isPaper=Boolean(note.paper)||note.noteKind==='handwriting'||note.noteKind==='art';
+  content.textContent=note.noteKind==='handwriting'?(note.title||'Рукописная заметка'):
+   note.noteKind==='art'?(note.title||'Рисунок'):note.paper?'Рукописный лист':
+   (lines[0]|| (note.inlineInk?.strokes?.length?'Заметка от руки':(note.attachmentsCount?'Вложения · '+note.attachmentsCount:'Пустая заметка')));
+  const excerpt=!isPaper&&lines.length>1?document.createElement('span'):null;
+  if(excerpt){excerpt.className='sv-nb4-excerpt';excerpt.textContent=lines.slice(1).join(' ');}
+
   let thumbnail=null;
   if(note.paper){
    thumbnail=document.createElement('canvas');thumbnail.className='sv-nb4-preview';
@@ -4393,7 +4403,7 @@ function renderNotes(){
   const controls=document.createElement('div');controls.className='sv-nb4-front';
   let suppressNoteClickUntil=0;
   const open=document.createElement('button');open.type='button';open.className='sv-nb4-open';open.setAttribute('aria-label','Открыть запись');
-  const copy=document.createElement('span');copy.className='sv-nb4-details';copy.append(content,date);
+  const copy=document.createElement('span');copy.className='sv-nb4-details';copy.append(content);if(excerpt)copy.append(excerpt);copy.append(date);
   if(thumbnail)open.append(thumbnail);
   open.append(copy);
   open.addEventListener('click',()=>{
@@ -5879,7 +5889,7 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=5"></script><script src="assets/seyveo-note-attachments.js?v=9"></script><script src="assets/seyveo-note-menu-dismiss.js?v=5"></script><script src="assets/seyveo-chat-jump.js?v=4"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=45"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=5"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=26"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=20"><link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=6"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=59"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
+</script><script src="assets/seyveo-note-richtext.js?v=5"></script><script src="assets/seyveo-note-attachments.js?v=9"></script><script src="assets/seyveo-note-menu-dismiss.js?v=5"></script><script src="assets/seyveo-chat-jump.js?v=4"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=45"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=5"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=26"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=20"><link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=7"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=59"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-dock-active-glass.css?v=14">
 <script src="assets/seyveo-dock-active-glass.js?v=4"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=2">
