@@ -61,3 +61,44 @@ html:root body dialog#seyveoCompanyDialog[open][data-sv-company-filled="false"][
   scroll-padding-bottom:12px;
  }
 }
+
+.sv-scroll-glass-material{display:none!important}
+/* Apple-inspired scroll-under header. The real scrollport extends behind
+   the stationary header by exactly its measured height and bottom gap.
+   Matching padding preserves the approved layout at scrollTop=0. */
+html:root body dialog.sv-scroll-glass-ready[open] > .sv-page-scroll{
+ margin-top:calc(0px - var(--sv-scroll-underlap,0px))!important;
+ padding-top:var(--sv-scroll-underlap,0px)!important;
+ scroll-padding-top:calc(var(--sv-scroll-underlap,0px) + 8px);
+}
+html:root body dialog.sv-scroll-glass-ready[open] > .sv-scroll-glass-head{
+ position:relative!important;z-index:4!important;
+}
+html:root body dialog.sv-scroll-glass-ready[open] > .sv-scroll-glass-head > .sv-scroll-glass-material{
+ display:block!important;position:absolute!important;pointer-events:none!important;
+ z-index:-1!important;
+ top:calc(-24px - env(safe-area-inset-top,0px));
+ left:-32px;right:-32px;bottom:calc(0px - var(--sv-scroll-glass-tail,12px));
+ background:rgba(28,31,35,.86);
+ -webkit-backdrop-filter:blur(16px) saturate(100%);
+ backdrop-filter:blur(16px) saturate(100%);
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 72%,transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0%,#000 72%,transparent 100%);
+ opacity:var(--sv-scroll-glass-opacity,0);
+}
+html:root[data-theme="light"] body dialog.sv-scroll-glass-ready[open] > .sv-scroll-glass-head > .sv-scroll-glass-material{
+ background:rgba(255,255,255,.84);
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(16px));
+ backdrop-filter:var(--sv-white-pearl-blur,blur(16px));
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root body dialog.sv-scroll-glass-ready[open] > .sv-scroll-glass-head > .sv-scroll-glass-material{
+  background:var(--bg,#fff);
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+ }
+ html:root[data-theme="light"] body dialog.sv-scroll-glass-ready[open] > .sv-scroll-glass-head > .sv-scroll-glass-material{background:#fff}
+}
+
+html:root body dialog#seyveoContactsDialog.sv-scroll-glass-ready[open] .sv-phonebook-letter{
+ top:var(--sv-scroll-underlap,0px)!important;
+}
