@@ -415,10 +415,10 @@ html:root body #svWorkShell[data-active="notes"] #notesDialog{
  --sv-nb-preview-gap:11px;
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-front{
- grid-template-columns:minmax(0,1fr) calc(44px + var(--sv-nb-reading-inset))!important;
+ grid-template-columns:minmax(0,1fr)!important;
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList button.sv-nb4-open{
- padding-inline:var(--sv-nb-reading-inset) 0!important;
+ padding-inline:var(--sv-nb-reading-inset)!important;
  gap:var(--sv-nb-preview-gap)!important;
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-preview{
@@ -522,4 +522,13 @@ html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-cont
 }
 html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]:has(> #notesList.sv-note-clean-list:not(.is-empty))::after{
  background:linear-gradient(to bottom,transparent 0%,rgba(23,24,27,.82) 30%,var(--bg,#17181b) 48%,var(--bg,#17181b) 100%)!important;
+}
+
+/* Saved rows are one full-width tap target. Swipe and context gestures
+   expose individual actions; only the collection header keeps its dots. */
+html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-front{
+ grid-template-columns:minmax(0,1fr)!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-open{
+ -webkit-touch-callout:none!important;
 }
