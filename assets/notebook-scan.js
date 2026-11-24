@@ -279,7 +279,7 @@ function toPaper(){
  if(typeof window.SEYVEO_PAPER?.open!=='function'){message('Редактор пометок недоступен.');return;}
  dialog.close();
  if(existing)window.SEYVEO_PAPER.open(existing,{scan:true});
- else{window.SEYVEO_PAPER.open(null,{scan:true});window.SEYVEO_PAPER.importPhoto(file);}
+ else{window.SEYVEO_PAPER.open(null,{scan:true,sourceFile:file});window.SEYVEO_PAPER.importPhoto(file);}
 }
 // Test a real OCR input without needing the camera or gallery.
 $('svNoteScanExample')?.addEventListener('click',()=>{
@@ -338,5 +338,5 @@ dialog.addEventListener('close',()=>{
  if(!$('noteReviewDialog').open&&!$('notePaperDialog').open)
   window.SEYVEO_NOTES_API?.openNotes();
 });
-window.SEYVEO_NOTE_SCANNER=Object.freeze({open,openSaved,scanIntoNote});
+window.SEYVEO_NOTE_SCANNER=Object.freeze({open,openSaved,scanIntoNote,resumePhoto:file=>{if(!file||dialog.open)return false;open();select(file);return true;}});
 })();
