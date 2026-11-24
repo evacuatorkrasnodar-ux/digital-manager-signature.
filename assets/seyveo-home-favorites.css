@@ -594,15 +594,15 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
 /* Application tiles have their own quiet card material, not the
    round-button Pearl finish. Selection is a restrained blue tint. */
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{
- background:rgba(255,255,255,.76)!important;background-image:none!important;
+ background:rgba(255,255,255,.90)!important;background-image:none!important;
  border:1px solid rgba(192,201,212,.34)!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  transform:none!important;
 }
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"]{
- background:rgba(219,232,245,.82)!important;background-image:none!important;
- border:1px solid rgba(145,176,204,.43)!important;
+ background:#e8f0f9!important;background-image:none!important;
+ border:1px solid rgba(145,176,204,.32)!important;
  box-shadow:none!important;
 }
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"] small{
@@ -630,4 +630,29 @@ html:root body #homePage #svHomeFavorites .sv-home-favorite-icon svg[viewBox="0 
 }
 html:root body #homePage #svHomeFavorites .sv-home-favorite-icon svg[viewBox="0 0 64 64"] :is(path,circle,rect,ellipse,line,polyline,polygon):not([stroke="none"]){
  stroke-width:2.05!important;
+}
+
+/* Home shortcut editor · readable frosted curtain, not a second dock.
+   Preserve the existing viewport, stationary header and native scrolling. */
+html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{
+ background:rgba(255,255,255,.94)!important;
+ -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
+ backdrop-filter:blur(16px) saturate(105%)!important;
+}
+dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid{
+ box-sizing:border-box!important;
+ padding:1px 1px 20px!important;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 13px),transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 13px),transparent 100%);
+}
+dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{
+ justify-content:center!important;align-items:center!important;
+ gap:5px!important;padding:5px 3px!important;
+}
+dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button svg[viewBox="0 0 64 64"],
+dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button svg[viewBox="0 0 64 64"] :is(path,circle,rect,ellipse,line,polyline,polygon):not([stroke="none"]){
+ stroke-width:2.05!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{background:#fff!important;}
 }
