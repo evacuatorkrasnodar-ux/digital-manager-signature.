@@ -2031,6 +2031,17 @@ back.addEventListener('click',()=>{
 });
 window.addEventListener('hashchange',sync);
 window.addEventListener('pagehide',releaseFile);
-window.SEYVEO_SAYVI_SURFACES=Object.freeze({open,render,sync,openPersonal,searchInCurrentMail});
+async function prepareSharedMail(file){
+ if(!(file instanceof File)||file.size>10*1048576||!/\.(pdf|doc|docx|xls|xlsx|txt|csv|png|jpe?g|webp)$/i.test(file.name))return false;
+ const draftId='mail-draft-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
+ const id='mf-'+Date.now()+'-'+Math.random().toString(36).slice(2,9);
+ if(!await saveMailAttachment(draftId,id,file))return false;
+ const draft={id:draftId,account:'',to:'',subject:'',body:'',attachments:[{id,name:file.name.slice(0,150),size:file.size,type:file.type||''}]};
+ mailDrafts.unshift(draft);persistMailDrafts();
+ open('mail','all');mailFolder='drafts';mailEditorOpen=true;mailEditingId=draftId;mailCurrent=null;mailComposeScope='';
+ if(location.hash==='#sayvi-mail')sync();
+ return true;
+}
+window.SEYVEO_SAYVI_SURFACES=Object.freeze({open,render,sync,openPersonal,searchInCurrentMail,prepareSharedMail});
 sync();
 })();
