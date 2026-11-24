@@ -794,11 +794,16 @@ function svAgendaMarkSelected(iso){
 /* Cache the positions of day headings. A long flick then costs one binary
  * search per animation frame, rather than a layout read for every date. */
 function svAgendaGetAnchors(){
- if(!svAgendaAnchorCache){
-  const listTop=list.getBoundingClientRect().top;
+ // A hidden Work tab has zero-size groups; never cache those coordinates.
+ if(!list.clientHeight||!list.getClientRects().length){svAgendaAnchorCache=null;return [];}
+ const layoutKey=[list.clientWidth,list.clientHeight,list.scrollHeight].join(':');
+ if(!svAgendaAnchorCache||svAgendaAnchorCache.layoutKey!==layoutKey){
+  const listTop=list.getBoundingClientRect().top+list.clientTop;
   const currentScroll=list.scrollTop;
   svAgendaAnchorCache=[...list.querySelectorAll('.sv-agenda-day-group > .sv-agenda-section-heading')]
-   .map(heading=>({iso:heading.dataset.weatherDate||null,key:heading.dataset.weatherDate||heading.querySelector('strong')?.textContent,heading,top:Math.max(0,currentScroll+(heading.closest('.sv-agenda-day-group')||heading).getBoundingClientRect().top-listTop)}));
+   .filter(heading=>heading.parentElement.getClientRects().length)
+   .map(heading=>({iso:heading.dataset.weatherDate||null,key:heading.dataset.weatherDate||heading.querySelector('strong')?.textContent,heading,top:Math.max(0,currentScroll+heading.parentElement.getBoundingClientRect().top-listTop)}));
+  svAgendaAnchorCache.layoutKey=layoutKey;
  }
  return svAgendaAnchorCache;
 }
@@ -879,7 +884,7 @@ window.addEventListener('seyveo:tasks-focus-date',event=>{
 });
 function svAgendaSyncFromScroll(){
  svAgendaSyncPinnedDate();
- if(!svAgendaInitiallyAligned||Date.now()<svAgendaJumpThrough||Date.now()<svAgendaOpeningUntil||document.getElementById('svWorkShell')?.dataset.agendaScroll!=='true')return;
+ if(Date.now()<svAgendaJumpThrough||Date.now()<svAgendaOpeningUntil||document.getElementById('svWorkShell')?.dataset.agendaScroll!=='true')return;
  const scrollRange=list.scrollHeight-list.clientHeight;
  if(scrollRange<35)return; // All days fit on screen: retain the explicitly chosen date.
  // A long inertial flick stays on the browser's native compositor. Only
