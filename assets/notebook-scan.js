@@ -176,7 +176,7 @@ function handoffToDocs(payload){
 }
 preparedArchive.addEventListener('click',()=>{if(preparedFile)handoffToDocs({kind:'archive',file:preparedFile});});
 async function saveScanText(openEditor=false){
- if(!editingScanText||!selected||running||exportBusy)return;
+ if((!editingScanText&&!openEditor)||!selected||running||exportBusy)return;
  const api=window.SEYVEO_NOTES_API;
  if(!api?.getNotes||!api?.putNotes){message('Блокнот недоступен.');return;}
  const value=text.value.slice(0,8000),token=session;
@@ -200,7 +200,7 @@ async function saveScanText(openEditor=false){
   savedScan=updated.find(n=>n.id===id);dialog.dataset.savedScan='true';
   $('noteScanTitle').textContent=savedScan.title||'Скан документа';
   text.blur();editingScanText=false;delete dialog.dataset.editScanText;outputIntent='';setStep('photo');showDocument(true);message('');
-  if(openEditor){exportBusy=false;openSharedEditor();}
+  if(openEditor){exportBusy=false;openSharedEditor(null,{focus:false});}
  }catch(e){if(dialog.open&&session===token)message(e?.message||'Не удалось сохранить документ.');}
  finally{exportBusy=false;syncActions();}
 }
@@ -479,7 +479,7 @@ async function recognize(){
  running=true;button.disabled=true;
  if(manualButton)manualButton.hidden=true;
  syncActions();
- let worker=null;
+ let worker=null,sendToNotebook=false;
  try{
   message('Подключаю распознавание… Это может занять время на iPhone.');
   const lib=await loadEngine();
@@ -524,6 +524,10 @@ async function recognize(){
    }
    activateTextEditor();message('Проверьте текст и сохраните документ.');return;
   }
+  if(!intoOpenNote&&!outputIntent){
+   sendToNotebook=true;pendingScanEdit=false;
+   message('Сохраняю в Блокнот…');return;
+  }
   if(pendingScanEdit)activateTextEditor();else setStep('edit');syncActions();
   message(clean.removed?
    'Возможно, удалена строка панели телефона. Проверьте результат перед сохранением.':
@@ -537,7 +541,7 @@ async function recognize(){
  }finally{
   if(worker)try{await worker.terminate()}catch{}
   running=false;button.disabled=!selected;syncActions();
-  if(dialog.open&&token===session&&editingScanText&&!savedScan?.id&&text.value.trim())void saveScanText();
+  if(dialog.open&&token===session&&sendToNotebook)void saveScanText(true);
  }
 }
 function cancel(){if(exportBusy)return;if(!consentBox.hidden){consentBox.hidden=true;pendingScanEdit=false;return;}if(running){session++;pendingScanEdit=false;autoReadExisting=false;message('Распознавание отменено.');offerManual();return;}if(editingScanText){if((!savedScan?.id||text.value!==editStartText)&&!window.confirm('Выйти без сохранения документа?'))return;if(!savedScan?.id){dialog.close();return;}text.blur();text.value=readableText()||'';editingScanText=false;delete dialog.dataset.editScanText;setStep('photo');showDocument(true);message('');return;}dialog.close()}
@@ -593,24 +597,24 @@ for(const id of ['noteScanCamera','noteScanGallery']){
 // Actual newlines and the user's "preserve lines" OCR choice stay untouched.
 keepLines?.addEventListener('change',()=>{text.wrap='soft';syncMenu();});
 // Use the actual Notebook editor, including its existing keyboard accessory.
-function openSharedEditor(event){
+function openSharedEditor(event,options={}){
  if(!selected||running||exportBusy||!consentBox.hidden||intoOpenNote)return;
  const editor=window.SEYVEO_NOTES_EDITOR,api=window.SEYVEO_NOTES_API;
  if(!editor?.openScan||!api){message('Редактор Блокнота недоступен.');return;}
  const value=readableText();
  if(!savedScan?.id){
   if(typeof value==='string')text.value=value;
-  activateTextEditor();void saveScanText(true);return;
+  void saveScanText(true);return;
  }
  if(typeof savedScan.scanText!=='string'){
-  if(typeof value!=='string'){activateTextEditor();void saveScanText(true);return;}
+  if(typeof value!=='string'){void saveScanText(true);return;}
   const list=api.getNotes(),next=list.map(n=>n.id===savedScan.id?{...n,scanText:value}:n);
   if(!api.putNotes(next)){message('Не удалось сохранить текст.');return;}
   savedScan=next.find(n=>n.id===savedScan.id);
  }
  const id=savedScan.id;
  const surface=formattedRead.hidden?text:formattedRead;
- const position={scrollTop:surface.scrollTop,selectionStart:surface===text?text.selectionStart:null,selectionEnd:surface===text?text.selectionEnd:null};
+ const position={focus:options.focus!==false,scrollTop:surface.scrollTop,selectionStart:surface===text?text.selectionStart:null,selectionEnd:surface===text?text.selectionEnd:null};
  if(event?.type==='click'&&surface===formattedRead){position.x=event.clientX;position.y=event.clientY;}
  clearPrepared();closeMenu();
  // Keep the reader in the modal stack, avoiding a flash of the list.
@@ -628,8 +632,8 @@ text.addEventListener('keydown',event=>{if(dialog.hasAttribute('data-scan-readin
 text.addEventListener('input',syncActions);
 manualButton?.addEventListener('click',()=>{
  if(!selected||running)return;
- if(pendingScanEdit||autoReadExisting||(!intoOpenNote&&!outputIntent)){autoReadExisting=false;activateTextEditor();}else setStep('edit');syncActions();
- message('Введите текст вручную.');text.focus();
+ if(!intoOpenNote&&!outputIntent){autoReadExisting=false;void saveScanText(true);return;}
+ setStep('edit');syncActions();message('Введите текст вручную.');text.focus();
 });
 button.addEventListener('click',()=>{
  if(running||!selected)return;
@@ -642,7 +646,7 @@ button.addEventListener('click',()=>{
 });
 $('noteScanConsentNo').addEventListener('click',()=>{
  consentBox.hidden=true;pendingScanEdit=false;autoReadExisting=false;
- if(selected&&!intoOpenNote&&!savedScan){pendingScanEdit=true;offerManual();message('Можно сохранить оригинал или ввести текст вручную.');}
+ if(selected&&!intoOpenNote&&!savedScan){pendingScanEdit=true;offerManual();message('Можно сохранить снимок и дополнить текст в Блокноте.');}
  (more.hidden?button:more).focus({preventScroll:true});
 });
 $('noteScanConsentYes').addEventListener('click',()=>{
