@@ -148,7 +148,7 @@ menuShare.addEventListener('click',()=>page('share'));
 editNote.addEventListener('click',()=>{if(dialog.dataset.step==='edit'&&text.value.trim()){closeMenu();toNote();}else requestText('note');});
 editWord.addEventListener('click',()=>requestText('docx'));
 editPaper.addEventListener('click',()=>{closeMenu();toPaper();});
-editPdf.addEventListener('click',()=>{closeMenu();toPaper();});
+editPdf.addEventListener('click',()=>{closeMenu();toPaper('pdf');});
 for(const [node,format] of [[outWord,'docx'],[outPdf,'pdf'],[outAnnotated,'annotated'],[outJpeg,'jpg'],[outTxt,'txt']])node.addEventListener('click',()=>{const share=menuPage==='share';void prepareFormat(format,share);});
 dialog.append(more,menu);
 function closeMenu(focus=false){
@@ -276,7 +276,7 @@ function reset(){
  setStep('pick');syncActions();message('');
 }
 function open(){if(dialog.open)return;intoOpenNote=false;reset();dialog.showModal()}
-function openSaved(note){
+function openSaved(note,options={}){
  if(dialog.open||!note?.paper?.photo)return false;
  try{
   const original=window.SEYVEO_NOTEBOOK_SCREEN?.polishScanExample?.(note)||note;
@@ -288,6 +288,7 @@ function openSaved(note){
   savedScan=original;dialog.dataset.savedScan='true';
   $('noteScanTitle').textContent=note.title||'Скан документа';
   message('');syncMenu();
+  if(options.exportPDF)void prepareFormat('annotated');
   return true;
  }catch{if(dialog.open)dialog.close();return false;}
 }
@@ -401,13 +402,13 @@ function toNote(){
  }
  window.SEYVEO_NOTES_API?.reviewText(value.slice(0,8000),{preserveLines:keepLines?.checked!==false});
 }
-function toPaper(){
+function toPaper(mode){
  if(!selected){message('Сначала выберите изображение.');return}
  const file=selected,existing=savedScan;
  if(typeof window.SEYVEO_PAPER?.open!=='function'){message('Редактор пометок недоступен.');return;}
  dialog.close();
- if(existing)window.SEYVEO_PAPER.open(existing,{scan:true});
- else{window.SEYVEO_PAPER.open(null,{scan:true,sourceFile:file});window.SEYVEO_PAPER.importPhoto(file);}
+ if(existing)window.SEYVEO_PAPER.open(existing,{scan:true,exportPDF:mode==='pdf'});
+ else{window.SEYVEO_PAPER.open(null,{scan:true,sourceFile:file,exportPDF:mode==='pdf'});window.SEYVEO_PAPER.importPhoto(file);}
 }
 // Test a real OCR input without needing the camera or gallery.
 $('svNoteScanExample')?.addEventListener('click',()=>{
