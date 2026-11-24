@@ -584,19 +584,19 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
  background:var(--sv-white-pearl-selected,rgba(255,255,255,.96))!important;
  border:var(--sv-white-pearl-edge)!important;box-shadow:var(--sv-white-pearl-selected-shadow)!important;
 }
-/* All tiles use the same gentle neutral finish; selected state is clear
-   from its white face and existing check mark, not a blue-grey bevel. */
+/* Unselected apps stay quiet and white. Selection uses the approved
+   neutral Pearl face, plus a graphite check. The tab capsule is separate. */
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{
- background:var(--sv-white-pearl-surface)!important;background-image:none!important;
- border:var(--sv-white-pearl-edge)!important;
- box-shadow:0 1px 4px rgba(82,69,57,.06)!important;
+ background:rgba(255,255,255,.80)!important;background-image:none!important;
+ border:1px solid rgba(213,211,209,.58)!important;
+ box-shadow:0 1px 3px rgba(82,69,57,.025)!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
  transform:none!important;
 }
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"]{
- background:var(--sv-white-pearl-selected,rgba(255,255,255,.96))!important;
- border:1px solid rgba(255,255,255,.99)!important;
- box-shadow:var(--sv-white-pearl-selected-shadow)!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
 }
 dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid{
  grid-template-rows:none!important;grid-auto-rows:minmax(70px,1fr)!important;
