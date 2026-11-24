@@ -332,7 +332,7 @@ function openCustomize(){
   const effectiveBusinessLimit=Math.max(businessLimit,businessSelection.length);
   const picked=cabinet?businessSelection:selection;
   const autoActive=cabinet?businessAuto:auto;
-  help.textContent=autoActive?'Сэйви выбирает часто используемые кнопки':'Выбрано '+(picked.length+(!cabinet&&smart?1:0))+' из '+(cabinet?effectiveBusinessLimit:personalLimit)+(cabinet?(businessSelection.length>businessLimit?' · освободите место':' · второй ряд'):' · до двух рядов');
+  help.textContent=autoActive?'Сэйви выбирает часто используемые кнопки':'Выбрано '+(picked.length+(!cabinet&&smart?1:0))+' из '+(cabinet?effectiveBusinessLimit:personalLimit)+(cabinet&&businessSelection.length>businessLimit?' · освободите место':'');
   autoButton.setAttribute('aria-pressed',String(autoActive));
   autoButton.title=autoActive?'Автовыбор включён':'Автовыбор: Сэйви подбирает частые кнопки';
   grid.dataset.section=activeTab;
