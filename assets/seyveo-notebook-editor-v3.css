@@ -671,9 +671,8 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-sayvi-icon{
  display:block!important;flex:0 0 24px!important;
  width:24px!important;height:24px!important;
- background-color:currentColor!important;
- -webkit-mask:url('./seyveo-circular-interlace-mono.svg?v=1') center / contain no-repeat!important;
- mask:url('./seyveo-circular-interlace-mono.svg?v=1') center / contain no-repeat!important;
+ background:transparent url('./seyveo-sayvi-user-upload.svg?v=3') center / contain no-repeat!important;
+ -webkit-mask:none!important;mask:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-sayvi-head>.sv-smart-sayvi-icon{color:var(--note-ink)!important}
@@ -1050,14 +1049,13 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]){
  color:#27313a!important;
 }
-/* The Sayvi SVG uses just 63% of its square viewBox. A larger mask box
-   makes the *visible* mark match the 25px outline icons, not dwarf them. */
+/* Use the same original Sayvi artwork as the chat, sized to the adjacent tools. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button[data-sv-smart-tool="sayvi"] > .sv-smart-sayvi-icon{
- display:block!important;flex:0 0 34px!important;
- width:34px!important;min-width:34px!important;max-width:34px!important;
- height:34px!important;min-height:34px!important;max-height:34px!important;
- margin:0!important;color:inherit!important;background-color:currentColor!important;
+ display:block!important;flex:0 0 26px!important;
+ width:26px!important;min-width:26px!important;max-width:26px!important;
+ height:26px!important;min-height:26px!important;max-height:26px!important;
+ margin:0!important;color:inherit!important;background-color:transparent!important;
  transform:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
