@@ -27,9 +27,11 @@
    const ctx=canvas.getContext('2d');if(!ctx)throw Error('Canvas unavailable');
    ctx.beginPath();ctx.arc(size/2,size/2,size/2,0,Math.PI*2);ctx.clip();
    // Preserve the entire original portrait; allow a small breathing space in staff cards.
-   const inset=Math.round(size*insetRatio),inner=size-2*inset;
-   const scale=inner/Math.max(b.w,b.h),dw=b.w*scale,dh=b.h*scale;
-   ctx.drawImage(img,b.x,b.y,b.w,b.h,(size-dw)/2,(size-dh)/2,dw,dh);
+   if(insetRatio>0){
+    const inset=Math.round(size*insetRatio),inner=size-2*inset;
+    const scale=inner/Math.max(b.w,b.h),dw=b.w*scale,dh=b.h*scale;
+    ctx.drawImage(img,b.x,b.y,b.w,b.h,(size-dw)/2,(size-dh)/2,dw,dh);
+   }else ctx.drawImage(img,b.x,b.y,b.w,b.h,0,0,size,size);
    return canvas.toDataURL('image/png');
   }));
   return cache.get(key);
@@ -41,7 +43,7 @@
   el.style.setProperty('background-size',(1536/b.w*100)+'% '+(1536/b.h*100)+'%','important');
   el.style.setProperty('background-position',(b.x/(1536-b.w)*100)+'% '+(b.y/(1536-b.h)*100)+'%','important');
   el.style.setProperty('background-repeat','no-repeat','important');
-  const insetRatio=options?.relaxedFit===true?.035:0;
+  const insetRatio=options?.relaxedFit===true ? 0.035 : 0;
   individual(tile,insetRatio).then(url=>{
    el.style.setProperty('background-image','url("'+url+'")','important');
    el.style.setProperty('background-size','100% 100%','important');
