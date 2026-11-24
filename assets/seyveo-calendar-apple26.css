@@ -51,18 +51,17 @@ html:not([data-theme]) #calendarPage .cal-month-grid .cal-day-number{
  background:transparent!important;box-shadow:none!important;color:#17191D!important;
  font-weight:560!important;
 }
-:root[data-theme="light"] #calendarPage .cal-month-grid .cal-day[data-selected="true"] .cal-day-number,
-html:not([data-theme]) #calendarPage .cal-month-grid .cal-day[data-selected="true"] .cal-day-number{
+:root[data-theme="light"] #calendarPage .cal-month-grid .cal-day[data-selected="true"]:not([data-today="true"]) .cal-day-number,
+html:not([data-theme]) #calendarPage .cal-month-grid .cal-day[data-selected="true"]:not([data-today="true"]) .cal-day-number{
  background:var(--sv-date-selected-bg,#EEF0F3)!important;color:var(--sv-date-selected-ink,#252A33)!important;border:0!important;
  box-shadow:none!important;font-weight:650!important;
 }
-:root[data-theme="light"] #calendarPage .cal-month-grid .cal-day[data-today="true"]:not([data-selected="true"]) .cal-day-number,
-html:not([data-theme]) #calendarPage .cal-month-grid .cal-day[data-today="true"]:not([data-selected="true"]) .cal-day-number{
- color:#FFF!important;box-shadow:none!important;
+:root[data-theme="light"] #calendarPage .cal-month-grid .cal-day[data-today="true"] .cal-day-number,
+html:not([data-theme]) #calendarPage .cal-month-grid .cal-day[data-today="true"] .cal-day-number{
  background:#109BDD!important;color:#FFF!important;box-shadow:none!important;
 }
-:root[data-theme="light"] #calendarPage .cal-month-grid .cal-day[data-weekend="true"]:not([data-selected="true"]) .cal-day-number,
-html:not([data-theme]) #calendarPage .cal-month-grid .cal-day[data-weekend="true"]:not([data-selected="true"]) .cal-day-number{
+:root[data-theme="light"] #calendarPage .cal-month-grid .cal-day[data-weekend="true"]:not([data-selected="true"]):not([data-today="true"]) .cal-day-number,
+html:not([data-theme]) #calendarPage .cal-month-grid .cal-day[data-weekend="true"]:not([data-selected="true"]):not([data-today="true"]) .cal-day-number{
  color:#7D828B!important;
 }
 /* Tiny Apple-like ink marks represent actual saved items. */
@@ -94,13 +93,13 @@ html:not([data-theme]) #calendarEventDialog #seyveoPickDate .cal-pick-day{
  border:0!important;border-radius:50%!important;color:#1A1D22!important;background:transparent!important;
  font:550 15px/1 system-ui!important;
 }
-:root[data-theme="light"] #calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected,
-html:not([data-theme]) #calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected{
+:root[data-theme="light"] #calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected:not(.is-today),
+html:not([data-theme]) #calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected:not(.is-today){
  border:0!important;border-radius:50%!important;background:var(--sv-date-selected-bg,#EEF0F3)!important;color:var(--sv-date-selected-ink,#252A33)!important;
  box-shadow:none!important;
 }
-:root[data-theme="light"] #calendarEventDialog #seyveoPickDate .cal-pick-day.is-today:not(.is-selected),
-html:not([data-theme]) #calendarEventDialog #seyveoPickDate .cal-pick-day.is-today:not(.is-selected){
+:root[data-theme="light"] #calendarEventDialog #seyveoPickDate .cal-pick-day.is-today,
+html:not([data-theme]) #calendarEventDialog #seyveoPickDate .cal-pick-day.is-today{
  color:#FFF!important;border:0!important;
  background:#109BDD!important;color:#FFF!important;box-shadow:none!important;
 }
@@ -112,17 +111,17 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days
  border:0!important;border-radius:50%!important;background:transparent!important;
  color:#17191D!important;font:550 14px/1 system-ui!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-selected{
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-selected:not(.is-today){
  border-radius:50%!important;background:var(--sv-date-selected-bg,#EEF0F3)!important;color:var(--sv-date-selected-ink,#252A33)!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-today:not(.is-selected){
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-today{
  color:#FFF!important;
  background:#109BDD!important;color:#FFF!important;box-shadow:none!important;
 }
-html body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-selected{
+html body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-selected:not(.is-today){
  border-radius:50%!important;background:var(--sv-date-selected-bg,#EEF0F3)!important;color:var(--sv-date-selected-ink,#252A33)!important;box-shadow:none!important;
 }
-html body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-today:not(.is-selected){
+html body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-today{
  color:#FFF!important;
  background:#109BDD!important;color:#FFF!important;box-shadow:none!important;
 }
@@ -152,10 +151,10 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice p{
 :root[data-theme="light"] body #calendarSpaceDialog .cal-velvet-picker:has(.cal-velvet-days) :is(button,strong){
  color:#17191D!important;
 }
-:root[data-theme="light"] body #calendarSpaceDialog .cal-velvet-days button[aria-pressed="true"]{
+:root[data-theme="light"] body #calendarSpaceDialog .cal-velvet-days button[aria-pressed="true"]:not(.is-today){
  background:var(--sv-date-selected-bg,#EEF0F3)!important;color:var(--sv-date-selected-ink,#252A33)!important;border-radius:50%!important;
 }
-:root[data-theme="light"] body #calendarSpaceDialog .cal-velvet-days button.is-today:not([aria-pressed="true"]){
+:root[data-theme="light"] body #calendarSpaceDialog .cal-velvet-days button.is-today{
  color:#FFF!important;
  background:#109BDD!important;color:#FFF!important;box-shadow:none!important;
 }
@@ -518,15 +517,15 @@ html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-ent
 }
 
 /* SEYVEO calendar selection standard: neutral selected day; today stays blue. */
-#calendarPage .cal-month-grid .cal-day[data-selected="true"] .cal-day-number,
-#calendarPage .cal-week-grid .cal-day[data-selected="true"] .cal-day-number,
-#tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"] .sv-agenda-day-number{
+#calendarPage .cal-month-grid .cal-day[data-selected="true"]:not([data-today="true"]) .cal-day-number,
+#calendarPage .cal-week-grid .cal-day[data-selected="true"]:not([data-today="true"]) .cal-day-number,
+#tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]:not([data-today="true"]) .sv-agenda-day-number{
  background:var(--sv-date-selected-bg,#EEF0F3)!important;color:var(--sv-date-selected-ink,#252A33)!important;
  border:0!important;border-radius:50%!important;
  outline:0!important;outline-offset:0!important;box-shadow:none!important;
 }
-#calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected,
-#calendarSpaceDialog .cal-velvet-days button[aria-pressed="true"]{
+#calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected:not(.is-today),
+#calendarSpaceDialog .cal-velvet-days button[aria-pressed="true"]:not(.is-today){
  background:var(--sv-date-selected-bg,#EEF0F3)!important;color:var(--sv-date-selected-ink,#252A33)!important;
  border:0!important;border-radius:50%!important;
  outline:0!important;outline-offset:0!important;box-shadow:none!important;
