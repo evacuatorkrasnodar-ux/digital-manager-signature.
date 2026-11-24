@@ -109,7 +109,7 @@ function select(file){
  if(consentBox)consentBox.hidden=true;
  text.value='';setStep('photo');
  preview.hidden=false;button.disabled=running;syncActions();
- message('Фото остаётся на устройстве. Проверьте результат распознавания.');
+ message('Фото обрабатывается на устройстве.');
 }
 function loadEngine(){
  if(window.Tesseract?.createWorker)return Promise.resolve(window.Tesseract);
@@ -210,7 +210,7 @@ function toPaper(){
 // Test a real OCR input without needing the camera or gallery.
 $('svNoteScanExample')?.addEventListener('click',()=>{
  if(running||!dialog.open)return;
- const canvas=document.createElement('canvas');canvas.width=1000;canvas.height=670;
+ const canvas=document.createElement('canvas');canvas.width=1000;canvas.height=600;
  const ctx=canvas.getContext('2d');if(!ctx)return;
  ctx.fillStyle='#fff';ctx.fillRect(0,0,1000,1200);
  ctx.fillStyle='#20242b';ctx.font='bold 54px Arial';ctx.fillText('Учебный документ',65,100);
