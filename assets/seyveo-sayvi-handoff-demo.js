@@ -264,6 +264,10 @@
     const keepHomeSphere=!spark&&(stayHome||!shouldDockHome())&&
       (!location.hash||location.hash==='#home')&&!home.hidden;
     const firstLaunch=keepHomeSphere&&root.classList.contains('sv-home-launch-pending');
+    // The head already installed the final Home layout. If a redirect or
+    // onboarding took over before startup, discard only those launch flags.
+    if(!keepHomeSphere&&root.classList.contains('sv-home-launch-pending'))
+      root.classList.remove('sv-home-empty-at-launch','sv-home-empty-sphere','sv-home-empty-arrived');
     done=true;
     voiceButton?.remove();
     voiceButton=null;
