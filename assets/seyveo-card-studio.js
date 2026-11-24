@@ -48,7 +48,7 @@ page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 const policyGuide=document.createElement('p');
 policyGuide.className='scs-note';
-policyGuide.textContent='Эталон SEYVEO · «Разобрать дела» (17.11): белый цельный фон, компактная категория и дата события, тонкая контурная иконка, читаемый текст и три понятных действия: «Сэйви поможет», «Исправить самому», «Перейти в нужный раздел». Сэйви обозначена новым монохромным ленточным знаком SEYVEO. Редактор «Ваш вариант» — матовое перламутровое серебро нашего дока, без зелёной заливки. Нажатие на Сэйви открывает подготовленное предложение и требует подтверждения человека. Все 16 типов, старые и будущие, наследуют этот договор интерфейса. Тёмная тема остаётся графитовой.';
+policyGuide.textContent='Эталон SEYVEO · «Разобрать дела» (17.11): белый цельный фон, компактная категория и дата события, фирменная иконка приложения из единого каталога SEYVEO (для текущих и будущих карточек), читаемый текст и три понятных действия: «Сэйви поможет», «Исправить самому», «Перейти в нужный раздел». Сэйви обозначена новым монохромным ленточным знаком SEYVEO. Редактор «Ваш вариант» — матовое перламутровое серебро нашего дока, без зелёной заливки. Нажатие на Сэйви открывает подготовленное предложение и требует подтверждения человека. Все 16 типов, старые и будущие, наследуют этот договор интерфейса. Тёмная тема остаётся графитовой.';
 galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
 const policyAudit=document.createElement('p');
 policyAudit.className='scs-note';
@@ -106,6 +106,12 @@ function renderGallery(){
       id==='navigate'?'Запрошен переход: Мастерская не выполняет настоящую навигацию.':'Только демонстрация.';
   }});
   if(!surface){errors.push(event[0]+' · рендерер не создал карточку');continue}
+  const sourceIcon=surface.querySelector('.sv-card-mark svg.sv-app-source-icon');
+  const expectedSource=window.SEYVEO_APP_ICONS?.sourceFor(card.family,card.sourceApp);
+  if(!sourceIcon||sourceIcon.dataset.appIcon!==expectedSource||
+     sourceIcon.innerHTML!==window.SEYVEO_APP_ICONS?.svg(expectedSource).innerHTML){
+   errors.push(event[0]+' · не совпадает фирменная иконка приложения');
+  }
   const buttons=[...surface.querySelectorAll('.sv-card-actions [data-card-action]')];
   if(!same(buttons.map(b=>b.dataset.cardAction),required)||
      !same(buttons.map(b=>b.dataset.svCardIcon),required)||
