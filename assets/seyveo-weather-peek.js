@@ -175,7 +175,7 @@
   section.className='sv-weather-peek-rain';
   const header=document.createElement('div');
   header.className='sv-weather-peek-rain-heading';
-  add('sv-weather-peek-rain-title','Дождь · '+(date===moscowDate()?'сегодня':weekday(date)),header,'h3');
+  add('sv-weather-peek-rain-title',homeMode?'Осадки':'Дождь · '+(date===moscowDate()?'сегодня':weekday(date)),header,'h3');
   const state=add('sv-weather-peek-rain-state','',header,'strong');
   section.append(header);
   const hourly=source?.getStationData?.()?.hourly;
@@ -206,7 +206,7 @@
   }
   const maximum=Math.max(...future.map(point=>point.chance));
   const isPossible=maximum>=30;
-  state.textContent=maximum>=50?'Вероятен':isPossible?'Возможен':'Маловероятен';
+  state.textContent=homeMode?(maximum>=50?'Вероятны':isPossible?'Возможны':'Маловероятны'):(maximum>=50?'Вероятен':isPossible?'Возможен':'Маловероятен');
   state.dataset.level=maximum>=50?'likely':isPossible?'possible':'quiet';
   const detail=document.createElement('div');
   detail.className='sv-weather-peek-rain-detail';
