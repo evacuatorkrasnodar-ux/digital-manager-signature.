@@ -18,6 +18,8 @@ const subjects=Object.freeze({
 });
 let fileUrl=null;
 let returnDestination=null;
+let mailEntryOrigin=null;
+let lastSurfaceHash=location.hash;
 function updateBackDestination(){
  const label=returnDestination?.label||'Главная';
  const caption=back.querySelector('span:last-child');
@@ -191,6 +193,15 @@ function demoScenario(kind){
  * Example messages are clearly marked and never saved or sent externally. */
 let mailFolder='overview',mailEditorOpen=false,mailEditingId=null,mailCurrent=null;
 let mailEditorReturnId=null,mailEditorExitHandler=null;
+let mailListExitHandler=null;
+const mailFolderHistory=[];
+function mailFolderSnapshot(){return {folder:mailFolder,scope:mailScope,search:mailSearch,searchOpen:mailSearchOpen};}
+function rememberMailFolder(){
+ const next=mailFolderSnapshot();
+ const last=mailFolderHistory[mailFolderHistory.length-1];
+ if(!last||last.folder!==next.folder||last.scope!==next.scope||last.search!==next.search||last.searchOpen!==next.searchOpen)mailFolderHistory.push(next);
+ if(mailFolderHistory.length>60)mailFolderHistory.shift();
+}
 let mailSearchOpen=false;
 let mailGuardExitHandler=null;
 let mailContactsExitHandler=null;
@@ -567,6 +578,7 @@ function mailView(){
  guardPanel.id='svMailProtectionMenu';
  guardPanel.setAttribute('aria-label','Умный допуск · защита почты');
  let guardOpen=false,guardAccount='personal';
+ let contactsReturnToGuard=false;
  const closeGate=()=>{if(!guardOpen)return;guardOpen=false;renderGate()};
  mailGuardExitHandler=()=>{if(!guardOpen)return false;closeGate();return true};
  guardTrigger.addEventListener('click',event=>{
@@ -576,7 +588,7 @@ function mailView(){
  });
  // Close like native iOS popovers, without covering the Inbox with a modal.
  document.addEventListener('pointerdown',event=>{
-  if(!guardOpen||guardPanel.contains(event.target)||guardTrigger.contains(event.target))return;
+  if(!guardOpen||guardPanel.contains(event.target)||guardTrigger.contains(event.target)||back.contains(event.target))return;
   closeGate();
  },{signal:mailGuardListenerAbort.signal});
  document.addEventListener('keydown',event=>{
@@ -660,7 +672,7 @@ function mailView(){
   // Flip only this navigation glyph, not the approved global Back design.
   contactsEntry.lastChild.style.transform='rotate(180deg)';
   contactsEntry.addEventListener('click',()=>{
-   guardOpen=false;
+   contactsReturnToGuard=true;guardOpen=false;
    smartContacts?.open(account);
    paint();
   });
@@ -702,7 +714,7 @@ function mailView(){
  contactsInvite.addEventListener('click',()=>{
   const scope=inviteScope();
   if(!scope)return;
-  guardOpen=false;smartContacts?.open(scope);paint();
+  contactsReturnToGuard=false;guardOpen=false;smartContacts?.open(scope);paint();
  });
  const guardBackdrop=create('button','sv-mail-gate-backdrop');
  guardBackdrop.type='button';guardBackdrop.hidden=true;
@@ -713,12 +725,12 @@ function mailView(){
  const smartContacts=window.SEYVEO_SMART_CONTACTS?.mount({
   host:section,
   onConnect:openConnect,
-  onBack:()=>{smartContacts.close();paint()},
+  onBack:()=>mailContactsExitHandler?.(),
   onSaved:()=>{const scope=inviteScope();contactsInvite.hidden=!scope; }
  });
  mailContactsExitHandler=()=>{
   if(!smartContacts?.isOpen())return false;
-  smartContacts.close();paint();return true;
+  smartContacts.close();guardOpen=contactsReturnToGuard;contactsReturnToGuard=false;paint();return true;
  };
  window.addEventListener('seyveo:verified-connection-changed',()=>{
   smartContacts?.refresh();paint();
@@ -754,6 +766,7 @@ function mailView(){
   if(!reply)content.querySelector('[data-mail-field="to"]')?.focus();
  }
  function selectFolder(folder){
+  if(folder!==mailFolder)rememberMailFolder();
   mailDraftSelecting=false;selectedDraftIds.clear();
   mailBulkSelecting=false;selectedMailIds.clear();
   guardOpen=false;
@@ -1006,10 +1019,10 @@ function mailView(){
   }
   for(const field of [to,subj,message])field.addEventListener('input',autosaveDraft);
   const leaveEditor=()=>{
-   const saved=autosaveDraft();
+   autosaveDraft();
    mailEditorOpen=false;mailEditingId=null;
    mailCurrent=mailEditorReturnId;mailEditorReturnId=null;mailEditorExitHandler=null;
-   if(saved&&!mailCurrent)mailFolder='drafts';
+   // A saved draft must not change the screen the user came from.
    paint();
   };
   // Back saves automatically, without the obsolete Save/Discard sheet.
@@ -1667,6 +1680,17 @@ function mailView(){
   if(['inbox','starred','archive','review','promotions','spam','trash'].includes(mailFolder)){drawExamples();return}
   content.append(create('p','sv-mail-empty','Отправленные письма появятся после подключения почтового сервиса. Учебные примеры ничего не отправляют.'));
  }
+ function returnToPreviousMailList(){
+  if(mailCurrent){mailCurrent=null;paint();return true;}
+  const previous=mailFolderHistory.pop();
+  if(!previous&&mailFolder==='overview')return false;
+  mailFolder=previous?.folder||'overview';
+  if(previous){mailScope=previous.scope;mailSearch=previous.search;mailSearchOpen=previous.searchOpen;}
+  mailNotice='';guardOpen=false;clearTrashUndo();
+  mailBulkSelecting=false;selectedMailIds.clear();mailDraftSelecting=false;selectedDraftIds.clear();
+  searchInput.value=mailSearch;paint();return true;
+ }
+ mailListExitHandler=returnToPreviousMailList;
  function paint(){
   const contactsActive=smartContacts?.isOpen()===true;
   page.dataset.svMailMode=contactsActive?'contacts':mailEditorOpen?'editor':mailCurrent?'detail':'overview';
@@ -1681,7 +1705,10 @@ function mailView(){
   introCopy.querySelector('.sv-mail-introduction-title').textContent=headerTitle;
   title.textContent=headerTitle;
   if(contactsActive){back.setAttribute('aria-label','Назад к почте');guardOpen=false;}
-  else if(mailFolder!=='overview'){back.setAttribute('aria-label','Назад к почте');}
+  else if(mailFolderHistory.length||mailFolder!=='overview'){
+   const previous=mailFolderHistory[mailFolderHistory.length-1];
+   back.setAttribute('aria-label','Назад: '+(tabs.find(([key])=>key===previous?.folder)?.[1]||'Почта'));
+  }else if(mailEntryOrigin){back.setAttribute('aria-label','Вернуться: '+mailEntryOrigin.label);}
   else updateBackDestination();
   topButtons.hidden=contactsActive;
   connect.hidden=mailEditorOpen||!!mailCurrent||contactsActive;
@@ -1880,6 +1907,7 @@ function searchInCurrentMail(query,scope='inbox'){
  // Keep the user in the mailbox already open. No new mini-search bar
  // and no navigation round trip that would discard this view.
  if(location.hash!=='#sayvi-mail')return false;
+ rememberMailFolder();
  mailSearch=String(query||'').trim().slice(0,200).toLocaleLowerCase('ru-RU');
  mailFolder=scope==='drafts'?'drafts':'inbox';
  mailSearchOpen=false;
@@ -1894,7 +1922,13 @@ function currentKind(){
  return null;
 }
 function sync(){
+ const hash=location.hash;
  const kind=currentKind();
+ if(kind==='mail'&&lastSurfaceHash!=='#sayvi-mail'&&!mailEntryOrigin){
+  captureMailOrigin(lastSurfaceHash);
+ }
+ if(lastSurfaceHash==='#sayvi-mail'&&kind!=='mail'){mailEntryOrigin=null;mailFolderHistory.length=0;}
+ lastSurfaceHash=hash;
  if(kind){
   // The document vault must lock even when switching directly to mail or health.
   if(kind!=='contract')window.SEYVEO_DOCUMENT_CENTER?.destroy?.();
@@ -1907,12 +1941,18 @@ function sync(){
   updateBackDestination();
  }
 }
+function captureMailOrigin(hash,context){
+ const labels={'#home':'Главная','#life':'Мой мир','#manage':'Управление','#tasks':context==='business'?'Кабинет':'Дела','#sayvi-documents':'Документы','#sayvi-health':'Здоровье'};
+ const origin=hash&&hash!=='#sayvi-mail'?hash:'#home';
+ mailEntryOrigin={hash:origin,label:labels[origin]||'предыдущий экран',previousDestination:returnDestination};
+}
 function open(kind,context){
  const target=routes[kind];
  if(!target)return false;
  // Keep account choice consistent even when mail is already open.
  // An early return here previously preserved the wrong inbox scope.
  if(kind==='mail'){
+  if(location.hash!==target){captureMailOrigin(location.hash,context);mailFolderHistory.length=0;}
   if(context==='business')mailScope='business';
   else if(context==='personal')mailScope='personal';
   else if(context==='all')mailScope='all';
@@ -1943,8 +1983,12 @@ back.addEventListener('click',()=>{
   if(typeof mailContactsExitHandler==='function'&&mailContactsExitHandler())return;
   if(typeof mailGuardExitHandler==='function'&&mailGuardExitHandler())return;
   if(typeof mailEditorExitHandler==='function'){mailEditorExitHandler();return}
-  if(mailCurrent){mailCurrent=null;sync();return}
-  if(mailFolder!=='overview'){mailFolder='overview';sync();return}
+  if(mailListExitHandler?.())return;
+  if(mailEntryOrigin){
+   const origin=mailEntryOrigin;mailEntryOrigin=null;
+   returnDestination=origin.previousDestination;
+   location.hash=origin.hash;return;
+  }
  }
  const destination=returnDestination?.hash;
  if(destination)location.hash=destination;
