@@ -153,7 +153,7 @@ function normalize(obj){
  // canvas so strokes remain circular instead of being stretched on iPhone.
  const height=Number.isFinite(Number(p.height))&&Number(p.height)>=H?Math.min(MAX_PAGE_HEIGHT,Math.round(Number(p.height))):H;
  return{pattern:patterns.includes(p.pattern)?p.pattern:'blank',background:p.background==='dark'?'dark':'light',height,
- photo:typeof p.photo==='string'&&p.photo.length<MAX_PHOTO&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:'',
+ photo:typeof p.photo==='string'&&p.photo.length<MAX_PHOTO&&/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:'',
  photoLayout:normalizePhotoLayout(p.photoLayout,height),
  texts:(Array.isArray(p.texts)?p.texts:[]).slice(0,MAX_TEXTS).map(item=>normalizeTextObject(item,height)).filter(Boolean),
  strokes:(Array.isArray(p.strokes)?p.strokes:[]).slice(0,MAX_STROKES)
@@ -1154,6 +1154,7 @@ dialog.addEventListener('cancel',e=>{if(changed&&!window.confirm('Закрыть
 dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');dialog.classList.remove('sv-paper-inking');if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}liveTail=null;liveMid=null;closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;const original=isScan()&&editID?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===editID):null;const scanner=window.SEYVEO_NOTE_SCANNER;if(original&&scanner?.openSaved?.(original))return;if(isScan()&&scanReturnFile&&scanner?.resumePhoto?.(scanReturnFile))return;window.SEYVEO_NOTES_API?.openNotes()}});
 $('notePaperSave').addEventListener('click',()=>{
  if(pending)return;
+ if(isScan()&&!data.photo){report('Дождитесь загрузки документа.');return;}
  if(!data.strokes.length&&!data.photo&&!data.texts?.length){report('Напишите, нарисуйте или добавьте фотографию.');return}
  const api=window.SEYVEO_NOTES_API,list=api?.getNotes();
  if(!api||!list){report('Блокнот недоступен.');return}
@@ -1238,7 +1239,7 @@ async function importPhoto(file){
  try{
   const image=await compressPhoto(file);
  if(!dialog.open||data!==pageAtStart)return;
-  rememberUndo({type:'sheet',previous:snapshotSheet()});
+  if(!isScan())rememberUndo({type:'sheet',previous:snapshotSheet()});
    data.photo=image;data.photoLayout=null;data.pattern='blank';changed=true;render();
   report('Фото добавлено. Можно писать поверх и сохранить лист.');
  }catch(error){report(error?.message||'Не получилось добавить фотографию.')}
