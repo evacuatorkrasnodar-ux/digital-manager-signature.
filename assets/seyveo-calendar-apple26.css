@@ -593,10 +593,10 @@ html body #calendarPage #calendarWeekTimelineScroll{
  scrollbar-width:none!important;background:#FFF!important;
 }
 #calendarPage #calendarWeekTimelineScroll::-webkit-scrollbar{display:none!important}
-#calendarPage .cal-week-hours{position:relative!important;width:100%!important;min-height:calc(24 * var(--cal-week-hour-height,46px))!important}
+#calendarPage .cal-week-hours{position:relative!important;width:100%!important;min-height:calc(24 * var(--cal-week-hour-height,42px))!important}
 #calendarPage .cal-week-hour-row{
  position:relative!important;box-sizing:border-box!important;
- height:var(--cal-week-hour-height,46px)!important;border:0!important;
+ height:var(--cal-week-hour-height,42px)!important;border:0!important;
  border-bottom:1px solid #EAECEF!important;background:transparent!important;
 }
 #calendarPage .cal-week-hour-row::before{
@@ -1389,7 +1389,7 @@ html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-calendar-
  background:var(--cal-item-accent)!important;pointer-events:none!important;
 }
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed .cal-entry-copy strong{
- font:600 14px/14px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font:600 13px/14px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"]{
  flex-direction:row!important;align-items:center!important;gap:5px!important;
@@ -1419,12 +1419,20 @@ html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
  line-height:9px!important;
 }
 
-/* Compact 46px hour scale: keep two-line half-hour events readable without overlap. */
+/* Compact hour scale: keep two-line half-hour events readable without overlap. */
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed:not([data-duration-unknown="true"]),
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"][data-compact-stacked="true"]{
  padding-top:0!important;padding-bottom:0!important;gap:0!important;
 }
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed:not([data-duration-unknown="true"]) .cal-entry-copy strong,
 html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"][data-compact-stacked="true"] .cal-entry-copy strong{
- line-height:13px!important;
+ font-size:12px!important;line-height:12px!important;
+}
+
+/* Compact point events: short, readable rows with accurate time placement. */
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"]:not([data-compact-stacked="true"]){
+ padding-top:0!important;padding-bottom:0!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
+ font-size:9px!important;line-height:8px!important;
 }
