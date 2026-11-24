@@ -1057,9 +1057,12 @@ $('notePaperDuplicate')?.addEventListener('click',()=>{
  const copy={...last,points:last.points.map(([x,y,p,t])=>[clamp(x+25,W),clamp(y+25,data.height||H),p,t||0])};
  data.strokes.push(copy);rememberUndo({type:'add',count:1});changed=true;render();report('Последний штрих дублирован.');
 });
-function open(note=null){
+function open(note=null,options={}){
   handwritingPage=note?.noteKind==='handwriting';
+  const scanPage=options?.scan===true||note?.scanDocument===true||note?.sampleKind==='scan-photo';
   dialog.classList.toggle('sv-paper-handwriting-page',handwritingPage);
+  dialog.classList.toggle('sv-paper-scan-page',scanPage);
+  if(scanPage)note=window.SEYVEO_NOTEBOOK_SCREEN?.polishScanExample?.(note)||note;
   if(handwritingPage)note=window.SEYVEO_NOTEBOOK_SCREEN?.alignExample?.(note)||note;
  dialog.classList.remove('sv-paper-inking');
  if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}
@@ -1119,7 +1122,7 @@ $('notePaperSave').addEventListener('click',()=>{
  if(editID){
   if(!list.some(n=>n.id===editID)){report('Запись не найдена.');return}
   updated=list.map(n=>n.id===editID?{...n,paper:page,updatedAt:Date.now()}:n);
- }else updated=[{id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:'Рисунок',noteKind:'art',paper:page,createdAt:Date.now()},...list];
+ }else updated=[{id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:dialog.classList.contains('sv-paper-scan-page')?'Скан документа':'Рисунок',noteKind:'art',...(dialog.classList.contains('sv-paper-scan-page')?{scanDocument:true}:{}),paper:page,createdAt:Date.now()},...list];
  if(!api.putNotes(updated)){report('Не хватает места для сохранения. Лист пока открыт.');return}
  changed=false;dialog.close();
 });
