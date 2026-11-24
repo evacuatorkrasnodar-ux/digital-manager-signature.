@@ -67,7 +67,18 @@
  // Shadow DOM, so old app styles cannot remove Back's circular material.
  const workHeader=window.SEYVEO_WORK_HEADER?.create();
  if(!workHeader)throw new Error('SEYVEO Work header module is missing');
- const {host:heading,back,title,month,add}=workHeader;
+ const {host:heading,back,title,month,company,add}=workHeader;
+ function syncCompanyName(){
+  if(!company)return;
+  let name='';
+  try{name=String(JSON.parse(localStorage.getItem('seyveo-company-passport-v1')||'null')?.name||'').trim();}catch{}
+  company.querySelector('.company-name').textContent=name||'Моя компания';
+  company.setAttribute('aria-label','Открыть профиль компании'+(name?': '+name:''));
+ }
+ company?.addEventListener('click',()=>window.SEYVEO_COMPANY_PASSPORT?.open?.());
+ window.addEventListener('seyveo:company-changed',syncCompanyName);
+ window.addEventListener('storage',event=>{if(event.key==='seyveo-company-passport-v1')syncCompanyName()});
+ syncCompanyName();
  // The current calendar period occupies the center of the shared header,
  // aligned between Back and Add; the month grid retains its original structure.
  const calendarPeriodLabel=document.getElementById('calendarPeriodTitle');
@@ -537,6 +548,7 @@
   // Cabinet is a top-level Work tab. Its existing Review and Plus controls
   // share one right capsule, matching the Tasks capsule's 44px button axis.
   heading.dataset.businessTools=String(active==='business'&&!history);
+  if(company)company.hidden=!visible||active!=='business'||history;
   if(toolMode&&(!visible||active!=='personal'||history)){setMode('');return;}
   searchTasks.innerHTML=nested?searchIcon:historyIcon;
   searchTasks.setAttribute('aria-label',nested?'Поиск по делам':'История и все дела');
