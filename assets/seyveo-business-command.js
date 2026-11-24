@@ -2319,6 +2319,7 @@ function showInbox(){
  refreshOwnAvatarEntrypoints();
  renderDirectory();
 }
+let sharedWorkDraft=null;
 function openRoom(roomId){
  closeWorkHistory();
  // Validate before exposing a room route. Invalid or restricted deep links
@@ -2401,6 +2402,7 @@ function openRoom(roomId){
  // so switching back from Sayvi cannot show a stale intermediate room frame.
  try{
   updatePerspective();renderChat();
+  if(sharedWorkDraft?.room===selected.id){const draft=sharedWorkDraft;sharedWorkDraft=null;pickCaptureFile(draft.file,'file');}
  }finally{
   if(conversation)conversation.style.removeProperty('visibility');
  }
@@ -4522,6 +4524,15 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
 syncComposerActions();
 window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  openTab:tab,
+ prepareSharedFile:(room,file)=>{
+  if(!(file instanceof File)||file.size>16*1024*1024||!ROOMS.some(r=>r.id===room)||!chatRoomVisible(room)||!window.SEYVEO_UNIFIED_TASKS?.openChat)return false;
+  if(sharedWorkDraft)return false;
+  const draft={room,file};sharedWorkDraft=draft;
+  try{window.SEYVEO_UNIFIED_TASKS.openChat('home',room);}
+  catch{sharedWorkDraft=null;return false;}
+  setTimeout(()=>{if(sharedWorkDraft===draft){sharedWorkDraft=null;setStatus('Не удалось открыть чат с вложением.');}},3000);
+  return true;
+ },
  listRooms:()=>ROOMS.filter(room=>chatRoomVisible(room.id)).map(({id,label,kind,hint,person,members,section})=>({id,label,kind,hint,person,members,section})),
  // Reuse the very same portrait renderer as the main conversation directory.
  paintContactAvatar:(target,roomId)=>{
