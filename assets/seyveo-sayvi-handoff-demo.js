@@ -72,15 +72,6 @@
   if(showCinema)small.style.setProperty('opacity','0','important');
 
   let done=false;
-  let publicLaunchCompletePending=false;
-  function completePublicLaunch(){
-    root.classList.remove('sv-home-launch-pending');
-    beginHomeGreetingLifetime();
-    if(publicLaunchCompletePending){
-      publicLaunchCompletePending=false;
-      window.dispatchEvent(new Event('seyveo:cinema-finished'));
-    }
-  }
   let animation=null;
   let introTimer=0;
   let safetyTimer=0;
@@ -272,8 +263,7 @@
     // pointless trip to the dock and back after the written welcome.
     const keepHomeSphere=!spark&&(stayHome||!shouldDockHome())&&
       (!location.hash||location.hash==='#home')&&!home.hidden;
-    const publicLift=keepHomeSphere&&!showCinema&&!noIntro&&!document.hidden&&root.classList.contains('sv-home-launch-pending');
-    publicLaunchCompletePending=publicLift;
+    const firstLaunch=keepHomeSphere&&root.classList.contains('sv-home-launch-pending');
     done=true;
     voiceButton?.remove();
     voiceButton=null;
@@ -302,7 +292,7 @@
     clearTimeout(safetyTimer);
     if(spark)root.classList.add('sv-cinema-stagger-enter');
     root.classList.add('sv-sayvi-handoff-docked');
-    if(keepHomeSphere&&!publicLift){
+    if(keepHomeSphere){
       emptySphere=true;
       emptyEntering=false;
       emptyLeaving=false;
@@ -315,15 +305,14 @@
     if(spark)root.classList.add('sv-sayvi-handoff-arrived');
     restoreOrb();
     restoreDock();
-    if(keepHomeSphere&&!publicLift)window.dispatchEvent(new Event('seyveo:home-sayvi-arrived'));
     if(smallOpacity)small.style.setProperty('opacity',smallOpacity,smallOpacityPriority);
     else small.style.removeProperty('opacity');
     root.classList.remove('sv-sayvi-handoff-inflight');
     if(revealHomeInfo)setTimeout(()=>root.classList.remove('sv-home-info-enter'),900);
     const cluster=document.getElementById('orbCluster');
     if(cluster){
-      cluster.setAttribute('aria-hidden',keepHomeSphere&&!publicLift?'false':'true');
-      cluster.inert=!keepHomeSphere||publicLift;
+      cluster.setAttribute('aria-hidden',keepHomeSphere?'false':'true');
+      cluster.inert=!keepHomeSphere;
     }
     if(spark){
       const flash=document.createElement('span');
@@ -336,22 +325,15 @@
       setTimeout(()=>flash.remove(),1050);
     }
     renderToday();
-    if(publicLift){
-      // The ordinary launch reuses the original dock-to-Home flight.
-      // Keep all Home information behind the first-paint gate until landing.
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        if(canShowEmptySphere())enterEmptySphere();
-        else completePublicLaunch();
-      }));
-    }else{
-      root.classList.remove('sv-home-launch-pending');
-      beginHomeGreetingLifetime();
-    }
+    // Cold launch already has the full-size sphere in its final slot.
+    root.classList.remove('sv-home-launch-pending');
+    beginHomeGreetingLifetime();
+    if(keepHomeSphere)window.dispatchEvent(new CustomEvent('seyveo:home-sayvi-arrived',{detail:{firstLaunch,afterCards:false}}));
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
     if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),4200);
     setTimeout(()=>root.classList.remove('sv-sayvi-handoff-arrived'),850);
-    if(!publicLift)window.dispatchEvent(new Event('seyveo:cinema-finished'));
+    window.dispatchEvent(new Event('seyveo:cinema-finished'));
   }
 
   function begin(){
@@ -677,14 +659,12 @@
     if(!done&&location.hash&&location.hash!=='#home')finish();
     if(location.hash&&location.hash!=='#home'){
       root.classList.remove('sv-cinema-stagger-enter');
-      if(publicLaunchCompletePending)completePublicLaunch();
-      else root.classList.remove('sv-home-launch-pending');
+      root.classList.remove('sv-home-launch-pending');
     }
   });
   window.addEventListener('pagehide',()=>{
     if(!done)finish();
-    if(publicLaunchCompletePending)completePublicLaunch();
-    else root.classList.remove('sv-home-launch-pending');
+    root.classList.remove('sv-home-launch-pending');
   });
   let lastViewportWidth=window.innerWidth;
   window.addEventListener('resize',()=>{
@@ -979,10 +959,8 @@
       // Never strand the weather behind the flight gate on Safari, even if
       // Web Animations is interrupted or cannot start.
       root.classList.add('sv-home-empty-arrived');
-      const firstLaunch=root.classList.contains('sv-home-launch-pending');
-      if(firstLaunch)completePublicLaunch();
       window.dispatchEvent(new CustomEvent('seyveo:home-sayvi-arrived',{
-        detail:{afterCards,firstLaunch}
+        detail:{afterCards}
       }));
       if(!canShowEmptySphere())leaveEmptySphere();
     };
@@ -1023,7 +1001,6 @@
     }
     if(!emptySphere)return;
     if(emptyEntering&&animate)return;
-    if(publicLaunchCompletePending)completePublicLaunch();
     // A genuine exit may expand the pearl dock; release the launch-only hold.
     root.classList.remove('sv-home-empty-at-launch');
     emptySphere=false;
