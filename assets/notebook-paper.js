@@ -21,6 +21,27 @@ const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPa
 const iosFingerInk=/iPhone|iPod/i.test(navigator.userAgent||'');
 let data={pattern:'blank',background:'dark',height:H,strokes:[],texts:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false,sayviHandoffBusy=false,handwritingPage=false;
 let hiddenTextIndex=-1;
+let scanReturnFile=null;
+const isScan=()=>dialog.classList.contains('sv-paper-scan-page');
+const scanDone=document.createElement('button');
+scanDone.id='svScanAnnotationDone';scanDone.type='button';scanDone.hidden=true;
+scanDone.setAttribute('aria-label','Сохранить пометки');
+scanDone.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.3l4.3 4.3 8.7-9.2"/></svg>';
+const scanHeading=document.createElement('span');scanHeading.id='svScanAnnotationTitle';scanHeading.textContent='Пометки';scanHeading.hidden=true;
+dialog.querySelector('.sv-paper-top').append(scanHeading,scanDone);
+scanDone.addEventListener('click',()=>$('notePaperSave').click());
+function resetScanGeometry(){
+ for(const k of ['width','height','left','top'])sheet.style.removeProperty('--sv-scan-'+k);
+ canvas.style.removeProperty('clip-path');
+}
+function scanBounds(){return isScan()&&data.photo?photoBounds(data,photoView):null;}
+function scanContains(e){
+ if(!isScan())return true;
+ const b=scanBounds(),r=canvas.getBoundingClientRect();
+ if(!b||!r.width||!r.height)return false;
+ const x=(e.clientX-r.left)*W/r.width,y=(e.clientY-r.top)*(data.height||H)/r.height;
+ return x>=b.x&&x<=b.x+b.width&&y>=b.y&&y<=b.y+b.height;
+}
 let activeColor='#f6f7fb',activeGradient=null,brushSize=5;
 let brushSizes={pen:5,pencil:3,brush:18,spray:48,oil:25,watercolor:30,marker:14,calligraphy:12,eraser:36};
 const brushOpacity={brush:.8,spray:.56,oil:.94,watercolor:.54,marker:.72,calligraphy:.98};
@@ -483,10 +504,22 @@ function previewList(target,obj){
  // Fill the WHOLE stage instead of forcing A4 into a small centered rectangle.
  // Extend the virtual page proportionally so circles and brush widths are not
  // distorted on-screen. Never shrink a page and crop existing strokes.
- const width=Math.max(90,Math.floor(rect.width));
- const height=Math.max(120,Math.floor(rect.height));
- const logicalHeight=Math.max(H,Math.min(MAX_PAGE_HEIGHT,Math.round(W*height/width)));
- if((data.height||H)<logicalHeight)data.height=logicalHeight;
+ let width=Math.max(90,Math.floor(rect.width));
+ let height=Math.max(120,Math.floor(rect.height));
+ if(isScan()){
+  const b=scanBounds(),pageH=data.height||H;
+  const box=b||{x:0,y:0,width:W,height:pageH};
+  const scale=Math.min((rect.width-32)/box.width,Math.max(100,Math.min(rect.height-64,window.innerHeight*.70))/box.height);
+  width=Math.max(1,Math.round(W*scale));height=Math.max(1,Math.round(pageH*scale));
+  sheet.style.setProperty('--sv-scan-width',width+'px');
+  sheet.style.setProperty('--sv-scan-height',height+'px');
+  sheet.style.setProperty('--sv-scan-left',((rect.width-box.width*scale)/2-box.x*scale)+'px');
+  sheet.style.setProperty('--sv-scan-top',(8-box.y*scale)+'px');
+  canvas.style.clipPath=b?'inset('+Math.max(0,b.y/pageH*100)+'% '+Math.max(0,(W-b.x-b.width)/W*100)+'% '+Math.max(0,(pageH-b.y-b.height)/pageH*100)+'% '+Math.max(0,b.x/W*100)+'%)':'inset(100%)';
+ }else{
+  const logicalHeight=Math.max(H,Math.min(MAX_PAGE_HEIGHT,Math.round(W*height/width)));
+  if((data.height||H)<logicalHeight)data.height=logicalHeight;
+ }
  sheet.style.width=width+'px';sheet.style.height=height+'px';syncHandwritingRules();
  // Retina: the old fixed-size bitmap was stretched across physical pixels.
  // Keep the original world coordinates, but rasterise at display resolution.
@@ -514,7 +547,7 @@ function placePhotoPreview(){
  photoView.style.visibility='visible';
 }
 photoView?.addEventListener('load',()=>{
- placePhotoPreview();dialog.dispatchEvent(new Event('sv-paper-photo-ready'));
+ if(isScan())fitPaper();else placePhotoPreview();dialog.dispatchEvent(new Event('sv-paper-photo-ready'));
 });
 function render(redrawInk=true){
  dialog.classList.toggle('sv-paper-light-surface',data.background==='light');
@@ -604,7 +637,10 @@ function point(e,box=canvas.getBoundingClientRect()){
  const altitudeTilt=Number.isFinite(altitude)&&altitude>=0&&altitude<=Math.PI/2
   ?90-altitude*180/Math.PI:0;
  const tilt=e.pointerType==='pen'?Math.max(planarTilt,altitudeTilt):0;
- return [inkCoord((e.clientX-box.left)/box.width*W,W),inkCoord((e.clientY-box.top)/box.height*(data.height||H),data.height||H),clamp(force*100,100),clamp(tilt,90)];
+ let x=inkCoord((e.clientX-box.left)/box.width*W,W),y=inkCoord((e.clientY-box.top)/box.height*(data.height||H),data.height||H);
+ const b=scanBounds();
+ if(b){x=Math.max(Math.ceil(b.x),Math.min(Math.floor(b.x+b.width),x));y=Math.max(Math.ceil(b.y),Math.min(Math.floor(b.y+b.height),y));}
+ return [x,y,clamp(force*100,100),clamp(tilt,90)];
 }
 // Live ink pipeline: draw ONLY the new Bézier segment, keeping previously
 // painted pixels intact. Historic strokes are replayed for Undo/export only.
@@ -697,6 +733,7 @@ function queueShapePreview(){
  shapeFrame=requestAnimationFrame(redrawShapePreview);
 }
 function down(e){
+ if(!scanContains(e))return;
  if(dialog.classList.contains('sv-paper-text-mode')||dialog.classList.contains('sv-paper-photo-mode')||dialog.classList.contains('sv-paper-smooth-mode'))return;
  if(iosFingerInk&&e.pointerType==='touch'&&!e.iosTouchFallback)return;
  if(currentTool()==='lasso')return;
@@ -1062,6 +1099,9 @@ function open(note=null,options={}){
   const scanPage=options?.scan===true||note?.scanDocument===true||note?.sampleKind==='scan-photo';
   dialog.classList.toggle('sv-paper-handwriting-page',handwritingPage);
   dialog.classList.toggle('sv-paper-scan-page',scanPage);
+ resetScanGeometry();scanDone.hidden=!scanPage;scanHeading.hidden=!scanPage;
+ scanReturnFile=scanPage?(options?.sourceFile||null):null;
+ $('notePaperBack').setAttribute('aria-label',scanPage?'Вернуться к документу':'Вернуться в Блокнот');
   if(scanPage)note=window.SEYVEO_NOTEBOOK_SCREEN?.polishScanExample?.(note)||note;
   if(handwritingPage)note=window.SEYVEO_NOTEBOOK_SCREEN?.alignExample?.(note)||note;
  dialog.classList.remove('sv-paper-inking');
@@ -1069,7 +1109,8 @@ function open(note=null,options={}){
  liveTail=null;liveMid=null;
  data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',photoLayout:null,background:document.documentElement.dataset.theme==='dark'?'dark':'light',height:H,strokes:[],texts:[]};
   dialog.classList.toggle('sv-paper-light-surface',data.background==='light');
-  editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;undoStack=[];redoStack=[];returnToList=true;hiddenTextIndex=-1;
+  if(scanPage){data.background='light';data.pattern='blank';}
+ editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;undoStack=[];redoStack=[];returnToList=true;hiddenTextIndex=-1;
  closePatternMenu();closeColorMenu();
  activeColor=[...data.strokes].reverse().find(stroke=>validInkColor(stroke.color))?.color||(data.background==='dark'?'#f6f7fb':'#171e29');
  activeGradient=null;
@@ -1094,7 +1135,7 @@ function open(note=null,options={}){
  brushSize=brushSizes.pen;
  if(extras)extras.hidden=true;if(moreButton)moreButton.setAttribute('aria-expanded','false');
  syncColorMenu();
- $('notePaperTitle').textContent=handwritingPage?(note.title||'Рукописная заметка'):(editID?'Мой лист':'Чистый лист');selectTool('pen',true);report('');
+ $('notePaperTitle').textContent=scanPage?'Пометки · '+(note?.title||'Скан документа'):handwritingPage?(note.title||'Рукописная заметка'):(editID?'Мой лист':'Чистый лист');selectTool('pen',true);report('');
  if(!dialog.open)dialog.showModal();
  document.documentElement.classList.add('sv-paper-drawing');
  requestAnimationFrame(()=>{
@@ -1110,7 +1151,7 @@ function discard(){
 }
 $('notePaperCancel').addEventListener('click',discard);$('notePaperBack').addEventListener('click',discard);
 dialog.addEventListener('cancel',e=>{if(changed&&!window.confirm('Закрыть лист без сохранения?'))e.preventDefault()});
-dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');dialog.classList.remove('sv-paper-inking');if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}liveTail=null;liveMid=null;closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
+dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');dialog.classList.remove('sv-paper-inking');if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}liveTail=null;liveMid=null;closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;const original=isScan()&&editID?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===editID):null;const scanner=window.SEYVEO_NOTE_SCANNER;if(original&&scanner?.openSaved?.(original))return;if(isScan()&&scanReturnFile&&scanner?.resumePhoto?.(scanReturnFile))return;window.SEYVEO_NOTES_API?.openNotes()}});
 $('notePaperSave').addEventListener('click',()=>{
  if(pending)return;
  if(!data.strokes.length&&!data.photo&&!data.texts?.length){report('Напишите, нарисуйте или добавьте фотографию.');return}
@@ -1124,6 +1165,7 @@ $('notePaperSave').addEventListener('click',()=>{
   updated=list.map(n=>n.id===editID?{...n,paper:page,updatedAt:Date.now()}:n);
  }else updated=[{id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:dialog.classList.contains('sv-paper-scan-page')?'Скан документа':'Рисунок',noteKind:'art',...(dialog.classList.contains('sv-paper-scan-page')?{scanDocument:true}:{}),paper:page,createdAt:Date.now()},...list];
  if(!api.putNotes(updated)){report('Не хватает места для сохранения. Лист пока открыт.');return}
+ if(isScan()&&!editID)editID=updated[0].id;
  changed=false;dialog.close();
 });
 async function png(p){
@@ -1190,10 +1232,12 @@ async function compressPhoto(file){
  }finally{URL.revokeObjectURL(url)}
 }
 async function importPhoto(file){
- if(!file)return;
+ if(!file||isScan()&&data.photo)return;
+ const pageAtStart=data;
  report('Готовлю фотографию…');
  try{
   const image=await compressPhoto(file);
+ if(!dialog.open||data!==pageAtStart)return;
   rememberUndo({type:'sheet',previous:snapshotSheet()});
    data.photo=image;data.photoLayout=null;data.pattern='blank';changed=true;render();
   report('Фото добавлено. Можно писать поверх и сохранить лист.');
@@ -1205,7 +1249,7 @@ photoFile?.addEventListener('change',()=>{
  if(file)importPhoto(file);
 });
 $('notePaperRemovePhoto')?.addEventListener('click',()=>{
- if(!data.photo)return;
+ if(!data.photo||isScan())return;
  if(!window.confirm('Убрать фотографию с листа? Штрихи останутся.'))return;
  rememberUndo({type:'sheet',previous:snapshotSheet()});
   data.photo='';data.photoLayout=null;changed=true;render();report('Фотография убрана.');
@@ -1228,7 +1272,7 @@ window.SEYVEO_PAPER=Object.freeze({
  getPhotoLayout:()=>data.photo?{...(normalizePhotoLayout(data.photoLayout,data.height||H)||{x:W/2,y:(data.height||H)/2,scale:1})}:null,
  getPhotoBounds:()=>data.photo?photoBounds(data,photoView):null,
  setPhotoLayout:next=>{
-  if(!data.photo||pending||!next||!Number.isFinite(next.x)||!Number.isFinite(next.y)||!Number.isFinite(next.scale))return false;
+  if(isScan()||!data.photo||pending||!next||!Number.isFinite(next.x)||!Number.isFinite(next.y)||!Number.isFinite(next.scale))return false;
   const layout=normalizePhotoLayout(next,data.height||H);
   const previous=normalizePhotoLayout(data.photoLayout,data.height||H)||{x:W/2,y:(data.height||H)/2,scale:1};
   if(JSON.stringify(layout)===JSON.stringify(previous))return true;
@@ -1309,6 +1353,12 @@ window.SEYVEO_PAPER=Object.freeze({
  },
  clearSheet:()=>{
   if(pending)return false;
+  if(isScan()){
+   if(!data.strokes.length&&!data.texts.length)return true;
+   if(!window.confirm('Удалить все пометки? Оригинал документа останется.'))return false;
+   rememberUndo({type:'sheet',previous:snapshotSheet()});
+   data.strokes=[];data.texts=[];changed=true;render();report('Пометки удалены.');return true;
+  }
   const hasContent=Boolean(data.strokes.length||data.photo||data.texts?.length);
   if(hasContent&&!window.confirm('Очистить весь лист? Рисунок, текст и фото можно вернуть кнопкой отмены.'))return false;
   if(!hasContent&&data.pattern==='blank'){report('Лист уже чистый.');return true}
@@ -1360,7 +1410,7 @@ window.SEYVEO_PAPER=Object.freeze({
   undo:undoInk,redo:redoInk,
   canUndo:()=>undoStack.length>0,canRedo:()=>redoStack.length>0,
  setBackground:(background)=>{
-  if(background!=='dark'&&background!=='light')return;
+  if(isScan()||background!=='dark'&&background!=='light')return;
   if(data.background===background)return;
   rememberUndo({type:'sheet',previous:snapshotSheet()});
   data.background=background;
