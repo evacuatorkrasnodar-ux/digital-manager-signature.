@@ -463,7 +463,6 @@
  let svAgendaWasVisible=null;
  function sync(){
   const active=activeSection();
-  if(notebookChoices)notebookChoices.hidden=active!=='notes';
   const managerTasks=!tasks.hidden&&oldTasks.dataset.manager==='true';
   const managerCal=!calendar.hidden&&!oldCalendar.hidden;
   // The employee's existing workspace is a top-level Tasks view.
@@ -475,7 +474,14 @@
   const employeeMode=employeePreview&&!managerMode;
   // The same three-position shell also belongs to ONE.
   // Preview roles are an interface demo, not verified company authorization.
-  const visible=!!walletDialog?.open||!!notesPage?.open||!tasks.hidden||!calendar.hidden;
+  // Only the Work routes own this in-flow screen. An old open notebook
+  // or wallet must never expose Work on top of Home or another route.
+  const workRoute=location.hash==='#tasks'||location.hash==='#calendar';
+  const visible=workRoute&&(!!walletDialog?.open||!!notesPage?.open||!tasks.hidden||!calendar.hidden);
+  shell.hidden=!visible;
+  if(visible)shell.style.removeProperty('display');
+  else shell.style.setProperty('display','none','important');
+  if(notebookChoices)notebookChoices.hidden=!visible||active!=='notes';
   const history=visible&&!walletDialog?.open&&!notesPage?.open&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
   parkCalendarMenu(visible&&!history&&active==='calendar');
   if(active!=='business'||!managerPreview||history)closeBusinessCreate();
@@ -499,15 +505,16 @@
   nav.dataset.one=String(!managerMode&&!employeeMode);
   nav.dataset.business=String(managerMode&&!employeeMode);
   nav.dataset.wallet='true';
+  const nested=visible&&active==='personal'&&!history&&!!toolMode;
   for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
    const name=tab.dataset.svWorkTab;
    // Manager (Business): 4; personal (ONE): 3; employee view: 2.
    // The last mode never turns «Моя работа» into «Кошелёк».
-   const hide=employeeMode
+   const hide=!visible||nested||(employeeMode
     ? !['personal','employee'].includes(name)
     : managerMode
       ? !['personal','notes','wallet','business'].includes(name)
-      : !['personal','notes','wallet'].includes(name);
+      : !['personal','notes','wallet'].includes(name));
    tab.hidden=hide;
    // Older CSS has display:flex!important. Preserve hidden semantics even
    // if a previously cached stylesheet arrives after this component.
@@ -530,8 +537,7 @@
   // Cabinet is a top-level Work tab. Its existing Review and Plus controls
   // share one right capsule, matching the Tasks capsule's 44px button axis.
   heading.dataset.businessTools=String(active==='business'&&!history);
-  if(active!=='personal')window.SEYVEO_TASK_INLINE?.close();
-  const nested=active==='personal'&&!history&&!!toolMode;
+  if(toolMode&&(!visible||active!=='personal'||history)){setMode('');return;}
   searchTasks.innerHTML=nested?searchIcon:historyIcon;
   searchTasks.setAttribute('aria-label',nested?'Поиск по делам':'История и все дела');
   searchTasks.setAttribute('aria-expanded',String(nested&&searchOpen));
@@ -555,7 +561,7 @@
   shell.dataset.agendaScroll=String(innerScroll);
   document.documentElement.classList.toggle('sv-agenda-scroll-active',innerScroll);
   // A dock hidden by a prior agenda flick must reappear in «Все дела».
-  if(nested&&document.documentElement.classList.contains('sv-agenda-dock-minimized'))
+  if((nested||!visible)&&document.documentElement.classList.contains('sv-agenda-dock-minimized'))
    document.documentElement.classList.remove('sv-agenda-dock-minimized');
   // A single composited fade on entry; no translate or layout shift, so the
   // permanent Apple-style header and approved 60px dock never jump.
