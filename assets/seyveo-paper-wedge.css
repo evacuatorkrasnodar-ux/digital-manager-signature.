@@ -8,7 +8,7 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperStage > .s
 }
 html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-width-control > .sv-paper-width-blade{
  position:absolute;display:block;left:50%;top:50%;transform:translate(-50%,-50%);
- width:3px;height:min(190px,36dvh);overflow:visible;pointer-events:none;
+ width:2px;height:min(190px,36dvh);overflow:visible;pointer-events:none;
  color:#aeb4bd;
  transition:width .22s cubic-bezier(.22,.8,.22,1),color .22s ease;
 }
@@ -19,7 +19,7 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperStage > .s
  box-sizing:border-box;position:absolute;z-index:2;left:50%;top:calc(50% + var(--sv-thumb-offset,0px));
  width:20px;height:20px;border-radius:50%;border:1px solid rgba(120,130,145,.19);
  background:#fff;box-shadow:0 1px 3px rgba(42,48,60,.12);pointer-events:none;
- transform:translate(-50%,-50%) scale(.83);transition:transform .16s ease;
+ transform:translate(-50%,-50%) scale(.78);transition:transform .16s ease;
 }
 html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-width-control.sv-wedge-expanded > .sv-paper-width-handle{transform:translate(-50%,-50%) scale(1);}
 html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-width-control > input#notePaperWidth{
