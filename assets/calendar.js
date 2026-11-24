@@ -78,10 +78,9 @@ let focus=new Date(),mode='month',editing=null,scope='all';
 const MONTH_LAYOUT_STORE='seyveo-calendar-month-layout-v1';
 const MONTH_LAYOUTS=['compact','stacked','details','list'];
 const DETAILS_MAX_LABELS=4;
-const detailsWeekHeight=entryCount=>{
- const shown=Math.min(DETAILS_MAX_LABELS,entryCount);
- return 52+Math.max(0,shown-1)*17+(entryCount>DETAILS_MAX_LABELS?13:0);
-};
+// A detailed week reserves the exact height of its tallest day, including
+// real time labels and the overflow counter, rather than clipping entries.
+const detailsWeekHeight=contentHeight=>Math.max(76,39+contentHeight);
 let monthLayout=MONTH_LAYOUTS.includes(raw(MONTH_LAYOUT_STORE))?raw(MONTH_LAYOUT_STORE):'compact';
 /* Return to the real source page; never use history.back() to leave SEYVEO. */
 let calendarReturnRoute='#life';
@@ -234,20 +233,29 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
   const entries=[
    ...calendarEvents.filter(item=>item.date===key).map(item=>({...item,kind:'event',source:'event'})),
    ...personalTasks.filter(item=>item.date===key&&!item.done).map(item=>({...item,kind:'task',source:'task'})),
-   ...personal.map(item=>({kind:'life',title:item.title||item.name||'Личное'})),
-   ...datedNotes.map(item=>({kind:'note',title:item.text.split('\n')[0].trim()||'Заметка'}))
+   ...personal.map(item=>({...item,kind:'life',source:'space',title:item.title||item.name||'Личное'})),
+   ...datedNotes.map(item=>({kind:'note',source:'note',title:item.text.split('\n')[0].trim()||'Заметка'}))
   ];
   if(entries.length){
    const tags=text('span','cal-day-labels');
    const maxTags=monthLayout==='stacked'||monthLayout==='details'?DETAILS_MAX_LABELS:2;
+   let contentHeight=0;
    entries.slice(0,maxTags).forEach(entry=>{
-    const chip=text('span','cal-day-chip',entry.title);
+    const chip=text('span','cal-day-chip');
     chip.dataset.kind=entry.kind;
     if(entry.source)paintCalendarItem(chip,entry);
-    chip.title=entry.title;
+    const timed=monthLayout==='details'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(entry.time||'');
+    chip.append(text('span','cal-chip-title',entry.title));
+    if(timed){
+     chip.dataset.hasTime='true';
+     chip.append(text('span','cal-chip-time',entry.time));
+    }
+    chip.title=entry.title+(timed?' · '+entry.time:'');
     tags.append(chip);
+    contentHeight+=timed?29:17;
    });
-   if(entries.length>maxTags)tags.append(text('span','cal-day-more','+'+(entries.length-maxTags)));
+   if(entries.length>maxTags){tags.append(text('span','cal-day-more','+'+(entries.length-maxTags)));contentHeight+=13;}
+   btn.dataset.monthContentHeight=String(contentHeight);
    btn.append(tags);
    btn.dataset.hasEntries='true';
   }
@@ -265,7 +273,7 @@ function renderMonth(){
  grid.style.setProperty('--cal-month-max-height',String(weeks*98)+'px');
  grid.style.setProperty('--cal-month-min-height',String(weeks*72)+'px');
  // Detailed weeks grow only when their busiest day has more entries.
- const rowHeight={compact:48,stacked:68,details:48,list:48}[monthLayout];
+ const rowHeight={compact:49,stacked:80,details:76,list:49}[monthLayout];
  const rowHeights=[];
  let busiestDay=0;
  const isoWeekNumber=date=>{
@@ -276,7 +284,7 @@ function renderMonth(){
  };
  for(let i=0;i<total;i++){
   const date=step(first,i),button=dayButton(date,false,calendarEvents,personalTasks);
-  busiestDay=Math.max(busiestDay,Number(button.dataset.monthEntryCount)||0);
+  busiestDay=Math.max(busiestDay,Number(button.dataset.monthContentHeight)||0);
   if(i%7===0){
    button.dataset.weekNumber=String(isoWeekNumber(date));
    button.dataset.currentWeek=String(format(date)===format(nowWeek));
