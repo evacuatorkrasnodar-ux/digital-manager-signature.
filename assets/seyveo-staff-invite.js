@@ -8,7 +8,7 @@ function clearResult(){result.hidden=true;$('svInviteQr').replaceChildren();$('s
 function updateInitials(){initials.textContent=form.elements.name.value.trim().split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'+';}
 function choosePhoto(){photo.click()}
 $('svInvitePhotoButton').addEventListener('click',choosePhoto);
-$('svInvitePhotoText').addEventListener('click',choosePhoto);
+
 photo.addEventListener('change',()=>{
  const file=photo.files?.[0];if(!file)return;
  if(!file.type.startsWith('image/'))return;
