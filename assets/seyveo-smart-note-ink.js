@@ -699,7 +699,9 @@
  // on this very note, rather than navigating to the separate art tablet.
  dlg.addEventListener('click',event=>{
   const btn=event.target.closest?.('[data-note-tool="draw"]');if(!btn)return;
-  event.preventDefault();event.stopImmediatePropagation();setMode('pen');
+  event.preventDefault();event.stopImmediatePropagation();
+  if(dlg.hasAttribute('data-scan-document')){window.SEYVEO_NOTES_EDITOR?.openDrawing();return;}
+  setMode('pen');
  },true);
  textBtn.addEventListener('click',()=>{
   if(mode!=='text'){setMode('text',true);return}
