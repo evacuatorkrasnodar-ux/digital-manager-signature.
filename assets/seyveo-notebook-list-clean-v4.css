@@ -3,19 +3,12 @@
  * classes can reach this surface. Document, editor, notes and attachments
  * remain owned by their original controllers. */
 
-/* Full-bleed notebook paper: the shared Work shell keeps a 7px gutter,
- * but the list must reach the screen edges without shifting tabs or dock. */
-#svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{
- --sv-nb-edge:7px;
- width:calc(100% + var(--sv-nb-edge) + var(--sv-nb-edge))!important;
- max-width:none!important;
- margin-inline:calc(0px - var(--sv-nb-edge))!important;
-}
-@media(max-width:355px){
- #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{--sv-nb-edge:4px}
-}
-@media(min-width:700px){
- #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{--sv-nb-edge:20px}
+/* Keep saved notes inside the Work shell's available width.
+   The note editor itself retains its independent full-bleed paper. */
+html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{
+ box-sizing:border-box!important;align-self:stretch!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ margin-inline:0!important;
 }
 
 #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{
@@ -494,4 +487,25 @@ html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog
 }
 @media(prefers-reduced-motion:reduce){
  html:root body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden])::after{transition:none!important}
+}
+
+/* Collection menu · compact companion of the shared pearl menu material. */
+html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookListMenu:not([hidden]){
+ width:190px!important;max-width:calc(100% - 24px)!important;
+ right:var(--sv-nb-reading-inset,12px)!important;top:calc(100% + 2px)!important;
+ padding:4px!important;border-radius:16px!important;
+ background:var(--sv-menu-bg,#fcfcfd)!important;
+ border:var(--sv-menu-border,1px solid rgba(226,229,234,.65))!important;
+ box-shadow:var(--sv-menu-shadow,0 9px 24px rgba(38,48,60,.10))!important;
+ -webkit-backdrop-filter:var(--sv-menu-blur,none)!important;
+ backdrop-filter:var(--sv-menu-blur,none)!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookDeleteAll{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ gap:8px!important;min-height:44px!important;padding:0 8px!important;
+ font:500 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:center!important;
+}
+html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookDeleteAll svg{
+ flex:0 0 18px!important;width:18px!important;height:18px!important;
 }
