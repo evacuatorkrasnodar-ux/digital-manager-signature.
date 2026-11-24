@@ -1332,7 +1332,7 @@ html body #calendarPage #calendarWeekTimeline .cal-week-hour-row{
  border-bottom:0!important;
 }
 html body #calendarPage #calendarWeekTimeline .cal-week-hour-label{
- left:2px!important;width:43px!important;text-align:left!important;
+ left:10px!important;width:35px!important;text-align:left!important;
  font:500 11px/12px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  font-variant-numeric:tabular-nums!important;color:#7C8490!important;
 }
@@ -1358,3 +1358,11 @@ html body #calendarPage #calendarWeekTimeline .cal-week-now-marker::before{
 }
 html:root[data-theme="dark"] body #calendarPage #calendarWeekTimeline .cal-week-hour-label{color:#A5ABB6!important;}
 html:root[data-theme="dark"] body #calendarPage #calendarWeekTimeline .cal-week-hour-row::before{background:#343840!important;}
+
+/* Keep the hour label, red time pill and event grid on shared visual axes. */
+html body #calendarPage #calendarWeekTimeline .cal-week-hour-row::before{
+ left:51px!important;right:8px!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-week-event-layer{
+ left:51px!important;right:8px!important;
+}
