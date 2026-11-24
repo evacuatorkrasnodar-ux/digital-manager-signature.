@@ -16,7 +16,7 @@
  const modal=document.createElement('dialog');modal.id='svPaperAskSayvi';modal.className='sv-paper-ai-workbench';
  modal.setAttribute('aria-labelledby','svPaperAskSayviTitle');
  modal.innerHTML=`<header class="sv-pa-head"><h2 id="svPaperAskSayviTitle">Сэйви · рисование</h2><button type="button" data-pa-close aria-label="Готово" title="Готово"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 12.5 4 4 8-9"/></svg></button></header>
-  <p class="sv-pa-intro">Помогу довести набросок до аккуратного рисунка.</p>
+  <p class="sv-pa-intro">Помогу улучшить твой рисунок.</p>
   <section class="sv-pa-quick-section" aria-label="Помощь с рисунком">
    <div class="sv-pa-quick-title">Инструменты</div>
    <div class="sv-pa-quick-grid" role="group" aria-label="Творческие действия с рисунком">
@@ -26,8 +26,8 @@
    </div>
   </section>
   <div class="sv-pa-custom">
-   <label class="sv-pa-field-label" for="svPaperAskSayviRequest">Что ты хочешь создать или исправить?</label>
-   <textarea id="svPaperAskSayviRequest" data-pa-request aria-label="Что Сэйви должна сделать с листом" placeholder="Например: выровняй линии или узнай фигуру" maxlength="600" rows="3"></textarea>
+   <label class="sv-pa-field-label" for="svPaperAskSayviRequest">Что сделать с рисунком?</label>
+   <textarea id="svPaperAskSayviRequest" data-pa-request aria-label="Что Сэйви должна сделать с листом" placeholder="Например, выровняй линии" maxlength="600" rows="2"></textarea>
    <button type="button" class="sv-pa-plan" data-pa-plan>Подобрать действие</button>
   </div>
   <div data-pa-steps class="sv-pa-steps" role="status" aria-live="polite"></div>
