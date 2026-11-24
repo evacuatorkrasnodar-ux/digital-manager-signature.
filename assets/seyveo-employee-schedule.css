@@ -198,3 +198,6 @@ html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePa
 /* Quiet staff forms: one useful status, no empty notice rows. */
 html:root body #svcpManagerPeople #svcpStaffSchedulePanel :is(.svcp-manager-schedule-status,.svcp-break-status,#svcpManagerRequestList):empty{display:none!important}
 html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel :is(.svcp-manager-schedule-inner,.svcp-break-setup-inner){gap:10px!important;padding-bottom:12px!important}
+
+/* Keep the break fields aligned even when a localized caption wraps. */
+html:root body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffSchedulePanel .svcp-break-controls{align-items:end!important}
