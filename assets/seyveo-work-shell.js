@@ -355,22 +355,33 @@
     const today=new Date();
     const localToday=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
     const overdue=!task.done&&/^\d{4}-\d{2}-\d{2}$/.test(String(task.due||''))&&task.due<localToday;
-    const subtitle=make('small','',task.done?'Выполнено'+(task.doneAt?' · '+String(task.doneAt).slice(0,10):''):
-      task.due?(overdue?'Просрочено · ':'Срок · ')+task.due:'Активное дело');
+    const dateLabel=value=>{
+     const raw=String(value||'').slice(0,10);
+     return /^\d{4}-\d{2}-\d{2}$/.test(raw)?raw.split('-').reverse().join('.'):raw;
+    };
+    const subtitle=make('small','',task.done?'Выполнено'+(task.doneAt?' · '+dateLabel(task.doneAt):''):
+      task.due?(overdue?'Просрочено · ':'Срок · ')+dateLabel(task.due):'Активное дело');
     if(task.done)subtitle.dataset.status='done';
     else if(overdue)subtitle.dataset.status='overdue';
     body.append(subtitle);
-    row.append(body);
-    {
-     const btn=make('button','',task.done?'Вернуть':'Открыть');btn.type='button';
-     btn.addEventListener('click',()=>{
-      if(task.done){if(window.SEYVEO_PERSONAL_TASK_HISTORY?.restore?.(task.id))paint()}
-      else{setMode('');requestAnimationFrame(()=>{
-       const item=[...document.querySelectorAll('.personal-task-row[data-task-id]')].find(x=>x.dataset.taskId===task.id);
-       item?.scrollIntoView({block:'center',behavior:'auto'});
-       item?.querySelector('[data-task-menu]')?.focus({preventScroll:true});
-      })}
-     });row.append(btn);
+    if(task.done){
+     row.append(body);
+     const btn=make('button','sv-tool-restore','Вернуть');btn.type='button';
+     btn.addEventListener('click',()=>{if(window.SEYVEO_PERSONAL_TASK_HISTORY?.restore?.(task.id))paint()});
+     row.append(btn);
+    }else{
+     const btn=make('button','sv-tool-open-row');btn.type='button';
+     btn.setAttribute('aria-label','Открыть дело: '+task.title);
+     const arrow=make('span','sv-tool-chevron');
+     arrow.setAttribute('aria-hidden','true');
+     arrow.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>';
+     btn.append(body,arrow);
+     btn.addEventListener('click',()=>{setMode('');requestAnimationFrame(()=>{
+      const item=[...document.querySelectorAll('.personal-task-row[data-task-id]')].find(x=>x.dataset.taskId===task.id);
+      item?.scrollIntoView({block:'center',behavior:'auto'});
+      item?.querySelector('[data-task-menu]')?.focus({preventScroll:true});
+     })});
+     row.append(btn);
     }
     results.append(row);
    }
