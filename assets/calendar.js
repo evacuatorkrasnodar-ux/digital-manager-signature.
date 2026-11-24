@@ -352,7 +352,7 @@ function renderDay(){
 
 /* Week keeps seven-day navigation, with Apple's hourly schedule for the selected date. */
 let lastWeekTimelineFocus='';
-const WEEK_HOUR_PX=52;
+const WEEK_HOUR_PX=46;
 const weekMinutePx=minute=>minute*WEEK_HOUR_PX/60;
 function updateWeekHourLabels(root, minute){
  root.querySelectorAll('.cal-week-hour-row').forEach((row,hour)=>{
@@ -411,7 +411,7 @@ function renderWeekTimeline(list){
    button.classList.add('cal-timeline-timed');
    button.dataset.tone=slot.item.source;
    button.style.top=weekMinutePx(slot.start)+'px';
-   button.style.height=Math.max(1,weekMinutePx(slot.end-slot.start)-2)+'px';
+   button.style.height=Math.max(1,weekMinutePx(slot.end-slot.start)-1)+'px';
    button.style.left=(slot.lane*100/laneCount)+'%';
    button.style.width=laneCount>1&&slot.lane<laneCount-1?`calc(${100/laneCount}% - 3px)`:(100/laneCount)+'%';
    const explicitDuration=Number(slot.item.duration)>0;
@@ -420,7 +420,7 @@ function renderWeekTimeline(list){
    if(!explicitDuration){
     button.dataset.durationUnknown='true';
     if(laneCount>1)button.dataset.compactStacked='true';
-    button.style.height=Math.min(laneCount>1?24:22,Math.max(1,weekMinutePx(slot.end-slot.start)-2))+'px';
+    button.style.height=Math.min(laneCount>1?24:22,Math.max(1,weekMinutePx(slot.end-slot.start)-1))+'px';
    }
    layer.append(button);
   }
