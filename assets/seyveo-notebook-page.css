@@ -275,3 +275,18 @@ html[data-theme="dark"] #svWorkShell[data-active="notes"] > #svNotebookCreateTil
  #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-icon{width:44px!important;height:44px!important;max-width:44px!important;flex-basis:44px!important}
  #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-copy strong{font-size:10.3px!important}
 }
+
+/* Three unframed launchers: one grid, icon size and baseline. */
+html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]){
+ gap:0!important;width:min(420px,calc(100% - 24px))!important;
+}
+html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles > .paper-choice-item{
+ justify-content:flex-start!important;gap:3px!important;
+}
+html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-icon svg{
+ width:26px!important;height:26px!important;stroke-width:1.45!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-copy strong{
+ font-size:11.5px!important;font-weight:550!important;line-height:1.25!important;
+}
