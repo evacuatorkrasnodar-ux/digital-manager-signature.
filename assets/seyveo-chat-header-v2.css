@@ -143,15 +143,17 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"]) > .svcp-identity-v2::before{
  content:""!important;display:block!important;
  box-sizing:border-box!important;position:absolute!important;
- left:0!important;right:0!important;top:0!important;bottom:-24px!important;
+ /* Keep glass at the top edge and lift its lower feathered edge.
+    Full strength behind the Back/call row, transparent below the identity. */
+ left:0!important;right:0!important;top:0!important;bottom:24px!important;
  z-index:-1!important;pointer-events:none!important;
  border:0!important;border-radius:0!important;box-shadow:none!important;
  -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
  backdrop-filter:blur(13px) saturate(110%)!important;
- /* Retain full glass through the name, then dissolve the blur and tint
-    together below it. Never mask the avatar, text or controls themselves. */
- -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 58%,rgba(0,0,0,.64) 75%,rgba(0,0,0,.18) 90%,transparent 100%)!important;
- mask-image:linear-gradient(to bottom,#000 0%,#000 58%,rgba(0,0,0,.64) 75%,rgba(0,0,0,.18) 90%,transparent 100%)!important;
+ /* Keep the upper control row frosted and feather away beneath it.
+    Never mask the avatar, text or controls themselves. */
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 48%,rgba(0,0,0,.64) 68%,rgba(0,0,0,.18) 88%,transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0%,#000 48%,rgba(0,0,0,.64) 68%,rgba(0,0,0,.18) 88%,transparent 100%)!important;
  -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2::before{
