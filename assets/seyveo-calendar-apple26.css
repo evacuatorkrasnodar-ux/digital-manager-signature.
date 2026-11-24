@@ -1624,3 +1624,20 @@ html:root body :is(#svWorkShell,#calendarPage) > #calendarCreateMenu #calendarMo
 html:root body :is(#svWorkShell,#calendarPage) > #calendarCreateMenu #calendarMonthModes > button[data-month-layout][aria-pressed="true"]::after{
  color:var(--sv-date-today-bg,#109BDD)!important;
 }
+
+/* Identical visual rhythm across both levels of the calendar menu. */
+html:root body :is(#svWorkShell,#calendarPage) > #calendarCreateMenu :is(#calendarViewModes,#calendarMonthModes) > button:is([data-calendar-mode],[data-month-layout]){
+ height:44px!important;min-height:44px!important;margin:0!important;
+ padding:0 11px!important;gap:12px!important;
+ font:500 15px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root body :is(#svWorkShell,#calendarPage) > #calendarCreateMenu :is(#calendarViewModes,#calendarMonthModes) > button[aria-pressed="true"]::after{
+ color:var(--sv-date-today-bg,#109BDD)!important;
+ width:15px!important;text-align:center!important;flex:0 0 15px!important;
+}
+html:root body :is(#svWorkShell,#calendarPage) > #calendarCreateMenu #calendarMonthModes > #calendarMonthModesBack > .cal-mode-icon{
+ grid-column:1!important;grid-row:1!important;
+}
+html:root body :is(#svWorkShell,#calendarPage) > #calendarCreateMenu #calendarMonthModes > #calendarMonthModesBack > .cal-mode-label{
+ grid-column:2!important;grid-row:1!important;width:100%!important;
+}
