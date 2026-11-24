@@ -71,7 +71,9 @@ function businessEnabled(){
 }
 const byId=Object.fromEntries(allApps.map(a=>[a.id,a]));
 const defaultIds=['music','documents','wallet'];
-const AUTO_COUNT=3,MAX_COUNT=4;
+const AUTO_COUNT=3,MAX_COUNT=4,MAX_TOTAL=8;
+const ROW_HEIGHT=66,ROW_GAP=10;
+const RESERVED_HEIGHT=ROW_HEIGHT*2+ROW_GAP;
 function stored(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}}
 function save(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}}
 let preference=stored(STORAGE);
@@ -87,7 +89,7 @@ preference.businessAutoSelect=preference.businessAutoSelect===true;
 function normalize(ids){
  const unique=uniqueIds(ids,id=>!!byId[id]&&!isBusiness(id));
  const selected=preference.custom?unique:[...unique,...defaultIds.filter(id=>!unique.includes(id))];
- return selected.slice(0,preference.showSmart?MAX_COUNT-1:MAX_COUNT);
+ return selected.slice(0,MAX_TOTAL-(businessEnabled()?preference.businessItems.length:0)-(preference.showSmart?1:0));
 }
 preference.items=normalize(preference.items);
 let usage=stored(USAGE)||{},cardCount=Number(window.SEYVEO_REVIEW_CARDS?.count?.())||0;
@@ -99,13 +101,14 @@ if(!preference.custom){
   save(STORAGE,preference);
  }
 }
-function autoFavorites(smartEnabled=preference.showSmart){
+function autoFavorites(smartEnabled=preference.showSmart,businessCount=businessEnabled()?preference.businessItems.length:0){
  const ranked=apps.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
- return uniqueIds([...ranked.map(a=>a.id),...preference.items,...defaultIds,...apps.map(a=>a.id)],id=>!!byId[id]&&!isBusiness(id)).slice(0,MAX_COUNT-(smartEnabled?1:0));
+ const target=Math.min(MAX_TOTAL-businessCount,Math.max(MAX_COUNT,preference.items.length+(smartEnabled?1:0)));
+ return uniqueIds([...ranked.map(a=>a.id),...preference.items,...defaultIds,...apps.map(a=>a.id)],id=>!!byId[id]&&!isBusiness(id)).slice(0,Math.max(0,target-(smartEnabled?1:0)));
 }
-function autoBusinessFavorites(){
+function autoBusinessFavorites(personalCount=preference.items.length+(preference.showSmart?1:0)){
  const ranked=businessApps.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
- return uniqueIds([...ranked.map(a=>a.id),...preference.businessItems,...businessApps.map(a=>a.id)],isBusiness).slice(0,MAX_COUNT);
+ return uniqueIds([...ranked.map(a=>a.id),...preference.businessItems,...businessApps.map(a=>a.id)],isBusiness).slice(0,Math.max(0,Math.min(MAX_COUNT,MAX_TOTAL-personalCount)));
 }
 if(preference.autoSelect)preference.items=autoFavorites();
 if(businessEnabled()&&preference.businessAutoSelect)preference.businessItems=autoBusinessFavorites();
@@ -166,12 +169,15 @@ function persist(){
  preference.custom=true;save(STORAGE,preference);
 }
 function totalSlots(){return preference.items.length+(preference.showSmart?1:0)}
+function visibleBusiness(){return businessEnabled()?preference.businessItems.slice(0,Math.max(0,MAX_TOTAL-totalSlots())):[];}
 function syncEditControls(){
  smartTile.hidden=!preference.showSmart;
  rail.classList.toggle('is-editing',editing);
- add.hidden=!editing||totalSlots()>=MAX_COUNT;
- personalRow.hidden=totalSlots()===0&&add.hidden;
- businessRow.hidden=!businessEnabled()||preference.businessItems.length===0;
+ add.hidden=!editing||totalSlots()+visibleBusiness().length>=MAX_TOTAL;
+ // Keep the add button within the remaining row, never create a fifth slot.
+ (totalSlots()>=MAX_COUNT?businessRow:personalRow).append(add);
+ personalRow.hidden=totalSlots()===0&&(add.hidden||add.parentElement!==personalRow);
+ businessRow.hidden=businessList.childElementCount===0&&(add.hidden||add.parentElement!==businessRow);
  rail.dataset.twoRows=String(!businessRow.hidden&&!personalRow.hidden);
 }
 function enterEdit(openPicker=false){
@@ -251,7 +257,10 @@ function bindReorder(button,tile,id){
 function renderItems(){
  const oldHeight=rail.hidden?0:rail.getBoundingClientRect().height;
  list.replaceChildren();businessList.replaceChildren();
- for(const id of [...preference.items,...(businessEnabled()?preference.businessItems:[])]){
+ const firstPersonal=MAX_COUNT-(preference.showSmart?1:0);
+ const firstIds=preference.items.slice(0,firstPersonal);
+ const secondIds=[...preference.items.slice(firstPersonal),...visibleBusiness()];
+ for(const id of [...firstIds,...secondIds]){
   const app=byId[id];if(!app)continue;
   const tile=document.createElement('div');tile.className='sv-home-favorite-tile';tile.dataset.favoriteId=id;
   const button=document.createElement('button');button.className='sv-home-favorite';button.type='button';
@@ -263,7 +272,7 @@ function renderItems(){
    if(editing||suppressClick){suppressClick=false;e.preventDefault();return}
    launch(id);
   });
-  tile.append(button,minusButton(id,app.name));bindHold(button);bindReorder(button,tile,id);(isBusiness(id)?businessList:list).append(tile);
+  tile.append(button,minusButton(id,app.name));bindHold(button);bindReorder(button,tile,id);(firstIds.includes(id)?list:businessList).append(tile);
  }
  syncEditControls();
  if(!rail.hidden&&Math.abs(rail.getBoundingClientRect().height-oldHeight)>1){
@@ -294,13 +303,12 @@ function openCustomize(){
  let curtainBottom=null;
  const positionCurtain=(force=false)=>{
   if(curtainBottom!==null&&!force)return;
-  const row=rail.getBoundingClientRect();
   const dock=document.getElementById('navHome')?.getBoundingClientRect();
-  const safeRowTop=row.height>0&&row.top>100&&row.top<window.innerHeight-45
-   ?row.top:(dock?.top||window.innerHeight-70)-90;
-  // End just above the Home shortcuts, including when the user has chosen zero.
+  // Always reserve two rows in the editor, even before a second row exists.
+  // Selection changes cannot resize the curtain; only viewport resizing can.
+  const safeRowTop=(dock?.top||window.innerHeight-70)-32-RESERVED_HEIGHT;
   const bottom=Math.max(78,Math.min(window.innerHeight-180,
-   Math.round(window.innerHeight-safeRowTop+12)));
+   Math.round(window.innerHeight-safeRowTop+20)));
   curtainBottom=bottom;
   dialog.style.setProperty('--sv-home-editor-bottom',bottom+'px');
  };
@@ -317,10 +325,12 @@ function openCustomize(){
    button.setAttribute('aria-selected',String(activeTab===mode));button.tabIndex=activeTab===mode?0:-1;
   }
   const cabinet=activeTab==='business';
-  if(cabinet?businessAuto:auto){if(cabinet)businessSelection=autoBusinessFavorites();else selection=autoFavorites(smart);}
+  const personalCount=selection.length+(smart?1:0);
+  const businessLimit=Math.min(MAX_COUNT,Math.max(0,MAX_TOTAL-personalCount));
+  const personalLimit=Math.max(personalCount,MAX_TOTAL-(enabled?businessSelection.length:0));
   const picked=cabinet?businessSelection:selection;
   const autoActive=cabinet?businessAuto:auto;
-  help.textContent=autoActive?'Сэйви выбирает часто используемые кнопки':'Выбрано '+(picked.length+(!cabinet&&smart?1:0))+' из '+MAX_COUNT+(cabinet?' · второй ряд':' · первый ряд');
+  help.textContent=autoActive?'Сэйви выбирает часто используемые кнопки':'Выбрано '+(picked.length+(!cabinet&&smart?1:0))+' из '+(cabinet?businessLimit:personalLimit)+(cabinet?' · второй ряд':' · до двух рядов');
   autoButton.setAttribute('aria-pressed',String(autoActive));
   autoButton.title=autoActive?'Автовыбор включён':'Автовыбор: Сэйви подбирает частые кнопки';
   grid.dataset.section=activeTab;
@@ -338,13 +348,13 @@ function openCustomize(){
     if(cabinet){
      businessAuto=false;
      if(chosen)businessSelection=businessSelection.filter(x=>x!==app.id);
-     else if(businessSelection.length<MAX_COUNT)businessSelection.push(app.id);
+     else if(businessSelection.length<businessLimit)businessSelection.push(app.id);
     }else{
      auto=false;
      if(app.id==='smart'){
-      if(smart)smart=false;else if(selection.length<MAX_COUNT)smart=true;
+      if(smart)smart=false;else if(selection.length<personalLimit)smart=true;
      }else if(chosen)selection=selection.filter(x=>x!==app.id);
-     else if(selection.length+(smart?1:0)<MAX_COUNT)selection.push(app.id);
+     else if(selection.length+(smart?1:0)<personalLimit)selection.push(app.id);
     }
     redraw();preview();
    });
@@ -358,10 +368,10 @@ function openCustomize(){
  autoButton.addEventListener('click',()=>{
   if(activeTab==='business'){
    businessAuto=!businessAuto;
-   if(businessAuto)businessSelection=autoBusinessFavorites();
+   if(businessAuto)businessSelection=autoBusinessFavorites(selection.length+(smart?1:0));
   }else{
    auto=!auto;
-   if(auto)selection=autoFavorites(smart);
+   if(auto)selection=autoFavorites(smart,businessEnabled()?businessSelection.length:0);
   }
   redraw();preview();
  });
@@ -383,10 +393,11 @@ function openCustomize(){
   }
   renderItems();updateCount();show();
   suppressClick=false;
+  const finish=()=>{dialog.close();dialog.remove();homeShortcutTopLocked=false;show();};
   if(animate){
    dialog.classList.add('is-leaving');
-   window.setTimeout(()=>{dialog.close();dialog.remove();},300);
-  }else{dialog.close();dialog.remove();}
+   window.setTimeout(finish,300);
+  }else finish();
  }
  const onDockNavigation=e=>{
   if(e.target.closest?.('#navTasks,#navPicture,#navManage'))close(true,true);
@@ -396,7 +407,8 @@ function openCustomize(){
  dialog.addEventListener('cancel',e=>{e.preventDefault();close(false,true)});
  positionCurtain(); // establish final geometry before the opening animation
  dialog.show();
- const onCurtainResize=()=>positionCurtain(true);
+ homeShortcutTopLocked=false;
+ const onCurtainResize=()=>{positionCurtain(true);homeShortcutTopLocked=false;show();};
  window.addEventListener('resize',onCurtainResize);
  document.addEventListener('click',onDockNavigation,true);
  window.addEventListener('seyveo:route-changed',onRouteChange);
@@ -430,17 +442,19 @@ function place(force=false){
  const r=rail.getBoundingClientRect();
  if(!r.height)return;
  const dock=document.getElementById('navHome')?.getBoundingClientRect();
- const maximum=(dock?.top||window.innerHeight-64)-r.height-32;
+ const editorOpen=!!document.getElementById('svHomeFavoritesEditor')?.open;
+ const reserved=editorOpen?Math.max(RESERVED_HEIGHT,r.height):r.height;
+ const maximum=(dock?.top||window.innerHeight-64)-reserved-32;
  let wanted=null;
  if(weather&&!weather.hidden&&getComputedStyle(weather).display!=='none'&&getComputedStyle(weather).visibility!=='hidden'){
   const w=weather.getBoundingClientRect();if(w.height)wanted=w.bottom+24;
  }
  // Always resolve the fallback before first paint. The row must not start at
  // the CSS placeholder position and jump when the weather finishes loading.
- if(wanted===null||rail.dataset.twoRows==='true')wanted=maximum;
+ if(wanted===null||editorOpen||rail.dataset.twoRows==='true')wanted=maximum;
  const next=Math.min(wanted,maximum);
  rail.style.top=Math.round(next-stage.getBoundingClientRect().top)+'px';
- if(activeCurtainPosition)activeCurtainPosition(true);
+ if(activeCurtainPosition)activeCurtainPosition();
  window.dispatchEvent(new Event('seyveo:home-shortcuts-layout'));
 }
 let firstHomeEntrancePlayed=false;
