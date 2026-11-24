@@ -1097,7 +1097,8 @@ html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskL
  padding-bottom:8px!important;
 }
 html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group:not(:first-child) > .sv-agenda-section-heading{
- box-shadow:inset 0 1px 0 #E7EAF0!important;
+ box-shadow:none!important;
+ border-top:0!important;
 }
 html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading::after,
 html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group:not(:first-child) > .sv-agenda-section-heading::after{
@@ -1109,6 +1110,4 @@ html:root body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskL
 html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group > .sv-agenda-section-heading{
  --sv-agenda-header-rgb:23,25,29;
 }
-html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list .sv-agenda-day-group:not(:first-child) > .sv-agenda-section-heading{
- box-shadow:inset 0 1px 0 #42464F!important;
-}
+
