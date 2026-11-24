@@ -194,7 +194,7 @@ function restoreTask(id){
  return true;
 }
 const sampleStamp=()=>new Intl.DateTimeFormat('ru-RU',{timeZone:'Europe/Moscow',day:'2-digit',month:'2-digit'}).format(new Date());
-const sampleMoment=time=>'Пример · '+sampleStamp()+' · '+time;
+const sampleMoment=time=>sampleStamp()+' · '+time;
 const sample=[
  {kind:'contract',title:'Проверить документ',sampleTime:'10:32',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
   reason:'В пункте договора не указан срок поставки.',
@@ -261,6 +261,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  clockLabel.hidden=!initialClock;
  clockLabel.textContent=initialClock?(real?initialTime:sampleMoment(initialTime)):'';
  clockLabel.setAttribute('aria-label',real?'Время выполнения дела':'Учебный пример, условная дата и время');
+ if(!real)clockLabel.title='Демонстрационная дата и время';
  top.append(label);
  if(real)top.append(measure);
  top.append(clockLabel);
@@ -1057,6 +1058,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    if(!real&&item.sampleTime){
     const stamp=create('span','sv-lm-sample-time',sampleMoment(item.sampleTime));
     stamp.setAttribute('aria-label','Учебный пример, условная дата и время: '+sampleMoment(item.sampleTime));
+    stamp.title='Демонстрационная дата и время';
     heading.append(stamp);
    }
    words.append(heading,create('span','lm-inline-note',item.body));
