@@ -102,3 +102,31 @@ html:root[data-theme="light"] body :is(dialog[open],#picturePage:not([hidden])).
 html:root body dialog#seyveoContactsDialog.sv-scroll-glass-ready[open] .sv-phonebook-letter{
  top:var(--sv-scroll-underlap,0px)!important;
 }
+
+/* Staff workspace contract: one bounded native scrollport, fixed header and
+   original dock outside it. Invitation is intentionally dock-free. */
+html:root body > dialog:is(#svcpManagerPeople,#svStaffProfile,#svStaffInvitePage,#svRecruitDetail,#svHrInterview)[open]{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ box-sizing:border-box!important;
+ height:100vh!important;height:100dvh!important;
+ max-height:100vh!important;max-height:100dvh!important;min-height:0!important;
+ overflow:hidden!important;overscroll-behavior:none!important;
+}
+html:root body > dialog:is(#svcpManagerPeople,#svStaffProfile,#svStaffInvitePage,#svRecruitDetail,#svHrInterview)[open] > header{
+ flex:0 0 auto!important;
+}
+html:root body > dialog:is(#svcpManagerPeople,#svStaffProfile,#svStaffInvitePage,#svRecruitDetail,#svHrInterview)[open] > .sv-page-scroll{
+ display:block!important;flex:1 1 0!important;min-height:0!important;min-width:0!important;
+ max-height:none!important;box-sizing:border-box!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;
+ scroll-behavior:auto;
+}
+html:root body > dialog:is(#svcpManagerPeople,#svStaffProfile,#svRecruitDetail,#svHrInterview).seyveo-dock-host[open] > .sv-page-scroll{
+ padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
+}
+html:root body > dialog#svStaffInvitePage[open] > .sv-page-scroll{
+ padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
+}
