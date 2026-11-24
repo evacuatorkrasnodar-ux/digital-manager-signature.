@@ -650,3 +650,47 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-mode-body strong{font-size:14px!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-mode-body small{font-size:12px!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-account{font-size:12.5px!important}
+
+/* Trusted addresses — shared pearl controls and native disclosure behavior. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details > summary{
+ display:flex!important;align-items:center!important;gap:8px!important;
+ list-style:none!important;padding:0!important;min-height:44px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details > summary::-webkit-details-marker{display:none!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details > summary::marker{content:""}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details > summary::before{
+ content:""!important;box-sizing:border-box!important;flex:0 0 7px!important;
+ width:7px!important;height:7px!important;margin:0 3px 0 1px!important;
+ border:solid #697583!important;border-width:0 1.5px 1.5px 0!important;
+ transform:rotate(-45deg)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details[open] > summary::before{transform:rotate(45deg)!important;margin-top:-3px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details .sv-mail-gate-form{
+ align-items:center!important;gap:7px!important;margin:7px 0!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details .sv-mail-gate-form > input,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details .sv-mail-gate-form > button{
+ box-sizing:border-box!important;height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;border-radius:999px!important;
+ background:var(--sv-white-pearl-surface,#f6f6f7)!important;
+ border:var(--sv-white-pearl-edge,1px solid #e6e8eb)!important;
+ box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details .sv-mail-gate-form > input{
+ padding:0 10px!important;font-size:12px!important;color:var(--sv-menu-text,#171b21)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details .sv-mail-gate-form > input::placeholder{color:#717983!important;opacity:1!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details .sv-mail-gate-form > button{
+ flex:0 0 auto!important;padding:0 11px!important;
+ font:600 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#176ab4!important;white-space:nowrap!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details > summary:focus-visible,html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details .sv-mail-gate-form > :is(input,button):focus-visible{
+ outline:2px solid #007aff!important;outline-offset:2px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-mode .sv-mail-gate-radio{
+ align-self:center!important;display:grid!important;place-items:center!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-mode[aria-pressed="true"] .sv-mail-gate-radio::after{
+ box-sizing:border-box!important;margin-top:-3px!important;
+}
