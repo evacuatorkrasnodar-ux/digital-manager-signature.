@@ -104,6 +104,7 @@ function ownerAvatarPreview(){
    replace the initial. Sayvi always keeps the dedicated SEYVEO symbol. */
 const AVATAR_AUTO_TINTS=['#E9EFF5','#E9F2EF','#EEEAF4','#F3EDE6','#E8F1F4','#F1EBF0'];
 function nativeAvatarTint(name){
+ if(window.SEYVEO_AVATAR_COLORS)return window.SEYVEO_AVATAR_COLORS.tint(name);
  const label=String(name||'').trim().toLocaleLowerCase('ru-RU');
  let hash=0;for(const ch of label)hash=(hash*31+ch.codePointAt(0))>>>0;
  return AVATAR_AUTO_TINTS[hash%AVATAR_AUTO_TINTS.length];
