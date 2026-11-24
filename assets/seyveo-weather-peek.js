@@ -267,8 +267,10 @@
   panel.setAttribute('tabindex','0');
   panel.setAttribute('aria-label','Открыть подробный прогноз погоды от Сэйви');
   panel.dataset.weatherReady=day?'true':'false';
-  const eyebrow=add('sv-weather-peek-eyebrow','СЭЙВИ · ПОГОДА',panel);
-  eyebrow.setAttribute('aria-hidden','true');
+  if(!homeMode){
+   const eyebrow=add('sv-weather-peek-eyebrow','СЭЙВИ · ПОГОДА',panel);
+   eyebrow.setAttribute('aria-hidden','true');
+  }
   const main=document.createElement('div');main.className='sv-weather-peek-main';
   if(day){
    const glyph=add('sv-weather-peek-glyph','',main);glyph.innerHTML=icon(day.code);
