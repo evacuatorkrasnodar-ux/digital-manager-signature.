@@ -538,6 +538,10 @@ html body #calendarPage #calendarWeekTimeline{
  display:flex!important;flex-direction:column!important;
  width:100%!important;min-width:0!important;margin:5px 0 0!important;
  padding:0 4px!important;border:0!important;background:#FFF!important;
+ /* Fill the available week viewport; reserve space for the shared floating dock once. */
+ box-sizing:border-box!important;flex:none!important;min-height:0!important;
+ height:calc(100vh - 232px - env(safe-area-inset-bottom,0px))!important;
+ height:calc(100dvh - 232px - env(safe-area-inset-bottom,0px))!important;
 }
 html body #calendarPage #calendarWeekAllDay{
  display:flex!important;flex-direction:column!important;gap:3px!important;
@@ -584,9 +588,8 @@ html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day-time{
 }
 html body #calendarPage #calendarWeekTimelineScroll{
  box-sizing:border-box!important;position:relative!important;
- flex:none!important;width:100%!important;
- height:min(640px,calc(100dvh - 232px - env(safe-area-inset-bottom)))!important;
- min-height:280px!important;overflow-y:auto!important;overflow-x:hidden!important;
+ flex:1 1 0px!important;width:100%!important;
+ height:auto!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;
  margin:0!important;padding:9px 0 5px!important;
  overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
  scrollbar-width:none!important;background:#FFF!important;
@@ -654,7 +657,10 @@ html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
  width:8px!important;height:8px!important;border-radius:50%!important;background:#EF4D59!important;
 }
 @media(max-width:370px){
- html body #calendarPage #calendarWeekTimelineScroll{height:calc(100dvh - 215px - env(safe-area-inset-bottom))!important}
+ html body #calendarPage #calendarWeekTimeline{
+  height:calc(100vh - 215px - env(safe-area-inset-bottom,0px))!important;
+  height:calc(100dvh - 215px - env(safe-area-inset-bottom,0px))!important;
+ }
 }
 
 
