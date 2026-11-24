@@ -193,7 +193,12 @@
         const beforeDock=dockTop-rowHeight-12;
         // Keep weather visible even when the mobile browser chrome makes
         // the viewport unusually short. Never place the row under the dock.
-        const absoluteTop=Math.min(Math.max(afterSphere,beforeShortcuts),beforeDock);
+        const twoRows=favorites?.dataset.twoRows==='true'&&railBox?.height>0;
+        // Reserve the full two-row shortcut rail; weather never covers a
+        // business shortcut even on the smaller iPhone viewport.
+        const absoluteTop=twoRows
+          ?Math.min(beforeDock,railBox.top-24-rowHeight)
+          :Math.min(Math.max(afterSphere,beforeShortcuts),beforeDock);
         const relativeTop=Math.round(absoluteTop-stageBox.top)+'px';
         if(button.style.getPropertyValue('--sv-home-weather-top')!==relativeTop)
           button.style.setProperty('--sv-home-weather-top',relativeTop);
@@ -203,6 +208,7 @@
         placeFrame=requestAnimationFrame(positionHomeWeather);
       };
       window.addEventListener('resize',schedulePlace,{passive:true});
+      window.addEventListener('seyveo:home-shortcuts-layout',schedulePlace);
       // ResizeObserver can be absent or delayed on old embedded Safari.
       if(typeof ResizeObserver==='function'){
         const resizeObserver=new ResizeObserver(schedulePlace);
