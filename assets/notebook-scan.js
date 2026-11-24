@@ -593,7 +593,7 @@ for(const id of ['noteScanCamera','noteScanGallery']){
 // Actual newlines and the user's "preserve lines" OCR choice stay untouched.
 keepLines?.addEventListener('change',()=>{text.wrap='soft';syncMenu();});
 // Use the actual Notebook editor, including its existing keyboard accessory.
-function openSharedEditor(){
+function openSharedEditor(event){
  if(!selected||running||exportBusy||!consentBox.hidden||intoOpenNote)return;
  const editor=window.SEYVEO_NOTES_EDITOR,api=window.SEYVEO_NOTES_API;
  if(!editor?.openScan||!api){message('Редактор Блокнота недоступен.');return;}
@@ -609,18 +609,22 @@ function openSharedEditor(){
   savedScan=next.find(n=>n.id===savedScan.id);
  }
  const id=savedScan.id;
- clearPrepared();closeMenu();leavingForDocs=true;dialog.close();
- if(!editor.openScan(id)){leavingForDocs=false;window.SEYVEO_NOTES_API?.openNotes();}
+ const surface=formattedRead.hidden?text:formattedRead;
+ const position={scrollTop:surface.scrollTop,selectionStart:surface===text?text.selectionStart:null,selectionEnd:surface===text?text.selectionEnd:null};
+ if(event?.type==='click'&&surface===formattedRead){position.x=event.clientX;position.y=event.clientY;}
+ clearPrepared();closeMenu();
+ // Keep the reader in the modal stack, avoiding a flash of the list.
+ if(!editor.openScan(id,position))message('Не удалось открыть редактор.');
 }
 preview.setAttribute('role','button');preview.setAttribute('aria-label','Открыть редактор документа');preview.tabIndex=0;
-function tapDocument(){if(dialog.dataset.step==='photo'&&!editingScanText){if(intoOpenNote)button.click();else openSharedEditor();}}
+function tapDocument(event){if(dialog.dataset.step==='photo'&&!editingScanText){if(intoOpenNote)button.click();else openSharedEditor(event);}}
 preview.addEventListener('click',tapDocument);
 formattedRead.addEventListener('click',tapDocument);
-formattedRead.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();tapDocument();}});
-preview.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();tapDocument();}});
+formattedRead.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();tapDocument(event);}});
+preview.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();tapDocument(event);}});
 text.setAttribute('aria-label','Текст документа');
 text.addEventListener('click',tapDocument);
-text.addEventListener('keydown',event=>{if(dialog.hasAttribute('data-scan-reading-text')&&!editingScanText&&(event.key==='Enter'||event.key===' ')){event.preventDefault();tapDocument();}});
+text.addEventListener('keydown',event=>{if(dialog.hasAttribute('data-scan-reading-text')&&!editingScanText&&(event.key==='Enter'||event.key===' ')){event.preventDefault();tapDocument(event);}});
 text.addEventListener('input',syncActions);
 manualButton?.addEventListener('click',()=>{
  if(!selected||running)return;
@@ -658,5 +662,11 @@ dialog.addEventListener('close',()=>{
  if(!handoff&&!$('noteReviewDialog').open&&!$('notePaperDialog').open)
   window.SEYVEO_NOTES_API?.openNotes();
 });
-window.SEYVEO_NOTE_SCANNER=Object.freeze({open,openSaved,scanIntoNote,resumePhoto:file=>{if(!file||dialog.open)return false;open();select(file,{auto:false});return true;}});
+window.SEYVEO_NOTE_SCANNER=Object.freeze({open,openSaved,scanIntoNote,refreshSaved:(note,position)=>{
+ if(!dialog.open||savedScan?.id!==note?.id)return false;
+ savedScan=note;showDocument(true);syncActions();message('');
+ const surface=formattedRead.hidden?text:formattedRead;
+ if(Number.isFinite(position))surface.scrollTop=position;
+ return true;
+},suspendForDrawing:()=>{if(dialog.open){leavingForDocs=true;dialog.close();}},resumePhoto:file=>{if(!file||dialog.open)return false;open();select(file,{auto:false});return true;}});
 })();
