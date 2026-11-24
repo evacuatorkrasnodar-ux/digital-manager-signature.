@@ -924,3 +924,49 @@ html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view=
 }
 html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-info{color:#454c55!important;opacity:1!important}
 html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-goal-info svg{stroke-width:1.55!important}
+
+/* All Cabinet tool guides share the same content rhythm and one action row. */
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-guide{
+ padding:0!important;margin:0!important;animation:none!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-guide-benefit{
+ margin:0 0 10px!important;font-size:14px!important;line-height:1.5!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-guide-subtitle{
+ margin:12px 0 10px!important;font-size:14px!important;font-weight:610!important;line-height:1.35!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-sources{gap:8px!important;margin:0 0 8px!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-source{
+ box-sizing:border-box!important;min-height:44px!important;height:44px!important;
+ margin:0!important;padding:0 8px!important;border-radius:999px!important;
+ font-size:13px!important;font-weight:560!important;transform:none!important;transition:none!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-source-note{
+ margin:8px 0 0!important;font-size:12px!important;line-height:1.5!important;min-height:0!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-footer{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:8px!important;margin:12px 0 0!important;padding-top:0!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-footer > .sv-cabinet-guide-action{
+ flex:0 1 auto!important;min-width:0!important;max-width:65%!important;
+ width:auto!important;height:auto!important;min-height:44px!important;
+ margin:0!important;padding:4px 2px!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ text-align:left!important;white-space:normal!important;font:560 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:var(--text)!important;
+}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-footer > .sv-cabinet-guide-action[data-selected="true"]{color:#d84c48!important}
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-footer > .sv-cabinet-save{flex:0 0 auto!important;margin:0 0 0 auto!important}
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-footer > .sv-cabinet-guide-action[data-selected="false"]{color:#176ab4!important}
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-footer > .sv-cabinet-guide-action[data-selected="true"]{color:#c43c35!important}
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-source{
+ background:var(--sv-white-pearl-surface,#f5f6f7)!important;
+ border:var(--sv-white-pearl-edge,1px solid #eee)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 2px 7px rgba(0,0,0,.06))!important;
+}
+html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open][data-cabinet-view="guide"] .sv-cabinet-source.is-current{
+ background:#e6f1ff!important;border:1px solid #bddaff!important;color:#176ab4!important;
+ box-shadow:none!important;font-weight:620!important;
+}
