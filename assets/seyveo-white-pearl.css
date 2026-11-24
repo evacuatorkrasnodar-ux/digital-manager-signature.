@@ -114,11 +114,13 @@ html:root[data-theme="light"] body :is(
  box-shadow:var(--sv-white-pearl-circle-shadow)!important;
  color:var(--sv-white-pearl-ink)!important;
 }
-/* Solid GOLD Done shares the White Pearl press geometry but must not inherit
-   the WHITE rim and optical halo. Use the feature's single warm shadow. */
-html:root[data-theme="light"] body dialog#noteReviewDialog[open]
- #svNoteDone.sv-note-nav-circle:not(:active){
- box-shadow:var(--sv-note-gold-shadow)!important;
+/* Notebook Done uses the same solid blue confirmation in both themes. */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > .sv-note-nav-actions > button#svNoteDone.sv-note-nav-circle:is(:not(:active),:active){
+ background:#237bd3!important;background-image:none!important;color:#fff!important;
+ border:.75px solid rgba(20,97,173,.18)!important;
+ box-shadow:0 2px 6px rgba(32,92,155,.13)!important;
+ transform:none!important;
 }
 
 /* New Note remains a stationary White Pearl circle in ALL pointer states.
