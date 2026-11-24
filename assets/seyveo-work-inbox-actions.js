@@ -511,7 +511,7 @@ function makeContactRow(r,fn){
  if(!painted&&r.kind==='groups')avatar.innerHTML=svg(r.id==='general'?'messages':r.id==='docs'?'file':'users');
  row.prepend(avatar);
  // Contact picture is supplied by the contact's own identity.
- const copy=row.querySelector('span:not(.sv-inbox-contact-avatar)');
+ const copy=Array.from(row.children).find(child=>child.tagName==='SPAN'&&!child.classList.contains('sv-inbox-contact-avatar'));
  if(copy&&r.hint){
   const role=r.hint.split(' · ')[0].trim();
   if(role)copy.append(node('small',null,role));
