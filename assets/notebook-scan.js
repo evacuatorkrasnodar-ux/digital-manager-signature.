@@ -54,11 +54,15 @@ const preparedArchive=document.createElement('button');preparedArchive.type='but
 const preparedDownload=document.createElement('button');preparedDownload.type='button';preparedDownload.textContent='Сохранить в файлы';preparedDownload.addEventListener('click',()=>downloadPrepared());
 prepared.append(preparedName,preparedAction,preparedDownload,preparedArchive,preparedCancel);dialog.append(prepared);
 let editStartText='',knownScanText=null;
+const formattedRead=document.createElement('div');formattedRead.id='svScanFormattedRead';formattedRead.hidden=true;formattedRead.tabIndex=0;formattedRead.setAttribute('role','button');formattedRead.setAttribute('aria-label','Открыть редактор документа');text.after(formattedRead);
 function readableText(){return typeof savedScan?.scanText==='string'?savedScan.scanText:knownScanText;}
 function showDocument(useText){
  const value=readableText(),visible=!!useText&&typeof value==='string';
  dialog.toggleAttribute('data-scan-reading-text',visible);
  if(visible)text.value=value;
+ const html=visible&&savedScan?.scanRichHtml?window.SEYVEO_NOTE_RICH?.safeHTML?.(savedScan.scanRichHtml)||'':'';
+ formattedRead.hidden=!html;formattedRead.innerHTML=html;
+ dialog.toggleAttribute('data-scan-formatted-read',!!html);
 }
 const textDone=document.createElement('button');textDone.type='button';textDone.id='svScanTextDone';textDone.hidden=true;textDone.setAttribute('aria-label','Сохранить текст');
 textDone.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.3l4.3 4.3 8.7-9.2"/></svg>';
@@ -548,7 +552,7 @@ function openSharedEditor(){
   activateTextEditor();void saveScanText(true);return;
  }
  if(typeof savedScan.scanText!=='string'){
-  if(typeof value!=='string'){openTextEditor();return;}
+  if(typeof value!=='string'){activateTextEditor();void saveScanText(true);return;}
   const list=api.getNotes(),next=list.map(n=>n.id===savedScan.id?{...n,scanText:value}:n);
   if(!api.putNotes(next)){message('Не удалось сохранить текст.');return;}
   savedScan=next.find(n=>n.id===savedScan.id);
@@ -560,6 +564,8 @@ function openSharedEditor(){
 preview.setAttribute('role','button');preview.setAttribute('aria-label','Открыть редактор документа');preview.tabIndex=0;
 function tapDocument(){if(dialog.dataset.step==='photo'&&!editingScanText){if(intoOpenNote)button.click();else openSharedEditor();}}
 preview.addEventListener('click',tapDocument);
+formattedRead.addEventListener('click',tapDocument);
+formattedRead.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();tapDocument();}});
 preview.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();tapDocument();}});
 text.setAttribute('aria-label','Текст документа');
 text.addEventListener('click',tapDocument);
