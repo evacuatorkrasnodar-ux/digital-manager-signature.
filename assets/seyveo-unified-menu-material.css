@@ -17,17 +17,17 @@
  --sv-menu-radius:20px;
  --sv-menu-blur:none;
 }
-/* Light theme uses the approved neutral Pearl glass. Text stays fully opaque
+/* Light reading menus use the opaque companion of White Pearl. Text stays fully opaque
    and choices keep their existing semantics/size; dark menus remain dark. */
 :root[data-theme="light"]{
- --sv-menu-bg:var(--sv-white-pearl-surface,rgba(242,241,240,.93));
- --sv-menu-border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.99));
- --sv-menu-shadow:var(--sv-white-pearl-dock-shadow,0 5px 17px rgba(82,69,57,.105));
- --sv-menu-blur:var(--sv-white-pearl-blur,blur(16px) saturate(100%));
- --sv-menu-item:rgba(255,255,255,.40);
- --sv-menu-item-border:rgba(255,255,255,.78);
- --sv-menu-item-selected:rgba(255,255,255,.96);
- --sv-menu-item-selected-border:rgba(255,255,255,.99);
+ --sv-menu-bg:#FCFCFD;
+ --sv-menu-border:var(--sv-white-pearl-edge,1px solid rgba(226,229,234,.65));
+ --sv-menu-shadow:var(--sv-depth-menu,0 9px 24px rgba(38,48,60,.10));
+ --sv-menu-blur:none;
+ --sv-menu-item:var(--sv-white-pearl-solid,#F7F7F8);
+ --sv-menu-item-border:rgba(226,229,234,.55);
+ --sv-menu-item-selected:#EDEEF0;
+ --sv-menu-item-selected-border:rgba(211,216,222,.65);
 }
 :root[data-theme="dark"]{
  --sv-menu-bg:#292b30;
