@@ -1142,10 +1142,12 @@ function open(note=null,options={}){
   const saved=recent.find(s=>s.tool===tool&&Number.isFinite(s.opacity));
   if(saved)brushOpacity[tool]=Math.max(.1,Math.min(1,saved.opacity));
  }
- brushSize=brushSizes.pen;
+ const initialTool=scanPage&&options.initialTool==='marker'?'marker':'pen';
+ brushSize=brushSizes[initialTool];
+ if(initialTool==='marker')activeColor=recent.find(stroke=>stroke.tool==='marker'&&validInkColor(stroke.color))?.color||'#ffb525';
  if(extras)extras.hidden=true;if(moreButton)moreButton.setAttribute('aria-expanded','false');
  syncColorMenu();
- $('notePaperTitle').textContent=scanPage?'Пометки · '+(note?.title||'Скан документа'):handwritingPage?(note.title||'Рукописная заметка'):(editID?'Мой лист':'Чистый лист');selectTool('pen',true);report('');
+ $('notePaperTitle').textContent=scanPage?'Пометки · '+(note?.title||'Скан документа'):handwritingPage?(note.title||'Рукописная заметка'):(editID?'Мой лист':'Чистый лист');selectTool(initialTool,true);report('');
  if(!dialog.open)dialog.showModal();
  document.documentElement.classList.add('sv-paper-drawing');
  requestAnimationFrame(()=>{
@@ -1161,7 +1163,7 @@ function discard(){
 }
 $('notePaperCancel').addEventListener('click',discard);$('notePaperBack').addEventListener('click',discard);
 dialog.addEventListener('cancel',e=>{if(changed&&!window.confirm('Закрыть лист без сохранения?'))e.preventDefault()});
-dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');dialog.classList.remove('sv-paper-inking');if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}liveTail=null;liveMid=null;closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;const original=isScan()&&editID?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===editID):null;const scanner=window.SEYVEO_NOTE_SCANNER;if(original&&scanner?.openSaved?.(original,{exportPDF:scanReturnPDF&&scanSaved,editText:scanReturnText}))return;if(isScan()&&scanReturnFile&&scanner?.resumePhoto?.(scanReturnFile))return;window.SEYVEO_NOTES_API?.openNotes()}});
+dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');dialog.classList.remove('sv-paper-inking');if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}liveTail=null;liveMid=null;closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;const original=isScan()&&editID?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===editID):null;const scanner=window.SEYVEO_NOTE_SCANNER;if(original&&scanner?.openSaved?.(original,{exportPDF:scanReturnPDF&&scanSaved,editText:scanReturnText,showMarkup:!scanReturnText}))return;if(isScan()&&scanReturnFile&&scanner?.resumePhoto?.(scanReturnFile))return;window.SEYVEO_NOTES_API?.openNotes()}});
 $('notePaperSave').addEventListener('click',()=>{
  if(pending)return;
  if(isScan()&&!data.photo){report('Дождитесь загрузки документа.');return;}
