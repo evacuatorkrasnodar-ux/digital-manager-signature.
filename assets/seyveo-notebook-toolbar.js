@@ -214,7 +214,7 @@
   dismissOpenMenus();
   // First tap on drawing area ONLY dismisses. Do not deliver it to the
   // canvas pen listener, regardless of touch, mouse or stylus.
-  if(target.closest('#notePaperStage')&&!target.closest('.sv-paper-size')){
+  if(target.closest('#notePaperStage')&&!target.closest('.sv-paper-width-control')){
    if(event.cancelable)event.preventDefault();
    event.stopImmediatePropagation();
   }
@@ -227,7 +227,7 @@
  dialog.addEventListener('close',()=>{closeSettings();pickedPaper=false});
  syncActive();
  // Retain existing thickness mechanics and the drawing-engine input.
- const range=$('notePaperWidth'),wrap=range?.closest('.sv-paper-size');
+ const range=$('notePaperWidth'),wrap=range?.closest('.sv-paper-width-control');
  if(range&&wrap){
   const syncWidth=()=>{
    const n=Number(range.value)||5,min=Number(range.min)||1,max=Number(range.max)||28;
