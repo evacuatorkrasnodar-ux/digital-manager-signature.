@@ -2599,15 +2599,24 @@ html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-
 /* Ink Studio iPhone safe-area: the full-screen dialog and the document root
    must have exactly one backing color, even below the browser's visual viewport.
    Without this, iOS can expose the page underneath the Save/palette footer. */
-html.sv-paper-drawing,
-html.sv-paper-drawing body,
-html:has(#notePaperDialog.sv-paper-studio[open]),
-html:has(#notePaperDialog.sv-paper-studio[open]) body{
+html.sv-paper-drawing:not(:has(#notePaperDialog.sv-paper-light-surface[open])),
+html.sv-paper-drawing:not(:has(#notePaperDialog.sv-paper-light-surface[open])) body,
+html:has(#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface)),
+html:has(#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface)) body{
  background:#212121!important;
  background-image:none!important;
 }
-html body #notePaperDialog.sv-paper-studio[open]{
+html:has(#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]),
+html:has(#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]) body{
+ background:#fff!important;
+ background-image:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface){
  background:#212121!important;
+ background-image:none!important;
+}
+html body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]{
+ background:#fff!important;
  background-image:none!important;
 }
 html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-bottom,
