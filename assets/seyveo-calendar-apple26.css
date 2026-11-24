@@ -1366,3 +1366,41 @@ html body #calendarPage #calendarWeekTimeline .cal-week-hour-row::before{
 html body #calendarPage #calendarWeekTimeline .cal-week-event-layer{
  left:51px!important;right:8px!important;
 }
+
+/* Week — selected date, interior event accents and compact point events.
+   Keep the hour geometry and the seamless scroll-under-dock contract intact. */
+html body #calendarPage #calendarWeekSelectedDay{
+ flex:0 0 auto!important;box-sizing:border-box!important;
+ margin:0!important;padding:7px 8px 8px!important;
+ border-top:1px solid #E8EAEE!important;
+ text-align:center!important;color:#252931!important;
+ font:600 13px/18px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-week-hour-label{
+ color:#686F79!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-calendar-tone]{
+ border:0!important;border-radius:5px!important;padding:3px 7px 1px 12px!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-calendar-tone]::before{
+ content:""!important;display:block!important;position:absolute!important;
+ left:4px!important;top:4px!important;bottom:4px!important;
+ width:3px!important;height:auto!important;border-radius:2px!important;
+ background:var(--cal-item-accent)!important;pointer-events:none!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed .cal-entry-copy strong{
+ font:600 13px/14px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"]{
+ flex-direction:row!important;align-items:center!important;gap:5px!important;
+ padding:2px 7px 2px 12px!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"] .cal-entry-copy{
+ flex:1 1 0!important;min-width:0!important;
+}
+html:root[data-theme="dark"] body #calendarPage #calendarWeekSelectedDay{
+ color:#E7E9EF!important;border-top-color:#343840!important;
+}
+html:root[data-theme="dark"] body #calendarPage #calendarWeekTimeline .cal-week-hour-label{
+ color:#B0B6C0!important;
+}
