@@ -3,14 +3,8 @@
 
 /* The white marker must track the value immediately, not chase the finger
    with a 70ms top-transition that causes visible lag and rubber-banding. */
-html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size::after{
- transition:transform .13s cubic-bezier(.2,.8,.2,1)!important;
- will-change:top,transform!important;
-}
-html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size.sv-paper-size-active::before,
-html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size.sv-paper-size-active::after{
- transition:none!important;
-}
+
+
 /* Explicit WebKit previews, including when the preview chip lives in a hidden
    panel at initialization. Script supplies literal start/end colors as backup. */
 html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets > button .sv-gradient-chip{
@@ -29,8 +23,6 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradien
   html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-paper-palette{
    transform:translateY(20px)!important;
   }
-  html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-ink-confirm{
-   bottom:calc(env(safe-area-inset-bottom,0px) - 9px)!important;
-  }
+
  }
 }
