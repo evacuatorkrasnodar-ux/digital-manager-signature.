@@ -47,11 +47,11 @@
  box-sizing:border-box;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
  gap:3px;align-items:center;width:100%;min-width:0;
  margin:0 0 18px;padding:3px;
- border:1px solid rgba(174,187,200,.30);border-radius:999px;
- background:rgba(238,242,246,.56);
- -webkit-backdrop-filter:blur(10px) saturate(105%);
- backdrop-filter:blur(10px) saturate(105%);
- box-shadow:none;
+ border:var(--sv-white-pearl-edge,1px solid rgba(174,187,200,.30));border-radius:999px;
+ background:var(--sv-white-pearl-surface,rgba(238,242,246,.56));
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(10px) saturate(105%));
+ backdrop-filter:var(--sv-white-pearl-blur,blur(10px) saturate(105%));
+ box-shadow:var(--sv-white-pearl-dock-shadow,none);
 }
 #seyveoPayDialog .syp-view-switch > button{
  display:grid;place-items:center;box-sizing:border-box;min-width:0;
@@ -63,8 +63,8 @@
  -webkit-tap-highlight-color:transparent;
 }
 #seyveoPayDialog .syp-view-switch > button[aria-pressed="true"]{
- border-color:rgba(202,214,224,.42);background:rgba(255,255,255,.90);
- box-shadow:0 1px 3px rgba(41,58,80,.055);
+ border-color:rgba(255,255,255,.99);background:var(--sv-white-pearl-selected,rgba(255,255,255,.90));
+ box-shadow:var(--sv-white-pearl-selected-shadow,0 1px 3px rgba(41,58,80,.055));
  color:#18212A;font-weight:650;
 }
 #seyveoPayDialog .syp-view-switch > button:focus-visible{
