@@ -2328,6 +2328,8 @@ function drawQr(target,text,displaySize){
  }
  target.replaceChildren(canvas);
 }
+// Invitation preview encodes a reserved, non-operational example URL only.
+window.SEYVEO_INVITE_QR_PREVIEW=target=>drawQr(target,'https://example.invalid/seyveo/invite',180);
 const save=$('seyveoQrSave');
 function update(){
  const r=record();

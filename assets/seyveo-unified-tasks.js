@@ -986,18 +986,7 @@
   }
  }
  $('svStaffBack')?.addEventListener('click',()=>staffReveal?.close());
- $('svStaffInvite')?.addEventListener('click',()=>{
-  const notice=$('svStaffInviteNotice'),button=$('svStaffInvite');if(!notice)return;
-  notice.hidden=!notice.hidden;button.setAttribute('aria-expanded',String(!notice.hidden));
-  if(!notice.hidden){const scroller=$('svcpManagerPeopleScroll');if(scroller)scroller.scrollTop=0;}
- });
- $('svStaffInviteDismiss')?.addEventListener('click',()=>{
-  const notice=$('svStaffInviteNotice');if(notice)notice.hidden=true;
-  $('svStaffInvite')?.setAttribute('aria-expanded','false');
- });
  staffReveal?.addEventListener('close',()=>{
-  const notice=$('svStaffInviteNotice');if(notice)notice.hidden=true;
-  $('svStaffInvite')?.setAttribute('aria-expanded','false');
   if(location.hash==='#tasks')$('svcpManagerPeopleOpen')?.focus({preventScroll:true});
  });
  window.addEventListener('seyveo:manager-tasks-updated',()=>{updateManagerSummary();if(isEmployee())renderEmployeeTasks()});
