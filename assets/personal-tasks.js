@@ -797,8 +797,8 @@ function svAgendaGetAnchors(){
  if(!svAgendaAnchorCache){
   const listTop=list.getBoundingClientRect().top;
   const currentScroll=list.scrollTop;
-  svAgendaAnchorCache=[...list.querySelectorAll('.sv-agenda-section-heading[data-weather-date]')]
-   .map(heading=>({iso:heading.dataset.weatherDate,top:Math.max(0,currentScroll+(heading.closest('.sv-agenda-day-group')||heading).getBoundingClientRect().top-listTop)}));
+  svAgendaAnchorCache=[...list.querySelectorAll('.sv-agenda-day-group > .sv-agenda-section-heading')]
+   .map(heading=>({iso:heading.dataset.weatherDate||null,key:heading.dataset.weatherDate||heading.querySelector('strong')?.textContent,heading,top:Math.max(0,currentScroll+(heading.closest('.sv-agenda-day-group')||heading).getBoundingClientRect().top-listTop)}));
  }
  return svAgendaAnchorCache;
 }
@@ -812,6 +812,18 @@ function svAgendaAnchorAt(position){
   else high=mid-1;
  }
  return anchors[result];
+}
+function svAgendaSyncPinnedDate(){
+ const panel=list.parentElement;
+ if(!panel)return;
+ let slot=panel.querySelector('#svAgendaPinnedDate');
+ if(!slot){slot=element('div','sv-agenda-pinned-date');slot.id='svAgendaPinnedDate';list.before(slot);}
+ const current=svAgendaAnchorAt(list.scrollTop+1);
+ if(!current){slot.replaceChildren();delete slot.dataset.key;return;}
+ if(slot.dataset.key===current.key&&slot.firstElementChild)return;
+ slot.dataset.key=current.key;
+ slot.replaceChildren(svAgendaSection(current.iso,current.iso?undefined:current.heading.querySelector('strong')?.textContent||'Без даты'));
+ document.dispatchEvent(new Event('seyveo:agenda-pinned-date-changed'));
 }
 function svAgendaScrollToDate(iso){
  const anchor=svAgendaGetAnchors().find(item=>item.iso===iso);
@@ -866,6 +878,7 @@ window.addEventListener('seyveo:tasks-focus-date',event=>{
  if(svTaskDate(iso))svAgendaJumpToDate(iso);
 });
 function svAgendaSyncFromScroll(){
+ svAgendaSyncPinnedDate();
  if(!svAgendaInitiallyAligned||Date.now()<svAgendaJumpThrough||Date.now()<svAgendaOpeningUntil||document.getElementById('svWorkShell')?.dataset.agendaScroll!=='true')return;
  const scrollRange=list.scrollHeight-list.clientHeight;
  if(scrollRange<35)return; // All days fit on screen: retain the explicitly chosen date.
@@ -1305,7 +1318,7 @@ function render(){
  svAgendaRenderList(visibleActive);
  list.dataset.long=String(visibleActive.length+postponed.length>=18);
  if(wasRendered){
-  const matching=previousAnchor&&svAgendaGetAnchors().find(item=>item.iso===previousAnchor.iso);
+  const matching=previousAnchor&&svAgendaGetAnchors().find(item=>item.key===previousAnchor.key);
   list.scrollTop=matching?Math.max(0,matching.top+offsetWithinDay):previousScroll;
  }
  if(hasDeferred){
@@ -1342,6 +1355,8 @@ function render(){
  $('personalBriefCount').hidden=!open.length;
  $('personalBrief').hidden=open.length===0;
  window.dispatchEvent(new CustomEvent('seyveo:tasks-changed',{detail:{open:open.length,total:all.length}}));
+ svAgendaAnchorCache=null;
+ svAgendaSyncPinnedDate();
  document.dispatchEvent(new Event('seyveo:agenda-rendered'));
 }
 window.addEventListener('seyveo:home-deferred-changed',render);
@@ -2170,6 +2185,7 @@ function svAgendaAlignInitial(){
   svAgendaDockPreviousY=anchor.top;
   list.scrollTo({top:anchor.top,behavior:'instant'});
  }
+ svAgendaSyncPinnedDate();
 }
 /* Every fresh entry into My Tasks starts at today, including a PWA resume.
    A user may then browse other dates; that browsing is never overwritten
