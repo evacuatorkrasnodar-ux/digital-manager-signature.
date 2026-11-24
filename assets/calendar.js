@@ -252,9 +252,9 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
     }
     chip.title=entry.title+(timed?' · '+entry.time:'');
     tags.append(chip);
-    contentHeight+=timed?29:17;
+    contentHeight+=monthLayout==='stacked'?5:timed?29:17;
    });
-   if(entries.length>maxTags){tags.append(text('span','cal-day-more','+'+(entries.length-maxTags)));contentHeight+=13;}
+   if(entries.length>maxTags){tags.append(text('span','cal-day-more','+'+(entries.length-maxTags)));contentHeight+=monthLayout==='stacked'?11:13;}
    btn.dataset.monthContentHeight=String(contentHeight);
    btn.append(tags);
    btn.dataset.hasEntries='true';
@@ -272,8 +272,8 @@ function renderMonth(){
  grid.style.setProperty('--cal-month-weeks',String(weeks));
  grid.style.setProperty('--cal-month-max-height',String(weeks*98)+'px');
  grid.style.setProperty('--cal-month-min-height',String(weeks*72)+'px');
- // Detailed weeks grow only when their busiest day has more entries.
- const rowHeight={compact:49,stacked:80,details:76,list:49}[monthLayout];
+ // Detailed and stacked weeks grow only when their busiest day has more entries.
+ const rowHeight={compact:49,stacked:49,details:76,list:49}[monthLayout];
  const rowHeights=[];
  let busiestDay=0;
  const isoWeekNumber=date=>{
@@ -291,13 +291,13 @@ function renderMonth(){
   }
   grid.append(button);
   if(i%7===6){
-   rowHeights.push(monthLayout==='details'?detailsWeekHeight(busiestDay):rowHeight);
+   rowHeights.push(monthLayout==='details'?detailsWeekHeight(busiestDay):monthLayout==='stacked'?Math.max(49,36+busiestDay):rowHeight);
    busiestDay=0;
   }
  }
  grid.style.setProperty('--cal-month-detail-rows',rowHeights.map(height=>height+'px').join(' '));
  // Calendar's shared canvas reserves 8px above and 2px below its row tracks.
- const height=monthLayout==='details'?rowHeights.reduce((sum,row)=>sum+row,10):weeks*rowHeight;
+ const height=monthLayout==='details'?rowHeights.reduce((sum,row)=>sum+row,10):monthLayout==='stacked'?rowHeights.reduce((sum,row)=>sum+row,0):weeks*rowHeight;
  grid.style.setProperty('--cal-month-layout-height',String(height)+'px');
  $('calendarMonth').hidden=false;
  $('calendarWeek').hidden=true;
