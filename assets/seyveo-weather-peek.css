@@ -570,3 +570,28 @@
 :root[data-theme="light"] .sv-weather-peek .sv-weather-peek-geo-status[data-level="storm"]{
  color:#98403d!important;
 }
+
+/* Agenda only · compact anchored pearl preview. Home's sphere slot is unchanged. */
+.sv-weather-peek[data-origin="agenda"]{
+ max-height:min(355px,calc(100dvh - 165px),var(--sv-agenda-peek-room,355px))!important;
+ padding:10px 14px 11px!important;
+ border-radius:22px!important;
+ animation:sv-weather-home-fade-in .2s ease-out both;
+}
+.sv-weather-peek[data-origin="agenda"].sv-weather-peek-leaving{animation:sv-weather-home-fade-out .18s ease-in both;}
+:root[data-theme="light"] .sv-weather-peek[data-origin="agenda"]{
+ background:var(--sv-white-pearl-surface,rgba(247,247,248,.96))!important;
+ border:var(--sv-white-pearl-edge,1px solid rgba(233,235,239,.82))!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow,0 8px 24px rgba(24,32,45,.08))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(16px))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(16px))!important;
+}
+.sv-weather-peek[data-origin="agenda"] .sv-weather-peek-eyebrow{margin-bottom:5px!important;}
+.sv-weather-peek[data-origin="agenda"] .sv-weather-peek-main{padding-bottom:8px!important;}
+.sv-weather-peek[data-origin="agenda"] .sv-weather-peek-rain{padding:7px 0!important;}
+.sv-weather-peek[data-origin="agenda"] .sv-weather-peek-geo{padding-top:8px!important;}
+.sv-weather-peek[data-origin="agenda"] .sv-weather-peek-geo-heading{margin-bottom:6px!important;}
+.sv-weather-peek[data-origin="agenda"] .sv-weather-peek-geo-figure{gap:3px!important;}
+:root[data-theme="light"] .sv-weather-peek[data-origin="agenda"] :is(.sv-weather-peek-rain,.sv-weather-peek-geo){border-top-color:rgba(126,140,155,.085)!important;}
+:root[data-theme="light"] .sv-weather-peek[data-origin="agenda"] .sv-weather-peek-geo-core{background:var(--sv-white-pearl-solid,#f7f7f8)!important;}
+@media(prefers-reduced-motion:reduce){.sv-weather-peek[data-origin="agenda"],.sv-weather-peek[data-origin="agenda"].sv-weather-peek-leaving{animation:none!important;}}
