@@ -89,7 +89,7 @@ preference.businessAutoSelect=preference.businessAutoSelect===true;
 function normalize(ids){
  const unique=uniqueIds(ids,id=>!!byId[id]&&!isBusiness(id));
  const selected=preference.custom?unique:[...unique,...defaultIds.filter(id=>!unique.includes(id))];
- return selected.slice(0,MAX_TOTAL-(businessEnabled()?preference.businessItems.length:0)-(preference.showSmart?1:0));
+ return selected.slice(0,MAX_TOTAL-(preference.showSmart?1:0));
 }
 preference.items=normalize(preference.items);
 let usage=stored(USAGE)||{},cardCount=Number(window.SEYVEO_REVIEW_CARDS?.count?.())||0;
@@ -103,7 +103,8 @@ if(!preference.custom){
 }
 function autoFavorites(smartEnabled=preference.showSmart,businessCount=businessEnabled()?preference.businessItems.length:0){
  const ranked=apps.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
- const target=Math.min(MAX_TOTAL-businessCount,Math.max(MAX_COUNT,preference.items.length+(smartEnabled?1:0)));
+ const existing=preference.items.length+(smartEnabled?1:0);
+ const target=Math.min(MAX_TOTAL,Math.max(existing,Math.min(MAX_COUNT,MAX_TOTAL-businessCount)));
  return uniqueIds([...ranked.map(a=>a.id),...preference.items,...defaultIds,...apps.map(a=>a.id)],id=>!!byId[id]&&!isBusiness(id)).slice(0,Math.max(0,target-(smartEnabled?1:0)));
 }
 function autoBusinessFavorites(personalCount=preference.items.length+(preference.showSmart?1:0)){
@@ -328,9 +329,10 @@ function openCustomize(){
   const personalCount=selection.length+(smart?1:0);
   const businessLimit=Math.min(MAX_COUNT,Math.max(0,MAX_TOTAL-personalCount));
   const personalLimit=Math.max(personalCount,MAX_TOTAL-(enabled?businessSelection.length:0));
+  const effectiveBusinessLimit=Math.max(businessLimit,businessSelection.length);
   const picked=cabinet?businessSelection:selection;
   const autoActive=cabinet?businessAuto:auto;
-  help.textContent=autoActive?'Сэйви выбирает часто используемые кнопки':'Выбрано '+(picked.length+(!cabinet&&smart?1:0))+' из '+(cabinet?businessLimit:personalLimit)+(cabinet?' · второй ряд':' · до двух рядов');
+  help.textContent=autoActive?'Сэйви выбирает часто используемые кнопки':'Выбрано '+(picked.length+(!cabinet&&smart?1:0))+' из '+(cabinet?effectiveBusinessLimit:personalLimit)+(cabinet?(businessSelection.length>businessLimit?' · освободите место':' · второй ряд'):' · до двух рядов');
   autoButton.setAttribute('aria-pressed',String(autoActive));
   autoButton.title=autoActive?'Автовыбор включён':'Автовыбор: Сэйви подбирает частые кнопки';
   grid.dataset.section=activeTab;
@@ -554,5 +556,5 @@ document.addEventListener('click',e=>{
  }
 },{capture:true,passive:true});
 updateCount();show();
-window.SEYVEO_HOME_FAVORITES=Object.freeze({openCustomize,enterEdit,getItems:()=>[...preference.items,...(businessEnabled()?preference.businessItems:[])],getPersonalItems:()=>preference.items.slice(),getBusinessItems:()=>businessEnabled()?preference.businessItems.slice():[],isEditing:()=>editing});
+window.SEYVEO_HOME_FAVORITES=Object.freeze({openCustomize,enterEdit,getItems:()=>[...preference.items,...visibleBusiness()],getPersonalItems:()=>preference.items.slice(),getBusinessItems:()=>visibleBusiness(),isEditing:()=>editing});
 })();
