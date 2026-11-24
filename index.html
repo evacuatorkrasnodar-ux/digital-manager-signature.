@@ -5988,4 +5988,45 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-pearl-tiles.css?v=3">
 
 <link rel="stylesheet" href="assets/seyveo-mail-white-pearl.css?v=18">
+<script>
+/* Temporary local Ink Studio diagnostic: Ctrl+Alt+G, only while drawing is open.
+   No network, no note mutation. Second press restores the control. */
+(()=>{
+ const d=document.getElementById('notePaperDialog'),b=document.getElementById('notePaperSave');
+ if(!d||!b)return;
+ let panel=null,previous=null;
+ function restore(){
+  if(!panel)return;
+  if(previous?.value)b.style.setProperty('visibility',previous.value,previous.priority);
+  else b.style.removeProperty('visibility');
+  panel.remove();panel=null;previous=null;
+ }
+ function inspect(){
+  if(panel){restore();return;}
+  const box=b.getBoundingClientRect();
+  const describe=e=>{
+   if(!e)return '—';
+   const s=getComputedStyle(e);
+   return (e.id?'#'+e.id:e.tagName.toLowerCase()+'.'+(typeof e.className==='string'?e.className.split(' ')[0]:''))+
+    ' · '+s.backgroundColor+(s.backgroundImage==='none'?'':' · image')+(s.boxShadow==='none'?'':' · shadow')+
+    (s.backdropFilter&&s.backdropFilter!=='none'?' · blur':'');
+  };
+  const before=describe(b)+' / '+describe(b.querySelector('svg'));
+  previous={value:b.style.getPropertyValue('visibility'),priority:b.style.getPropertyPriority('visibility')};
+  b.style.setProperty('visibility','hidden','important');
+  panel=document.createElement('div');
+  panel.setAttribute('role','status');
+  panel.style.cssText='position:fixed;z-index:2147483647;top:80px;left:8px;right:8px;padding:8px;background:#fff;color:#111;border:1px solid #aaa;border-radius:8px;font:11px/1.5 monospace;white-space:pre-wrap;pointer-events:none';
+  const pts=[[box.left+2,box.top+2],[box.right-2,box.top+2],[box.left+2,box.bottom-2],[box.right-2,box.bottom-2]];
+  const layers=[...new Set(pts.flatMap(([x,y])=>document.elementsFromPoint(x,y).filter(e=>e!==b&&!b.contains(e))))].slice(0,8);
+  panel.textContent='SEYVEO · диагностика / галочка скрыта\n'+before+'\nПод кнопкой:\n'+layers.map(describe).join('\n')+'\nCtrl+Alt+G — вернуть';
+  d.append(panel);
+ }
+ window.addEventListener('keydown',e=>{
+  if(!d.open||!e.ctrlKey||!e.altKey||e.code!=='KeyG')return;
+  e.preventDefault();inspect();
+ },true);
+ d.addEventListener('close',restore);
+})();
+</script>
 </body></html>
