@@ -1660,3 +1660,34 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  color:#176ab4!important;font:540 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
+
+/* Address refinement · one pearl field, a thin search icon and flat actions. */
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-field{
+ position:relative!important;min-width:0!important;width:100%!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-field .sv-place-refine-input{
+ display:block!important;box-sizing:border-box!important;width:100%!important;
+ min-height:44px!important;height:44px!important;padding:8px 12px 8px 35px!important;
+ font:400 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-search{
+ position:absolute!important;left:12px!important;top:50%!important;transform:translateY(-50%)!important;
+ width:16px!important;height:16px!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+ color:#626b77!important;pointer-events:none!important;z-index:1!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-field .sv-place-refine-input{
+ background:var(--sv-task-field-fill)!important;border:var(--sv-task-field-rim)!important;
+ border-radius:22px!important;box-shadow:none!important;color:#202329!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-field .sv-place-refine-input::placeholder{
+ color:#68717d!important;opacity:1!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-field + .sv-place-refine-apply{
+ min-height:44px!important;height:44px!important;padding:0 12px!important;
+ color:#176ab4!important;background:transparent!important;border:0!important;box-shadow:none!important;
+ font:540 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-trigger[aria-expanded="true"]{
+ color:#176ab4!important;
+}
