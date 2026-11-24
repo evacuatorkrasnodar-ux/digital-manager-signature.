@@ -196,7 +196,7 @@ html:root[data-theme="light"] body :is(#seyveoRecruitment,#svRecruitDetail) .svr
 html:root body dialog.sv-recruit-page[open]{
  position:fixed!important;inset:0!important;box-sizing:border-box!important;
  width:100vw!important;max-width:100vw!important;height:100vh!important;height:100dvh!important;max-height:100dvh!important;
- margin:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(90px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))!important;
+ margin:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))!important;
  display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
  overflow:hidden!important;border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;background:var(--bg)!important;color:var(--text)!important;
 }
@@ -207,7 +207,7 @@ html body dialog.sv-recruit-page > .sv-recruit-head{display:grid;grid-template-c
 html body .sv-recruit-head h2{margin:0!important;padding:0!important;text-align:center;font:640 17px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important}
 html body .sv-recruit-head button{box-sizing:border-box;display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border-radius:50%;border:var(--sv-white-pearl-edge,0);background:var(--sv-white-pearl-surface,#38383a);color:var(--sv-white-pearl-ink,#fff);box-shadow:var(--sv-white-pearl-circle-shadow,none)}
 html body .sv-recruit-head button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-html body dialog.sv-recruit-page > .sv-page-scroll{display:block;flex:1 1 auto;min-height:0;min-width:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box;margin-inline:-8px;padding-inline:8px;padding-bottom:12px}
+html body dialog.sv-recruit-page > .sv-page-scroll{display:block;flex:1 1 auto;min-height:0;min-width:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box;margin-inline:-8px;padding-inline:8px;padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))}
 #seyveoRecruitment{gap:8px}
 #seyveoRecruitment .svrec-list-row{display:flex;align-items:center;gap:9px;width:100%;min-height:62px;text-align:left;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;background:transparent;box-shadow:none;padding:8px 0;color:var(--text);font:inherit}
 #seyveoRecruitment .svrec-list-copy{display:grid;gap:4px;flex:1;min-width:0}
@@ -246,3 +246,12 @@ html:root[data-theme="light"] body :is(#svHrInterview .svhr-next,#svcpManagerPeo
 #svcpManagerPeople #svcpPeopleHiringHost .seyveo-hr-fold{margin-inline:0!important;padding-inline:0!important}
 #svcpManagerPeople #svcpPeopleHiringHost .seyveo-hr-fold>summary{padding-inline:0!important}
 #svcpManagerPeople #svcpPeopleHiringHost .seyveo-hr-fold>p{margin-inline:0!important}
+
+/* Recruit detail and interview share the same continuous under-dock canvas. */
+html:root body dialog.sv-recruit-page.seyveo-dock-host[open] > .sv-page-scroll{
+ padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
+}
+html:root body dialog.sv-recruit-page.seyveo-dock-host[open] > footer.dock{
+ position:fixed!important;z-index:90!important;background:transparent!important;background-image:none!important;
+}
