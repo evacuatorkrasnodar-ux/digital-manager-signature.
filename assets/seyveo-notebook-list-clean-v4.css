@@ -410,7 +410,7 @@ html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #svNotebookL
 
 /* Saved notes · common mobile reading grid, no separate footer panel. */
 html:root body #svWorkShell[data-active="notes"] #notesDialog{
- --sv-nb-reading-inset:12px;
+ --sv-nb-reading-inset:18px;
  --sv-nb-preview-width:44px;
  --sv-nb-preview-gap:11px;
 }
@@ -508,4 +508,18 @@ html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookDeleteA
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookDeleteAll svg{
  flex:0 0 18px!important;width:18px!important;height:18px!important;
+}
+
+/* Notebook bottom reading edge: fade content into the existing canvas, not
+   an extra footer or dock background. Keep row menus and dock interactive. */
+html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]:has(> #notesList.sv-note-clean-list:not(.is-empty))::after{
+ content:""!important;display:block!important;position:absolute!important;
+ left:0!important;right:0!important;bottom:0!important;
+ height:calc(96px + env(safe-area-inset-bottom,0px))!important;
+ background:linear-gradient(to bottom,transparent 0%,rgba(255,255,255,.82) 30%,#fff 48%,#fff 100%)!important;
+ border:0!important;box-shadow:none!important;pointer-events:none!important;
+ z-index:2!important;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]:has(> #notesList.sv-note-clean-list:not(.is-empty))::after{
+ background:linear-gradient(to bottom,transparent 0%,rgba(23,24,27,.82) 30%,var(--bg,#17181b) 48%,var(--bg,#17181b) 100%)!important;
 }
