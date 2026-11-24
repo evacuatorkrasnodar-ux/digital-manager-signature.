@@ -3,7 +3,7 @@
 #homePage #stage ~ :is(#seyveoLivingMoment,#dynamic,#svcpWorkHomePreview,#workTimeline,#svSmartStartHome,.sv-sayvi-handoff-today){display:none!important}
 .sv-review-header svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 /* Same first-row origin as Cabinet: app safe area + 8px, Work bar + 14px. */
-.sv-review-room{box-sizing:border-box;position:fixed;inset:0;z-index:1800;overflow-y:auto;overscroll-behavior:contain;overflow-anchor:none;background:#fff;border:0;border-radius:0;box-shadow:none;padding:calc(env(safe-area-inset-top,0px) + 22px) max(12px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 32px) max(8px,env(safe-area-inset-left,0px))}
+.sv-review-room{box-sizing:border-box;position:fixed;inset:0;z-index:1800;overflow:hidden;overscroll-behavior:contain;overflow-anchor:none;background:#fff;border:0;border-radius:0;box-shadow:none;padding:calc(env(safe-area-inset-top,0px) + 22px) max(12px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 32px) max(8px,env(safe-area-inset-left,0px))}
 .sv-review-room[hidden]{display:none!important}
 /* Review is a full page, not a modal sheet layered over a live workspace. */
 :root.sv-review-open body{overflow:hidden!important}
@@ -496,4 +496,49 @@
 }
 @media(prefers-reduced-motion:reduce){
  #svReviewRoom .sv-review-header #svReviewBack{transition:none!important}
+}
+
+/* Review room · one fixed header and one native reading surface. */
+#svReviewRoom.sv-review-room:not([hidden]){
+ display:flex!important;flex-direction:column!important;
+ padding-inline:max(12px,env(safe-area-inset-left,0px)) max(12px,env(safe-area-inset-right,0px))!important;
+}
+#svReviewRoom .sv-review-header{
+ position:relative!important;top:auto!important;flex:0 0 44px!important;
+ grid-template-columns:minmax(66px,1fr) auto minmax(66px,1fr);
+ margin-bottom:10px!important;
+}
+#svReviewRoom .sv-review-header h2{font-weight:600!important;font-size:18px!important}
+#svReviewRoom .sv-review-header #svReviewProgress{color:#65717e!important;font-size:11.5px!important}
+#svReviewRoom .sv-review-header > #svReviewBack svg{width:19px;height:19px;stroke-width:1.65}
+#svReviewRoom .sv-review-content{
+ flex:1 1 0!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+ padding:15px 0 22px!important;
+}
+#svReviewRoom .sv-review-content::-webkit-scrollbar{display:none}
+#svReviewRoom #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-field-eyebrow{color:#B56A26!important}
+#svReviewRoom #seyveoLivingMoment :is(.lm-hero-art,.lm-inline-art) > svg.lm-art-svg{
+ color:#394550!important;stroke:currentColor!important;stroke-width:3!important;
+ width:32px!important;height:32px!important;opacity:1!important;filter:none!important;
+}
+#svReviewRoom #seyveoLivingMoment :is(.lm-hero-art,.lm-inline-art) > svg.lm-art-svg .lm-glyph-accent{
+ stroke:currentColor!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-hero-art::before{content:none!important;display:none!important}
+#svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions{
+ gap:6px!important;padding:4px 0 14px!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
+ flex:0 1 auto!important;justify-content:center!important;min-height:44px!important;
+ padding:6px 9px!important;gap:5px!important;border-radius:22px!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(160,170,184,.25))!important;
+ background:var(--sv-white-pearl-surface,#f6f7f9)!important;
+ box-shadow:0 1px 4px rgba(42,52,72,.045)!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions .sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-icon-caption{color:#217FCD!important}
+@media(max-width:365px){
+ #svReviewRoom .sv-review-header{grid-template-columns:minmax(54px,1fr) auto minmax(54px,1fr)}
+ #svReviewRoom .sv-review-header h2{font-size:17px!important}
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){padding-inline:5px!important}
 }
