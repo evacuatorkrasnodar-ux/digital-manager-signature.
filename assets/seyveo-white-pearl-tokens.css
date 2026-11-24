@@ -1,0 +1,62 @@
+/* SEYVEO White Pearl · shared light palette and optical depth. No component rules. */
+:root[data-theme="light"]{
+ /* Refined neutral white pearl, applied to existing white-theme
+    controls WITHOUT changing their geometry or behavior. */
+ --sv-white-pearl-surface:rgba(247,247,248,.92);
+ --sv-white-pearl-solid:#F7F7F8;
+ --sv-white-pearl-edge:1px solid rgba(226,229,234,.65);
+ --sv-white-pearl-blur:blur(16px) saturate(100%);
+ --sv-white-pearl-ink:#0b0b0d;
+ /* One quiet white selected state for segmented capsules and new screens. */
+ --sv-white-pearl-selected:rgba(255,255,255,.96);
+ --sv-white-pearl-selected-shadow:0 1px 3px rgba(38,48,60,.045);
+ /* EXACT white-chat shadows: one fine readable rim and soft lift.
+    No second outline pseudo element or heavy embossed gradient. */
+ --sv-white-pearl-circle-shadow:
+   0 3px 10px rgba(38,48,60,.065),
+   inset 0 1px 0 rgba(255,255,255,.86);
+ --sv-white-pearl-dock-shadow:
+   0 4px 13px rgba(38,48,60,.065),
+   0 1px 3px rgba(38,48,60,.025),
+   inset 0 1px 0 rgba(255,255,255,.82);
+ --sv-white-pearl-press-fill:
+   radial-gradient(ellipse 110% 95% at 50% 5%,rgba(120,132,147,.065),rgba(120,132,147,.025) 72%);
+ --sv-white-pearl-press-shadow:
+   inset 0 1.5px 2.4px rgba(31,42,58,.10),
+   inset 0 -1px 1px rgba(255,255,255,.65);
+ --sv-white-pearl-press-scale:.992;
+ --sv-white-pearl-press-time:135ms;
+ --sv-white-pearl-radius-circle:50%;
+ --sv-white-pearl-radius-capsule:999px;
+
+ /* Compatibility names used by existing feature CSS. No second palette. */
+ --sv-dock-pearl-bg:var(--sv-white-pearl-surface);
+ --sv-dock-pearl-border:var(--sv-white-pearl-edge);
+ --sv-dock-pearl-blur:var(--sv-white-pearl-blur);
+ --sv-dock-pearl-shadow:var(--sv-white-pearl-dock-shadow);
+ --sv-dock-glass-finish:var(--sv-white-pearl-surface);
+ --sv-dock-glass-filter:var(--sv-white-pearl-blur);
+ --sv-dock-glass-edge:var(--sv-white-pearl-edge);
+ --sv-dock-glass-relief:var(--sv-white-pearl-dock-shadow);
+ --sv-depth-dock:var(--sv-white-pearl-dock-shadow);
+ --sv-depth-circle:var(--sv-white-pearl-circle-shadow);
+ --sv-nav-pearl-bg:var(--sv-white-pearl-surface);
+ --sv-nav-pearl-border:var(--sv-white-pearl-edge);
+ --sv-nav-pearl-shadow:var(--sv-white-pearl-circle-shadow);
+ --sv-header-circle:var(--sv-white-pearl-surface);
+ --sv-header-circle-border:var(--sv-white-pearl-edge);
+ --sv-header-circle-shadow:var(--sv-white-pearl-circle-shadow);
+ --sv-header-circle-filter:var(--sv-white-pearl-blur);
+ --sv-header-surface:#fff;
+ --sv-back-flat:var(--sv-white-pearl-surface);
+ --sv-back-flat-pressed:var(--sv-white-pearl-surface);
+ --sv-back-flat-ink:var(--sv-white-pearl-ink);
+}
+/* A true white fallback when accessibility requests no transparency. */
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"]{
+  --sv-white-pearl-surface:#F7F7F8;
+  --sv-white-pearl-blur:none;
+ }
+}
+
