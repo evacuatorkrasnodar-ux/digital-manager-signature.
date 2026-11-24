@@ -572,3 +572,76 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-menu-contacts svg,
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-menu-review svg{color:#546475!important;stroke:currentColor!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-caution{color:#59636D!important;font-size:11px!important;line-height:1.35!important}
+
+/* Shield menu — compact grouped light settings, no individual tiles. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel:not([hidden]){
+ padding:10px 12px!important;gap:0!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-menu-heading{
+ justify-content:center!important;text-align:center!important;
+ min-height:29px!important;padding:0 0 5px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-accounts{
+ margin:0 0 8px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-account[aria-pressed="true"]{
+ background:var(--sv-white-pearl-selected)!important;
+ border:1px solid rgba(255,255,255,.99)!important;
+ box-shadow:var(--sv-white-pearl-selected-shadow)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-modes{
+ margin:0 0 8px!important;gap:0!important;
+ background:#fff!important;border:0!important;border-radius:12px!important;
+ overflow:hidden!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-mode,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-mode[aria-pressed="true"]{
+ position:relative!important;align-items:center!important;
+ min-height:44px!important;padding:7px 11px!important;
+ gap:8px!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-mode + .sv-mail-gate-mode::before{
+ content:""!important;position:absolute!important;left:11px!important;right:11px!important;
+ top:0!important;height:1px!important;background:var(--sv-menu-rule,rgba(60,60,67,.12))!important;
+ pointer-events:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-mode-body{
+ order:0!important;flex:1 1 auto!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-radio{
+ order:1!important;flex:0 0 18px!important;width:18px!important;height:18px!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ margin:0 0 0 auto!important;color:#007AFF!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-mode[aria-pressed="true"] .sv-mail-gate-radio::after{
+ content:""!important;width:7px!important;height:12px!important;
+ border:solid #007AFF!important;border-width:0 2px 2px 0!important;
+ border-radius:0!important;background:transparent!important;transform:rotate(45deg)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details{
+ box-sizing:border-box!important;margin:0!important;padding:0 11px!important;
+ border:0!important;border-radius:12px 12px 0 0!important;background:#fff!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-trusted-details summary{
+ min-height:44px!important;padding:14px 0 10px!important;
+ font-size:12px!important;box-sizing:border-box!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-menu-contacts,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-menu-review{
+ position:relative!important;box-sizing:border-box!important;
+ margin:0!important;min-height:44px!important;padding:7px 11px!important;
+ border:0!important;border-radius:0!important;background:#fff!important;
+ box-shadow:none!important;font-size:12px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-menu-contacts::before,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-menu-review::before{
+ content:""!important;position:absolute!important;left:11px!important;right:11px!important;
+ top:0!important;height:1px!important;background:var(--sv-menu-rule,rgba(60,60,67,.12))!important;
+ pointer-events:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-menu-review{border-radius:0 0 12px 12px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel .sv-mail-gate-caution{display:none!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel :is(.sv-mail-gate-mode,.sv-mail-gate-account,.sv-mail-gate-menu-review,.sv-mail-gate-menu-contacts):focus-visible{
+ outline:2px solid #007AFF!important;outline-offset:-3px!important;
+}
