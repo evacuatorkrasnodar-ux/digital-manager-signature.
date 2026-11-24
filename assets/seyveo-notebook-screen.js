@@ -88,10 +88,10 @@
   'Ч':[[[0,0],[0,20],[14,27],[34,23]],[[34,0],[34,48]]],
   'Я':[[[34,48],[34,0],[8,0],[0,12],[8,24],[34,24]],[[34,24],[0,48]]]
  };
- function inkWords(lines,lined=false){
+ function inkWords(lines,lined=false,previous=false){
   const result=[];
   lines.forEach((line,row)=>Array.from(line).forEach((letter,col)=>{
-   (glyphs[letter]||[]).forEach(points=>result.push(stroke(points.map(([x,y])=>[60+col*45+x,lined?84+row*132+y:90+row*110+y+Math.round(Math.sin(col+row)*3)]))));
+   (glyphs[letter]||[]).forEach(points=>result.push(stroke(points.map(([x,y])=>[60+col*45+x,lined?(previous?84+y:77+y*.82)+row*132:90+row*110+y+Math.round(Math.sin(col+row)*3)]))));
   }));
   return result;
  }
@@ -114,7 +114,8 @@
   const index=handwritingExamples.findIndex((_,i)=>note.id===mediaPrefix+i);
   if(index<0||index%2)return note;
   const lines=handwritingExamples[index][1];
-  if(JSON.stringify(note.paper.strokes)!==JSON.stringify(inkWords(lines)))return note;
+  const actual=JSON.stringify(note.paper.strokes);
+  if(actual!==JSON.stringify(inkWords(lines))&&actual!==JSON.stringify(inkWords(lines,true,true)))return note;
   return {...note,paper:{...note.paper,strokes:inkWords(lines,true)}};
  }
   const docs=[
