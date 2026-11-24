@@ -1071,3 +1071,19 @@ html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([d
 html:root[data-theme="dark"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #svAgendaPinnedDate{
  background:#17191D!important;
 }
+
+/* Agenda reading separators: hairlines only, no new panels or row height. */
+#tasksPage #personalTaskList .sv-agenda-day-group > .personal-task-row.sv-agenda-entry:not(:last-child)::after{
+ content:""!important;display:block!important;position:absolute!important;
+ left:30px!important;right:16px!important;bottom:0!important;height:1px!important;
+ background:rgba(60,70,82,.09)!important;pointer-events:none!important;z-index:2!important;
+}
+#tasksPage #personalTaskList .sv-agenda-day-group + .sv-agenda-day-group > .sv-agenda-section-heading{
+ border-top:1px solid rgba(60,70,82,.13)!important;
+}
+html:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-day-group > .personal-task-row.sv-agenda-entry:not(:last-child)::after{
+ background:rgba(255,255,255,.09)!important;
+}
+html:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-day-group + .sv-agenda-day-group > .sv-agenda-section-heading{
+ border-top-color:rgba(255,255,255,.15)!important;
+}
