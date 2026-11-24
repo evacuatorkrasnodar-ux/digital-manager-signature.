@@ -617,8 +617,8 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="busine
 }
 /* One visible pearl edge, following the actual rounded curtain boundary. */
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{
- border:1px solid rgba(145,158,176,.52)!important;border-top:0!important;
- box-shadow:0 3px 10px rgba(43,55,73,.075),inset 0 -1px 0 rgba(255,255,255,.88)!important;
+ border:1px solid rgba(145,158,176,.60)!important;border-top:0!important;
+ box-shadow:0 4px 12px rgba(43,55,73,.085),inset 0 -1px 0 rgba(255,255,255,.90)!important;
 }
 @media(max-width:355px){
  dialog#svHomeFavoritesEditor .sv-home-favorites-editor-head strong{font-size:16px!important}
@@ -635,9 +635,9 @@ html:root body #homePage #svHomeFavorites .sv-home-favorite-icon svg[viewBox="0 
 /* Home shortcut editor · readable frosted curtain, not a second dock.
    Preserve the existing viewport, stationary header and native scrolling. */
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{
- background:rgba(255,255,255,.75)!important;
- -webkit-backdrop-filter:blur(7px) saturate(108%)!important;
- backdrop-filter:blur(7px) saturate(108%)!important;
+ background:rgba(255,255,255,.65)!important;
+ -webkit-backdrop-filter:blur(5px) saturate(108%)!important;
+ backdrop-filter:blur(5px) saturate(108%)!important;
 }
 dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid{
  box-sizing:border-box!important;
