@@ -64,7 +64,9 @@ const allApps=[...apps,...businessApps];
 /* Real entitlement in production, subscription preview only in this prototype. */
 function businessEnabled(){
  const access=window.SEYVEO_ENTITLEMENTS;
- if(access?.business===true||['business','rise','autonom','enterprise'].includes(String(access?.plan||'').toLowerCase()))return true;
+ if(typeof access?.business==='boolean')return access.business;
+ if(access?.plan)return ['business','business-start','business-pro','business-max','business-empire','start','pro','max','empire','rise','autonom','enterprise'].includes(String(access.plan).toLowerCase());
+ // Demo mode is a preview only, not an entitlement or authorization.
  return ['rise','autonom','large','employee'].includes(window.SEYVEO_PREVIEW?.getMode?.()||document.getElementById('seyveoDemoModeSelect')?.value||'');
 }
 const byId=Object.fromEntries(allApps.map(a=>[a.id,a]));
@@ -77,8 +79,13 @@ if(!preference||!Array.isArray(preference.items))preference={items:defaultIds.sl
 if(typeof preference.showSmart!=='boolean')preference.showSmart=true;
 if(typeof preference.autoSelect!=='boolean')preference.autoSelect=false;
 if(!preference.custom&&preference.items.join(',')==='music,documents,notebook,wallet,calendar')preference.items=defaultIds.slice();
+// Migrate the previous mixed row without losing either category.
+const isBusiness=id=>typeof id==='string'&&id.startsWith('business-')&&!!byId[id];
+const uniqueIds=(ids,predicate)=>[...new Set(Array.isArray(ids)?ids:[])].filter(predicate);
+preference.businessItems=uniqueIds([...(Array.isArray(preference.businessItems)?preference.businessItems:[]),...preference.items],isBusiness).slice(0,MAX_COUNT);
+preference.businessAutoSelect=preference.businessAutoSelect===true;
 function normalize(ids){
- const unique=[...new Set(ids)].filter(id=>byId[id]&&(businessEnabled()||!id.startsWith('business-')));
+ const unique=uniqueIds(ids,id=>!!byId[id]&&!isBusiness(id));
  const selected=preference.custom?unique:[...unique,...defaultIds.filter(id=>!unique.includes(id))];
  return selected.slice(0,preference.showSmart?MAX_COUNT-1:MAX_COUNT);
 }
@@ -93,13 +100,16 @@ if(!preference.custom){
  }
 }
 function autoFavorites(smartEnabled=preference.showSmart){
- const eligible=businessEnabled()?allApps:apps;
- const ranked=eligible.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
- const limit=MAX_COUNT-(smartEnabled?1:0);
- const current=preference.items.filter(id=>byId[id]);
- return [...ranked.map(a=>a.id),...current,...defaultIds,...eligible.map(a=>a.id)].filter((id,i,all)=>all.indexOf(id)===i).slice(0,limit);
+ const ranked=apps.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
+ return uniqueIds([...ranked.map(a=>a.id),...preference.items,...defaultIds,...apps.map(a=>a.id)],id=>!!byId[id]&&!isBusiness(id)).slice(0,MAX_COUNT-(smartEnabled?1:0));
+}
+function autoBusinessFavorites(){
+ const ranked=businessApps.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
+ return uniqueIds([...ranked.map(a=>a.id),...preference.businessItems,...businessApps.map(a=>a.id)],isBusiness).slice(0,MAX_COUNT);
 }
 if(preference.autoSelect)preference.items=autoFavorites();
+if(businessEnabled()&&preference.businessAutoSelect)preference.businessItems=autoBusinessFavorites();
+save(STORAGE,preference);
 /* One smart slot: pending decisions when present, otherwise a useful Life app.
    Selection is stable during the session and ignores the three pinned apps. */
 const fallbackOrder=['browser','music','notebook','calendar','health','mail','documents','wallet','contacts','family','smart-home','care'];
@@ -111,6 +121,7 @@ function chooseFallback(){
 }
 let fallbackId=chooseFallback();
 const rail=document.createElement('nav');rail.id='svHomeFavorites';rail.className='sv-home-favorites';rail.setAttribute('aria-label','Быстрый доступ SEYVEO');rail.hidden=true;
+const personalRow=document.createElement('div');personalRow.className='sv-home-favorites-row';personalRow.setAttribute('role','group');personalRow.setAttribute('aria-label','Личные приложения');rail.append(personalRow);
 const smartTile=document.createElement('div');smartTile.className='sv-home-favorite-tile';smartTile.dataset.favoriteId='smart';
 const card=document.createElement('button');card.type='button';card.className='sv-home-favorite sv-home-review-entry';
 card.setAttribute('aria-label','Открыть дела Сэйви');card.setAttribute('title','Дела для разбора');card.dataset.icon='cards';
@@ -118,13 +129,15 @@ const symbol=document.createElement('span');symbol.className='sv-home-favorite-i
 symbol.innerHTML='<svg viewBox="0 0 64 64" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>';
 const badge=document.createElement('span');badge.className='sv-home-review-badge';badge.hidden=true;badge.setAttribute('aria-hidden','true');
 const caption=document.createElement('span');caption.className='sv-home-favorite-label';caption.textContent='Дела';
-symbol.append(badge);card.append(symbol,caption);smartTile.append(card);rail.append(smartTile);
-const list=document.createElement('div');list.className='sv-home-favorite-items';rail.append(list);
+symbol.append(badge);card.append(symbol,caption);smartTile.append(card);personalRow.append(smartTile);
+const list=document.createElement('div');list.className='sv-home-favorite-items';personalRow.append(list);
 const add=document.createElement('button');add.type='button';add.className='sv-home-favorite sv-home-add-entry';add.hidden=true;
 add.setAttribute('aria-label','Добавить приложение на главную');
 // A plain plus by design: no tile surface or visible caption, even with older CSS.
 add.innerHTML='<svg class="sv-home-plain-plus" style="width:27px;height:27px;flex:none;margin-top:11.5px;fill:none;stroke:#141417;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
-rail.append(add);
+personalRow.append(add);
+const businessRow=document.createElement('div');businessRow.className='sv-home-favorites-row sv-home-favorites-business-row';businessRow.setAttribute('role','group');businessRow.setAttribute('aria-label','Кабинет');businessRow.hidden=true;
+const businessList=document.createElement('div');businessList.className='sv-home-favorite-items';businessRow.append(businessList);rail.append(businessRow);
 stage.append(rail);
 card.addEventListener('click',e=>{
  if(editing||suppressClick){e.preventDefault();suppressClick=false;return}
@@ -140,7 +153,13 @@ function launch(id){
   if(source)source.click();else return;
  }else if(result===false)return;
  if(item.action){usage[id]=Math.min(10000,(Number(usage[id])||0)+1);save(USAGE,usage);}
- if(preference.autoSelect){const next=autoFavorites();if(next.join(',')!==preference.items.join(',')){preference.items=next;save(STORAGE,preference);renderItems();show();}}
+ refreshAutomaticFavorites();
+}
+function refreshAutomaticFavorites(){
+ let changed=false;
+ if(preference.autoSelect){const next=autoFavorites();if(next.join(',')!==preference.items.join(',')){preference.items=next;changed=true;}}
+ if(businessEnabled()&&preference.businessAutoSelect){const next=autoBusinessFavorites();if(next.join(',')!==preference.businessItems.join(',')){preference.businessItems=next;changed=true;}}
+ if(changed){save(STORAGE,preference);renderItems();show();}
 }
 let longTimer=0,suppressClick=false,holding=false,editing=false,ignoreOutsideUntil=0;
 function persist(){
@@ -151,6 +170,8 @@ function syncEditControls(){
  smartTile.hidden=!preference.showSmart;
  rail.classList.toggle('is-editing',editing);
  add.hidden=!editing||totalSlots()>=MAX_COUNT;
+ personalRow.hidden=totalSlots()===0&&add.hidden;
+ businessRow.hidden=!businessEnabled()||preference.businessItems.length===0;
 }
 function enterEdit(openPicker=false){
  if(home.hidden||!root.classList.contains('sv-home-empty-arrived'))return;
@@ -170,9 +191,10 @@ add.addEventListener('click',()=>openCustomize());
 function removeSlot(id){
  if(!editing)return;
  if(id==='smart')preference.showSmart=false;
+ else if(isBusiness(id))preference.businessItems=preference.businessItems.filter(x=>x!==id);
  else preference.items=preference.items.filter(x=>x!==id);
  persist();
- if(totalSlots()===0){exitEdit();updateCount();return;}
+ if(totalSlots()===0&&(!businessEnabled()||!preference.businessItems.length)){exitEdit();updateCount();return;}
  renderItems();updateCount();show();
 }
 function minusButton(id,label){
@@ -216,16 +238,19 @@ function bindReorder(button,tile,id){
   const to=target?.dataset.favoriteId;
   suppressClick=true;
   if(!to||to==='smart'||to===id)return;
-  const a=preference.items.slice(),from=a.indexOf(id),where=a.indexOf(to);
+  if(isBusiness(id)!==isBusiness(to))return;
+  const key=isBusiness(id)?'businessItems':'items';
+  const a=preference[key].slice(),from=a.indexOf(id),where=a.indexOf(to);
   if(from<0||where<0)return;
   a.splice(from,1);a.splice(where,0,id);
-  preference.items=a;persist();renderItems();show();
+  preference[key]=a;persist();renderItems();show();
  });
  button.addEventListener('pointercancel',()=>{dragged=null;tile.classList.remove('is-dragging')});
 }
 function renderItems(){
- list.replaceChildren();
- for(const id of preference.items){
+ const oldHeight=rail.hidden?0:rail.getBoundingClientRect().height;
+ list.replaceChildren();businessList.replaceChildren();
+ for(const id of [...preference.items,...(businessEnabled()?preference.businessItems:[])]){
   const app=byId[id];if(!app)continue;
   const tile=document.createElement('div');tile.className='sv-home-favorite-tile';tile.dataset.favoriteId=id;
   const button=document.createElement('button');button.className='sv-home-favorite';button.type='button';
@@ -237,14 +262,17 @@ function renderItems(){
    if(editing||suppressClick){suppressClick=false;e.preventDefault();return}
    launch(id);
   });
-  tile.append(button,minusButton(id,app.name));bindHold(button);bindReorder(button,tile,id);list.append(tile);
+  tile.append(button,minusButton(id,app.name));bindHold(button);bindReorder(button,tile,id);(isBusiness(id)?businessList:list).append(tile);
  }
  syncEditControls();
+ if(!rail.hidden&&Math.abs(rail.getBoundingClientRect().height-oldHeight)>1){
+  homeShortcutTopLocked=false;
+ }
 }
 let activeCurtainPosition=null;
 function openCustomize(){
  if(document.getElementById('svHomeFavoritesEditor'))return;
- const before={...preference,items:preference.items.slice()};
+ const before={...preference,items:preference.items.slice(),businessItems:preference.businessItems.slice()};
  const dialog=document.createElement('dialog');dialog.id='svHomeFavoritesEditor';dialog.className='sv-home-favorites-editor';
  dialog.setAttribute('aria-label','Настроить главную');
  const shell=document.createElement('div');shell.className='sv-home-favorites-editor-shell';
@@ -255,7 +283,7 @@ function openCustomize(){
  const help=document.createElement('p');help.className='sv-home-favorites-editor-help';
  const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';
  grid.setAttribute('role','group');grid.setAttribute('aria-label','Приложения на главной');
- let selection=preference.items.slice(),smart=preference.showSmart,auto=preference.autoSelect,activeTab='personal';
+ let selection=preference.items.slice(),businessSelection=preference.businessItems.slice(),smart=preference.showSmart,auto=preference.autoSelect,businessAuto=preference.businessAutoSelect,activeTab='personal';
  const tabbar=document.createElement('div');tabbar.className='sv-home-favorites-tabs';tabbar.setAttribute('role','tablist');tabbar.setAttribute('aria-label','Разделы главной');
  const personalTab=document.createElement('button'),cabinetTab=document.createElement('button');
  for(const [button,name,mode] of [[personalTab,'Личное','personal'],[cabinetTab,'Кабинет','business']]){
@@ -277,7 +305,7 @@ function openCustomize(){
  };
  activeCurtainPosition=positionCurtain;
  const preview=()=>{
-  preference={...preference,items:selection.slice(),showSmart:smart,autoSelect:auto,custom:true};
+  preference={...preference,items:selection.slice(),businessItems:businessSelection.slice(),showSmart:smart,autoSelect:auto,businessAutoSelect:businessAuto,custom:true};
   renderItems();updateCount();show();
  };
  const redraw=()=>{
@@ -287,26 +315,36 @@ function openCustomize(){
   for(const [button,mode] of [[personalTab,'personal'],[cabinetTab,'business']]){
    button.setAttribute('aria-selected',String(activeTab===mode));button.tabIndex=activeTab===mode?0:-1;
   }
-  help.textContent=auto?'Сэйви выбирает часто используемые кнопки':'Выбрано '+(selection.length+(smart?1:0))+' из '+MAX_COUNT+' · меняется сразу';
-  autoButton.setAttribute('aria-pressed',String(auto));
-  autoButton.title=auto?'Автовыбор включён':'Автовыбор: Сэйви подбирает частые кнопки';
-  if(auto){selection=autoFavorites(smart);}
+  const cabinet=activeTab==='business';
+  if(cabinet?businessAuto:auto){if(cabinet)businessSelection=autoBusinessFavorites();else selection=autoFavorites(smart);}
+  const picked=cabinet?businessSelection:selection;
+  const autoActive=cabinet?businessAuto:auto;
+  help.textContent=autoActive?'Сэйви выбирает часто используемые кнопки':'Выбрано '+(picked.length+(!cabinet&&smart?1:0))+' из '+MAX_COUNT+(cabinet?' · второй ряд':' · первый ряд');
+  autoButton.setAttribute('aria-pressed',String(autoActive));
+  autoButton.title=autoActive?'Автовыбор включён':'Автовыбор: Сэйви подбирает частые кнопки';
+  grid.dataset.section=activeTab;
   grid.replaceChildren();
-  const options=activeTab==='business'?businessApps:[{id:'smart',name:'Умная кнопка'},...apps];
+  const options=cabinet?businessApps:[{id:'smart',name:'Умная кнопка'},...apps];
   for(const app of options){
    const b=document.createElement('button');b.type='button';
-   const chosen=app.id==='smart'?smart:selection.includes(app.id);
+   const chosen=app.id==='smart'?smart:picked.includes(app.id);
    b.setAttribute('aria-pressed',String(chosen));
    b.innerHTML=app.id==='smart'?'<svg viewBox="0 0 64 64" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>':icon(app.id);
    const t=document.createElement('span');t.textContent=app.name;
    const mark=document.createElement('small');mark.textContent=chosen?'✓':'';
    b.append(t,mark);
    b.addEventListener('click',()=>{
-    if(auto){auto=false;selection=preference.items.slice();}
-    if(app.id==='smart'){
-     if(smart)smart=false;else if(selection.length<MAX_COUNT)smart=true;
-    }else if(chosen)selection=selection.filter(x=>x!==app.id);
-    else if(selection.length+(smart?1:0)<MAX_COUNT)selection.push(app.id);
+    if(cabinet){
+     businessAuto=false;
+     if(chosen)businessSelection=businessSelection.filter(x=>x!==app.id);
+     else if(businessSelection.length<MAX_COUNT)businessSelection.push(app.id);
+    }else{
+     auto=false;
+     if(app.id==='smart'){
+      if(smart)smart=false;else if(selection.length<MAX_COUNT)smart=true;
+     }else if(chosen)selection=selection.filter(x=>x!==app.id);
+     else if(selection.length+(smart?1:0)<MAX_COUNT)selection.push(app.id);
+    }
     redraw();preview();
    });
    grid.append(b);
@@ -317,11 +355,16 @@ function openCustomize(){
  autoButton.setAttribute('aria-label','Автовыбор часто используемых кнопок');
  autoButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 8.2A8.8 8.8 0 1 0 20.8 12"/><path d="M19.5 3.7v4.5H15"/><path d="m9.2 15.8 2.8-7 2.8 7M10.2 13.4h3.6"/></svg>';
  autoButton.addEventListener('click',()=>{
-  auto=!auto;
-  if(auto){selection=autoFavorites(smart);}
+  if(activeTab==='business'){
+   businessAuto=!businessAuto;
+   if(businessAuto)businessSelection=autoBusinessFavorites();
+  }else{
+   auto=!auto;
+   if(auto)selection=autoFavorites(smart);
+  }
   redraw();preview();
  });
- head.insertBefore(autoButton,done);
+ head.insertBefore(autoButton,title);
  redraw();shell.append(head,tabbar,help,grid);dialog.append(shell);document.body.append(dialog);
  let closed=false;
  function close(saveChanges,animate=false){
@@ -422,7 +465,7 @@ const show=()=>{
  if(!visible&&editing&&!document.querySelector('dialog[open]')){
   editing=false;syncEditControls();renderItems();
  }
- const shouldShow=visible&&(editing||totalSlots()>0);
+ const shouldShow=visible&&(editing||totalSlots()>0||(businessEnabled()&&preference.businessItems.length>0));
  const entering=shouldShow&&rail.hidden;
  if(entering)rail.style.visibility='hidden';
  rail.hidden=!shouldShow;
@@ -475,6 +518,8 @@ function updateCount(){
 window.addEventListener('seyveo:review-count',e=>{cardCount=Math.max(0,Number(e.detail?.count)||0);updateCount();show()});
 for(const name of ['seyveo:home-sayvi-arrived','seyveo:route-changed','seyveo:cinema-finished','hashchange','focus'])
  window.addEventListener(name,show);
+window.addEventListener('seyveo:preview-role-changed',()=>{renderItems();show();});
+window.addEventListener('seyveo:entitlements-changed',()=>{renderItems();show();});
 document.addEventListener('visibilitychange',show);
 window.addEventListener('resize',()=>{homeShortcutTopLocked=false;show()});
 const weather=document.getElementById('svSayviHomeWeather');
@@ -486,9 +531,9 @@ document.addEventListener('click',e=>{
  const key=target.getAttribute('data-world-space')||target.getAttribute('data-calendar-space');
  const entry=byId[key]?key:null;
  if(entry){usage[entry]=Math.min(10000,(Number(usage[entry])||0)+1);save(USAGE,usage);
-  if(preference.autoSelect){const next=autoFavorites();if(next.join(',')!==preference.items.join(',')){preference.items=next;save(STORAGE,preference);renderItems();show();}}
+  refreshAutomaticFavorites();
  }
 },{capture:true,passive:true});
 updateCount();show();
-window.SEYVEO_HOME_FAVORITES=Object.freeze({openCustomize,enterEdit,getItems:()=>preference.items.slice(),isEditing:()=>editing});
+window.SEYVEO_HOME_FAVORITES=Object.freeze({openCustomize,enterEdit,getItems:()=>[...preference.items,...(businessEnabled()?preference.businessItems:[])],getPersonalItems:()=>preference.items.slice(),getBusinessItems:()=>businessEnabled()?preference.businessItems.slice():[],isEditing:()=>editing});
 })();
