@@ -458,17 +458,17 @@
 }
 #svReviewRoom #seyveoLivingMoment .lm-secondary > .lm-inline-item{
  box-sizing:border-box!important;
- grid-template-columns:35px minmax(0,1fr)!important;
- gap:9px!important;
+ grid-template-columns:44px minmax(0,1fr)!important;
+ gap:11px!important;
  min-height:62px!important;
- padding:10px 1px!important;
+ padding:10px 0!important;
  border-top:1px solid rgba(104,114,129,.12)!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-secondary > .lm-inline-item:first-child{
  border-top:0!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-inline-art{
- width:32px!important;height:32px!important;
+ width:44px!important;height:44px!important;
 }
 #svReviewRoom #seyveoLivingMoment .sv-lm-inline-heading .lm-inline-title{
  font-size:14.5px!important;font-weight:560!important;
@@ -520,7 +520,7 @@
 #svReviewRoom #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-field-eyebrow{color:#B56A26!important}
 #svReviewRoom #seyveoLivingMoment :is(.lm-hero-art,.lm-inline-art) > svg.lm-art-svg{
  color:#24272c!important;stroke:currentColor!important;stroke-width:2.05!important;
- width:32px!important;height:32px!important;opacity:1!important;filter:none!important;
+ width:36px!important;height:36px!important;opacity:1!important;filter:none!important;
 }
 #svReviewRoom #seyveoLivingMoment :is(.lm-hero-art,.lm-inline-art) > svg.lm-art-svg .lm-glyph-accent{
  stroke:currentColor!important;
@@ -558,4 +558,18 @@
 }
 @media(max-width:365px){
  #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions{gap:5px!important}
+}
+
+/* Shared optical axis: featured and queued application icons use the same
+   44px column, 36px drawing and 11px text gap. */
+#svReviewRoom #seyveoLivingMoment :is(.lm-hero,.lm-secondary > .lm-inline-item){
+ grid-template-columns:44px minmax(0,1fr)!important;column-gap:11px!important;
+ padding-inline:0!important;align-items:center!important;
+}
+#svReviewRoom #seyveoLivingMoment :is(.lm-hero-art,.lm-inline-art){
+ display:grid!important;place-items:center!important;
+ width:44px!important;height:44px!important;margin:0!important;
+}
+#svReviewRoom #seyveoLivingMoment :is(.lm-hero-copy,.lm-primary-copy,.lm-inline-copy){
+ margin-inline:0!important;padding-inline:0!important;
 }
