@@ -278,17 +278,50 @@
 .sv-weather-peek[data-origin="home"]{
  width:min(326px,calc(100vw - 34px))!important;
  max-height:min(355px,calc(100dvh - 170px),var(--sv-home-peek-room,355px))!important;
- padding:15px 15px 14px!important;
+ padding:12px 15px 11px!important;
  border-radius:25px!important;
  box-shadow:0 19px 44px rgba(24,32,45,.13),
    0 5px 13px rgba(24,32,45,.07),
    inset 0 1px 0 rgba(255,255,255,.96)!important;
 }
-.sv-weather-peek[data-origin="home"] .sv-weather-peek-eyebrow{
- font-size:11px;line-height:1.3;margin-bottom:10px;
-}
 .sv-weather-peek[data-origin="home"] .sv-weather-peek-main{
- min-height:76px;gap:9px;padding-bottom:12px;
+ min-height:0!important;gap:9px!important;padding-bottom:9px!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-info{
+ padding-right:1px!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-info .sv-weather-peek-city{
+ position:relative;padding-right:14px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-info .sv-weather-peek-city::after{
+ content:"›";position:absolute;right:0;top:0;
+ color:#9BA5B0;font-size:19px;font-weight:350;line-height:1;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-geo{
+ padding-top:8px!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-geo-heading{
+ margin-bottom:7px!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-geo-figure{
+ gap:4px!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-geo-meter{
+ width:45px!important;height:45px!important;
+ min-width:45px!important;min-height:45px!important;flex-basis:45px!important;
+ padding:2.5px!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-geo-number{
+ font-size:16px!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-rain{
+ padding:8px 0 9px!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-rain-heading{
+ margin-bottom:4px!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-rain-detail{
+ min-height:20px!important;
 }
 .sv-weather-peek[data-origin="home"] .sv-weather-peek-glyph,
 .sv-weather-peek[data-origin="home"] .sv-weather-peek-glyph svg{
@@ -298,7 +331,7 @@
  font-size:39px;line-height:1;letter-spacing:-.045em;
 }
 .sv-weather-peek[data-origin="home"] .sv-weather-peek-info{
- padding-left:10px;gap:4px;
+ padding-left:10px!important;gap:3px!important;
 }
 .sv-weather-peek[data-origin="home"] .sv-weather-peek-city{
  font-size:13.5px;
