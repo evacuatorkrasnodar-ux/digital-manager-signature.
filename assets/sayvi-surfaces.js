@@ -1070,13 +1070,12 @@ function mailView(){
   }).join('\n')).join('\n\n');
  }
  function tintMailAvatar(avatar,item){
-   if(String(item.initial).trim()==='?'){
-    avatar.classList.add('sv-mail-avatar-unknown');
-    avatar.style.setProperty('--sv-mail-avatar-tint','#E9EAED');
-    return avatar;
-   }
-   let tint=0;for(const ch of String(item.from||item.initial).trim().toLocaleLowerCase('ru-RU'))tint=(tint*31+ch.codePointAt(0))>>>0;
-   avatar.style.setProperty('--sv-mail-avatar-tint',['#E9EFF5','#E9F2EF','#EEEAF4','#F3EDE6','#E8F1F4','#F1EBF0'][tint%6]);
+  const initial=String(item.initial||'').trim();
+  if(initial==='?')avatar.classList.add('sv-mail-avatar-unknown');
+  const palette=['#E9EFF5','#E9F2EF','#EEEAF4','#F3EDE6','#E8F1F4','#F1EBF0'];
+  const key=[...initial.toLocaleLowerCase('ru-RU')][0];
+  const fallback=!key||key==='?'||key==='•'?'#E9EAED':palette[key.codePointAt(0)%palette.length];
+  avatar.style.setProperty('--sv-mail-avatar-tint',window.SEYVEO_AVATAR_COLORS?.tint(initial)||fallback);
   return avatar;
  }
  function drawDetails(item){
