@@ -1192,3 +1192,54 @@ html:root body #calendarPage #calendarYear .cal-year-mini-day.is-today .cal-year
 html body #calendarPage #calendarView[data-mode="month"]:is([data-month-layout="compact"],[data-month-layout="list"]) .cal-month-grid .cal-day-dots i{height:4px!important;flex-basis:7px!important;width:7px!important;}
 html body #calendarPage #calendarView[data-mode="month"]:is([data-month-layout="compact"],[data-month-layout="list"]) .cal-month-grid .cal-day-dots i.cal-dot-task{background:#E7B94E!important;}
 html body #calendarPage #calendarView[data-mode="month"]:is([data-month-layout="compact"],[data-month-layout="list"]) .cal-month-grid .cal-day-dots i.cal-dot-life{background:#9582DF!important;}
+
+/* One semantic color per saved event, in every calendar presentation. */
+html body #calendarPage #calendarView .cal-day-dots i[data-calendar-tone]{
+ background:var(--cal-item-accent)!important;border-color:transparent!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-chip[data-calendar-tone]{
+ background:var(--cal-item-accent)!important;
+}
+html body #calendarPage #calendarView[data-mode="month"] .cal-month-grid .cal-day-chip[data-calendar-tone]{
+ background:var(--cal-item-fill)!important;color:var(--cal-item-ink)!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-chip[data-calendar-tone]{
+ background:var(--cal-item-accent)!important;color:transparent!important;
+}
+html body #calendarPage #calendarView .cal-month-grid .cal-day-chip[data-calendar-tone]::before{background:var(--cal-item-accent)!important;}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="list"] #calendarAgenda .cal-entry[data-calendar-tone]{
+ --cal-list-accent:var(--cal-item-accent);--cal-list-fill:var(--cal-item-fill);
+}
+/* Week: preserve the existing hourly grid and overlap lanes. */
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-calendar-tone]{
+ background:var(--cal-item-fill)!important;border-left-color:var(--cal-item-accent)!important;
+ color:var(--cal-item-ink)!important;min-height:0!important;
+ padding:3px 7px!important;gap:1px!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed .cal-entry-copy strong{
+ font:600 13px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
+ font:500 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day[data-calendar-tone]{
+ background:var(--cal-item-fill)!important;color:var(--cal-item-ink)!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day[data-calendar-tone]::before{
+ background:var(--cal-item-accent)!important;box-shadow:none!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day .cal-entry-copy strong{
+ font-size:12px!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-week-now-marker::before{
+ content:attr(data-time)!important;display:grid!important;place-items:center!important;
+ left:auto!important;right:100%!important;top:50%!important;transform:translateY(-50%)!important;
+ width:auto!important;min-width:34px!important;height:18px!important;padding:0 3px!important;
+ border-radius:9px!important;color:#FFF!important;
+ font:600 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-variant-numeric:tabular-nums!important;
+}
+html:root[data-theme="dark"] body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-calendar-tone],
+html:root[data-theme="dark"] body #calendarPage #calendarWeekAllDay .cal-timeline-all-day[data-calendar-tone]{
+ background:color-mix(in srgb,var(--cal-item-accent) 22%,#17191D)!important;color:#F1F2F4!important;
+}
