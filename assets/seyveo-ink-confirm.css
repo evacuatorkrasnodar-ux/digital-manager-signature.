@@ -34,19 +34,20 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomCont
 }
 html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip{
  box-sizing:border-box!important;display:grid!important;grid-auto-flow:column!important;
- grid-template-columns:none!important;grid-auto-columns:max(30px,calc(100% / var(--sv-color-slots)))!important;
+ grid-template-columns:repeat(var(--sv-visible-count,6),minmax(0,1fr))!important;
+ grid-auto-columns:0!important;
  align-items:center!important;justify-content:start!important;gap:0!important;
  min-width:0!important;width:100%!important;height:44px!important;
- padding:0!important;margin:0!important;overflow-x:auto!important;overflow-y:hidden!important;
- scrollbar-width:none!important;-webkit-overflow-scrolling:touch;
- scroll-snap-type:x mandatory;overscroll-behavior-inline:contain;pointer-events:auto!important;
+ padding:0!important;margin:0!important;overflow:visible!important;
+ touch-action:pan-y!important;pointer-events:auto!important;
 }
-html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip::-webkit-scrollbar{display:none!important;}
+/* No scrolling viewport: only complete, currently visible color buttons exist in layout. */
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip > button[data-paper-color][hidden]{display:none!important;}
 html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip > button[data-paper-color]{
  all:unset!important;box-sizing:border-box!important;display:grid!important;place-items:center!important;
- width:100%!important;min-width:30px!important;height:38px!important;
+ width:100%!important;min-width:0!important;height:38px!important;
  background:none!important;box-shadow:none!important;border:0!important;
- scroll-snap-align:start;cursor:pointer!important;touch-action:manipulation;
+ cursor:pointer!important;touch-action:pan-y!important;
 }
 html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip > button[data-paper-color]::before{
  content:""!important;display:block!important;box-sizing:border-box!important;
