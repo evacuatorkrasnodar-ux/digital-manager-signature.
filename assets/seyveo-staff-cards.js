@@ -100,7 +100,11 @@ html:root[data-theme="light"] body > dialog#svStaffProfile[open]::backdrop{backg
 #svStaffProfile *{box-sizing:border-box}
 #svStaffProfile > .sv-recruit-head{margin-bottom:4px}
 #svStaffProfile .svstaff-content{max-width:none;width:auto;margin-inline:-5px;padding:4px 5px calc(90px + env(safe-area-inset-bottom,0px))!important}
-#svStaffProfile.seyveo-dock-host[open] > footer.dock{position:fixed!important;display:grid!important;visibility:visible!important;opacity:1!important;top:auto!important;bottom:var(--seyveo-dock-bottom,7px)!important;z-index:90!important;pointer-events:auto!important;background:transparent!important;background-image:none!important}
+html:root body > dialog#svStaffProfile.svstaff-modal.seyveo-dock-host[open] > footer.dock.sv-shared-dock{position:absolute!important;display:grid!important;visibility:visible!important;opacity:1!important;top:auto!important;bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;z-index:90!important;pointer-events:auto!important;transform:none!important;max-height:60px!important;background:transparent!important;background-image:none!important}
+#svStaffProfile > .svstaff-content{flex:1 1 0!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important}
+.svstaff-thumb,.svstaff-photo{overflow:hidden;background-size:cover;background-position:center;display:grid;place-items:center;color:var(--text)}
+.svstaff-thumb>img,.svstaff-photo>img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+#svStaffProfile .svstaff-sayvi-mark{width:24px!important;height:24px!important;flex-basis:24px!important}
 .svstaff-hero{display:flex;align-items:center;gap:14px;margin:0 0 14px}
 .svstaff-photo-edit{display:grid;place-items:center;flex:0 0 84px;width:84px;height:84px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;overflow:hidden;box-shadow:none;cursor:pointer}
 .svstaff-photo{display:block;width:100%;height:100%;border-radius:50%;border:0;object-fit:cover;object-position:center 20%;background:#dceaf3}
@@ -184,7 +188,7 @@ html:root[data-theme="light"] body > dialog#svStaffProfile[open]::backdrop{backg
 .svstaff-review-option:not([aria-selected="true"]) svg{visibility:hidden}
 .svstaff-review-option svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.55}
 .svstaff-review-form textarea{
- display:block;width:100%;min-height:74px;resize:vertical;
+ display:block;width:100%;min-height:74px;resize:none;overflow-y:hidden;
  padding:11px 12px;border:0;border-radius:14px;
  background:var(--staff-field);color:var(--text);
  font:400 16px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
@@ -209,10 +213,10 @@ html:root[data-theme="light"] body > dialog#svStaffProfile[open]::backdrop{backg
 }
 .svstaff-insight-head .svstaff-icon{color:var(--secondary)}
 /* Canonical Sayvi emblem has the center dot; do not draw a generic sparkle here. */
-.svstaff-insight-head .svstaff-sayvi-mark{display:inline-block;width:20px;height:20px;flex:0 0 20px;margin:0;color:var(--secondary)}
+.svstaff-insight-head .svstaff-sayvi-mark{display:inline-block;width:24px;height:24px;flex:0 0 24px;margin:0;color:var(--secondary)}
 .svstaff-insight-head svg{width:19px;height:19px}
 .svstaff-insight p{margin:0;font-size:12px;line-height:1.6;color:var(--secondary)}
-.svstaff-actions{display:flex;flex-wrap:wrap;gap:9px;margin:2px 0 13px;padding:0}
+.svstaff-actions{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;margin:2px 0 13px;padding:0}
 .svstaff-action{
  min-height:44px;padding:9px 14px;border:var(--sv-white-pearl-edge,0);border-radius:999px;
  background:var(--staff-control);color:var(--staff-ink);
@@ -270,7 +274,27 @@ function portrait(p){
  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }
 const tenure=(since)=>{const start=new Date(since+'T12:00:00'),today=new Date();let y=today.getFullYear()-start.getFullYear(),m=today.getMonth()-start.getMonth();if(today.getDate()<start.getDate())m--;if(m<0){y--;m+=12}return y>0?(y+' г. '+m+' мес.'):m+' мес.'};
-const photoFor=p=>photos.get(p.id)||portrait(p);
+// Fictional staff can use the existing portrait atlas; explicit personal choices win.
+const staffArt={anna:34,mikhail:35,elena:22};
+function staffAvatar(p,cls){
+ const node=el('span',cls);node.setAttribute('aria-hidden','true');node.dataset.staffPerson=p.id;
+ paintStaffAvatar(node,p);return node;
+}
+function paintStaffAvatar(node,p){
+ node.replaceChildren();node.removeAttribute('style');
+ let saved;try{saved=JSON.parse(localStorage.getItem('seyveo-self-identity-avatar-v1')||'{}')?.[p.id]}catch{}
+ const local=photos.get(p.id);
+ const personal=saved?.kind==='photo'&&typeof saved.data==='string'&&saved.data.length<320000&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(saved.data)?saved.data:null;
+ if(local||personal){const img=el('img');img.src=local||personal;img.alt='';node.append(img);return}
+ const custom=saved?.kind==='atlas'&&saved.customChosen===true&&Number.isInteger(saved.index)&&saved.index>=0&&saved.index<84;
+ const index=custom?saved.index:staffArt[p.id];
+ if(window.SEYVEO_SAYVI_HOLIDAY?.paint(node,index)||window.SEYVEO_AVATAR_ART?.paint(node,index))return;
+ if(custom){node.textContent=p.name.trim()[0]||'•';return}
+ const img=el('img');img.src=portrait(p);img.alt='';node.append(img);
+}
+function refreshStaffAvatars(){document.querySelectorAll('[data-staff-person]').forEach(node=>{const p=people.find(item=>item.id===node.dataset.staffPerson);if(p)paintStaffAvatar(node,p);});}
+window.addEventListener('seyveo:self-avatar-updated',refreshStaffAvatars);
+window.addEventListener('load',refreshStaffAvatars,{once:true});
 const shell=el('div','svstaff-directory');root.replaceChildren(shell);
 // The parent Team tab and short connection notice provide the heading.
 const directory=el('div','svstaff-directory-list');shell.append(directory);
@@ -295,7 +319,7 @@ function renderDirectory(){
  people.forEach(p=>{
   const tile=button('','svstaff-tile',()=>openPerson(p,tile));
   tile.setAttribute('aria-label','Открыть профессиональную историю: '+p.name);
-  const photo=el('img','svstaff-thumb');photo.src=photoFor(p);photo.alt='';photo.loading='lazy';
+  const photo=staffAvatar(p,'svstaff-thumb');
   const copy=el('span','svstaff-tile-copy');
   copy.append(el('strong',null,p.name),el('small',null,p.role+' · '+tenure(p.since)));
   const marks=peerRecognition(p.id).length;
@@ -315,10 +339,11 @@ function openPerson(p,trigger){
  chosen=p;lastTrigger=trigger;renderProfile();
  if(typeof modal.showModal==='function')modal.showModal();else modal.setAttribute('open','');
  body.scrollTop=0;window.SEYVEO_DOCK_CONTINUITY?.refresh?.(modal);
+ requestAnimationFrame(()=>{if(modal.open){window.SEYVEO_DOCK_CONTINUITY?.refresh?.(modal);refreshStaffAvatars();}});
 }
 function renderProfile(){
  if(!chosen)return;const p=chosen;body.replaceChildren();
- const hero=el('section','svstaff-hero');const photo=el('img','svstaff-photo');photo.src=photoFor(p);photo.alt='Иллюстрированный портрет сотрудника '+p.name;
+ const hero=el('section','svstaff-hero');const photo=staffAvatar(p,'svstaff-photo');
  const photoPick=el('input');photoPick.type='file';photoPick.accept='image/*';photoPick.hidden=true;photoPick.setAttribute('aria-label','Выбрать фото сотрудника');
  photoPick.addEventListener('change',()=>{
   const file=photoPick.files&&photoPick.files[0];if(!file)return;
@@ -342,7 +367,7 @@ function renderProfile(){
  const recognitions=peerRecognition(p.id);
  const badges=el('section','svstaff-peer-section');
  const title=el('div','svstaff-peer-head');
- title.append(el('h3',null,'Знаки признания коллег'),el('span','svstaff-peer-count',String(recognitions.length)));
+ title.append(el('h3',null,'Знаки признания коллег'));
  badges.append(title);
  if(!recognitions.length)badges.append(el('p','svstaff-peer-empty','Пока нет благодарностей.'));
  for(const record of recognitions.slice(0,12)){
@@ -408,6 +433,7 @@ function renderProfile(){
  });
  choiceHost.append(trigger,options);
  const note=el('textarea');note.rows=2;note.maxLength=240;note.minLength=8;note.required=true;
+ note.addEventListener('input',()=>{note.style.height='auto';note.style.height=Math.max(74,note.scrollHeight)+'px';});
  note.placeholder='Укажите основание для рассмотрения…';note.setAttribute('aria-label','Основание решения руководителя');
  const feedback=el('p','svstaff-review-status');feedback.setAttribute('role','status');
  const submit=el('button','svstaff-review-submit','Сохранить для рассмотрения');submit.type='submit';
