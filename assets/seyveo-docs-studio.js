@@ -208,7 +208,7 @@ function mount(target,{
   action.setAttribute('aria-expanded','false');
   action.setAttribute('aria-controls','svDocToolPanel');
  }
- let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='',documentName='SEYVEO-документ',fromScan=false;
+ let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='',documentName='SEYVEO-документ',fromScan=false,wordStyle={size:12,alignment:'left',heading:false};
  const clear=()=>{
   panel.replaceChildren();cleanUrls();
  };
@@ -577,7 +577,23 @@ function mount(target,{
    $('small','','Редактируемый текст'));
   const filename=$('input','sv-doc-tool-text');filename.type='text';filename.value=documentName;filename.maxLength=100;filename.setAttribute('aria-label','Название документа');filename.placeholder='Название документа';
   filename.addEventListener('input',()=>{documentName=filename.value;});
-  editing.append(editorTop,filename,body);
+  const typography=$('div','sv-doc-create-typography');
+  const size=$('select','sv-doc-tool-page-select');size.setAttribute('aria-label','Размер шрифта');
+  for(const n of [10,11,12,14,16,18]){const item=$('option','',n+' пт');item.value=String(n);size.append(item);}
+  size.value=String(wordStyle.size);
+  const alignment=$('select','sv-doc-tool-page-select');alignment.setAttribute('aria-label','Выравнивание текста');
+  for(const [id,label] of [['left','Слева'],['center','По центру'],['right','Справа'],['both','По ширине']]){
+   const item=$('option','',label);item.value=id;alignment.append(item);
+  }
+  alignment.value=wordStyle.alignment;
+  const firstLine=button('Заголовок',()=>{wordStyle.heading=!wordStyle.heading;firstLine.setAttribute('aria-pressed',String(wordStyle.heading));},'sv-doc-word-heading');
+  firstLine.setAttribute('aria-label','Первую строку оформить жирным заголовком');
+  firstLine.setAttribute('aria-pressed',String(wordStyle.heading));
+  const refreshStyle=()=>{wordStyle.size=Number(size.value);wordStyle.alignment=alignment.value;
+   body.style.fontSize=wordStyle.size+'pt';body.style.textAlign=wordStyle.alignment==='both'?'justify':wordStyle.alignment;};
+  size.addEventListener('change',refreshStyle);alignment.addEventListener('change',refreshStyle);refreshStyle();
+  typography.append(size,alignment,firstLine);
+  editing.append(editorTop,filename,typography,body);
 
   const formatLabel=$('div','sv-doc-create-subhead');
   formatLabel.append($('strong','','Формат'),
@@ -607,6 +623,9 @@ function mount(target,{
    selectedFormat.forEach(({id,button})=>
     button.setAttribute('aria-pressed',String(id===documentFormat)));
    saveButton.textContent=documentFormat==='pdf'?'Сохранить PDF':'Сохранить Word';
+   typography.hidden=documentFormat!=='docx';
+   body.style.fontSize=documentFormat==='docx'?wordStyle.size+'pt':'';
+   body.style.textAlign=documentFormat==='docx'?(wordStyle.alignment==='both'?'justify':wordStyle.alignment):'';
   }
   function safeDocumentName(){return documentName.replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').trim()||'SEYVEO-документ';}
   function preparedFile(){
@@ -617,7 +636,7 @@ function mount(target,{
     if(documentFormat==='pdf'){
      return {blob:textPdf(body.value),name:safeDocumentName()+'.pdf',label:'PDF'};
     }
-    return {blob:window.SEYVEO_DOCS_EXPORT.docxFromText(body.value),
+    return {blob:window.SEYVEO_DOCS_EXPORT.docxFromText(body.value,wordStyle),
      name:safeDocumentName()+'.docx',label:'Word'};
    }catch(error){
     message(error?.message||'Не удалось подготовить документ.');
@@ -984,7 +1003,7 @@ function mount(target,{
   if(payload.kind==='word'){
    const value=String(payload.text||'').slice(0,12000);
    if(!value.trim())return false;
-   documentDraft=value;documentFormat='docx';documentTemplate='';fromScan=true;
+   documentDraft=value;documentFormat='docx';documentTemplate='';fromScan=true;wordStyle={size:12,alignment:'left',heading:false};
    documentName=String(payload.title||'Скан').slice(0,100);
    operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();
    panel.scrollIntoView?.({block:'nearest'});return true;
