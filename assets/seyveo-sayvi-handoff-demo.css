@@ -762,3 +762,8 @@ body > #orb.sv-sayvi-handoff-flight {
   animation:none!important;
   max-width:var(--sv-feng-capsule)!important;
 }
+
+/* Home greeting: lighter typography without changing the sphere anchor. */
+html:root body #homePage #stage > .message > #headline{
+ font-weight:550!important;
+}
