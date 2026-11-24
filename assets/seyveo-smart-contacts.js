@@ -55,16 +55,6 @@
   if(typeof provider?.isConnected!=='function')return false;
   try{return provider.isConnected(service,scope)===true}catch{return false}
  }
- const SAMPLES={
-  personal:[
-   {initial:'М',name:'Мария',category:'Семья'},
-   {initial:'А',name:'Алексей',category:'Друзья'}
-  ],
-  business:[
-   {initial:'А',name:'Андрей',category:'Клиенты'},
-   {initial:'П',name:'Проектный отдел',category:'Коллеги'}
-  ]
- };
  function mount({host,onBack,onConnect,onSaved}={}){
   if(!host)throw new Error('Mail Smart Contacts needs an existing workspace');
   const page=make('section','sv-mail-contacts-page');page.hidden=true;
@@ -81,13 +71,6 @@
    page.replaceChildren();
    if(!open){page.hidden=true;return}
    page.hidden=false;
-   const head=make('div','svmc-head');
-   const back=make('button','svmc-back');back.type='button';
-   back.append(pict(ICON.back));back.setAttribute('aria-label','Назад к почте');
-   back.addEventListener('click',()=>{if(typeof onBack==='function')onBack()});
-   const titles=make('div','svmc-titles');
-   titles.append(make('h2','','Умные контакты'));
-   head.append(back,titles);page.append(head);
    const tabs=make('nav','svmc-tabs');tabs.setAttribute('aria-label','Выбор адресной книги');
    for(const [scope,label] of [['personal','Личная'],['business','Рабочая']]){
     const b=make('button','svmc-tab',label);b.type='button';
@@ -113,10 +96,10 @@
    }
    page.append(connection);
    const legend=make('div','svmc-section-label');
-   legend.append(make('strong','','Доступ для Сэйви'),make('small','','Отдельно для личной и рабочей почты'));
+   legend.append(make('strong','','Доступ для Сэйви'));
    page.append(legend);
    const choices=make('div','svmc-choices');
-   const status=make('p','svmc-status','Выбор сохраняется автоматически.');status.setAttribute('role','status');
+   const status=make('p','svmc-status','');status.setAttribute('role','status');
    for(const [key,data] of Object.entries(infoText)){
     const label=make('label','svmc-option');
     const symbol=data.icon==='sayvi'?make('span','sv-sayvi-symbol svmc-sayvi-mark'):pict(ICON[data.icon]);
@@ -142,20 +125,7 @@
     label.append(copy,input);choices.append(label);
    }
    page.append(choices,status);
-   const preview=make('section','svmc-preview');
-   const previewHead=make('div','svmc-preview-head');
-   previewHead.append(make('strong','','Как будут выглядеть контакты'),make('small','','Пример · не импортировано'));
-   preview.append(previewHead);
-   for(const item of SAMPLES[selected]){
-    const row=make('div','svmc-person');
-    row.append(make('span','svmc-avatar',item.initial));
-    const main=make('div','svmc-person-main');
-    main.append(make('strong','',item.name));
-    row.append(main,make('span','svmc-group',item.category));
-    preview.append(row);
-   }
-   page.append(preview);
-   const note=make('p','svmc-note','При будущем импорте оригиналы останутся у владельца. Объединение совпадений — только после подтверждения.');
+   const note=make('p','svmc-note','Оригиналы контактов остаются у владельца. Объединение совпадений — только после подтверждения.');
    page.append(note);
   }
   return Object.freeze({
