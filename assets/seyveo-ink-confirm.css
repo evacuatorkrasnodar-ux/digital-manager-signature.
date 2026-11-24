@@ -1,123 +1,92 @@
-/* SEYVEO Ink Studio — rebuilt Save control.
-   Independent of the old .sv-paper-save styles and palette surface.
-   The notePaperSave id is intentionally retained for existing save/chat handlers. */
-html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom{
- display:flex!important;
- align-items:center!important;
- left:0!important;
- right:auto!important;
- width:100%!important;
- max-width:100%!important;
- padding-right:0!important;
+/* SEYVEO Ink Studio · single, unpainted bottom row.
+   Picker, color strip and confirmation are siblings in the same grid.
+   No fixed save layer, underlying plate, backdrop, filter or mask.
+   Existing IDs, data-paper-color and native color input are retained. */
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls{
+ --sv-color-slots:8;
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
+ align-items:center!important;column-gap:6px!important;
+ position:absolute!important;left:max(8px,env(safe-area-inset-left,0px))!important;
+ right:max(12px,env(safe-area-inset-right,0px))!important;
+ bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+ top:auto!important;width:auto!important;height:44px!important;
+ z-index:35!important;padding:0!important;margin:0!important;
+ overflow:visible!important;pointer-events:none!important;
 }
-html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-paper-palette{
- flex:1 1 auto!important;
- min-width:0!important;
- width:auto!important;
- max-width:100%!important;
- margin:0!important;
- background:transparent!important;
- border:0!important;
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls,html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip,html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .paper-color-control{
+ background:transparent!important;background-image:none!important;border:0!important;
+ border-radius:0!important;box-shadow:none!important;outline:0!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ -webkit-filter:none!important;filter:none!important;
+ -webkit-mask:none!important;mask:none!important;clip-path:none!important;
+ transform:none!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls::before,html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls::after,html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip::before,html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip::after,
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .paper-color-control::before,html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .paper-color-control::after{
+ content:none!important;display:none!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .paper-color-control{
+ position:relative!important;display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;width:44px!important;height:44px!important;
+ min-width:44px!important;max-width:44px!important;padding:0!important;margin:0!important;
+ left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+ overflow:visible!important;pointer-events:auto!important;z-index:2!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip{
+ box-sizing:border-box!important;display:grid!important;grid-auto-flow:column!important;
+ grid-template-columns:none!important;grid-auto-columns:max(30px,calc(100% / var(--sv-color-slots)))!important;
+ align-items:center!important;justify-content:start!important;gap:0!important;
+ min-width:0!important;width:100%!important;height:44px!important;
+ padding:0!important;margin:0!important;overflow-x:auto!important;overflow-y:hidden!important;
+ scrollbar-width:none!important;-webkit-overflow-scrolling:touch;
+ scroll-snap-type:x mandatory;overscroll-behavior-inline:contain;pointer-events:auto!important;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip::-webkit-scrollbar{display:none!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip > button[data-paper-color]{
+ all:unset!important;box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:100%!important;min-width:30px!important;height:38px!important;
+ background:none!important;box-shadow:none!important;border:0!important;
+ scroll-snap-align:start;cursor:pointer!important;touch-action:manipulation;
+}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip > button[data-paper-color]::before{
+ content:""!important;display:block!important;box-sizing:border-box!important;
+ width:25px!important;height:25px!important;border-radius:50%!important;
+ background:var(--swatch)!important;border:1px solid rgba(60,68,80,.14)!important;
  box-shadow:none!important;
 }
-
-
-
-
-
-
-/* Palette now runs naturally underneath the separate floating Save circle.
-   No end cap, fade, rectangle or clipped-color curtain beside the action. */
-html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom{
- width:100%!important;
- max-width:100%!important;
- right:0!important;
- padding-right:0!important;
- background:transparent!important;
- box-shadow:none!important;
- pointer-events:none!important;
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip > button[data-paper-color]::after{content:none!important;display:none!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip > button[data-paper-color][aria-pressed="true"]::before{
+ outline:1.5px solid #87919e!important;outline-offset:2px!important;
 }
-html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-paper-palette{
- flex:1 1 auto!important;
- width:100%!important;
- max-width:100%!important;
- pointer-events:auto!important;
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > .sv-paper-color-strip > button[data-paper-color]:focus-visible{outline:1px solid #87919e!important;outline-offset:-2px!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > #notePaperSave{
+ all:unset!important;box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ position:relative!important;inset:auto!important;width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;max-width:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;background:#38383a!important;color:#fff!important;
+ box-shadow:0 2px 5px rgba(0,0,0,.13)!important;
+ -webkit-appearance:none!important;appearance:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;filter:none!important;
+ -webkit-mask:none!important;mask:none!important;clip-path:none!important;
+ transform:none!important;transition:none!important;pointer-events:auto!important;cursor:pointer!important;
+ -webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important;
 }
-html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom
- .sv-paper-palette > .sv-paper-swatches{
- flex:1 1 auto!important;
- width:100%!important;
- max-width:100%!important;
- min-width:0!important;
- padding:0 2px!important;
- overflow-x:auto!important;
- overflow-y:hidden!important;
- scroll-snap-type:none!important;
- -webkit-mask-image:none!important;
- mask-image:none!important;
- background:transparent!important;
- background-image:none!important;
- border:0!important;
- box-shadow:none!important;
+html:root body dialog#notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #svPaperBottomControls > #notePaperSave{
+ background:#c69c09!important;box-shadow:0 2px 5px rgba(98,72,10,.12)!important;
 }
-
-/* Symmetric left edge: colors scroll behind the gradient-picker circle.
-   Keep the picker/menu above the scroller, just like Save on the right. */
-html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-paper-palette{
- position:relative!important;
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > #notePaperSave::before,html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > #notePaperSave::after{content:none!important;display:none!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > #notePaperSave > svg{
+ position:static!important;display:block!important;width:21px!important;height:21px!important;
+ margin:0!important;padding:0!important;border:0!important;background:transparent!important;
+ box-shadow:none!important;filter:none!important;transform:none!important;
+ fill:none!important;stroke:#fff!important;stroke-width:1.8!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;pointer-events:none!important;
 }
-html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom
- .sv-paper-palette > .paper-color-control{
- position:absolute!important;
- left:0!important;
- top:50%!important;
- transform:translateY(-50%)!important;
- width:37px!important;
- height:40px!important;
- z-index:31!important;
- pointer-events:auto!important;
- background:transparent!important;
- box-shadow:none!important;
+html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > #notePaperSave:focus-visible{outline:2px solid #87919e!important;outline-offset:3px!important;}
+html:root body dialog#notePaperDialog.sv-paper-studio[open].sv-paper-inking > #svPaperBottomControls{
+ opacity:0!important;visibility:hidden!important;pointer-events:none!important;
 }
-html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom
- .sv-paper-palette > .sv-paper-swatches{
- position:relative!important;
- flex:1 1 100%!important;
- width:100%!important;
- max-width:100%!important;
- padding-left:39px!important;
- padding-right:2px!important;
- z-index:1!important;
-}
-
-
-/* Two-layer ink selector: spectrum around the ring, exact active solid color
-   (or the selected two-stop gradient) in its center. */
-html body #notePaperDialog.sv-paper-studio[open] #notePaperColorDot.paper-color-dot{
- position:relative!important;
- display:block!important;
- border-radius:50%!important;
- border:1px solid rgba(244,246,250,.78)!important;
- background:conic-gradient(#ee4345,#ffb525,#31bc70,#14b4cd,#397bdf,#943cdf,#e73b84,#ee4345)!important;
- box-shadow:0 0 0 1px rgba(14,20,30,.38)!important;
- overflow:hidden!important;
-}
-html body #notePaperDialog.sv-paper-studio[open] #notePaperColorDot.paper-color-dot::after{
- content:""!important;
- position:absolute!important;
- display:block!important;
- inset:5px!important;
- border:1px solid rgba(255,255,255,.9)!important;
- border-radius:50%!important;
- box-sizing:border-box!important;
- background:var(--sv-selected-ink,#f6f7fb)!important;
- box-shadow:0 0 0 1px rgba(18,22,30,.57),0 1px 2px rgba(0,0,0,.2)!important;
- pointer-events:none!important;
-}
-/* The Save circle is a floating tool, never a curtain across the swatches.
-   Hide immediately during the live stroke; return smoothly on pen lift. */
-
-
-@media(prefers-reduced-motion:reduce){
-
-}
+html:root body dialog#notePaperDialog.sv-paper-studio[open].sv-paper-inking > #svPaperBottomControls > *{pointer-events:none!important;}
+@media(max-width:370px){html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls{--sv-color-slots:7;}}
+@media(max-width:340px){html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls{--sv-color-slots:6;}}
