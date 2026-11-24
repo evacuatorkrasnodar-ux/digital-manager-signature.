@@ -148,6 +148,12 @@
    }
   }
   if(name.length<2||/^(?:кем|ним|ней|другом|подругой|коллегой|анн[а-яё]*|лен[а-яё]*|друг[а-яё]*)$/iu.test(name))return null;
+  // Explicit city and landmark after a quoted venue are separate from its name.
+  if(!locationHint&&/^вкусно\s+(?:[—–-]\s*)?и\s+точка$/iu.test(name)){
+   const tail=phrase.slice(venue.index+venue[0].length);
+   const knownTail=tail.match(/^\s*,\s*(Краснодар)\s*,\s*((?:трц|тц)\s+[«"]?Красная площадь[»"]?(?:\s*,\s*(?:ул\.?\s*)?Дзержинского\s*,?\s*\d+[а-яё]?)?)/iu);
+   if(knownTail){city=city||'Краснодар';locationHint=normalize(knownTail[2]);}
+  }
   const searchName=name;
   if(/^вкусно\s+(?:[—–-]\s*)?и\s+точка$/iu.test(name))name='Вкусно — и точка';
   const contextCity=typeof options.city==='string'?options.city:suggestedCity();
