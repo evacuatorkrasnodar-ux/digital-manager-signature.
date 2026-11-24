@@ -15,6 +15,19 @@
  --sv-menu-item-selected-border:#d8dde4;
  --sv-menu-rule:rgba(130,139,150,.16);
  --sv-menu-radius:20px;
+ --sv-menu-blur:none;
+}
+/* Light theme uses the approved neutral Pearl glass. Text stays fully opaque
+   and choices keep their existing semantics/size; dark menus remain dark. */
+:root[data-theme="light"]{
+ --sv-menu-bg:var(--sv-white-pearl-surface,rgba(242,241,240,.93));
+ --sv-menu-border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.99));
+ --sv-menu-shadow:var(--sv-white-pearl-dock-shadow,0 5px 17px rgba(82,69,57,.105));
+ --sv-menu-blur:var(--sv-white-pearl-blur,blur(16px) saturate(100%));
+ --sv-menu-item:rgba(255,255,255,.40);
+ --sv-menu-item-border:rgba(255,255,255,.78);
+ --sv-menu-item-selected:rgba(255,255,255,.96);
+ --sv-menu-item-selected-border:rgba(255,255,255,.99);
 }
 :root[data-theme="dark"]{
  --sv-menu-bg:#292b30;
@@ -37,8 +50,8 @@ html:root body .sv-menu-surface{
  background:var(--sv-menu-bg);
  color:var(--sv-menu-text);
  box-shadow:var(--sv-menu-shadow);
- -webkit-backdrop-filter:none;
- backdrop-filter:none;
+ -webkit-backdrop-filter:var(--sv-menu-blur,none);
+ backdrop-filter:var(--sv-menu-blur,none);
 }
 html:root body .sv-menu-surface .sv-menu-choice{
  display:flex;align-items:center;gap:8px;
@@ -85,8 +98,8 @@ html:root body :is(
  border-radius:var(--sv-menu-radius)!important;
  box-shadow:var(--sv-menu-shadow)!important;
  opacity:1!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
+ -webkit-backdrop-filter:var(--sv-menu-blur,none)!important;
+ backdrop-filter:var(--sv-menu-blur,none)!important;
 }
 /* Consistent legible user-facing popovers in the Note Editor. Explicit
  * specificity beats historical 2026 glass theme overrides.
@@ -105,8 +118,8 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  border:var(--sv-menu-border)!important;
  border-radius:var(--sv-menu-radius)!important;
  box-shadow:var(--sv-menu-shadow)!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
+ -webkit-backdrop-filter:var(--sv-menu-blur,none)!important;
+ backdrop-filter:var(--sv-menu-blur,none)!important;
  opacity:1!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
@@ -155,7 +168,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  background:var(--sv-menu-bg)!important;
  color:var(--sv-menu-text)!important;
  box-shadow:var(--sv-menu-shadow)!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ -webkit-backdrop-filter:var(--sv-menu-blur,none)!important;backdrop-filter:var(--sv-menu-blur,none)!important;
  opacity:1!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
@@ -286,8 +299,8 @@ html:root body #notePaperDialog.sv-paper-studio[open]
  border-radius:var(--sv-menu-radius)!important;
  box-shadow:var(--sv-menu-shadow)!important;
  color:var(--sv-menu-text)!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
+ -webkit-backdrop-filter:var(--sv-menu-blur,none)!important;
+ backdrop-filter:var(--sv-menu-blur,none)!important;
  opacity:1!important;
 }
 html:root body #notePaperDialog.sv-paper-studio[open]
@@ -323,8 +336,8 @@ html:root body dialog#personalTaskDialog.sv-task-editor-v3
  border-radius:var(--sv-menu-radius)!important;
  color:var(--sv-menu-text)!important;
  box-shadow:var(--sv-menu-shadow)!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
+ -webkit-backdrop-filter:var(--sv-menu-blur,none)!important;
+ backdrop-filter:var(--sv-menu-blur,none)!important;
 }
 /* Work Chat dropdown choices: preserve their grids, icons,
  * selection logic and existing button sizes, but align hover/press feel. */
@@ -344,8 +357,8 @@ html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"
  border:var(--sv-menu-border)!important;
  border-radius:var(--sv-menu-radius)!important;
  box-shadow:var(--sv-menu-shadow)!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
+ -webkit-backdrop-filter:var(--sv-menu-blur,none)!important;
+ backdrop-filter:var(--sv-menu-blur,none)!important;
 }
 html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"]
  :is(.sv-mail-gate-menu-heading strong,.sv-mail-gate-trusted-details,
@@ -398,8 +411,8 @@ html:root body #svcpWorkChatScreen
  border:var(--sv-menu-border)!important;
  border-radius:var(--sv-menu-radius)!important;
  box-shadow:var(--sv-menu-shadow)!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
+ -webkit-backdrop-filter:var(--sv-menu-blur,none)!important;
+ backdrop-filter:var(--sv-menu-blur,none)!important;
 }
 html:root body #svcpWorkChatScreen #svcpWorkHistory
  #svcpWorkHistoryMenu.svcp-work-history-menu{
@@ -433,8 +446,8 @@ html:root body #svcpWorkChatScreen #svcpAttachMenu.svcp-attach-menu:not([hidden]
  border:var(--sv-menu-border)!important;
  border-radius:var(--sv-menu-radius)!important;
  box-shadow:var(--sv-menu-shadow)!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
+ -webkit-backdrop-filter:var(--sv-menu-blur,none)!important;
+ backdrop-filter:var(--sv-menu-blur,none)!important;
 }
 html:root body #svcpWorkChatScreen #svcpAttachMenu.svcp-attach-menu > button{
  color:var(--sv-menu-text)!important;
@@ -450,7 +463,7 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unifi
  border-radius:20px!important;
  background:var(--sv-menu-bg,#fcfcfd)!important;
  color:var(--sv-menu-text,#252a33)!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ -webkit-backdrop-filter:var(--sv-menu-blur,none)!important;backdrop-filter:var(--sv-menu-blur,none)!important;
  overflow-x:hidden!important;overflow-y:auto!important;
  scrollbar-width:none!important;
 }
