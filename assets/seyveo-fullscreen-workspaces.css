@@ -970,3 +970,19 @@ html:root[data-theme="light"] body dialog#svCabinetDialog.sv-cabinet-dialog[open
  background:#e6f1ff!important;border:1px solid #bddaff!important;color:#176ab4!important;
  box-shadow:none!important;font-weight:620!important;
 }
+
+/* Sayvi belongs to the cabinet constructor, not to a second launch row. */
+html:root body #svCabinetDialog .sv-cabinet-setup-hint:not([hidden]){
+ display:flex!important;align-items:center;gap:9px;min-width:0;
+ margin:0 0 12px;padding:2px 0;background:transparent;border:0;box-shadow:none;
+ color:var(--text);
+}
+html:root body #svCabinetDialog .sv-cabinet-setup-hint[hidden]{display:none!important}
+html:root body #svCabinetDialog .sv-cabinet-setup-hint > .sv-sayvi-symbol{
+ display:block;width:24px!important;height:24px!important;flex:0 0 24px!important;
+}
+html:root body #svCabinetDialog .sv-cabinet-setup-hint > span:last-child{
+ display:grid;gap:3px;min-width:0;
+}
+html:root body #svCabinetDialog .sv-cabinet-setup-hint strong{font-size:14px;font-weight:600}
+html:root body #svCabinetDialog .sv-cabinet-setup-hint small{font-size:12px;color:var(--secondary);line-height:1.4}
