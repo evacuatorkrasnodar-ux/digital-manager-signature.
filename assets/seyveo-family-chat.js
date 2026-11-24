@@ -193,15 +193,14 @@ document.addEventListener('pointerdown',event=>{
  closeFamilyAttachMenu();
 });
 document.addEventListener('keydown',event=>{if(event.key==='Escape')closeFamilyAttachMenu()});
-fileInput.addEventListener('change',()=>{
- discardFile();
- const file=fileInput.files?.[0];if(!file)return;
+function previewSharedFile(file){
+ if(!(file instanceof File))return false;
  const valid=/\.(jpe?g|png|webp|gif|heic|heif|pdf|docx?|xlsx?|txt)$/i.test(file.name);
  if(!valid||file.size>12*1024*1024){
   fileInput.value='';status('Выберите фото или документ до 12 МБ для локального предпросмотра.');
-  return;
+  return false;
  }
- selectedFile=file;
+ discardFile();selectedFile=file;
  const preview=$('svfAttachment');preview.hidden=false;
  if(/\.(jpe?g|png|webp|gif)$/i.test(file.name)){
   previewUrl=URL.createObjectURL(file);
@@ -211,7 +210,9 @@ fileInput.addEventListener('change',()=>{
  preview.append(make('span',null,file.name+' · предпросмотр, без отправки'));
  preview.append(button('Убрать',()=>{fileInput.value='';discardFile()},'svf-button-lite'));
  status('Вложение пока видно только здесь. Файл не загружается на сервер.');
-});
+ return true;
+}
+fileInput.addEventListener('change',()=>previewSharedFile(fileInput.files?.[0]));
 $('svfChatForm').addEventListener('submit',event=>{
  event.preventDefault();
  const field=$('svfMessageInput'),value=field.value.trim();
@@ -239,6 +240,6 @@ $('svfClose').addEventListener('click',close);
 dialog.addEventListener('click',event=>{if(event.target===dialog)close()});
 dialog.addEventListener('close',()=>{fileInput.value='';discardFile();closeFamilyAttachMenu();familyPollEditor?.close?.();familyPollEditor=null;});
 window.addEventListener('seyveo:family-open',open);
-window.SEYVEO_FAMILY_CHAT=Object.freeze({open});
+window.SEYVEO_FAMILY_CHAT=Object.freeze({open,prepareSharedFile:file=>{if(!(file instanceof File)||file.size>12*1024*1024||!/\.(jpe?g|png|webp|gif|heic|heif|pdf|docx?|xlsx?|txt)$/i.test(file.name))return false;open();return dialog.open&&previewSharedFile(file);}});
 changeTab('chat');
 })();
