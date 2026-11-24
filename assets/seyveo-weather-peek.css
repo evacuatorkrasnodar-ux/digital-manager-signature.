@@ -263,6 +263,13 @@
  }
 }
 
+/* Home forecast fades at its final coordinates; never slide or scale. */
+.sv-weather-peek[data-origin="home"]{animation:sv-weather-home-fade-in .24s ease-out both;}
+.sv-weather-peek[data-origin="home"].sv-weather-peek-leaving{animation:sv-weather-home-fade-out .2s ease-in both;}
+@keyframes sv-weather-home-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes sv-weather-home-fade-out{from{opacity:1}to{opacity:0}}
+@media(prefers-reduced-motion:reduce){.sv-weather-peek[data-origin="home"],.sv-weather-peek[data-origin="home"].sv-weather-peek-leaving{animation:none}}
+
 /* HOME SPHERE-SLOT FORECAST · 22 Nov.
    Replaces the visible sphere for 30s without changing its allocated
    dimensions, stage, greeting, quick applications or dock. The calendar
