@@ -156,12 +156,13 @@ html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-pape
  height:44px!important;min-height:44px!important;max-height:44px!important;
 }
 html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history > button > svg{
- transform:translateY(-2px)!important;
+ transform:none!important;
 }
 html:root body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > #notePaperSayvi > img.sv-newdock-potok{
  width:34px!important;height:34px!important;
  min-width:34px!important;min-height:34px!important;max-width:34px!important;max-height:34px!important;
  object-fit:contain!important;filter:none!important;opacity:1!important;
+ border-radius:50%!important;clip-path:circle(48% at 50% 50%);
 }
 @media(max-width:355px){
  html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
