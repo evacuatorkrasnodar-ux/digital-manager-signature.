@@ -288,12 +288,12 @@
  if(canvas&&stage){
   const ring=document.createElement('div');ring.className='sv-paper-eraser-ring';
   ring.setAttribute('aria-hidden','true');stage.append(ring);
-  const hide=()=>ring.classList.remove('is-visible');
+  const hide=()=>{ring.classList.remove('is-visible');dialog.classList.remove('sv-paper-cursor-visible');};
   const update=e=>{
-   if(!dialog.open)return;
-   // A finger already covers its own contact point. Keep the screen clean on
-   // iPhone; stylus hover still previews brush size without a ring over ink.
-   if(e.pointerType==='touch'||(e.pointerType==='pen'&&e.buttons>0&&activeTool()!=='eraser')){
+   if(!dialog.open){hide();return;}
+   // No idle brush circle: show the footprint only during active contact.
+   // Touch is already covered by the finger; stylus pen ink needs no ring.
+   if(!e.buttons||e.pointerType==='touch'||(e.pointerType==='pen'&&activeTool()!=='eraser')){
     hide();return;
    }
    const box=canvas.getBoundingClientRect(),root=stage.getBoundingClientRect();
@@ -310,13 +310,15 @@
    ring.classList.toggle('sv-paper-cursor-brush',!erase);
    ring.classList.toggle('sv-paper-cursor-eraser',erase);
    ring.classList.toggle('on-light',paper?.dataset.inkBackground==='light');
-   ring.classList.add('is-visible');
+   ring.classList.add('is-visible');dialog.classList.add('sv-paper-cursor-visible');
   };
   for(const ev of ['pointerenter','pointerdown','pointermove'])
    canvas.addEventListener(ev,update,{passive:true});
   for(const ev of ['pointerleave','pointercancel'])
    canvas.addEventListener(ev,hide,{passive:true});
-  canvas.addEventListener('pointerup',e=>{if(e.pointerType!=='mouse')hide()},{passive:true});
+  canvas.addEventListener('pointerup',hide,{passive:true});
+  window.addEventListener('pointerup',hide,{passive:true});
+  window.addEventListener('blur',hide);
   canvas.addEventListener('lostpointercapture',hide,{passive:true});
   dialog.addEventListener('close',hide);
   dock.addEventListener('click',hide);
