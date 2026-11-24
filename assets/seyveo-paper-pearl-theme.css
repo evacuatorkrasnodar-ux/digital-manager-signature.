@@ -52,22 +52,11 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-pape
 
 /* Delicate but legible thickness ruler on white.
    On dark pages the approved wedge stays exactly as before. */
-html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size::before{
- background:#a5aab4!important;opacity:.52!important;
-}
-html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size.sv-wedge-expanded::before{
- background:#868d98!important;opacity:.75!important;
-}
-html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size::after{
- background:#fff!important;border:1px solid #d9dde3!important;
- box-shadow:0 1px 3px rgba(42,48,60,.10)!important;
-}
-html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size input::-webkit-slider-runnable-track{
- background:#c5cad2!important;
-}
-html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size input::-moz-range-track{
- background:#c5cad2!important;
-}
+
+
+
+
+
 /* No backing rectangle behind palette or Save on white. */
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > footer.sv-paper-bottom,
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > footer.sv-paper-bottom > .sv-paper-palette{
@@ -84,9 +73,7 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-pape
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-swatches > button[aria-label="Белый"]::before{
  border:1px solid #d7dbe2!important;
 }
-html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-paper-save{
- background:#38383a!important;color:#fff!important;border:0!important;box-shadow:none!important;
-}
+
 
 /* Pearl menus: same geometry as graphite; only materials and contrast change. */
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperPatternMenu.sv-paper-tool-menu:not([hidden]),
@@ -226,7 +213,7 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-pape
  opacity:1!important;
 }
 /* Keep the added vector face hidden on graphite; its original Save style stays intact. */
-#notePaperDialog #notePaperSave .sv-ink-gold-disc{display:none;stroke:none;}
+
 
 /* SEYVEO Drawing: tap the actual native color input, not a JavaScript proxy.
    The separate tiny diagonal chip opens ONLY the gradient brush presets. */
@@ -283,4 +270,3 @@ html body #notePaperDialog.sv-paper-studio[open] .paper-color-control #notePaper
  max-width:278px!important;gap:7px!important;
 }
 
-html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) > #notePaperSave.sv-ink-confirm svg > .sv-ink-check{transform:translate(12px,12px) scale(1.8) translate(-12px,-12px);}
