@@ -143,10 +143,10 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"]) > .svcp-identity-v2::before{
  content:""!important;display:block!important;
  box-sizing:border-box!important;position:absolute!important;
- /* End the glass at the bottom edge of the shared 44px Back control.
+ /* End the glass 15px below the shared 44px Back control.
     The avatar/name stack keeps its original position and height. */
  left:0!important;right:0!important;top:0!important;bottom:auto!important;
- height:calc(var(--svcp-nav-back-y,calc(12px + env(safe-area-inset-top,0px))) + 44px)!important;
+ height:calc(var(--svcp-nav-back-y,calc(12px + env(safe-area-inset-top,0px))) + 44px + 15px)!important;
  z-index:-1!important;pointer-events:none!important;
  border:0!important;border-radius:0!important;box-shadow:none!important;
  -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
