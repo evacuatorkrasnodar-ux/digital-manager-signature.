@@ -12,6 +12,53 @@ let savedScan=null;
 const consentBox=$('noteScanConsent'),keepLines=$('noteScanKeepLines');
 const toPaperButton=$('noteScanToPaper'),toTextButton=$('noteScanToText'),
  manualButton=$('noteScanManual');
+// Saved scan actions reuse the original OCR and annotation handlers.
+const more=document.createElement('button');
+more.id='svScanMore';more.type='button';more.hidden=true;
+more.className='sv-header-material-circle';
+more.setAttribute('aria-label','Действия с документом');
+more.setAttribute('aria-expanded','false');more.setAttribute('aria-controls','svScanMenu');
+more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
+const menu=document.createElement('div');
+menu.id='svScanMenu';menu.className='sv-menu-surface';menu.hidden=true;
+menu.setAttribute('role','group');menu.setAttribute('aria-label','Действия с документом');
+function menuButton(label,path){
+ const item=document.createElement('button');item.type='button';
+ item.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+path+'</svg><span>'+label+'</span>';
+ menu.append(item);return item;
+}
+const menuOCR=menuButton('Распознать текст','<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 9h8M8 12h8M8 15h5"/>');
+const menuLines=menuButton('Сохранять переносы','<path d="M4 6h16M4 11h12a4 4 0 0 1 0 8h-3m3-3-3 3 3 3M4 16h5"/>');
+menuLines.setAttribute('role','checkbox');
+menuLines.insertAdjacentHTML('beforeend','<svg class="sv-scan-menu-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>');
+const menuPaper=menuButton('Добавить пометки','<path d="m5 15 12-12 4 4L9 19l-5 1 1-5Zm10-10 4 4"/>');
+dialog.append(more,menu);
+function closeMenu(focus=false){
+ menu.hidden=true;more.setAttribute('aria-expanded','false');
+ if(focus&&!more.hidden)more.focus({preventScroll:true});
+}
+function syncMenu(){
+ const available=dialog.dataset.savedScan==='true'&&dialog.dataset.step==='photo';
+ more.hidden=!available;if(!available)closeMenu();
+ menuOCR.disabled=!selected||running;menuPaper.disabled=!selected||running;
+ menuLines.disabled=running;menuLines.setAttribute('aria-checked',String(keepLines?.checked!==false));
+}
+more.addEventListener('click',()=>{
+ if(!menu.hidden){closeMenu(true);return;}
+ syncMenu();if(more.hidden)return;
+ menu.hidden=false;more.setAttribute('aria-expanded','true');
+ (menu.querySelector('button:not(:disabled)')||more).focus({preventScroll:true});
+});
+menuOCR.addEventListener('click',()=>{closeMenu(true);button.click();});
+menuPaper.addEventListener('click',()=>{closeMenu();toPaperButton?.click();});
+menuLines.addEventListener('click',()=>{if(keepLines)keepLines.click();syncMenu();});
+dialog.addEventListener('click',event=>{
+ if(!menu.hidden&&!menu.contains(event.target)&&!more.contains(event.target))closeMenu();
+});
+dialog.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&!menu.hidden){event.preventDefault();event.stopPropagation();closeMenu(true);}
+});
+
 function setStep(step){
  // Three actual work stages, not transparent overlays or duplicate controls.
  dialog.dataset.step=step;
@@ -21,6 +68,7 @@ function setStep(step){
   ?'Проверьте снимок, затем распознайте текст.'
   :'Снимите страницу — Сэйви поможет превратить её в текст.';
  if(manualButton)manualButton.hidden=true;
+ syncMenu();
 }
 function offerManual(){
  // Only offer manual entry when OCR couldn't find text or failed.
@@ -30,6 +78,7 @@ function offerManual(){
 function syncActions(){
  if(toPaperButton)toPaperButton.disabled=!selected||running;
  if(toTextButton)toTextButton.disabled=!text.value.trim()||running;
+ syncMenu();
 }
 /* Preserve OCR's real line breaks. Reject ONLY short, symbol-heavy phone
    status-bar garbage at the very start; never guess the meaning of a poem. */
@@ -103,7 +152,7 @@ function openSaved(note){
   select(new File([bytes],'document.jpg',{type:parts[0].slice(5,-7)}));
   savedScan=original;dialog.dataset.savedScan='true';
   $('noteScanTitle').textContent=note.title||'Скан документа';
-  message(note.paper.strokes?.length||note.paper.texts?.length?'Оригинал документа. Сохранённые пометки доступны в редакторе пометок.':'Сохранённый документ');
+  message('');syncMenu();
   return true;
  }catch{if(dialog.open)dialog.close();return false;}
 }
@@ -248,7 +297,7 @@ for(const id of ['noteScanCamera','noteScanGallery']){
 }
 // Soft wrapping only changes how long lines LOOK on a narrow iPhone screen.
 // Actual newlines and the user's "preserve lines" OCR choice stay untouched.
-keepLines?.addEventListener('change',()=>{text.wrap='soft'});
+keepLines?.addEventListener('change',()=>{text.wrap='soft';syncMenu();});
 text.addEventListener('input',syncActions);
 manualButton?.addEventListener('click',()=>{
  if(!selected||running)return;
@@ -266,7 +315,7 @@ button.addEventListener('click',()=>{
 });
 $('noteScanConsentNo').addEventListener('click',()=>{
  consentBox.hidden=true;
- button.focus({preventScroll:true});
+ (more.hidden?button:more).focus({preventScroll:true});
 });
 $('noteScanConsentYes').addEventListener('click',()=>{
  if(!selected||running)return;
