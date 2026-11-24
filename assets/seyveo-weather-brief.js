@@ -200,11 +200,13 @@
           ?Math.min(beforeDock,railBox.top-24-rowHeight)
           :Math.min(Math.max(afterSphere,beforeShortcuts),beforeDock);
         const relativeTop=Math.round(absoluteTop-stageBox.top)+'px';
-        if(button.style.getPropertyValue('--sv-home-weather-top')!==relativeTop)
+        if(button.style.getPropertyValue('--sv-home-weather-top')!==relativeTop){
           button.style.setProperty('--sv-home-weather-top',relativeTop);
+          window.dispatchEvent(new Event('seyveo:home-weather-position'));
+        }
       };
       const schedulePlace=()=>{
-        if(placeFrame)cancelAnimationFrame(placeFrame);
+        if(placeFrame)return;
         placeFrame=requestAnimationFrame(positionHomeWeather);
       };
       window.addEventListener('resize',schedulePlace,{passive:true});
@@ -368,7 +370,12 @@
       // The Home intro changes its root classes independently from the data
       // feed; recalculate the row when the handoff becomes visible.
       let homeRootFrame=0;
+      const weatherLayoutFlags=()=>['sv-home-empty-sphere','sv-home-empty-arriving','sv-home-empty-arrived','sv-home-weather-available','sv-home-greeting-expired','sv-home-weather-preview','sv-music-ambient'].map(c=>document.documentElement.classList.contains(c)).join(',');
+      let lastWeatherLayoutFlags=weatherLayoutFlags();
       new MutationObserver(()=>{
+        const flags=weatherLayoutFlags();
+        if(flags===lastWeatherLayoutFlags)return;
+        lastWeatherLayoutFlags=flags;
         if(homeRootFrame)return;
         homeRootFrame=requestAnimationFrame(()=>{
           homeRootFrame=0;
