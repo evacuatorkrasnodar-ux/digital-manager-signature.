@@ -521,7 +521,7 @@ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-mo
 html:root[data-theme="light"] body dialog#seyveoQrCardDialog.sv-qr-dialog[open] > header{
  box-sizing:border-box!important;display:grid!important;
  grid-template-columns:44px minmax(0,1fr) 44px!important;
- grid-template-rows:44px!important;align-items:center!important;
+ grid-template-rows:48px!important;align-items:center!important;
  min-height:48px!important;height:48px!important;
  gap:4px!important;padding:0!important;margin:0 0 12px!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
@@ -568,19 +568,19 @@ html:root[data-theme="light"] body dialog#seyveoQrCardDialog.sv-qr-dialog[open] 
  color:#176ab4!important;font-weight:620!important;transform:none!important;transition:none!important;
 }
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .sv-company-editor:not([hidden]){padding-top:0!important}
-html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-section{font-size:15px!important;margin:4px 0 14px!important}
+html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-section{font-size:15px!important;margin:2px 0 10px!important}
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .sv-company-form-section{
- font-size:14px!important;margin:10px 0 12px!important;padding:0!important;border:0!important;
+ font-size:14px!important;margin:8px 0 10px!important;padding:0!important;border:0!important;
 }
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-form > label,
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-form > [data-passport-type] > label,
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .sv-company-extra label{
- margin:0 0 11px!important;font-size:12.5px!important;font-weight:530!important;
+ margin:0 0 8px!important;font-size:12.5px!important;font-weight:530!important;
  color:#525a65!important;line-height:1.35!important;
 }
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-form input:not([type="hidden"]):not([type="radio"]){
- min-height:48px!important;height:48px!important;
- margin:5px 0 0!important;padding:10px 12px!important;border-radius:14px!important;
+ min-height:44px!important;height:44px!important;
+ margin:4px 0 0!important;padding:8px 12px!important;border-radius:14px!important;
  border:1px solid #e1e4e8!important;background:#f7f8fa!important;
  color:#17191d!important;-webkit-text-fill-color:#17191d!important;
  box-shadow:none!important;font-size:16px!important;
@@ -620,7 +620,7 @@ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-mo
  transform:rotate(45deg)!important;
 }
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .sv-company-extra[open] > summary::after{transform:rotate(135deg)!important}
-html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-form .btn.primary{width:auto!important;align-self:flex-end!important;margin:12px 0 6px!important}
+html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-form .btn.primary{width:auto!important;min-width:132px!important;align-self:flex-end!important;margin:10px 0 6px!important}
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .sv-company-actions:not([hidden]){
  background:var(--sv-white-pearl-surface,#f5f6f7)!important;
  border:var(--sv-white-pearl-edge,1px solid #eee)!important;border-radius:22px!important;
@@ -631,3 +631,5 @@ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-mo
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-row{border-bottom-color:#e7e8eb!important}
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-row .sv-company-value-link{color:#176ab4!important}
 html:root[data-theme="light"] body dialog#seyveoQrCardDialog.sv-qr-dialog[open] .sv-qr-actions button{font-size:12px!important}
+
+html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .sv-company-optional-note{margin:2px 0 10px!important;font-size:12px!important;line-height:1.4!important;color:var(--sv-company-quiet)!important;}
