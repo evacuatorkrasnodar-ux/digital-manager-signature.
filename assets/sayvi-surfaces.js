@@ -529,6 +529,28 @@ function mailView(){
  const extraNav=create('div','sv-mail-extra-folders');
  const info=create('div','sv-mail-info');info.setAttribute('role','status');info.setAttribute('aria-live','polite');
  const content=create('div','sv-mail-list');
+ const undoNotice=create('div','sv-mail-undo-notice');undoNotice.hidden=true;
+ const undoText=create('span','sv-mail-undo-text');undoText.setAttribute('role','status');
+ const undoButton=create('button','sv-mail-undo-button','Отменить');undoButton.type='button';
+ undoNotice.append(undoText,undoButton);
+ let undoTimer=0,undoSnapshot=[];
+ function clearTrashUndo(){window.clearTimeout(undoTimer);undoTimer=0;undoSnapshot=[];undoNotice.hidden=true;}
+ function showTrashUndo(items){
+  clearTrashUndo();
+  undoSnapshot=items.map(item=>({item,trashed:item.trashed,spam:item.spam,archived:item.archived}));
+  undoText.textContent=items.length===1?'Письмо в корзине':'В корзине: '+items.length;
+  undoNotice.hidden=false;
+  undoTimer=window.setTimeout(clearTrashUndo,6000);
+ }
+ undoButton.addEventListener('click',()=>{
+  const snapshot=undoSnapshot.slice();clearTrashUndo();
+  for(const prior of snapshot){
+   if(!prior.item.trashed||prior.item.removed)continue;
+   Object.assign(prior.item,{trashed:prior.trashed,spam:prior.spam,archived:prior.archived});
+  }
+  saveSampleActions();mailNotice='';paint();
+ });
+ mailGuardListenerAbort.signal.addEventListener('abort',clearTrashUndo,{once:true});
  // Search lives in its own row between the titlebar and account switch.
  // It pushes content down instead of obscuring the selected mail scope.
 
@@ -686,7 +708,7 @@ function mailView(){
  guardBackdrop.type='button';guardBackdrop.hidden=true;
  guardBackdrop.setAttribute('aria-label','Закрыть меню защиты');
  guardBackdrop.addEventListener('click',closeGate);
- section.append(guardBackdrop,top,searchLabel,scopeNav,connect,contactsInvite,nav,extraNav,info,content);
+ section.append(guardBackdrop,top,searchLabel,scopeNav,connect,contactsInvite,nav,extraNav,info,content,undoNotice);
  body.append(section);
  const smartContacts=window.SEYVEO_SMART_CONTACTS?.mount({
   host:section,
@@ -758,6 +780,7 @@ function mailView(){
  function updateSampleMail(item,action){
   if(!item||!mailExamples.includes(item))return;
   const sender=sampleSenderKey(item);
+  if(action!=='trash')clearTrashUndo();
   if(action==='spam'){
    item.spam=true;item.trashed=false;item.archived=false;
    mailNotice='Письмо перемещено в спам · только учебный список.';
@@ -766,8 +789,10 @@ function mailView(){
    item.spam=false;item.trashed=false;
    mailNotice='Письмо возвращено во входящие · учебный список.';
   }else if(action==='trash'){
+   showTrashUndo([item]);
    item.trashed=true;item.spam=false;
-   mailNotice='Письмо в Корзине · только учебный список.';
+   if(mailFolder==='overview')mailFolder='inbox';
+   mailNotice='';
   }else if(action==='restore'){
    item.trashed=false;item.spam=sampleBlocked(item);
    mailNotice='Письмо восстановлено · только учебный список.';
@@ -1084,7 +1109,10 @@ function mailView(){
   const backButton=iconButton('back','Вернуться к списку',()=>{mailCurrent=null;paint()});
   const opts=create('div','sv-mail-detail-tools');
   const favorite=iconButton('starred',item.starred?'Убрать из важных':'Отметить важным',()=>{
-   item.starred=!item.starred;saveSampleActions();paint();
+   item.starred=!item.starred;saveSampleActions();
+   const label=item.starred?'Убрать из важных':'Отметить важным';
+   favorite.setAttribute('aria-pressed',String(item.starred));
+   favorite.setAttribute('aria-label',label);favorite.title=label;
   });
   favorite.setAttribute('aria-pressed',String(item.starred));
   const moreMenu=create('div','sv-mail-message-menu');
@@ -1273,6 +1301,7 @@ function mailView(){
    ?'Удалить навсегда '+amount+' из Корзины'+scopeLabel+'? Действие нельзя отменить.'
    :'Переместить '+amount+' из раздела «'+folderLabel+'»'+scopeLabel+' в Корзину? Их можно будет восстановить.';
   if(!window.confirm(question))return false;
+  if(permanent)clearTrashUndo();else showTrashUndo(allowed);
   for(const item of allowed){
    if(permanent)item.removed=true;
    else {item.trashed=true;item.spam=false}
@@ -1280,7 +1309,7 @@ function mailView(){
   saveSampleActions();
   selectedMailIds.clear();mailBulkSelecting=false;
   mailNotice=permanent?'Удалено навсегда: '+amount+' · учебный список.':
-   'В Корзине: '+amount+' · учебный список.';
+   '';
   paint();return true;
  }
  function renderMailBulkBar(visible){
@@ -1634,6 +1663,7 @@ function mailView(){
  function paint(){
   const contactsActive=smartContacts?.isOpen()===true;
   page.dataset.svMailMode=contactsActive?'contacts':mailEditorOpen?'editor':mailCurrent?'detail':'overview';
+  if(contactsActive||mailEditorOpen||mailCurrent)clearTrashUndo();
   section.classList.toggle('sv-mail-contacts-active',contactsActive);
   section.dataset.mailFolder=mailFolder;
   section.classList.toggle('sv-mail-composing',mailEditorOpen);
@@ -1683,7 +1713,7 @@ function mailView(){
    }
    extraNav.append(button);
   }
-  extraNav.hidden=mailEditorOpen||!!mailCurrent||mailFolder==='overview';
+  extraNav.hidden=mailEditorOpen||!!mailCurrent||contactsActive;
   nav.hidden=mailEditorOpen||!!mailCurrent;
   searchLabel.hidden=mailEditorOpen||!!mailCurrent||!mailSearchOpen;
   // Scope switches between personal and work mailbox authorization.
