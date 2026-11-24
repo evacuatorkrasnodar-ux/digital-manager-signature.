@@ -818,13 +818,21 @@ function svAgendaAnchorAt(position){
  }
  return anchors[result];
 }
-let svAgendaFadeHeading=null;
+let svAgendaFadeHeading=null,svAgendaActiveHeading=null;
 function svAgendaSyncPinnedDate(){
  const panel=list.parentElement;
  if(!panel)return;
  let slot=panel.querySelector('#svAgendaPinnedDate');
  if(!slot){slot=element('div','sv-agenda-pinned-date');slot.id='svAgendaPinnedDate';list.before(slot);}
  const current=svAgendaAnchorAt(list.scrollTop+1);
+ // The active date already has the calendar's bottom rule above it.
+ // Hide only its duplicate divider, keeping the row's geometry unchanged.
+ const activeHeading=current?.heading||null;
+ if(svAgendaActiveHeading!==activeHeading){
+  svAgendaActiveHeading?.removeAttribute('data-sv-active-day');
+  svAgendaActiveHeading=activeHeading;
+  activeHeading?.setAttribute('data-sv-active-day','');
+ }
  const traveled=current?Math.max(0,list.scrollTop-current.top):0;
  const fadeHeading=traveled>0.5?current.heading:null;
  if(svAgendaFadeHeading!==fadeHeading){
