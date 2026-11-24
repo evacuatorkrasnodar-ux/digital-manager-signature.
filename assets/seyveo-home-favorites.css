@@ -243,7 +243,7 @@ dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid{
 }
 @keyframes sv-home-editor-curtain{
  from{opacity:.9;clip-path:inset(0 0 100% 0 round 24px)}
- to{opacity:1;clip-path:inset(0 0 0 0 round 24px)}
+ to{opacity:1;clip-path:inset(0 0 0 0 round 0 0 30px 30px)}
 }
 @media(prefers-reduced-motion:reduce){
  dialog.sv-home-favorites-editor{animation:none!important}
@@ -615,10 +615,10 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid{
 dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
  grid-auto-rows:88px!important;
 }
-/* No second outline around the curtain; its original background remains. */
+/* One visible pearl edge, following the actual rounded curtain boundary. */
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{
- border:var(--sv-white-pearl-edge)!important;border-top:0!important;
- box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ border:1px solid rgba(145,158,176,.38)!important;border-top:0!important;
+ box-shadow:0 3px 10px rgba(43,55,73,.07),inset 0 -1px 0 rgba(255,255,255,.9)!important;
 }
 @media(max-width:355px){
  dialog#svHomeFavoritesEditor .sv-home-favorites-editor-head strong{font-size:16px!important}
