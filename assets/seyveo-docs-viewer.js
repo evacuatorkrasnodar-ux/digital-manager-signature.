@@ -217,7 +217,7 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{},onEdit=()=>false}=
    }catch(e){if(active)say(e?.message||'Не удалось открыть редактор.');}
    finally{edit.disabled=false;}
   });
-  toolbar.append(edit);
+  edit.classList.add('svdv-edit');toolbar.prepend(edit);
  }
  const doShare=()=>{
   if(typeof navigator==='undefined'||typeof navigator.share!=='function'){
