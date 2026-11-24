@@ -123,9 +123,9 @@ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWork
 }
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][aria-pressed="true"]:not([hidden]){
  /* Selected segment remains visually identifiable, but no silver bevel. */
- background:rgba(255,255,255,.96)!important;
+ background:var(--sv-white-pearl-selected)!important;
  border:1px solid rgba(255,255,255,.99)!important;
- box-shadow:0 1px 3px rgba(82,69,57,.075)!important;
+ box-shadow:var(--sv-white-pearl-selected-shadow)!important;
 }
 /* Keep the approved Home contrast for unselected text too. */
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:not([hidden]):not([aria-pressed="true"]){
