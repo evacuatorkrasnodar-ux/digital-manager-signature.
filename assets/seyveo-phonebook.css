@@ -264,7 +264,8 @@ html body #seyveoContactsDialog :is(button,a,input):focus-visible{
 /* Contact avatars retain their identity colour. Actual header and form
    action buttons use the shared Pearl face in the white theme. */
 :root[data-theme="light"] #seyveoContactsDialog .sv-phonebook-avatar{
-  background:#38383A!important;color:#F5F5F6!important;
+ background:var(--sv-avatar-auto-bg,#E9EAED)!important;color:#374C60!important;
+ border:0!important;box-shadow:none!important;
 }
 html:root[data-theme="light"] body #seyveoContactsDialog :is(
  #seyveoContactAdd,#seyveoContactSave
