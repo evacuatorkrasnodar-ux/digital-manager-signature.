@@ -8,7 +8,7 @@ const dialog=$('noteScanDialog');if(!dialog)return;
 const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanText'),
  button=$('noteScanRecognize');
 let selected=null,localURL='',running=false,session=0,loading=null,consented=false,intoOpenNote=false;
-let savedScan=null;
+let savedScan=null,menuPage='root',exportBusy=false,outputIntent='',preparedFile=null,preparedURL='';
 const consentBox=$('noteScanConsent'),keepLines=$('noteScanKeepLines');
 const toPaperButton=$('noteScanToPaper'),toTextButton=$('noteScanToText'),
  manualButton=$('noteScanManual');
@@ -31,27 +31,154 @@ const menuOCR=menuButton('Распознать текст','<path d="M4 8V5a1 1 
 const menuLines=menuButton('Сохранять переносы','<path d="M4 6h16M4 11h12a4 4 0 0 1 0 8h-3m3-3-3 3 3 3M4 16h5"/>');
 menuLines.setAttribute('role','checkbox');
 menuLines.insertAdjacentHTML('beforeend','<svg class="sv-scan-menu-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>');
-const menuPaper=menuButton('Добавить пометки','<path d="m5 15 12-12 4 4L9 19l-5 1 1-5Zm10-10 4 4"/>');
+const penIcon='<path d="m5 15 12-12 4 4L9 19l-5 1 1-5Zm10-10 4 4"/>';
+const docIcon='<path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/>';
+const imageIcon='<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="2"/><path d="m4 17 5-5 4 4 3-3 5 5"/>';
+const arrowIcon='<path d="m14 6-6 6 6 6"/>';
+const exportIcon='<path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/>';
+const shareIcon='<path d="M12 15V3m-4 4 4-4 4 4M7 9H4v12h16V9h-3"/>';
+const chevron='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+const menuEdit=menuButton('Редактировать в…',penIcon);
+const menuExport=menuButton('Сохранить как…',exportIcon);
+const menuShare=menuButton('Поделиться…',shareIcon);
+for(const node of [menuEdit,menuExport,menuShare])node.insertAdjacentHTML('beforeend',chevron);
+const menuBack=menuButton('Назад',arrowIcon);
+const editNote=menuButton('Блокнот',docIcon);
+const editPaper=menuButton('Рисование · пометки',penIcon);
+const editWord=menuButton('Word · текст',docIcon);
+const editPdf=menuButton('PDF · пометки',penIcon);
+const outWord=menuButton('Word (.docx)',docIcon);
+const outPdf=menuButton('PDF · оригинал',docIcon);
+const outAnnotated=menuButton('PDF · с пометками',docIcon);
+const outJpeg=menuButton('JPEG · оригинал',imageIcon);
+const outTxt=menuButton('TXT · текст',docIcon);
+const groups={root:[menuOCR,menuLines,menuEdit,menuExport,menuShare],edit:[menuBack,editNote,editPaper,editWord,editPdf],export:[menuBack,outWord,outPdf,outAnnotated,outJpeg,outTxt],share:[menuBack,outWord,outPdf,outAnnotated,outJpeg,outTxt]};
+const prepared=document.createElement('div');prepared.id='svScanPrepared';prepared.className='sv-menu-surface';prepared.hidden=true;
+const preparedName=document.createElement('strong');const preparedAction=document.createElement('button');preparedAction.type='button';
+const preparedCancel=document.createElement('button');preparedCancel.type='button';preparedCancel.textContent='Закрыть';
+prepared.append(preparedName,preparedAction,preparedCancel);dialog.append(prepared);
+const textExport=document.createElement('button');textExport.id='svScanTextExport';textExport.type='button';textExport.hidden=true;
+$('noteScanText').insertAdjacentElement('afterend',textExport);
+function clearPrepared(){
+ prepared.hidden=true;preparedFile=null;
+ if(preparedURL){URL.revokeObjectURL(preparedURL);preparedURL='';}
+}
+function page(name){
+ menuPage=name;
+ for(const node of new Set(Object.values(groups).flat()))node.hidden=!groups[name].includes(node);
+ syncMenu();
+}
+function fileBase(){return ($('noteScanTitle').textContent||'Скан').replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').trim().slice(0,100)||'Скан';}
+async function sourceCanvas(withMarks=false){
+ if(withMarks&&savedScan?.paper&&(savedScan.paper.strokes?.length||savedScan.paper.texts?.length)){
+  const api=window.SEYVEO_PAPER;if(!api?.scanAnnotationImage)throw Error('Экспорт пометок недоступен.');
+  return api.scanAnnotationImage(savedScan);
+ }
+ const url=URL.createObjectURL(selected);
+ try{
+  const image=new Image();
+  await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(Error('Не удалось открыть изображение.'));image.src=url;});
+  const factor=Math.min(1,2400/Math.max(image.naturalWidth,image.naturalHeight));
+  const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(image.naturalWidth*factor));canvas.height=Math.max(1,Math.round(image.naturalHeight*factor));
+  const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);
+  return canvas;
+ }finally{URL.revokeObjectURL(url);}
+}
+function canvasJpeg(canvas){
+ return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(Error('Не удалось подготовить фото.')),'image/jpeg',.92));
+}
+function showPrepared(blob,extension,share){
+ clearPrepared();preparedFile=new File([blob],fileBase()+'.'+extension,{type:blob.type});
+ preparedName.textContent=preparedFile.name;
+ preparedAction.textContent=share?'Поделиться файлом':'Скачать файл';preparedAction.dataset.share=String(share);
+ prepared.hidden=false;preparedAction.focus({preventScroll:true});
+ message('');
+}
+function downloadPrepared(){
+ if(!preparedFile)return;
+ if(preparedURL)URL.revokeObjectURL(preparedURL);
+ preparedURL=URL.createObjectURL(preparedFile);
+ const a=document.createElement('a');a.href=preparedURL;a.download=preparedFile.name;document.body.append(a);a.click();a.remove();
+}
+preparedAction.addEventListener('click',()=>{
+ if(!preparedFile)return;
+ if(preparedAction.dataset.share==='true'&&navigator.share&&navigator.canShare?.({files:[preparedFile]})){
+  navigator.share({files:[preparedFile]}).catch(e=>{if(e?.name!=='AbortError')message('Не удалось открыть отправку. Можно скачать файл.');preparedAction.dataset.share='false';preparedAction.textContent='Скачать файл';});
+ }else downloadPrepared();
+});
+preparedCancel.addEventListener('click',clearPrepared);
+function requestText(intent){
+ closeMenu(true);clearPrepared();outputIntent=intent;
+ if(dialog.dataset.step==='edit'&&text.value.trim()){syncActions();return;}
+ button.click();
+}
+async function prepareFormat(format,share=false){
+ if(!selected||running||exportBusy)return;
+ closeMenu(true);clearPrepared();
+ if((format==='docx'||format==='txt')&&(!text.value.trim()||dialog.dataset.step!=='edit')){
+  requestText(format+(share?'-share':''));return;
+ }
+ const token=session;exportBusy=true;syncMenu();
+ try{
+  let blob,ext=format;
+  if(format==='docx'){
+   if(!window.SEYVEO_DOCS_EXPORT?.docxFromText)throw Error('Экспорт Word недоступен.');
+   blob=window.SEYVEO_DOCS_EXPORT.docxFromText(text.value.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,''));
+  }else if(format==='txt'){blob=new Blob([text.value],{type:'text/plain;charset=utf-8'});}
+  else{
+   const canvas=await sourceCanvas(format==='annotated');
+   const jpeg=await canvasJpeg(canvas);
+   if(format==='jpg')blob=jpeg;
+   else{
+    if(!window.SEYVEO_DOCS_EXPORT?.pdfFromJpegs)throw Error('Экспорт PDF недоступен.');
+    blob=window.SEYVEO_DOCS_EXPORT.pdfFromJpegs([{width:canvas.width,height:canvas.height,jpegBytes:new Uint8Array(await jpeg.arrayBuffer())}]);ext='pdf';
+   }
+  }
+  if(dialog.open&&token===session)showPrepared(blob,ext,share);
+ }catch(e){if(dialog.open&&token===session)message(e?.message||'Не удалось подготовить файл.');}
+ finally{exportBusy=false;syncMenu();}
+}
+textExport.addEventListener('click',()=>{
+ const [format,share]=outputIntent.split('-');if(['docx','txt'].includes(format))void prepareFormat(format,share==='share');
+});
+menuBack.addEventListener('click',()=>page('root'));
+menuEdit.addEventListener('click',()=>page('edit'));
+menuExport.addEventListener('click',()=>page('export'));
+menuShare.addEventListener('click',()=>page('share'));
+editNote.addEventListener('click',()=>{if(dialog.dataset.step==='edit'&&text.value.trim()){closeMenu();toNote();}else requestText('note');});
+editWord.addEventListener('click',()=>requestText('docx'));
+editPaper.addEventListener('click',()=>{closeMenu();toPaper();});
+editPdf.addEventListener('click',()=>{closeMenu();toPaper();});
+for(const [node,format] of [[outWord,'docx'],[outPdf,'pdf'],[outAnnotated,'annotated'],[outJpeg,'jpg'],[outTxt,'txt']])node.addEventListener('click',()=>{const share=menuPage==='share';void prepareFormat(format,share);});
 dialog.append(more,menu);
 function closeMenu(focus=false){
  menu.hidden=true;more.setAttribute('aria-expanded','false');
+ menuPage='root';
  if(focus&&!more.hidden)more.focus({preventScroll:true});
 }
 function syncMenu(){
- const available=dialog.dataset.savedScan==='true'&&dialog.dataset.step==='photo';
+ const available=!!selected&&['photo','edit'].includes(dialog.dataset.step);
  more.hidden=!available;if(!available)closeMenu();
- menuOCR.disabled=!selected||running;menuPaper.disabled=!selected||running;
- menuLines.disabled=running;menuLines.setAttribute('aria-checked',String(keepLines?.checked!==false));
+ const inEdit=dialog.dataset.step==='edit';
+ const blocked=!selected||running||exportBusy;
+ for(const node of new Set(Object.values(groups).flat())){node.hidden=!groups[menuPage].includes(node);node.disabled=blocked&&node!==menuBack;}
+ if(menuPage==='root'){menuOCR.hidden=inEdit;menuLines.hidden=inEdit;}
+ if(menuPage==='edit'){editPaper.disabled=blocked||inEdit;editPdf.disabled=blocked||inEdit;}
+ outAnnotated.disabled=blocked||!(savedScan?.paper?.strokes?.length||savedScan?.paper?.texts?.length);
+ menuLines.setAttribute('aria-checked',String(keepLines?.checked!==false));
+ const format=outputIntent.split('-')[0];
+ textExport.hidden=!inEdit||!['docx','txt'].includes(format);
+ textExport.disabled=blocked||!text.value.trim();
+ textExport.textContent=(outputIntent.endsWith('-share')?'Подготовить для отправки: ':'Сохранить как ')+(format==='docx'?'Word (.docx)':'TXT');
 }
 more.addEventListener('click',()=>{
  if(consentBox&&!consentBox.hidden){consentBox.hidden=true;more.focus({preventScroll:true});return;}
  if(!menu.hidden){closeMenu(true);return;}
- syncMenu();if(more.hidden)return;
+ clearPrepared();page('root');if(more.hidden)return;
  menu.hidden=false;more.setAttribute('aria-expanded','true');
  (menu.querySelector('button:not(:disabled)')||more).focus({preventScroll:true});
 });
 menuOCR.addEventListener('click',()=>{closeMenu(true);button.click();});
-menuPaper.addEventListener('click',()=>{closeMenu();toPaperButton?.click();});
 menuLines.addEventListener('click',()=>{if(keepLines)keepLines.click();syncMenu();});
 dialog.addEventListener('click',event=>{
  if(!menu.hidden&&!menu.contains(event.target)&&!more.contains(event.target))closeMenu();
@@ -63,6 +190,7 @@ dialog.addEventListener('keydown',event=>{
  if(event.key==='Escape'&&consentBox&&!consentBox.hidden){
   event.preventDefault();event.stopPropagation();$('noteScanConsentNo').click();return;
  }
+ if(event.key==='Escape'&&!prepared.hidden){event.preventDefault();event.stopPropagation();clearPrepared();return;}
  if(event.key==='Escape'&&!menu.hidden){event.preventDefault();event.stopPropagation();closeMenu(true);}
 });
 
@@ -141,7 +269,7 @@ window.SEYVEO_SCANNER_FORMAT=Object.freeze({cleanPhoneHeader,textInOriginalLines
 function message(s){status.textContent=s||''}
 function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}}
 function reset(){
- savedScan=null;delete dialog.dataset.savedScan;$('noteScanTitle').textContent='Сканировать';
+ clearPrepared();outputIntent='';savedScan=null;delete dialog.dataset.savedScan;$('noteScanTitle').textContent='Сканировать';
  selected=null;consented=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
  if(consentBox)consentBox.hidden=true;
  text.value='';text.wrap='soft';button.disabled=true;
@@ -178,7 +306,7 @@ function select(file){
   dialog.dataset.scanError='true';
   message('Выберите обычную фотографию до 15 МБ.');return;
  }
- session++;selected=file;clearURL();localURL=URL.createObjectURL(file);preview.src=localURL;
+ clearPrepared();outputIntent='';session++;selected=file;clearURL();localURL=URL.createObjectURL(file);preview.src=localURL;
  if(consentBox)consentBox.hidden=true;
  text.value='';setStep('photo');
  preview.hidden=false;button.disabled=running;syncActions();
