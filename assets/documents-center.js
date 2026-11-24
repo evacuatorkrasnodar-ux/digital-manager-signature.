@@ -10,7 +10,7 @@ const previewRole=()=>window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':wi
 const employeePreview=()=>previewRole()==='employee';
 let lastPreviewRole=null;
 let files={personal:null,business:null},stored={personal:false,business:false},showPreview=false;
- let pendingChatDocument=null;
+ let pendingChatDocument=null,pendingScanWork=null;
 
 const el=(tag,cls,value)=>{
  const n=document.createElement(tag);
@@ -379,6 +379,17 @@ function importFromChat(file){
  }
  return true;
 }
+function openScanWork(payload){
+ if(!payload||!['word','pages','sign','archive'].includes(payload.kind))return false;
+ if(payload.kind==='word'&&!String(payload.text||'').trim())return false;
+ if(payload.kind!=='word'&&(!(payload.file instanceof File)||payload.file.size<1||payload.file.size>MAX_FILE||!allowed.test(payload.file.name)))return false;
+ const route=window.SEYVEO_SAYVI_SURFACES;
+ if(typeof route?.open!=='function')return false;
+ // Scans originate from the personal Notebook. No business-vault transfer.
+ pendingScanWork=payload;
+ if(!route.open('contract','personal')){pendingScanWork=null;return false;}
+ return true;
+}
 function mount(parent){
  reset();lastPreviewRole=previewRole();
  if(pendingChatDocument&&!employeePreview()){
@@ -386,7 +397,21 @@ function mount(parent){
   archiveExpanded=true;showPreview=true;
  }
  pendingChatDocument=null;
- host=el('div','sv-doc-center');parent.append(host);draw();return true;
+ const work=pendingScanWork;pendingScanWork=null;
+ if(work){
+  area='personal';view='archive';
+  if(work.kind==='archive'){files.personal=work.file;stored.personal=false;archiveExpanded=true;showPreview=true;}
+ }
+ host=el('div','sv-doc-center');parent.append(host);draw();
+ if(work&&work.kind!=='archive'){
+  const target=host;
+  requestAnimationFrame(()=>{if(host!==target||!host.isConnected)return;
+   Promise.resolve(window.SEYVEO_DOCS_STUDIO?.openScanWork?.(work)).then(ok=>{
+    if(!ok&&host===target)host.prepend(note('Не удалось открыть редактор. Исходный скан не изменён.'));
+   }).catch(()=>{if(host===target)host.prepend(note('Не удалось открыть редактор.'));});
+  });
+ }
+ return true;
 }
 function getSearchContext(){
  return Object.freeze({area,view,mounted:!!host?.isConnected});
@@ -434,5 +459,5 @@ function destroy(){
  window.SEYVEO_DOCUMENT_VAULT?.lock?.();
  reset();host=null;
 }
-window.SEYVEO_DOCUMENT_CENTER=Object.freeze({mount,destroy,setArea,openApprovals,backFromNested,importFromChat,revealArchiveForSearch,getSearchContext,searchInCurrentDocuments});
+window.SEYVEO_DOCUMENT_CENTER=Object.freeze({mount,destroy,setArea,openApprovals,backFromNested,importFromChat,openScanWork,revealArchiveForSearch,getSearchContext,searchInCurrentDocuments});
 })();
