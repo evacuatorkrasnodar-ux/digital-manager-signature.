@@ -1,5 +1,24 @@
 <!doctype html><html lang="ru" class="sv-work-first-paint" data-theme="light" data-palette="white"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#ffffff">
 <script>
+/* Set the initial route before HTML or external assets can paint Home.
+   Keep the guard until the real router commits its first visibility state. */
+(()=>{
+ const root=document.documentElement;
+ const interior=()=>/^#(?:manage(?:-theme|-feedback)?|tasks|picture|calendar|life|sayvi-(?:mail|documents|health|answer|music|video))$/.test(location.hash);
+ if(interior())root.classList.add('sv-interior-first-paint');
+ window.addEventListener('hashchange',()=>{
+  if(!interior())root.classList.remove('sv-interior-first-paint');
+ });
+})();
+</script>
+<style id="sv-interior-first-paint-guard">
+html:root.sv-interior-first-paint body #homeHeader,
+html:root.sv-interior-first-paint body #homePage{
+ display:none!important;visibility:hidden!important;opacity:0!important;
+ pointer-events:none!important;animation:none!important;transition:none!important;
+}
+</style>
+<script>
 /* Cold Home starts with the large Sayvi already in its final position.
    Suppress only the old fallback content until the first render is ready. */
 (()=>{const p=new URLSearchParams(location.search);
@@ -3687,6 +3706,8 @@ function syncAppPage(){
   $('sayviAnswerPage').hidden=!livingAnswer;
   $('sayviMusicPage').hidden=!music;
   $('sayviVideoPage').hidden=!video;
+  // Commit route visibility first; only then release the cold-start guard.
+  document.documentElement.classList.remove('sv-interior-first-paint');
   // Leaving the real Work routes closes only the in-flow Notebook/Wallet
   // views, never the user's saved notes or other data. Do this synchronously
   // for pushState Home as well as hashchange/browser Back.
