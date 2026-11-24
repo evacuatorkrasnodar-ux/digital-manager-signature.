@@ -728,6 +728,18 @@ function mailView(){
  guardBackdrop.addEventListener('click',closeGate);
  section.append(guardBackdrop,top,searchLabel,scopeNav,connect,contactsInvite,nav,extraNav,info,content,undoNotice);
  body.append(section);
+ // One stationary header + account capsule. Keep the original DOM and
+ // controls in non-overview modes (including Smart Contacts).
+ const pinnedMailHead=create('div','sv-mail-pinned-head');
+ function pinMailHead(pin){
+  if(pin&&!pinnedMailHead.isConnected){
+   section.insertBefore(pinnedMailHead,top);
+   pinnedMailHead.append(top,searchLabel,scopeNav);
+  }else if(!pin&&pinnedMailHead.isConnected){
+   pinnedMailHead.before(top,searchLabel,scopeNav);
+   pinnedMailHead.remove();
+  }
+ }
  const smartContacts=window.SEYVEO_SMART_CONTACTS?.mount({
   host:section,
   onConnect:openConnect,
@@ -1704,6 +1716,7 @@ function mailView(){
   if(changedScrollKey&&scrollKey!==null)scrollPositions.set(scrollKey,body.scrollTop);
   scrollKey=nextScrollKey;
   page.dataset.svMailMode=contactsActive?'contacts':mailEditorOpen?'editor':mailCurrent?'detail':'overview';
+  pinMailHead(!contactsActive&&!mailEditorOpen&&!mailCurrent);
   if(contactsActive||mailEditorOpen||mailCurrent)clearTrashUndo();
   section.classList.toggle('sv-mail-contacts-active',contactsActive);
   section.dataset.mailFolder=mailFolder;
