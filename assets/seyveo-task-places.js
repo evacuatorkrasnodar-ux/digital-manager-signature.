@@ -478,14 +478,16 @@
  }
  function venueInfo(value){
   const place=cleanPlace(value);if(!place)return null;
-  const verified=isCuratedMallPhoto(place);
-  const curated=verified?VERIFIED_VENUES[0]:null;
-  const hours=place.openingHours||curated?.openingHours||'';
-  if(!hours&&!verified)return null;
-  return {hours,hoursSourceURL:!place.openingHours?curated?.hoursSourceURL||'':'',
-   hoursNote:curated&&!place.openingHours?'По открытому справочнику для 1-го этажа. График мог измениться.':'',
-   menuURL:curated?.menuURL||'',menuPreview:curated?.menuPreview||[],
-   menuNote:curated?'Цены «от» на официальном сайте для выбранного региона. В этом ресторане они могут отличаться.':''};
+  // Venue details are keyed to the address, never to the presence of a photo.
+  const curated=place.source==='known-address'?VERIFIED_VENUES.find(row=>
+   Math.abs(place.lat-row.lat)<.00001&&Math.abs(place.lon-row.lon)<.00001&&
+   searchText(place.name).includes(row.venue)&&searchText(place.address).includes('дзержинского')):null;
+  const hours=curated?'10:00–22:00':place.openingHours||'';
+  if(!hours&&!curated)return null;
+  return {hours,hoursSourceURL:curated?'https://krasnodar.red-square.ru/visitors/kafe_i_restorany/vkusno_-_i_tochka_1_etazh-171408/':'',
+   hoursNote:curated?'По официальному сайту ТРЦ, для посещения зала на 1-м этаже. В справочниках для «Авто» встречается 06:00–04:00. Перед визитом уточни график.':'По данным открытой карты; график может измениться.',
+   menuURL:curated?.menuURL||'',menuPreview:[],
+   menuNote:curated?'Актуальное меню на официальном сайте сети; цены зависят от ресторана.':''};
  }
  const photoCache=new Map();
  const metadataCache=new Map();
