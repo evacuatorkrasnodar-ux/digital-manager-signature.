@@ -1553,10 +1553,13 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .
 }
 html:root body dialog#personalTaskDialog.sv-task-editor-v3 .personal-task-sheet:not(.sv-task-keyboard-visible) #personalTaskForm{
  flex:1 1 0!important;min-height:0!important;
- margin-bottom:calc(var(--sv-task-float-bottom) + 52px)!important;
- padding-bottom:16px!important;scroll-padding-bottom:16px!important;
- -webkit-mask-image:linear-gradient(to bottom,transparent,#000 8px,#000 calc(100% - 12px),transparent);
- mask-image:linear-gradient(to bottom,transparent,#000 8px,#000 calc(100% - 12px),transparent);
+ /* Scroll on the same canvas underneath the floating controls.
+    Reserve clearance inside the scroll area, not as a separate bottom band. */
+ margin-bottom:0!important;
+ padding-bottom:calc(var(--sv-task-float-bottom) + 60px)!important;
+ scroll-padding-bottom:calc(var(--sv-task-float-bottom) + 60px)!important;
+ -webkit-mask-image:linear-gradient(to bottom,transparent,#000 8px,#000 calc(100% - 24px),transparent);
+ mask-image:linear-gradient(to bottom,transparent,#000 8px,#000 calc(100% - 24px),transparent);
 }
 
 /* New Task · restrained reading cards, shared across every smart task. */
