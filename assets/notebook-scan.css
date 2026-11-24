@@ -659,28 +659,9 @@ html:root body dialog#noteScanDialog.paper-scan-dialog[open] > #svScanMenu > but
 }
 html:root body #noteScanDialog > #svScanPrepared > button[hidden]{display:none!important;}
 
-/* Contextual editing tools: only appear at the tapped document, never in
-   the permanent header. Position is clamped to the visible dialog. */
-html:root body #noteScanDialog > #svScanContext[hidden]{display:none!important;}
-html:root body #noteScanDialog > #svScanContext:not([hidden]){
- position:absolute!important;z-index:25!important;box-sizing:border-box!important;
- display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
- width:min(234px,calc(100% - 20px))!important;
- margin:0!important;padding:3px!important;gap:0!important;
- border:var(--sv-menu-border,1px solid rgba(110,120,135,.16))!important;
- border-radius:15px!important;background:var(--sv-menu-bg,#fcfcfd)!important;
- box-shadow:var(--sv-menu-shadow,0 6px 24px rgba(31,41,55,.15))!important;
- color:var(--sv-menu-text,#171e29)!important;
-}
-html:root body #noteScanDialog > #svScanContext > button{
- box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
- gap:7px!important;height:44px!important;min-height:44px!important;min-width:0!important;
- margin:0!important;padding:0 8px!important;
- border:0!important;border-radius:11px!important;background:transparent!important;box-shadow:none!important;
- color:inherit!important;font:500 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- transform:none!important;transition:none!important;white-space:nowrap!important;
-}
-html:root body #noteScanDialog > #svScanContext > button+button{border-left:1px solid rgba(128,135,145,.17)!important;border-radius:0 11px 11px 0!important;}
-html:root body #noteScanDialog > #svScanContext > button svg{order:-1;width:18px!important;height:18px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;}
-html:root body #noteScanDialog[data-scan-reading-text] > #noteScanText{cursor:pointer!important;caret-color:transparent!important;-webkit-user-select:none!important;user-select:none!important;}
-html:root body #noteScanDialog[data-edit-scan-text="true"] > #noteScanText{cursor:text!important;caret-color:auto!important;}
+
+/* Scan editing reuses the real notebook keyboard accessory. No duplicate
+   new-note button or drawing popup. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-scan-document] .sv-note-home-new-dock{display:none!important;}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-scan-document] #svNoteTitle{cursor:default!important;}
+html:root body #noteScanDialog[data-scan-reading-text] > #noteScanText{cursor:pointer!important;caret-color:transparent!important;}
