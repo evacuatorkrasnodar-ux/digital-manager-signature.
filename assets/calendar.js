@@ -66,7 +66,7 @@ function tasks(){
  const data=parse(raw(TASKS));
  return (Array.isArray(data)?data:[])
  .filter(x=>x&&typeof x.id==='string'&&typeof x.title==='string')
- .map(x=>({id:x.id,title:x.title.trim().slice(0,140),date:at(x.due)?x.due:'',time:/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(x.time||'')?x.time:'',done:x.done===true}))
+ .map(x=>({id:x.id,title:x.title.trim().slice(0,140),date:at(x.due)?x.due:'',time:/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(x.time||'')?x.time:'',done:x.done===true,tone:['orange','green','red','blue','yellow','purple'].includes(x.tone)?x.tone:'',duration:[30,60,90,120].includes(Number(x.duration))?Number(x.duration):0}))
  .filter(x=>x.title);
 }
 function saveEvents(list){
@@ -115,8 +115,36 @@ function dayItems(dayKey,includeDone=true){
   }));
  return [...meeting,...todo,...personal,...notes].sort((a,b)=>a.sort.localeCompare(b.sort)||a.title.localeCompare(b.title,'ru'));
 }
+/* Same stored tone and deterministic fallback as My Tasks. */
+const calendarPalette={
+ orange:['#FF9F0A','#FFF0D8','#82510D'],
+ green:['#34C759','#E1F5E5','#246C36'],
+ red:['#FF453A','#FCE5E2','#983C35'],
+ blue:['#0A84FF','#E0EEFD','#245C97'],
+ yellow:['#FFD60A','#FFF6D6','#78600B'],
+ purple:['#BF5AF2','#F1E6FC','#7542A0'],
+ note:['#97A2B3','#F0F2F5','#526071']
+};
+function calendarTone(item,source=item.source){
+ if(source==='note')return 'note';
+ if(source==='space')return 'purple';
+ const tones=['orange','green','red','blue','yellow','purple'];
+ if(source!=='event'&&tones.includes(item.tone))return item.tone;
+ const key=source==='event'?'calendar:'+item.id:String(item.id||item.title);
+ let hash=0;for(const char of key)hash=(Math.imul(hash,31)+char.charCodeAt(0))>>>0;
+ return tones[hash%tones.length];
+}
+function paintCalendarItem(node,item,source=item.source){
+ const tone=calendarTone(item,source),[accent,fill,ink]=calendarPalette[tone];
+ node.dataset.calendarTone=tone;
+ node.style.setProperty('--cal-item-accent',accent);
+ node.style.setProperty('--cal-item-fill',fill);
+ node.style.setProperty('--cal-item-ink',ink);
+ return node;
+}
 function createEntry(item){
  const btn=text('button','cal-entry');btn.type='button';
+ paintCalendarItem(btn,item);
  const callTarget=item.source==='task'&&!item.done?window.SEYVEO_CONTACTS?.taskTarget?.(item.title)||'':'';
  const clock=text('span','cal-entry-time');
  if(item.source==='task'){
@@ -190,16 +218,22 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
  btn.append(text('span','cal-day-number',String(day.getDate())));
  const dots=text('span','cal-day-dots');
  if(holiday)dots.append(text('i','cal-dot-holiday'));
- if(calendarEvents.some(x=>x.date===key))dots.append(text('i',''));
- if(personalTasks.some(x=>x.date===key&&!x.done))dots.append(text('i','cal-dot-task'));
+ const dayColors=new Set();
+ for(const [items,source,cls] of [[calendarEvents.filter(x=>x.date===key),'event',''],[personalTasks.filter(x=>x.date===key&&!x.done),'task','cal-dot-task']]){
+  for(const item of items){
+   const tone=calendarTone(item,source);
+   if(dayColors.has(tone)||dayColors.size>=5)continue;
+   dayColors.add(tone);dots.append(paintCalendarItem(text('i',cls),item,source));
+  }
+ }
  if(personal.length)dots.append(text('i','cal-dot-life'));
  if(datedNotes.length)dots.append(text('i','cal-dot-note'));
  btn.append(dots);
  // Month layout: compact, readable event tags below the date, Apple-style.
  if(!week&&btn.dataset.outside!=='true'){
   const entries=[
-   ...calendarEvents.filter(item=>item.date===key).map(item=>({kind:'event',title:item.title})),
-   ...personalTasks.filter(item=>item.date===key&&!item.done).map(item=>({kind:'task',title:item.title})),
+   ...calendarEvents.filter(item=>item.date===key).map(item=>({...item,kind:'event',source:'event'})),
+   ...personalTasks.filter(item=>item.date===key&&!item.done).map(item=>({...item,kind:'task',source:'task'})),
    ...personal.map(item=>({kind:'life',title:item.title||item.name||'Личное'})),
    ...datedNotes.map(item=>({kind:'note',title:item.text.split('\n')[0].trim()||'Заметка'}))
   ];
@@ -209,6 +243,7 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
    entries.slice(0,maxTags).forEach(entry=>{
     const chip=text('span','cal-day-chip',entry.title);
     chip.dataset.kind=entry.kind;
+    if(entry.source)paintCalendarItem(chip,entry);
     chip.title=entry.title;
     tags.append(chip);
    });
@@ -321,7 +356,7 @@ function renderWeekTimeline(list){
  const scheduled=[],untimed=[];
  for(const item of list){
   const start=parseMinutes(item.time);
-  if(start===null)untimed.push(item);else scheduled.push({item,start,end:Math.min(1440,start+Math.max(30,Math.min(180,Number(item.duration)||60)))});
+  if(start===null)untimed.push(item);else scheduled.push({item,start,end:Math.min(1440,start+Math.max(30,Math.min(180,Number(item.duration)||30)))});
  }
  allDay.hidden=!untimed.length;
  for(const item of untimed){
@@ -358,17 +393,22 @@ function renderWeekTimeline(list){
    button.classList.add('cal-timeline-timed');
    button.dataset.tone=slot.item.source;
    button.style.top=slot.start+'px';
-   button.style.height=Math.max(36,slot.end-slot.start-2)+'px';
+   button.style.height=Math.max(1,slot.end-slot.start-2)+'px';
    button.style.left=(slot.lane*100/laneCount)+'%';
    button.style.width=(100/laneCount)+'%';
-   button.append(text('span','cal-timeline-time-label',slot.item.time));
+   const explicitDuration=Number(slot.item.duration)>0;
+   const endLabel=String(Math.floor(slot.end/60)).padStart(2,'0')+':'+String(slot.end%60).padStart(2,'0');
+   button.append(text('span','cal-timeline-time-label',slot.item.time+(explicitDuration?' – '+endLabel:'')));
+   if(!explicitDuration)button.dataset.durationUnknown='true';
    layer.append(button);
   }
  }
  if(format(focus)===format(new Date())){
   const now=new Date(),minute=now.getHours()*60+now.getMinutes();
   const marker=text('div','cal-week-now-marker');
-  marker.style.top=minute+'px';marker.setAttribute('aria-label','Сейчас');
+  marker.style.top=minute+'px';
+  const label=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  marker.dataset.time=label;marker.setAttribute('aria-label','Сейчас '+label);
   layer.append(marker);
  }
  window.requestAnimationFrame(()=>{
@@ -1154,7 +1194,16 @@ window.addEventListener('load',()=>{if(!page.hidden)render()});
 window.addEventListener('storage',event=>{if((event.key===STORE||event.key===TASKS||event.key==='seyveo-notes-v1')&&!page.hidden)render()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!page.hidden)render()});
 // Browser timers may pause on iOS when the app is not visible. No background guarantee.
-window.setInterval(()=>{if(!page.hidden&&!document.hidden)renderAdvice()},60*1000);
+window.setInterval(()=>{
+ if(page.hidden||document.hidden)return;
+ renderAdvice();
+ const marker=page.querySelector('.cal-week-now-marker');
+ if(marker&&mode==='week'&&iso()===format(new Date())){
+  const now=new Date(),label=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  marker.style.top=(now.getHours()*60+now.getMinutes())+'px';
+  marker.dataset.time=label;marker.setAttribute('aria-label','Сейчас '+label);
+ }else if(marker)marker.remove();
+},60*1000);
 // A saved #calendar URL may be active before this script initializes.
 if(!page.hidden)render();
 })();
