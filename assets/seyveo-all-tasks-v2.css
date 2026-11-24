@@ -101,12 +101,12 @@ html:root.sv-task-search-focus body #svWorkShell[data-task-tool-mode="all"] #svA
 /* A single vector check is optically centered inside every 22px circle.
    No rotated border or font glyph: stable across Safari and Chromium. */
 #svAllTasksView .sv-tool-result input[type="checkbox"]:checked{
- background-color:#38383A;border-color:#38383A;
+ background-color:#287fda!important;border-color:#287fda!important;
  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.1L6.45 11.25L12.9 4.75' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
  background-repeat:no-repeat;background-position:center;background-size:16px 16px;
 }
 #svAllTasksView .sv-tool-result input[type="checkbox"]:checked::after{content:none}
-#svAllTasksView .sv-tool-result input[type="checkbox"]:focus-visible{outline:2px solid #38383A;outline-offset:3px}
+#svAllTasksView .sv-tool-result input[type="checkbox"]:focus-visible{outline:2px solid #287fda;outline-offset:3px}
 #svAllTasksView .sv-tool-empty{
  padding:52px 8px;text-align:center;color:#707782;
  font-size:14px;font-weight:500;
@@ -221,4 +221,12 @@ html:root body #svTaskActionCapsule.sv-bulk-scrolling{
   transition:none!important;
   transform:translateX(-50%)!important;
  }
+}
+
+/* Active bulk selection: denser glass on the capsule itself, never a footer. */
+html:root[data-theme="light"] body #svTaskActionCapsule[data-has-selection="true"]{
+ background:rgba(248,249,251,.97)!important;
+}
+html:root[data-theme="dark"] body #svTaskActionCapsule[data-has-selection="true"]{
+ background:rgba(47,49,54,.97)!important;
 }
