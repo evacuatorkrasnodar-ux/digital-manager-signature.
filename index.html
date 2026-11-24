@@ -4874,10 +4874,11 @@ window.SEYVEO_NOTES_API=Object.freeze({
  }
 });
 /* Note review: real autosave, same existing local notes format and stable IDs. */
-let editingNoteID=null,reviewPreserveLines=false,noteSkipListOnClose=false,noteCalendarDate='';
+let editingNoteID=null,reviewPreserveLines=false,noteSkipListOnClose=false,noteCalendarDate='',reviewScanID=null;
 let noteAutosaveTimer=0,noteSavedSnapshot='',noteSavedRichSnapshot='',noteAutosaveFailed=false;
 function noteReviewValues(){
  const raw=$('noteReviewText').value;
+ if(reviewScanID)return raw.slice(0,8000);
  const title=$('svNoteTitle').value.trim().replace(/\s+/g,' ').slice(0,120);
  const body=reviewPreserveLines?raw.replace(/^\n+|\n+$/g,''):raw.trim();
  return (title?title+'\n\n'+body:body).slice(0,8000);
@@ -4892,14 +4893,14 @@ function persistNoteReview(){
  const richHtml=window.SEYVEO_NOTE_RICH?.getHTML()||'';
  if(text===noteSavedSnapshot&&richHtml===noteSavedRichSnapshot)return true;
  // Blank newly opened sheets are not records. Never delete an existing note implicitly.
- if(!text.trim())return true;
+ if(!text.trim()&&!reviewScanID)return true;
  const old=getNotes();let next;
  if(editingNoteID){
   if(!old.some(note=>note.id===editingNoteID)){
    noteReviewStatus('Запись не найдена. Скопируйте текст перед выходом.');
    noteAutosaveFailed=true;return false;
   }
-  next=old.map(note=>note.id===editingNoteID?{...note,text,richHtml,updatedAt:Date.now()}:note);
+  next=old.map(note=>note.id===editingNoteID?(reviewScanID?{...note,scanText:text,scanRichHtml:richHtml,updatedAt:Date.now()}:{...note,text,richHtml,updatedAt:Date.now()}):note);
  }else{
   const created={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text,richHtml,createdAt:Date.now(),...(reviewPreserveLines?{preserveLines:true}:{}),...(noteCalendarDate?{calendarDate:noteCalendarDate}:{})};
   next=[created,...old];
@@ -4921,16 +4922,20 @@ function scheduleNoteAutosave(){
 function openNoteReview(value,id=null,options=null){
  const dlg=$('noteReviewDialog');
  clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
+ reviewScanID=options?.scan===true?id:null;
+ dlg.toggleAttribute('data-scan-document',!!reviewScanID);
  editingNoteID=id;dlg.dataset.noteId=id||'';noteAutosaveFailed=false;
  reviewPreserveLines=id?getNotes().some(note=>note.id===id&&note.preserveLines===true):options?.preserveLines===true;
  $('noteReviewTitle').textContent=id?'Изменить запись':value?'Запомнить мысль':'Новая заметка';
  dlg.dataset.noteMode=id?'edit':String(value||'').length>150?'draft':'new';
  const noteValue=String(value||'').slice(0,8000);
- const titleMatch=noteValue.match(/^([^\n]{1,120})\n\n([\s\S]*)$/);
+ const titleMatch=reviewScanID?null:noteValue.match(/^([^\n]{1,120})\n\n([\s\S]*)$/);
  $('svNoteTitle').value=titleMatch?titleMatch[1]:'';
  $('noteReviewText').value=titleMatch?titleMatch[2]:noteValue;
  $('noteReviewText').wrap='soft';
  const previousNote=id?getNotes().find(note=>note.id===id):null;
+ $('svNoteTitle').readOnly=!!reviewScanID;
+ if(reviewScanID)$('svNoteTitle').value=previousNote?.title||'Скан документа';
  noteCalendarDate=(id?previousNote?.calendarDate:options?.calendarDate)||'';
  if(!/^\d{4}-\d{2}-\d{2}$/.test(noteCalendarDate))noteCalendarDate='';
  const dateLabel=$('svNoteCalendarLabel');
@@ -4940,7 +4945,8 @@ function openNoteReview(value,id=null,options=null){
   dateLabel.hidden=!stamp;
   dateLabel.textContent=stamp?'Заметка на '+new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(stamp):'';
  }
- const richHtml=typeof previousNote?.richHtml==='string'?previousNote.richHtml:'';
+ const storedRich=reviewScanID?previousNote?.scanRichHtml:previousNote?.richHtml;
+ const richHtml=typeof storedRich==='string'?storedRich:'';
  window.SEYVEO_NOTE_RICH?.load(richHtml);
  noteSavedRichSnapshot=id?richHtml:'';
  noteSavedSnapshot=id?noteReviewValues():'';
@@ -4978,10 +4984,12 @@ $('noteReviewDialog').addEventListener('click',event=>{
 $('noteReviewDialog').addEventListener('close',()=>{
  clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
  // The close event follows the native dialog closing (back, Escape, etc.).
- const fromTask=noteEditFromTask,skipList=noteSkipListOnClose;
+ const fromTask=noteEditFromTask,skipList=noteSkipListOnClose,scanID=reviewScanID;
  noteSkipListOnClose=false;
  persistClosedNoteReview();
- editingNoteID=null;noteEditFromTask=false;
+ editingNoteID=null;noteEditFromTask=false;reviewScanID=null;
+ $('noteReviewDialog').removeAttribute('data-scan-document');$('svNoteTitle').readOnly=false;
+ if(scanID){const scan=getNotes().find(n=>n.id===scanID);if(scan&&window.SEYVEO_NOTE_SCANNER?.openSaved?.(scan))return;}
  if(!fromTask&&!skipList)openNotes();
 });
 function persistClosedNoteReview(){
@@ -4989,11 +4997,11 @@ function persistClosedNoteReview(){
  const dlg=$('noteReviewDialog');
  if(!dlg.open&&(noteReviewValues()!==noteSavedSnapshot||(window.SEYVEO_NOTE_RICH?.getHTML()||'')!==noteSavedRichSnapshot)){
   const text=noteReviewValues(),richHtml=window.SEYVEO_NOTE_RICH?.getHTML()||'';
-  if(!text.trim())return;
+  if(!text.trim()&&!reviewScanID)return;
   const old=getNotes();let next;
   if(editingNoteID){
    if(!old.some(note=>note.id===editingNoteID))return;
-   next=old.map(note=>note.id===editingNoteID?{...note,text,richHtml,updatedAt:Date.now()}:note);
+   next=old.map(note=>note.id===editingNoteID?(reviewScanID?{...note,scanText:text,scanRichHtml:richHtml,updatedAt:Date.now()}:{...note,text,richHtml,updatedAt:Date.now()}):note);
   }else{
    const created={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text,richHtml,createdAt:Date.now(),...(reviewPreserveLines?{preserveLines:true}:{}),...(noteCalendarDate?{calendarDate:noteCalendarDate}:{})};
    next=[created,...old];
@@ -5015,6 +5023,13 @@ window.addEventListener('pagehide',()=>{
 /* Safe bridge from the Notebook toolbar script to this private autosave scope.
    Only these intentional editor actions are exposed; no UI geometry changes. */
 window.SEYVEO_NOTES_EDITOR=Object.freeze({
+ openScan(id){
+  if($('noteReviewDialog').open)return false;
+  const scan=getNotes().find(n=>n.id===id&&n.paper?.photo);if(!scan)return false;
+  openNoteReview(scan.scanText||'',id,{scan:true,preserveLines:true});
+  if(window.SEYVEO_NOTE_RICH?.isActive?.())window.SEYVEO_NOTE_RICH.focus();else $('noteReviewText').focus({preventScroll:true});
+  return true;
+ },
  ensureRecord(){
   const dlg=$('noteReviewDialog');
   if(!dlg.open)return null;
@@ -5032,6 +5047,7 @@ window.SEYVEO_NOTES_EDITOR=Object.freeze({
   return note.id;
  },
  newNote(){
+  if(reviewScanID)return false;
   clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
   if(!persistNoteReview())return false;
   noteEditFromTask=false;
@@ -6006,6 +6022,7 @@ window.addEventListener('load',()=>{
   menu.hidden=true;
   dlg.querySelector('[data-note-tool="attachment"]')?.setAttribute('aria-expanded','false');
   if(option.dataset.noteAttachment==='camera'){
+   if(dlg.hasAttribute('data-scan-document')){window.SEYVEO_NOTE_ATTACHMENTS?.choose('camera');return;}
    if(!window.SEYVEO_NOTE_SCANNER?.scanIntoNote?.())status('Камера сейчас недоступна.');
   }else if(!window.SEYVEO_NOTE_ATTACHMENTS?.choose('file'))status('Выбор файла пока недоступен.');
  });
