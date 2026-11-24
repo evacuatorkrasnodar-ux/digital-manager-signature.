@@ -8,7 +8,7 @@
 /* Work 44px navigation · single private stylesheet, no press overlays.
    Original buttons and Work Shell listeners remain intact. */
 :host{
- --work-left:max(8px,env(safe-area-inset-left,0px));
+ --work-left:max(12px,env(safe-area-inset-left,0px));
  --work-right:max(12px,env(safe-area-inset-right,0px));
  /* One 44px button axis with 14px of breathing room on every Work page. */
  --work-top:14px;
@@ -94,7 +94,7 @@
 :host([data-task-tools="true"]) .sv-history-dual{
  grid-column:3/5;grid-row:1;justify-self:end;align-self:center;
  display:flex;align-items:center;justify-content:center;
- width:134px;height:44px;margin:0;padding:0 4px;gap:0;
+ width:134px;height:44px;margin:0;padding:0 3px;gap:0;
  border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88));
  border-radius:999px;background:var(--sv-white-pearl-surface,rgba(255,255,255,.18));
  box-shadow:var(--sv-white-pearl-dock-shadow,0 7px 21px rgba(42,52,72,.105));
@@ -120,7 +120,7 @@
 :host([data-business-tools="true"]) .sv-history-dual{
  grid-column:3/5;grid-row:1;justify-self:end;align-self:center;
  display:flex;align-items:center;justify-content:center;
- width:92px;height:44px;margin:0;padding:0 4px;gap:0;
+ width:92px;height:44px;margin:0;padding:0 3px;gap:0;
  border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88));
  border-radius:999px;background:var(--sv-white-pearl-surface,rgba(255,255,255,.18));
  box-shadow:var(--sv-white-pearl-dock-shadow,0 7px 21px rgba(42,52,72,.105));
