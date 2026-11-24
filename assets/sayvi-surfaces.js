@@ -366,7 +366,7 @@ const mailIcons=Object.freeze({
  archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v12h14V9M10 14h4"/>',
  search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
  pencil:'<path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M17.4 2.6a2.1 2.1 0 0 1 3 3L12 14l-4 1 1-4Z"/>',
- back:'<path d="m15 5-7 7 7 7"/>',
+ back:'<path d="m14.5 5-7 7 7 7"/>',
  reply:'<path d="m9 7-5 5 5 5"/><path d="M4 12h11a5 5 0 0 1 5 5v2"/>',
  paperclip:'<path d="m8 12 6-6a4 4 0 0 1 6 6l-8 8a6 6 0 0 1-9-9l8-8"/>',
  settings:'<path d="M4 7h16M4 17h16M8 4v6M16 14v6"/><circle cx="8" cy="7" r="2"/><circle cx="16" cy="17" r="2"/>',
