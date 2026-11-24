@@ -1068,6 +1068,11 @@ function mailView(){
    return normalized.replace(/^([а-яёa-z])/i,c=>c.toLocaleUpperCase('ru-RU'));
   }).join('\n')).join('\n\n');
  }
+ function tintMailAvatar(avatar,item){
+   let tint=0;for(const ch of String(item.from||item.initial).trim().toLocaleLowerCase('ru-RU'))tint=(tint*31+ch.codePointAt(0))>>>0;
+   avatar.style.setProperty('--sv-mail-avatar-tint',['#E9EFF5','#E9F2EF','#EEEAF4','#F3EDE6','#E8F1F4','#F1EBF0'][tint%6]);
+  return avatar;
+ }
  function drawDetails(item){
   const panel=create('article','sv-mail-detail');
   const heading=create('div','sv-mail-detail-bar');
@@ -1143,7 +1148,7 @@ function mailView(){
   }
   panel.append(moreMenu,blockConfirm);
   const person=create('div','sv-mail-detail-person');
-  person.append(create('span','sv-mail-avatar',item.initial));
+  person.append(tintMailAvatar(create('span','sv-mail-avatar',item.initial),item));
   const who=create('div','sv-mail-detail-who');
   who.append(create('strong','',item.from),create('span','',item.when+' · образец письма'));
   person.append(who);panel.append(person);
@@ -1333,8 +1338,7 @@ function mailView(){
     row.setAttribute('aria-pressed',String(selectedMailIds.has(item.id)));
    }
    const avatar=create('span','sv-mail-avatar',item.initial);
-   let tint=0;for(const ch of String(item.from||item.initial).trim().toLocaleLowerCase('ru-RU'))tint=(tint*31+ch.codePointAt(0))>>>0;
-   avatar.style.setProperty('--sv-mail-avatar-tint',['#E9EFF5','#E9F2EF','#EEEAF4','#F3EDE6','#E8F1F4','#F1EBF0'][tint%6]);
+   tintMailAvatar(avatar,item);
    if(mailBulkSelecting){avatar.classList.add('sv-mail-bulk-avatar');avatar.textContent='';}
    const detail=create('span','sv-mail-letter-details');
    const senderLine=create('span','sv-mail-sender-line');
