@@ -305,3 +305,12 @@
 :root[data-theme="dark"] #homePage #svSayviHomeWeather .sv-home-weather-day-name{
  color:#a6b8c9!important;
 }
+
+/* Empty Home: greeting and weather occupy the same quiet phase, never both.
+   Only visibility changes; sphere, shortcuts and dock remain anchored. */
+:root.sv-sayvi-handoff-docked.sv-home-empty-sphere:not(.sv-home-greeting-expired):not(.sv-home-weather-preview) #homePage #svSayviHomeWeather:not([hidden]){
+ opacity:0!important;
+ visibility:hidden!important;
+ pointer-events:none!important;
+ animation:none!important;
+}
