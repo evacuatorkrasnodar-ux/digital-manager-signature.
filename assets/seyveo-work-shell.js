@@ -275,18 +275,27 @@
   actionCapsule.classList.remove('sv-bulk-scrolling');
  }
  function trackBulkScroll(results){
-  let previousTop=results.scrollTop;
-  results.addEventListener('scroll',()=>{
-   const top=results.scrollTop;
-   if(Math.abs(top-previousTop)<.5)return;
-   previousTop=top;
+  const hideDuringScroll=()=>{
    if(!results.isConnected||!toolMode||!selectionActive||actionCapsule.hidden||
-      selected.size||actionCapsule.contains(document.activeElement)){
+      selected.size||actionCapsule.querySelector(':focus-visible')){
     revealBulkCapsule();return;
    }
+   const focused=document.activeElement;
+   if(actionCapsule.contains(focused))focused.blur();
    actionCapsule.classList.add('sv-bulk-scrolling');
    clearTimeout(bulkScrollTimer);
    bulkScrollTimer=setTimeout(revealBulkCapsule,300);
+  };
+  // Observe actual native movement, including inertial scrolling on iOS.
+  results.addEventListener('scroll',hideDuringScroll,{passive:true});
+  results.addEventListener('wheel',event=>{
+   if(event.deltaY&&results.scrollHeight>results.clientHeight+1)hideDuringScroll();
+  },{passive:true});
+  let touchY=null;
+  results.addEventListener('touchstart',event=>{touchY=event.touches[0]?.clientY??null;},{passive:true});
+  results.addEventListener('touchmove',event=>{
+   const y=event.touches[0]?.clientY;
+   if(touchY!==null&&Number.isFinite(y)&&Math.abs(y-touchY)>5&&results.scrollHeight>results.clientHeight+1)hideDuringScroll();
   },{passive:true});
  }
  actionCapsule.addEventListener('focusin',revealBulkCapsule);
