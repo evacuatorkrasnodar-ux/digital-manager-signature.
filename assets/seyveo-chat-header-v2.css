@@ -9,7 +9,8 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  align-items:center!important;justify-content:flex-start!important;
  --svcp-header-avatar:56px;--svcp-header-label:28px;--svcp-header-overlap:-5px;
  height:calc(136px + env(safe-area-inset-top,0px))!important;
- padding:calc(16px + env(safe-area-inset-top,0px)) 12px 0!important;
+ /* Keep the identity stack intact, just 2px below the device safe area. */
+ padding:calc(2px + env(safe-area-inset-top,0px)) 12px 0!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
  overflow:visible!important;pointer-events:none!important;z-index:30!important;
 }
