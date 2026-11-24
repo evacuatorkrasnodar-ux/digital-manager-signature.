@@ -1535,7 +1535,7 @@ html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout=
 html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="list"] .cal-month-grid .cal-day-dots i.cal-dot-note:not([data-calendar-tone]){background:#97A2B3!important;}
 html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="list"] .cal-month-grid .cal-day:not([data-today="true"]):not([data-selected="true"]) .cal-day-number{font-weight:500!important;}
 html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="list"] .cal-day-summary{
- align-items:center!important;margin:6px 12px 5px!important;padding:6px 0 0!important;
+ align-items:center!important;margin:6px 12px 5px!important;padding:6px 0 0!important;border-top:0!important;
 }
 html:root body #calendarPage #calendarView[data-mode="month"][data-month-layout="list"] #calendarSelectedTitle{
  font-size:16px!important;font-weight:600!important;line-height:20px!important;
@@ -1582,6 +1582,6 @@ html:root body #calendarPage:not([hidden]) #calendarView[data-mode="month"][data
  overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
  margin-bottom:0!important;padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
  scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
- -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 60px),transparent 100%);
- mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 60px),transparent 100%);
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 90px - env(safe-area-inset-bottom,0px)),rgba(0,0,0,.22) calc(100% - 62px - env(safe-area-inset-bottom,0px)),transparent calc(100% - 38px - env(safe-area-inset-bottom,0px)),transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 90px - env(safe-area-inset-bottom,0px)),rgba(0,0,0,.22) calc(100% - 62px - env(safe-area-inset-bottom,0px)),transparent calc(100% - 38px - env(safe-area-inset-bottom,0px)),transparent 100%);
 }
