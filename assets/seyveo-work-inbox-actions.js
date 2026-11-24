@@ -181,6 +181,24 @@ function showAvatarEditor(){
  const tabs=node('div','sv-new-avatar-tabs');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Способ оформления');
  const views=node('div','sv-new-avatar-views');
  const gallery=node('div','sv-new-avatar-grid');
+ const categoryBar=node('div','sv-avatar-categories');
+ categoryBar.setAttribute('role','group');
+ categoryBar.setAttribute('aria-label','Категории аватаров');
+ let category='all';
+ function avatarCategory(i){
+  if(i>=76)return 'sayvi';
+  if([6,7,8,9,10,11].includes(i))return 'emoji';
+  if(i===4||(i>=52&&i<=59&&i!==57)||(i>=64&&i<=66))return 'animals';
+  if([1,3,23,25,26,27,29,30,57,60,61,62,63,67].includes(i)||i>=68)return 'fantasy';
+  return 'people';
+ }
+ const categoryButtons=[];
+ for(const [key,label] of [['all','Все'],['emoji','Эмодзи'],['people','Персонажи'],['animals','Животные'],['fantasy','Фантазия'],['sayvi','Сэйви']]){
+  if(key==='sayvi'&&AVATAR_3D.length<=76)continue;
+  const b=node('button','sv-avatar-category',label);b.type='button';b.dataset.category=key;
+  b.setAttribute('aria-pressed',String(key==='all'));
+  b.addEventListener('click',()=>{category=key;paint()});categoryBar.append(b);categoryButtons.push(b);
+ }
  const options=[['atlas','Аватары'],['photo','Фото']];
  const btns=[];
  for(const [mode,label] of options){
@@ -194,6 +212,7 @@ function showAvatarEditor(){
  for(let i=0;i<AVATAR_3D.length;i++){
   const choice=node('button','sv-new-avatar-choice');choice.type='button';
   choice.dataset.index=String(i);
+  choice.dataset.category=avatarCategory(i);
   choice.setAttribute('aria-label','Выбрать аватар '+AVATAR_3D[i][0]);
   choice.append(atlasMark(i),node('small',null,AVATAR_3D[i][0]));
   choice.addEventListener('click',()=>{
@@ -342,7 +361,7 @@ function showAvatarEditor(){
   };
   existing.src=draft.image;
  }
- views.append(gallery,photo);
+ views.append(categoryBar,gallery,photo);
  editor.append(hero,tabs,views,status);
  // Fresh floating actions: no footer strip, backing card, or inherited button styles.
  const actions=node('div','sv-avatar-floating-actions');
@@ -357,12 +376,15 @@ function showAvatarEditor(){
   }
   paintAvatar(preview,draft);
   for(const b of btns)b.setAttribute('aria-pressed',String(b.dataset.mode===tab));
-  gallery.hidden=tab!=='atlas';photo.hidden=tab!=='photo';
+  gallery.hidden=tab!=='atlas';categoryBar.hidden=tab!=='atlas';photo.hidden=tab!=='photo';
+  for(const b of categoryButtons)b.setAttribute('aria-pressed',String(b.dataset.category===category));
   // Never show photo effects before a photo has been taken or chosen.
   filterBar.hidden=!photoSource;
   cropEditor.hidden=!photoSource;
-   for(const choice of gallery.children)
+   for(const choice of gallery.children){
+    choice.hidden=category!=='all'&&choice.dataset.category!==category;
     choice.setAttribute('aria-pressed',String(draft.kind==='atlas'&&Number(choice.dataset.index)===draft.index));
+   }
   for(const b of filterButtons)b.setAttribute('aria-pressed',String(b.dataset.photoMode===photoMode));
  }
  function persist(clear=false){
