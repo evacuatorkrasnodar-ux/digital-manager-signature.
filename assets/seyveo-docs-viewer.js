@@ -127,7 +127,7 @@ async function readDocxText(file){
  }
  return output.trim().slice(0,110000);
 }
-function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{}}={}){
+function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{},onEdit=()=>false}={}){
  if(!target||!file||typeof file.name!=='string'||typeof file.size!=='number'||
     file.size<1||file.size>MAX||typeof file.text!=='function')return false;
  const info=format(file.name,file.type);
@@ -195,6 +195,30 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{}}={}){
  save.setAttribute('aria-label','Сохранить оригинал '+file.name);
  save.append(icon('download'),el('span','','Сохранить'));
  toolbar.append(save);
+ if(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf'){
+  const edit=action('Редактировать','file',async()=>{
+   if(edit.disabled)return;
+   edit.disabled=true;
+   try{
+    let payload;
+    if(info.kind==='text'||info.ext==='docx'){
+     const value=info.ext==='docx'?await readDocxText(file):await file.text();
+     if(!active)return;
+     if(value.length>12000){say('Документ больше 12 000 знаков. Редактирование копии пока недоступно.');return;}
+     if(!window.confirm('Открыть редактируемую текстовую копию? Исходное оформление может отличаться, оригинал не изменится.'))return;
+     payload={kind:'word',text:value,title:file.name.replace(/\.[^.]+$/,'')};
+    }else if(info.kind==='image'){
+     payload={kind:'pages',file};
+    }else{
+     payload={kind:'pdf-file',file};
+    }
+    const ok=await onEdit(payload);
+    if(!ok&&active)say('Этот формат пока нельзя редактировать здесь. Оригинал не изменён.');
+   }catch(e){if(active)say(e?.message||'Не удалось открыть редактор.');}
+   finally{edit.disabled=false;}
+  });
+  toolbar.append(edit);
+ }
  const doShare=()=>{
   if(typeof navigator==='undefined'||typeof navigator.share!=='function'){
    say('На этом устройстве доступно сохранение оригинала.');return;
