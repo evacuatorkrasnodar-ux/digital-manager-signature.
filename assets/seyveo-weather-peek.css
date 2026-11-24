@@ -277,7 +277,7 @@
 }
 .sv-weather-peek[data-origin="home"]{
  width:min(326px,calc(100vw - 34px))!important;
- max-height:min(355px,calc(100dvh - 170px))!important;
+ max-height:min(355px,calc(100dvh - 170px),var(--sv-home-peek-room,355px))!important;
  padding:15px 15px 14px!important;
  border-radius:25px!important;
  box-shadow:0 19px 44px rgba(24,32,45,.13),
