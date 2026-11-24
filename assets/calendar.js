@@ -740,7 +740,8 @@ function revealSelectedDay(){
   const availableBottom=Math.min(dock.getBoundingClientRect().top,viewportBottom)-14;
   const wantedBottom=itemBox?Math.min(itemBox.bottom,itemBox.top+76):agendaBox.top+66;
   if(wantedBottom<=availableBottom)return;
-  window.scrollBy({
+  const scrollTarget=mode==='month'&&monthLayout==='list'?$('calendarView'):window;
+  scrollTarget.scrollBy({
    top:Math.ceil(wantedBottom-availableBottom),
    behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'
   });
