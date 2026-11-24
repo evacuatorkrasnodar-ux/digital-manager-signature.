@@ -1251,8 +1251,9 @@
   dialog.scrollTop=0;
   if($('svCabinetTitle'))$('svCabinetTitle').textContent='Что хотите делать?';
   if($('svCabinetDisclosure'))$('svCabinetDisclosure').textContent='Выберите задачу — подскажем нужный инструмент.';
-  cancelButton?.setAttribute('aria-label','Назад к моим делам');
+  cancelButton?.setAttribute('aria-label','Назад в кабинет');
   guideHost.hidden=true;guideHost.replaceChildren();
+  dialog.querySelector('.sv-cabinet-footer > .sv-cabinet-guide-action')?.remove();
   catalogHost.hidden=false;
   if(searchWrap)searchWrap.hidden=false;
   renderCatalog();
@@ -1280,9 +1281,16 @@
    guideHost.append(label,sourceList,instruction);
   }else guideHost.append(node('p','sv-cabinet-source-note',goal.hint));
   const checked=draft.includes(activeGoal);
-  const action=button(checked?'Убрать из кабинета':'Добавить в кабинет','goal-toggle',activeGoal);
-  action.className='sv-cabinet-guide-action';
-  guideHost.append(action);
+  // Every tool uses the same footer, with a persistent toggle beside Save.
+  let action=dialog.querySelector('.sv-cabinet-footer > .sv-cabinet-guide-action');
+  if(!action){
+   action=button('','goal-toggle',activeGoal);
+   action.className='sv-cabinet-guide-action';
+   saveButton.before(action);
+  }
+  action.dataset.cabinetId=activeGoal;
+  action.dataset.selected=String(checked);
+  action.textContent=checked?'Убрать из кабинета':'Добавить в кабинет';
   if(status)status.textContent='';
  }
  function render(){
@@ -1348,7 +1356,7 @@
   render();
   catalogHost.querySelector('[data-cabinet-id="'+id+'"][data-cabinet-action="toggle"]')?.focus({preventScroll:true});
  });
- guideHost.addEventListener('click',event=>{
+ dialog.addEventListener('click',event=>{
   const b=event.target.closest('[data-cabinet-action]');
   if(!b||!draft)return;
   const action=b.dataset.cabinetAction;
