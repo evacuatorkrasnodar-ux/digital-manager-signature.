@@ -350,7 +350,7 @@ html:root body :is(#svcpAttachMenu,#svcpWorkHistoryMenu) > button:active{
 /* Mail account-management popup has a distinct historically forced dark
  * material. Scope light-mode overrides to this single popup and its direct
  * text controls, without touching Mail's full page or admission forms. */
-html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-menu{
+html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mail-gate-panel:not([hidden]){
  background:var(--sv-menu-bg)!important;
  background-image:none!important;
  color:var(--sv-menu-text)!important;
