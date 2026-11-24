@@ -260,13 +260,18 @@ html:root body dialog.sv-recruit-page.seyveo-dock-host[open] > footer.dock{
 #svStaffInvitePage .sv-invite-form{display:grid;gap:12px;padding:0 0 12px;min-width:0}
 #svStaffInvitePage .sv-invite-identity{display:grid;justify-items:center;padding:0 0 2px}
 #svStaffInvitePage .sv-invite-avatar{position:relative;display:grid;place-items:center;width:84px;height:84px;border:0;border-radius:50%;background:#dceaf3;color:#335e7b;font-size:28px;font-weight:600;padding:0}
+#svStaffInvitePage #svInviteInitials{display:grid;place-items:center}
+#svStaffInvitePage #svInviteInitials svg{width:37px;height:37px;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
 #svStaffInvitePage .sv-invite-avatar img{width:84px;height:84px;border-radius:50%;object-fit:cover}
 #svStaffInvitePage .sv-invite-camera{position:absolute;right:0;bottom:0;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:var(--sv-white-pearl-solid,#f6f6f8);color:#20242a;box-shadow:0 1px 4px #0002}
 #svStaffInvitePage .sv-invite-camera svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round}
 #svStaffInvitePage .sv-invite-link{border:0;background:transparent;color:#176ab4;min-height:36px;font:600 12px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
 #svStaffInvitePage .sv-invite-identity small{font-size:11px;color:var(--secondary)}
 #svStaffInvitePage .sv-invite-fields{display:grid;gap:8px;min-width:0}
-#svStaffInvitePage .sv-invite-fields label{display:grid;gap:5px;font-size:12px;color:var(--secondary);min-width:0}
+#svStaffInvitePage .sv-invite-fields label{position:relative;display:block;font-size:12px;color:var(--secondary);min-width:0}
+#svStaffInvitePage .sv-invite-fields label>span{position:absolute;top:6px;left:12px;right:12px;font-size:10px;line-height:12px;pointer-events:none;opacity:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#svStaffInvitePage .sv-invite-fields input:not(:placeholder-shown)+span{opacity:1}
+#svStaffInvitePage .sv-invite-fields input:not(:placeholder-shown){padding-top:19px;padding-bottom:5px}
 #svStaffInvitePage .sv-invite-fields input{box-sizing:border-box;width:100%;min-width:0;min-height:46px;padding:10px 12px;border:0;border-radius:14px;background:var(--card);color:var(--text);font:400 16px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;box-shadow:none}
 html:root[data-theme="light"] body #svStaffInvitePage .sv-invite-fields input{background:#f4f4f6!important;border:0!important;color:#20242a!important}
 #svStaffInvitePage h3{font-size:14px;font-weight:630;margin:0 0 8px}
@@ -297,8 +302,8 @@ html:root body dialog#svStaffInvitePage > .sv-recruit-head{margin-bottom:4px}
    Its real dock remains fixed over the one scrolling canvas. */
 html:root body > dialog#svStaffInvitePage.sv-recruit-page[open]{
  position:fixed!important;inset:0!important;margin:0!important;transform:none!important;
- width:100vw!important;min-width:0!important;max-width:100vw!important;
- height:100vh!important;height:100dvh!important;min-height:100vh!important;min-height:100dvh!important;max-height:100dvh!important;
+ width:auto!important;min-width:0!important;max-width:none!important;box-sizing:border-box!important;
+ height:auto!important;min-height:0!important;max-height:none!important;
  border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;
  clip-path:none!important;mask:none!important;-webkit-mask:none!important;
  overflow:hidden!important;background-image:none!important;
@@ -308,7 +313,7 @@ html:root body > dialog#svStaffInvitePage[open]::backdrop{background:var(--bg,#f
 html:root[data-theme="light"] body > dialog#svStaffInvitePage[open]::backdrop{background:#fff!important}
 html:root body > dialog#svStaffInvitePage.seyveo-dock-host[open] > footer.dock{
  position:fixed!important;display:grid!important;visibility:visible!important;opacity:1!important;
- bottom:var(--seyveo-dock-bottom,7px)!important;z-index:90!important;
+ top:auto!important;bottom:var(--seyveo-dock-bottom,7px)!important;z-index:90!important;pointer-events:auto!important;
  background:transparent!important;background-image:none!important;
 }
 html:root body > dialog#svStaffInvitePage[open] > #svStaffInvitePageScroll{
