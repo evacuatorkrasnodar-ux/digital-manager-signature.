@@ -23,11 +23,12 @@ dock.parentNode.insertBefore(origin,dock);
 let order=[];
 let current=null;
 const isWorkspace=el=>el?.tagName==='DIALOG'&&WORKSPACES.has(el.id);
-function update(){
+function update(preferred){
  order=order.filter(el=>el.isConnected&&el.open&&isWorkspace(el));
  for(const item of document.querySelectorAll('dialog[open]')){
   if(isWorkspace(item)&&!order.includes(item))order.push(item);
  }
+ if(isWorkspace(preferred)&&preferred.isConnected&&preferred.open){order=order.filter(el=>el!==preferred);order.push(preferred);}
  const next=order[order.length-1]||null;
  if(next===current&&dock.parentNode===(next||origin.parentNode))return;
  if(next){
