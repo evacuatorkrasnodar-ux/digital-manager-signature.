@@ -65,8 +65,8 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomCont
  position:relative!important;inset:auto!important;width:44px!important;height:44px!important;
  min-width:44px!important;min-height:44px!important;max-width:44px!important;max-height:44px!important;
  margin:0!important;padding:0!important;
- border:0!important;border-radius:50%!important;background:#c69c09!important;color:#fff!important;
- box-shadow:0 2px 5px rgba(0,0,0,.18)!important;
+ border:0!important;border-radius:50%!important;background:#287fda!important;color:#fff!important;
+ box-shadow:0 2px 5px rgba(0,0,0,.14)!important;
  -webkit-appearance:none!important;appearance:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;filter:none!important;
  -webkit-mask:none!important;mask:none!important;clip-path:none!important;
@@ -74,7 +74,7 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomCont
  -webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important;
 }
 html:root body dialog#notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #svPaperBottomControls > #notePaperSave{
- background:#c69c09!important;box-shadow:0 2px 5px rgba(98,72,10,.12)!important;
+ background:#287fda!important;box-shadow:0 2px 5px rgba(40,127,218,.15)!important;
 }
 html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > #notePaperSave::before,html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > #notePaperSave::after{content:none!important;display:none!important;}
 html:root body dialog#notePaperDialog.sv-paper-studio[open] > #svPaperBottomControls > #notePaperSave > svg{
