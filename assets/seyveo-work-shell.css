@@ -712,7 +712,7 @@ html body #svWorkShell[data-active="business"] #svCabinetContinueWithSayvi
  background-color:transparent!important;
  background-image:var(--sv-sayvi-mark-image)!important;
  background-position:center center!important;
- background-size:18px 18px!important;
+ background-size:25px 25px!important;
  background-repeat:no-repeat!important;
  box-shadow:none!important;filter:none!important;
  transform:none!important;
@@ -971,3 +971,18 @@ html body #svWorkShell[data-shared-work="true"][data-history="true"] #sahHistory
 
 
 
+
+/* Cabinet list: one trailing chevron column, including the Sayvi setup row. */
+html body #svWorkShell[data-active="business"] #svCabinetContinueWithSayvi.sv-cabinet-resume:not([hidden]){
+ padding-right:12px!important;
+}
+html body #svWorkShell[data-active="business"] #svCabinetContinueWithSayvi > svg{
+ box-sizing:content-box!important;display:block!important;
+ flex:0 0 16px!important;width:16px!important;height:16px!important;
+ padding:0 3px!important;margin:0!important;
+ stroke-width:1.45!important;opacity:.84!important;
+}
+html body #svWorkShell[data-active="business"] #tasksPage .svcp-manager-chevron{
+ display:grid!important;place-items:center!important;
+ flex:0 0 22px!important;width:22px!important;
+}
