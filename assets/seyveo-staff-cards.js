@@ -52,8 +52,8 @@ style.textContent=String.raw`
 .svstaff-tile:active{background:rgba(160,168,180,.06)}
 .svstaff-tile:focus-visible{outline:2px solid var(--text);outline-offset:-2px}
 .svstaff-thumb{
- box-sizing:border-box;display:block;flex:0 0 46px;width:46px;height:51px;
- border:0;border-radius:12px;object-fit:cover;object-position:center 13%;
+ box-sizing:border-box;display:block;flex:0 0 46px;width:46px;height:46px;
+ border:0;border-radius:50%;object-fit:cover;object-position:center 20%;
  background:#38383A;box-shadow:none;
 }
 .svstaff-tile-copy{display:grid;flex:1 1 auto;min-width:0;gap:3px}
@@ -76,72 +76,47 @@ style.textContent=String.raw`
 .svstaff-tile-count .svstaff-icon svg{width:15px;height:15px}
 .svstaff-tile-arrow{flex:none;font-size:22px;line-height:1;color:var(--secondary);margin-left:2px}
 .svstaff-footnote{margin:11px 0 0;padding:0;font-size:10.5px;line-height:1.5;color:var(--secondary)}
-.svstaff-modal{
- box-sizing:border-box;position:fixed;inset:0;
- width:100vw;max-width:100vw;min-width:0;
- height:100dvh;min-height:100dvh;max-height:100dvh;
- padding:calc(16px + env(safe-area-inset-top,0px))
-         max(14px,env(safe-area-inset-right,0px))
-         calc(24px + env(safe-area-inset-bottom,0px))
-         max(14px,env(safe-area-inset-left,0px));
- margin:0;border:0;border-radius:0;background:var(--bg,#151B20);
- color:var(--text,#F5F6F8);overflow-x:hidden;overflow-y:auto;
- box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
- overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
- scrollbar-width:none;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+
+/* Full-screen profile uses the common recruitment header and scrolling canvas. */
+html:root body > dialog#svStaffProfile.svstaff-modal[open]{
+ position:fixed!important;inset:0!important;transform:none!important;
+ width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;
+ max-width:none!important;max-height:none!important;box-sizing:border-box!important;
+ margin:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) max(13px,env(safe-area-inset-right,0px)) 0 max(13px,env(safe-area-inset-left,0px))!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+ border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;
+ background:#151b20!important;background-image:none!important;opacity:1!important;filter:none!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;overflow:hidden!important;clip-path:none!important;mask:none!important;-webkit-mask:none!important;
+ color:var(--text);font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ --staff-control:#38383a;--staff-field:#272b2f;--staff-ink:#fff;--staff-menu:#38383a;--staff-selected:#505053;--staff-divider:rgba(190,196,204,.18);
 }
-.svstaff-modal::-webkit-scrollbar{display:none}
-.svstaff-modal::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:none;backdrop-filter:none}
-.svstaff-modal [hidden]{display:none!important}
-.svstaff-modal *{box-sizing:border-box}
-.svstaff-modal-top{
- position:sticky;top:0;z-index:8;display:flex;align-items:center;
- justify-content:flex-start;gap:10px;min-height:54px;
- margin:0 0 12px;padding:4px 0;border:0;
- background:var(--bg,#151B20);
- -webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;
+html:root[data-theme="light"] body > dialog#svStaffProfile.svstaff-modal[open]{
+ background:#fff!important;color:#20242a;
+ --staff-control:var(--sv-white-pearl-surface,#f6f6f8);--staff-field:#f4f4f6;--staff-ink:#176ab4;--staff-menu:#fff;--staff-selected:#e7eff8;--staff-divider:#e8eaee;
 }
-.svstaff-modal-top span{
- display:block;font-size:20px;line-height:1.2;font-weight:630;
- letter-spacing:-.035em;color:var(--text)
-}
-.svstaff-close{
- display:grid;place-items:center;flex:0 0 44px;
- width:44px;height:44px;min-width:44px;min-height:44px;
- margin:0;padding:0;border:0;border-radius:50%;
- background:#38383A;color:#F7F7F8;box-shadow:none;
- -webkit-backdrop-filter:none;backdrop-filter:none;
-}
-.svstaff-close svg{
- display:block;width:20px;height:20px;fill:none;stroke:currentColor;
- stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round
-}
-.svstaff-close:active{background:#505053}
-.svstaff-content{padding:5px 0 20px;max-width:600px;margin:0 auto}
-.svstaff-hero{display:flex;align-items:center;gap:14px;margin:0 0 22px}
-.svstaff-photo-edit{
- display:grid;place-items:center;flex:0 0 82px;
- width:82px;height:94px;margin:0;padding:0;
- border:0;border-radius:15px;background:transparent;overflow:hidden;
- box-shadow:none;cursor:pointer;
-}
-.svstaff-photo{
- display:block;width:82px;height:94px;border-radius:15px;border:0;
- object-fit:cover;object-position:center 12%;background:#38383A;
-}
-.svstaff-hero-info{display:grid;gap:5px;min-width:0}
+html:root body > dialog#svStaffProfile[open]::backdrop{background:#151b20!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html:root[data-theme="light"] body > dialog#svStaffProfile[open]::backdrop{background:#fff!important}
+#svStaffProfile [hidden]{display:none!important}
+#svStaffProfile *{box-sizing:border-box}
+#svStaffProfile > .sv-recruit-head{margin-bottom:4px}
+#svStaffProfile .svstaff-content{max-width:none;width:auto;margin-inline:-5px;padding:4px 5px calc(90px + env(safe-area-inset-bottom,0px))!important}
+#svStaffProfile.seyveo-dock-host[open] > footer.dock{position:fixed!important;display:grid!important;visibility:visible!important;opacity:1!important;top:auto!important;bottom:var(--seyveo-dock-bottom,7px)!important;z-index:90!important;pointer-events:auto!important;background:transparent!important;background-image:none!important}
+.svstaff-hero{display:flex;align-items:center;gap:14px;margin:0 0 14px}
+.svstaff-photo-edit{display:grid;place-items:center;flex:0 0 84px;width:84px;height:84px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;overflow:hidden;box-shadow:none;cursor:pointer}
+.svstaff-photo{display:block;width:100%;height:100%;border-radius:50%;border:0;object-fit:cover;object-position:center 20%;background:#dceaf3}
+.svstaff-hero-info{display:grid;gap:4px;min-width:0}
 .svstaff-person-name{font-size:22px;line-height:1.18;letter-spacing:-.03em;font-weight:650;color:var(--text)}
 .svstaff-person-role{font-size:13px;line-height:1.4;color:var(--secondary)}
 .svstaff-tenure{font-size:11px;line-height:1.45;color:var(--secondary)}
 .svstaff-metrics{
  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
- gap:0;margin:0 0 24px;padding:12px 0;
+ gap:0;margin:0 0 16px;padding:9px 0;
  border-top:1px solid rgba(190,196,204,.13);
  border-bottom:1px solid rgba(190,196,204,.13);
  background:transparent;
 }
 .svstaff-metric{
- display:grid;align-content:start;justify-items:center;gap:6px;
+ display:grid;align-content:start;justify-items:center;gap:3px;
  min-width:0;padding:2px 5px;text-align:center
 }
 .svstaff-metric+.svstaff-metric{border-left:1px solid rgba(190,196,204,.1)}
@@ -151,13 +126,13 @@ style.textContent=String.raw`
 .svstaff-metric small{font-size:10.5px;line-height:1.35;color:var(--secondary)}
 .svstaff-gold,.svstaff-silver,.svstaff-green{color:var(--secondary)}
 .svstaff-section,.svstaff-peer-section,.svstaff-review,.svstaff-insight{
- margin:0 0 22px;padding:0;background:transparent;border:0
+ margin:0 0 16px;padding:0;background:transparent;border:0
 }
 .svstaff-section h3,.svstaff-peer-head h3,.svstaff-review h3{
  margin:0 0 12px;font-size:15px;line-height:1.3;font-weight:620;
  letter-spacing:-.01em;color:var(--text)
 }
-.svstaff-event{display:flex;align-items:flex-start;gap:10px;margin:0 0 13px}
+.svstaff-event{display:flex;align-items:flex-start;gap:10px;margin:0 0 10px}
 .svstaff-event-icon{flex:0 0 18px;width:18px;height:18px;margin-top:2px;color:var(--secondary)}
 .svstaff-event-icon svg{width:18px;height:18px}
 .svstaff-event-copy{display:grid;gap:3px;min-width:0}
@@ -180,14 +155,14 @@ style.textContent=String.raw`
 .svstaff-peer-copy small{font-size:10px;line-height:1.4;color:var(--secondary)}
 .svstaff-review-record{
  margin:0 0 11px;padding:10px 12px;border:0;border-radius:12px;
- background:#38383A;color:#F7F7F8;font-size:11px;line-height:1.5
+ background:var(--staff-field);color:var(--text);font-size:11px;line-height:1.5
 }
 .svstaff-review-form{display:grid;gap:10px}
 .svstaff-review-choice{position:relative;min-width:0}
 .svstaff-review-trigger{
  display:flex;align-items:center;justify-content:space-between;gap:10px;
  width:100%;min-height:44px;margin:0;padding:10px 13px;
- border:0;border-radius:12px;background:#38383A;color:#FFFFFF;
+ border:var(--sv-white-pearl-edge,0);border-radius:999px;background:var(--staff-control);color:var(--staff-ink);
  font:550 12px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
  box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
 }
@@ -196,31 +171,34 @@ style.textContent=String.raw`
 .svstaff-review-options{
  position:absolute;bottom:calc(100% + 5px);left:0;right:0;z-index:9;
  display:grid;gap:2px;padding:5px;border:0;border-radius:12px;
- background:#38383A;color:#FFFFFF;box-shadow:0 8px 24px rgba(0,0,0,.24);
+ background:var(--staff-menu);color:var(--text);box-shadow:0 5px 22px rgba(0,0,0,.13);
  -webkit-backdrop-filter:none;backdrop-filter:none;
 }
 .svstaff-review-option{
  display:flex;align-items:center;justify-content:space-between;gap:10px;
  width:100%;min-height:44px;padding:9px 12px;
- border:0;border-radius:9px;background:transparent;color:#FFFFFF;
+ border:0;border-radius:12px;background:transparent;color:var(--text);
  font:inherit;font-size:12px;text-align:left
 }
-.svstaff-review-option[aria-selected="true"]{background:#505053}
+.svstaff-review-option[aria-selected="true"]{background:var(--staff-selected)}
+.svstaff-review-option:not([aria-selected="true"]) svg{visibility:hidden}
 .svstaff-review-option svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.55}
 .svstaff-review-form textarea{
  display:block;width:100%;min-height:74px;resize:vertical;
- padding:11px 12px;border:1px solid rgba(190,196,204,.17);border-radius:12px;
- background:#272B2F;color:var(--text);
+ padding:11px 12px;border:0;border-radius:14px;
+ background:var(--staff-field);color:var(--text);
  font:400 16px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
  box-shadow:none;
 }
 .svstaff-review-submit{
- min-height:44px;justify-self:start;padding:10px 15px;
- margin:0;border:0;border-radius:14px;background:#38383A;color:#FFFFFF;
+ min-height:44px;justify-self:stretch;padding:10px 15px;
+ margin:0;border:var(--sv-white-pearl-edge,0);border-radius:999px;background:var(--staff-control);color:var(--staff-ink);
  font:620 12.5px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
  box-shadow:none
 }
 .svstaff-review-status{margin:0;font-size:11px;color:var(--secondary)}
+.svstaff-review-status:empty{display:none}
+#svStaffProfile :is(.svstaff-review-trigger,.svstaff-review-submit,.svstaff-action){box-shadow:var(--sv-white-pearl-circle-shadow,none)}
 .svstaff-insight{
  border-top:1px solid rgba(190,196,204,.12);
  padding-top:17px;
@@ -236,8 +214,8 @@ style.textContent=String.raw`
 .svstaff-insight p{margin:0;font-size:12px;line-height:1.6;color:var(--secondary)}
 .svstaff-actions{display:flex;flex-wrap:wrap;gap:9px;margin:2px 0 13px;padding:0}
 .svstaff-action{
- min-height:44px;padding:9px 14px;border:0;border-radius:14px;
- background:#38383A;color:#FFFFFF;
+ min-height:44px;padding:9px 14px;border:var(--sv-white-pearl-edge,0);border-radius:999px;
+ background:var(--staff-control);color:var(--staff-ink);
  font:600 12px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
  box-shadow:none
 }
@@ -265,13 +243,8 @@ style.textContent=String.raw`
  color:var(--secondary);font-size:10.5px;line-height:1.5
 }
 .svstaff-modal :is(button,textarea):focus-visible{outline:2px solid var(--text);outline-offset:2px}
-@media(min-width:700px){
- .svstaff-modal{inset:50% auto auto 50%;transform:translate(-50%,-50%);
-  width:min(540px,92vw);max-width:540px;height:min(790px,92dvh);
-  min-height:0;max-height:92dvh;border-radius:19px;padding:20px 22px}
-}
 @media(max-width:365px){
- .svstaff-photo-edit,.svstaff-photo{width:73px;height:85px}
+ .svstaff-photo-edit,.svstaff-photo{width:73px;height:73px}
  .svstaff-photo-edit{flex-basis:73px}
  .svstaff-person-name{font-size:20px}
  .svstaff-hero{gap:11px}
@@ -302,13 +275,13 @@ const shell=el('div','svstaff-directory');root.replaceChildren(shell);
 // The parent Team tab and short connection notice provide the heading.
 const directory=el('div','svstaff-directory-list');shell.append(directory);
 // One short notice remains above the list; no duplicated explanation below every card.
-const modal=el('dialog','svstaff-modal');modal.setAttribute('aria-label','Профессиональная история сотрудника');document.body.append(modal);
-const top=el('div','svstaff-modal-top');
+const modal=el('dialog','svstaff-modal sv-recruit-page');modal.id='svStaffProfile';modal.setAttribute('aria-label','Карточка сотрудника');document.body.append(modal);
+const top=el('header','sv-recruit-head');
 const close=button('','svstaff-close',()=>modal.close());
 close.setAttribute('aria-label','Назад к сотрудникам');
 close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';
-top.append(close,el('span',null,'Карточка сотрудника'));modal.append(top);
-const body=el('div','svstaff-content');modal.append(body);
+const spacer=el('span');spacer.setAttribute('aria-hidden','true');top.append(close,el('h2',null,'Карточка сотрудника'),spacer);modal.append(top);
+const body=el('div','svstaff-content sv-page-scroll');modal.append(body);
 let chosen=null,lastTrigger=null,leavingForChat=false;
 function summaryStats(target,p){
  const metrics=el('div','svstaff-metrics');
@@ -341,6 +314,7 @@ function renderDirectory(){
 function openPerson(p,trigger){
  chosen=p;lastTrigger=trigger;renderProfile();
  if(typeof modal.showModal==='function')modal.showModal();else modal.setAttribute('open','');
+ body.scrollTop=0;window.SEYVEO_DOCK_CONTINUITY?.refresh?.(modal);
 }
 function renderProfile(){
  if(!chosen)return;const p=chosen;body.replaceChildren();
@@ -370,7 +344,7 @@ function renderProfile(){
  const title=el('div','svstaff-peer-head');
  title.append(el('h3',null,'Знаки признания коллег'),el('span','svstaff-peer-count',String(recognitions.length)));
  badges.append(title);
- if(!recognitions.length)badges.append(el('p','svstaff-peer-empty','Пока нет новых знаков. Коллеги могут поблагодарить за помощь в рабочем чате.'));
+ if(!recognitions.length)badges.append(el('p','svstaff-peer-empty','Пока нет благодарностей.'));
  for(const record of recognitions.slice(0,12)){
   const entry=el('div','svstaff-peer-row'),description=el('div','svstaff-peer-copy');
   const day=new Date(record.at);
@@ -379,17 +353,17 @@ function renderProfile(){
   if(record.kind==='help')symbol.innerHTML='<svg class="svcp-star-icon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2.8 2.85 5.77 6.37.93-4.61 4.5 1.09 6.35L12 17.35l-5.7 3 1.09-6.35-4.61-4.5 6.37-.93Z"/></svg>';
   entry.append(symbol);
   description.append(el('strong',null,badgeKind[record.kind][1]),el('p',null,record.reason.slice(0,220)),
-   el('small',null,'От: '+(colleagues[record.from]||'Коллега')+' · '+date+' · демо'));
+   el('small',null,'От: '+(colleagues[record.from]||'Коллега')+' · '+date));
   entry.append(description);badges.append(entry);
  }
  if(recognitions.length>12)badges.append(el('p','svstaff-peer-empty','Показаны последние 12 из '+recognitions.length+'.'));
- badges.append(el('p','svstaff-peer-disclaimer','Эмодзи — знаки благодарности, не объективная оценка. Без подтверждённого отправителя и обстоятельств они не основание для премии или взыскания.'));
+ badges.append(el('p','svstaff-peer-disclaimer','Благодарности не являются оценкой работы или основанием для премии и взыскания без проверки.'));
  body.append(badges);
  const review=el('section','svstaff-review');
  review.append(el('h3',null,'Решение руководителя'));
  const prior=savedReview(p.id);
  if(prior)review.append(el('p','svstaff-review-record',(prior.kind==='bonus'?'На рассмотрении: поощрение':'На рассмотрении: обсуждение')+' · '+prior.note));
- review.append(el('p','svstaff-review-note','Руководитель может предложить поощрение или обсудить рабочую ситуацию. Никакой автоматической премии или взыскания.'));
+ review.append(el('p','svstaff-review-note','Поощрения и замечания рассматриваются руководителем, без автоматических решений.'));
  const form=el('form','svstaff-review-form');
  // Custom accessible Liquid Glass choice: avoid square native OS select popups.
  const choices=[['bonus','Рассмотреть поощрение'],['discuss','Обсудить развитие или обстоятельства']];
@@ -463,11 +437,11 @@ function renderProfile(){
  const list=el('ol');p.next.forEach(x=>list.append(el('li',null,x)));
  planContent.append(list,el('p',null,'Шаги обсуждаются с сотрудником; решение принимает руководитель.'));
  plan.append(planContent);body.append(plan);
- body.append(el('p','svstaff-demo-note','Демо · заметки и поощрения требуют проверки.'));
+ // The directory identifies the fictional data; no repeated footer in the profile.
 
 }
 modal.addEventListener('close',()=>{chosen=null;if(!leavingForChat)lastTrigger?.focus?.();leavingForChat=false});
-modal.addEventListener('click',e=>{if(e.target===modal)modal.close()});
+// Full-screen profile closes with the header back button or native Escape.
 window.addEventListener('pagehide',()=>{photos.forEach(u=>{if(u.startsWith('blob:'))URL.revokeObjectURL(u)})});
 window.SEYVEO_STAFF_CARDS=Object.freeze({open:personId=>{
  const person=people.find(p=>p.id===personId);
