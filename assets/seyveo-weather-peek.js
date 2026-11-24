@@ -41,7 +41,7 @@
   const body=code===0?sun:cloud+(wet?rain:snowy?snow:'');
   return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round">'+body+'</svg>';
  };
- const temp=n=>(Math.round(n)>0?'+':'')+Math.round(n)+'°';
+ const temp=n=>Math.round(n)+'°';
  const validate=day=>day&&Number.isFinite(day.max)&&Number.isFinite(day.min)&&
   Number.isFinite(day.code)&&day.max>=day.min&&day.max<70&&day.min>-90;
  const getDay=date=>{
@@ -155,14 +155,13 @@
   const value=new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(ms);
   const direction=current.wind_direction_10m;
   const index=Number.isFinite(direction)&&direction>=0&&direction<=360?Math.round(direction/45)%8:-1;
-  const short=['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'];
   const full=['северный','северо-восточный','восточный','юго-восточный','южный','юго-западный','западный','северо-западный'];
   const row=document.createElement('span');row.className='sv-weather-peek-wind';
   const glyph=document.createElement('span');glyph.className='sv-weather-peek-wind-icon';
   glyph.setAttribute('aria-hidden','true');
   glyph.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h12a2.5 2.5 0 1 0-2.5-2.5M3 12h16a2 2 0 1 1-2 2M3 16h9a2.5 2.5 0 1 1-2.5 2.5"/></svg>';
   row.append(glyph);
-  const label=value+' м/с'+(index>=0&&ms>=.05?' · '+(homeMode?short[index]:full[index]):'');
+  const label=value+' м/с'+(index>=0&&ms>=.05?' · '+full[index]:'');
   add('sv-weather-peek-wind-value',label,row);
   row.title='Ветер: '+value+' м/с'+(index>=0&&ms>=.05?', '+full[index]:'');
   row.setAttribute('aria-label',row.title);
@@ -175,7 +174,7 @@
   section.className='sv-weather-peek-rain';
   const header=document.createElement('div');
   header.className='sv-weather-peek-rain-heading';
-  add('sv-weather-peek-rain-title',homeMode?'Осадки':'Дождь · '+(date===moscowDate()?'сегодня':weekday(date)),header,'h3');
+  add('sv-weather-peek-rain-title',date===moscowDate()?'Осадки до конца дня':'Осадки · '+weekday(date),header,'h3');
   const state=add('sv-weather-peek-rain-state','',header,'strong');
   section.append(header);
   const hourly=source?.getStationData?.()?.hourly;
@@ -206,7 +205,7 @@
   }
   const maximum=Math.max(...future.map(point=>point.chance));
   const isPossible=maximum>=30;
-  state.textContent=homeMode?(maximum>=50?'Вероятны':isPossible?'Возможны':'Маловероятны'):(maximum>=50?'Вероятен':isPossible?'Возможен':'Маловероятен');
+  state.textContent=maximum>=50?'Вероятны':isPossible?'Возможны':'Маловероятны';
   state.dataset.level=maximum>=50?'likely':isPossible?'possible':'quiet';
   const detail=document.createElement('div');
   detail.className='sv-weather-peek-rain-detail';
@@ -218,7 +217,7 @@
   glyph.innerHTML=icon(isPossible?61:2);
   text.append(glyph);
   const detailLabel=document.createElement('span');
-  detailLabel.textContent=isPossible?'Когда возможен':'Вероятность осадков';
+  detailLabel.textContent=isPossible?'Возможное время':'Вероятность осадков';
   text.append(detailLabel);
   detail.append(text);
   const detailValue=add('sv-weather-peek-rain-detail-value','',detail,'strong');
@@ -264,7 +263,7 @@
   panel.setAttribute('tabindex','0');
   panel.setAttribute('aria-label','Открыть подробный прогноз погоды от Сэйви');
   panel.dataset.weatherReady=day?'true':'false';
-  if(!homeMode){
+  {
    const eyebrow=add('sv-weather-peek-eyebrow','',panel);
    const brand=document.createElement('span');brand.className='sv-weather-peek-brand';
    const mark=document.createElement('img');mark.className='sv-weather-peek-brand-mark';
@@ -279,7 +278,7 @@
    tempLine.title='Максимальная температура за день';
    const info=document.createElement('div');info.className='sv-weather-peek-info';
    add('sv-weather-peek-city',city,info,'strong');
-   add('sv-weather-peek-condition',condition(day.code),info);
+   add('sv-weather-peek-condition','За день: '+condition(day.code).toLocaleLowerCase('ru-RU'),info);
    add('sv-weather-peek-low','↑ '+temp(day.max)+'   ↓ '+temp(day.min),info);
    addWind(info,date,src);
    main.append(info);
