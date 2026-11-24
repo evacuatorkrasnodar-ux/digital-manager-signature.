@@ -789,7 +789,22 @@ function svAgendaMarkSelected(iso){
   if(selected)button.dataset.selected='true';
   else delete button.dataset.selected;
  }
+ svAgendaEnsureRailVisible(currentDay);
  svAgendaQueueToday();
+}
+/* Follow the selected day only when it is outside the visible rail. */
+function svAgendaEnsureRailVisible(day){
+ const strip=day?.closest('.sv-agenda-week');
+ if(!strip||!strip.clientWidth||svAgendaRolling)return;
+ const rail=strip.getBoundingClientRect(),box=day.getBoundingClientRect();
+ if(box.left>=rail.left-1&&box.right<=rail.right+1)return;
+ const width=day.getBoundingClientRect().width;
+ if(!width)return;
+ const delta=box.left<rail.left?box.left-rail.left:box.right-rail.right;
+ const offset=strip.scrollLeft+delta;
+ const target=(delta<0?Math.floor(offset/width):Math.ceil(offset/width))*width;
+ svAgendaIgnoreStripScrollUntil=Date.now()+450;
+ strip.scrollTo({left:Math.max(0,target),behavior:'instant'});
 }
 /* Cache the positions of day headings. A long flick then costs one binary
  * search per animation frame, rather than a layout read for every date. */
@@ -854,10 +869,28 @@ function svAgendaSyncPinnedDate(){
  slot.replaceChildren(svAgendaSection(current.iso,current.iso?undefined:current.heading.querySelector('strong')?.textContent||'Без даты'));
  document.dispatchEvent(new Event('seyveo:agenda-pinned-date-changed'));
 }
+/* Let even the last dated section reach the pinned heading. Grow only the
+ * scrollable tail that is missing, never the page or the dock backdrop. */
+function svAgendaEnsureReachable(top){
+ if(!list.clientHeight||!Number.isFinite(top))return;
+ const missing=Math.ceil(top-Math.max(0,list.scrollHeight-list.clientHeight));
+ if(missing<=0)return;
+ let tail=list.querySelector(':scope > .sv-agenda-scroll-tail');
+ if(!tail){
+  tail=element('div','sv-agenda-scroll-tail');
+  tail.setAttribute('aria-hidden','true');
+  tail.style.cssText='display:block;flex:none;width:100%;height:0;padding:0;margin:0;border:0;pointer-events:none;background:transparent';
+  list.append(tail);
+ }
+ tail.style.height=(tail.getBoundingClientRect().height+missing+2)+'px';
+ svAgendaAnchorCache=null;
+}
 function svAgendaScrollToDate(iso){
+ svAgendaAnchorCache=null;
  const anchor=svAgendaGetAnchors().find(item=>item.iso===iso);
  if(!anchor)return false;
  const target=Math.max(0,anchor.top);
+ svAgendaEnsureReachable(target);
  const distance=Math.abs(target-list.scrollTop);
  // Never animate through dozens of days. Close days glide; distant ones
  // jump directly with the selected calendar date already in place.
@@ -1064,7 +1097,7 @@ function svAgendaRenderNav(rows){
   svAgendaUserInteracted=true;
   svTaskWindowStart=iso;
   svAgendaMarkSelected(iso);
-  if(!svAgendaScrollToDate(iso))render();
+  if(!svAgendaScrollToDate(iso)){render();svAgendaScrollToDate(iso);}
   svAgendaQueueToday();
  };
  strip.addEventListener('scroll',()=>{
@@ -1346,10 +1379,6 @@ function render(){
  svAgendaAnchorCache=null;
  svAgendaRenderList(visibleActive);
  list.dataset.long=String(visibleActive.length+postponed.length>=18);
- if(wasRendered){
-  const matching=previousAnchor&&svAgendaGetAnchors().find(item=>item.key===previousAnchor.key);
-  list.scrollTop=matching?Math.max(0,matching.top+offsetWithinDay):previousScroll;
- }
  if(hasDeferred){
   const group=element('section','sv-agenda-day-group');
   group.append(svAgendaSection(null,'Отложено'));
@@ -1376,6 +1405,15 @@ function render(){
  if(completed){
   const action=findContinuation(completed,all);
   if(action)list.prepend(continuationPrompt(completed,action));
+ }
+ // Restore after all sections and optional prompts have been inserted.
+ if(wasRendered){
+  svAgendaAnchorCache=null;
+  const matching=previousAnchor&&svAgendaGetAnchors().find(item=>item.key===previousAnchor.key);
+  const restore=matching?Math.max(0,matching.top+offsetWithinDay):previousScroll;
+  const selected=svAgendaGetAnchors().find(item=>item.iso===svTaskSelectedDate);
+  if(selected&&matching?.iso===selected.iso)svAgendaEnsureReachable(Math.max(restore,selected.top));
+  list.scrollTop=restore;
  }
  summary.replaceChildren();
  if(open.length)open.slice(0,2).forEach(task=>summary.append(row(task,true)));
@@ -2211,6 +2249,7 @@ function svAgendaAlignInitial(){
  svAgendaAnchorCache=null;
  const anchor=svAgendaGetAnchors().find(item=>item.iso===today);
  if(anchor){
+  svAgendaEnsureReachable(anchor.top);
   svAgendaDockPreviousY=anchor.top;
   list.scrollTo({top:anchor.top,behavior:'instant'});
  }
