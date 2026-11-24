@@ -396,3 +396,25 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
  .sv-new-avatar-choice > .sv-atlas-thumb{
  border:0!important;box-shadow:none!important;
 }
+
+/* Compact category filter, independent of the Photo/Avatars switch. */
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-avatar-categories{
+ display:flex!important;align-items:center!important;gap:6px!important;
+ width:100%!important;box-sizing:border-box!important;overflow-x:auto!important;
+ scrollbar-width:none;margin:0 0 10px!important;padding:3px 1px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-avatar-categories::-webkit-scrollbar{display:none}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-avatar-category{
+ flex:none!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ min-height:32px!important;padding:0 12px!important;border:1px solid transparent!important;border-radius:999px!important;
+ color:var(--svav-ink)!important;background:transparent!important;
+ font:530 12px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:nowrap!important;box-shadow:none!important;transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-avatar-category[aria-pressed="true"]{
+ background:var(--svav-soft)!important;color:var(--svav-ink)!important;font-weight:640!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-avatar-category[aria-pressed="true"]{
+ background:var(--sv-white-pearl-surface)!important;border:var(--sv-white-pearl-edge)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] :is(.sv-avatar-categories,.sv-new-avatar-choice)[hidden]{display:none!important}
