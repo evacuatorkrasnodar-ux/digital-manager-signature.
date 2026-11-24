@@ -8,7 +8,7 @@ const dialog=$('noteScanDialog');if(!dialog)return;
 const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanText'),
  button=$('noteScanRecognize');
 let selected=null,localURL='',running=false,session=0,loading=null,consented=false,intoOpenNote=false;
-let leavingForDocs=false,editingScanText=false,markPreviewURL='';
+let leavingForDocs=false,editingScanText=false,pendingScanEdit=false,markPreviewURL='';
 let savedScan=null,menuPage='root',exportBusy=false,outputIntent='',preparedFile=null,preparedURL='';
 const consentBox=$('noteScanConsent'),keepLines=$('noteScanKeepLines');
 const toPaperButton=$('noteScanToPaper'),toTextButton=$('noteScanToText'),
@@ -158,11 +158,21 @@ async function saveScanText(){
  }catch(e){if(dialog.open&&session===token)message(e?.message||'Не удалось сохранить документ.');}
  finally{exportBusy=false;syncActions();}
 }
+function activateTextEditor(){
+ pendingScanEdit=false;editingScanText=true;dialog.dataset.editScanText='true';outputIntent='';
+ setStep('edit');syncActions();
+}
 function openTextEditor(){
  if(running||exportBusy)return;
- editingScanText=true;dialog.dataset.editScanText='true';outputIntent='';
- text.value=typeof savedScan?.scanText==='string'?savedScan.scanText:text.value;
- setStep('edit');syncActions();message(text.value?'':'Введите текст или нажмите «Распознать текст».');
+ const known=typeof savedScan?.scanText==='string'?savedScan.scanText:window.SEYVEO_NOTEBOOK_SCREEN?.scanExampleText?.(savedScan);
+ if(typeof known==='string'||text.value.trim()){
+  if(typeof known==='string')text.value=known;
+  activateTextEditor();message('');return;
+ }
+ pendingScanEdit=true;
+ // Keep the original image in place during consent and recognition.
+ if(dialog.dataset.step!=='photo')setStep('photo');
+ button.click();
 }
 function requestText(intent){
  closeMenu(true);clearPrepared();outputIntent=intent;
@@ -202,7 +212,7 @@ textExport.addEventListener('click',()=>{
  const [format,share]=outputIntent.split('-');if(['docx','txt','textpdf'].includes(format))void prepareFormat(format,share==='share');
 });
 menuBack.addEventListener('click',()=>page('root'));
-menuEdit.addEventListener('click',()=>{closeMenu();clearPrepared();if(intoOpenNote){if(dialog.dataset.step==='edit'&&text.value.trim())text.focus();else button.click();return;}openTextEditor();if(!text.value.trim())button.click();});
+menuEdit.addEventListener('click',()=>{closeMenu();clearPrepared();if(intoOpenNote){if(dialog.dataset.step==='edit'&&text.value.trim())text.focus();else button.click();return;}openTextEditor();});
 menuMarks.addEventListener('click',()=>{closeMenu();toPaper();});
 menuExport.addEventListener('click',()=>page('export'));
 menuShare.addEventListener('click',()=>page('share'));
@@ -231,18 +241,18 @@ function syncMenu(){
  textExport.textContent=outputIntent==='word-editor'?'Открыть редактор Word':(outputIntent.endsWith('-share')?'Подготовить для отправки: ':'Сохранить как ')+(format==='docx'?'Word (.docx)':format==='textpdf'?'PDF':'TXT');
 }
 more.addEventListener('click',()=>{
- if(consentBox&&!consentBox.hidden){consentBox.hidden=true;more.focus({preventScroll:true});return;}
+ if(consentBox&&!consentBox.hidden){consentBox.hidden=true;pendingScanEdit=false;more.focus({preventScroll:true});return;}
  if(!menu.hidden){closeMenu(true);return;}
  clearPrepared();page('root');if(more.hidden)return;
  menu.hidden=false;more.setAttribute('aria-expanded','true');
  (menu.querySelector('button:not(:disabled)')||more).focus({preventScroll:true});
 });
-menuOCR.addEventListener('click',()=>{closeMenu(true);if(savedScan){openTextEditor();if(text.value.trim())return;}button.click();});
+menuOCR.addEventListener('click',()=>{closeMenu(true);if(savedScan){openTextEditor();return;}button.click();});
 menuLines.addEventListener('click',()=>{if(keepLines)keepLines.click();syncMenu();});
 dialog.addEventListener('click',event=>{
  if(!menu.hidden&&!menu.contains(event.target)&&!more.contains(event.target))closeMenu();
  if(consentBox&&!consentBox.hidden&&!consentBox.contains(event.target)&&!button.contains(event.target)&&!textOCR.contains(event.target)&&!more.contains(event.target)&&!menu.contains(event.target)){
-  consentBox.hidden=true;
+  consentBox.hidden=true;pendingScanEdit=false;
  }
 });
 dialog.addEventListener('keydown',event=>{
@@ -328,7 +338,7 @@ window.SEYVEO_SCANNER_FORMAT=Object.freeze({cleanPhoneHeader,textInOriginalLines
 function message(s){status.textContent=s||''}
 function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}if(markPreviewURL){URL.revokeObjectURL(markPreviewURL);markPreviewURL=''}}
 function reset(){
- clearPrepared();outputIntent='';editingScanText=false;delete dialog.dataset.editScanText;savedScan=null;delete dialog.dataset.savedScan;$('noteScanTitle').textContent='Сканировать';
+ clearPrepared();outputIntent='';editingScanText=false;pendingScanEdit=false;delete dialog.dataset.editScanText;savedScan=null;delete dialog.dataset.savedScan;$('noteScanTitle').textContent='Сканировать';
  selected=null;consented=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
  if(consentBox)consentBox.hidden=true;
  text.value='';text.wrap='soft';button.disabled=true;
@@ -437,7 +447,7 @@ async function recognize(){
    return;
   }
   text.value=found.slice(0,8000);
-  setStep('edit');syncActions();
+  if(pendingScanEdit)activateTextEditor();else setStep('edit');syncActions();
   message(clean.removed?
    'Возможно, удалена строка панели телефона. Проверьте результат перед сохранением.':
    'Проверьте текст и исправьте возможные ошибки перед сохранением.');
@@ -451,7 +461,7 @@ async function recognize(){
   running=false;button.disabled=!selected;syncActions();
  }
 }
-function cancel(){if(exportBusy)return;if(editingScanText){if(text.value!==(savedScan?.scanText||'')&&!window.confirm('Выйти без сохранения текста?'))return;text.value=savedScan?.scanText||'';editingScanText=false;delete dialog.dataset.editScanText;setStep('photo');message('');return;}dialog.close()}
+function cancel(){if(exportBusy)return;if(!consentBox.hidden){consentBox.hidden=true;pendingScanEdit=false;return;}if(running){session++;pendingScanEdit=false;message('Распознавание отменено.');return;}if(editingScanText){if(text.value!==(savedScan?.scanText||'')&&!window.confirm('Выйти без сохранения текста?'))return;text.value=savedScan?.scanText||'';editingScanText=false;delete dialog.dataset.editScanText;setStep('photo');message('');return;}dialog.close()}
 function toNote(){
  const value=keepLines?.checked!==false?text.value.replace(/^\n+|\n+$/g,''):text.value.trim();
  if(!value.trim()){message('Сначала распознайте текст или введите его вручную.');return}
@@ -506,8 +516,8 @@ keepLines?.addEventListener('change',()=>{text.wrap='soft';syncMenu();});
 text.addEventListener('input',syncActions);
 manualButton?.addEventListener('click',()=>{
  if(!selected||running)return;
- setStep('edit');syncActions();
- message('Введите текст вручную и сохраните его в Блокнот.');
+ if(pendingScanEdit)activateTextEditor();else setStep('edit');syncActions();
+ message('Введите текст вручную.');text.focus();
 });
 button.addEventListener('click',()=>{
  if(running||!selected)return;
@@ -519,7 +529,7 @@ button.addEventListener('click',()=>{
  recognize();
 });
 $('noteScanConsentNo').addEventListener('click',()=>{
- consentBox.hidden=true;
+ consentBox.hidden=true;pendingScanEdit=false;
  (more.hidden?button:more).focus({preventScroll:true});
 });
 $('noteScanConsentYes').addEventListener('click',()=>{
