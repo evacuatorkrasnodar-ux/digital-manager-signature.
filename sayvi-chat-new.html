@@ -1957,6 +1957,55 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 :root:not([data-theme="light"]) #sayviMessages .sv-chat-task-heading{color:#b7c1c8}
 :root:not([data-theme="light"]) #sayviMessages .sv-chat-task-edit{background:rgba(255,255,255,.1);color:#f6f6f6;border-color:rgba(255,255,255,.12)}
 :root:not([data-theme="light"]) #sayviMessages .sv-chat-task-fields input{background:#343b42;color:#fff;border-color:rgba(255,255,255,.18)}
+
+/* White Pearl: standalone Sayvi uses the same tokens as the main app.
+   Paint existing surfaces only; preserve input geometry and dark palettes. */
+:root[data-theme="light"] #sayviComposer{
+ --sayvi-home-copy-material:var(--sv-white-pearl-surface);
+ --sayvi-home-copy-shadow:var(--sv-white-pearl-dock-shadow);
+ --sayvi-fallback:var(--sv-white-pearl-solid);
+}
+html:root[data-theme="light"] body #sayviComposer{
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviComposer::before,
+html:root[data-theme="light"] body #sayviComposer > button#sayviPlus{
+ background:var(--sv-white-pearl-surface)!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+html:root[data-theme="light"] body #sayviComposer > button#sayviPlus{
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ color:var(--sv-white-pearl-ink)!important;
+}
+html:root[data-theme="light"] body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root[data-theme="light"] body #sayviComposer:not(.sayvi-compose-expanded) #sayviField{
+ background:transparent!important;border-color:transparent!important;
+}
+html:root[data-theme="light"] body main #sayviMenu{
+ background:#FCFCFD!important;color:#252a33!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-depth-menu)!important;
+}
+html:root[data-theme="light"] body main #sayviMenu button{color:#252a33!important}
+html:root[data-theme="light"] body main #sayviMenu button:active{background:#EDEEF0!important}
+html:root[data-theme="light"] body main #sayviTopActions button#sayviHistoryTop.sv-top-action,
+html:root[data-theme="light"] body #sayviHistory .history-head #sayviHistoryClose,
+html:root[data-theme="light"] body #sayviTopActions .sv-top-action{
+ background:var(--sv-white-pearl-surface)!important;
+ color:var(--sv-white-pearl-ink)!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ transform:none!important;
+}
 </style>
 <link rel="stylesheet" href="assets/sayvi-notifications.css?v=4">
 <link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=9">
@@ -1965,7 +2014,8 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
 <link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=11">
 <link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=35">
-<link rel="stylesheet" href="assets/seyveo-depth-system.css?v=11">
+<link rel="stylesheet" href="assets/seyveo-white-pearl-tokens.css?v=1">
+<link rel="stylesheet" href="assets/seyveo-depth-system.css?v=13">
 <link rel="stylesheet" href="assets/seyveo-sayvi-response-state.css?v=1">
 </head>
 <body>
