@@ -268,6 +268,32 @@
  document.body.append(actionCapsule);
  let toolMode='',filter='all',query='',selectionActive=false,searchOpen=false;
  const selected=new Set();
+ // The floating bulk capsule rests while reading, without resizing the list.
+ let bulkScrollTimer=0;
+ function revealBulkCapsule(){
+  clearTimeout(bulkScrollTimer);bulkScrollTimer=0;
+  actionCapsule.classList.remove('sv-bulk-scrolling');
+ }
+ function trackBulkScroll(results){
+  let previousTop=results.scrollTop;
+  results.addEventListener('scroll',()=>{
+   const top=results.scrollTop;
+   if(Math.abs(top-previousTop)<.5)return;
+   previousTop=top;
+   if(!results.isConnected||!toolMode||!selectionActive||actionCapsule.hidden||
+      selected.size||actionCapsule.contains(document.activeElement)){
+    revealBulkCapsule();return;
+   }
+   actionCapsule.classList.add('sv-bulk-scrolling');
+   clearTimeout(bulkScrollTimer);
+   bulkScrollTimer=setTimeout(revealBulkCapsule,300);
+  },{passive:true});
+ }
+ actionCapsule.addEventListener('focusin',revealBulkCapsule);
+ document.addEventListener('keydown',event=>{
+  if(toolMode&&event.key==='Tab')revealBulkCapsule();
+ },true);
+ document.addEventListener('visibilitychange',revealBulkCapsule);
  const make=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e};
  // All Tasks v2 uses one standalone stylesheet, without legacy injected layers.
  // Hide only the dock's position when the iPhone keyboard takes over search.
@@ -291,6 +317,7 @@
   return t.title.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').includes(query.trim().toLocaleLowerCase('ru-RU').replace(/ё/g,'е'));
  }).sort((a,b)=>String(b.doneAt||b.createdAt||'').localeCompare(String(a.doneAt||a.createdAt||'')));
  function paint(){
+  revealBulkCapsule();
   const previousResultScroll=toolPanel.querySelector('.sv-tool-results')?.scrollTop||0;
   toolPanel.replaceChildren();
   // Always one search box and one results list. Selection is a mode within
@@ -388,6 +415,7 @@
    updateBulk();
   }
   function updateBulk(){
+   if(selected.size)revealBulkCapsule();
    if(counter){
     counter.textContent='Выбрано: '+selected.size;
     counter.dataset.hasSelection=String(selected.size>0);
@@ -400,6 +428,7 @@
   }
   paintResults();
   results.scrollTop=previousResultScroll;
+  trackBulkScroll(results);
  }
  function syncToolHeader(){
   const inPersonal=activeSection()==='personal'&&!tasks.classList.contains('sah-history-open');
@@ -408,6 +437,7 @@
   heading.dataset.selectionActive=String(selectionActive);
   const selectionVisible=selectionActive&&nested;
   actionCapsule.hidden=!nested;
+  if(!nested)revealBulkCapsule();
   document.documentElement.classList.toggle('sv-task-selection-active',selectionVisible);
   selectHistory.setAttribute('aria-pressed',String(selectionActive));
   selectHistory.setAttribute('aria-label',selectionActive?'Закончить выбор дел':'Выбрать дела');
@@ -423,6 +453,7 @@
   }
  }
  function setMode(mode){
+  revealBulkCapsule();
   toolMode=mode?'all':'';
   filter='all';query='';searchOpen=false;selected.clear();
   selectionActive=!!toolMode;
