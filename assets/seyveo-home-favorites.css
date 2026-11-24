@@ -601,7 +601,7 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
  transform:none!important;
 }
 html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"]{
- background:#e8f0f9!important;background-image:none!important;
+ background:#eef4fa!important;background-image:none!important;
  border:1px solid rgba(145,176,204,.32)!important;
  box-shadow:none!important;
 }
@@ -655,4 +655,18 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button svg[viewBox="
 }
 @media(prefers-reduced-transparency:reduce){
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{background:#fff!important;}
+}
+
+/* Home editor · final action uses the same blue as drawing confirmation. */
+html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-head > button[aria-label="Готово"]{
+ background:#287fda!important;background-image:none!important;
+ color:#fff!important;border:0!important;
+ box-shadow:0 2px 5px rgba(40,127,218,.15)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-head > button[aria-label="Готово"] svg{
+ stroke:#fff!important;stroke-width:1.7!important;
+}
+html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-help{
+ color:#65717e!important;
 }
