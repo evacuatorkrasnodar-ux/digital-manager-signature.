@@ -24,6 +24,16 @@
  const scanTile=document.getElementById('noteModeScan');
  scanTile?.querySelector('.paper-choice-copy strong')?.replaceChildren(document.createTextNode('Сканировать'));
  scanTile?.querySelector('.paper-choice-copy small')?.replaceChildren(document.createTextNode('Фото → текст'));
+ // Three creation tools share one 24px vector grid and stroke weight.
+ const icons={
+  noteModeText:'<path d="M6 3h8l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h4M8 17l3-7 3 7M9 15h4"/>',
+  noteModeScan:'<path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3m0 8v3a2 2 0 0 1-2 2h-3m-8 0H5a2 2 0 0 1-2-2v-3"/><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M9 14h6M9 11h6"/>',
+  noteModeDraw:'<path d="M12 2v3M5 5h14a1 1 0 0 1 1 1v12H4V6a1 1 0 0 1 1-1ZM2 18h20M9 18l-2 4m8-4 2 4"/><circle cx="15.5" cy="9" r="1.3"/><path d="m6 15 4-4 3 3 2-2 3 3"/>'
+ };
+ for(const [id,paths] of Object.entries(icons)){
+  const host=document.getElementById(id)?.querySelector('.paper-choice-icon');
+  if(host)host.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
+ }
  if(legacyInkTile)legacyInkTile.hidden=true;
  const destinations={
   noteModeText:{label:'Заметка',run:()=>window.SEYVEO_NOTES_API?.reviewText?.('')},
