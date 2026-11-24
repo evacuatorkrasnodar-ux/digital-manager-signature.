@@ -22,20 +22,19 @@ const example=()=>({vacancies:[
 let state=load();
 let demo=!state.vacancies.length&&!state.candidates.length;
 if(demo)state=example();
-root.innerHTML=`<div class="svrec-head"><div><h3 class="svrec-title">Подбор персонала</h3><p class="svrec-desc">Вакансии, кандидаты и решения руководителя</p></div><button type="button" class="svrec-mode" id="svrecMode" aria-pressed="false"></button></div>
-<div class="svrec-stats" aria-label="Состояние подбора"><div class="svrec-stat"><strong id="svrecVacancies">0</strong><small>Вакансий</small></div><div class="svrec-stat"><strong id="svrecCandidates">0</strong><small>Кандидатов</small></div><div class="svrec-stat"><strong id="svrecInterviews">0</strong><small>Интервью</small></div></div>
+root.innerHTML=`<div class="svrec-stats" aria-label="Состояние подбора"><div class="svrec-stat"><strong id="svrecVacancies">0</strong><small>Вакансий</small></div><div class="svrec-stat"><strong id="svrecCandidates">0</strong><small>Кандидатов</small></div><div class="svrec-stat"><strong id="svrecInterviews">0</strong><small>Интервью</small></div></div>
 <div class="svrec-advice"><div class="svrec-advice-head"><span class="sv-sayvi-symbol" aria-hidden="true"></span><strong>Сэйви</strong></div><p class="svrec-status" id="svrecStatus" role="status" aria-live="polite">Сэйви поможет подготовить вакансию. Решение о найме принимает руководитель.</p></div>
 <section class="svrec-section"><div class="svrec-section-head"><h4 class="svrec-section-title">01 · Вакансия</h4></div>
 <form id="svrecVacancyForm" class="svrec-grid"><label class="svrec-field">Кого ищем<input name="title" maxlength="90" placeholder="Например, кассир" required></label><label class="svrec-field">Город<input name="city" maxlength="90" placeholder="Краснодар"></label><label class="svrec-field wide">Требования по работе<textarea name="criteria" maxlength="1200" required placeholder="По одному требованию с новой строки: опыт с кассой, работа с покупателями…"></textarea></label><div class="svrec-actions svrec-field wide"><button class="svrec-button primary" type="submit">Создать вакансию</button></div></form>
 <div id="svrecVacancyList" class="svrec-candidates"></div>
-<p class="svrec-small">Публикация вакансии требует подключения площадки и подтверждения работодателя.</p></section>
+<p class="svrec-small">Для публикации подключите площадку и подтвердите работодателя.</p></section>
 <section class="svrec-section"><div class="svrec-section-head"><h4 class="svrec-section-title">02 · Площадки и отклики</h4></div>
-<p class="svrec-desc">Площадки пока не подключены. Отклики можно добавить вручную при наличии основания для обработки данных.</p>
+<p class="svrec-desc">Площадки не подключены. Отклики можно добавить вручную при законном основании.</p>
 
 <form id="svrecCandidateForm" class="svrec-grid"><label class="svrec-field wide">Кандидат<input name="name" maxlength="90" placeholder="Имя из разрешённого отклика" required></label><label class="svrec-field">Источник<input name="source" maxlength="90" placeholder="hh.ru / вручную"></label><label class="svrec-field">Вакансия<select name="vacancy" required></select></label><label class="svrec-field wide">Профессиональные факты из отклика<textarea name="evidence" maxlength="1800" placeholder="Опыт, конкретные навыки, примеры работ — только разрешённые данные" required></textarea></label>
 <label class="svrec-consent svrec-field wide"><input type="checkbox" name="allowed" required><span>У меня есть законное основание обрабатывать данные кандидата для подбора. Не добавляю личные или чувствительные сведения.</span></label><div class="svrec-actions svrec-field wide"><button class="svrec-button primary" type="submit">Добавить отклик</button></div></form></section>
 <section class="svrec-section"><div class="svrec-section-head"><h4 class="svrec-section-title">03 · Кандидаты и оценка Сэйви</h4></div><div id="svrecCandidateList" class="svrec-candidates"></div></section>
-<section class="svrec-section"><h4 class="svrec-section-title">04 · Решение и адаптация</h4><p class="svrec-desc">Проверка фактов, собеседования и итоговые решения остаются под контролем руководителя.</p><button type="button" class="svrec-button" id="svrecClear">Очистить локальный подбор</button><p class="svrec-small">Данные остаются в этом браузере. Используйте только информацию, на обработку которой есть разрешение.</p></section>`;
+<section class="svrec-section"><h4 class="svrec-section-title">04 · Решение и адаптация</h4><p class="svrec-desc">Решения о найме принимает руководитель.</p><button type="button" class="svrec-button" id="svrecMode" aria-pressed="false">Переключить данные</button><button type="button" class="svrec-button" id="svrecClear">Очистить локальный подбор</button><p class="svrec-small">Данные хранятся в браузере. Добавляйте только разрешённые сведения.</p></section>`;
 // One compact disclosure per workflow, rather than four long sections at once.
 const headings=['Вакансии','Отклики','Кандидаты','Управление'];
 const sections=Array.from(root.querySelectorAll('.svrec-section'));
@@ -56,8 +55,8 @@ const vacancyForm=$('#svrecVacancyForm'),candidateForm=$('#svrecCandidateForm');
 const detailContent=el('div','svrec-detail-content'),detailStatus=el('p','svrec-detail-status');
 detailStatus.setAttribute('role','status');detailStatus.hidden=true;
 function action(text,fn,cls='svrec-button'){const button=el('button',cls,text);button.type='button';button.addEventListener('click',fn);return button;}
-const vacancyLaunch=action('Новая вакансия',()=>openDetail('vacancy'));
-const responseLaunch=action('Добавить отклик',()=>openDetail('response'));
+const vacancyLaunch=action('Новая вакансия',()=>openDetail('vacancy'),'svrec-button svrec-launch');
+const responseLaunch=action('Добавить отклик',()=>openDetail('response'),'svrec-button svrec-launch');
 const vacancyList=$('#svrecVacancyList');
 vacancyList.after(vacancyLaunch);
 candidateForm.before(responseLaunch);
@@ -105,7 +104,8 @@ function renderCandidateDetail(){
 function persist(){if(demo)return true;try{localStorage.setItem(STORE,JSON.stringify(state));return true}catch{sayvi('Не удалось сохранить изменения в браузере. Проверь свободное место.');return false}}
 function cardTitle(parent,title,sub){const h=el('div','svrec-cardhead'),name=el('div');name.append(el('strong',null,title),el('small',null,sub));h.append(name);parent.append(h);return h}
 function render(){
- $('#svrecMode').textContent=demo?'Демо · выйти':'Демо';
+ $('#svrecMode').textContent=demo?'Перейти к рабочим данным':'Показать пример';
+ root.dataset.example=String(demo);
  $('#svrecMode').setAttribute('aria-pressed',String(demo));
 
  $('#svrecClear').textContent=demo?'Сбросить учебный пример':'Очистить локальный подбор';
@@ -158,7 +158,7 @@ $('#svrecCandidateForm').addEventListener('submit',e=>{
 $('#svrecMode').addEventListener('click',()=>{
  demo=!demo;state=demo?example():load();
  $('#svrecVacancyForm').reset();$('#svrecCandidateForm').reset();render();
- sayvi(demo?'Две открытые вакансии. Один кандидат на этапе собеседования.':'Решение о найме принимает руководитель.');
+ sayvi(demo?'В примере две вакансии, один кандидат на собеседовании.':'Решение о найме принимает руководитель.');
 });
 $('#svrecClear').addEventListener('click',()=>{
  if(demo){state=example();render();sayvi('Учебный пример восстановлен. Рабочие записи не изменены.');return;}
@@ -166,5 +166,5 @@ $('#svrecClear').addEventListener('click',()=>{
  state=initial();if(persist()){render();sayvi('Локальная история подбора очищена.');}
 });
 render();
-if(demo)sayvi('Две открытые вакансии. Один кандидат на этапе собеседования.');
+if(demo)sayvi('В примере две вакансии, один кандидат на собеседовании.');
 })();
