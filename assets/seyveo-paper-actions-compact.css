@@ -140,3 +140,27 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-his
  left:auto!important;
  transform:none!important;
 }
+
+/* Equal side lanes keep the actual four-tool dock centred on the page.
+   The history buttons remain distinct, accessible actions in the same row. */
+html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
+ grid-template-columns:68px minmax(0,1fr) 68px!important;
+ align-items:center!important;
+}
+html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBack{
+ justify-self:start!important;
+ width:44px!important;height:44px!important;
+}
+html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history > button{
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+}
+html:root body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > #notePaperSayvi > img.sv-newdock-potok{
+ width:34px!important;height:34px!important;
+ min-width:34px!important;min-height:34px!important;max-width:34px!important;max-height:34px!important;
+ object-fit:contain!important;filter:none!important;opacity:1!important;
+}
+@media(max-width:355px){
+ html:root body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
+  grid-template-columns:56px minmax(0,1fr) 56px!important;
+ }
+}
