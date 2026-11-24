@@ -155,15 +155,20 @@ html body #noteScanDialog .paper-scan-line-mode small{
 /* OCR enabled only when an image was selected. */
 html body #noteScanDialog #noteScanRecognize{
  box-sizing:border-box!important;
- display:grid!important;place-items:center!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;
  flex:0 0 44px!important;width:100%!important;min-height:44px!important;height:44px!important;
  margin:0 0 8px!important;padding:0 12px!important;
- border:0!important;border-radius:999px!important;
- background:#1c1c1e!important;background-image:none!important;
- color:#f7f7f8!important;box-shadow:none!important;
+ border:1px solid rgba(60,60,67,.08)!important;border-radius:999px!important;
+ background:#f2f4f5!important;background-image:none!important;
+ color:#20252b!important;box-shadow:0 2px 6px rgba(24,32,39,.055)!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- font:600 15px/1.2 -apple-system,BlinkMacSystemFont,sans-serif!important;
+ font:550 15px/1.2 -apple-system,BlinkMacSystemFont,sans-serif!important;
  cursor:pointer!important;
+}
+html body #noteScanDialog #noteScanRecognize svg{
+ display:block!important;flex:0 0 20px!important;width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html body #noteScanDialog #noteScanRecognize:disabled{
  background:#f1f1f3!important;color:#92939a!important;
@@ -378,5 +383,8 @@ html:root body #noteScanDialog[data-step="pick"] #svNoteScanExample{
 html:root[data-theme="light"] body #noteScanDialog[data-step="pick"] #svNoteScanExample{color:#176ab4!important}
 
 /* Dark surface keeps primary actions visible without changing the OCR flow. */
-html[data-theme="dark"] body #noteScanDialog #noteScanRecognize:not(:disabled),
 html[data-theme="dark"] body #noteScanDialog .paper-scan-actions #noteScanToText:not(:disabled){background:#f2f2f7!important;color:#1c1c1e!important;}
+
+html[data-theme="dark"] body #noteScanDialog #noteScanRecognize:not(:disabled){background:#29292d!important;color:#f7f7f8!important;border-color:#3d3d42!important;}
+html body #noteScanDialog #noteScanRecognize:disabled{box-shadow:none!important;}
+html body #noteScanDialog[data-step="photo"] #noteScanStatus{text-align:center!important;}
