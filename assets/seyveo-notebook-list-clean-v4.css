@@ -410,7 +410,7 @@ html:root[data-theme="dark"] body > #svNotebookListMenu:not([hidden]){background
 
 /* Saved notes · common mobile reading grid, no separate footer panel. */
 html:root body #svWorkShell[data-active="notes"] #notesDialog{
- --sv-nb-reading-inset:18px;
+ --sv-nb-reading-inset:16px;
  --sv-nb-preview-width:44px;
  --sv-nb-preview-gap:11px;
 }
@@ -424,7 +424,8 @@ html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList button.
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-preview{
  flex-basis:var(--sv-nb-preview-width)!important;
  width:var(--sv-nb-preview-width)!important;min-width:var(--sv-nb-preview-width)!important;
- max-width:var(--sv-nb-preview-width)!important;border-radius:6px!important;
+ max-width:var(--sv-nb-preview-width)!important;border-radius:7px!important;
+ height:56px!important;min-height:56px!important;max-height:56px!important;object-fit:contain!important;
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-details > p{
  font-weight:600!important;
@@ -436,8 +437,8 @@ html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialo
  color:#606975!important;
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-note:not(:last-of-type) .sv-nb4-front::after{
- left:var(--sv-nb-reading-inset)!important;right:auto!important;
- height:.5px!important;
+ left:var(--sv-nb-reading-inset)!important;right:var(--sv-nb-reading-inset)!important;
+ height:1px!important;
 }
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-note.has-paper .sv-nb4-front::after{
  left:calc(var(--sv-nb-reading-inset) + var(--sv-nb-preview-width) + var(--sv-nb-preview-gap))!important;
