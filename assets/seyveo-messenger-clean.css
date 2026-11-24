@@ -1160,10 +1160,10 @@ html:root body #svcpWorkChatScreen > #svcpWorkChatBack:is(:hover,:focus,:active)
  padding:0!important;margin:0!important;
  z-index:110!important;
  border-radius:50%!important;
- background:rgba(242,241,240,.93)!important;background-image:none!important;
- border:1px solid rgba(255,255,255,.99)!important;
+ background:var(--sv-white-pearl-surface,rgba(247,247,248,.92))!important;background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;
  color:#161b20!important;
- box-shadow:0 4px 15px rgba(82,69,57,.115),inset 0 1px 0 rgba(255,255,255,.86)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
  -webkit-backdrop-filter:blur(16px) saturate(100%)!important;backdrop-filter:blur(16px) saturate(100%)!important;
  visibility:visible!important;opacity:1!important;pointer-events:auto!important;
  transform:none!important;translate:none!important;scale:1!important;
