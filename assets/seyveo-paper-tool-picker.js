@@ -27,7 +27,7 @@
  const settings=document.getElementById('notePaperSettingsMenu');
  const oldChoices=settings?.querySelector('.sv-newdock-ink-choices');
  const heading=[...(settings?.querySelectorAll('.sv-newdock-menu-title')||[])]
-  .find(node=>node.textContent.trim()==='Тип пера');
+  .find(node=>['Тип пера','Перо'].includes(node.textContent.trim()));
  const picker=document.createElement('div');
  picker.id='svPaperBrushPicker';picker.className='sv-paper-brush-picker';picker.hidden=true;
  picker.setAttribute('role','group');picker.setAttribute('aria-label','Инструменты рисования');
