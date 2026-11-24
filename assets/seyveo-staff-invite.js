@@ -9,7 +9,7 @@ let method='link',photoUrl=null;
 const submit=form.querySelector('.sv-invite-primary');
 function updateSubmit(){submit.disabled=!form.checkValidity()||!form.elements.name.value.trim()||!form.elements.job.value.trim();}
 function clearResult(){result.hidden=true;$('svInviteQr').replaceChildren();$('svInviteQr').hidden=true;$('svInviteLink').hidden=true;}
-function updateInitials(){initials.textContent=form.elements.name.value.trim().split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'+';}
+function updateInitials(){const value=form.elements.name.value.trim().split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();const icon=$('svInvitePersonIcon'),letters=$('svInviteLetters');if(icon&&letters){icon.hidden=!!value;letters.hidden=!value;letters.textContent=value;}else initials.textContent=value||'+';}
 function choosePhoto(){photo.click()}
 $('svInvitePhotoButton').addEventListener('click',choosePhoto);
 
@@ -25,8 +25,8 @@ form.querySelectorAll('[data-invite-method]').forEach(button=>button.addEventLis
  method=button.dataset.inviteMethod;form.querySelectorAll('[data-invite-method]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));clearResult();
 }));
 open.addEventListener('click',()=>{
- if(dialog.open)return;clearResult();updateInitials();updateSubmit();dialog.showModal();$('svStaffInvitePageScroll').scrollTop=0;window.SEYVEO_DOCK_CONTINUITY?.refresh?.();
- requestAnimationFrame(()=>{if(dialog.open)window.SEYVEO_DOCK_CONTINUITY?.refresh?.();});
+ if(dialog.open)return;clearResult();updateInitials();updateSubmit();dialog.showModal();$('svStaffInvitePageScroll').scrollTop=0;window.SEYVEO_DOCK_CONTINUITY?.refresh?.(dialog);
+ requestAnimationFrame(()=>{if(dialog.open)window.SEYVEO_DOCK_CONTINUITY?.refresh?.(dialog);});
 });
 $('svStaffInviteBack').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('close',()=>{if($('svcpManagerPeople')?.open)open.focus({preventScroll:true});});
