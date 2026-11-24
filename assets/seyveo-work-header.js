@@ -149,13 +149,13 @@
 .company{
  grid-column:1;grid-row:1;align-self:center;justify-self:start;
  display:flex;align-items:center;gap:6px;min-width:0;max-width:100%;height:44px;
- padding:0;margin:0;border:0;background:transparent;color:inherit;
+ padding:0 0 0 12px;margin:0;border:0;background:transparent;color:inherit;
  font:620 clamp(18px,5.4vw,24px)/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
  letter-spacing:-.025em;text-align:left;cursor:pointer;appearance:none;-webkit-appearance:none;
  -webkit-tap-highlight-color:transparent;transform:none;transition:none;
 }
 .company-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.company svg{display:block;flex:0 0 13px;width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.company svg{display:block;flex:0 0 14px;width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
 .company:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:5px}
 
 
