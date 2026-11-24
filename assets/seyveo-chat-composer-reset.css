@@ -18,7 +18,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]{
  --svcp-conversation-blue-glass:var(--sv-white-pearl-surface,rgba(247,247,248,.92));
  --svcp-conversation-blue-glass-expanded:var(--sv-white-pearl-surface,rgba(247,247,248,.92));
- --svcp-conversation-blue-rim:rgba(226,229,234,.65);
+ --svcp-conversation-blue-rim:var(--sv-white-pearl-rim-color,rgba(233,235,239,.82));
  --svcp-conversation-blue-blur:var(--sv-white-pearl-blur,blur(16px) saturate(100%));
   --sv-chat-outgoing:#3DAEFE;
 }
