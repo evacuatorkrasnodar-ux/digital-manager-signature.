@@ -83,7 +83,7 @@
   if(forecast&&location&&!separateCity)parts.unshift(weatherText(forecast,location.name));
   if(!parts.length)return;
   const mark=document.createElement('img');mark.className='sv-task-meeting-advice-mark';
-  mark.src='assets/seyveo-circular-interlace-mono.svg?v=1';mark.alt='';
+  mark.src='assets/seyveo-sayvi-user-upload.svg?v=3';mark.alt='';
   mark.decoding='async';mark.setAttribute('aria-hidden','true');
   const copy=document.createElement('p');copy.textContent=parts.join(' ');
   advice.append(mark,copy);advice.hidden=false;
