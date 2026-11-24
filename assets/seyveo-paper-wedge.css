@@ -9,10 +9,10 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperStage > .s
 html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-width-control > .sv-paper-width-blade{
  position:absolute;display:block;left:50%;top:50%;transform:translate(-50%,-50%);
  width:3px;height:min(190px,36dvh);overflow:visible;pointer-events:none;
- color:rgba(210,214,222,.60);
+ color:#aeb4bd;
  transition:width .22s cubic-bezier(.22,.8,.22,1),color .22s ease;
 }
-html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-width-control.sv-wedge-expanded > .sv-paper-width-blade{width:32px;color:rgba(210,214,222,.78);}
+html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-width-control.sv-wedge-expanded > .sv-paper-width-blade{width:32px;color:#c4c9d1;}
 html:root body dialog#notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-width-control > .sv-paper-width-blade{color:#c3c7ce;}
 html:root body dialog#notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-width-control.sv-wedge-expanded > .sv-paper-width-blade{color:#a9aeb6;}
 html:root body dialog#notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-width-control > .sv-paper-width-handle{
