@@ -425,6 +425,7 @@
   }
   function updateBulk(){
    actionCapsule.dataset.hasSelection=String(selected.size>0);
+   results.dataset.hasSelection=String(selected.size>0);
    if(selected.size)revealBulkCapsule();
    if(counter){
     counter.textContent='Выбрано: '+selected.size;
