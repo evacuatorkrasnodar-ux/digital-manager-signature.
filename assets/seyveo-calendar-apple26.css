@@ -1326,3 +1326,35 @@ html:root body #calendarPage #calendarView[data-mode="week"] #calendarWeekTimeli
  scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
  background:transparent!important;
 }
+
+/* Final week rhythm: one hairline per hour, tabular labels, two-line short events. */
+html body #calendarPage #calendarWeekTimeline .cal-week-hour-row{
+ border-bottom:0!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-week-hour-label{
+ left:2px!important;width:43px!important;text-align:left!important;
+ font:500 11px/12px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-variant-numeric:tabular-nums!important;color:#7C8490!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-week-hour-row[data-now-near] .cal-week-hour-label{
+ visibility:hidden!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-calendar-tone]{
+ padding:2px 7px!important;gap:0!important;border-radius:5px!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed .cal-entry-copy strong{
+ font:600 12.5px/14px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
+ font:500 10px/10px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-variant-numeric:tabular-nums!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-week-now-marker{
+ height:1px!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-week-now-marker::before{
+ box-sizing:border-box!important;width:40px!important;min-width:40px!important;height:18px!important;
+ padding:0!important;border-radius:9px!important;
+}
+html:root[data-theme="dark"] body #calendarPage #calendarWeekTimeline .cal-week-hour-label{color:#A5ABB6!important;}
+html:root[data-theme="dark"] body #calendarPage #calendarWeekTimeline .cal-week-hour-row::before{background:#343840!important;}
