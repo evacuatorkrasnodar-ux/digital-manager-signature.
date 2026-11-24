@@ -20,7 +20,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3{
  --sv-task-field-blur:var(--sv-white-pearl-blur,blur(4px) saturate(100%));
  --sv-task-field-shadow:var(--sv-white-pearl-dock-shadow,0 2px 7px rgba(82,88,103,.06));
  box-sizing:border-box!important;position:fixed!important;inset:0!important;
- width:100vw!important;max-width:none!important;height:100dvh!important;max-height:none!important;
+ width:auto!important;min-width:0!important;max-width:100%!important;height:100dvh!important;max-height:100%!important;
  margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
  background:#F2F2F7!important;color:#17191E!important;box-shadow:none!important;
  overflow:hidden!important;overscroll-behavior:contain!important;
@@ -1569,4 +1569,44 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .
 }
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice-mark{
  flex:0 0 24px!important;width:24px!important;height:24px!important;object-fit:contain!important;
+}
+
+/* New Task · one horizontal grid. Fixed inset uses the available viewport,
+   not 100vw (which may include a desktop scrollbar). */
+html:root body dialog#personalTaskDialog.sv-task-editor-v3{
+ inset:0!important;box-sizing:border-box!important;width:auto!important;max-width:100%!important;
+ min-width:0!important;margin:0!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
+ min-width:0!important;max-width:100%!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskForm{
+ --sv-task-content-gutter:12px;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ padding-inline:var(--sv-task-content-gutter)!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 :is(
+ .sv-new-task-main,.sv-new-task-smart-preview,.sv-new-task-place,.sv-place-card,
+ .sv-place-venue-details,.sv-task-meeting-advice){
+ box-sizing:border-box!important;width:100%!important;max-width:100%!important;
+ min-width:0!important;margin-inline:0!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-heading{
+ margin-inline:0!important;padding-inline:12px!important;min-width:0!important;
+ box-sizing:border-box!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-heading > span{
+ min-width:0!important;text-align:right!important;overflow-wrap:anywhere!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm-actions{
+ margin-inline:0!important;flex-wrap:wrap!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-info-toggle{
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice-mark{
+ flex:0 0 30px!important;width:30px!important;height:30px!important;min-width:30px!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice p{
+ min-width:0!important;
 }
