@@ -1913,11 +1913,6 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    <div class="sv-cabinet-toolbar-text"><strong>Мои инструменты</strong><small>Ваш порядок работы · на этом устройстве</small></div>
    <button type="button" id="svCabinetConfigure" class="sv-cabinet-plus" aria-label="Настроить инструменты кабинета" aria-haspopup="dialog" aria-controls="svCabinetDialog"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button>
   </div>
-  <button type="button" id="svCabinetContinueWithSayvi" class="sv-cabinet-resume" hidden aria-label="Продолжить настройку кабинета вместе с Сэйви">
-   <span class="sv-cabinet-resume-spark sv-sayvi-symbol" aria-hidden="true"></span>
-   <span class="sv-cabinet-resume-copy"><strong>Продолжить настройку с Сэйви</strong><small>Помогу подготовить кабинет под вашу работу</small></span>
-   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
-  </button>
   <section id="svCabinetArrival" class="sv-cabinet-arrival" aria-labelledby="svCabinetArrivalTitle" hidden>
    <div class="sv-cabinet-arrival-head">
     <div><span class="sv-cabinet-arrival-eyebrow">Сэйви · ваш кабинет</span><h3 id="svCabinetArrivalTitle">Всё готово к работе</h3></div>
@@ -1926,15 +1921,14 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    <p id="svCabinetArrivalText">Я подготовила рабочее пространство. Если захотите что-то изменить — я помогу.</p>
    <p id="svCabinetArrivalSource" class="sv-cabinet-arrival-source" hidden></p>
    <div class="sv-cabinet-arrival-actions">
-    <button type="button" id="svCabinetArrivalEdit">Настроить кабинет</button>
+    
     <button type="button" id="svCabinetArrivalApply" hidden>Применить предложение Сэйви</button>
     <button type="button" id="svCabinetArrivalWorld">Посмотреть Мой мир</button>
    </div>
    <p class="sv-cabinet-arrival-foot">Музыка, браузер и личная почта — в «Моём мире».</p>
   </section>
   <div id="svCabinetEmpty" class="sv-cabinet-empty" hidden>
-   <p>Пока в кабинете нет инструментов. Выберите те, которыми пользуетесь.</p>
-   <button type="button" data-sv-cabinet-open>Добавить инструменты</button>
+   <p>Пока нет инструментов. Нажмите «+», чтобы настроить кабинет.</p>
   </div>
   <div class="svcp-manager-actions" aria-label="Инструменты бизнеса">
    <button class="svcp-manager-row" type="button" data-business-hub="pulse" data-cabinet-tool="pulse"><span class="svcp-manager-art" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 13h5l3-7 4 12 3-7h5"/></svg></span><span class="svcp-manager-row-text"><strong>Пульс бизнеса</strong><small>Клиенты, продажи и показатели</small></span><span class="svcp-manager-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m9 5 7 7-7 7"/></svg></span></button>
@@ -2030,6 +2024,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    <h2 id="svCabinetTitle">Что хотите делать?</h2>
    <p id="svCabinetDisclosure">Выберите задачу — подскажем нужный инструмент.</p>
   </header>
+  <div id="svCabinetSetupHint" class="sv-cabinet-setup-hint"><span class="sv-sayvi-symbol" aria-hidden="true"></span><span><strong>Сэйви</strong><small>Подберём инструменты под вашу работу.</small></span></div>
   <label class="sv-cabinet-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m16 16 4.5 4.5"/></svg><input id="svCabinetSearch" type="search" placeholder="Например, видеть продажи" autocomplete="off" aria-label="Поиск инструментов"></label>
   <div id="svCabinetCatalog" class="sv-cabinet-catalog" aria-label="Рабочие задачи"></div>
   <section id="svCabinetGuide" class="sv-cabinet-guide" aria-live="polite" hidden></section>
@@ -5691,7 +5686,7 @@ syncManager();render();
 <section class="syp-screen" data-syp-screen="history" hidden><div class="syp-panel"><h3>История покупок</h3><p>Здесь появятся подтверждённые операции и доступные чеки после официального подключения банков. Сейчас операций нет.</p></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
 </div></dialog><script src="assets/seyveo-pay.js?v=10"></script><script src="assets/seyveo-chat-polls.js?v=6"></script><script src="assets/seyveo-chat-themes.js?v=6"></script><script src="assets/seyveo-family-chat.js?v=6"></script><script src="assets/seyveo-avatar-art.js?v=3"></script>
 <script src="assets/seyveo-sayvi-holidays.js?v=2"></script>
-<script src="assets/seyveo-business-command.js?v=244-avatar-colors"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261124-sayvi-live"></script><script src="assets/seyveo-unified-tasks.js?v=92"></script><script src="assets/seyveo-employee-schedule.js?v=4"></script><script src="assets/seyveo-dock-continuity.js?v=10"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=33"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=22"></script>
+<script src="assets/seyveo-business-command.js?v=244-avatar-colors"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261124-sayvi-live"></script><script src="assets/seyveo-unified-tasks.js?v=93"></script><script src="assets/seyveo-employee-schedule.js?v=4"></script><script src="assets/seyveo-dock-continuity.js?v=10"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=33"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=22"></script>
 <script src="assets/seyveo-learning-lab.js?v=1" defer></script>
 <dialog id="seyveoOfflineDialog" class="seyveo-offline-dialog" aria-labelledby="seyveoOfflineHeading"><div class="seyveo-offline-shell"><header class="seyveo-offline-head"><div><span class="seyveo-offline-kicker">SEYVEO ONE · УПРАВЛЕНИЕ</span><h2 id="seyveoOfflineHeading">Сэйви офлайн</h2><p>Сэйви рядом, даже когда нет интернета</p></div><button type="button" id="seyveoOfflineClose" aria-label="Закрыть">×</button></header><div id="seyveoOfflineChoices" class="seyveo-offline-choices"></div><div class="seyveo-offline-summary"><span>Полный офлайн-комплект</span><strong id="seyveoOfflineSize">0 МБ</strong><small id="seyveoOfflineNotice">Предварительная оценка. Готовые пакеты ещё не опубликованы.</small></div><button type="button" id="seyveoOfflineConfirm" class="seyveo-offline-save">Понятно</button><p class="seyveo-offline-foot">Офлайн-комплект будет доступен для отдельной установки после публикации проверенных файлов. Личная память хранится отдельно.</p></div></dialog><link rel="stylesheet" href="assets/seyveo-offline-manager.css?v=5"><link rel="stylesheet" href="assets/seyveo-silver-flat-surfaces.css?v=5"><link rel="stylesheet" href="assets/seyveo-mail-guard.css?v=10"><link rel="stylesheet" href="assets/seyveo-smart-contacts.css?v=6"><link rel="stylesheet" href="assets/seyveo-mail-drafts-clean.css?v=2"><link rel="stylesheet" href="assets/seyveo-mail-bulk-clean.css?v=5"><link rel="stylesheet" href="assets/seyveo-notebook-home-scene.css?v=10"><link rel="stylesheet" href="assets/seyveo-home-work-actions-flat.css?v=71"><link rel="stylesheet" href="assets/seyveo-documents-graphite-flat.css?v=10"><link rel="stylesheet" href="assets/seyveo-header-search-flat.css?v=2"><link rel="stylesheet" href="assets/seyveo-phonebook.css?v=5"><link rel="stylesheet" href="assets/seyveo-health-graphite-flat.css?v=83"><link rel="stylesheet" href="assets/seyveo-medical-passport.css?v=10"><script src="assets/seyveo-offline-manager.js?v=2" defer></script>
 
