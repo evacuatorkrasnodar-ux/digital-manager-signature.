@@ -103,7 +103,7 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
  min-height:72px!important;padding:8px 3px 8px 14px!important;gap:9px!important;background:#fff!important;
  align-items:center!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell:not(.is-bulk-selecting):not(:last-child) > .sv-mail-letter::after{
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell:not(.is-bulk-selecting) > .sv-mail-letter::after{
  content:""!important;position:absolute!important;left:63px!important;right:0!important;bottom:0!important;
  height:1px!important;background:rgba(35,45,55,.10)!important;pointer-events:none!important;
 }
@@ -397,4 +397,26 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor-actions :is(.sv-mail-polish-trigger,.sv-mail-send-trigger){
  background:transparent!important;border:0!important;box-shadow:none!important;
  transform:none!important;transition:none!important;
+}
+
+/* Mail folder overview — aligned four-column navigation and legible title. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-toolbar{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:0!important;align-items:center!important;justify-items:stretch!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-toolbar > .sv-mail-folder{width:100%!important;min-width:0!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-toolbar > .sv-mail-folder > svg{
+ width:20px!important;height:20px!important;flex:0 0 20px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-toolbar[hidden]{display:none!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-letter,.sv-mail-detail-person) .sv-mail-avatar-unknown:not(.sv-mail-bulk-avatar){
+ background:#E9EAED!important;color:#626A75!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-toolbar{
+ display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
+}
+@media(max-width:390px){
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-introduction-title{
+  font-size:15px!important;letter-spacing:-.025em!important;
+ }
 }
