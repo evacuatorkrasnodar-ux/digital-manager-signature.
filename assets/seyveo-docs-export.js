@@ -46,7 +46,7 @@ function pdfFromJpegs(pages){
  for(let i=0;i<pages.length;i++){
   const p=pages[i],pg=3+i*3,stream=pg+1,img=pg+2;
   const w=595;
-  const h=Math.max(160,Math.round(595*p.height/p.width));
+  const h=Math.max(1,Math.round(595*p.height/p.width));
   const text='q\n'+w+' 0 0 '+h+' 0 0 cm\n/Im0 Do\nQ\n';
   obj(pg,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+w+' '+h+'] /Resources << /XObject << /Im0 '+img+' 0 R >> >> /Contents '+stream+' 0 R >>');
   obj(stream,['<< /Length '+enc.encode(text).length+' >>\nstream\n',text,'endstream']);
@@ -89,12 +89,19 @@ function zip(entries){
  ]);
  return join([...local,center,tail]);
 }
-function docxFromText(text){
+function docxFromText(text,options={}){
  if(typeof text!=='string'||!text.trim()||text.length>60000)
   throw Error('Введите текст до 60 000 знаков');
- const lines=text.replace(/\r\n?/g,'\n').split('\n');
- const paragraphs=lines.map(line=>'<w:p><w:r><w:t xml:space="preserve">'+
-   escapeXml(line)+'</w:t></w:r></w:p>').join('');
+ const lines=text.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'').replace(/\r\n?/g,'\n').split('\n');
+ const size=[10,11,12,14,16,18].includes(Number(options.size))?Number(options.size):12;
+ const alignment=['left','center','right','both'].includes(options.alignment)?options.alignment:'left';
+ const paragraphs=lines.map((line,i)=>{
+  const heading=options.heading===true&&i===0;
+  const fontSize=heading?Math.max(16,size):size;
+  return '<w:p><w:pPr><w:jc w:val="'+alignment+'"/></w:pPr><w:r><w:rPr>'+
+   (heading?'<w:b/>':'')+'<w:sz w:val="'+fontSize*2+'"/><w:szCs w:val="'+fontSize*2+'"/></w:rPr>'+
+   '<w:t xml:space="preserve">'+escapeXml(line)+'</w:t></w:r></w:p>';
+ }).join('');
  const files=[
   ['[Content_Types].xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
    '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'+
@@ -108,7 +115,7 @@ function docxFromText(text){
    '</Relationships>'],
   ['word/document.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'+
-   '<w:body>'+paragraphs+'<w:sectPr/></w:body></w:document>']
+   '<w:body>'+paragraphs+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>']
  ];
  return new Blob([zip(files)],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
 }
