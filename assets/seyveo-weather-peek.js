@@ -8,7 +8,7 @@
  const HIDE_AFTER=30000;
  const getSource=()=>window.SAYVI_WEATHER;
  let panel=null,activeAnchor=null,activeDate='',timer=0,requestedRefresh=false,agendaMode=false,homeMode=false;
- let homeLayoutObserver=null,homeTextObserver=null,homeLayoutFrame=0;
+ let homeLayoutObserver=null,homeTextObserver=null,homeLayoutFrame=0,homeLayoutWatch=0;
  function scheduleHomePosition(){
   if(!panel||!homeMode||homeLayoutFrame)return;
   homeLayoutFrame=requestAnimationFrame(()=>{homeLayoutFrame=0;if(panel&&homeMode)position();});
@@ -64,6 +64,7 @@
   clearTimeout(timer);timer=0;
   homeLayoutObserver?.disconnect();homeLayoutObserver=null;
   homeTextObserver?.disconnect();homeTextObserver=null;
+  clearInterval(homeLayoutWatch);homeLayoutWatch=0;
   if(homeLayoutFrame){cancelAnimationFrame(homeLayoutFrame);homeLayoutFrame=0;}
   if(activeAnchor)activeAnchor.setAttribute('aria-expanded','false');
   activeAnchor=null;activeDate='';requestedRefresh=false;
@@ -99,24 +100,31 @@
   if(homeMode){
    const favorites=document.querySelector('#svHomeFavorites');
    const favoritesRect=favorites&&!favorites.hidden?favorites.getBoundingClientRect():null;
-   const weekTop=rect.height>0&&rect.top>viewTop?rect.top-12:maxBottom;
+   // Measure the painted forecast face, not its larger touch target.
+   const face=activeAnchor.querySelector('.sv-home-weather-week-face');
+   const faceRect=face?.getBoundingClientRect();
+   const rowTop=faceRect?.height>0?faceRect.top:rect.top;
+   const weekTop=rect.height>0&&rowTop>viewTop?rowTop-12:maxBottom;
    const bottomLimit=Math.min(maxBottom,weekTop,
     favoritesRect?.top?favoritesRect.top-14:maxBottom);
-   const baseTop=viewTop+Math.max(42,Math.min(68,viewHeight*.09));
+   const baseTop=viewTop+Math.max(12,Math.min(68,viewHeight*.09));
    let allowedTop=baseTop;
-   const visibleText=el=>{
+   const hasLayout=el=>{
     if(!el||el.closest('[hidden]'))return false;
     for(let node=el;node&&node.id!=='homePage';node=node.parentElement){
      const style=getComputedStyle(node);
-     if(style.display==='none'||style.visibility==='hidden'||Number(style.opacity)<=.05)return false;
+     if(style.display==='none')return false;
     }
+    // Reserve geometry even during a fade/typing/action reveal. Opacity
+    // and visibility can be transient while the weather card is opening.
     return true;
    };
-   for(const el of document.querySelectorAll('#homePage :is(.sv-sayvi-home-online,#kicker,#headline,#subline,#svHomeLivingLine)')){
-    if(!visibleText(el))continue;
+   const selectors='#homePage .sv-sayvi-home-online, #homePage #kicker, #homePage #headline, #homePage #subline, #svHomeLivingLine, #svHomeLivingLine .sv-home-living-copy, #svHomeLivingLine .sv-home-living-actions, #svHomeLivingLine .sv-home-living-action';
+   for(const el of document.querySelectorAll(selectors)){
+    if(!hasLayout(el))continue;
     const b=el.getBoundingClientRect();
-    if(b.height>0&&b.bottom<bottomLimit)
-     allowedTop=Math.max(allowedTop,b.bottom+12);
+    if(b.height>0&&b.width>0&&b.top>=viewTop&&b.top<bottomLimit)
+     allowedTop=Math.max(allowedTop,Math.min(bottomLimit,b.bottom+12));
    }
    const available=Math.max(1,Math.floor(bottomLimit-allowedTop));
    panel.style.setProperty('--sv-home-peek-room',available+'px');
@@ -129,8 +137,9 @@
    y=Math.max(topSafe,Math.min(desiredTop,Math.max(topSafe,maxBottom-bounds.height)));
   }
   const x=viewLeft+Math.max(12,(viewWidth-bounds.width)/2);
-  panel.style.top=Math.round(y)+'px';
-  panel.style.left=Math.round(x)+'px';
+  const top=Math.round(y)+'px',left=Math.round(x)+'px';
+  if(panel.style.top!==top)panel.style.top=top;
+  if(panel.style.left!==left)panel.style.left=left;
  }
  function add(className,textValue,parent,tag='span'){
   const el=document.createElement(tag);
@@ -374,8 +383,12 @@
    }
    if(typeof MutationObserver==='function'){
     homeTextObserver=new MutationObserver(scheduleHomePosition);
-    for(const node of [thought,message])if(node)homeTextObserver.observe(node,{attributes:true,subtree:true,childList:true,characterData:true,attributeFilter:['hidden','style','class']});
+    for(const node of [thought,message])if(node)homeTextObserver.observe(node,{attributes:true,subtree:true,childList:true,characterData:true,attributeFilter:['hidden','style','class','data-revealed','data-sv-presence','data-sv-space','data-sv-typing']});
    }
+   // Some Safari layout/animation changes move a node without resizing it
+   // or mutating its own attributes. Reconcile the actual bounds only while
+   // the temporary Home card is open; close() always clears this watcher.
+   homeLayoutWatch=setInterval(scheduleHomePosition,160);
   }
   resetTimer();
   panel.addEventListener('pointerdown',resetTimer,{passive:true});
