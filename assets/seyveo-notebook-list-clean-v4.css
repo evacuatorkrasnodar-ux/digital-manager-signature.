@@ -511,20 +511,18 @@ html:root body > #svNotebookListMenu #svNotebookDeleteAll svg{
  flex:0 0 18px!important;width:18px!important;height:18px!important;
 }
 
-/* Notebook bottom reading edge: fade content into the existing canvas, not
-   an extra footer or dock background. Keep row menus and dock interactive. */
-html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]:has(> #notesList.sv-note-clean-list:not(.is-empty))::after{
- content:""!important;display:block!important;position:absolute!important;
- left:0!important;right:0!important;bottom:0!important;
- height:calc(96px + env(safe-area-inset-bottom,0px))!important;
- background:linear-gradient(to bottom,transparent 0%,rgba(255,255,255,.82) 30%,#fff 48%,#fff 100%)!important;
- border:0!important;box-shadow:none!important;pointer-events:none!important;
- z-index:2!important;
+/* Notebook: reserve real space above the dock, rather than paint an opaque footer. */
+html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
 }
-html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]:has(> #notesList.sv-note-clean-list:not(.is-empty))::after{
- background:linear-gradient(to bottom,transparent 0%,rgba(23,24,27,.82) 30%,var(--bg,#17181b) 48%,var(--bg,#17181b) 100%)!important;
+html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]::after{
+ content:none!important;display:none!important;
 }
-
+html:root body #svWorkShell[data-active="notes"] #notesDialog:not(.sv-nb-selecting) > #notesList.sv-note-clean-list:not(.is-empty){
+ margin-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+ padding-bottom:12px!important;scroll-padding-bottom:12px!important;
+}
 /* Saved rows are one full-width tap target. Swipe and context gestures
    expose individual actions; only the collection header keeps its dots. */
 html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-front{
@@ -626,3 +624,17 @@ html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookSelecti
 }
 html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog #svNotebookSelectedCount{color:#adb5c0!important}
 html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog #svNotebookSelectionFooter button#svNotebookDeleteSelected{color:#ff777a!important}
+
+/* Actual shared dock on the notebook route: brand mark at rest, original voice art during interaction. */
+#assistantButton > .sv-notebook-dock-mark{display:none!important;pointer-events:none!important;}
+html:root[data-theme="light"]:has(#svWorkShell[data-active="notes"]:not([hidden]) > #notesDialog[open]) body > footer.dock.sv-shared-dock{
+ background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"]:has(#svWorkShell[data-active="notes"]:not([hidden]) > #notesDialog[open]) body > footer.dock.sv-shared-dock > #assistantButton:not(:active,.listening,.pressing,.arming,[aria-pressed="true"],[data-sayvi-motion="listening"],[data-sayvi-motion="speaking"],[data-sayvi-motion="reply"],[data-sayvi-velvet-state="listening"],[data-sayvi-velvet-state="thinking"],[data-sayvi-velvet-state="speaking"]) > .sv-notebook-dock-mark{
+ display:block!important;position:absolute!important;left:50%!important;top:50%!important;
+ width:36px!important;height:36px!important;max-width:36px!important;max-height:36px!important;
+ margin:0!important;padding:0!important;transform:translate(-50%,-50%)!important;
+ object-fit:contain!important;border-radius:50%!important;clip-path:circle(48% at 50% 50%);
+ background:transparent!important;border:0!important;pointer-events:none!important;z-index:5!important;
+}
+html:root[data-theme="light"]:has(#svWorkShell[data-active="notes"]:not([hidden]) > #notesDialog[open]) body > footer.dock.sv-shared-dock > #assistantButton:not(:active,.listening,.pressing,.arming,[aria-pressed="true"],[data-sayvi-motion="listening"],[data-sayvi-motion="speaking"],[data-sayvi-motion="reply"],[data-sayvi-velvet-state="listening"],[data-sayvi-velvet-state="thinking"],[data-sayvi-velvet-state="speaking"]) > :is(.button-art,.sv-sayvi-velvet-sphere,.sv-sayvi-dock-sphere,.sv-sayvi-velvet-glass-glow){visibility:hidden!important;}
