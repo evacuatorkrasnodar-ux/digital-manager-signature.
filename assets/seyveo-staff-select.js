@@ -69,7 +69,7 @@ for(const selector of selectors){
  if(dialog)new MutationObserver(()=>{if(dialog.open)sync();else close()}).observe(dialog,{attributes:true,attributeFilter:['open']});
  window.addEventListener('seyveo:break-schedule-updated',sync);
  window.addEventListener('storage',sync);
- wrapper.closest('details')?.addEventListener('toggle',sync);
+ wrapper.closest('details')?.addEventListener('toggle',()=>{close();sync()});
  sync();
 }
 document.addEventListener('pointerdown',e=>{if(active&&!active.wrapper.contains(e.target))active.close()},true);

@@ -2685,7 +2685,7 @@ html body dialog#svcpManagerPeople :is(.svcp-manager-schedule-inner,.svcp-break-
  background:transparent!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-html body dialog#svcpManagerPeople :is(.svcp-manager-schedule-inner,.svcp-break-setup-inner) :is(input,select){
+html body dialog#svcpManagerPeople :is(.svcp-manager-schedule-inner,.svcp-break-setup-inner) :is(input[type="time"],select:not(.sv-form-picker-native)){
  min-height:44px!important;
  border:1px solid var(--svstaff-divider)!important;
  border-radius:12px!important;
@@ -2795,7 +2795,7 @@ html:root body #svcpManagerPeople .sv-staff-schedule-summary strong{display:bloc
 html:root body #svcpManagerPeople .sv-staff-schedule-summary small{display:block;font-size:12px;color:var(--secondary);margin-top:4px}
 html:root body #svStaffShiftHours{font-size:15px;font-weight:620;font-variant-numeric:tabular-nums}
 html:root body #svStaffWeekPreview{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:0 0 9px}
-html:root body #svStaffWeekPreview .sv-staff-week-day{display:grid;place-items:center;height:36px;border-radius:50%;font-size:12px;color:var(--secondary)}
+html:root body #svStaffWeekPreview .sv-staff-week-day{display:grid;place-items:center;width:36px;max-width:100%;height:auto;aspect-ratio:1;justify-self:center;border-radius:50%;font-size:12px;color:var(--secondary)}
 html:root body #svStaffWeekPreview .sv-staff-week-day[data-work="true"]{background:rgba(118,169,213,.15);color:#27669e;font-weight:620}
 html:root body #svcpManagerPeople .sv-staff-schedule-caption{font-size:11px;line-height:1.45;color:var(--secondary);margin:0 0 8px}
 html:root body #svcpManagerPeople .sv-staff-invite-notice{padding:13px 14px;margin:0 0 14px;border:var(--sv-white-pearl-edge,0)}
@@ -2806,6 +2806,6 @@ html:root body #svStaffInviteNotice .sv-staff-example-row>span{color:var(--secon
 html:root body #svStaffInviteNotice .sv-staff-example-row>b{text-align:right;font-weight:600;overflow-wrap:anywhere;min-width:0}
 html:root body #svStaffInviteNotice>p{font-size:11px;color:var(--secondary);line-height:1.45;margin:7px 0}
 html:root body #svStaffInviteDismiss{min-height:44px;background:transparent;border:0;color:#176ab4;font-size:12px;font-weight:600;padding:0 4px}
-html:root[data-theme="light"] body #svcpManagerPeople :is(.svcp-manager-schedule-inner,.svcp-break-setup-inner) :is(input,select){background:#f7f7f8!important;border:var(--sv-white-pearl-edge)!important;color:#20242a!important}
+
 html:root[data-theme="light"] body #svcpManagerPeople :is(.svcp-manager-schedule-save,.svcp-break-save){background:var(--sv-white-pearl-surface)!important;border:var(--sv-white-pearl-edge)!important;box-shadow:var(--sv-white-pearl-circle-shadow)!important;border-radius:999px!important;color:#176ab4!important}
 html:root[data-theme="light"] body #svcpManagerPeople .svcp-manager-weekdays button[aria-pressed="true"]{background:#e9f1f8!important;color:#27669e!important}
