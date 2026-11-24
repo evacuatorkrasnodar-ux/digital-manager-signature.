@@ -476,8 +476,11 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
   if(actions.children.length)body.append(actions);
  }
  function paintTime(){
-  body.querySelectorAll('[data-sv-picker-hour]').forEach(b=>b.classList.toggle('is-selected',Number(b.dataset.svPickerHour)===hour));
-  body.querySelectorAll('[data-sv-picker-minute]').forEach(b=>b.classList.toggle('is-selected',Number(b.dataset.svPickerMinute)===minute));
+  body.querySelectorAll('[data-sv-picker-hour],[data-sv-picker-minute]').forEach(b=>{
+   const selected=b.hasAttribute('data-sv-picker-hour')?Number(b.dataset.svPickerHour)===hour:Number(b.dataset.svPickerMinute)===minute;
+   b.classList.toggle('is-selected',selected);
+   b.setAttribute('aria-pressed',String(selected));
+  });
   const preview=body.querySelector('.sv-standard-time-preview');
   if(preview)preview.textContent=pad(hour)+':'+pad(minute);
  }
@@ -485,25 +488,49 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
   const preview=make('div','sv-standard-time-preview');body.append(preview);
   const columns=make('div','sv-standard-time-columns');
   const hh=make('div','sv-standard-time-wheel'),mm=make('div','sv-standard-time-wheel');
-  hh.setAttribute('aria-label','Часы');hh.setAttribute('role','group');
-  mm.setAttribute('aria-label','Минуты');mm.setAttribute('role','group');
-  for(let n=0;n<24;n++){
-   const b=button(pad(n),'sv-standard-time-option',()=>{hour=n;paintTime()});
-   b.dataset.svPickerHour=String(n);hh.append(b);
+  let ready=false;
+  function setupWheel(wheel,count,axis,label){
+   wheel.setAttribute('aria-label',label);wheel.setAttribute('role','group');
+   const choices=[];
+   const read=()=>axis==='hour'?hour:minute;
+   const write=n=>{if(axis==='hour')hour=n;else minute=n;};
+   const pitch=()=>choices[0]?.getBoundingClientRect().height||42;
+   const nearest=()=>Math.max(0,Math.min(count-1,Math.round(wheel.scrollTop/pitch())));
+   const center=n=>{wheel.scrollTop=n*pitch()};
+   function choose(n){
+    write(n);center(n);paintTime();
+   }
+   for(let n=0;n<count;n++){
+    const b=button(pad(n),'sv-standard-time-option',()=>choose(n));
+    if(axis==='hour')b.dataset.svPickerHour=String(n);else b.dataset.svPickerMinute=String(n);
+    b.setAttribute('aria-label',pad(n)+(axis==='hour'?' ч':' мин'));
+    choices.push(b);wheel.append(b);
+   }
+   wheel.addEventListener('scroll',()=>{
+    if(!ready||!sheet.open||kind!=='time'||!wheel.isConnected)return;
+    const n=nearest();if(n!==read()){write(n);paintTime();}
+   },{passive:true});
+   wheel.addEventListener('keydown',event=>{
+    if(!['ArrowUp','ArrowDown','Home','End'].includes(event.key))return;
+    event.preventDefault();
+    const n=event.key==='Home'?0:event.key==='End'?count-1:Math.max(0,Math.min(count-1,read()+(event.key==='ArrowUp'?-1:1)));
+    choose(n);choices[n].focus({preventScroll:true});
+   });
+   return {center:()=>center(read()),sync:()=>write(nearest())};
   }
-  for(let n=0;n<60;n++){
-   const b=button(pad(n),'sv-standard-time-option',()=>{minute=n;paintTime()});
-   b.dataset.svPickerMinute=String(n);mm.append(b);
-  }
+  const hours=setupWheel(hh,24,'hour','Часы'),minutes=setupWheel(mm,60,'minute','Минуты');
   const hCol=make('section','sv-standard-time-column'),mCol=make('section','sv-standard-time-column');
   hCol.append(make('small',null,'Часы'),hh);mCol.append(make('small',null,'Минуты'),mm);
   columns.append(hCol,make('span','sv-standard-time-colon',':'),mCol);
   body.append(columns);paintTime();
-  const done=button('Готово','sv-standard-picker-done',()=>commit(pad(hour)+':'+pad(minute)));
+  const done=button('Готово','sv-standard-picker-done',()=>{
+   if(ready){hours.sync();minutes.sync();}
+   commit(pad(hour)+':'+pad(minute));
+  });
   body.append(done);
   requestAnimationFrame(()=>{
-   if(!sheet.open||kind!=='time')return;
-   hh.scrollTop=Math.max(0,hour*42-84);mm.scrollTop=Math.max(0,minute*42-84);
+   if(!sheet.open||kind!=='time'||!hh.isConnected)return;
+   hours.center();minutes.center();ready=true;paintTime();
   });
  }
  function render(){if(!current)return;body.replaceChildren();

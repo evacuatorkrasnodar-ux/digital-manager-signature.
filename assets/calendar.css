@@ -1977,7 +1977,7 @@ html body .sv-standard-time-preview{
 }
 html body .sv-standard-time-columns{
  display:grid!important;grid-template-columns:minmax(0,1fr) 12px minmax(0,1fr)!important;
- gap:6px!important;align-items:center!important;
+ gap:6px!important;align-items:end!important;
  max-width:300px!important;margin:0 auto!important;
 }
 html body .sv-standard-time-column{
@@ -1988,13 +1988,16 @@ html body .sv-standard-time-column>small{
  font-size:11px!important;font-weight:510!important;
 }
 html body .sv-standard-time-colon{
- align-self:center!important;text-align:center!important;
+ align-self:end!important;display:grid!important;place-items:center!important;
+ height:210px!important;text-align:center!important;
  font-size:19px!important;color:#DFDFE1!important;
 }
 html body .sv-standard-time-wheel{
  display:block!important;box-sizing:border-box!important;
- max-height:164px!important;height:164px!important;width:100%!important;
- padding:2px!important;margin:0!important;
+ max-height:210px!important;height:210px!important;width:100%!important;
+ padding:84px 4px!important;margin:0!important;
+ scroll-snap-type:y mandatory!important;scroll-padding:0!important;
+ overscroll-behavior-y:contain!important;
  overflow-y:auto!important;overflow-x:hidden!important;
  border:0!important;border-radius:13px!important;
  background:#2E2E30!important;scrollbar-width:none!important;
@@ -2006,11 +2009,12 @@ html body .sv-standard-time-option{
  padding:0!important;margin:0!important;
  border:0!important;border-radius:10px!important;
  background:transparent!important;color:#D3D3D6!important;
- font-size:15px!important;font-weight:530!important;
+ font-size:15px!important;font-weight:500!important;
  font-variant-numeric:tabular-nums!important;
+ scroll-snap-align:center!important;scroll-snap-stop:normal!important;
 }
 html body .sv-standard-time-option.is-selected{
- background:#505053!important;color:#FFFFFF!important;font-weight:710!important;
+ background:#505053!important;color:#FFFFFF!important;font-size:18px!important;font-weight:700!important;
 }
 html body .sv-standard-picker-done{
  display:grid!important;place-items:center!important;
@@ -2126,7 +2130,7 @@ html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-picker-b
 html:root[data-theme="light"] body #svStandardPickerDialog :is(.sv-standard-picker-head h2,.sv-standard-time-preview,.sv-standard-month strong,.sv-standard-month-arrow,.sv-standard-picker-day,.sv-standard-picker-option){color:#20242a!important}
 html:root[data-theme="light"] body #svStandardPickerDialog :is(.sv-standard-time-column>small,.sv-standard-time-colon,.sv-standard-picker-week span){color:#646c77!important}
 html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-time-wheel{background:#f2f3f5!important;border-radius:15px!important}
-html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-time-option{color:#454d58!important}
+html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-time-option{color:#68717c!important}
 html:root[data-theme="light"] body #svStandardPickerDialog :is(.sv-standard-time-option.is-selected,.sv-standard-picker-day.is-selected,.sv-standard-picker-option[aria-pressed="true"]){background:#e2edf8!important;color:#235d90!important}
 html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-picker-check{color:#176ab4!important}
 html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-picker-day.is-today:not(.is-selected){outline-color:#79a9d5!important}
