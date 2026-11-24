@@ -593,10 +593,10 @@ html body #calendarPage #calendarWeekTimelineScroll{
  scrollbar-width:none!important;background:#FFF!important;
 }
 #calendarPage #calendarWeekTimelineScroll::-webkit-scrollbar{display:none!important}
-#calendarPage .cal-week-hours{position:relative!important;width:100%!important;min-height:calc(24 * var(--cal-week-hour-height,42px))!important}
+#calendarPage .cal-week-hours{position:relative!important;width:100%!important;min-height:calc(24 * var(--cal-week-hour-height,38px))!important}
 #calendarPage .cal-week-hour-row{
  position:relative!important;box-sizing:border-box!important;
- height:var(--cal-week-hour-height,42px)!important;border:0!important;
+ height:var(--cal-week-hour-height,38px)!important;border:0!important;
  border-bottom:1px solid #EAECEF!important;background:transparent!important;
 }
 #calendarPage .cal-week-hour-row::before{
@@ -1435,4 +1435,16 @@ html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-
 }
 html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
  font-size:9px!important;line-height:8px!important;
+}
+
+/* Final compact week density: preserve the precise minute scale and inset accent. */
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"]:not([data-compact-stacked="true"]) .cal-entry-copy strong{
+ font-size:12px!important;line-height:14px!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed:not([data-duration-unknown="true"]) .cal-entry-copy strong,
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"][data-compact-stacked="true"] .cal-entry-copy strong{
+ font-size:11px!important;line-height:10px!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-calendar-tone]::before{
+ top:3px!important;bottom:3px!important;
 }
