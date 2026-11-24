@@ -58,7 +58,7 @@
   }
  }
  groupedPreview.addEventListener('click',()=>title.focus({preventScroll:true}));
- title.addEventListener('focus',refreshOneField);
+ title.addEventListener('focus',()=>{refreshOneField();sizePhrase()});
  title.addEventListener('blur',()=>queueMicrotask(refreshOneField));
  const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
  const iso=(y,m,d)=>[y,String(m+1).padStart(2,'0'),String(d).padStart(2,'0')].join('-');
@@ -227,6 +227,7 @@
  window.visualViewport?.addEventListener('resize',queueKeyboardPosition);
  window.visualViewport?.addEventListener('scroll',queueKeyboardPosition);
  window.addEventListener('resize',queueKeyboardPosition);
+ window.addEventListener('resize',sizePhrase);
  dialog.addEventListener('focusin',queueKeyboardPosition);
  const isEditing=()=>document.getElementById('personalTaskDialogTitle')?.textContent?.startsWith('Изменить');
  function createText(kind,text){
@@ -282,9 +283,14 @@
   return result.charAt(0).toLocaleUpperCase('ru-RU')+result.slice(1);
  }
  function sizePhrase(){
-  if(!dialog.open)return;
-  title.style.height='auto';
-  title.style.height=Math.max(56,Math.min(128,title.scrollHeight))+'px';
+  if(!dialog.open||!title.getClientRects().length||
+   (titleCapsule?.classList.contains('is-grouped')&&!titleCapsule.classList.contains('is-editing')))return;
+  const minimum=window.matchMedia('(max-width:649px)').matches?24:56;
+  // Measure the actual wrapped text, not the textarea's default row count.
+  title.style.height='0px';
+  const measured=title.scrollHeight;
+  title.style.height=Math.max(minimum,Math.min(128,measured))+'px';
+  title.style.overflowY=measured>128?'auto':'hidden';
  }
  const wheelRowHeight=40;
  const wheelMonths=Array.from({length:12},(_,i)=>new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(2020,i,1)));
@@ -597,7 +603,7 @@
   sheet?.style.removeProperty('--sv-task-keyboard-inset');
   sheet?.classList.remove('sv-task-keyboard-visible');
   quickDateOpen=false;
-  title.style.height='';
+  title.style.height='';title.style.overflowY='';
   mainSection?.querySelectorAll('.sv-task-manual-extra-row').forEach(row=>row.remove());
   categoryOverrides.clear();categorySource='';
   form.scrollTop=0;
