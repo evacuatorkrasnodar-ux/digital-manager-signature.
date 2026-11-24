@@ -230,3 +230,14 @@ html:root[data-theme="light"] body #svTaskActionCapsule[data-has-selection="true
 html:root[data-theme="dark"] body #svTaskActionCapsule[data-has-selection="true"]{
  background:rgba(47,49,54,.97)!important;
 }
+
+/* Active bulk actions: fade and clip the reading surface above the capsule.
+   Only compositing changes. No fixed white layer, no height or scroll offset change.
+   The existing end padding still allows the final row to be read in full. */
+html:root:not(.sv-task-search-focus) body #svWorkShell[data-task-tool-mode="all"] #svAllTasksView .sv-tool-results[data-has-selection="true"]{
+ --sv-bulk-clearance:calc(max(12px,env(safe-area-inset-bottom,0px)) + 50px);
+ -webkit-mask-image:linear-gradient(to bottom,transparent,#000 16px,#000 calc(100% - var(--sv-bulk-clearance) - 16px),transparent calc(100% - var(--sv-bulk-clearance)),transparent 100%);
+ mask-image:linear-gradient(to bottom,transparent,#000 16px,#000 calc(100% - var(--sv-bulk-clearance) - 16px),transparent calc(100% - var(--sv-bulk-clearance)),transparent 100%);
+ -webkit-clip-path:inset(0 0 var(--sv-bulk-clearance) 0);
+ clip-path:inset(0 0 var(--sv-bulk-clearance) 0);
+}
