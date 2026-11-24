@@ -472,6 +472,12 @@ function mailView(){
  mailEditorExitHandler=null;
  mailContactsExitHandler=null;
  const section=shelf();section.classList.add('sv-mail-workspace');
+ // Native scroll belongs to the mail body, not the outer app.
+ const scrollPositions=new Map();
+ let scrollKey=null;
+ const syncScrollHeader=()=>page.classList.toggle('sv-mail-scrolled',body.scrollTop>2);
+ body.addEventListener('scroll',syncScrollHeader,{passive:true,signal:mailGuardListenerAbort.signal});
+
  const top=create('div','sv-mail-top-actions');
  const topButtons=create('div','sv-mail-top-buttons');
  // An account connection is a primary mailbox action, NEVER a Search filter.
@@ -1693,6 +1699,10 @@ function mailView(){
  mailListExitHandler=returnToPreviousMailList;
  function paint(){
   const contactsActive=smartContacts?.isOpen()===true;
+  const nextScrollKey=contactsActive?'contacts':mailEditorOpen?'editor:'+String(mailEditingId||'new'):mailCurrent?'detail:'+mailCurrent:'list:'+mailScope+':'+mailFolder;
+  const changedScrollKey=nextScrollKey!==scrollKey;
+  if(changedScrollKey&&scrollKey!==null)scrollPositions.set(scrollKey,body.scrollTop);
+  scrollKey=nextScrollKey;
   page.dataset.svMailMode=contactsActive?'contacts':mailEditorOpen?'editor':mailCurrent?'detail':'overview';
   if(contactsActive||mailEditorOpen||mailCurrent)clearTrashUndo();
   section.classList.toggle('sv-mail-contacts-active',contactsActive);
@@ -1766,6 +1776,8 @@ function mailView(){
   if(mailNotice&&!mailCurrent&&!mailEditorOpen)info.textContent=mailNotice;
   info.hidden=!!mailCurrent||!info.textContent;
   paintList();
+  if(changedScrollKey)body.scrollTop=scrollPositions.get(nextScrollKey)||0;
+  syncScrollHeader();
  }
  paint();
 }
