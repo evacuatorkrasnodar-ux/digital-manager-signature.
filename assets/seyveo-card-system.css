@@ -1386,3 +1386,15 @@
    letter-spacing:-.015em;white-space:nowrap;
  }
 }
+/* Approved application source glyphs retain their original 64px vector grid.
+   Use the same graphite ink as Home, including in Studio theme previews. */
+.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-mark svg.sv-app-source-icon{
+ width:34px;height:34px;stroke:currentColor;fill:none;
+}
+:root[data-theme="light"] .sv-card-system--rendered .sv-card-mark:has(.sv-app-source-icon),
+#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"] .sv-card-system--rendered .sv-card-mark:has(.sv-app-source-icon){
+ color:#24272c!important;
+}
+#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="dark"] .sv-card-system--rendered .sv-card-mark:has(.sv-app-source-icon){
+ color:#edf1f2!important;
+}
