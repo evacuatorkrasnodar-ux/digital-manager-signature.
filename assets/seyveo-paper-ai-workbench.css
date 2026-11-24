@@ -62,7 +62,7 @@ html body dialog#svPaperAskSayvi.sv-paper-ai-workbench::backdrop{
 }
 #svPaperAskSayvi .sv-pa-quick-grid button svg{
  display:block;flex:0 0 19px;width:19px;height:19px;
- fill:none;stroke:#323841;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+ fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;
 }
 #svPaperAskSayvi .sv-pa-quick-grid button span{min-width:0;line-height:16px!important;text-align:left}
 #svPaperAskSayvi .sv-pa-quick-grid button:active{
