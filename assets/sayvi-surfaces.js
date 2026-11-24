@@ -500,13 +500,11 @@ function mailView(){
  // The legacy .sv-deep-top is hidden for Mail; leaving Back outside it
  // made navigation disappear or float independently of the title.
  top.append(back,introCopy,topButtons);
- // The existing shared Back button inherits conflicting late styles on iPhone.
- // Pin the approved matte graphite face only while it belongs to Mail.
- back.style.setProperty('background','#38383A','important');
- back.style.setProperty('background-image','none','important');
- back.style.setProperty('border-radius','50%','important');
- back.style.setProperty('box-shadow','none','important');
- back.style.setProperty('color','#EEF2F4','important');
+ // Mail uses the shared navigation material. Clear obsolete inline graphite,
+ // including any inline border left by a previously opened document screen.
+ for(const property of ['background','background-image','border-radius','box-shadow','color','border']){
+  back.style.removeProperty(property);
+ }
  const searchLabel=create('div','sv-mail-search');searchLabel.id='svMailQuickSearch';
  searchLabel.append(mailIcon('search'));
  const searchInput=create('input','sv-mail-search-input');
@@ -1335,6 +1333,8 @@ function mailView(){
     row.setAttribute('aria-pressed',String(selectedMailIds.has(item.id)));
    }
    const avatar=create('span','sv-mail-avatar',item.initial);
+   let tint=0;for(const ch of String(item.from||item.initial).trim().toLocaleLowerCase('ru-RU'))tint=(tint*31+ch.codePointAt(0))>>>0;
+   avatar.style.setProperty('--sv-mail-avatar-tint',['#E9EFF5','#E9F2EF','#EEEAF4','#F3EDE6','#E8F1F4','#F1EBF0'][tint%6]);
    if(mailBulkSelecting){avatar.classList.add('sv-mail-bulk-avatar');avatar.textContent='';}
    const detail=create('span','sv-mail-letter-details');
    const senderLine=create('span','sv-mail-sender-line');
@@ -1381,6 +1381,7 @@ function mailView(){
    }
    for(const [icon,label,fn] of choices){
     const action=create('button','sv-mail-swipe-action');
+    action.dataset.mailSwipeAction=icon;
     action.type='button';action.tabIndex=-1;
     action.setAttribute('aria-label',label+': '+item.subject);
     action.append(mailIcon(icon),create('span','',label));
@@ -1610,9 +1611,8 @@ function mailView(){
   }
   if(mailFolder==='overview'){
    const recent=create('div','sv-mail-recent-head');
-   recent.append(create('h3','','Последние письма'));
-   recent.append(intent('См. все ›',()=>selectFolder('inbox')));
-   content.append(recent);drawExamples(3);return;
+   recent.append(intent('Все письма ›',()=>selectFolder('inbox')));
+   drawExamples(3);content.append(recent);return;
   }
   if(mailFolder==='drafts'){drawDrafts();return}
   if(['inbox','starred','archive','review','promotions','spam','trash'].includes(mailFolder)){drawExamples();return}

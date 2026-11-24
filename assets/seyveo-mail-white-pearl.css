@@ -1,0 +1,91 @@
+/* Mail only · shared White Pearl navigation, compact native list.
+   No global controls, account handlers, dock, message storage or chat changes. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions{
+ display:flex!important;position:relative!important;align-items:center!important;justify-content:space-between!important;
+ box-sizing:border-box!important;height:48px!important;min-height:48px!important;
+ margin:0 0 8px!important;padding:0 2px!important;gap:4px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > .sv-mail-introduction-text{
+ position:absolute!important;left:96px!important;right:96px!important;top:50%!important;
+ transform:translateY(-50%)!important;text-align:center!important;pointer-events:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-introduction-title{
+ margin:0!important;padding:0!important;font:640 17px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:-.025em!important;color:var(--sv-white-pearl-ink)!important;white-space:nowrap!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons{
+ display:flex!important;align-items:center!important;gap:4px!important;margin:0 0 0 auto!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > .sv-mail-icon-button{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;flex:0 0 44px!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;max-width:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;border-radius:50%!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;border:var(--sv-white-pearl-edge)!important;
+ color:var(--sv-white-pearl-ink)!important;box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+ transform:none!important;transition:none!important;animation:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > .sv-mail-icon-button[hidden]{display:none!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions :is(#sayviSurfaceBack,.sv-mail-icon-button) svg{
+ width:19px!important;height:19px!important;stroke:currentColor!important;stroke-width:1.55!important;fill:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-accounts{
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:28px!important;
+ align-items:center!important;align-content:center!important;height:38px!important;min-height:38px!important;max-height:38px!important;
+ gap:0!important;padding:4px!important;margin:0 0 7px!important;border-radius:999px!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-account-switch{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ height:28px!important;min-height:28px!important;max-height:28px!important;padding:0 2px!important;margin:0!important;
+ background:transparent!important;border:1px solid transparent!important;border-radius:999px!important;
+ color:var(--sv-white-pearl-segment-ink)!important;box-shadow:none!important;
+ font:530 12.5px/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ transform:none!important;transition:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-account-switch[aria-pressed="true"]{
+ background:var(--sv-white-pearl-selected)!important;border:1px solid rgba(255,255,255,.99)!important;
+ color:#1A2028!important;font-weight:640!important;box-shadow:var(--sv-white-pearl-selected-shadow)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-accounts[hidden]{display:none!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt{
+ min-height:54px!important;height:auto!important;margin:5px 0 7px!important;padding:6px 11px!important;
+ border:var(--sv-white-pearl-edge)!important;border-radius:16px!important;
+ background:var(--sv-white-pearl-surface)!important;color:var(--sv-white-pearl-ink)!important;
+ box-shadow:none!important;transform:none!important;transition:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt[hidden]{display:none!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt > .sv-connect-prompt-icon{
+ background:transparent!important;color:#53616E!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-title{color:#20262D!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-caption{color:#66707B!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-arrow svg{stroke:#637080!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-toolbar{gap:4px!important;margin:2px 0 7px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder{min-height:53px!important;padding:5px 1px 7px!important;gap:5px!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder-count{background:#0A84FF!important;color:#fff!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-recent-head{
+ justify-content:flex-end!important;margin:2px 0 0!important;min-height:0!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-recent-head .sv-deep-intent{
+ color:#0075DF!important;font-size:12px!important;min-height:36px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell > .sv-mail-letter{
+ min-height:66px!important;padding:8px 3px!important;gap:9px!important;background:#fff!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter .sv-mail-avatar:not(.sv-mail-bulk-avatar){
+ flex:0 0 36px!important;width:36px!important;height:36px!important;
+ background:var(--sv-mail-avatar-tint,#E9EFF5)!important;color:#374C60!important;
+ border:0!important;border-radius:50%!important;box-shadow:none!important;font-weight:600!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-sender{font-size:14px!important;font-weight:620!important;color:#17191D!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-subject{font-size:12.5px!important;font-weight:570!important;color:#252930!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-preview{font-size:11.5px!important;color:#68717C!important;line-height:1.3!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-unread-dot{background:#0A84FF!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action{background:#8A929C!important;color:#fff!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action[data-mail-swipe-action="trash"]{background:#E34B45!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action[data-mail-swipe-action="shield"],
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action[data-mail-swipe-action="restore"]{background:#087AC7!important}
