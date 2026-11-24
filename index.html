@@ -2958,13 +2958,18 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </div>
 </form></dialog>
 <dialog id="noteReadDialog" class="notes-dialog note-read-dialog" aria-labelledby="noteReadTitle">
-<button id="noteReadBack" type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Вернуться к записям"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
-<div class="note-read-head"><h2 id="noteReadTitle">Моя запись</h2><small id="noteReadDate"></small></div>
-<div id="noteReadContent" class="note-read-content" tabindex="0" aria-label="Полный текст сохранённой записи"></div>
+<header class="sv-note-reader-header">
+ <button id="noteReadBack" class="sv-note-reader-circle" type="button" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
+ <h2 id="noteReadTitle">Моя запись</h2>
+ <button id="noteReadEdit" class="sv-note-reader-circle" type="button" aria-label="Редактировать заметку" title="Изменить"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/></svg></button>
+</header>
+<div id="noteReadScroll" class="sv-note-reader-scroll">
+ <div class="note-read-head"><h3 id="noteReadName" hidden></h3><small id="noteReadDate"></small></div>
+ <div id="noteReadContent" class="note-read-content" tabindex="0" aria-label="Текст сохранённой записи"></div>
 <details id="noteSmartInsight" class="note-smart-insight" hidden>
-<summary><span class="note-smart-symbol sv-sayvi-symbol" aria-hidden="true"></span><span id="noteSmartHeading">SEYVEO заметил возможное действие</span><span class="note-smart-chevron" aria-hidden="true">⌄</span></summary>
+<summary><img class="note-smart-symbol" src="assets/seyveo-sayvi-user-upload.svg?v=3" alt=""><span id="noteSmartHeading">Сэйви предлагает создать дело</span><span class="note-smart-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></summary>
 <div class="note-smart-body">
- <div id="noteSmartSingle"><p id="noteSmartDescription"></p><small>Это предположение по тексту. Ничего не создаётся без вашего подтверждения.</small>
+ <div id="noteSmartSingle"><p id="noteSmartDescription"></p><small>Ничего не создаётся без твоего подтверждения.</small>
   <div class="note-smart-actions"><button id="noteSmartTask" type="button">Подготовить дело</button><button id="noteSmartEvent" type="button">В календарь</button></div>
  </div>
  <div id="noteSmartPlan" hidden><p>Проверьте предполагаемые дела. Снимите галочки с лишних.</p><div id="noteSmartPlanList" class="note-smart-plan-list"></div>
@@ -2973,7 +2978,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  </div>
 </div>
 </details>
-<div class="note-read-actions"><button id="noteReadEdit" class="btn" type="button">Изменить</button><button id="noteReadDone" class="btn primary" type="button">Готово</button></div>
+</div>
 </dialog>
 
 <dialog id="notePaperDialog" class="notes-dialog paper-editor-dialog sv-paper-studio" aria-labelledby="notePaperTitle">
@@ -4660,7 +4665,7 @@ function openNoteRead(note,options=null){
  noteActionDraft=note.preserveLines||noteTaskPlan?null:window.SEYVEO_NOTE_ACTION_HINT?.(note.text)||null;
  const insight=$('noteSmartInsight');
  insight.hidden=!noteActionDraft&&!noteTaskPlan;insight.open=false;
- $('noteSmartHeading').textContent=noteTaskPlan?'SEYVEO заметил несколько дел':'SEYVEO заметил возможное действие';
+ $('noteSmartHeading').textContent=noteTaskPlan?'Сэйви предлагает создать дела':noteActionDraft?.type==='event'?'Сэйви предлагает добавить встречу':'Сэйви предлагает создать дело';
  $('noteSmartSingle').hidden=Boolean(noteTaskPlan);
  $('noteSmartPlan').hidden=!noteTaskPlan;
  if(noteTaskPlan)renderNotePlan(noteTaskPlan.items);
@@ -4670,7 +4675,16 @@ function openNoteRead(note,options=null){
   $('noteSmartDescription').textContent=(type==='event'?'В записи может быть встреча':'В записи может быть дело')+when+'.';
   $('noteSmartEvent').hidden=type!=='event'&&!noteActionDraft.date;
  }
- $('noteReadContent').textContent=note.text;
+ const savedText=String(note.text||'');
+ const readerName=$('noteReadName');
+ const separator=savedText.indexOf('\n\n');
+ // Only separate a conventional first-line title. Poems and unstructured
+ // notes retain every line; the stored text is never changed.
+ const candidate=separator>0?savedText.slice(0,separator):'';
+ const hasTitle=!note.preserveLines&&candidate.trim().length>0&&candidate.trim().length<=120&&!candidate.includes('\n');
+ readerName.textContent=hasTitle?candidate.trim():'';
+ readerName.hidden=!hasTitle;
+ $('noteReadContent').textContent=hasTitle?savedText.slice(separator+2):savedText;
  const safeRich=window.SEYVEO_NOTE_RICH?.safeHTML?.(note.richHtml||'')||'';
  if(safeRich){
   const body=note.text.includes('\n\n')?note.text.slice(note.text.indexOf('\n\n')+2):note.text;
@@ -4678,14 +4692,15 @@ function openNoteRead(note,options=null){
   // for search and sharing. Only show HTML if its text still matches.
   const probe=document.createElement('div');probe.innerHTML=safeRich;
   const normalized=value=>String(value).replace(/\s+/g,' ').trim();
-  if(normalized(probe.textContent)===normalized(body)){
+  if(normalized(probe.textContent)===normalized(body)&&(!note.text.includes('\n\n')||hasTitle)){
    $('noteReadContent').innerHTML=safeRich;
    $('noteReadContent').classList.add('sv-note-has-rich');
   }else $('noteReadContent').classList.remove('sv-note-has-rich');
  }else $('noteReadContent').classList.remove('sv-note-has-rich');
  $('noteReadContent').dataset.preserveLines=note.preserveLines?'true':'false';
  const stamp=new Date(note.updatedAt||note.createdAt);
- $('noteReadDate').textContent=Number.isNaN(stamp.getTime())?'':stamp.toLocaleString('ru-RU');
+ $('noteReadDate').textContent=Number.isNaN(stamp.getTime())?'':new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(stamp);
+ $('noteReadScroll').scrollTop=0;
  $('noteReadContent').scrollTop=0;
  if(!dlg.open)dlg.showModal();
 }
@@ -4693,7 +4708,6 @@ function closeNoteRead(){
  if($('noteReadDialog').open)$('noteReadDialog').close();
 }
 $('noteReadBack').addEventListener('click',closeNoteRead);
-$('noteReadDone').addEventListener('click',closeNoteRead);
 function prepareNoteAction(action){
  const draft=noteActionDraft;
  if(!draft)return;
