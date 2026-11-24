@@ -12,7 +12,7 @@
  height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:0!important;
- background:#202124!important;color:#e9edf2!important;
+ background:#212121!important;color:#e9edf2!important;
  box-shadow:none!important;transform:none!important;overflow:hidden!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  overscroll-behavior:contain;
@@ -102,24 +102,24 @@
  flex:1 1 auto!important;display:flex!important;align-items:center!important;justify-content:center!important;
  width:100%!important;min-width:0!important;min-height:0!important;
  overflow:hidden!important;margin:0!important;padding:0 5px!important;
- background:#202124!important;touch-action:pan-x pan-y!important;
+ background:#212121!important;touch-action:pan-x pan-y!important;
 }
 #notePaperDialog .sv-paper-stage .paper-sheet{
  box-sizing:border-box!important;display:block!important;position:relative!important;
  flex:0 0 auto!important;max-width:100%!important;max-height:100%!important;
  margin:0!important;padding:0!important;
- background:#202124!important;border:0!important;border-radius:0!important;
+ background:#212121!important;border:0!important;border-radius:0!important;
  box-shadow:none!important;overflow:hidden!important;
 }
 #notePaperDialog .sv-paper-stage .paper-sheet[data-ink-background="light"]{
  background:#fff!important;
 }
 #notePaperDialog .sv-paper-stage .paper-sheet[data-pattern="lines"][data-ink-background="dark"]{
- background-color:#202124!important;
+ background-color:#212121!important;
  background-image:repeating-linear-gradient(0deg,transparent 0 28px,rgba(222,231,242,.085) 29px,transparent 30px)!important;
 }
 #notePaperDialog .sv-paper-stage .paper-sheet[data-pattern="dots"][data-ink-background="dark"]{
- background-color:#202124!important;
+ background-color:#212121!important;
  background-image:radial-gradient(circle,rgba(225,236,244,.10) .85px,transparent 1px)!important;
  background-size:20px 20px!important;
 }
@@ -140,7 +140,7 @@
  min-height:calc(72px + env(safe-area-inset-bottom,0px))!important;
  margin:0!important;
  padding:7px max(9px,env(safe-area-inset-right,0px)) calc(9px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))!important;
- border:0!important;background:#202124!important;
+ border:0!important;background:#212121!important;
 }
 #notePaperDialog .sv-paper-palette{
  box-sizing:border-box!important;flex:1 1 auto!important;min-width:0!important;
@@ -196,7 +196,7 @@
 #notePaperDialog .sv-paper-swatches > button[aria-pressed="true"]::before{
  width:25px!important;height:25px!important;
  outline:2px solid #f7f9fc!important;outline-offset:2px!important;
- box-shadow:0 0 0 1px rgba(32,33,36,.85) inset!important;
+ box-shadow:0 0 0 1px rgba(33,33,33,.85) inset!important;
 }
 #notePaperDialog .sv-paper-save{
  box-sizing:border-box!important;flex:0 0 47px!important;
@@ -517,7 +517,7 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-stage{
  margin:0!important;padding:0!important;
  aspect-ratio:auto!important;
  border:0!important;border-radius:0!important;
- background:#202124!important;box-shadow:none!important;
+ background:#212121!important;box-shadow:none!important;
  overflow:hidden!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperSheet > #notePaperCanvas{
