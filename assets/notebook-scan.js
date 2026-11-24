@@ -37,6 +37,7 @@ const shareIcon='<path d="M12 15V3m-4 4 4-4 4 4M7 9H4v12h16V9h-3"/>';
 
 
 const menuShare=menuButton('Поделиться',shareIcon);
+const menuInternal=menuButton('В SEYVEO','<path d="M20 11.5a8 8 0 0 1-8 8H5l1.5-4A8 8 0 1 1 20 11.5Z"/>');
 const menuPrint=menuButton('Печать','<path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-4a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v4a2 2 0 0 1-2 2h-2M7 14h10v7H7zM17 11h1"/>');
 
 const menuBack=menuButton('Назад',arrowIcon);
@@ -45,7 +46,7 @@ const outPdf=menuButton('PDF',docIcon);
 const outJpeg=menuButton('Фото (JPEG)',imageIcon);
 const outTxt=menuButton('Текст (TXT)',docIcon);
 const outTextPDF=menuButton('PDF',docIcon);
-const groups={root:[menuShare,menuPrint],share:[menuBack,outTextPDF,outPdf,outWord,outJpeg,outTxt]};
+const groups={root:[menuShare,menuInternal,menuPrint],share:[menuBack,outTextPDF,outPdf,outWord,outJpeg,outTxt]};
 for(const node of [...groups.root,...groups.share])menu.append(node);
 const prepared=document.createElement('div');prepared.id='svScanPrepared';prepared.className='sv-menu-surface';prepared.hidden=true;
 const preparedName=document.createElement('strong');const preparedAction=document.createElement('button');preparedAction.type='button';
@@ -67,10 +68,14 @@ const mailChoice=destination('Почта',mailIcon,()=>sendDraft('mail'));
 const roomList=document.createElement('div');roomList.id='svScanShareRooms';roomList.hidden=true;
 const backRooms=destination('Назад',arrowIcon,()=>showShareDestinations());
 preparedDestinations.append(workChoice,familyChoice,mailChoice);
-prepared.append(preparedName,preparedDestinations,roomList,preparedAction,preparedDownload,preparedArchive,preparedCancel);dialog.append(prepared);
+const preparedFormats=document.createElement('button');preparedFormats.type='button';preparedFormats.textContent='Другой формат';
+preparedFormats.addEventListener('click',event=>{
+ event.stopPropagation();clearPrepared();page('share');menu.hidden=false;more.setAttribute('aria-expanded','true');
+});
+prepared.append(preparedName,preparedAction,preparedDestinations,roomList,preparedDownload,preparedArchive,preparedFormats,preparedCancel);dialog.append(prepared);
 function showShareDestinations(){
  roomList.hidden=true;roomList.replaceChildren();
- preparedDestinations.hidden=false;preparedDownload.hidden=false;preparedArchive.hidden=false;
+ preparedDestinations.hidden=false;preparedDownload.hidden=false;preparedArchive.hidden=false;preparedFormats.hidden=false;
  let nativeShare=false;try{nativeShare=!!(preparedFile&&navigator.share&&navigator.canShare?.({files:[preparedFile]}));}catch{}
  preparedAction.hidden=!nativeShare;
  workChoice.hidden=!window.SEYVEO_BUSINESS_COMMAND?.prepareSharedFile||!(window.SEYVEO_BUSINESS_COMMAND.listRooms?.()||[]).some(r=>r.id!=='dm-sayvi');
@@ -87,7 +92,7 @@ function chooseWorkRoom(){
   choice.querySelector('span').textContent=room.label;
   roomList.append(choice);
  }
- preparedDestinations.hidden=true;preparedAction.hidden=true;preparedDownload.hidden=true;preparedArchive.hidden=true;roomList.hidden=false;backRooms.focus({preventScroll:true});
+ preparedDestinations.hidden=true;preparedAction.hidden=true;preparedDownload.hidden=true;preparedArchive.hidden=true;preparedFormats.hidden=true;roomList.hidden=false;backRooms.focus({preventScroll:true});
 }
 async function sendDraft(target,room){
  if(!preparedFile||exportBusy)return;
@@ -147,14 +152,89 @@ async function sourceCanvas(withMarks=false){
 function canvasJpeg(canvas){
  return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(Error('Не удалось подготовить фото.')),'image/jpeg',.92));
 }
-function showPrepared(blob,extension,share){
- clearPrepared();preparedFile=new File([blob],fileBase()+'.'+extension,{type:blob.type});
- preparedName.textContent=preparedFile.name;
- let canShare=false;try{canShare=!!(navigator.share&&navigator.canShare?.({files:[preparedFile]}));}catch{}
- preparedAction.hidden=!canShare;preparedAction.textContent='Другие приложения';preparedAction.dataset.share='true';
+function canShareFile(file){
+ try{return !!(file&&navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]})));}catch{return false;}
+}
+function showPreparedFile(file,preferNative=false){
+ clearPrepared();preparedFile=file;preparedName.textContent=file.name;
  showShareDestinations();
- prepared.hidden=false;(Array.from(preparedDestinations.children).find(n=>!n.hidden)|| (preparedAction.hidden?preparedDownload:preparedAction)).focus({preventScroll:true});
+ preparedAction.hidden=!canShareFile(file);
+ preparedAction.textContent=preferNative?'Поделиться':'Другие приложения';preparedAction.dataset.share='true';
+ prepared.hidden=false;
+ const first=Array.from(preparedDestinations.children).find(n=>!n.hidden);
+ (preferNative&&!preparedAction.hidden?preparedAction:first||(preparedAction.hidden?preparedDownload:preparedAction)).focus({preventScroll:true});
  message('');
+}
+function showPrepared(blob,extension,share){
+ showPreparedFile(new File([blob],fileBase()+'.'+extension,{type:blob.type}));
+}
+// Prebuild the default PDF before the user taps Share. Safari requires a
+// fresh user gesture for its native share sheet, not a delayed synthetic click.
+let shareCache=null,nativeSharing=false;
+function shareSnapshot(){
+ return {file:selected,note:savedScan,text:text.value,title:fileBase(),isText:dialog.hasAttribute('data-scan-reading-text')};
+}
+function sameShare(a,b){
+ return !!a&&a.file===b.file&&a.note===b.note&&a.text===b.text&&a.title===b.title&&a.isText===b.isText;
+}
+function textShareBlob(snapshot){
+ if(snapshot.isText&&snapshot.text.trim()&&window.SEYVEO_DOCS_STUDIO?.textPdf)
+  return window.SEYVEO_DOCS_STUDIO.textPdf(snapshot.text);
+ return null;
+}
+function warmSharePDF(){
+ if(!selected||!dialog.open||running||editingScanText)return null;
+ const snapshot=shareSnapshot();
+ if(sameShare(shareCache?.snapshot,snapshot))return shareCache;
+ const entry={snapshot,file:null,promise:null};shareCache=entry;
+ entry.promise=(async()=>{
+  const blob=textShareBlob(snapshot);
+  if(blob)return new File([blob],snapshot.title+'.pdf',{type:'application/pdf'});
+  const canvas=await sourceCanvas(true),jpeg=await canvasJpeg(canvas);
+  const pdf=window.SEYVEO_DOCS_EXPORT?.pdfFromJpegs?.([{width:canvas.width,height:canvas.height,jpegBytes:new Uint8Array(await jpeg.arrayBuffer())}]);
+  if(!pdf)throw Error('Экспорт PDF недоступен.');
+  return new File([pdf],snapshot.title+'.pdf',{type:'application/pdf'});
+ })().then(file=>{entry.file=file;return file;}).catch(()=>{if(shareCache===entry)shareCache=null;return null;});
+ return entry;
+}
+function nativeShareFile(file){
+ if(!canShareFile(file)||nativeSharing)return false;
+ const snapshot=shareSnapshot();
+ const fallback=error=>{
+  if(error?.name==='AbortError')return;
+  if(dialog.open&&sameShare(snapshot,shareSnapshot())){
+   showPreparedFile(file,true);
+   message('Нажмите «Поделиться» или сохраните файл.');
+  }
+ };
+ nativeSharing=true;
+ try{
+  Promise.resolve(navigator.share({files:[file]})).catch(fallback).finally(()=>{nativeSharing=false;});
+ }catch(error){nativeSharing=false;fallback(error);}
+ return true;
+}
+function shareDocument(useNative=true){
+ if(!selected||running||exportBusy||nativeSharing)return;
+ closeMenu(true);clearPrepared();
+ const snapshot=shareSnapshot();
+ let entry=sameShare(shareCache?.snapshot,snapshot)?shareCache:null;
+ // A text PDF can be created synchronously in the same click handler.
+ if(!entry?.file){
+  try{const blob=textShareBlob(snapshot);if(blob){entry={snapshot,file:new File([blob],snapshot.title+'.pdf',{type:'application/pdf'})};shareCache=entry;}}catch{}
+ }
+ if(entry?.file){
+  if(!useNative||!nativeShareFile(entry.file))showPreparedFile(entry.file,useNative);
+  return;
+ }
+ entry=entry||warmSharePDF();
+ if(!entry?.promise){message('Не удалось подготовить PDF.');return;}
+ exportBusy=true;syncMenu();message('Подготавливаю PDF…');
+ entry.promise.then(file=>{
+  if(!dialog.open||!sameShare(snapshot,shareSnapshot()))return;
+  if(!file){message('Не удалось подготовить PDF.');return;}
+  if(useNative&&(!navigator.userActivation||navigator.userActivation.isActive)&&nativeShareFile(file))return;
+  showPreparedFile(file,useNative);
+ }).finally(()=>{exportBusy=false;syncMenu();});
 }
 function downloadPrepared(){
  if(!preparedFile)return;
@@ -164,9 +244,7 @@ function downloadPrepared(){
 }
 preparedAction.addEventListener('click',()=>{
  if(!preparedFile)return;
- if(preparedAction.dataset.share==='true'&&navigator.share&&navigator.canShare?.({files:[preparedFile]})){
-  navigator.share({files:[preparedFile]}).catch(e=>{if(e?.name!=='AbortError')message('Не удалось открыть отправку. Можно скачать файл.');});
- }else downloadPrepared();
+ if(!nativeShareFile(preparedFile))downloadPrepared();
 });
 preparedCancel.addEventListener('click',clearPrepared);
 function handoffToDocs(payload){
@@ -259,7 +337,8 @@ textExport.addEventListener('click',()=>{
 menuBack.addEventListener('click',()=>page('root'));
 
 
-menuShare.addEventListener('click',()=>page('share'));
+menuShare.addEventListener('click',()=>shareDocument(true));
+menuInternal.addEventListener('click',()=>shareDocument(false));
 menuPrint.addEventListener('click',()=>void printScan());
 for(const [node,format] of [[outWord,'docx'],[outPdf,'pdf'],[outTextPDF,'textpdf'],[outJpeg,'jpg'],[outTxt,'txt']])node.addEventListener('click',()=>{const share=menuPage==='share';const withMarks=format==='pdf'&&(savedScan?.paper?.strokes?.length||savedScan?.paper?.texts?.length);void prepareFormat(withMarks?'annotated':format,share);});
 dialog.append(more,menu);
@@ -311,6 +390,8 @@ more.addEventListener('click',()=>{
  if(!menu.hidden){closeMenu(true);return;}
  clearPrepared();page('root');if(more.hidden)return;
  menu.hidden=false;more.setAttribute('aria-expanded','true');
+ // The user has not yet tapped Share; prepare a fresh file now.
+ void warmSharePDF();
  (menu.querySelector('button:not([hidden]):not(:disabled)')||more).focus({preventScroll:true});
 });
 dialog.addEventListener('click',event=>{
@@ -402,7 +483,7 @@ window.SEYVEO_SCANNER_FORMAT=Object.freeze({cleanPhoneHeader,textInOriginalLines
 function message(s){status.textContent=s||''}
 function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}if(markPreviewURL){URL.revokeObjectURL(markPreviewURL);markPreviewURL=''}}
 function reset(){
- clearPrepared();outputIntent='';editingScanText=false;pendingScanEdit=false;delete dialog.dataset.editScanText;savedScan=null;knownScanText=null;editStartText='';showDocument(false);delete dialog.dataset.savedScan;$('noteScanTitle').textContent='Сканировать';
+ shareCache=null;clearPrepared();outputIntent='';editingScanText=false;pendingScanEdit=false;delete dialog.dataset.editScanText;savedScan=null;knownScanText=null;editStartText='';showDocument(false);delete dialog.dataset.savedScan;$('noteScanTitle').textContent='Сканировать';
  selected=null;autoReadExisting=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
  if(consentBox)consentBox.hidden=true;
  text.value='';text.wrap='soft';button.disabled=true;
@@ -668,7 +749,7 @@ dialog.addEventListener('close',()=>{
 });
 window.SEYVEO_NOTE_SCANNER=Object.freeze({open,openSaved,scanIntoNote,refreshSaved:(note,position)=>{
  if(!dialog.open||savedScan?.id!==note?.id)return false;
- savedScan=note;showDocument(true);syncActions();message('');
+ savedScan=note;shareCache=null;showDocument(true);syncActions();message('');
  const surface=formattedRead.hidden?text:formattedRead;
  if(Number.isFinite(position))surface.scrollTop=position;
  return true;
