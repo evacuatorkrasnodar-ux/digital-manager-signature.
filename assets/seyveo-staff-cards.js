@@ -291,7 +291,8 @@ function paintStaffAvatar(node,p){
  if(local||personal){const img=el('img');img.src=local||personal;img.alt='';node.append(img);return}
  const custom=saved?.kind==='atlas'&&saved.customChosen===true&&Number.isInteger(saved.index)&&saved.index>=0&&saved.index<84;
  const index=custom?saved.index:staffArt[p.id];
- if(window.SEYVEO_SAYVI_HOLIDAY?.paint(node,index)||window.SEYVEO_AVATAR_ART?.paint(node,index))return;
+ if(window.SEYVEO_SAYVI_HOLIDAY?.paint(node,index))return;
+ if(window.SEYVEO_AVATAR_ART?.paint(node,index,{relaxedFit:true})){node.style.backgroundColor='transparent';return;}
  if(custom){node.textContent=p.name.trim()[0]||'•';return}
  const img=el('img');img.src=portrait(p);img.alt='';node.append(img);
 }
