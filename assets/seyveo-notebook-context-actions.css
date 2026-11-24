@@ -25,36 +25,16 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
  :is(button#noteReviewBack.sv-note-back-arrow,button#svNoteDone.sv-note-nav-circle)::after{
  content:none!important;display:none!important;
 }
-/* Back is a navigation control, not a pressable toggle. Its white/dark
-   resting material remains unchanged while the user touches it. */
+/* Done uses the same stationary blue confirmation as New Task. */
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- button#svNoteDone.sv-note-nav-circle:active{
- background:#c69c09!important;
- box-shadow:inset 0 2.3px 3.3px rgba(78,54,8,.27),inset 0 -1px 1px rgba(255,255,255,.22),0 2px 7px rgba(91,69,18,.12)!important;
- transform:scale(var(--sv-white-pearl-press-scale,.992))!important;
-}
-/* GOLD is a solid tinted button. Reuse Pearl's 44px geometry and .992
-   press motion but NOT the WHITE optical ring; it looked like a double halo. */
-html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- button#svNoteDone.sv-note-nav-circle{
- --sv-note-gold-edge:.75px solid rgba(118,87,9,.16);
- /* Same optical elevation as White Pearl circles: wide soft lift,
-    defined contact shadow and one hairline. Warm, never blue or grey fill. */
- --sv-note-gold-shadow:
-   0 11px 27px rgba(67,55,37,.145),
-   0 3px 9px rgba(65,52,31,.11),
-   0 0 0 .4px rgba(122,92,24,.15),
-   inset 0 1px 1px rgba(255,255,255,.16),
-   inset 0 -1px 1px rgba(96,68,6,.10);
- border:var(--sv-note-gold-edge)!important;
+ button#svNoteDone.sv-note-nav-circle,
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ button#svNoteDone.sv-note-nav-circle:is(:hover,:active){
+ border:.75px solid rgba(20,97,173,.18)!important;
+ background:#237bd3!important;color:#fff!important;
+ box-shadow:0 2px 6px rgba(32,92,155,.13)!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- button#svNoteDone.sv-note-nav-circle:active{
- border:var(--sv-note-gold-edge)!important;
- background:#c69c09!important;
- box-shadow:inset 0 1.8px 2.7px rgba(72,51,9,.23),
-   inset 0 -1px 1px rgba(255,255,255,.15),0 1px 2px rgba(98,72,10,.07)!important;
+ transform:none!important;transition:none!important;
 }
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  :is(button#noteReviewBack,button#svNoteDone):focus-visible{
@@ -70,12 +50,7 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
  backdrop-filter:var(--sv-white-pearl-blur)!important;
 }
-html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- button#svNoteDone.sv-note-nav-circle:not(:active){
- border:var(--sv-note-gold-edge)!important;
- background:#c69c09!important;
- box-shadow:var(--sv-note-gold-shadow)!important;
-}
+
 
 /* Aa opens three icon-only text actions in a true tiny capsule above the
    bottom dock: Undo · Copy · Clear typed text. No top-right dropdown. */
