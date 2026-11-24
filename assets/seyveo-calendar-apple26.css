@@ -1404,3 +1404,12 @@ html:root[data-theme="dark"] body #calendarPage #calendarWeekSelectedDay{
 html:root[data-theme="dark"] body #calendarPage #calendarWeekTimeline .cal-week-hour-label{
  color:#B0B6C0!important;
 }
+
+/* Parallel compact events: keep the full card width available for the title. */
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"][data-compact-stacked="true"]{
+ flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+ gap:0!important;padding:2px 7px 2px 12px!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-duration-unknown="true"][data-compact-stacked="true"] .cal-entry-copy{
+ flex:none!important;width:100%!important;
+}
