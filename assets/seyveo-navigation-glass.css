@@ -197,3 +197,12 @@ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-ac
  html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="wallet"] > dialog#seyveoPayDialog[open]{padding-top:0!important;scroll-padding-top:0!important}
  html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="wallet"].sv-wallet-under-scroll > #svWorkTabs:not([hidden])::after{content:none!important;display:none!important}
 }
+
+
+/* Wallet selected segment only: a lighter white face, same rim and typography. */
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="wallet"] > #svWorkTabs:not([hidden]) > button[data-sv-work-tab="wallet"][aria-pressed="true"]:not([hidden]){
+ background:rgba(255,255,255,.65)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="wallet"] > #svWorkTabs:not([hidden]) > button[data-sv-work-tab="wallet"][aria-pressed="true"]:not([hidden]){background:#fff!important}
+}
