@@ -250,8 +250,6 @@ function draw(){
   safeArea.append(storeActions,picker);
   host.append(safeArea);
  }
- // One visible gateway on BOTH Personal and Business, not buried at page bottom.
- host.append(connectionsEntry());
  const feedback=el('p','sv-doc-selection-status');
  feedback.setAttribute('role','status');
  if(selected&&!stored[area])feedback.textContent='Выбран «'+selected.name+'». Откройте архив и подтвердите сохранение.';
@@ -260,7 +258,7 @@ function draw(){
  // vault metadata only while the password-protected vault is unlocked.
  const shelf=el('div','sv-doc-shelf-slot');
  host.append(shelf);
- window.SEYVEO_DOCUMENT_SHELF?.mount?.(shelf,{
+ const shelfReady=window.SEYVEO_DOCUMENT_SHELF?.mount?.(shelf,{
   area,
   getSelected:()=>stored[area]?null:files[area],
   onPick:type=>openPicker(type),
@@ -275,12 +273,15 @@ function draw(){
    files[area]=file;stored[area]=!!fromVault;
    showPreview=true;archiveExpanded=!!fromVault;draw();
   }
- });
+ })===true;
+ // Document folders precede connection settings on both areas.
+ host.append(connectionsEntry());
 
  const archive=el('details','sv-doc-vault-shell');
+ if(shelfReady)archive.classList.add('sv-doc-vault-folder-entry');
  const summary=el('summary','sv-doc-vault-summary');
  const archiveTitle=el('span','sv-doc-vault-copy');
- archiveTitle.append(el('span','sv-doc-vault-title',area==='personal'?'Мой архив':'Архив компании'),
+ archiveTitle.append(el('span','sv-doc-vault-title',area==='personal'?'Архив':'Архив компании'),
   el('small','','Локальное шифрование · пароль'));
  summary.append(makeIcon('lock'),archiveTitle);
  const contents=el('div','sv-doc-vault');
