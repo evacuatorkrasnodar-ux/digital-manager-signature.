@@ -459,3 +459,21 @@ html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-more-options .svd
 
 /* An external-open fallback must not occupy a row when the preview is usable. */
 html:root body .svdv-more-options > .svdv-link[hidden]{display:none!important;}
+
+/* One document screen: the original action capsule is replaced, never stacked. */
+html:root body .svdv-viewer .svdv-toolbar[hidden],html:root body .svdv-inline-done[hidden]{display:none!important;}
+html:root body .svdv-bottom-sheet .svdv-sheet-top{grid-template-columns:44px minmax(0,1fr) 44px!important;}
+html:root body .svdv-inline-done{display:grid;place-items:center;width:44px;height:44px;border:0;background:transparent;color:#176ab4;border-radius:50%;}
+html:root body .svdv-inline-done .svdv-icon{width:23px;height:23px;}
+html:root body .svdv-viewer .svdv-inline-editing{display:flex!important;flex-direction:column!important;min-height:0!important;}
+html:root body .svdv-inline-text{display:block;flex:1;box-sizing:border-box;width:100%;min-height:240px;max-width:100%;padding:16px;border:0;outline:0;resize:none;background:transparent;color:#20262d;font:400 16px/1.6 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;overflow:auto;white-space:pre-wrap;}
+html:root body .svdv-inline-rail{box-sizing:border-box;display:flex;flex:none;align-items:center;gap:2px;min-height:50px;width:100%;max-width:404px;margin:0 auto;padding:3px 5px;border:var(--sv-editor-rail-border,1px solid #e8eaed);border-radius:999px;background:var(--sv-editor-rail-bg,#f5f5f7);box-shadow:var(--sv-editor-rail-shadow,none);overflow-x:auto;scrollbar-width:none;}
+html:root body .svdv-inline-rail>button,html:root body .svdv-inline-rail>select{flex:0 0 auto;min-width:44px;height:44px;padding:0 5px;border:0;border-radius:22px;background:transparent;color:#20262d;font:500 12px/1 system-ui;box-shadow:none;}
+html:root body .svdv-inline-rail>button{display:grid;place-items:center;width:44px;}
+html:root body .svdv-inline-rail>button:disabled{opacity:.35;}
+html:root body .svdv-inline-rail>button>svg{width:20px;height:20px;}
+html:root body .svdv-inline-rail .sv-smart-aa{font:600 20px/1 system-ui;}
+html:root body .svdv-inline-rail .sv-smart-sayvi-icon{display:block;width:26px;height:26px;background:var(--sv-sayvi-mark-image,url("./seyveo-sayvi-user-upload.svg?v=3")) center/contain no-repeat;}
+html:root body .svdv-bottom-sheet.sv-editor-keyboard-open{bottom:var(--sv-editor-keyboard,0px)!important;height:var(--sv-editor-visible-height,100%)!important;max-height:var(--sv-editor-visible-height,100%)!important;transition:none!important;}
+html:root body .svdv-bottom-sheet.sv-editor-keyboard-open .svdv-inline-text{min-height:0;}
+html:root body .svdv-bottom-sheet .svdv-text{white-space:pre-wrap!important;overflow-wrap:anywhere!important;}
