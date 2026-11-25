@@ -403,6 +403,7 @@ const mailIcons=Object.freeze({
  sent:'<path d="m22 2-7 20-4-9-9-4 20-7ZM22 2 11 13"/>',
  drafts:'<path d="M7 3h8l5 5v13H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z"/><path d="M14 3v6h6M8 14h8M8 18h6"/>',
  starred:'<path d="m12 2 3 6.4 7 .9-5.1 5 .9 7-5.8-3.2-5.8 3.2.9-7-5.1-5 7-.9L12 2Z"/>',
+ closeAttachment:'<path d="m7 7 10 10M17 7 7 17"/>',
  trash:'<path d="M3 6h18M8 6V4h8v2m3 0-1 15H6L5 6M10 10v7m4-7v7"/>',
  spam:'<path d="M8 3h8l5 5v8l-5 5H8l-5-5V8Z"/><path d="M12 7v7m0 3v.1"/>',
  shieldBlock:'<path d="M12 2 20 6v5c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V6Z"/><path d="m9 9 6 6m0-6-6 6"/>',
@@ -1091,7 +1092,7 @@ function mailView(){
   const showFile=async entry=>{
    const file=await readMailAttachment(draftId,entry.id);
    if(!file){status.textContent='Файл больше не доступен на устройстве. Прикрепите его снова.';return}
-   if(/\.(pdf|docx|txt|md|png|jpe?g|webp)$/i.test(entry.name)&&window.SEYVEO_DOCS_VIEWER?.open?.(file))return;
+   if(window.SEYVEO_DOCS_VIEWER?.open?.(file))return;
    filePreviewTitle.textContent=entry.name;
    filePreviewContent.replaceChildren();
    const extension=entry.name.split('.').pop().toLowerCase();
@@ -1139,7 +1140,7 @@ function mailView(){
     meta.append(name,create('small','sv-mail-attached-size',attachmentSize(entry.size)));
     view.append(badge,meta);
     view.addEventListener('click',()=>{void showFile(entry)});
-    const remove=iconButton('trash','Убрать вложение '+entry.name,()=>{
+    const remove=iconButton('closeAttachment','Убрать вложение '+entry.name,()=>{
      attachments=attachments.filter(a=>a.id!==entry.id);
      void deleteMailAttachment(draftId,entry.id);
      autosaveDraft();renderAttachments();
