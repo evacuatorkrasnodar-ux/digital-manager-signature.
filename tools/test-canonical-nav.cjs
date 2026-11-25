@@ -5,6 +5,11 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const checks=[
+  ["assets/seyveo-header-system.css","--sv-note-header-top:max(26px,env(safe-area-inset-top,0px));"],
+  ["assets/seyveo-notebook-editor-v3.css","top:var(--sv-note-header-top,max(26px,env(safe-area-inset-top,0px)))!important;"],
+  ["assets/notebook-scan.css","top:var(--sv-note-header-top,max(26px,env(safe-area-inset-top,0px)))!important;"],
+  ["assets/seyveo-notebook-editor-v3.css","grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;"],
+  ["assets/notebook-scan.css","right:var(--sv-note-header-side,19px)!important;"],
   ["assets/seyveo-mail-white-pearl.css","left:var(--sv-header-compact-row,48px)!important;right:var(--sv-header-compact-row,48px)!important;"],
   ["assets/seyveo-mail-white-pearl.css",".sv-mail-top-buttons{align-items:center!important;height:var(--sv-nav-capsule-height,44px)!important"],
   ["assets/seyveo-mail-white-pearl.css","flex:0 0 var(--sv-nav-single-size,44px)!important;width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;"],

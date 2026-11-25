@@ -30,6 +30,11 @@
  --sv-apple-top-gap:14px;
  --sv-apple-top-inset:calc(env(safe-area-inset-top,0px) + var(--sv-apple-top-gap));
  --sv-header-slot:var(--sv-nav-single-size);
+ /* Keep scan-to-text and notebook editor on the same stationary axis. */
+ --sv-note-header-top:max(26px,env(safe-area-inset-top,0px));
+ --sv-note-header-side:19px;
+ --sv-note-title-max:260px;
+ --sv-note-title-reserve:168px;
  --sv-header-action-top:calc((var(--sv-apple-nav-row) - var(--sv-header-slot)) / 2);
  --sv-header-symmetric-grid:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot);
  --sv-header-compact-row:calc(var(--sv-header-slot) + 4px);
