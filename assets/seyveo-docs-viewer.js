@@ -120,6 +120,26 @@ function loadPdf(){
  }).catch(e=>{pdfLibrary=null;throw e;});
  return pdfLibrary;
 }
+async function readPdfText(file,isActive){
+ const lib=await loadPdf();
+ if(!isActive())return '';
+ const task=lib.getDocument({data:new Uint8Array(await file.arrayBuffer()),useSystemFonts:true,isEvalSupported:false,disableAutoFetch:true,disableStream:true});
+ try{
+  const doc=await task.promise;
+  if(doc.numPages>12)throw Error('Редактирование текста доступно для PDF до 12 страниц.');
+  const texts=[];
+  for(let i=1;i<=doc.numPages;i++){
+   if(!isActive())return '';
+   const page=await doc.getPage(i),content=await page.getTextContent();
+   const text=content.items.filter(x=>typeof x.str==='string').map(x=>x.str+(x.hasEOL?'\n':' ')).join('').trim();
+   page.cleanup();
+   if(!text)throw Error('В PDF есть страницы без текстового слоя. Для них нужно распознавание скана.');
+   texts.push(text);
+   if(texts.join('\n\n').length>12000)throw Error('Документ больше 12 000 знаков. Редактирование копии пока недоступно.');
+  }
+  return texts.join('\n\n');
+ }finally{try{await task.destroy();}catch{}}
+}
 function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=false,onClose=()=>{}}={}){
  if(!target||!file||typeof file.name!=='string'||typeof file.size!=='number'||
     file.size<1||file.size>MAX||typeof file.text!=='function')return false;
@@ -267,7 +287,20 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
     }else if(info.kind==='image'){
      payload={kind:'pages',file};
     }else{
-     payload={kind:'pdf-file',file};
+     if(!window.confirm('Открыть редактируемую текстовую копию PDF? Оригинал сохранится, оформление может отличаться.'))return;
+     say('Подготавливаем текст…');
+     let scanned=null;
+     try{scanned=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);}catch{}
+     if(!active)return;
+     if(scanned?.length){
+      payload={kind:'pdf-text',file,isActive:()=>active};
+      say('Распознаём текст страниц…');
+     }else{
+      const value=await readPdfText(file,()=>active);
+      if(!active)return;
+      if(!value.trim())throw Error('Текст не найден.');
+      payload={kind:'word',text:value,title:file.name.replace(/\.[^.]+$/,'')};
+     }
     }
     const ok=await onEdit(payload);
     if(!ok&&active)say('Этот формат пока нельзя редактировать здесь. Оригинал не изменён.');
@@ -318,6 +351,15 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
     else if(result!==true)say('Инструмент подписи недоступен.');
    }catch{say('Не удалось открыть подпись.');}
   }));
+ }
+ if(info.kind==='pdf'&&onEdit){
+  const pages=action('Обработка страниц','scan',async()=>{
+   if(pages.disabled)return;pages.disabled=true;
+   try{const ok=await onEdit({kind:'pdf-file',file});if(ok&&sheet?.open)sheet.close();else if(!ok&&active)say('Обработка страниц пока недоступна.');}
+   catch(e){if(active)say(e?.message||'Не удалось открыть обработку страниц.');}
+   finally{pages.disabled=false;}
+  });
+  moreBody.append(pages);
  }
  if(onSayvi)moreBody.append(action('Сэйви поможет','sayvi',()=>onSayvi('review')));
  moreBody.addEventListener('click',event=>{if(event.target.closest('button,a'))more.open=false;});
