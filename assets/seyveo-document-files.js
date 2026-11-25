@@ -88,7 +88,15 @@ async function save(a,file,source='device',options={}){
 }
 async function list(a){const all=await rows(a);if(!all.length)return [];const k=await key(a);return Promise.all(all.map(async r=>({id:r.id,...await meta(r,k)})));}
 async function row(a,i){check(a);const r=await run('files','readonly',s=>s.get(i));if(!r||r.area!==a)throw Error('Файл не найден');return r;}
-async function get(a,i){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='file')throw Error('Не файл');return new File([await unseal(k,r.content,prefix(a,i)+':data')],m.name,{type:m.type,lastModified:m.createdAt});}
+// Only associate source text with the exact decrypted file instance, never with a filename.
+const editableSource=new WeakMap();
+async function get(a,i){
+ const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='file')throw Error('Не файл');
+ const file=new File([await unseal(k,r.content,prefix(a,i)+':data')],m.name,{type:m.type,lastModified:m.createdAt});
+ if(m.source==='created'&&typeof m.searchText==='string'&&m.searchText.trim())editableSource.set(file,m.searchText);
+ return file;
+}
+function sourceText(file){return editableSource.get(file)||'';}
 async function createFolder(a,name){check(a);name=String(name||'').trim().slice(0,60);if(!name)throw Error('Введите название');const i=id(),k=await key(a),m=await seal(k,enc.encode(JSON.stringify({kind:'folder',name,createdAt:Date.now()})),prefix(a,i)+':meta');await run('files','readwrite',s=>s.add({id:i,area:a,meta:m}));changed(a);return i;}
 async function update(a,i,patch){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind==='folder'&&typeof patch.name==='string'){const name=patch.name.trim().slice(0,60);if(!name)throw Error('Введите название');m.name=name;}if(m.kind==='folder'&&Number.isFinite(patch.order))m.order=patch.order;if(m.kind==='file'&&typeof patch.folder==='string'){if(patch.folder&&!['contracts','projects','clients'].includes(patch.folder)){const target=await row(a,patch.folder);if((await meta(target,k)).kind!=='folder')throw Error('Папка не найдена');}m.folder=patch.folder;}r.meta=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');await run('files','readwrite',s=>s.put(r));changed(a);}
 async function remove(a,i){const r=await row(a,i),k=await key(a);if((await meta(r,k)).kind!=='file')throw Error('Нельзя удалить папку этим действием');await run('files','readwrite',s=>s.delete(i));changed(a);}
@@ -141,5 +149,5 @@ async function listTemplates(a){return (await list(a)).filter(x=>x.kind==='templ
 async function getTemplate(a,i){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='template')throw Error('Шаблон не найден');return {...m,...JSON.parse(dec.decode(await unseal(k,r.content,prefix(a,i)+':data')))};}
 async function renameTemplate(a,i,name){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='template')throw Error('Шаблон не найден');name=String(name||'').trim().slice(0,100);if(!name)throw Error('Введите название');m.name=name;r.meta=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');await run('files','readwrite',s=>s.put(r));changed(a);}
 async function removeTemplate(a,i){const r=await row(a,i),k=await key(a);if((await meta(r,k)).kind!=='template')throw Error('Шаблон не найден');await run('files','readwrite',s=>s.delete(i));changed(a);}
-window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,get,createFolder,update,remove,removeFolder,setDefaultFolder,saveAttachment,saveTemplate,listTemplates,getTemplate,renameTemplate,removeTemplate,docTypes,inferDocumentType,updateDocument,addVersion,getVersion});
+window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,get,sourceText,createFolder,update,remove,removeFolder,setDefaultFolder,saveAttachment,saveTemplate,listTemplates,getTemplate,renameTemplate,removeTemplate,docTypes,inferDocumentType,updateDocument,addVersion,getVersion});
 })();
