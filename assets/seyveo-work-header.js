@@ -238,6 +238,14 @@
 @media(prefers-reduced-motion:reduce){.sv-zodiac-symbol svg,.horse-heat,.horse-spark{animation:none!important}}
 :host([data-theme="dark"]){color:var(--sv-header-ink,#F6F6F8)}
 :host([data-theme="dark"]) .bar{background:var(--sv-header-surface,#202023)}
+/* The approved full-header glass is painted once behind this Shadow DOM.
+   Do not cover it with the old opaque white toolbar. */
+:host(:not([data-theme="dark"])[data-sv-full-glass-control]) .bar{
+ background:transparent!important;background-image:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ :host(:not([data-theme="dark"])) .bar{background:#fff!important}
+}
 :host([data-theme="dark"]) .control,
 :host([data-theme="dark"]) .control:is(:hover,:focus,:active){
  border:var(--sv-header-circle-border,1px solid rgba(255,255,255,.14));
