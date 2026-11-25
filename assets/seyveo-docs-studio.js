@@ -719,10 +719,10 @@ function mount(target,{
 
   const sectionTitle=$('div','sv-doc-create-subhead');
   let switchingDraft=false;
-  async function beginNew(content='',template=''){
+  async function beginNew(content='',template='',format='pdf'){
    if(switchingDraft)return;switchingDraft=true;
    try{await persistDraft();if(saveFailed||!panel.isConnected)return;newDraft();
-   body.value=content;documentDraft=content;documentTemplate=template;filename.value='';
+   body.value=content;documentDraft=content;documentTemplate=template;documentFormat=format==='docx'?'docx':'pdf';filename.value='';
    size.value='12';alignment.value='left';firstLine.setAttribute('aria-pressed','false');headingCheck.hidden=true;
    refreshStyle();syncFormat();syncTemplate();lastWordText=body.value;wordHistory.length=0;
    revealEditor();
@@ -798,6 +798,75 @@ function mount(target,{
    cards.forEach(({id,button})=>
     button.setAttribute('aria-pressed',String(documentTemplate===id)));
   }
+  const library=()=>window.SEYVEO_DOCUMENT_FILES;
+  function templateDialog(title){
+   const dlg=$('dialog','sv-doc-my-templates');
+   const head=$('header','sv-doc-my-template-head');
+   const close=button('',()=>dlg.close(),'sv-doc-my-template-back');close.setAttribute('aria-label','Назад');close.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m14 5-7 7 7 7"/></svg>';
+   head.append(close,$('strong','',title));dlg.append(head);
+   const content=$('div','sv-doc-my-template-content');dlg.append(content);
+   const parent=panel.querySelector('dialog.sv-doc-edit-sheet[open]')||panel;
+   parent.append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
+   return {dlg,content};
+  }
+  async function rememberTemplate(value,feedback){
+   try{const result=await library().saveTemplate(area,value);feedback.textContent=result.duplicate?'Уже в моих шаблонах':'Сохранено в «Мои шаблоны»';return true;}
+   catch(e){feedback.textContent=e.message||'Не удалось сохранить шаблон';return false;}
+  }
+  function saveTemplateDialog(value){
+   const {dlg,content}=templateDialog('Сохранить шаблон');
+   const name=$('input','sv-doc-my-template-input');name.value=value.name;name.maxLength=100;name.placeholder='Название шаблона';name.setAttribute('aria-label','Название шаблона');
+   const feedback=$('small','sv-doc-my-template-note',value.officialId?'Сохраняется ссылка на форму, а не бланк за конкретный год.':'Проверьте, что в образце нет ненужных личных данных.');
+   const save=button('Сохранить',async()=>{save.disabled=true;if(await rememberTemplate({...value,name:name.value},feedback)){save.textContent='Сохранено';setTimeout(()=>{if(dlg.open)dlg.close();},650);}else save.disabled=false;},'sv-doc-my-template-primary');
+   content.append(name,save,feedback);
+  }
+  function templateActions(item){
+   const {dlg,content}=templateDialog(item.name);
+   const info=$('small','sv-doc-my-template-note');
+   content.append(button('Сохранить в мои шаблоны',async()=>{const result=await rememberTemplate({name:item.name,text:item.content||'',officialId:item.url?item.id:'',format:'pdf'},info);if(result)setTimeout(()=>{if(dlg.open)dlg.close();},650);},'sv-doc-my-template-primary'),
+    button('Открыть документ',()=>{dlg.close();if(item.url)openOfficial(item);else selectTemplate(item.id,item.content);},'sv-doc-my-template-option'),
+    button('Поделиться',async()=>{try{const text=item.url||item.content;if(navigator.share)await navigator.share({title:item.name,text});else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);info.textContent='Скопировано';}else info.textContent='Поделиться на этом устройстве нельзя.';}catch(e){if(e.name!=='AbortError')info.textContent='Не удалось поделиться.';}},'sv-doc-my-template-option'),info);
+  }
+  function bindTemplateHold(card,item){
+   let timer=null,start=null,suppress=false;
+   const cancel=()=>{clearTimeout(timer);timer=null;start=null;};
+   const show=()=>{cancel();suppress=true;templateActions(item);};
+   card.addEventListener('pointerdown',e=>{cancel();suppress=false;if(e.button!==0)return;start=[e.clientX,e.clientY];timer=setTimeout(show,500);});
+   card.addEventListener('pointermove',e=>{if(start&&Math.hypot(e.clientX-start[0],e.clientY-start[1])>9)cancel();});
+   for(const event of ['pointerup','pointercancel','pointerleave'])card.addEventListener(event,cancel);
+   card.addEventListener('contextmenu',e=>{e.preventDefault();if(!suppress)show();});
+   card.addEventListener('click',e=>{if(suppress){e.preventDefault();e.stopImmediatePropagation();suppress=false;}},true);
+  }
+  async function openMyTemplates(){
+   const {dlg,content}=templateDialog('Мои шаблоны');
+   const list=$('div','sv-doc-my-template-list'),feedback=$('small','sv-doc-my-template-note','Загрузка…');
+   async function paint(){
+    try{
+     const items=await library().listTemplates(area);if(!dlg.isConnected)return;
+     list.replaceChildren();feedback.textContent=items.length?'':'Пока пусто. Удерживайте шаблон в библиотеке или сохраните свой документ.';
+     for(const item of items){
+      const row=$('div','sv-doc-my-template-row');
+      const open=button('',async()=>{try{const saved=await library().getTemplate(area,item.id);
+       if(saved.officialId){const form=official.find(x=>x.id===saved.officialId);if(!form)throw Error('Форма больше недоступна.');dlg.close();openOfficial(form);return;}
+       dlg.close();await beginNew(saved.text,'saved:'+item.id,saved.format);
+      }catch(e){feedback.textContent=e.message||'Не удалось открыть шаблон';}},'sv-doc-my-template-open');
+      open.append($('strong','',item.name),$('small','',item.official?'Официальная форма':'Шаблон'));
+      const more=button('…',()=>{const menu=templateDialog(item.name);const input=$('input','sv-doc-my-template-input');input.value=item.name;input.maxLength=100;input.setAttribute('aria-label','Название шаблона');const note=$('small','sv-doc-my-template-note');
+       menu.content.append(input,button('Переименовать',async()=>{try{await library().renameTemplate(area,item.id,input.value);menu.dlg.close();await paint();}catch(e){note.textContent=e.message;}},'sv-doc-my-template-primary'),button('Удалить шаблон',async()=>{if(!window.confirm('Удалить только этот шаблон?'))return;try{await library().removeTemplate(area,item.id);menu.dlg.close();await paint();}catch(e){note.textContent=e.message;}},'sv-doc-my-template-delete'),note);
+      },'sv-doc-my-template-more');more.setAttribute('aria-label','Действия: '+item.name);
+      row.append(open,more);list.append(row);
+     }
+    }catch(e){feedback.textContent=e.message||'Хранилище недоступно';}
+   }
+   content.append(list,feedback);
+   const importInput=$('input','');importInput.type='file';importInput.accept='.txt,text/plain';importInput.hidden=true;
+   importInput.addEventListener('change',async()=>{try{const f=importInput.files?.[0];if(!f)return;if(f.size>100000)throw Error('Текстовый шаблон слишком большой.');const value=await f.text();if(!value.trim()||value.length>12000)throw Error('До 12 000 символов.');await rememberTemplate({name:f.name.replace(/\.txt$/i,''),text:value,format:'pdf'},feedback);await paint();}catch(e){feedback.textContent=e.message;}});
+   content.append(button('Добавить из файла',()=>importInput.click(),'sv-doc-my-template-option'),importInput);
+   await paint();
+  }
+  const myCard=button('',openMyTemplates,'sv-doc-template-card sv-doc-my-template-card');
+  const myGlyph=$('span','sv-doc-template-glyph');myGlyph.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M3 7V5h7l2 3h9v12H3z"/><path d="M9 11h6v6l-3-2-3 2z"/></svg>';
+  myCard.append(myGlyph,$('strong','sv-doc-template-name','Мои шаблоны'));examples.append(myCard);
   for(const item of templates){
    const card=button('',()=>{if(item.url){openOfficial(item);return;}selectTemplate(item.id,item.content);},
     'sv-doc-template-card sv-doc-template-'+item.id);
@@ -814,6 +883,7 @@ function mount(target,{
    };
    paper.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h6l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M13 3v4a1 1 0 0 0 1 1h4" opacity=".65"/>'+(motifs[item.icon]||motifs.statement)+'</svg>';
    card.append(paper,$('strong','sv-doc-template-name',item.name));
+   bindTemplateHold(card,item);
    cards.push({id:item.id,button:card});
    examples.append(card);
   }
@@ -822,6 +892,7 @@ function mount(target,{
   const templateEmpty=$('small','sv-doc-template-empty','Ничего не найдено');templateEmpty.hidden=true;
   templateSearch.addEventListener('input',()=>{
    const query=templateSearch.value.trim().toLocaleLowerCase('ru-RU').replace(/ё/g,'е');
+   myCard.hidden=Boolean(query);
    let count=0;
    cards.forEach(({id,button})=>{const item=templates.find(t=>t.id===id);const match=(!query||[item.name,item.content?.split('\n')[0],item.url?'официальная декларация отчётность налоги':''].join(' ').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').includes(query));button.hidden=!match;if(match)count++;});
    examples.scrollLeft=0;templateEmpty.hidden=count>0;
@@ -922,7 +993,10 @@ function mount(target,{
   const formatSwitch=$('div','sv-doc-edit-formats');
   formatSwitch.setAttribute('role','group');
   formatSwitch.setAttribute('aria-label','Выбор формата документа');
-  const saveButton=button('',saveSelected,'sv-doc-edit-action');
+  const saveButton=button('',()=>{
+   const {dlg,content}=templateDialog('Сохранить');
+   content.append(button('Сохранить документ',()=>{dlg.close();void saveSelected();},'sv-doc-my-template-primary'),button('Сохранить как шаблон',()=>{dlg.close();if(!body.value.trim()){message('Напишите текст документа.');return;}saveTemplateDialog({name:filename.value.trim()||body.value.split('\n').find(x=>x.trim())?.trim().slice(0,100)||'Шаблон',text:body.value,format:documentFormat});},'sv-doc-my-template-option'));
+  },'sv-doc-edit-action');
   const saveLabel=$('span','','Сохранить');
   const shareButton=button('',shareSelected,'sv-doc-edit-action');
   const selectedFormat=[];
