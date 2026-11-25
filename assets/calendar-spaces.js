@@ -893,12 +893,14 @@ function svRenderKind(){
 }
 function svRenderDate(){
  svPicker.replaceChildren();
- const head=document.createElement('div');head.className='cal-velvet-month';
+ const head=document.createElement('div');head.className='cal-velvet-month sv-month-nav';
  const prev=document.createElement('button');prev.type='button';prev.dataset.svMonth='-1';prev.setAttribute('aria-label','Предыдущий месяц');prev.textContent='‹';
  const name=document.createElement('strong');
  name.textContent=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(new Date(svPickerYear,svPickerMonth,1,12));
  const next=document.createElement('button');next.type='button';next.dataset.svMonth='1';next.setAttribute('aria-label','Следующий месяц');next.textContent='›';
- head.append(prev,name,next);svPicker.append(head);
+ name.classList.add('sv-month-name');
+ const controls=document.createElement('div');controls.className='sv-month-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label','Переключение месяца');
+ prev.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg>';next.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9.5 5 7 7-7 7"/></svg>';controls.append(prev,next);head.append(name,controls);svPicker.append(head);
  const weekdays=document.createElement('div');weekdays.className='cal-velvet-weekdays';
  for(const label of ['Пн','Вт','Ср','Чт','Пт','Сб','Вс']){const el=document.createElement('span');el.textContent=label;weekdays.append(el);}
  svPicker.append(weekdays);

@@ -36,9 +36,9 @@ panel.id='seyveoEventPicker';panel.className='cal-premium-picker';panel.hidden=t
 panel.setAttribute('aria-label','Выбор даты и времени');
 panel.innerHTML=[
  '<section id="seyveoPickDate" class="cal-pick-date" aria-label="Календарь" hidden>',
- '<div class="cal-pick-head"><strong id="seyveoPickMonth"></strong>',
- '<div class="cal-pick-arrows"><button type="button" id="seyveoPickPrev" aria-label="Предыдущий месяц">‹</button>',
- '<button type="button" id="seyveoPickNext" aria-label="Следующий месяц">›</button></div></div>',
+ '<div class="cal-pick-head sv-month-nav"><strong class="sv-month-name" id="seyveoPickMonth"></strong>',
+ '<div class="cal-pick-arrows sv-month-controls" role="group" aria-label="Переключение месяца"><button type="button" id="seyveoPickPrev" aria-label="Предыдущий месяц"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>',
+ '<button type="button" id="seyveoPickNext" aria-label="Следующий месяц"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9.5 5 7 7-7 7"/></svg></button></div></div>',
  '<div class="cal-pick-week" aria-hidden="true"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>',
  '<div id="seyveoPickDays" class="cal-pick-days" role="group" aria-label="Числа месяца"></div>',
  '<div class="cal-pick-date-actions"><button type="button" class="cal-pick-today" id="seyveoPickToday">Сегодня</button>',
@@ -458,13 +458,15 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
   body.append(list);
  }
  function renderDate(){
-  const m=new Date(year,month,1),header=make('div','sv-standard-month');
+  const m=new Date(year,month,1),header=make('div','sv-standard-month sv-month-nav');
   const previous=button('‹','sv-standard-month-arrow',()=>{month--;if(month<0){month=11;year--}render()});
   previous.setAttribute('aria-label','Предыдущий месяц');
-  const name=make('strong',null,monthFmt.format(m));
+  const name=make('strong','sv-month-name',monthFmt.format(m));
   const next=button('›','sv-standard-month-arrow',()=>{month++;if(month>11){month=0;year++}render()});
   next.setAttribute('aria-label','Следующий месяц');
-  header.append(previous,name,next);body.append(header);
+  const controls=make('div','sv-month-controls');controls.setAttribute('role','group');controls.setAttribute('aria-label','Переключение месяца');
+  previous.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg>';next.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9.5 5 7 7-7 7"/></svg>';
+  controls.append(previous,next);header.append(name,controls);body.append(header);
   const week=make('div','sv-standard-picker-week');
   for(const day of ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'])week.append(make('span',null,day));
   body.append(week);

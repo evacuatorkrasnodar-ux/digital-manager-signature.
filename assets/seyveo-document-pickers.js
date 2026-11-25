@@ -57,13 +57,14 @@ function date(label,initial='',placeholder='Выбрать дату',scope='pers
   const {d,body}=sheet(trigger,label,{bottom:true});
   const now=new Date(),chosen=trigger.value||today(),parts=chosen.split('-').map(Number);
   let year=parts[0],month=parts[1]-1,selection=trigger.value||'',agendaDate=chosen;
-  const nav=el('div','sv-doc-picker-cal-nav'),grid=el('div','sv-doc-picker-cal-grid'),title=el('button','sv-doc-picker-month');title.type='button';
+  const nav=el('div','sv-doc-picker-cal-nav sv-month-nav'),grid=el('div','sv-doc-picker-cal-grid'),title=el('button','sv-doc-picker-month sv-month-name');title.type='button';
   const move=delta=>{const next=new Date(year,month+delta,1);year=next.getFullYear();month=next.getMonth();paint();};
   const prev=btn('','sv-doc-picker-round',()=>move(-1)),next=btn('','sv-doc-picker-round',()=>move(1));prev.append(glyph('<path d="m14 5-7 7 7 7"/>'));next.append(glyph(arrow));prev.setAttribute('aria-label','Предыдущий месяц');next.setAttribute('aria-label','Следующий месяц');
   const week=el('div','sv-doc-picker-cal-grid');
   for(const name of ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'])week.append(el('span','sv-doc-picker-weekday',name));
   const agenda=el('div','sv-doc-picker-agenda');
-  nav.append(prev,title,next);body.append(nav,week,grid,agenda);
+  const controls=el('div','sv-month-controls');controls.setAttribute('role','group');controls.setAttribute('aria-label','Переключение месяца');controls.append(prev,next);
+   nav.append(title,controls);body.append(nav,week,grid,agenda);
   function paint(){
    window.SEYVEO_SHARED_DATE_CALENDAR.render(new Date(year,month,1),{value:selection},title,grid,{scope,dayClass:'sv-doc-picker-day',selectedClass:'is-current',onSelect:value=>{selection=value;agendaDate=value;paint();}});
    const entries=window.SEYVEO_CALENDAR_PICKER_DATA?.day(agendaDate,scope)||[];
