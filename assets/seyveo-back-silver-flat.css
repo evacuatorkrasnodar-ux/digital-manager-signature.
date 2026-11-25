@@ -24,7 +24,7 @@ html body dialog[open] button:is(
   #calendarEventCancel,#svCabinetCancel
 ),
 html body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow{
-  border:0!important;
+  border:var(--sv-back-button-edge,0)!important;
   border-radius:50%!important;
   outline-offset:2px;
   background:var(--sv-back-flat)!important;
@@ -56,7 +56,7 @@ html body dialog[open] button:is(
 html body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow svg{
   fill:none!important;
   stroke:currentColor!important;
-  stroke-width:1.45!important;
+  stroke-width:var(--sv-header-back-weight,1.45)!important;
   stroke-linecap:round!important;
   stroke-linejoin:round!important;
   filter:none!important;
@@ -66,7 +66,7 @@ html body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack
 /* Work back is owned only by seyveo-work-shell.css to avoid two
    competing materials. The Sayvi back keeps the approved flat treatment. */
 html body #sayviSurfacePage #sayviSurfaceBack{
-  border:0!important;
+  border:var(--sv-back-button-edge,0)!important;
   border-radius:50%!important;
   background:var(--sv-back-flat)!important;
   background-image:none!important;
@@ -82,7 +82,7 @@ html body #sayviSurfacePage #sayviSurfaceBack:active{
 }
 html body #sayviSurfacePage #sayviSurfaceBack svg{
   stroke:currentColor!important;
-  stroke-width:1.45!important;
+  stroke-width:var(--sv-header-back-weight,1.45)!important;
   fill:none!important;
 }
 
@@ -93,7 +93,7 @@ html body #sayviTopActions a#sayviBack.sv-top-action{
   background:var(--sv-back-flat)!important;
   background-image:none!important;
   color:var(--sv-back-flat-ink)!important;
-  border:0!important;
+  border:var(--sv-back-button-edge,0)!important;
   box-shadow:var(--sv-back-button-shadow,none)!important;
   -webkit-backdrop-filter:var(--sv-back-button-blur,none)!important;
   backdrop-filter:var(--sv-back-button-blur,none)!important;
@@ -107,14 +107,14 @@ html body #sayviTopActions a#sayviBack.sv-top-action:active{
 html body #sayviTopActions a#sayviBack.sv-top-action svg{
   fill:none!important;
   stroke:currentColor!important;
-  stroke-width:1.45!important;
+  stroke-width:var(--sv-header-back-weight,1.45)!important;
 }
 
 /* Stronger scope for legacy settings/profile headers that still set transparent
    backgrounds with two ID selectors. No size or positional adjustments. */
 html body dialog:is(#onboardDialog,#seyveoAccountDemo,#seyveoQrCardDialog,#seyveoAvatarDialog)[open]
  button:is(#onboardClose,#seyveoAccountClose,#seyveoQrClose,#seyveoAvatarClose){
-  border:0!important;
+  border:var(--sv-back-button-edge,0)!important;
   border-radius:50%!important;
   background:var(--sv-back-flat)!important;
   background-image:none!important;
@@ -125,7 +125,7 @@ html body dialog:is(#onboardDialog,#seyveoAccountDemo,#seyveoQrCardDialog,#seyve
 }
 html body dialog:is(#onboardDialog,#seyveoAccountDemo,#seyveoQrCardDialog,#seyveoAvatarDialog)[open]
  button:is(#onboardClose,#seyveoAccountClose,#seyveoQrClose,#seyveoAvatarClose) svg{
-  fill:none!important;stroke:currentColor!important;stroke-width:1.45!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:var(--sv-header-back-weight,1.45)!important;
 }
 
 /* Header round controls: White Pearl material, original 44px geometry. */
@@ -197,6 +197,6 @@ html body #svcpRoomInfo #svcpRoomProfileClose:is(:active,:hover,:focus:not(:focu
 html body #svcpRoomInfo #svcpRoomProfileClose svg{
   display:block!important;width:22px!important;height:22px!important;
   fill:none!important;stroke:currentColor!important;
-  stroke-width:1.45!important;stroke-linecap:round!important;
+  stroke-width:var(--sv-header-back-weight,1.45)!important;stroke-linecap:round!important;
   stroke-linejoin:round!important;transform:none!important;
 }

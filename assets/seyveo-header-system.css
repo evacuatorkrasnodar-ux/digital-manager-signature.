@@ -7,7 +7,7 @@
 :root{
  /* SEYVEO navigation geometry: the one shared scale for single and grouped controls. */
  /* One SEYVEO page-action scale. The permanent 60px dock is excluded. */
- --sv-action-circle-size:44px;
+ --sv-action-circle-size:var(--sv-nav-single-size);
  --sv-action-glyph-size:20px;
  --sv-nav-single-size:44px;
  --sv-nav-capsule-height:44px;
@@ -26,10 +26,10 @@
  --sv-nav-pearl-shadow:var(--sv-white-pearl-circle-shadow);
  --sv-header-row:62px;
  /* Native top layout contract: clear the notch, keep a single 44px axis. */
- --sv-apple-nav-row:44px;
+ --sv-apple-nav-row:var(--sv-nav-single-size);
  --sv-apple-top-gap:14px;
  --sv-apple-top-inset:calc(env(safe-area-inset-top,0px) + var(--sv-apple-top-gap));
- --sv-header-slot:44px;
+ --sv-header-slot:var(--sv-nav-single-size);
  --sv-header-gap:8px;
  --sv-header-title-size:20px;
  --sv-header-title-weight:590;

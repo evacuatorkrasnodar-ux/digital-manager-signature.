@@ -287,12 +287,9 @@ html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion 
 #seyveoCleanDetail > #seyveoCleanBack .seyveo-back-circle svg{
  display:block;width:17px;height:17px;
 }
-/* 44px tap target, visually 36px round outline */
-#manageThemeScreen #manageThemeBack{position:relative;border-color:transparent}
-#manageThemeScreen #manageThemeBack::before{
- content:"";position:absolute;inset:4px;pointer-events:none;
- border:1px solid var(--sv-q-outline,var(--soft-line));border-radius:50%;
-}
+/* Theme settings: the real navigation circle owns the only rim. */
+#manageThemeScreen #manageThemeBack{position:relative}
+#manageThemeScreen #manageThemeBack::before{content:none!important;display:none!important}
 #manageThemeScreen #manageThemeBack .manage-theme-back-copy{display:none}
 #manageThemeScreen .manage-theme-intro{
  margin:0 0 10px;font-size:11.5px;line-height:1.55;

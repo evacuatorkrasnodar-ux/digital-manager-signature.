@@ -568,3 +568,23 @@ html:root[data-theme="light"] body #seyveoPayDialog .sw-month.sv-month-nav > .sv
 html:root[data-theme="light"] body #seyveoPayDialog .sw-month.sv-month-nav > .sv-month-controls > button{
  color:#007aff!important;background:transparent!important;box-shadow:none!important;border:0!important;
 }
+
+/* Settings and registered nested returns: one real White Pearl face.
+   Existing navigation-system.js keeps the original buttons and handlers.
+   Explicitly exclude hidden/duplicate controls and colored chat actions. */
+html:root[data-theme="light"] body #managePage #manageThemeScreen #manageThemeBack.sv-nav-back:not([hidden]),
+html:root[data-theme="light"] body #managePage #seyveoCleanDetail > #seyveoCleanBack.sv-nav-back:not([hidden]),
+html:root[data-theme="light"] body dialog#seyveoAccountDemo[open] #seyveoAccountClose.sv-nav-back:not([hidden]),
+html:root[data-theme="light"] body dialog#seyveoOfflineDialog[open] #seyveoOfflineClose.sv-nav-arrow:not([hidden]),
+html:root[data-theme="light"] body dialog#seyveoAvatarDialog[open] #seyveoAvatarClose.sv-nav-back:not([hidden]),
+html:root[data-theme="light"] body dialog#seyveoFamilyDialog[open] #svfClose.sv-nav-arrow:not([hidden]){
+ box-sizing:border-box!important;
+ width:var(--sv-nav-single-size)!important;height:var(--sv-nav-single-size)!important;
+ min-width:var(--sv-nav-single-size)!important;min-height:var(--sv-nav-single-size)!important;
+ max-width:var(--sv-nav-single-size)!important;max-height:var(--sv-nav-single-size)!important;
+ border:var(--sv-white-pearl-edge)!important;border-radius:50%!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;
+ color:var(--sv-header-icon-ink)!important;box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+ transform:none!important;opacity:1!important;filter:none!important;transition:none!important;
+}
