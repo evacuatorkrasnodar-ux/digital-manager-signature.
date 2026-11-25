@@ -318,3 +318,15 @@ html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-
  html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"].sv-inbox-under-scroll #svcpChatDirectory > #svcpChatFilters:not([hidden])::after,
  html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"].sv-avatar-under-scroll .sv-new-avatar-tabs::after{content:none!important;display:none!important}
 }
+
+
+/* Inbox filter uses the same real matte surface as the bottom dock.
+   The selected segment and post-capsule fade remain independent. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > #svcpChatFilters:not([hidden]){
+ background:var(--sv-white-pearl-floating-dock)!important;background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > #svcpChatFilters:not([hidden])::before{content:none!important;display:none!important}
