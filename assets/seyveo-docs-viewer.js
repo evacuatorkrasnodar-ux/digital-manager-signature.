@@ -158,7 +158,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  header.append(glyph,copy);root.append(header);
  const stage=el('div','svdv-stage');
  let previewNeedsOriginal=info.kind==='original';
- let originalAction=null,loadedText=null,inline=null,doneControl=null,stopViewport=null;
+ let originalAction=null,loadedText=null,inline=null,doneControl=null,stopViewport=null,pagesAction=null,canManagePages=false;
  const requireOriginal=()=>{previewNeedsOriginal=true;if(originalAction){originalAction.hidden=false;originalAction.closest('details').hidden=false;}};
  if(info.kind==='image'){
   const img=el('img','svdv-picture');
@@ -176,6 +176,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     try{pages=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);}catch{}
     if(!active)return;
     if(pages?.length){
+     canManagePages=true;if(pagesAction)pagesAction.hidden=false;
      for(const page of pages)pageUrls.push(URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'})));
      const list=el('div','svdv-sheet-pages');
      for(const [i,url] of pageUrls.entries()){const img=el('img','svdv-reader-page');img.src=url;img.alt='Страница '+(i+1);if(i>0)img.loading='lazy';list.append(img);}
@@ -433,7 +434,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   }catch(e){if(active)say(e?.message||'Не удалось сохранить копию. Черновик сохранён.');}
   finally{state.saving=false;state.input.readOnly=false;if(doneControl)doneControl.disabled=false;}
  }
- const openMarkup=()=>{if(!window.SEYVEO_PDF_MARKUP?.open(file,{parent:root,loadPdf,onSave:onSaveCopy,embedded:true,onClose:()=>{if(active)say('');},onSaved:()=>{if(active)say('Копия с пометками сохранена.',3500);}}))say('Рисование и подпись PDF недоступны.');};
+ const openMarkup=()=>{if(!window.SEYVEO_PDF_MARKUP?.open(file,{parent:root,loadPdf,onSave:onSaveCopy,embedded:true,onSaved:()=>{if(active)say('Копия с пометками сохранена.',3500);}}))say('Рисование и подпись PDF недоступны.');};
  if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf')){
   const edit=action('Изменить','edit',async()=>{
    if(edit.disabled)return;
@@ -512,7 +513,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     if(loadedText===null){say('Дождись загрузки текста.');return;}
     url=URL.createObjectURL(window.SEYVEO_DOCS_EXPORT.pdfFromText(loadedText));temporary=true;
    }
-   const tab=window.open(url,'_blank','noopener,noreferrer');
+   window.open(url,'_blank','noopener,noreferrer');
    if(temporary)setTimeout(()=>URL.revokeObjectURL(url),120000);
    say('В открытом документе выбери системную печать.');
   }catch(e){say(e?.message||'Не удалось подготовить печать.');}
@@ -549,7 +550,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    catch(e){if(active)say(e?.message||'Не удалось открыть управление страницами.');}
    finally{pages.disabled=false;}
   });
-  moreBody.append(pages);
+  pagesAction=pages;pages.hidden=!canManagePages;moreBody.append(pages);
  }
  if(onSayvi&&!editAction)moreBody.append(action('Сэйви поможет','sayvi',()=>onSayvi('review')));
  moreBody.addEventListener('click',event=>{if(event.target.closest('button,a'))more.open=false;});
