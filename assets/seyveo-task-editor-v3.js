@@ -356,7 +356,7 @@
    quickDateOpen=false;date.dispatchEvent(new Event('change',{bubbles:true}));
    timeInput?.dispatchEvent(new Event('change',{bubbles:true}));updateSmartPreview();
   });
-  actions.append(clear,done);editor.append(actions);
+  actions.append(clear,done);editor.append(actions,window.SEYVEO_WHEEL.feedbackButton());
   return editor;
  }
  function updateSmartPreview(){
