@@ -72,7 +72,7 @@ function commitDate(d){
  close();dateButton.focus({preventScroll:true});
 }
 /* One calendar renderer for all SEYVEO task/event date inputs. */
-function renderDateCalendar(forMonth,input,heading,grid){
+function renderDateCalendar(forMonth,input,heading,grid,options={}){
  const y=forMonth.getFullYear(),m=forMonth.getMonth();
  const label=monthFormatter.format(forMonth);
  heading.textContent=label.charAt(0).toUpperCase()+label.slice(1);
@@ -84,18 +84,31 @@ function renderDateCalendar(forMonth,input,heading,grid){
  for(let i=0;i<count;i++){
   const n=i-start+1;
   if(n<1||n>monthDays){
-   const blank=document.createElement('span');blank.className='cal-pick-empty';
+   const blank=document.createElement('span');blank.className=options.blankClass||'cal-pick-empty';
    blank.setAttribute('aria-hidden','true');fragment.append(blank);continue;
   }
   const d=new Date(y,m,n),key=iso(d),b=document.createElement('button');
-  b.type='button';b.className='cal-pick-day';b.textContent=String(n);
+  b.type='button';b.className=options.dayClass||'cal-pick-day';
+  const numeral=document.createElement('span');numeral.className='sv-shared-calendar-number';numeral.textContent=String(n);b.append(numeral);
   b.dataset.calPickDay=key;b.setAttribute('aria-label',dayFormatter.format(d));
-  if(key===selected){b.classList.add('is-selected');b.setAttribute('aria-pressed','true')}
+  if(key===selected){b.classList.add(options.selectedClass||'is-selected');b.setAttribute('aria-pressed','true')}
   if(key===now)b.classList.add('is-today');
+  const items=window.SEYVEO_CALENDAR_PICKER_DATA?.day(key,options.scope)||[];
+  if(items.length){
+   const dots=document.createElement('span');dots.className='sv-shared-calendar-dots';dots.setAttribute('aria-hidden','true');
+   for(const tone of [...new Map(items.map(x=>[x.tone,x.color])).values()].slice(0,4)){
+    const dot=document.createElement('i');dot.style.backgroundColor=tone;dots.append(dot);
+   }
+   b.append(dots);b.setAttribute('aria-label',dayFormatter.format(d)+', дел: '+items.length);
+  }
+  if((input.min&&key<input.min)||(input.max&&key>input.max))b.disabled=true;
+  if(options.onSelect)b.addEventListener('click',()=>options.onSelect(key));
   fragment.append(b);
  }
  grid.replaceChildren(fragment);
 }
+window.SEYVEO_SHARED_DATE_CALENDAR=Object.freeze({render:renderDateCalendar});
+
 function renderMonth(){renderDateCalendar(month,date,monthLabel,days)}
 function renderWheel(wheel,total,kind){
  const fragment=document.createDocumentFragment();
@@ -456,17 +469,7 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
   for(const day of ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'])week.append(make('span',null,day));
   body.append(week);
   const grid=make('div','sv-standard-picker-days');
-  const offset=(m.getDay()+6)%7,days=new Date(year,month+1,0).getDate();
-  for(let n=0;n<offset;n++)grid.append(make('span','sv-standard-picker-blank'));
-  for(let n=1;n<=days;n++){
-   const date=new Date(year,month,n),value=toISO(date);
-   const inRange=(!current.min||value>=current.min)&&(!current.max||value<=current.max);
-   const day=button(String(n),'sv-standard-picker-day',()=>commit(value));
-   day.disabled=!inRange;day.setAttribute('aria-label',formatDate.format(date));
-   if(value===current.value){day.classList.add('is-selected');day.setAttribute('aria-pressed','true')}
-   if(value===toISO(new Date()))day.classList.add('is-today');
-   grid.append(day);
-  }
+  window.SEYVEO_SHARED_DATE_CALENDAR.render(m,current,name,grid,{dayClass:'sv-standard-picker-day',blankClass:'sv-standard-picker-blank',scope:current.id==='pictureOperationDay'?'personal':current.id.startsWith('svcp')?'business':undefined,onSelect:commit});
   body.append(grid);
   const actions=make('div','sv-standard-picker-actions');
   const today=toISO(new Date());
