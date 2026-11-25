@@ -1054,3 +1054,47 @@ html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="edit
  font:650 10px/1 system-ui;
 }
 html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attach-count[hidden]{display:none!important}
+
+/* Mail final consistency pass: one vocabulary for list, draft selection and
+   composer. Native scroll, the global dock material and other routes untouched. */
+html:root body:has(#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"]:not([hidden])) footer.dock.sv-shared-dock{
+ display:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-toolbar > .sv-mail-unread-filter{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;
+ flex:0 0 auto!important;min-height:44px!important;padding:0 5px!important;margin:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;color:#176AB4!important;
+ font:550 11.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:nowrap!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-unread-filter svg{
+ width:18px!important;height:18px!important;flex:none!important;stroke:currentColor!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-unread-filter[aria-pressed="true"] svg{
+ fill:#E4F1FF!important;color:#007AFF!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action[data-mail-swipe-action="archive"]{
+ background:#397CA9!important;color:#fff!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-drafts-bar.is-selecting{
+ display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ flex-wrap:nowrap!important;gap:4px!important;min-height:44px!important;
+ margin:0!important;padding:0 2px!important;border:0!important;
+ border-bottom:1px solid rgba(35,45,60,.07)!important;background:transparent!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-drafts-bar.is-selecting > .sv-mail-drafts-count{
+ flex:1 1 auto!important;min-width:0!important;font-size:12px!important;white-space:nowrap!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-drafts-bar.is-selecting > :is(.sv-mail-drafts-all,.sv-mail-drafts-select,.sv-mail-drafts-remove-selected){
+ flex:0 0 auto!important;min-width:44px!important;width:auto!important;min-height:44px!important;
+ padding:0 6px!important;margin:0!important;border:0!important;
+ background:transparent!important;box-shadow:none!important;color:#007AFF!important;
+ font:550 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;white-space:nowrap!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-drafts-bar.is-selecting > .sv-mail-drafts-remove-selected{
+ color:#D63236!important;
+}
+@media(max-width:360px){
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-drafts-bar.is-selecting{gap:1px!important}
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-drafts-bar.is-selecting > :is(.sv-mail-drafts-all,.sv-mail-drafts-select,.sv-mail-drafts-remove-selected){padding:0 3px!important;font-size:11px!important}
+}
