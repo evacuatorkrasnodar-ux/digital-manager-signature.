@@ -209,36 +209,53 @@ function itemsFor(state){
  return records.sort((a,b)=>b.createdAt-a.createdAt);
 }
 // Everyday file actions first; advanced metadata is deliberately one level deeper.
-function openFileActions(state,item){
+function openFileActions(state,item,trigger=null){
  if(state!==active||!item.local)return;
  const api=localFiles(),area=state.options.area;
- const dlg=el('dialog','sv-doc-my-templates sv-doc-simple-file-actions');
- const head=el('header','sv-doc-my-template-head');
- head.append(window.SEYVEO_DOCUMENT_PICKERS.backButton(()=>dlg.close()),el('strong','','Действия с файлом'));
- const content=el('div','sv-doc-my-template-content');
+ const dlg=el('dialog','sv-doc-simple-file-actions sv-doc-file-popover');dlg.setAttribute('aria-label','Действия с файлом');
+ const content=el('div','sv-doc-file-popover-content');
  const feedback=el('p','sv-doc-my-template-note');feedback.setAttribute('role','status');
  const name=el('strong','sv-doc-simple-file-name',item.name);
  const list=el('div','sv-doc-simple-file-list');
  const action=(label,kind,fn,danger=false)=>{const b=el('button','sv-doc-simple-file-action'+(danger?' is-danger':''));b.type='button';b.append(actionIcon(kind),el('span','',label));b.addEventListener('click',async()=>{try{await fn();}catch(e){feedback.textContent=e.message||'Не удалось выполнить действие.';}});return b;};
+ const position=()=>{
+  if(!dlg.open)return;
+  const v=window.visualViewport,w=v?.width||window.innerWidth,h=v?.height||window.innerHeight,x=v?.offsetLeft||0,y=v?.offsetTop||0;
+  const surface=document.getElementById('sayviSurfacePage')?.getBoundingClientRect();
+  const left=Math.max(x+10,surface?.width>0?surface.left+10:x+10),right=Math.min(x+w-10,surface?.width>0?surface.right-10:x+w-10);
+  dlg.style.setProperty('--sv-file-menu-width',Math.max(0,Math.min(270,right-left))+'px');
+  dlg.style.setProperty('--sv-file-menu-height',Math.max(100,h-20)+'px');
+  const r=trigger?.isConnected?trigger.getBoundingClientRect():null,box=dlg.getBoundingClientRect();
+  const px=r?Math.max(left,Math.min(right-box.width,r.right-box.width)):Math.max(left,(left+right-box.width)/2);
+  const preferred=r?(r.bottom+8+box.height<=y+h-10?r.bottom+8:r.top-8-box.height):y+(h-box.height)/2;
+  const py=Math.max(y+10,Math.min(y+h-box.height-10,preferred));
+  dlg.style.setProperty('--sv-file-menu-left',px+'px');dlg.style.setProperty('--sv-file-menu-top',py+'px');
+ };
  const main=()=>{
+  feedback.textContent='';
   list.replaceChildren(
    action('Переименовать','rename',()=>{
     const field=el('input','sv-doc-simple-file-input');field.type='text';field.maxLength=150;field.value=item.name.replace(/\.[^.]+$/,'');field.setAttribute('aria-label','Новое название');
     const save=action('Готово','check',async()=>{if(!field.value.trim())return;await api.update(area,item.id,{name:field.value});dlg.close();});
-    list.replaceChildren(field,save,action('Отмена','back',main));field.focus();field.select();
+    list.replaceChildren(field,save,action('Отмена','back',main));position();field.focus({preventScroll:true});field.select();
     field.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save.click();}});
    }),
    action('Переместить в папку','archive',()=>{
-    list.replaceChildren(el('small','sv-doc-my-template-note','Выберите папку'),...([['','Все файлы'],...ownFolders(state).map(x=>[x.id,x.name])].map(([id,title])=>action(title,'archive',async()=>{await api.update(area,item.id,{folder:id});dlg.close();}))),action('Назад','back',main));
+    list.replaceChildren(el('small','sv-doc-my-template-note','Выберите папку'),...([['','Все файлы'],...ownFolders(state).map(x=>[x.id,x.name])].map(([id,title])=>action(title,'archive',async()=>{await api.update(area,item.id,{folder:id});dlg.close();}))),action('Назад','back',main));position();
    }),
    action('Скачать файл','download',async()=>{
     const file=await api.get(area,item.id);const url=URL.createObjectURL(file),a=el('a','');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);dlg.close();
    }),
    action('О документе','info',()=>{dlg.close();openDocumentDetails(state,item);}),
    action('Удалить','delete',async()=>{if(!window.confirm('Удалить документ «'+item.name+'» и его версии?'))return;await api.remove(area,item.id);dlg.close();},true)
-  );
+  );position();
  };
- main();content.append(name,feedback,list);dlg.append(head,content);(state.folderPage?.dialog.open?state.folderPage.dialog:state.recent).append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
+ main();content.append(name,feedback,list);dlg.append(content);
+ (state.folderPage?.dialog.open?state.folderPage.dialog:state.recent).append(dlg);
+ dlg.addEventListener('pointerdown',e=>{if(e.target!==dlg)return;const r=dlg.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dlg.close();});
+ const v=window.visualViewport;window.addEventListener('resize',position);v?.addEventListener('resize',position);v?.addEventListener('scroll',position);
+ dlg.addEventListener('close',()=>{window.removeEventListener('resize',position);v?.removeEventListener('resize',position);v?.removeEventListener('scroll',position);dlg.remove();if(trigger?.isConnected)trigger.focus({preventScroll:true});},{once:true});
+ dlg.showModal();position();
 }
 function openDocumentDetails(state,item){
  if(state!==active||!item.local)return;
@@ -334,8 +351,8 @@ function paintFolder(state){
    finally{folder.busy=false;open.disabled=false;}
   });
   if(item.local){
-   const manage=()=>openFileActions(state,item);
-   open.addEventListener('contextmenu',e=>{e.preventDefault();manage();});
+   const manage=event=>openFileActions(state,item,event?.currentTarget);
+   open.addEventListener('contextmenu',e=>{e.preventDefault();manage(e);});
    const more=el('button','sv-doc-folder-file-more');more.type='button';more.setAttribute('aria-label','Действия с файлом '+item.name);more.append(actionIcon('more'));more.addEventListener('click',manage);row.append(more);
   }
   folder.list.append(row);
@@ -462,8 +479,8 @@ function paint(state){
     }
    });
    if(item.local){
-    const manage=()=>openFileActions(state,item);
-    card.addEventListener('contextmenu',e=>{e.preventDefault();void manage();});
+    const manage=event=>openFileActions(state,item,event?.currentTarget);
+    card.addEventListener('contextmenu',e=>{e.preventDefault();manage(e);});
     const wrap=el('div','sv-doc-local-file-wrap');const more=el('button','sv-doc-file-more');more.append(actionIcon('more'));more.type='button';more.setAttribute('aria-label','Действия с файлом '+item.name);more.addEventListener('click',manage);wrap.append(card,more);state.recentGrid.append(wrap);
    }else state.recentGrid.append(card);
   }
