@@ -21,7 +21,4 @@ html:root body .sv-pdf-markup-head .sv-pdf-markup-round:last-child{color:#176ab4
 .sv-pdf-markup button:disabled{opacity:.35;}
 .sv-pdf-markup-input-row[hidden]{display:none!important;}
 .sv-pdf-markup-input{box-sizing:border-box;width:100%;min-height:44px;font-size:16px;padding:8px 12px;border:1px solid #e6e8eb;border-radius:12px;background:var(--card2,#f5f5f7);color:inherit;}
-html:root body .sv-pdf-markup-rail{display:flex;flex:none;gap:2px;align-items:stretch;padding:4px;border-radius:999px;background:var(--sv-white-pearl-surface,#f5f5f7);border:var(--sv-white-pearl-edge,1px solid #e6e8eb);box-shadow:var(--sv-white-pearl-dock-shadow,none);}
-html:root body .sv-pdf-markup .sv-pdf-markup-tool{display:flex;flex:1;min-width:0;min-height:48px;align-items:center;justify-content:center;flex-direction:column;gap:3px;padding:4px 0;border:0;box-shadow:none;background:transparent;color:inherit;border-radius:24px;font:500 10px/1.2 system-ui;}
-html:root body .sv-pdf-markup .sv-pdf-markup-tool[aria-pressed="true"]{background:rgba(10,132,255,.09);color:#176ab4;}
 @media(prefers-reduced-motion:reduce){html:root body .sv-pdf-markup[open]{animation:none;}}
