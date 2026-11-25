@@ -265,6 +265,10 @@ function renderRecord(node,x){
  header.append(body,chevron);
  card.append(header);node.append(card);
 }
+function actionCount(n){
+ const last=n%10,lastTwo=n%100;
+ return n+' '+(last===1&&lastTwo!==11?'действие':last>=2&&last<=4&&(lastTwo<12||lastTwo>14)?'действия':'действий');
+}
 function renderDetail(x){
   const detail=$('div','svdf-detail');
   const paper=$('div','svdf-paper');
@@ -337,7 +341,7 @@ function renderDetail(x){
   }
   // History and revisions now share one disclosure. Their data is untouched.
   const history=$('details','svdf-history');
-  history.append($('summary','','История документа · '+x.revisions.length+' ред. · '+x.log.length+' действий'));
+  history.append($('summary','','История документа · '+x.revisions.length+' ред. · '+actionCount(x.log.length)));
   const historyBody=$('div','svdf-history-body');
   const versions=$('section','svdf-versions');
   versions.append($('strong','svdf-history-subhead','Редакции'));

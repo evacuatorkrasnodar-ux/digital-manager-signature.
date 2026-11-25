@@ -91,6 +91,7 @@ test('document preview uses actual fictional text on white paper; history preser
  const f=fixture({initial:[record('read')]});
  cls(f.host,'svdf-record-toggle')[0].click();
  assert.equal(cls(f.host,'svdf-paper').length,1);
+ assert.match(cls(f.host,'svdf-history')[0].children[0].textContent,/1 действие$/);
  assert.equal(cls(f.host,'svdf-document-page')[0].open,true);
  assert.equal(cls(cls(f.host,'svdf-list')[0],'svdf-paper').length,0);
  assert.equal(cls(f.host,'svdf-paper-brand')[0].textContent,'SEYVEO · УЧЕБНЫЙ ОБРАЗЕЦ');
