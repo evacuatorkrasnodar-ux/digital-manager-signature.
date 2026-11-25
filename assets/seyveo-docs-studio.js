@@ -394,9 +394,15 @@ function mount(target,{
   mode='';clear();if(exitSheet.open)exitSheet.close();if(scannerSheet.open)scannerSheet.close();editor.insertBefore(panel,draftSection);syncToolSelection();
  };
  const warn=(text)=>$('p','sv-doc-tool-warning',text);
- const message=(text)=>{
+ let scanNoticeTimer=0;
+ const message=(text,timeout=0)=>{
   const target=panel.querySelector('dialog.sv-doc-edit-sheet[open] .sv-doc-tool-status')||panel.querySelector(':scope > .sv-doc-tool-status');
-  if(target)target.textContent=text;
+  if(!target)return;
+  target.textContent=text;
+  if(mode==='scan'){
+   clearTimeout(scanNoticeTimer);
+   if(timeout&&text)scanNoticeTimer=setTimeout(()=>{if(target.isConnected&&target.textContent===text)target.textContent='';},timeout);
+  }
  };
  function open(name){
   if(scanSaving)return;
@@ -514,7 +520,7 @@ function mount(target,{
      // Changes remain in this scan session until the explicit PDF/JPG Save.
      const bytes=new Uint8Array(await file.arrayBuffer());
      if(!valid())throw Error('Страница изменилась.');
-     scans[index]={...scans[index],width:image.naturalWidth,height:image.naturalHeight,jpegBytes:bytes};
+     scans[index]={...scans[index],width:image.naturalWidth,height:image.naturalHeight,jpegBytes:bytes,edited:true};
      const thumb=panel.querySelectorAll('.sv-doc-scan-compact-thumbs img')[index];
      if(thumb){const url=URL.createObjectURL(file);temporaryUrls.push(url);thumb.src=url;}
     }
@@ -611,14 +617,14 @@ function mount(target,{
   if(current?.original){
    autoActions.push({label:'Авто',icon:'scan',run:async()=>{
     if(importBusy||activeScanViewer?.isPhotoBusy?.())return;
-    if(!window.confirm('Повторно обработать исходный снимок? Текущие правки будут сброшены.'))return;
+    if(current.edited&&!window.confirm('Повторно обработать исходный снимок? Текущие правки будут сброшены.'))return;
     const index=selectedScan,at=generation,epoch=operationEpoch;
     importBusy=true;
-    try{const image=await imageOf(new Blob([current.original.jpegBytes],{type:'image/jpeg'}));if(at!==generation||epoch!==operationEpoch||scans[index]!==current)return;const fixed=window.SEYVEO_SCAN_AUTO?.correct(canvasOf(image));if(!fixed){message('Границы листа не подтверждены. Можно обрезать вручную.');return;}scans[index]={...jpegOf(fixed),original:current.original,automatic:true};renderScan();}catch{message('Не удалось обработать снимок.');}finally{if(at===generation&&epoch===operationEpoch)importBusy=false;}
+    try{const image=await imageOf(new Blob([current.original.jpegBytes],{type:'image/jpeg'}));if(at!==generation||epoch!==operationEpoch||scans[index]!==current)return;const fixed=window.SEYVEO_SCAN_AUTO?.correct(canvasOf(image));if(!fixed){message('Снимок без изменений · обрезка вручную',4000);return;}scans[index]={...jpegOf(fixed),original:current.original,automatic:true};renderScan();}catch{message('Не удалось обработать снимок.');}finally{if(at===generation&&epoch===operationEpoch)importBusy=false;}
    }});
    autoActions.push({label:'Оригинал',icon:'original',run:()=>{
     if(importBusy||activeScanViewer?.isPhotoBusy?.())return;
-    if(!window.confirm('Вернуть исходный снимок страницы? Текущие правки будут сброшены.'))return;
+    if(current.edited&&!window.confirm('Вернуть исходный снимок страницы? Текущие правки будут сброшены.'))return;
     scans[selectedScan]={...current.original,original:current.original,automatic:false};renderScan();
    }});
   }
