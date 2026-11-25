@@ -2,7 +2,7 @@
    Only existing navigation capsules and audited scroll edges, never the dock,
    editor toolbar, hit targets, native scrolling or dark theme. */
 :root[data-theme="light"]{
- --sv-nav-glass-face:rgba(239,241,244,.50);
+ --sv-nav-glass-face:rgba(239,241,244,.45);
  --sv-nav-glass-selected:rgba(255,255,255,.82);
  --sv-nav-glass-filter:blur(12px) saturate(105%);
  --sv-nav-glass-shadow:0 3px 9px rgba(38,48,60,.045),inset 0 1px 0 rgba(255,255,255,.85);
