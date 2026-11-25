@@ -56,7 +56,7 @@ html:root[data-theme="light"] body .sv-header-material-circle:not(:active):not([
 html:root[data-theme="light"] body #calendarPage :is(#calendarAdd,.calendar-header-add,.cal-actions .cal-day-fab):not(:active):not([hidden]),
 html:root[data-theme="light"] body #tasksPage :is(#personalAddTasks,.personal-tasks-add,.svcp-manager-task-create,.sv-cabinet-plus):not(:active):not([hidden]),
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] :is(.sv-doc-head-icon,.sv-doc-shelf-add,.sv-doc-tool-scan,.sv-doc-tool-grid .sv-doc-tool-button):not(:active):not([hidden]),
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-icon-button:not(.sv-mail-top-buttons > .sv-mail-icon-button):not(:active):not([hidden]),
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-icon-button:not(.sv-mail-top-buttons > .sv-mail-icon-button):not(.sv-mail-detail-tools > .sv-mail-icon-button):not(:active):not([hidden]),
 html:root[data-theme="light"] body #svcpWorkChatScreen .svcp-work-chat-header > #svcpWorkHistoryTop:not(:active):not([hidden]){
  box-shadow:var(--sv-depth-circle)!important;
 }
