@@ -1226,3 +1226,22 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-meta{
  gap:1px!important;justify-content:center!important;
 }
+
+/* Quiet remove cross. Touch users always see it; mouse users see it on
+   card hover or keyboard focus. Keep a generous target with no layout shift. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item > button.sv-mail-attached-remove.sv-mail-icon-button:not([hidden]){
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ color:#707781!important;opacity:1;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item > button.sv-mail-attached-remove.sv-mail-icon-button > svg{
+ width:15px!important;height:15px!important;stroke-width:1.65!important;
+}
+@media (hover:hover) and (pointer:fine){
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item:not(:hover):not(:focus-within) > button.sv-mail-attached-remove.sv-mail-icon-button{
+  opacity:0!important;pointer-events:none!important;
+ }
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item > button.sv-mail-attached-remove.sv-mail-icon-button:is(:hover,:active){
+ color:#262c33!important;
+}
