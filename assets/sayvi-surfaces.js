@@ -574,7 +574,7 @@ function mailView(){
 
  const guardTrigger=create('button','sv-mail-icon-button sv-mail-shield-toggle');guardTrigger.type='button';
  guardTrigger.append(mailIcon('shield'));
- guardTrigger.setAttribute('aria-label','Защита почты · Умный допуск');
+ guardTrigger.setAttribute('aria-label','Настройки почты');
  guardTrigger.setAttribute('aria-haspopup','true');
  guardTrigger.setAttribute('aria-expanded','false');
  guardTrigger.setAttribute('aria-controls','svMailProtectionMenu');
@@ -582,15 +582,16 @@ function mailView(){
  topButtons.replaceChildren(compose,guardTrigger);
  const guardPanel=create('section','sv-mail-gate-panel');guardPanel.hidden=true;
  guardPanel.id='svMailProtectionMenu';
- guardPanel.setAttribute('aria-label','Умный допуск · защита почты');
- let guardOpen=false,guardAccount='personal';
+ guardPanel.setAttribute('aria-label','Настройки почты');
+ let guardOpen=false,guardAccount='personal',guardView='main';
  let contactsReturnToGuard=false;
- const closeGate=()=>{if(!guardOpen)return;guardOpen=false;renderGate()};
- mailGuardExitHandler=()=>{if(!guardOpen)return false;closeGate();return true};
+ const closeGate=()=>{if(!guardOpen)return;guardOpen=false;guardView='main';renderGate()};
+ const backGate=()=>{if(guardView==='documents'){guardView='main';renderGate();guardPanel.scrollTop=0;return;}closeGate();};
+ mailGuardExitHandler=()=>{if(!guardOpen)return false;backGate();return true};
  guardTrigger.addEventListener('click',event=>{
   event.stopPropagation();
   guardAccount=mailScope==='all'?guardAccount:mailScope;
-  guardOpen=!guardOpen;renderGate();
+  guardOpen=!guardOpen;guardView='main';renderGate();
  });
  // Close like native iOS popovers, without covering the Inbox with a modal.
  document.addEventListener('pointerdown',event=>{
@@ -598,7 +599,7 @@ function mailView(){
   closeGate();
  },{signal:mailGuardListenerAbort.signal});
  document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'&&guardOpen){event.preventDefault();closeGate();guardTrigger.focus()}
+  if(event.key==='Escape'&&guardOpen){event.preventDefault();backGate();if(!guardOpen)guardTrigger.focus()}
  },{signal:mailGuardListenerAbort.signal});
  function renderGate(){
   const account=guardAccount;
@@ -608,7 +609,10 @@ function mailView(){
   guardPanel.replaceChildren();
   if(!guardOpen)return;
   const title=create('div','sv-mail-gate-menu-heading');
-  title.append(create('strong','','Защита почты'));
+  if(guardView==='documents'){
+   const prev=create('button','sv-mail-gate-sub-back');prev.type='button';prev.setAttribute('aria-label','Назад к настройкам почты');prev.append(mailIcon('back'));prev.addEventListener('click',backGate);title.append(prev);
+  }
+  title.append(create('strong','',guardView==='documents'?'Документы из почты':'Настройки почты'));
   guardPanel.append(title);
   const chooser=create('div','sv-mail-gate-accounts');
   for(const [key,label] of [['personal','Личная'],['business','Рабочая']]){
@@ -618,6 +622,50 @@ function mailView(){
    chooser.append(button);
   }
   guardPanel.append(chooser);
+  if(guardView==='documents'){
+  const routing=window.SEYVEO_ATTACHMENT_ROUTING;
+  if(routing){
+   const docs=create('section','sv-mail-document-routing');
+   const form=create('div','sv-mail-gate-modes');
+   const config=routing.settings(account);
+   const labels={ask:['Спрашивать','Предлагать сохранение'],auto:['Автоматически','Только доверенные письма и выбранные папки'],manual:['Вручную','Сохранять по запросу']};
+   const status=create('small','sv-mail-gate-status','Настройки применятся после подключения почты и проверки вложений.');
+   status.setAttribute('role','status');
+   const rules=create('div','sv-mail-doc-routing-rules');
+   const buttons=[];
+   function persist(){
+    try{routing.setSettings(account,config);status.textContent='Настройки сохранены. Для приёма файлов требуется подключение почты.';}
+    catch{status.textContent='Не удалось сохранить настройки.';}
+   }
+   function syncModes(){
+    for(const [key,b] of buttons)b.setAttribute('aria-pressed',String(config.mode===key));
+    rules.hidden=config.mode!=='auto';
+   }
+   for(const [key,[label,hint]] of Object.entries(labels)){
+    const b=create('button','sv-mail-gate-mode');b.type='button';
+    const copy=create('span','sv-mail-gate-mode-body');
+    copy.append(create('strong','',label),create('small','',hint));
+    b.append(create('span','sv-mail-gate-radio'),copy);
+    b.addEventListener('click',()=>{config.mode=key;persist();syncModes()});
+    buttons.push([key,b]);form.append(b);
+   }
+   rules.append(create('small','sv-mail-gate-status','Выберите существующие папки. Если папки нет, Сэйви спросит.'));
+   void routing.folders(account).then(folders=>{
+    if(!docs.isConnected)return;
+    for(const [category,label] of Object.entries(routing.categories)){
+     const row=create('label','sv-mail-doc-routing-rule');
+     const select=create('select','');select.setAttribute('aria-label','Папка для: '+label);
+     const none=create('option','','Спрашивать');none.value='';select.append(none);
+     for(const folder of folders){const option=create('option','',folder.name);option.value=folder.id;select.append(option);}
+     select.value=folders.some(f=>f.id===config.rules[category])?config.rules[category]:'';
+     select.addEventListener('change',()=>{config.rules[category]=select.value;persist();});
+     row.append(create('span','',label),select);rules.append(row);
+    }
+   }).catch(()=>{if(docs.isConnected)status.textContent='Не удалось прочитать папки документов.';});
+   docs.append(form,rules,status);syncModes();guardPanel.append(docs);
+  }
+   return;
+  }
   const modes=create('div','sv-mail-gate-modes');modes.setAttribute('role','group');
   modes.setAttribute('aria-label','Режим защиты '+(account==='business'?'рабочей':'личной')+' почты');
   const hints={smart:'Сэйви сортирует письма',contacts:'Контакты и доверенные',strict:'Только разрешённые'};
@@ -683,47 +731,13 @@ function mailView(){
    paint();
   });
   guardPanel.append(contactsEntry);
-  const routing=window.SEYVEO_ATTACHMENT_ROUTING;
-  if(routing){
-   const docs=create('details','sv-mail-gate-trusted-details sv-mail-document-routing');
-   docs.append(create('summary','','Документы из почты'));
-   const form=create('div','sv-mail-gate-modes');
-   const config=routing.settings(account);
-   const labels={ask:['Спрашивать','Предлагать сохранение'],auto:['Автоматически','Только доверенные письма и выбранные папки'],manual:['Вручную','Сохранять по запросу']};
-   const status=create('small','sv-mail-gate-status','Настройки применятся после подключения почты и проверки вложений.');
-   status.setAttribute('role','status');
-   const rules=create('div','sv-mail-doc-routing-rules');
-   const buttons=[];
-   function persist(){
-    try{routing.setSettings(account,config);status.textContent='Настройки сохранены. Для приёма файлов требуется подключение почты.';}
-    catch{status.textContent='Не удалось сохранить настройки.';}
-   }
-   function syncModes(){
-    for(const [key,b] of buttons)b.setAttribute('aria-pressed',String(config.mode===key));
-    rules.hidden=config.mode==='manual';
-   }
-   for(const [key,[label,hint]] of Object.entries(labels)){
-    const b=create('button','sv-mail-gate-mode');b.type='button';
-    const copy=create('span','sv-mail-gate-mode-body');
-    copy.append(create('strong','',label),create('small','',hint));
-    b.append(create('span','sv-mail-gate-radio'),copy);
-    b.addEventListener('click',()=>{config.mode=key;persist();syncModes()});
-    buttons.push([key,b]);form.append(b);
-   }
-   rules.append(create('small','sv-mail-gate-status','Выберите существующие папки. Если папки нет, Сэйви спросит.'));
-   void routing.folders(account).then(folders=>{
-    if(!docs.isConnected)return;
-    for(const [category,label] of Object.entries(routing.categories)){
-     const row=create('label','sv-mail-doc-routing-rule');
-     const select=create('select','');select.setAttribute('aria-label','Папка для: '+label);
-     const none=create('option','','Спрашивать');none.value='';select.append(none);
-     for(const folder of folders){const option=create('option','',folder.name);option.value=folder.id;select.append(option);}
-     select.value=folders.some(f=>f.id===config.rules[category])?config.rules[category]:'';
-     select.addEventListener('change',()=>{config.rules[category]=select.value;persist();});
-     row.append(create('span','',label),select);rules.append(row);
-    }
-   }).catch(()=>{if(docs.isConnected)status.textContent='Не удалось прочитать папки документов.';});
-   docs.append(form,rules,status);syncModes();guardPanel.append(docs);
+  if(window.SEYVEO_ATTACHMENT_ROUTING){
+   const docsEntry=create('button','sv-mail-gate-menu-contacts sv-mail-doc-routing-entry');
+   docsEntry.type='button';
+   docsEntry.append(mailIcon('drafts'),create('span','','Документы из почты'),mailIcon('back'));
+   docsEntry.lastChild.style.transform='rotate(180deg)';
+   docsEntry.addEventListener('click',()=>{guardView='documents';renderGate();guardPanel.scrollTop=0;});
+   guardPanel.append(docsEntry);
   }
   const pending=folderCount('review');
   if(pending&&mailShowExamples){
