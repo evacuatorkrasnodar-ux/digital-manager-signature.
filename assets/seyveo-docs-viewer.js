@@ -256,13 +256,14 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  toolbar.append(save);
  let editAction=null;
  const draftAPI=()=>area&&window.SEYVEO_DOCUMENT_DRAFTS;
+ let sourceKey=window.SEYVEO_DOCUMENT_FILES?.sourceId?.(file)||'';
  function persistInline(){
   if(!inline||!inline.changed||!area)return Promise.resolve(true);
   const state=inline;
   if(!draftAPI()){say('Хранилище черновиков недоступно.');return Promise.resolve(false);}
-  return draftAPI().save(area,{id:state.id,name:file.name.replace(/\.[^.]+$/,''),text:state.input.value,format:info.kind==='pdf'?'pdf':'docx',style:state.style,edited:true,fromScan:info.kind==='pdf',template:'',updatedAt:Date.now()}).then(()=>true,e=>{if(active)say(e?.message||'Не удалось сохранить черновик.');return false;});
+  return draftAPI().save(area,{id:state.id,sourceKey,name:state.name,text:state.input.value,format:info.kind==='pdf'?'pdf':'docx',style:state.style,edited:true,fromScan:info.kind==='pdf',template:'',updatedAt:Date.now()}).then(()=>true,e=>{if(active)say(e?.message||'Не удалось сохранить черновик.');return false;});
  }
- function startInline(value){
+ function startInline(value,existing=null){
   if(!active||inline)return;
   if(value.length>12000){say('Документ больше 12 000 знаков. Редактирование копии пока недоступно.');return;}
   const api=window.SEYVEO_EDITOR_CAPSULE;
@@ -272,7 +273,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   const rail=api.attach(el('div','svdv-inline-rail'),'word');
   const menu=el('div','svdv-inline-menu');menu.hidden=true;menu.setAttribute('role','group');controls.append(menu,rail);
   rail.setAttribute('aria-label','Инструменты документа');
-  const state={input,rail,controls,id:draftAPI()?.id(),changed:false,style:{size:12,alignment:'left',heading:false},history:[],redo:[],last:value,saving:false,originalNodes:Array.from(stage.childNodes),oldTop:stage.scrollTop};
+  const state={input,rail,controls,id:existing?.id||draftAPI()?.id(),name:existing?.name||file.name.replace(/\.[^.]+$/,''),changed:!!existing,style:existing?.style?{size:[10,11,12,14,16,18,20,24].includes(existing.style.size)?existing.style.size:12,alignment:['left','center','right','both'].includes(existing.style.alignment)?existing.style.alignment:'left',heading:existing.style.heading===true}:{size:12,alignment:'left',heading:false},history:[],redo:[],last:value,saving:false,originalNodes:Array.from(stage.childNodes),oldTop:stage.scrollTop};
   inline=state;
   const update=()=>{input.style.fontSize=(state.style.size*4/3)+'px';input.style.textAlign=state.style.alignment==='both'?'justify':state.style.alignment;};
   const changed=()=>{state.changed=true;void persistInline();};
@@ -392,7 +393,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   if(sheet)stopViewport=api.viewport(sheet);
   const meta=copy.querySelector('.svdv-meta');state.metaBefore=meta.textContent;
   if(info.kind==='pdf'||info.ext==='docx')meta.textContent=state.metaBefore+' · Текстовая копия';
-  say('');
+  say(existing?'Черновик восстановлен.':'',existing?3000:0);
   input.focus({preventScroll:true});input.setSelectionRange(0,0);stage.scrollTop=state.oldTop;
  }
  function leaveInline(){
@@ -415,11 +416,12 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    const blob=ext==='pdf'?ex.pdfFromText(text,()=>document.createElement('canvas'),state.style):ext==='docx'?ex.docxFromText(text,state.style):new Blob([text],{type:'text/plain;charset=utf-8'});
    const name=file.name.replace(/\.[^.]+$/,'').replace(/ · копия$/,'')+' · копия.'+ext;
    const next=new File([blob],name,{type:blob.type});
-   if(onSaveCopy)await onSaveCopy(next,{text,status:'ready'});
+   let savedFileId='';if(onSaveCopy)savedFileId=await onSaveCopy(next,{text,status:'ready'});
    else{const link=el('a');link.href=URL.createObjectURL(next);link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),60000);}
    if(draftAPI())await draftAPI().remove(area,state.id).catch(()=>{});
+   window.SEYVEO_DOCS_STUDIO?.refreshDrafts?.(area);
    if(!active)return;
-   const old=objectUrl;objectUrl=URL.createObjectURL(next);file=next;loadedText=text;
+   const old=objectUrl;objectUrl=URL.createObjectURL(next);file=next;sourceKey=typeof savedFileId==='string'?savedFileId:'';loadedText=text;
    save.href=objectUrl;save.download=name;save.setAttribute('aria-label','Сохранить '+name);
    if(originalAction)originalAction.href=objectUrl;
    copy.querySelector('.svdv-name').textContent=name;state.metaBefore=info.label+' · '+Math.max(1,Math.ceil(next.size/1024))+' КБ';
@@ -443,6 +445,10 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
      return;
     }
     if(inline)return;
+    if(sourceKey&&draftAPI()){
+     const previous=(await draftAPI().list(area)).find(d=>d.sourceKey===sourceKey);
+     if(!active)return;if(previous){startInline(String(previous.text||''),previous);return;}
+    }
     let value=loadedText??(window.SEYVEO_DOCUMENT_FILES?.sourceText?.(file)||null);
     if(value===null){
      if(info.kind==='text')value=await file.text();
@@ -558,7 +564,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   const close=el('button','svdv-sheet-close');close.type='button';close.setAttribute('aria-label','Назад');close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 5-7 7 7 7"/></svg>';
   doneControl=el('button','svdv-inline-done');doneControl.type='button';doneControl.hidden=true;doneControl.setAttribute('aria-label','Готово · сохранить копию');doneControl.append(icon('check'));
   const top=el('div','svdv-sheet-top');top.append(close,copy,doneControl);header.replaceChildren(grip,top);
-  async function requestClose(){if(inline?.saving)return;if(inline&&!await persistInline())return;sheet.close();}
+  async function requestClose(){if(inline?.saving)return;if(inline&&!await persistInline())return;window.SEYVEO_DOCS_STUDIO?.refreshDrafts?.(area);sheet.close();}
   close.addEventListener('click',()=>void requestClose());
   sheet.addEventListener('cancel',e=>{e.preventDefault();void requestClose();});
   window.SEYVEO_SHEET_NAVIGATION?.attach(grip,
