@@ -393,7 +393,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   state.dismiss=e=>{if(!controls.contains(e.target))closeMenu();};document.addEventListener('pointerdown',state.dismiss,{passive:true});
   more.open=false;toolbar.hidden=true;controls.hidden=false;
   stage.classList.add('svdv-inline-editing');stage.replaceChildren(input);
-  if(sheet)stopViewport=api.viewport(sheet);
+  if(sheet){sheet.classList.add('is-expanded','svdv-edit-fullscreen');stopViewport=api.viewport(sheet);}
   const meta=copy.querySelector('.svdv-meta');state.metaBefore=meta.textContent;
   if(info.kind==='pdf'||info.ext==='docx')meta.textContent=state.metaBefore+' · Текстовая копия';
   say(existing?'Черновик восстановлен.':'',existing?3000:0);
@@ -402,7 +402,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  }
  function leaveInline(){
   const state=inline;if(!state)return;
-  stopViewport?.();stopViewport=null;sheet?.classList.remove('sv-editor-keyboard-open');
+  stopViewport?.();stopViewport=null;sheet?.classList.remove('sv-editor-keyboard-open','svdv-edit-fullscreen');
   state.closeMenu?.();document.removeEventListener('pointerdown',state.dismiss);state.controls.hidden=true;state.rail.replaceChildren();state.controls.replaceChildren(state.rail);copy.querySelector('.svdv-meta').textContent=state.metaBefore;stage.classList.remove('svdv-inline-editing');toolbar.hidden=false;
   if(doneControl){doneControl.hidden=true;doneControl.onclick=null;}
   inline=null;
@@ -443,12 +443,12 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   const originalNodes=Array.from(stage.childNodes),oldTop=stage.scrollTop;
   const restore=()=>{
    if(!active)return;
-   markupSession=null;editorControls.hidden=true;editorRail.replaceChildren();editorControls.replaceChildren(editorRail);
+   markupSession=null;sheet?.classList.remove('svdv-edit-fullscreen');editorControls.hidden=true;editorRail.replaceChildren();editorControls.replaceChildren(editorRail);
    toolbar.hidden=false;doneControl.hidden=true;doneControl.disabled=false;doneControl.onclick=null;
    stage.classList.remove('svdv-ink-stage');stage.replaceChildren(...originalNodes);stage.scrollTop=oldTop;
   };
   editorRail.replaceChildren();editorControls.replaceChildren(editorRail);editorControls.hidden=false;toolbar.hidden=true;more.open=false;
-  stage.classList.add('svdv-ink-stage');stage.replaceChildren();doneControl.hidden=false;
+  stage.classList.add('svdv-ink-stage');stage.replaceChildren();doneControl.hidden=false;sheet?.classList.add('is-expanded','svdv-edit-fullscreen');
   const result=api.open(file,{parent:root,loadPdf,onSave:onSaveCopy,shared:{stage,rail:editorRail,controls:editorControls,done:doneControl,viewport:sheet||root,notice:say},onClose:restore,onText:(assistant=false)=>{sayviAfterEdit=assistant;editAction?.click();},onSaved:(next,id,output)=>{
    if(!active)return;
    const old=objectUrl;objectUrl=URL.createObjectURL(next);file=next;sourceKey=typeof id==='string'?id:'';loadedText=null;
@@ -601,7 +601,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   sheet.addEventListener('cancel',e=>{e.preventDefault();void requestClose();});
   window.SEYVEO_SHEET_NAVIGATION?.attach(grip,
    ()=>sheet.classList.add('is-expanded'),
-   ()=>{if(sheet.classList.contains('is-expanded'))sheet.classList.remove('is-expanded');else void requestClose();});
+   ()=>{if(inline||markupSession||sheet.classList.contains('svdv-edit-fullscreen'))return;if(sheet.classList.contains('is-expanded'))sheet.classList.remove('is-expanded');else void requestClose();});
   sheet.append(root);target.replaceChildren(sheet);
   sheet.addEventListener('close',()=>{if(active){session.destroy();onClose();}},{once:true});
   sheet.addEventListener('click',e=>{if(e.target===sheet){const r=sheet.getBoundingClientRect();if(e.clientY<r.top||e.clientX<r.left||e.clientX>r.right)void requestClose();}});
