@@ -210,7 +210,7 @@ function mount(target,{
  scannerSheet.setAttribute('aria-labelledby','sv-doc-scanner-title');
  const scannerHead=$('header','sv-doc-scanner-head');
  const grip=$('div','sv-doc-picker-grip');grip.setAttribute('aria-hidden','true');
- const scannerBack=button('',()=>{if(mode==='sign'||mode==='print')open('scan');else requestScanExit();},'sv-doc-scanner-round');
+ const scannerBack=button('',requestWorkspaceBack,'sv-doc-scanner-round');
  scannerBack.setAttribute('aria-label','Назад');scannerBack.append(toolArt('back'));scannerBack.autofocus=true;
  const scannerTitle=$('strong','','Сканер');scannerTitle.id='sv-doc-scanner-title';
  scannerHead.append(grip,scannerBack,scannerTitle);
@@ -230,8 +230,23 @@ function mount(target,{
   if(!scans.length){closePanel();return;}
   if(!exitSheet.open)exitSheet.showModal();
  }
- scannerSheet.addEventListener('cancel',e=>{e.preventDefault();if(mode==='sign'||mode==='print')open('scan');else requestScanExit();});
- window.SEYVEO_SHEET_NAVIGATION?.attach(scannerHead,null,()=>{if(mode==='sign'||mode==='print')open('scan');else requestScanExit();});
+ let createLeaving=false;
+ async function requestCreateExit(){
+  if(createLeaving)return;
+  createLeaving=true;scannerBack.disabled=true;
+  try{
+   await persistDraft();
+   if(mode!=='create'||!panel.isConnected)return;
+   if(saveFailed){message(draftError);return;}
+   closePanel();newDraft();
+  }finally{createLeaving=false;scannerBack.disabled=false;}
+ }
+ function requestWorkspaceBack(){
+  if(mode==='create'){void requestCreateExit();return;}
+  if(mode==='sign'||mode==='print')open('scan');else requestScanExit();
+ }
+ scannerSheet.addEventListener('cancel',e=>{if(e.target!==scannerSheet)return;e.preventDefault();requestWorkspaceBack();});
+ window.SEYVEO_SHEET_NAVIGATION?.attach(scannerHead,null,requestWorkspaceBack);
  editor.append(grid,panel,draftSection,scannerSheet);target.append(editor);
  // Primary toolbar and contextual document actions open the existing panels.
  for(const action of grid.querySelectorAll('button[data-action]:not([data-action="file"])')){
@@ -378,7 +393,7 @@ function mount(target,{
  };
  function open(name){
   if(scanSaving)return;
-  if(mode===name&&!panel.hidden){if(name==='scan')requestScanExit();else closePanel();return;}
+  if(mode===name&&!panel.hidden){requestWorkspaceBack();return;}
   if(name==='scan')savedNotice.textContent='';
   if(mode!==name){operationEpoch++;importBusy=false;}
   mode=name;panel.dataset.mode=name;panel.hidden=false;
@@ -387,19 +402,21 @@ function mount(target,{
  }
  function render(){
   clear();if(!mode)return;
-  const separate=['scan','sign','print'].includes(mode);
+  const separate=['scan','sign','print','create'].includes(mode);
   if(separate){
-   scannerTitle.textContent=mode==='sign'?'Подпись':mode==='print'?'Печать':'Сканер';
+   scannerSheet.classList.toggle('sv-doc-create-sheet',mode==='create');
+   scannerTitle.textContent=mode==='create'?'Создать документ':mode==='sign'?'Подпись':mode==='print'?'Печать':'Сканер';
    scannerSheet.insertBefore(panel,exitSheet);
   }else{
    if(exitSheet.open)exitSheet.close();if(scannerSheet.open)scannerSheet.close();
    editor.insertBefore(panel,draftSection);
   }
+  // Open the parent first: an imported Word/PDF may immediately open its own editor dialog.
+  if(separate&&scannerSheet.isConnected&&!scannerSheet.open)scannerSheet.showModal();
   if(mode==='scan')renderScan();
   if(mode==='create')renderCreate();
   if(mode==='sign')renderSign();
   if(mode==='print')renderPrint();
-  if(separate&&scannerSheet.isConnected&&!scannerSheet.open)scannerSheet.showModal();
   if(separate)panel.scrollTop=0;
  }
  async function ingest(list){
@@ -631,9 +648,7 @@ function mount(target,{
   panel.append(status(''));
  }
  function renderCreate(){
-  const createHeading=heading(fromScan?'Редактор Word':'Создать документ',fromScan?'Распознанный текст · редактирование в SEYVEO':'');
-  if(!fromScan)createHeading.classList.add('sv-doc-create-regular-heading');
-  panel.append(createHeading);
+  // The workspace header already names this screen; avoid a duplicate title.
 
   // Editable starting forms, not jurisdiction-verified legal documents.
   const templates=area==='business'?[
@@ -753,7 +768,7 @@ function mount(target,{
   let switchingDraft=false;
   async function beginNew(content='',template='',format='pdf'){
    if(switchingDraft)return;switchingDraft=true;
-   try{await persistDraft();if(saveFailed||!panel.isConnected)return;newDraft();
+   try{await persistDraft();if(saveFailed||!panel.isConnected||mode!=='create')return;newDraft();
    body.value=content;documentDraft=content;documentTemplate=template;documentFormat=format==='docx'?'docx':'pdf';filename.value='';
    size.value='12';alignment.value='left';firstLine.setAttribute('aria-pressed','false');headingCheck.hidden=true;
    refreshStyle();syncFormat();syncTemplate();lastWordText=body.value;wordHistory.length=0;
@@ -1113,7 +1128,7 @@ function mount(target,{
    if(saveFailed&&!window.confirm('Черновик не сохранён. Выйти из редактора?'))return;
    if(typeof sheet.close==='function')sheet.close();else sheet.removeAttribute('open');
   },'sv-doc-edit-back');
-  back.setAttribute('aria-label','Назад к документам');
+  back.setAttribute('aria-label','Назад к созданию документа');
   back.append(actionIcon('back'));
   const sayviEditor=button('',helpWithCurrentDocument,'sv-doc-edit-ai');
   sayviEditor.setAttribute('aria-label','Создать с Сэйви');
@@ -1184,7 +1199,7 @@ function mount(target,{
    sheet.style.removeProperty('--sv-doc-editor-height');sheet.style.removeProperty('--sv-doc-editor-top');
   });
   const resume=button('Продолжить документ',()=>revealEditor(),'sv-doc-edit-resume');
-  resume.hidden=!saveFailed;
+  resume.hidden=!(saveFailed||draftId||draftEdited||documentDraft.trim());
   function revealEditor(){
    rail.scrollLeft=0;
    if(!sheet.open){
@@ -1196,7 +1211,7 @@ function mount(target,{
   }
   sheet.addEventListener('close',()=>{
    if(!panel.isConnected||!sheet.isConnected)return;
-   void persistDraft().then(()=>{resume.hidden=!saveFailed;void refreshDrafts();});
+   void persistDraft().then(()=>{resume.hidden=!(saveFailed||draftId||draftEdited||documentDraft.trim());void refreshDrafts();});
   });
   const sayvi=button('',()=>onSayvi('create'),'sv-doc-create-sayvi');
   const sayviMark=$('span','sv-doc-create-sayvi-mark sv-sayvi-symbol');
