@@ -1380,7 +1380,7 @@ function mailView(){
   const help=intent('Сэйви',()=>{
    note.hidden=!note.hidden;
    help.setAttribute('aria-expanded',String(!note.hidden));
-
+   if(!note.hidden)note.scrollIntoView({block:'nearest',behavior:'auto'});
   });
   help.classList.add('sv-mail-assist-action');
   help.replaceChildren(create('span','sv-mail-assist-symbol sv-sayvi-symbol',''));
