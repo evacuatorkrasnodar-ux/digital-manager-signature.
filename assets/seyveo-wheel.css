@@ -1,6 +1,10 @@
 /* Five rows and a centered magnetic selection, shared by every wheel consumer. */
-html body .sv-unified-wheel{
- box-sizing:border-box!important;display:block!important;position:relative!important;min-width:0!important;width:100%!important;height:200px!important;max-height:200px!important;
+html body .sv-unified-wheel,
+html:root body #calendarEventDialog #seyveoPickTime .sv-unified-wheel,
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-unified-wheel,
+html:root body #svStandardPickerDialog .sv-unified-wheel,
+html:root body #calendarSpaceDialog[data-space="health"] .sv-unified-wheel{
+ box-sizing:border-box!important;display:block!important;position:relative!important;justify-content:initial!important;min-width:0!important;width:100%!important;height:200px!important;min-height:200px!important;max-height:200px!important;
  overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;scroll-snap-type:y mandatory;scroll-padding:80px 0!important;
  padding:80px 0!important;margin:0!important;border:0!important;border-radius:14px!important;background:transparent!important;box-shadow:none!important;
  scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-y;
@@ -27,3 +31,13 @@ html:root body #sayviSurfacePage .sv-wheel-sheet > .sv-doc-picker-body{display:f
 html:root body #sayviSurfacePage .sv-wheel-sheet .sv-wheel-done{grid-column:3!important;grid-row:2!important;justify-self:end;color:#176ab4!important;}
 html body .sv-wheel-group .sv-unified-wheel-option{font-size:clamp(13px,3.8vw,17px)!important;}
 html body .sv-wheel-feedback{margin:0 auto;display:block;}
+
+/* Override the retired wheel geometry, including the old task center band. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-bottom .sv-doc-picker-head > .sv-wheel-done{grid-column:3!important;grid-row:2!important;justify-self:end;color:#176ab4!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-sheet.sv-wheel-sheet[open]{height:auto!important;max-height:80dvh!important;}
+html:root body #calendarSpaceDialog[data-space="health"] .sv-unified-wheel{touch-action:pan-y!important;overflow-y:auto!important;}
+html:root body #calendarEventDialog #seyveoPickTime .sv-unified-wheel > .sv-unified-wheel-option,
+html:root body #svStandardPickerDialog .sv-unified-wheel > .sv-unified-wheel-option,
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-unified-wheel > .sv-unified-wheel-option,
+html:root body #calendarSpaceDialog[data-space="health"] .sv-unified-wheel > .sv-unified-wheel-option{height:40px!important;min-height:40px!important;max-height:40px!important;padding:0 4px!important;background:transparent!important;color:var(--text,#20262d)!important;}
+html:root body :is(#calendarEventDialog,#personalTaskDialog,#svStandardPickerDialog,#calendarSpaceDialog) .sv-unified-wheel > .sv-unified-wheel-option.is-selected{background:rgba(115,127,145,.12)!important;}
