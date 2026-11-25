@@ -1141,6 +1141,15 @@ function mailView(){
    attachmentThumbs.set(entry.id,task);thumbnailQueue=task;return task;
   }
   attachmentList.tabIndex=0;
+  // Only paint a tiny trailing-edge fade when more attachments are offscreen.
+  // No changes to scroll position or dimensions in this listener.
+  const syncAttachmentEdge=()=>{
+   const more=attachmentList.scrollWidth-attachmentList.clientWidth-attachmentList.scrollLeft>2;
+   attachmentList.classList.toggle('sv-mail-rail-more',more);
+  };
+  attachmentList.addEventListener('scroll',syncAttachmentEdge,{passive:true});
+  const attachmentRailObserver=typeof ResizeObserver==='function'?new ResizeObserver(syncAttachmentEdge):null;
+  attachmentRailObserver?.observe(attachmentList);
   let railDrag=null,railSuppress=false;
   attachmentList.addEventListener('pointerdown',e=>{
    if(e.pointerType!=='mouse'||e.button!==0||e.target.closest('.sv-mail-attached-remove')||attachmentList.scrollWidth<=attachmentList.clientWidth)return;
@@ -1208,9 +1217,9 @@ function mailView(){
     remove.title='Убрать вложение';
     row.append(view,remove);attachmentList.append(row);
    }
-   // Always start at the first file. Auto-scrolling to the last attachment
-   // previously left the first card visibly cut off on iPhone.
+   // Preserve the position when adding or removing an attachment.
    attachmentList.scrollLeft=left;
+   syncAttachmentEdge();
   }
   attachmentPicker.addEventListener('change',async()=>{
    const chosen=Array.from(attachmentPicker.files||[]);
@@ -1340,9 +1349,12 @@ function mailView(){
    viewport?.removeEventListener('resize',resizeTools);viewport?.removeEventListener('scroll',syncTools);
    window.removeEventListener('resize',resizeTools);message.removeEventListener('input',sizeReply);
    thumbsActive=false;attachmentThumbs.clear();
+   attachmentRailObserver?.disconnect();
+   attachmentList.removeEventListener('scroll',syncAttachmentEdge);
    composerFooter.remove();
   };
   sizeReply();
+  syncAttachmentEdge();
   mailGuardListenerAbort.signal.addEventListener('abort',mailEditorViewportCleanup,{once:true});
   syncTools();
  }
