@@ -160,11 +160,11 @@
 
 
 :host([data-task-selecting="true"]) .sv-history-dual{
- width:44px;height:44px;padding:0 1px;
+ width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);padding:0 1px;
 }
 :host([data-task-selecting="true"]) .sv-history-dual .control:not(.sv-history-search){display:none!important}
 :host([data-task-selecting="true"]) .sv-history-dual .sv-history-search{
- display:grid;flex:0 0 42px;width:42px;height:42px;
+ display:grid;flex:0 0 var(--sv-nav-capsule-cell,42px);width:var(--sv-nav-capsule-cell,42px);height:var(--sv-nav-capsule-cell,42px);
 }
 .month[hidden]{display:none!important}
 .month:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:3px}
@@ -215,9 +215,15 @@
  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
  letter-spacing:-.028em;font-variant-numeric:proportional-nums lining-nums;
 }
+/* Long week ranges must stay between Back and Add even at narrow widths.
+   Only the year with its zodiac artwork needs the flex layout. */
 :host([data-calendar-period="true"]) .title{
+ display:block;min-width:0;max-width:100%;
+ font-size:clamp(16px,4.8vw,19px);font-weight:620;letter-spacing:-.025em;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+:host([data-calendar-period="true"]) .title:has(.sv-zodiac-symbol){
  display:flex;align-items:center;justify-content:center;gap:5px;
- font-size:19px;font-weight:620;letter-spacing:-.025em;overflow:visible;
 }
 .sv-zodiac-symbol{
  display:inline-grid;place-items:center;flex:none;width:39px;height:39px;
