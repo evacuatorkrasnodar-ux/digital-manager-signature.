@@ -9,7 +9,7 @@
 #managePage .sv-fan-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:4px 0 24px}
 #managePage .sv-fan-top small{font-size:10px;letter-spacing:.09em;color:var(--secondary)}
 #managePage .sv-fan-back{padding:8px 4px;min-height:42px;border:0;background:transparent;color:var(--text);font:inherit;font-size:13px;cursor:pointer}
-#managePage .sv-fan-back.sv-nav-back{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border-radius:50%}
+#managePage .sv-fan-back.sv-nav-back{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px);min-height:var(--sv-nav-single-size,44px);padding:0;border-radius:50%}
 #managePage .sv-fan-back.sv-nav-back svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
 
 #managePage .sv-fan-workshop h1{font-size:25px;font-weight:620;letter-spacing:-.035em;line-height:1.12;margin:0 0 10px}
@@ -54,7 +54,7 @@
 .sv-fan-personal-dialog{box-sizing:border-box;width:min(460px,calc(100% - 18px));max-height:90dvh;border:1px solid var(--sv-ui-sheet-border);border-radius:var(--sv-ui-radius-sheet,22px);background:var(--sv-ui-sheet);color:var(--text);padding:0;-webkit-backdrop-filter:var(--sv-ui-sheet-filter);backdrop-filter:var(--sv-ui-sheet-filter);box-shadow:var(--sv-ui-sheet-shadow)}
 .sv-fan-personal-dialog::backdrop{background:rgba(4,8,12,.45);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .sv-fan-personal-sheet{padding:18px 18px 22px}
-.sv-fan-personal-back{box-sizing:border-box;display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;border-radius:50%;background:transparent;box-shadow:none;color:var(--text);cursor:pointer}
+.sv-fan-personal-back{box-sizing:border-box;display:grid;place-items:center;width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px);min-height:var(--sv-nav-single-size,44px);padding:0;border:0;border-radius:50%;background:transparent;box-shadow:none;color:var(--text);cursor:pointer}
 .sv-fan-personal-back svg{display:block;width:var(--sv-ui-icon,19px);height:var(--sv-ui-icon,19px);fill:none;stroke:currentColor;stroke-width:var(--sv-ui-stroke,1.55);stroke-linecap:round;stroke-linejoin:round}
 .sv-fan-personal-sheet h2{font-size:23px;letter-spacing:-.03em;font-weight:610;margin:13px 0}
 .sv-fan-personal-sheet p{font-size:14px;color:var(--secondary);line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}

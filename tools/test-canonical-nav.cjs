@@ -60,7 +60,11 @@ const checks=[
   [
     "assets/seyveo-white-pearl.css",
     "color:#007aff!important"
-  ]
+  ],
+  ["assets/seyveo-docs-viewer.css","width:var(--sv-nav-single-size,44px)"],
+  ["assets/seyveo-fan-workshop.css","width:var(--sv-nav-single-size,44px)"],
+  ["assets/seyveo-connect.css","width:var(--sv-nav-single-size,44px)"],
+  ["assets/seyveo-white-pearl.css",".svdv-sheet-top > :is(.svdv-sheet-close,.svdv-sheet-expand)"]
 ];
 for(const [file,fragment] of checks){
  assert.ok(fs.readFileSync(path.join(root,file),'utf8').includes(fragment),file+' must retain '+fragment);

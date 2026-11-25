@@ -588,3 +588,24 @@ html:root[data-theme="light"] body dialog#seyveoFamilyDialog[open] #svfClose.sv-
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
  transform:none!important;opacity:1!important;filter:none!important;transition:none!important;
 }
+
+/* Additional standalone navigation: the existing PDF viewer and nested tools.
+   Keep the viewer's expansion transform, all click handlers and hidden state.
+   Address-field and playback controls are not standalone header buttons. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .svdv-reader-head > button,
+html:root[data-theme="light"] body .svdv-bottom-sheet .svdv-reader-head > button,
+html:root[data-theme="light"] body .svdv-bottom-sheet .svdv-sheet-top > :is(.svdv-sheet-close,.svdv-sheet-expand),
+html:root[data-theme="light"] body #managePage .sv-fan-back.sv-nav-back,
+html:root[data-theme="light"] body .sv-fan-personal-back,
+html:root[data-theme="light"] body .sv-connect-header > .sv-connect-back,
+html:root[data-theme="light"] body #sayviVideoPage #sayviVideoBack.sv-nav-back{
+ box-sizing:border-box!important;
+ width:var(--sv-nav-single-size)!important;height:var(--sv-nav-single-size)!important;
+ min-width:var(--sv-nav-single-size)!important;min-height:var(--sv-nav-single-size)!important;
+ max-width:var(--sv-nav-single-size)!important;max-height:var(--sv-nav-single-size)!important;
+ border:var(--sv-white-pearl-edge)!important;border-radius:50%!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;
+ color:var(--sv-header-icon-ink)!important;box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+ opacity:1!important;filter:none!important;transition:none!important;
+}
