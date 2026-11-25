@@ -166,6 +166,15 @@ function renderPreview(parent,file){
  }else preview.append(note('Предварительный просмотр этого формата не поддерживается браузером. Откройте оригинал.'));
  parent.append(preview);
 }
+const docScrollBodies=new WeakSet();
+function bindDocumentScroll(body){
+ if(!body||docScrollBodies.has(body))return;
+ docScrollBodies.add(body);
+ body.addEventListener('scroll',()=>{
+  const pinned=body.querySelector('.sv-doc-center > .sv-doc-pinned-switch');
+  if(pinned)pinned.classList.toggle('sv-doc-under-scroll',body.scrollTop>2);
+ },{passive:true});
+}
 function draw(){
  if(!host)return;
  // Employee perspective is inherited from the business cabinet.
@@ -186,6 +195,12 @@ function draw(){
   b.setAttribute('aria-pressed',String(area===key));switcher.append(b);
  }
  const pinned=el('div','sv-doc-pinned-switch');pinned.append(switcher);host.append(pinned);
+ const scrollBody=host.closest('#sayviSurfaceBody');
+ if(scrollBody){
+  bindDocumentScroll(scrollBody);
+  const sync=()=>pinned.classList.toggle('sv-doc-under-scroll',scrollBody.scrollTop>2);
+  sync();
+ }
 
  if(area==='business'&&!employeePreview()&&view!=='flow'){
   // Show approvals entry in the archive, not again inside approvals.
