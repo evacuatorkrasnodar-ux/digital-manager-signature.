@@ -108,16 +108,53 @@ const updateFolder=(state,category,patch)=>category.defaultFolder?localFiles().s
 function notice(state,text){state.folderCaption.textContent=text;}
 function closeFolderMenu(state){state.folderMenu.hidden=true;state.folderMenu.replaceChildren();}
 function revealOwnFolder(state,id){state.pendingFolder=id;void refresh();}
-async function makeFolder(state){
- const name=window.prompt('Название папки','Новая папка');if(!name?.trim()||state!==active)return;
- try{const id=await localFiles().createFolder(state.options.area,name);if(state===active)revealOwnFolder(state,id);}catch(e){notice(state,e.message||'Не удалось создать папку.');}
+// Naming is a real app sheet, not a browser prompt. The encrypted storage
+// API remains the only writer; failed saves leave the draft name in place.
+function editFolderName(state,category=null){
+ if(state!==active||state.folderEditor?.open)return;
+ const dlg=el('dialog','sv-doc-my-templates sv-doc-folder-name-sheet');
+ state.folderEditor=dlg;
+ const title=category?'Переименовать папку':'Новая папка';
+ dlg.setAttribute('aria-label',title);
+ const head=el('header','sv-doc-my-template-head');
+ const back=el('button','sv-doc-my-template-back');back.type='button';back.setAttribute('aria-label','Назад');
+ back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+ back.addEventListener('click',()=>dlg.close());
+ head.append(back,el('strong','',title));
+ const form=el('form','sv-doc-my-template-content sv-doc-folder-name-form');
+ const field=el('input','sv-doc-my-template-input');field.type='text';field.maxLength=60;
+ field.placeholder='Название папки';field.setAttribute('aria-label','Название папки');field.value=category?.title||'';
+ field.autocomplete='off';field.setAttribute('enterkeyhint','done');
+ const save=el('button','sv-doc-my-template-primary',category?'Сохранить':'Создать');save.type='submit';
+ const feedback=el('small','sv-doc-my-template-note');feedback.setAttribute('role','status');
+ let saving=false;
+ function sync(){save.disabled=saving||!field.value.trim();}
+ field.addEventListener('input',sync);
+ dlg.addEventListener('cancel',event=>{if(saving)event.preventDefault();});
+ form.addEventListener('submit',async event=>{
+  event.preventDefault();const name=field.value.trim();
+  if(saving||!name||state!==active)return;
+  saving=true;field.readOnly=true;back.disabled=true;sync();feedback.textContent='';
+  try{
+   const id=category?category.id:await localFiles().createFolder(state.options.area,name);
+   if(category)await updateFolder(state,category,{name});
+   if(dlg.open)dlg.close();
+   if(state===active)revealOwnFolder(state,id);
+  }catch(error){feedback.textContent=error.message||'Не удалось сохранить папку.';}
+  finally{saving=false;field.readOnly=false;back.disabled=false;sync();}
+ });
+ form.append(field,save,feedback);dlg.append(head,form);
+ state.foldersGrid.parentElement.append(dlg);
+ dlg.addEventListener('close',()=>{if(state.folderEditor===dlg)state.folderEditor=null;dlg.remove();},{once:true});
+ sync();dlg.showModal();field.focus();if(category)field.select();
 }
+function makeFolder(state){editFolderName(state);}
 function openFolderMenu(state,category){
  if(state!==active)return;
  closeFolderMenu(state);
  const menu=state.folderMenu;menu.hidden=false;
  const action=(label,fn,destructive=false)=>{const b=el('button','sv-doc-folder-menu-action'+(destructive?' sv-doc-folder-danger':''),label);b.type='button';b.addEventListener('click',async()=>{closeFolderMenu(state);try{await fn();}catch(e){notice(state,e.message||'Не удалось изменить папку.');}});menu.append(b);};
- action('Переименовать',async()=>{const name=window.prompt('Название папки',category.title);if(name?.trim())await updateFolder(state,category,{name});});
+ action('Переименовать',()=>editFolderName(state,category));
  action('В начало моих папок',async()=>{const own=ownFolders(state);const first=Math.min(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:first-1});revealOwnFolder(state,category.id);});
  action('В конец моих папок',async()=>{const own=ownFolders(state);const last=Math.max(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:last+1});revealOwnFolder(state,category.id);});
  action('Удалить папку',async()=>{
@@ -397,7 +434,7 @@ function mount(parent,options={}){
 }
 function destroy(){
  if(!active)return;
- active.token++;active.records=[];active=null;
+ active.token++;active.records=[];if(active.folderEditor?.open)active.folderEditor.close();active=null;
 }
 document.addEventListener('seyveo:documents-vault-changed',event=>{
  if(active&&(!event.detail?.area||event.detail.area===active.options.area))refresh();

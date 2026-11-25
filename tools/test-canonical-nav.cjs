@@ -5,6 +5,10 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const checks=[
+  ["assets/documents-shelf.js","function editFolderName(state,category=null)"],
+  ["assets/documents-shelf.js","await localFiles().createFolder(state.options.area,name)"],
+  ["assets/documents-shelf.js","if(category)await updateFolder(state,category,{name});"],
+  ["assets/seyveo-documents-graphite-flat.css","dialog.sv-doc-folder-name-sheet[open]"],
   ["assets/seyveo-pay.css","flex:0 0 var(--sv-nav-single-size,44px);display:grid;place-items:center;appearance:none;"],
   ["assets/seyveo-personal-wallet.css",".sw-row-main > div{flex:1 1 auto;min-width:0;overflow:hidden}"],
   ["assets/seyveo-personal-wallet.css","white-space:normal;overflow-wrap:anywhere;font-variant-numeric:tabular-nums"],
