@@ -1021,6 +1021,7 @@ function mailView(){
   const showFile=async entry=>{
    const file=await readMailAttachment(draftId,entry.id);
    if(!file){status.textContent='Файл больше не доступен на устройстве. Прикрепите его снова.';return}
+   if(/\.(pdf|docx|txt|md|png|jpe?g|webp)$/i.test(entry.name)&&window.SEYVEO_DOCS_VIEWER?.open?.(file))return;
    filePreviewTitle.textContent=entry.name;
    filePreviewContent.replaceChildren();
    const extension=entry.name.split('.').pop().toLowerCase();
