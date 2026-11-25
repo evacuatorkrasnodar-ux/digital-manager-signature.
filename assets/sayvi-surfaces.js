@@ -405,6 +405,7 @@ const mailIcons=Object.freeze({
  starred:'<path d="m12 2 3 6.4 7 .9-5.1 5 .9 7-5.8-3.2-5.8 3.2.9-7-5.1-5 7-.9L12 2Z"/>',
  trash:'<path d="M3 6h18M8 6V4h8v2m3 0-1 15H6L5 6M10 10v7m4-7v7"/>',
  spam:'<path d="M8 3h8l5 5v8l-5 5H8l-5-5V8Z"/><path d="M12 7v7m0 3v.1"/>',
+ shieldBlock:'<path d="M12 2 20 6v5c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V6Z"/><path d="m9 9 6 6m0-6-6 6"/>',
  shield:'<path d="M12 2 20 6v5c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V6Z"/><path d="m9 12 2 2 4-4"/>',
  contacts:'<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 5"/>',
  restore:'<path d="M9 4 4 9l5 5"/><path d="M4 9h10a6 6 0 1 1-5.5 8.3"/>',
@@ -1264,6 +1265,8 @@ function mailView(){
    moreMenu.hidden=!moreMenu.hidden;
    more.setAttribute('aria-expanded',String(!moreMenu.hidden));
    blockConfirm.hidden=true;
+   closeReply();
+   panel.classList.toggle('sv-mail-more-open',!moreMenu.hidden);
   });
   more.classList.add('sv-mail-detail-more');
   more.setAttribute('aria-expanded','false');more.setAttribute('aria-controls','svMailMoreActions');
@@ -1272,6 +1275,7 @@ function mailView(){
   panel.append(heading,create('h2','sv-mail-detail-title',item.subject));
   function closeMore(){
    moreMenu.hidden=true;more.setAttribute('aria-expanded','false');
+   panel.classList.remove('sv-mail-more-open');
   }
   const addMenuAction=(icon,label,callback,destructive=false)=>{
    const control=create('button','sv-mail-message-menu-item');control.type='button';
@@ -1290,17 +1294,7 @@ function mailView(){
    addMenuAction('archive',item.archived?'Вернуть во входящие':'В архив',()=>{
     item.archived=!item.archived;saveSampleActions();mailCurrent=null;paint();
    });
-   addMenuAction('forward','Переслать',()=>{
-    openEditor(null,item);
-    const subject=content.querySelector('[data-mail-field="subject"]');
-    const field=content.querySelector('[data-mail-field="body"]');
-    if(subject)subject.value=('Fwd: '+item.subject).slice(0,240);
-    if(field){
-     field.value=('\n\n—— Пересланное письмо ——\nОт: '+item.from+'\nТема: '+item.subject+'\n\n'+String(item.body||'')).slice(0,10000);
-     field.dispatchEvent(new Event('input',{bubbles:true}));
-    }
-    info.textContent='Черновик пересылки учебного письма. Укажите получателя.';
-   });
+
   }
   if(!item.trashed&&!sampleBlocked(item)){
    addMenuAction(item.spam?'restore':'spam',item.spam?'Не спам':'В спам',()=>{
@@ -1314,7 +1308,7 @@ function mailView(){
   }else if(sampleBlocked(item)){
    addMenuAction('shield','Разблокировать отправителя',()=>updateSampleMail(item,'unblock'));
   }else{
-   addMenuAction('shield','Блокировать отправителя',()=>{
+   addMenuAction('shieldBlock','Блокировать отправителя',()=>{
     moreMenu.hidden=true;more.setAttribute('aria-expanded','false');
     blockConfirm.hidden=false;
    });
@@ -1340,9 +1334,11 @@ function mailView(){
   panel.append(blockConfirm);
   panel.addEventListener('click',event=>{
    if(!moreMenu.hidden&&!moreMenu.contains(event.target)&&!more.contains(event.target))closeMore();
+   if(!replyMenu.hidden&&!replyMenu.contains(event.target)&&!reply.contains(event.target))closeReply();
   });
   panel.addEventListener('keydown',event=>{
    if(event.key==='Escape'&&!moreMenu.hidden){event.preventDefault();event.stopPropagation();closeMore();more.focus();}
+   else if(event.key==='Escape'&&!replyMenu.hidden){event.preventDefault();event.stopPropagation();closeReply();reply.focus();}
   });
   const person=create('div','sv-mail-detail-person');
   person.append(tintMailAvatar(create('span','sv-mail-avatar',item.initial),item));
@@ -1387,11 +1383,37 @@ function mailView(){
    panel.append(example);
   }
   const actions=create('div','sv-mail-detail-actions');
-  const reply=intent('Ответить',()=>openEditor(null,item),true);
+  const replyMenu=create('div','sv-mail-message-menu sv-mail-reply-menu');
+  replyMenu.id='svMailReplyMenu';replyMenu.hidden=true;
+  replyMenu.setAttribute('role','group');replyMenu.setAttribute('aria-label','Действия ответа');
+  const reply=intent('Ответить',()=>{
+   const opening=replyMenu.hidden;closeMore();
+   replyMenu.hidden=!opening;reply.setAttribute('aria-expanded',String(opening));
+  },true);
+  function closeReply(){replyMenu.hidden=true;reply.setAttribute('aria-expanded','false');}
+  const addReplyAction=(icon,label,callback)=>{
+   const button=create('button','sv-mail-message-menu-item');button.type='button';
+   button.append(mailIcon(icon),create('span','',label));
+   button.addEventListener('click',()=>{closeReply();callback();});replyMenu.append(button);
+  };
+  addReplyAction('reply','Ответить',()=>openEditor(null,item));
+  // Samples have no verified recipient list; never fabricate Reply All.
+  addReplyAction('forward','Переслать',()=>{
+    openEditor(null,item);
+    const subject=content.querySelector('[data-mail-field="subject"]');
+    const field=content.querySelector('[data-mail-field="body"]');
+    if(subject)subject.value=('Fwd: '+item.subject).slice(0,240);
+    if(field){
+     field.value=('\n\n—— Пересланное письмо ——\nОт: '+item.from+'\nТема: '+item.subject+'\n\n'+String(item.body||'')).slice(0,10000);
+     field.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+    info.textContent='Черновик пересылки учебного письма. Укажите получателя.';
+   });
   reply.classList.add('sv-mail-reply-action');
   reply.replaceChildren(mailIcon('reply'));
-  reply.setAttribute('aria-label','Ответить на письмо');
-  reply.title='Ответить';
+  reply.setAttribute('aria-label','Ответить или переслать письмо');
+  reply.setAttribute('aria-expanded','false');reply.setAttribute('aria-controls','svMailReplyMenu');
+  reply.title='Ответить или переслать';
   const help=intent('Сэйви',()=>{
    note.hidden=!note.hidden;
    help.setAttribute('aria-expanded',String(!note.hidden));
@@ -1403,7 +1425,7 @@ function mailView(){
   help.title='Сэйви · помощь с письмом';
   help.setAttribute('aria-expanded','false');
   help.setAttribute('aria-controls','svMailSayviAssist');
-  if(!item.trashed){actions.append(reply,help);panel.append(actions)}
+  if(!item.trashed){actions.append(reply,help,replyMenu);panel.append(actions)}
   const note=create('section','sv-mail-sayvi-note');
   note.id='svMailSayviAssist';
   note.hidden=true;note.setAttribute('aria-label','Помощь Сэйви с письмом');
