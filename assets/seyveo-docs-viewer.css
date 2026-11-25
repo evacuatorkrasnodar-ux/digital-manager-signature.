@@ -477,3 +477,23 @@ html:root body .svdv-inline-rail .sv-smart-sayvi-icon{display:block;width:26px;h
 html:root body .svdv-bottom-sheet.sv-editor-keyboard-open{bottom:var(--sv-editor-keyboard,0px)!important;height:var(--sv-editor-visible-height,100%)!important;max-height:var(--sv-editor-visible-height,100%)!important;transition:none!important;}
 html:root body .svdv-bottom-sheet.sv-editor-keyboard-open .svdv-inline-text{min-height:0;}
 html:root body .svdv-bottom-sheet .svdv-text{white-space:pre-wrap!important;overflow-wrap:anywhere!important;}
+
+/* Inline editing uses the same 44-point pearl header and compact icon rail. */
+html:root body .svdv-bottom-sheet .svdv-inline-done:not([hidden]){
+ display:grid!important;place-items:center!important;width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;
+ padding:0!important;border:var(--sv-white-pearl-edge,1px solid #e9eaed)!important;border-radius:50%!important;
+ background:var(--sv-white-pearl-surface,#f5f5f7)!important;box-shadow:var(--sv-white-pearl-dock-shadow,none)!important;color:#176ab4!important;
+}
+html:root body .svdv-bottom-sheet .svdv-sheet-close{border:var(--sv-white-pearl-edge,1px solid #e9eaed)!important;background:var(--sv-white-pearl-surface,#f5f5f7)!important;box-shadow:var(--sv-white-pearl-dock-shadow,none)!important;}
+html:root body .svdv-inline-controls{position:relative;flex:none;min-width:0;width:100%;max-width:404px;margin:0 auto;}
+html:root body .svdv-inline-rail{justify-content:space-between;min-height:50px;gap:2px;}
+html:root body .svdv-inline-rail>button.svdv-inline-choice{display:flex;justify-content:center;align-items:center;gap:2px;width:auto;min-width:56px;padding:0 5px;}
+html:root body .svdv-inline-rail>button.svdv-inline-choice>svg:last-child{width:13px;height:13px;}
+html:root body .svdv-inline-rail>button[aria-expanded="true"]{color:#176ab4;background:#0a84ff12;}
+html:root body .svdv-inline-menu{position:absolute;bottom:calc(100% + 8px);left:0;z-index:30;box-sizing:border-box;width:min(225px,100%);max-height:min(45dvh,340px);overflow:auto;padding:5px;border:var(--sv-menu-border,1px solid #e4e6ea);border-radius:var(--sv-menu-compact-radius,18px);background:var(--sv-menu-bg,#fcfcfd);box-shadow:var(--sv-menu-shadow,0 7px 24px #0002);}
+html:root body .svdv-inline-menu[hidden]{display:none!important;}
+html:root body .svdv-inline-option{display:grid;grid-template-columns:24px 1fr 20px;align-items:center;gap:9px;text-align:left;width:100%;min-height:44px;padding:7px 9px;border:0;border-radius:11px;background:transparent;color:var(--sv-menu-text,#20262d);font:500 13px/1.3 system-ui;}
+html:root body .svdv-inline-option[aria-pressed="true"]{color:#176ab4;}
+html:root body .svdv-inline-option:active{background:#0a84ff12;}
+html:root body .svdv-inline-option svg{display:block;width:19px;height:19px;}
+html:root body .svdv-inline-option-art,html:root body .svdv-inline-option-check{display:grid;place-items:center;}
