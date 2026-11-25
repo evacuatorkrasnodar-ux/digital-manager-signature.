@@ -155,8 +155,14 @@ function openFolderMenu(state,category){
  const menu=state.folderMenu;menu.hidden=false;
  const action=(label,kind,fn,destructive=false)=>{const b=el('button','sv-doc-folder-menu-action'+(destructive?' sv-doc-folder-danger':''));b.append(actionIcon(kind),el('span','',label));b.type='button';b.addEventListener('click',async()=>{closeFolderMenu(state);try{await fn();}catch(e){notice(state,e.message||'Не удалось изменить папку.');}});menu.append(b);};
  action('Переименовать','rename',()=>editFolderName(state,category));
- action('В начало моих папок','first',async()=>{const own=ownFolders(state);const first=Math.min(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:first-1});revealOwnFolder(state,category.id);});
- action('В конец моих папок','last',async()=>{const own=ownFolders(state);const last=Math.max(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:last+1});revealOwnFolder(state,category.id);});
+ const move=el('button','sv-doc-folder-menu-action');move.type='button';move.append(actionIcon('first'),el('span','','Переместить'));move.setAttribute('aria-expanded','false');
+ move.addEventListener('click',()=>{
+  menu.replaceChildren();menu.hidden=false;
+  const back=el('button','sv-doc-folder-menu-action');back.type='button';back.append(actionIcon('back'),el('span','','Назад'));back.addEventListener('click',()=>openFolderMenu(state,category));menu.append(back);
+  action('В начало','first',async()=>{const own=ownFolders(state);const first=Math.min(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:first-1});revealOwnFolder(state,category.id);});
+  action('В конец','last',async()=>{const own=ownFolders(state);const last=Math.max(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:last+1});revealOwnFolder(state,category.id);});
+  back.focus({preventScroll:true});
+ });menu.append(move);
  action('Удалить папку','delete',async()=>{
   if(category.defaultFolder){
    if(!window.confirm('Удалить папку «'+category.title+'» из списка? Документы останутся в «Все файлы».'))return;
