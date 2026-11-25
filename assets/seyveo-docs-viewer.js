@@ -21,12 +21,11 @@ const icons={
  share:'<path d="M12 16V3m-5 5 5-5 5 5M4 14v7h16v-7"/>',
  print:'<path d="M6 9V3h12v6M6 17H4V9h16v8h-2M6 15h12v6H6zM17 12h.01"/>',
  more:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
- download:'<path d="M12 3v13m-5-5 5 5 5-5M4 18v3h16v-3"/>',
- sayvi:'<path d="m5 18 5-10 3 6 3-4 3 8M3 20h18"/>'
+ download:'<path d="M12 3v13m-5-5 5 5 5-5M4 18v3h16v-3"/>'
 };
 function icon(key){
  if(key==='sayvi'){
-  const mark=el('span','svdv-sayvi-mark');mark.setAttribute('aria-hidden','true');return mark;
+  const mark=el('span','svdv-sayvi-mark');mark.className+=' sv-sayvi-symbol';mark.setAttribute('aria-hidden','true');return mark;
  }
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
  svg.setAttribute('viewBox','0 0 24 24');

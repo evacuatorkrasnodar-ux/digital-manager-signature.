@@ -5,6 +5,8 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const checks=[
+  ["assets/seyveo-docs-viewer.js","mark.className+=' sv-sayvi-symbol'"],
+  ["assets/seyveo-docs-viewer.css","display:block;flex:0 0 24px;width:24px;height:24px;"],
   ["assets/seyveo-docs-studio.js","ctx.fillText(line,margin,y,usable)"],
   ["assets/seyveo-docs-viewer.css","grid-template-columns:minmax(0,1fr);min-width:0;width:100%;max-width:100%;"],
   ["assets/seyveo-docs-viewer.js","el('span','svdv-sayvi-mark')"],

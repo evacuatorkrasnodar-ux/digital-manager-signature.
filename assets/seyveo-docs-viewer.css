@@ -440,8 +440,13 @@ html:root[data-theme="light"] body .svdv-bottom-sheet .svdv-toolbar{
  -webkit-backdrop-filter:var(--sv-white-pearl-blur,none);backdrop-filter:var(--sv-white-pearl-blur,none);
 }
 html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-sayvi-mark{
- display:block;flex:0 0 20px;width:20px;height:20px;
+ display:block;flex:0 0 24px;width:24px;height:24px;
  background:var(--sv-sayvi-mark-image,url("./seyveo-sayvi-user-upload.svg?v=3")) center / contain no-repeat;
+}
+ /* Equal icon columns; the brand artwork needs its full slot to match
+    the optical size of the thin file and printer strokes. */
+html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-more-options :is(.svdv-link,.svdv-action)>svg{
+ box-sizing:border-box;display:block;flex:0 0 24px;width:24px;height:24px;padding:2px;
 }
 html:root body .svdv-bottom-sheet .svdv-sheet-close svg{stroke-width:var(--sv-header-back-weight,1.45);width:var(--sv-header-back-icon,22px);height:var(--sv-header-back-icon,22px);}
 html:root body .svdv-bottom-sheet :is(.svdv-sheet-close,.svdv-sheet-expand):focus-visible{outline:2px solid currentColor!important;outline-offset:2px!important;}
