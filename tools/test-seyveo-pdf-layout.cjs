@@ -46,7 +46,7 @@ test('all text reaches the last PDF page within printable bounds',async()=>{
 test('reject oversized text and too many pages instead of clipping',()=>{
  const {api,make}=setup();
  assert.throws(()=>api.pdfFromText('x'.repeat(12001),make),/12 000/);
- assert.throws(()=>api.pdfFromText('строка\n'.repeat(400),make),/максимум 12/);
+ assert.throws(()=>api.pdfFromText('строка\n'.repeat(650),make),/максимум 12/);
 });
 
 test('PDF uses chosen typography and does not change source text',()=>{
