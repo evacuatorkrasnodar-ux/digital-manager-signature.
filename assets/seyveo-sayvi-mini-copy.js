@@ -5,14 +5,19 @@
   'use strict';
   const button=document.getElementById('assistantButton');
   const heroArtwork=document.getElementById('plasmaVisual');
-  if(!button||!heroArtwork||button.querySelector('.sv-sayvi-mini-copy'))return;
+  if(!button||!heroArtwork)return;
 
-  const copy=document.createElement('img');
-  copy.className='sv-sayvi-mini-copy sv-sayvi-velvet-sphere';
-  copy.alt='';
-  copy.setAttribute('aria-hidden','true');
-  copy.draggable=false;
-  copy.decoding='async';
+  // Reuse the initial HTML artwork; only create it for older cached markup.
+  let copy=button.querySelector('.sv-sayvi-mini-copy');
+  if(!copy){
+    copy=document.createElement('img');
+    copy.className='sv-sayvi-mini-copy sv-sayvi-velvet-sphere';
+    copy.alt='';
+    copy.setAttribute('aria-hidden','true');
+    copy.draggable=false;
+    copy.decoding='async';
+    button.appendChild(copy);
+  }
 
   const syncArtwork=()=>{
     const src=heroArtwork.getAttribute('src');
@@ -23,6 +28,5 @@
   new MutationObserver(syncArtwork).observe(heroArtwork,{
     attributes:true,attributeFilter:['src']
   });
-  button.appendChild(copy);
   button.classList.add('sv-sayvi-velvet-ready');
 })();
