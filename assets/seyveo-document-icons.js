@@ -3,6 +3,13 @@
 (function(root){
 'use strict';
 const paths=Object.freeze({
+ note:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/>',
+ phone:'<path d="M7 3 4 4c-3 5 11 19 16 16l1-3-5-3-2 2a18 18 0 0 1-6-6l2-2Z"/>',
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+ web:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a16 16 0 0 1 0 18M12 3a16 16 0 0 0 0 18"/>',
+ flip:'<path d="M12 3v18M8 5 3 18h5ZM16 5l5 13h-5Z"/>',
+ contrast:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill="currentColor" stroke="none"/>',
+ marker:'<path d="m4 16 9-12 6 5-9 12H5l-1-5Zm7-9 6 5M4 21h8"/>',
  ocr:'<path d="M8 3.5H6A2.5 2.5 0 0 0 3.5 6v2M16 3.5h2A2.5 2.5 0 0 1 20.5 6v2M20.5 16v2a2.5 2.5 0 0 1-2.5 2.5h-2M8 20.5H6A2.5 2.5 0 0 1 3.5 18v-2M7 8h10M7 12h10M7 16h7"/>',
  crop:'<path d="M6 3v13a2 2 0 0 0 2 2h13M3 6h13a2 2 0 0 1 2 2v13"/>',
  rotate:'<path d="M20 5v6h-6M20 11a8 8 0 1 0-2 7"/>',

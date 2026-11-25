@@ -525,7 +525,7 @@ function mount(target,{
   if(ocrEnginePromise)return ocrEnginePromise;
   ocrEnginePromise=new Promise((resolve,reject)=>{
    const script=document.createElement('script');
-   script.src='https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/7.0.0/tesseract.min.js';
+   script.src=new URL('assets/seyveo-ocr-tesseract.min.js',document.baseURI).href;
    script.async=true;script.crossOrigin='anonymous';
    const timer=setTimeout(()=>reject(Error('Не удалось загрузить распознавание вовремя.')),25000);
    script.onload=()=>{clearTimeout(timer);window.Tesseract?.createWorker?resolve(window.Tesseract):reject(Error('OCR недоступен.'));};
@@ -538,7 +538,9 @@ function mount(target,{
  async function createOcrWorker(engine){
   let timer,expired=false;
   const pending=engine.createWorker(['rus','eng'],1,{
-   workerPath:'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/7.0.0/worker.min.js'
+   workerPath:new URL('assets/seyveo-ocr-worker.min.js',document.baseURI).href,
+   corePath:new URL('assets/seyveo-ocr-core-lstm.wasm.js',document.baseURI).href,
+   langPath:new URL('assets/',document.baseURI).href,gzip:false
   });
   const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>{expired=true;reject(Error('Распознавание не запустилось. Проверьте доступ к библиотеке и языковым моделям. Оригинал сохранён.'));},90000);});
   pending.then(w=>{if(expired)void w.terminate().catch(()=>{});},()=>{});
@@ -1714,7 +1716,7 @@ function mount(target,{
    if(!(file instanceof Blob)||!/^image\/(jpeg|png|webp)$/i.test(file.type)||file.size<1||file.size>20*1024*1024)return false;
    const at=generation,epoch=operationEpoch;
    const valid=()=>at===generation&&epoch===operationEpoch&&panel.isConnected&&payload.isActive?.()!==false;
-   if(!window.Tesseract?.createWorker&&!window.confirm('Для распознавания потребуется скачать языковые модели из интернета. Фото обрабатывается на устройстве. Продолжить?'))return false;
+   if(!window.Tesseract?.createWorker&&!window.confirm('Для распознавания нужно загрузить языковые модели SEYVEO. Фото обрабатывается на устройстве. Продолжить?'))return false;
    let worker;
    try{
     const engine=await getOcrEngine();if(!valid())return false;
@@ -1729,7 +1731,7 @@ function mount(target,{
   if(payload.kind==='pdf-text'){
    const at=generation,epoch=++operationEpoch;
    const valid=()=>at===generation&&epoch===operationEpoch&&panel.isConnected&&payload.isActive?.()!==false;
-   if(!window.Tesseract?.createWorker&&!window.confirm('Для распознавания потребуется скачать движок и языковые модели из интернета. Страницы обрабатываются на устройстве. Продолжить?'))return false;
+   if(!window.Tesseract?.createWorker&&!window.confirm('Для распознавания нужно загрузить языковые модели SEYVEO. Страницы обрабатываются на устройстве. Продолжить?'))return false;
    let worker;
    try{
     const pages=Array.isArray(payload.pages)?payload.pages:await window.SEYVEO_DOCS_EXPORT.readScanPdf(payload.file);

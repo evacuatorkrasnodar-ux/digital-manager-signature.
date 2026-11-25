@@ -537,7 +537,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  // Image actions stay inside this viewer. Never reopen the scanner.
  let photoMode='',photoBusy=false,photoEpoch=0;
  const photoRail=el('div','svdv-photo-rail');
- let normalPhotoActions=[],photoOriginalNodes=[],photoOldTop=0,photoCanvas=null;
+ let normalPhotoActions=[],photoOriginalNodes=[],photoOldTop=0,photoCanvas=null,photoOutput=null;
  function photoActions(...buttons){photoRail.replaceChildren(...buttons);photoRail.scrollLeft=0;}
  function beginPhoto(mode){
   if(!active||photoMode||photoBusy)return false;
@@ -545,8 +545,8 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   more.open=false;more.hidden=true;return true;
  }
  function endPhoto(){
-  photoEpoch++;photoBusy=false;photoMode='';photoCanvas=null;
-  stage.classList.remove('svdv-photo-mode','svdv-photo-text-mode');
+  photoEpoch++;photoBusy=false;photoMode='';photoCanvas=null;photoOutput=null;
+  stage.classList.remove('svdv-photo-mode','svdv-photo-text-mode','svdv-photo-adjust-mode');
   stage.replaceChildren(...photoOriginalNodes);stage.scrollTop=photoOldTop;
   photoActions(...normalPhotoActions);
   more.hidden=!Array.from(moreBody.children).some(n=>!n.hidden);
@@ -589,7 +589,55 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     }catch(e){if(active&&photoEpoch===epoch)say(e?.message||'Не удалось сохранить документ.');}
     finally{if(photoEpoch===epoch){photoBusy=false;createDoc.disabled=false;}}
    });
-   photoActions(action('Фото','image',()=>endPhoto()),copyText,createDoc);
+   const chosen=()=>field.selectionStart!==field.selectionEnd?field.value.slice(field.selectionStart,field.selectionEnd):field.value;
+   const actions=[action('Фото','image',()=>endPhoto()),copyText,createDoc];
+   if(area==='personal'&&window.SEYVEO_NOTES_API?.reviewText)actions.push(action('В блокнот','note',()=>{
+    if(photoBusy)return;
+    const value=chosen();if(!value.trim())return;
+    if(value.length>8000){say('Выделите до 8 000 знаков для блокнота.');return;}
+    try{
+     if(sheet?.open)sheet.close();else endPhoto();
+     window.SEYVEO_NOTES_API.reviewText(value,{preserveLines:true});
+    }catch{if(active)say('Не удалось открыть блокнот.');}
+   }));
+   actions.push(action('PDF','pdf',async()=>{
+    if(photoBusy||!field.value.trim())return;
+    if(field.value.length>12000){say('Для документа доступно до 12 000 знаков.');return;}
+    photoBusy=true;
+    try{
+     const blob=window.SEYVEO_DOCS_EXPORT.pdfFromText(field.value);
+     await savePhotoFile(new File([blob],file.name.replace(/\.[^.]+$/,'')+' · текст.pdf',{type:'application/pdf'}),{text:field.value,status:'ready'});
+     if(active&&photoEpoch===epoch)say('PDF сохранён. Фото не изменено.',3500);
+    }catch(e){if(active&&photoEpoch===epoch)say(e?.message||'Не удалось сохранить PDF.');}
+    finally{if(photoEpoch===epoch)photoBusy=false;}
+   }));
+   if(typeof navigator.share==='function')actions.push(action('Поделиться','share',()=>{
+    const text=chosen();if(!text.trim())return;
+    try{void navigator.share({text}).catch(e=>{if(e?.name!=='AbortError')say('Не удалось отправить текст.');});}catch{say('Отправка текста недоступна.');}
+   }));
+   const quick=el('div','svdv-photo-quick');
+   quick.setAttribute('aria-label','Действия с распознанным текстом');
+   function refreshQuick(){
+    const raw=chosen(),items=[],seen=new Set();
+    function add(label,kind,href){
+     if(seen.has(href)||items.length>=8)return;seen.add(href);
+     const link=el('a','svdv-quick-link');link.href=href;
+     if(kind==='web'){link.target='_blank';link.rel='noopener noreferrer';}
+     link.append(icon(kind==='web'?'web':kind==='phone'?'phone':'mail'),el('span','',label));items.push(link);
+    }
+    for(const match of raw.matchAll(/(?:\+?\d[\d ()-]{7,20}\d)/g)){
+     const phone=match[0].replace(/[^\d+]/g,'');
+     if(/^\+?\d{10,15}$/.test(phone))add(match[0].trim(),'phone','tel:'+phone);
+    }
+    for(const match of raw.matchAll(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi))add(match[0],'mail','mailto:'+match[0]);
+    for(const match of raw.matchAll(/(?:https?:\/\/|www\.)[^\s<>"']+/gi)){
+     try{const url=new URL(match[0].replace(/[.,;!?]+$/,'' ).replace(/^www\./i,'https://www.'));if(['http:','https:'].includes(url.protocol)&&!url.username&&!url.password)add(url.hostname,'web',url.href);}catch{}
+    }
+    quick.replaceChildren(...items);quick.hidden=!items.length;
+   }
+   field.addEventListener('input',refreshQuick);field.addEventListener('select',refreshQuick);
+   stage.prepend(quick);refreshQuick();
+   photoActions(...actions);
   }catch(e){if(active&&photoEpoch===epoch){endPhoto();say(e?.message||'Не удалось распознать текст.');}}
  }
  function photoSource(){
@@ -614,7 +662,8 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    photoBusy=true;saveImage.disabled=true;const epoch=photoEpoch;
    try{
     const type=file.type==='image/jpeg'?'image/jpeg':'image/png';
-    const blob=await new Promise((resolve,reject)=>photoCanvas.toBlob(b=>b?resolve(b):reject(Error('Не удалось создать копию.')),type,.94));
+    const output=photoOutput?photoOutput():photoCanvas;
+    const blob=await new Promise((resolve,reject)=>output.toBlob(b=>b?resolve(b):reject(Error('Не удалось создать копию.')),type,.94));
     if(!active||photoEpoch!==epoch)return;
     const next=new File([blob],file.name.replace(/\.[^.]+$/,'')+' · копия.'+(type==='image/jpeg'?'jpg':'png'),{type});
     await savePhotoFile(next,{status:'ready'});
@@ -634,6 +683,88 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     try{showPhotoCanvas(drawPhoto(photoCanvas,{x:0,y:0,w:photoCanvas.width,h:photoCanvas.height},true));}
     catch(e){say(e.message);}
    }),saveImageAction());
+  }catch(e){endPhoto();say(e.message);}
+ }
+ function adjustPhoto(){
+  if(!beginPhoto('adjust'))return;
+  try{
+   const img=photoSource(),w=img.naturalWidth,h=img.naturalHeight;
+   const previewScale=Math.min(1,1000/Math.max(w,h));
+   const wrap=el('div','svdv-photo-adjust'),preview=el('canvas','svdv-photo-canvas'),controls=el('div','svdv-photo-adjust-controls');
+   const settings={brightness:0,contrast:0,saturation:0,angle:0,mirror:false,mono:false};
+   const ranges=[];
+   function render(target,scale){
+    target.width=Math.max(1,Math.round(w*scale));target.height=Math.max(1,Math.round(h*scale));
+    const ctx=target.getContext('2d',{willReadFrequently:true});if(!ctx)throw Error('Редактор изображения недоступен.');
+    const W=target.width,H=target.height,angle=settings.angle*Math.PI/180;
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.translate(W/2,H/2);ctx.rotate(angle);
+    // Fill the original frame after straightening; avoid blank corners.
+    const zoom=Math.max(Math.abs(Math.cos(angle))+H/W*Math.abs(Math.sin(angle)),Math.abs(Math.cos(angle))+W/H*Math.abs(Math.sin(angle)));
+    ctx.scale((settings.mirror?-1:1)*zoom,zoom);ctx.drawImage(img,-W/2,-H/2,W,H);
+    ctx.setTransform(1,0,0,1,0,0);
+    if(settings.brightness||settings.contrast||settings.saturation||settings.mono){
+     const image=ctx.getImageData(0,0,W,H),d=image.data,b=settings.brightness*2.55,k=1+settings.contrast/100,sat=settings.mono?0:1+settings.saturation/100;
+     for(let n=0;n<d.length;n+=4){
+      const r=d[n],g=d[n+1],bl=d[n+2],gray=.2126*r+.7152*g+.0722*bl;
+      d[n]=((gray+(r-gray)*sat)-128)*k+128+b;
+      d[n+1]=((gray+(g-gray)*sat)-128)*k+128+b;
+      d[n+2]=((gray+(bl-gray)*sat)-128)*k+128+b;
+     }
+     ctx.putImageData(image,0,0);
+    }
+    return target;
+   }
+   function repaint(){render(preview,previewScale);}
+   function range(label,key,min,max){
+    const row=el('label','svdv-adjust-row'),title=el('span','',label),value=el('output','','0'),input=el('input');
+    input.type='range';input.min=min;input.max=max;input.step=1;input.value=0;
+    input.setAttribute('aria-label',label);
+    input.addEventListener('input',()=>{settings[key]=Number(input.value);value.textContent=input.value;repaint();});
+    ranges.push({input,value,key});row.append(title,input,value);controls.append(row);
+   }
+   range('Яркость','brightness',-60,60);range('Контраст','contrast',-70,70);range('Насыщенность','saturation',-100,100);range('Выпрямление','angle',-25,25);
+   wrap.append(preview,controls);stage.classList.add('svdv-photo-mode','svdv-photo-adjust-mode');stage.replaceChildren(wrap);
+   photoCanvas=preview;photoOutput=()=>render(el('canvas'),1);
+   const mirror=action('Отразить','flip',()=>{settings.mirror=!settings.mirror;mirror.setAttribute('aria-pressed',String(settings.mirror));repaint();});
+   const mono=action('Ч/Б','contrast',()=>{settings.mono=!settings.mono;mono.setAttribute('aria-pressed',String(settings.mono));repaint();});
+   const reset=action('Сброс','undo',()=>{for(const key of Object.keys(settings))settings[key]=typeof settings[key]==='boolean'?false:0;for(const r of ranges){r.input.value=0;r.value.textContent='0';}mirror.setAttribute('aria-pressed','false');mono.setAttribute('aria-pressed','false');repaint();});
+   photoActions(photoCancel(),mirror,mono,reset,saveImageAction());repaint();
+  }catch(e){endPhoto();say(e.message);}
+ }
+ function markupPhoto(){
+  if(!beginPhoto('markup'))return;
+  try{
+   const img=photoSource(),w=img.naturalWidth,h=img.naturalHeight;
+   const scale=Math.min(1,1600/Math.max(w,h)),canvas=el('canvas','svdv-photo-canvas svdv-photo-drawing');
+   const strokes=[];let current=null,color='#176ab4',marker=false;
+   function paint(target,factor){
+    target.width=Math.max(1,Math.round(w*factor));target.height=Math.max(1,Math.round(h*factor));
+    const ctx=target.getContext('2d');ctx.drawImage(img,0,0,target.width,target.height);
+    for(const stroke of strokes){
+     ctx.globalAlpha=stroke.marker?.35:1;ctx.strokeStyle=stroke.color;ctx.fillStyle=stroke.color;
+     ctx.lineWidth=Math.max(1,stroke.width*target.width);ctx.lineCap='round';ctx.lineJoin='round';
+     ctx.beginPath();const p=stroke.points[0];ctx.moveTo(p.x*target.width,p.y*target.height);
+     for(const q of stroke.points.slice(1))ctx.lineTo(q.x*target.width,q.y*target.height);
+     if(stroke.points.length===1){ctx.arc(p.x*target.width,p.y*target.height,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();}else ctx.stroke();
+    }
+    return target;
+   }
+   const repaint=()=>paint(canvas,scale);
+   const point=e=>{const r=canvas.getBoundingClientRect();return {x:Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),y:Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))};};
+   canvas.addEventListener('pointerdown',e=>{if(e.button!==0||current||photoBusy)return;e.preventDefault();current={points:[point(e)],color,marker,width:(marker?12:3)/Math.max(1,canvas.getBoundingClientRect().width),id:e.pointerId};strokes.push(current);canvas.setPointerCapture?.(e.pointerId);repaint();});
+   canvas.addEventListener('pointermove',e=>{if(!current||e.pointerId!==current.id)return;current.points.push(point(e));repaint();});
+   const stop=e=>{if(current&&e.pointerId===current.id)current=null;};
+   canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
+   const wrap=el('div','svdv-photo-markup'),palette=el('div','svdv-photo-colors');
+   for(const shade of ['#20262d','#176ab4','#e34646','#e9b900','#26965b']){
+    const b=el('button','svdv-photo-color');b.type='button';b.style.background=shade;b.setAttribute('aria-label',({'#20262d':'Чёрный','#176ab4':'Синий','#e34646':'Красный','#e9b900':'Жёлтый','#26965b':'Зелёный'})[shade]);
+    b.setAttribute('aria-pressed',String(shade===color));b.addEventListener('click',()=>{color=shade;for(const x of palette.children)x.setAttribute('aria-pressed',String(x===b));});palette.append(b);
+   }
+   wrap.append(canvas,palette);stage.classList.add('svdv-photo-mode');stage.replaceChildren(wrap);
+   photoCanvas=canvas;photoOutput=()=>paint(el('canvas'),1);
+   const pen=action('Перо','edit',()=>{marker=false;pen.setAttribute('aria-pressed','true');highlight.setAttribute('aria-pressed','false');});
+   const highlight=action('Маркер','marker',()=>{marker=true;pen.setAttribute('aria-pressed','false');highlight.setAttribute('aria-pressed','true');});pen.setAttribute('aria-pressed','true');
+   photoActions(photoCancel(),pen,highlight,action('Отменить','undo',()=>{if(!current){strokes.pop();repaint();}}),saveImageAction());repaint();
   }catch(e){endPhoto();say(e.message);}
  }
  function cropPhoto(){
@@ -668,7 +799,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  if(info.kind==='image'){
   toolbar.classList.add('svdv-photo-toolbar');photoRail.setAttribute('aria-label','Инструменты фотографии');
   if(onEdit)toolbar.append(action('Текст','ocr',()=>void recognizePhoto()));
-  toolbar.append(action('Обрезать','crop',cropPhoto),action('Повернуть','rotate',rotatePhoto));
+  toolbar.append(action('Обрезать','crop',cropPhoto),action('Повернуть','rotate',rotatePhoto),action('Настроить','contrast',adjustPhoto),action('Разметка','marker',markupPhoto));
  }
  const doShare=()=>{
   if(typeof navigator==='undefined'||typeof navigator.share!=='function'){
