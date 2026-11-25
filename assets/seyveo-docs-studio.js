@@ -589,32 +589,49 @@ function mount(target,{
    const item=$('option','',label);item.value=id;alignment.append(item);
   }
   alignment.value=wordStyle.alignment;
-  const firstLine=button('Aa',()=>{wordStyle.heading=!wordStyle.heading;firstLine.setAttribute('aria-pressed',String(wordStyle.heading));},'sv-doc-word-heading');
+  const typographyIcon=paths=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';
+  const formatMenu=$('div','sv-doc-word-menu sv-menu-surface');
+  formatMenu.id='svDocWordFormatMenu';formatMenu.hidden=true;
+  formatMenu.setAttribute('role','group');formatMenu.setAttribute('aria-label','Оформление текста');
+  const formatTrigger=button('Aa',()=>setFormatMenu(formatMenu.hidden),'sv-doc-word-trigger');
+  formatTrigger.setAttribute('aria-label','Оформление текста');
+  formatTrigger.setAttribute('aria-controls',formatMenu.id);
+  formatTrigger.setAttribute('aria-expanded','false');
+  function setFormatMenu(open){
+   formatMenu.hidden=!open;formatTrigger.setAttribute('aria-expanded',String(open));
+  }
+  const icon=(paths)=>{const el=$('span','sv-doc-word-menu-icon');el.setAttribute('aria-hidden','true');el.innerHTML=typographyIcon(paths);return el;};
+  const sizeControl=$('label','sv-doc-word-menu-row');
+  const sizeFace=$('span','sv-doc-word-menu-value');sizeFace.setAttribute('aria-hidden','true');
+  sizeControl.append(icon('<path d="M4 18 9 6l5 12M6 14h6M15 10h6M18 7v6"/>'),$('span','','Размер шрифта'),sizeFace,size);
+  const alignControl=$('label','sv-doc-word-menu-row');
+  const alignFace=$('span','sv-doc-word-menu-value');alignFace.setAttribute('aria-hidden','true');
+  const alignIcon=icon('');alignControl.append(alignIcon,$('span','','Выравнивание'),alignFace,alignment);
+  const firstLine=button('',()=>{
+   wordStyle.heading=!wordStyle.heading;
+   firstLine.setAttribute('aria-pressed',String(wordStyle.heading));
+   headingCheck.hidden=!wordStyle.heading;
+   refreshStyle();
+  },'sv-doc-word-menu-row sv-doc-word-menu-heading');
   firstLine.setAttribute('aria-label','Первую строку оформить жирным заголовком');
   firstLine.setAttribute('aria-pressed',String(wordStyle.heading));
-  const typographyIcon=paths=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';
-  const chevron=()=>{const node=$('span','sv-doc-word-chevron');node.innerHTML=typographyIcon('<path d="m7 10 5 5 5-5"/>');node.setAttribute('aria-hidden','true');return node;};
-  const sizeControl=$('div','sv-doc-word-control');
-  const sizeFace=$('span','sv-doc-word-size-face');sizeFace.setAttribute('aria-hidden','true');
-  sizeControl.append(sizeFace,chevron(),size);
-  const alignControl=$('div','sv-doc-word-control');
-  const alignFace=$('span','sv-doc-word-align-face');alignFace.setAttribute('aria-hidden','true');
-  alignControl.append(alignFace,chevron(),alignment);
-  const alignPaths={
-   left:'M4 5h16M4 10h10M4 15h16M4 20h10',
-   center:'M4 5h16M7 10h10M4 15h16M7 20h10',
-   right:'M4 5h16M10 10h10M4 15h16M10 20h10',
-   both:'M4 5h16M4 10h16M4 15h16M4 20h16'
-  };
-  const refreshStyle=()=>{wordStyle.size=Number(size.value);wordStyle.alignment=alignment.value;
+  const headingCheck=icon('<path d="m5 12 4 4L19 6"/>');headingCheck.classList.add('sv-doc-word-menu-check');headingCheck.hidden=!wordStyle.heading;
+  firstLine.append(icon('<path d="m4 19 6-14 6 14M6 15h8M19 6v13"/>'),$('span','','Заголовок'),headingCheck);
+  const alignPaths={left:'M4 5h16M4 10h10M4 15h16M4 20h10',center:'M4 5h16M7 10h10M4 15h16M7 20h10',right:'M4 5h16M10 10h10M4 15h16M10 20h10',both:'M4 5h16M4 10h16M4 15h16M4 20h16'};
+  const alignNames={left:'Слева',center:'По центру',right:'Справа',both:'По ширине'};
+  const refreshStyle=()=>{
+   wordStyle.size=Number(size.value);wordStyle.alignment=alignment.value;
    body.style.fontSize=wordStyle.size+'pt';body.style.textAlign=wordStyle.alignment==='both'?'justify':wordStyle.alignment;
-   sizeFace.textContent=wordStyle.size+' пт';
-   alignFace.innerHTML=typographyIcon('<path d="'+(alignPaths[wordStyle.alignment]||alignPaths.left)+'"/>');
-   sizeControl.classList.toggle('sv-doc-word-modified',wordStyle.size!==12);
-   alignControl.classList.toggle('sv-doc-word-modified',wordStyle.alignment!=='left');
+   sizeFace.textContent=wordStyle.size+' пт';alignFace.textContent=alignNames[wordStyle.alignment];
+   alignIcon.innerHTML=typographyIcon('<path d="'+(alignPaths[wordStyle.alignment]||alignPaths.left)+'"/>');
+   formatTrigger.classList.toggle('sv-doc-word-modified',wordStyle.size!==12||wordStyle.alignment!=='left'||wordStyle.heading);
   };
   size.addEventListener('change',refreshStyle);alignment.addEventListener('change',refreshStyle);refreshStyle();
-  typography.append(sizeControl,alignControl,firstLine);
+  formatMenu.append(sizeControl,alignControl,firstLine);
+  typography.append(formatTrigger,formatMenu);
+  typography.addEventListener('keydown',event=>{
+   if(event.key==='Escape'&&!formatMenu.hidden){event.preventDefault();event.stopPropagation();setFormatMenu(false);formatTrigger.focus();}
+  });
   editing.append(filename,typography,body);
 
   const formatSwitch=$('div','sv-doc-edit-formats');
@@ -645,6 +662,7 @@ function mount(target,{
    saveButton.setAttribute('aria-label',documentFormat==='pdf'?'Сохранить PDF':'Сохранить Word');
 
    typography.hidden=documentFormat!=='docx';
+   if(typography.hidden)setFormatMenu(false);
    body.style.fontSize=documentFormat==='docx'?wordStyle.size+'pt':'';
    body.style.textAlign=documentFormat==='docx'?(wordStyle.alignment==='both'?'justify':wordStyle.alignment):'';
   }
@@ -707,6 +725,9 @@ function mount(target,{
   const actions=$('div','sv-doc-edit-actions');actions.append(saveButton,shareButton,archive);
   footer.append(formatSwitch,actions,status(''));
   sheet.append(top,editing,footer);
+  sheet.addEventListener('pointerdown',event=>{if(!typography.contains(event.target))setFormatMenu(false);});
+  sheet.addEventListener('cancel',event=>{if(!formatMenu.hidden){event.preventDefault();setFormatMenu(false);formatTrigger.focus();}});
+  sheet.addEventListener('close',()=>setFormatMenu(false));
   const resume=button('Продолжить документ',()=>revealEditor(),'sv-doc-edit-resume');
   resume.hidden=!documentDraft.trim();
   function revealEditor(){
