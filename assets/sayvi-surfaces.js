@@ -901,8 +901,13 @@ function mailView(){
   if(reply)mailEditingId=null;
   paint();
   if(reply)info.textContent=mode==='forward'?'Черновик пересылки учебного письма. Укажите получателя.':'Ответ на учебный пример. Адрес демонстрационный, письмо не отправляется.';
-  // Do not force the keyboard open when reading the original message.
-  if(!reply)content.querySelector('[data-mail-field="to"]')?.focus();
+  // Focus the message on Reply; Forward and new mail start with the recipient.
+  // Synchronous focus preserves the initiating tap for mobile keyboards.
+  const focusField=content.querySelector(reply&&mode==='reply'?'[data-mail-field="body"]':'[data-mail-field="to"]');
+  if(focusField){
+   focusField.focus({preventScroll:true});
+   if(reply&&mode==='reply')focusField.setSelectionRange(0,0);
+  }
  }
  function selectFolder(folder){
   if(folder!==mailFolder)rememberMailFolder();
