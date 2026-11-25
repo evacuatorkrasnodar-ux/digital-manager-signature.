@@ -905,3 +905,27 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > button.sv-mail-icon-button:focus-visible{
  outline:2px solid #007AFF!important;outline-offset:-4px!important;
 }
+
+/* Single overflow control: match the standalone return button. The menu
+   belongs to the existing sticky header, so it stays anchored when scrolling. */
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-bar > .sv-mail-detail-more{
+ margin-inline-start:auto!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-bar > .sv-mail-message-menu:not([hidden]){
+ top:calc(100% + 7px)!important;right:0!important;
+ width:min(250px,calc(100vw - 36px))!important;
+ max-height:min(60dvh,360px)!important;
+ overflow-y:auto!important;overscroll-behavior:contain;
+ z-index:32!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-bar .sv-mail-message-menu-item{
+ color:var(--sv-menu-text,#1c1c1e)!important;
+ background:transparent!important;box-shadow:none!important;
+ font-size:13px!important;flex-shrink:0!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-bar .sv-mail-message-menu-item:is(:hover,:active){
+ background:rgba(120,132,147,.08)!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-message-menu-item.sv-mail-menu-destructive{
+ color:#E04444!important;border-top:1px solid rgba(130,139,150,.18)!important;
+}
