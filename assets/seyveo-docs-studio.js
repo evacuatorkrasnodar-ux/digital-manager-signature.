@@ -1088,8 +1088,9 @@ function mount(target,{
      if(typeof value!=='string'){feedback.textContent='Оформление недоступно.';return;}
      show(value,{canApply:true,layout:action==='format',description:action==='format'?'Предложение: первая строка — заголовок, размер 12 пт, выравнивание слева. Проверьте результат.':'Убраны лишние пустые строки и пробелы в конце строк. Смысл и реквизиты не изменены.'});return;
     }
-    if(!['127.0.0.1','localhost'].includes(location.hostname)){
-     feedback.textContent='Языковые инструменты доступны в локальном SEYVEO с Ollama. На публичном демо работает базовое оформление.';return;
+    const assistant=window.SEYVEO_EDITOR_ASSISTANT;
+    if(!assistant?.available()){
+     feedback.textContent=assistant?.unavailable||'Сэйви пока недоступна. Базовое оформление работает.';return;
     }
     if(action==='ask'&&!question.value.trim()){question.hidden=false;question.focus();feedback.textContent='Напишите вопрос и нажмите «Спросить Сэйви» ещё раз.';return;}
     const inputText=selected;
@@ -1100,12 +1101,8 @@ function mount(target,{
     const timeout=setTimeout(()=>current.abort(),45000);feedback.textContent='Сэйви обрабатывает текст…';
     for(const b of choices.children)b.disabled=true;
     try{
-     const response=await fetch('/api/seyveo-ask',{method:'POST',credentials:'same-origin',signal:current.signal,headers:{'content-type':'application/json'},body:JSON.stringify({message:prompt})});
-     const data=await response.json().catch(()=>({}));
-     if(!response.ok)throw Error(data.error||'Локальная Сэйви недоступна.');
+     const result=await assistant.ask(prompt,{signal:current.signal});
      if(closed||!dlg.open||current.signal.aborted)return;
-     const result=typeof data.text==='string'?data.text.trim():'';
-     if(!result||result.length>12000)throw Error('Ответ пуст или слишком длинный.');
      show(result,{canApply:action==='correct',fragment:end>begin,description:action==='correct'?'Проверьте текст, особенно имена, даты и суммы.':'Ответ Сэйви. Документ не изменён.'});
     }catch(e){if(!closed)feedback.textContent=e.name==='AbortError'?'Сэйви не ответила вовремя.':e.message||'Не удалось получить ответ.';}
     finally{clearTimeout(timeout);busy=false;controller=null;if(!closed)for(const b of choices.children)b.disabled=false;}

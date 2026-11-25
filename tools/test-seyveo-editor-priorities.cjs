@@ -33,3 +33,13 @@ test('assistant never silently truncates private text to fit local endpoint',()=
  assert.ok(api.documentPrompt('correct','Сумма 100').endsWith('Сумма 100'));
  assert.throws(()=>api.documentPrompt('review','x'.repeat(4000)),/фрагмент/);
 });
+
+test('shared private transport uses same-origin existing intelligence and never sends from public demo',async()=>{
+ let calls=[];
+ const w={location:{hostname:'example.github.io'},fetch:async(...args)=>{calls.push(args);return {ok:true,json:async()=>({text:'Исправлено'})};}};
+ vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../assets/seyveo-sayvi-editor-client.js'),'utf8'),{window:w});
+ await assert.rejects(w.SEYVEO_EDITOR_ASSISTANT.ask('Текст'),/недоступна/);assert.equal(calls.length,0);
+ w.location.hostname='localhost';assert.equal(await w.SEYVEO_EDITOR_ASSISTANT.ask('Текст'),'Исправлено');
+ assert.equal(calls[0][0],'/api/seyveo-ask');assert.equal(calls[0][1].credentials,'same-origin');
+ await assert.rejects(w.SEYVEO_EDITOR_ASSISTANT.ask('x'.repeat(4001)),/Сократите/);assert.equal(calls.length,1);
+});
