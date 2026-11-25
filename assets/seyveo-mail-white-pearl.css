@@ -805,3 +805,46 @@ html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders 
 html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[data-mail-review][aria-current="page"]::before{content:none!important;display:none!important}
 html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[data-mail-review][aria-current="page"]{font-weight:650!important}
 html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > [data-mail-review][hidden]{display:none!important}
+
+/* Open letter: one existing action capsule, no individual pearl shells.
+   Fixed reply rail uses its static inline position from the right-aligned
+   flex child, so it follows the actual mail column on narrow and wide screens. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-bar{
+ height:var(--sv-apple-nav-row,44px)!important;min-height:var(--sv-apple-nav-row,44px)!important;
+ max-height:var(--sv-apple-nav-row,44px)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;gap:0!important;flex:none!important;
+ height:var(--sv-nav-capsule-height,44px)!important;min-height:var(--sv-nav-capsule-height,44px)!important;
+ padding:0 var(--sv-nav-capsule-padding,3px)!important;
+ border:var(--sv-white-pearl-edge)!important;border-radius:999px!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > .sv-mail-icon-button:not([hidden]){
+ flex:0 0 var(--sv-nav-capsule-cell,42px)!important;
+ width:var(--sv-nav-capsule-cell,42px)!important;min-width:var(--sv-nav-capsule-cell,42px)!important;max-width:var(--sv-nav-capsule-cell,42px)!important;
+ height:var(--sv-nav-capsule-cell,42px)!important;min-height:var(--sv-nav-capsule-cell,42px)!important;max-height:var(--sv-nav-capsule-cell,42px)!important;
+ border:0!important;background:transparent!important;background-image:none!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > .sv-mail-icon-button:not([hidden]):active{
+ background:var(--sv-white-pearl-press-fill)!important;box-shadow:var(--sv-white-pearl-press-shadow)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-inspect-trigger{
+ font-weight:500!important;color:#52718A!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-actions{
+ position:fixed!important;top:auto!important;left:auto!important;right:auto!important;
+ bottom:calc(max(8px,env(safe-area-inset-bottom,0px) - 14px) + var(--seyveo-dock-height,60px) + 10px)!important;
+ align-self:flex-end!important;margin:0!important;z-index:31!important;
+ background:var(--sv-white-pearl-floating-dock,var(--sv-white-pearl-surface))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,var(--sv-white-pearl-blur))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,var(--sv-white-pearl-blur))!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"]:has(.sv-mail-detail-actions) > #sayviSurfaceBody{
+ padding-bottom:calc(144px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(144px + env(safe-area-inset-bottom,0px));
+}
