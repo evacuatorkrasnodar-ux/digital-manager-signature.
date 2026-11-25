@@ -26,13 +26,13 @@
  scanTile?.querySelector('.paper-choice-copy small')?.replaceChildren(document.createTextNode('Фото → текст'));
  // Three creation tools share one 24px vector grid and stroke weight.
  const icons={
-  noteModeText:'<path d="M6 3h8l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h4M8 17l3-7 3 7M9 15h4"/>',
-  noteModeScan:'<path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3m0 8v3a2 2 0 0 1-2 2h-3m-8 0H5a2 2 0 0 1-2-2v-3"/><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M9 14h6M9 11h6"/>',
-  noteModeDraw:'<path d="M12 2v3M5 5h14a1 1 0 0 1 1 1v12H4V6a1 1 0 0 1 1-1ZM2 18h20M9 18l-2 4m8-4 2 4"/><circle cx="15.5" cy="9" r="1.3"/><path d="m6 15 4-4 3 3 2-2 3 3"/>'
+  noteModeText:'<path d="M7 3.5h6.5L18 8v10.5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2Z"/><path d="M13.5 3.5V7a1 1 0 0 0 1 1H18" opacity=".7"/><path d="M8 10.5h7M8 13.5h7M8 16.5h4.5" opacity=".75"/><path d="M8 5.5h2.5" opacity=".45"/>',
+  noteModeScan:'<path d="M8 3.5H6A2.5 2.5 0 0 0 3.5 6v2M16 3.5h2A2.5 2.5 0 0 1 20.5 6v2M20.5 16v2a2.5 2.5 0 0 1-2.5 2.5h-2M8 20.5H6A2.5 2.5 0 0 1 3.5 18v-2"/><rect x="8" y="6.5" width="8" height="11" rx="1.3" opacity=".55"/><path d="M6 12h12"/>',
+  noteModeDraw:'<path d="M12 3.5H6.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2H18a2 2 0 0 0 2-2V15" opacity=".8"/><path d="m10 16.8 1.2-4 7-7a1.7 1.7 0 0 1 2.4 2.4l-7 7Z" fill="currentColor" fill-opacity=".08"/><path d="m17 7 2.4 2.4" opacity=".65"/><path d="M7.5 17.5c-1.8-2.4-.3-5.3 1.7-4.5" opacity=".55"/>'
  };
  for(const [id,paths] of Object.entries(icons)){
   const host=document.getElementById(id)?.querySelector('.paper-choice-icon');
-  if(host)host.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
+  if(host)host.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
  }
  if(legacyInkTile)legacyInkTile.hidden=true;
  const destinations={

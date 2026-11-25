@@ -284,7 +284,7 @@ html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles > .pap
  justify-content:flex-start!important;gap:3px!important;
 }
 html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-icon svg{
- width:26px!important;height:26px!important;stroke-width:1.45!important;
+ width:26px!important;height:26px!important;stroke-width:1.15!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-copy strong{
