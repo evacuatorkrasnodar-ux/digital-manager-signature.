@@ -213,7 +213,7 @@ function mount(target,{
  }
  let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='',documentName='',fromScan=false,wordStyle={size:12,alignment:'left',heading:false};
  const drafts=window.SEYVEO_DOCUMENT_DRAFTS;
- let draftId=null,draftRefresh=0,saveSeq=0,saveFailed=false,savePending=false,latestSave=Promise.resolve(),savedSignature='';
+ let draftId=null,draftRefresh=0,saveSeq=0,saveFailed=false,savePending=false,latestSave=Promise.resolve(),savedSignature='',previewSignature=null;
  const draftFeedback=$('p','sv-doc-draft-feedback');draftFeedback.setAttribute('role','status');
  editor.append(draftFeedback);
  const draftError='Черновик не сохранён. Не закрывайте приложение.';
@@ -223,9 +223,12 @@ function mount(target,{
   if(indicator)indicator.textContent=value;
  }
  function newDraft(){
-  draftId=null;documentDraft='';documentFormat='pdf';documentTemplate='';documentName='';fromScan=false;wordStyle={size:12,alignment:'left',heading:false};savedSignature='';
+  draftId=null;documentDraft='';documentFormat='pdf';documentTemplate='';documentName='';fromScan=false;wordStyle={size:12,alignment:'left',heading:false};savedSignature='';previewSignature=null;
  }
+ function draftContentSignature(){return JSON.stringify([documentDraft,documentName,documentFormat,wordStyle]);}
  function persistDraft(){
+  // Opening or closing an unmodified template is a preview, not a draft.
+  if(!draftId&&previewSignature!==null&&draftContentSignature()===previewSignature)return Promise.resolve();
   if(!draftId&&!documentDraft.trim()&&!documentName.trim())return Promise.resolve();
   if(!drafts){saveFailed=true;setDraftFeedback(draftError);return Promise.resolve();}
   if(!draftId)draftId=drafts.id();
@@ -628,7 +631,8 @@ function mount(target,{
    body.value=content;documentDraft=content;documentTemplate=template;filename.value='';
    size.value='12';alignment.value='left';firstLine.setAttribute('aria-pressed','false');headingCheck.hidden=true;
    refreshStyle();syncFormat();syncTemplate();lastWordText=body.value;wordHistory.length=0;
-   revealEditor();void persistDraft();
+   previewSignature=draftContentSignature();
+   revealEditor();
    }finally{switchingDraft=false;}
   }
   const blank=button('Чистый лист',()=>beginNew(),'sv-doc-create-blank');
