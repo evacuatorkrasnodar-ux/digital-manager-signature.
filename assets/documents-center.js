@@ -136,7 +136,7 @@ function renderPreview(parent,file){
  const opened=window.SEYVEO_DOCS_VIEWER?.mount?.(parent,file,{
   onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
   onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
-  onSaveCopy:copy=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,'device'),
+  area:scope,onSaveCopy:(copy,options)=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,options?.text?'created':'device',options||{}),
   onSayvi:(intent,context)=>goSayvi(intent,context)
  });
  if(opened&&typeof opened.destroy==='function'){
@@ -296,7 +296,7 @@ function draw(){
     const opened=window.SEYVEO_DOCS_VIEWER?.open?.(file,{
      onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
      onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
-     onSaveCopy:copy=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,'device'),
+     area:scope,onSaveCopy:(copy,options)=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,options?.text?'created':'device',options||{}),
      onSayvi:(intent,context)=>goSayvi(intent,context),
      onClose(){viewerSession=null;}
     });
@@ -348,7 +348,7 @@ function draw(){
    const opened=window.SEYVEO_DOCS_VIEWER?.open?.(selectedFile,{
     onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
     onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
-    onSaveCopy:copy=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,'device'),
+    area:scope,onSaveCopy:(copy,options)=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,options?.text?'created':'device',options||{}),
     onSayvi:(intent,context)=>goSayvi(intent,context),
     onClose(){showPreview=false;viewerSession=null;}
    });
