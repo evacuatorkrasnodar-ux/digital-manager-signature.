@@ -48,6 +48,14 @@ function setArea(next){
 }
 async function goSayvi(intent,context){
  const key='seyveo.sayvi.document-handoff.v1';
+ if(intent==='official-form'){
+  if(!context?.name||!context?.country||!context?.period)return false;
+  try{
+   const source=new URL(context.url);if(source.protocol!=='https:'||!/(^|\.)(nalog\.gov\.ru|src\.am|customs\.gov\.ru)$/.test(source.hostname))return false;
+   sessionStorage.setItem(key,JSON.stringify({intent,at:Date.now(),name:String(context.name).slice(0,100),country:String(context.country).slice(0,50),period:String(context.period).slice(0,60),url:source.href,area}));
+   location.assign('sayvi-chat-new.html?officialForm=1');return true;
+  }catch{return false;}
+ }
  if(intent==='edit-current'){
   if(!context||typeof context.text!=='string'||!context.text.trim()||context.text.length>12000)return false;
   try{
