@@ -267,41 +267,74 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   const api=window.SEYVEO_EDITOR_CAPSULE;
   if(!api){say('Инструменты редактора недоступны.');return;}
   const input=el('textarea','svdv-inline-text');input.value=value;input.maxLength=12000;input.spellcheck=true;input.setAttribute('aria-label','Текст документа');
+  const controls=el('div','svdv-inline-controls');
   const rail=api.attach(el('div','svdv-inline-rail'),'word');
+  const menu=el('div','svdv-inline-menu');menu.hidden=true;menu.setAttribute('role','group');controls.append(menu,rail);
   rail.setAttribute('aria-label','Инструменты документа');
-  const state={input,rail,id:draftAPI()?.id(),changed:false,style:{size:12,alignment:'left',heading:false},history:[],redo:[],last:value,saving:false,originalNodes:Array.from(stage.childNodes),oldTop:stage.scrollTop};
+  const state={input,rail,controls,id:draftAPI()?.id(),changed:false,style:{size:12,alignment:'left',heading:false},history:[],redo:[],last:value,saving:false,originalNodes:Array.from(stage.childNodes),oldTop:stage.scrollTop};
   inline=state;
-  const update=()=>{input.style.fontSize=(state.style.size*4/3)+'px';input.style.textAlign=state.style.alignment;};
+  const update=()=>{input.style.fontSize=(state.style.size*4/3)+'px';input.style.textAlign=state.style.alignment==='both'?'justify':state.style.alignment;};
   const changed=()=>{state.changed=true;void persistInline();};
   const record=next=>{if(next===state.last)return;state.history.push(state.last);if(state.history.length>60)state.history.shift();state.redo.length=0;state.last=next;changed();sync();};
   const set=next=>{input.value=next;state.last=next;changed();sync();};
-  const size=el('select','svdv-inline-size');size.setAttribute('aria-label','Размер текста');size.dataset.svEditorTool='size';
-  for(const n of [10,11,12,14,16,18,20,24]){const opt=el('option','',n+' пт');opt.value=String(n);size.append(opt);}size.value='12';
-  size.addEventListener('change',()=>{state.style.size=Number(size.value);update();changed();});
-  const align=el('select','svdv-inline-align');align.setAttribute('aria-label','Выравнивание');align.dataset.svEditorTool='align';
-  for(const [id,label] of [['left','Слева'],['center','По центру'],['right','Справа']]){const opt=el('option','',label);opt.value=id;align.append(opt);}
-  align.addEventListener('change',()=>{state.style.alignment=align.value;update();changed();});
   const make=(id,label,markup,handler)=>api.button(id,label,markup,handler);
+  const alignNames={left:'Слева',center:'По центру',right:'Справа',both:'По ширине'};
+  const svg=path=>api.icon(path);
+  const down=svg('<path d="m7 10 5 5 5-5"/>');
+  const alignmentArt=key=>svg('<path d="'+({left:'M4 5h16M4 10h10M4 15h16M4 20h10',center:'M4 5h16M7 10h10M4 15h16M7 20h10',right:'M4 5h16M10 10h10M4 15h16M10 20h10',both:'M4 5h16M4 10h16M4 15h16M4 20h16'}[key])+'"/>');
+  const size=make('size','Размер текста','',()=>toggleMenu('size'));
+  const align=make('align','Выравнивание текста','',()=>toggleMenu('align'));
+  for(const b of [size,align]){b.classList.add('svdv-inline-choice');b.setAttribute('aria-expanded','false');}
+  let menuKind='';
+  function refreshControls(){
+   size.innerHTML='<span>'+state.style.size+' пт</span>'+down;
+   size.setAttribute('aria-label','Размер текста: '+state.style.size+' пт');
+   align.innerHTML=alignmentArt(state.style.alignment)+down;
+   align.setAttribute('aria-label','Выравнивание: '+alignNames[state.style.alignment]);
+  }
+  function closeMenu(){menu.hidden=true;menuKind='';size.setAttribute('aria-expanded','false');align.setAttribute('aria-expanded','false');}
+  function toggleMenu(kind){
+   if(menuKind===kind){closeMenu();return;}
+   closeMenu();menuKind=kind;menu.hidden=false;
+   (kind==='size'?size:align).setAttribute('aria-expanded','true');
+   menu.setAttribute('aria-label',kind==='size'?'Размер текста':'Выравнивание текста');
+   menu.replaceChildren();
+   const options=kind==='size'?[10,11,12,14,16,18,20,24].map(n=>[n,n+' пт']):Object.entries(alignNames);
+   for(const [id,label] of options){
+    const item=el('button','svdv-inline-option');item.type='button';
+    const art=el('span','svdv-inline-option-art');if(kind==='align')art.innerHTML=alignmentArt(id);else art.textContent='А';
+    const selected=kind==='size'?id===state.style.size:id===state.style.alignment;
+    const check=el('span','svdv-inline-option-check');if(selected)check.innerHTML=svg('<path d="m5 12 4 4 10-10"/>');
+    item.setAttribute('aria-pressed',String(selected));item.append(art,el('span','',label),check);
+    item.addEventListener('click',()=>{if(kind==='size')state.style.size=id;else state.style.alignment=id;input.style.textAlign=state.style.alignment==='both'?'justify':state.style.alignment;update();refreshControls();changed();closeMenu();});
+    menu.append(item);
+   }
+  }
+  state.closeMenu=closeMenu;
+  refreshControls();
   const tidy=make('sayvi','Сэйви · привести в порядок',api.artwork('sayvi'),()=>{try{const next=api.tidyDocument(input.value);input.value=next;record(next);say('Лишние пробелы и пустые строки убраны.');}catch(e){say(e.message);}});
   const undo=make('undo','Отменить',api.artwork('undo'),()=>{if(state.history.length){state.redo.push(input.value);set(state.history.pop());}});
   const redo=make('redo','Повторить',api.artwork('redo'),()=>{if(state.redo.length){state.history.push(input.value);set(state.redo.pop());}});
   function sync(){undo.disabled=!state.history.length;redo.disabled=!state.redo.length;}
-  const textTool=make('format','Редактировать текст','<span class="sv-smart-aa">Aa</span>',()=>input.focus({preventScroll:true}));
   const done=make('done','Готово · сохранить копию',window.SEYVEO_DOCUMENT_ICONS?.markup('check')||'✓',()=>void finishInline());
   if(doneControl){doneControl.hidden=false;doneControl.onclick=()=>void finishInline();}else rail.append(done);
-  rail.append(size,align,textTool,tidy,undo,redo);api.prioritize(rail,'word');sync();update();
+  rail.append(size,align,tidy,undo,redo);api.prioritize(rail,'word');sync();update();
   input.addEventListener('input',()=>record(input.value));
   rail.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault();});
-  more.open=false;toolbar.hidden=true;root.insertBefore(rail,notice);
+  controls.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault();});
+  state.dismiss=e=>{if(!controls.contains(e.target))closeMenu();};document.addEventListener('pointerdown',state.dismiss,{passive:true});
+  more.open=false;toolbar.hidden=true;root.insertBefore(controls,notice);
   stage.classList.add('svdv-inline-editing');stage.replaceChildren(input);
   if(sheet)stopViewport=api.viewport(sheet);
-  say(info.kind==='pdf'||info.ext==='docx'?'Текстовая копия · исходный файл сохраняется без изменений.':'Редактирование текста');
+  const meta=copy.querySelector('.svdv-meta');state.metaBefore=meta.textContent;
+  if(info.kind==='pdf'||info.ext==='docx')meta.textContent=state.metaBefore+' · Текстовая копия';
+  say('');
   input.focus({preventScroll:true});input.setSelectionRange(0,0);stage.scrollTop=state.oldTop;
  }
  function leaveInline(){
   const state=inline;if(!state)return;
   stopViewport?.();stopViewport=null;sheet?.classList.remove('sv-editor-keyboard-open');
-  state.rail.remove();stage.classList.remove('svdv-inline-editing');toolbar.hidden=false;
+  document.removeEventListener('pointerdown',state.dismiss);state.controls.remove();copy.querySelector('.svdv-meta').textContent=state.metaBefore;stage.classList.remove('svdv-inline-editing');toolbar.hidden=false;
   if(doneControl){doneControl.hidden=true;doneControl.onclick=null;}
   inline=null;
  }
@@ -325,10 +358,10 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    const old=objectUrl;objectUrl=URL.createObjectURL(next);file=next;loadedText=text;
    save.href=objectUrl;save.download=name;save.setAttribute('aria-label','Сохранить '+name);
    if(originalAction)originalAction.href=objectUrl;
-   copy.querySelector('.svdv-name').textContent=name;copy.querySelector('.svdv-meta').textContent=info.label+' · '+Math.max(1,Math.ceil(next.size/1024))+' КБ';
+   copy.querySelector('.svdv-name').textContent=name;state.metaBefore=info.label+' · '+Math.max(1,Math.ceil(next.size/1024))+' КБ';
    // Pending renders of the original are detached; the edited copy remains on this screen.
    leaveInline();stage.classList.remove('svdv-pdf-stage');stage.classList.add('svdv-stage-document');
-   const preview=el('pre','svdv-text',text);preview.style.fontSize=(state.style.size*4/3)+'px';preview.style.textAlign=state.style.alignment;
+   const preview=el('pre','svdv-text',text);preview.style.fontSize=(state.style.size*4/3)+'px';preview.style.textAlign=state.style.alignment==='both'?'justify':state.style.alignment;
    stage.replaceChildren(preview);URL.revokeObjectURL(old);say('Копия сохранена. Оригинал не изменён.');
   }catch(e){if(active)say(e?.message||'Не удалось сохранить копию. Черновик сохранён.');}
   finally{state.saving=false;state.input.readOnly=false;if(doneControl)doneControl.disabled=false;}
@@ -474,7 +507,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  const session=Object.freeze({
   destroy(){
    if(!active)return;
-   stopViewport?.();stopViewport=null;active=false;const markup=root.querySelector('.sv-pdf-markup[open]');if(markup)markup.close();if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
+   if(inline?.dismiss)document.removeEventListener('pointerdown',inline.dismiss);stopViewport?.();stopViewport=null;active=false;const markup=root.querySelector('.sv-pdf-markup[open]');if(markup)markup.close();if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
    document.removeEventListener('pointerdown',dismissMore);
    document.removeEventListener('keydown',closeMoreOnEscape);
    URL.revokeObjectURL(objectUrl);
