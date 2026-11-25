@@ -1711,6 +1711,7 @@ function mount(target,{
      texts.push(value);
      if(texts.join('\n\n').length>12000)throw Error('Документ больше 12 000 знаков. Редактирование копии пока недоступно.');
     }
+    if(payload.inlineTextOnly)return texts.join('\n\n');
     await persistDraft();if(saveFailed||!valid())return false;
     newDraft();draftEdited=true;documentDraft=texts.join('\n\n');documentFormat='docx';fromScan=true;
     documentName=String(payload.file.name||'Документ').replace(/\.[^.]+$/,'').slice(0,100);
