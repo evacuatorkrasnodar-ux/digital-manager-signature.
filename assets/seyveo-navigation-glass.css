@@ -89,3 +89,36 @@ html:root[data-theme="light"] body :is(dialog[open],#picturePage:not([hidden])).
  html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch::after,html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden])::after,html:root[data-theme="light"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading[data-sv-edge-fade]::after{content:none!important;display:none!important}
  html:root[data-theme="light"] body :is(dialog[open],#picturePage:not([hidden])).sv-scroll-glass-ready > .sv-scroll-glass-head > .sv-scroll-glass-material{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;-webkit-mask-image:none;mask-image:none}
 }
+
+
+/* Approved mail/document reference: a real outer face and one selected face.
+   No inset press shadows or legacy painted pills in the shared work tabs.
+   Preserve every existing size, label, focus ring and scroll container. */
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]),
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] #svWorkTabs[data-task-filters="true"]:not([hidden]),
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters,
+html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs{
+ background:var(--sv-nav-glass-face)!important;background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;border-radius:999px!important;
+ box-shadow:var(--sv-nav-glass-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-nav-glass-filter)!important;backdrop-filter:var(--sv-nav-glass-filter)!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]) > button:not([hidden]):not([aria-pressed="true"]),
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] #svWorkTabs[data-task-filters="true"]:not([hidden]) > .sv-tool-filters > button:not([aria-pressed="true"]),
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters > button:not([aria-pressed="true"]),
+html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs .sv-inbox-muted-tab:not([aria-pressed="true"]){
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]) > button:not([hidden])[aria-pressed="true"],
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] #svWorkTabs[data-task-filters="true"]:not([hidden]) > .sv-tool-filters > button[aria-pressed="true"],
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters > button[aria-pressed="true"],
+html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs .sv-inbox-muted-tab[aria-pressed="true"]{
+ background:var(--sv-nav-glass-selected)!important;background-image:none!important;
+ border-radius:999px!important;box-shadow:var(--sv-white-pearl-selected-shadow)!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]) > button:not([hidden])::before,
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] #svWorkTabs[data-task-filters="true"]:not([hidden]) > .sv-tool-filters > button::before,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters > button::before,
+html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs .sv-inbox-muted-tab::before{
+ content:none!important;display:none!important;
+}
