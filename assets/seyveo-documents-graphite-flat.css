@@ -2613,3 +2613,14 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools .sv-doc-scan-editor-host{order:1;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools .svdv-scan-embedded>.svdv-stage{min-height:0!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools .svdv-photo-rail.svdv-photo-short{justify-content:center!important;}
+
+/* Keep the outline on the fitted image, not on the surrounding scanner stage. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .svdv-scan-embedded>.svdv-stage>.svdv-picture{
+ width:auto!important;height:auto!important;max-width:calc(100% - 6px)!important;max-height:calc(100% - 6px)!important;
+ flex:0 1 auto!important;object-fit:contain!important;margin:auto!important;
+ outline:1px solid rgba(105,118,132,.24);outline-offset:-1px;
+ border-radius:3px!important;box-shadow:0 2px 7px rgba(30,40,55,.07)!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .svdv-scan-embedded>.svdv-stage>.svdv-photo-canvas{
+ max-width:calc(100% - 6px)!important;max-height:calc(100% - 6px)!important;
+}
