@@ -11,7 +11,7 @@ async function imageFrom(page){
 function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
 function size(w,h){const k=Math.min(1,1600/w,2200/h);return [Math.max(1,Math.round(w*k)),Math.max(1,Math.round(h*k))];}
 async function jpeg(c){const b=await new Promise(resolve=>c.toBlob(resolve,'image/jpeg',.9));if(!b)throw Error('Не удалось собрать страницу.');return {width:c.width,height:c.height,jpegBytes:new Uint8Array(await b.arrayBuffer())};}
-function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}){
+function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText,initialMode='view'}={}){
  if(!parent?.isConnected||!window.SEYVEO_DOCS_EXPORT||!window.SEYVEO_EDITOR_CAPSULE)return false;
  const capsule=window.SEYVEO_EDITOR_CAPSULE;
  if(!shared||!shared.stage||!shared.rail||!shared.done)return false;
@@ -180,7 +180,14 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
     for(let n=1;n<=doc.numPages;n++){if(closed)return;const page=await doc.getPage(n);if(closed)return;const v=page.getViewport({scale:1}),k=Math.min(2.5,1600/v.width,2200/v.height),vp=page.getViewport({scale:k}),base=canvas(Math.ceil(vp.width),Math.ceil(vp.height));await page.render({canvasContext:base.getContext('2d',{alpha:false}),viewport:vp}).promise;if(closed)return;page.cleanup();add(base);}
    }
    if(!pages.length)throw Error('Нет доступных страниц.');
-   busy=false;show();setMode('view');status.textContent='';
+   busy=false;show();
+   const startMode=['signature','pen'].includes(initialMode)?initialMode:'view';
+   setMode(startMode);
+   if(startMode==='view')status.textContent='';
+   else{
+    const activeTool=tools.find(([id])=>id===startMode)?.[1];
+    if(activeTool){const a=activeTool.getBoundingClientRect(),r=rail.getBoundingClientRect();if(a.left<r.left||a.right>r.right)rail.scrollLeft+=a.left-r.left-(r.width-a.width)/2;}
+   }
   }catch(e){if(!closed){status.textContent=e?.message||'Не удалось открыть страницы.';busy=false;sync();for(const [,b] of tools)b.disabled=true;}}
  }
  function add(base){base.className='sv-pdf-markup-base';const overlay=canvas(base.width,base.height);overlay.className='sv-pdf-markup-overlay';overlay.setAttribute('aria-label','Слой разметки страницы');const p={base,overlay,ops:[],undo:[],redo:[]};connect(p);pages.push(p);}
