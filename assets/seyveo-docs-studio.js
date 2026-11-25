@@ -545,7 +545,7 @@ function mount(target,{
       !window.confirm('Заменить текущий текст выбранным шаблоном?'))return;
    body.value=content;documentDraft=content;documentTemplate=id;
    syncTemplate();revealEditor();
-   message('Шаблон открыт. Заполните поля своими данными.');
+   message('Образец открыт. Заполните поля и проверьте содержание.');
   }
   function syncTemplate(){
    cards.forEach(({id,button})=>
@@ -599,8 +599,8 @@ function mount(target,{
   editing.append(editorTop,filename,typography,body);
 
   const formatLabel=$('div','sv-doc-create-subhead');
-  formatLabel.append($('strong','','Формат'),
-   $('small','','Как сохранить'));
+  const formatHint=$('small','','');
+  formatLabel.append($('strong','','Формат'),formatHint);
   const formatSwitch=$('div','sv-doc-create-formats');
   formatSwitch.setAttribute('role','group');
   formatSwitch.setAttribute('aria-label','Выбор формата документа');
@@ -626,6 +626,7 @@ function mount(target,{
    selectedFormat.forEach(({id,button})=>
     button.setAttribute('aria-pressed',String(id===documentFormat)));
    saveButton.textContent=documentFormat==='pdf'?'Сохранить PDF':'Сохранить Word';
+   formatHint.textContent=documentFormat==='pdf'?'Изображение текста':'Редактируемый DOCX';
    typography.hidden=documentFormat!=='docx';
    body.style.fontSize=documentFormat==='docx'?wordStyle.size+'pt':'';
    body.style.textAlign=documentFormat==='docx'?(wordStyle.alignment==='both'?'justify':wordStyle.alignment):'';
@@ -679,10 +680,7 @@ function mount(target,{
   sayvi.append(sayviMark,$('span','','Создать с Сэйви'));
   if(!fromScan)panel.append(sectionTitle,examples);
   panel.append(editing,formatLabel,formatSwitch,footer,sayvi);
-  const info=$('details','sv-doc-tool-help');
-  info.append($('summary','','О шаблонах'),
-   warn('Шаблоны учебные. Это простой текстовый редактор, не проверка договора. PDF сохраняется как изображение текста на страницах, Word — редактируемый DOCX.'));
-  panel.append(info,status(''));
+  panel.append(status(''));
  }
  function renderSign(){
   panel.dataset.hasScans=String(scans.length>0);
