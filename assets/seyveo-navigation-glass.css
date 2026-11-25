@@ -285,7 +285,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] > #svc
  width:19px!important;height:19px!important;stroke-width:1.55!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tabs{
- position:sticky!important;top:calc(var(--svcp-nav-back-y,12px) + 52px)!important;
+ position:relative!important;top:auto!important;
  z-index:4!important;overflow:visible!important;
  min-height:38px!important;height:38px!important;
  padding:3px!important;gap:3px!important;border-radius:999px!important;
@@ -343,4 +343,39 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpC
 }
 @media(prefers-reduced-transparency:reduce){
  html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > #svcpChatFilters:not([hidden]),html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tabs{background:#F7F7F8!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
+
+/* Fixed avatar header: the hero and mode capsule never scroll.
+   The gallery/photo pane is the sole native vertical scrollport. */
+html:root body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-body{
+ overflow:hidden!important;padding-bottom:0!important;
+}
+html:root body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-editor{
+ height:100%!important;min-height:0!important;overflow:visible!important;
+}
+html:root body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] :is(.sv-new-avatar-hero,.sv-new-avatar-tabs){
+ flex:0 0 auto!important;
+}
+html:root body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tabs{
+ position:relative!important;top:auto!important;z-index:4!important;
+}
+html:root body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-views{
+ position:relative!important;z-index:1!important;
+ box-sizing:border-box!important;flex:1 1 0!important;min-height:0!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
+ scrollbar-width:none!important;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important;
+}
+html:root body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-views::-webkit-scrollbar{display:none!important}
+html:root body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-status:not(:empty){
+ flex:0 0 auto!important;margin-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-views{
+ /* 38px capsule plus the existing 16px form gap. The scroll viewport
+    starts at the capsule, never behind the portrait or name. */
+ margin-top:-54px!important;padding-top:54px!important;
+ scroll-padding-top:54px!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-views{margin-top:0!important;padding-top:0!important;scroll-padding-top:0!important}
 }

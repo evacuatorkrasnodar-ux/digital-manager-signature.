@@ -180,6 +180,9 @@ function showAvatarEditor(){
  }
  const tabs=node('div','sv-new-avatar-tabs');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Способ оформления');
  const views=node('div','sv-new-avatar-views');
+ const syncAvatarGlass=()=>overlay.classList.toggle('sv-avatar-under-scroll',views.scrollTop>2);
+ views.addEventListener('scroll',syncAvatarGlass,{passive:true});
+ overlay.classList.remove('sv-avatar-under-scroll');
  const gallery=node('div','sv-new-avatar-grid');
  const categoryBar=node('div','sv-avatar-categories');
  categoryBar.setAttribute('role','group');
@@ -204,7 +207,7 @@ function showAvatarEditor(){
  for(const [mode,label] of options){
   const btn=node('button','sv-new-avatar-tab',label);btn.type='button';
   btn.addEventListener('click',()=>{
-   tab=mode;
+   if(tab!==mode){tab=mode;views.scrollTop=0;syncAvatarGlass()}
    paint();
   });
   btn.dataset.mode=mode;tabs.append(btn);btns.push(btn);
@@ -491,12 +494,7 @@ panel.append(sheetGrip,top,body);
 const syncInboxGlass=()=>screen.classList.toggle('sv-inbox-under-scroll',list.scrollTop>2);
 list.addEventListener('scroll',syncInboxGlass,{passive:true});
 syncInboxGlass();
-const syncAvatarGlass=()=>{
- const tabs=body.querySelector('.sv-new-avatar-tabs');
- const pinned=!!tabs&&body.scrollTop>2&&tabs.getBoundingClientRect().top<=body.getBoundingClientRect().top+(parseFloat(getComputedStyle(tabs).top)||0)+2;
- overlay.classList.toggle('sv-avatar-under-scroll',pinned);
-};
-body.addEventListener('scroll',syncAvatarGlass,{passive:true});
+// Avatar optical state belongs to its gallery scrollport (showAvatarEditor).
 
 const swipeSafeViews=new Set(['new','staff','team-structure','one','archives']);
 window.SEYVEO_SHEET_NAVIGATION?.attach(sheetGrip,null,()=>{
@@ -504,7 +502,7 @@ window.SEYVEO_SHEET_NAVIGATION?.attach(sheetGrip,null,()=>{
 });
 overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
-function closeSheet(){panel.querySelector(':scope > .sv-avatar-floating-actions')?.remove();overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
+function closeSheet(){overlay.classList.remove('sv-avatar-under-scroll');panel.querySelector(':scope > .sv-avatar-floating-actions')?.remove();overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
 function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
 function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники','team-structure':'Структура чатов',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления','muted-chats':'Чаты без звука',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
 function openSheet(type,id='',nested=false){
