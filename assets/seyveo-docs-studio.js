@@ -146,15 +146,24 @@ function shareMessage(status,format){
 }
 function textPdf(text){
  if(typeof text!=='string'||!text.trim())throw Error('Введите текст');
- const lines=[],limit=70;
+ const lines=[],measure=$('canvas').getContext('2d');
+ if(!measure)throw Error('Canvas недоступен');
+ measure.font='28px Arial,sans-serif';
+ const usable=760;
  for(const raw of text.slice(0,12000).split(/\r?\n/)){
-  if(!raw){lines.push('');continue;}
+  if(!raw.trim()){lines.push('');continue;}
   let line='';
-  for(const token of raw.split(/(\s+)/)){
-   if((line+token).length>limit&&line){lines.push(line);line='';}
-   line+=token;
+  for(const word of raw.trim().split(/\s+/)){
+   const candidate=line?line+' '+word:word;
+   if(measure.measureText(candidate).width<=usable){line=candidate;continue;}
+   if(line){lines.push(line);line='';}
+   // Long identifiers and words must fit the printable width as well.
+   for(const ch of word){
+    if(line&&measure.measureText(line+ch).width>usable){lines.push(line);line='';}
+    line+=ch;
+   }
   }
-  lines.push(line);
+  if(line)lines.push(line);
  }
  const pages=[];
  while(lines.length){
