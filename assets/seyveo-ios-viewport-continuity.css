@@ -34,8 +34,14 @@
  html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
   padding-top:calc(58px + env(safe-area-inset-top,0px))!important;
   scroll-padding-top:calc(58px + env(safe-area-inset-top,0px))!important;
-  -webkit-mask-image:none!important;
-  mask-image:none!important;
+  /* Fade only the scrolling messages at their bottom edge. The composer
+     and the native safe-area canvas remain untouched; no painted strip. */
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 36px),transparent 100%)!important;
+  mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 36px),transparent 100%)!important;
+  -webkit-mask-repeat:no-repeat!important;
+  mask-repeat:no-repeat!important;
+  -webkit-mask-size:100% 100%!important;
+  mask-size:100% 100%!important;
  }
  /* Scenic wallpaper continuity through iOS Home-indicator region.
     These match the existing opt-in chat wallpapers, not other app themes. */
