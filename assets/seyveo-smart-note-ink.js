@@ -10,12 +10,10 @@
  const textarea=document.getElementById('noteReviewText');
  const rich=document.getElementById('svNoteRichEditor');
  if(!dlg||!form||!bar||!textarea)return;
- const create=(id,label,body)=>{
-  const el=document.createElement('button');el.type='button';el.dataset.svSmartTool=id;
-  el.setAttribute('aria-label',label);el.title=label;
-  el.innerHTML=body;return el;
- };
- const icon=d=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d+'</svg>';
+ const capsule=window.SEYVEO_EDITOR_CAPSULE;
+ if(!capsule)return;
+ capsule.attach(bar,'notebook');
+ const create=capsule.button,icon=capsule.icon;
  const textBtn=create('text','Печатать текст','<span class="sv-smart-aa">Aa</span>');
  textBtn.setAttribute('aria-controls','svNoteTopMenu');textBtn.setAttribute('aria-expanded','false');
  const sayviMark='<span class="sv-smart-sayvi-icon" aria-hidden="true"></span>';
