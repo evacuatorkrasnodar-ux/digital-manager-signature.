@@ -487,6 +487,17 @@ const body=node('div','sv-inbox-sheet-body');
 // Existing overlay and Back handler are the sole navigation owners.
 const sheetGrip=node('div','sv-inbox-shared-grip');sheetGrip.setAttribute('aria-hidden','true');sheetGrip.hidden=true;
 panel.append(sheetGrip,top,body);
+// Existing scrollports own their optical state; no duplicate scrolling layer.
+const syncInboxGlass=()=>screen.classList.toggle('sv-inbox-under-scroll',list.scrollTop>2);
+list.addEventListener('scroll',syncInboxGlass,{passive:true});
+syncInboxGlass();
+const syncAvatarGlass=()=>{
+ const tabs=body.querySelector('.sv-new-avatar-tabs');
+ const pinned=!!tabs&&body.scrollTop>2&&tabs.getBoundingClientRect().top<=body.getBoundingClientRect().top+(parseFloat(getComputedStyle(tabs).top)||0)+2;
+ overlay.classList.toggle('sv-avatar-under-scroll',pinned);
+};
+body.addEventListener('scroll',syncAvatarGlass,{passive:true});
+
 const swipeSafeViews=new Set(['new','staff','team-structure','one','archives']);
 window.SEYVEO_SHEET_NAVIGATION?.attach(sheetGrip,null,()=>{
  if(!overlay.hidden&&swipeSafeViews.has(sheetType))back.click();
