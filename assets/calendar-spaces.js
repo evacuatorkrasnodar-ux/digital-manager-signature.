@@ -253,7 +253,7 @@ $('calendarHealthNumberPicker').addEventListener('click',event=>{
 $('calendarHealthNumberPicker').addEventListener('keydown',event=>{
  if(event.key==='Escape'){event.preventDefault();closeHealthPicker(false)}
  if(event.key==='Tab'){
-  const stops=[$('calendarHealthPickerWheel'),$('calendarHealthPickerCancel'),$('calendarHealthPickerDone')];
+  const stops=[$('calendarHealthPickerWheel'),$('calendarHealthPickerCancel'),$('calendarHealthPickerDone'),$('calendarHealthNumberPicker').querySelector('.sv-wheel-feedback')].filter(Boolean);
   const index=stops.indexOf(document.activeElement);
   if(index>=0){event.preventDefault();stops[(index+(event.shiftKey?stops.length-1:1))%stops.length].focus();}
  }
