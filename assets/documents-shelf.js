@@ -29,6 +29,12 @@ const examples=[
 ];
 const inFolder=(item,id)=>{
  if(id==='archive')return item.saved===true;
+ if(id.startsWith('smart-')){
+  if(!item.local)return false;
+  if(id==='smart-partners')return Boolean(item.counterparty);
+  if(id==='smart-due')return Boolean(item.dueDate)&&!['paid','closed'].includes(item.status);
+  return docType(item)===id.slice(6);
+ }
  if(['scan','created','device'].includes(id))return item.source===id;
  if(item.folder)return item.folder===id;
  const value=String(item.name||'').toLocaleLowerCase('ru-RU');
@@ -88,7 +94,16 @@ const ownFolders=state=>{
  }).filter(Boolean);
  return [...defaults,...state.local.filter(x=>x.kind==='folder')].filter(x=>!x.hidden).sort((a,b)=>(a.order??a.createdAt)-(b.order??b.createdAt)||a.id.localeCompare(b.id));
 };
-const folderEntries=state=>[...categories.filter(x=>['device','scan','new','archive'].includes(x.id)),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true,defaultFolder:x.defaultFolder===true}))];
+const docType=item=>item.docType||localFiles()?.inferDocumentType?.(item.name)||'other';
+const smartFolders=state=>{
+ const files=state.local.filter(x=>x.kind==='file');
+ const types=localFiles()?.docTypes||{};
+ const output=Object.entries(types).filter(([id])=>id!=='other'&&files.some(x=>docType(x)===id)).map(([id,title])=>({id:'smart-'+id,title,smart:true}));
+ if(files.some(x=>x.counterparty))output.push({id:'smart-partners',title:'Контрагенты',smart:true});
+ if(files.some(x=>x.dueDate&&!['paid','closed'].includes(x.status)))output.push({id:'smart-due',title:'Со сроком',smart:true});
+ return output;
+};
+const folderEntries=state=>[...categories.filter(x=>['device','scan','new','archive'].includes(x.id)),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true,defaultFolder:x.defaultFolder===true})),...smartFolders(state)];
 const updateFolder=(state,category,patch)=>category.defaultFolder?localFiles().setDefaultFolder(state.options.area,category.id,patch):localFiles().update(state.options.area,category.id,patch);
 function notice(state,text){state.folderCaption.textContent=text;}
 function closeFolderMenu(state){state.folderMenu.hidden=true;state.folderMenu.replaceChildren();}
@@ -131,11 +146,52 @@ function itemsFor(state){
  }
  return records.sort((a,b)=>b.createdAt-a.createdAt);
 }
+function openDocumentDetails(state,item){
+ if(state!==active||!item.local)return;
+ const api=localFiles(),area=state.options.area;
+ const dlg=el('dialog','sv-doc-my-templates sv-doc-professional-details');
+ const head=el('header','sv-doc-my-template-head');
+ const back=el('button','sv-doc-my-template-back','‹');back.type='button';back.setAttribute('aria-label','Назад');back.addEventListener('click',()=>dlg.close());
+ head.append(back,el('strong','','Сведения о документе'));
+ const content=el('div','sv-doc-my-template-content');
+ const feedback=el('small','sv-doc-my-template-note');feedback.setAttribute('role','status');
+ const form=el('form','sv-doc-document-fields');
+ const field=(label,control)=>{const node=el('label','sv-doc-document-field');node.append(el('span','',label),control);form.append(node);return control;};
+ const select=(values,initial)=>{const n=el('select','');for(const [value,title] of values){const o=el('option','',title);o.value=value;n.append(o);}n.value=initial;return n;};
+ const input=(value,max,type='text')=>{const n=el('input','');n.type=type;n.value=value||'';if(max)n.maxLength=max;return n;};
+ const type=field('Тип документа',select(Object.entries(api.docTypes),docType(item)));
+ const counterparty=field('Контрагент',input(item.counterparty,120));
+ const ref=field('Номер / связанный договор',input(item.reference,100));
+ const due=field('Контрольная дата',input(item.dueDate,0,'date'));
+ const status=field('Статус (вручную)',select([['','Не указан'],['draft','Черновик'],['ready','Готов'],['sent','Отправлен'],['signed','Подписан'],['paid','Оплачен'],['closed','Закрыт']],item.status||''));
+ const folder=field('Папка',select([['','Без папки'],...ownFolders(state).map(x=>[x.id,x.name])],item.folder||''));
+ if(type.value==='other'||item.typeOrigin!=='user')form.append(el('small','sv-doc-my-template-note','Тип предложен по названию. Проверьте его. Статусы не подтверждают подпись или оплату.'));
+ const action=(name,fn,cls='sv-doc-my-template-option')=>{const n=el('button',cls,name);n.type='button';n.addEventListener('click',fn);return n;};
+ form.append(action('Сохранить сведения',async()=>{try{
+  await api.updateDocument(area,item.id,{docType:type.value,counterparty:counterparty.value,reference:ref.value,dueDate:due.value,status:status.value});
+  if(folder.value!==item.folder)await api.update(area,item.id,{folder:folder.value});
+  dlg.close();
+ }catch(e){feedback.textContent=e.message;}},'sv-doc-my-template-primary'));
+ form.addEventListener('submit',e=>e.preventDefault());
+ const history=el('details','sv-doc-version-history');history.append(el('summary','','История версий · '+(item.version||1)));
+ const versions=el('div','sv-doc-my-template-list');
+ for(const v of [...(item.versions||[])].reverse()){
+  versions.append(action('Версия '+v.version+' · '+dateOf(v.at),async()=>{try{const f=await api.getVersion(area,item.id,v.version);const url=URL.createObjectURL(f);const a=el('a','');a.href=url;a.download=f.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}catch(e){feedback.textContent=e.message;}}));
+ }
+ if(!item.versions?.length)versions.append(el('small','sv-doc-my-template-note','Предыдущих версий пока нет.'));
+ const picker=el('input','');picker.type='file';picker.accept='.pdf,.docx,.xlsx,.pptx,.txt,.md,.png,.jpg,.jpeg,.webp';picker.hidden=true;
+ picker.addEventListener('change',async()=>{const f=picker.files?.[0];if(!f)return;try{if(!/\.(pdf|docx|xlsx|pptx|txt|md|png|jpe?g|webp)$/i.test(f.name))throw Error('Неподдерживаемый формат.');if(!window.confirm('Добавить новую версию? Предыдущая версия останется в истории.'))return;await api.addVersion(area,item.id,f);dlg.close();}catch(e){feedback.textContent=e.message;}finally{picker.value='';}});
+ versions.append(action('Добавить новую версию',()=>picker.click()),picker);history.append(versions);
+ content.append(el('strong','sv-doc-document-name',item.name),form,history,action('Удалить локальный документ',async()=>{if(!window.confirm('Удалить локальный документ и его версии?'))return;try{await api.remove(area,item.id);dlg.close();}catch(e){feedback.textContent=e.message;}},'sv-doc-my-template-delete'),feedback);
+ dlg.append(head,content);state.recent.append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
+}
 function paint(state){
  if(state!==active)return;
  const all=itemsFor(state);
+ if(state.filter.startsWith('smart-')&&!smartFolders(state).some(x=>x.id===state.filter))state.filter='all';
+ const normalize=value=>String(value||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е');
  const filtered=all.filter(item=>(state.filter==='all'||inFolder(item,state.filter))&&
-  (!state.query||item.name.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').includes(state.query.toLocaleLowerCase('ru-RU').replace(/ё/g,'е'))));
+  (!state.query||normalize([item.name,item.local?item.counterparty:'',item.local?item.reference:'',item.local?item.searchText:''].join(' ')).includes(normalize(state.query))));
  const subset=state.expanded?filtered:filtered.slice(0,4);
  const recentScroll=state.recentGrid.scrollLeft;
  state.recentGrid.replaceChildren();
@@ -220,17 +276,7 @@ function paint(state){
     }
    });
    if(item.local){
-    const manage=async()=>{
-     const folders=ownFolders(state).map(x=>({id:x.id,title:x.name}));
-     const choices=folders.map((x,i)=>(i+1)+'. '+x.title).join('\n');
-     const answer=window.prompt('Переместить в папку — введите номер. 0 — без папки. У — удалить локальную копию.\n'+choices);
-     if(answer===null)return;
-     try{
-      if(answer.toLowerCase()==='у'){if(window.confirm('Удалить локальную копию файла?'))await localFiles().remove(state.options.area,item.id);}
-      else if(answer==='0')await localFiles().update(state.options.area,item.id,{folder:''});
-      else if(folders[Number(answer)-1])await localFiles().update(state.options.area,item.id,{folder:folders[Number(answer)-1].id});
-     }catch(e){state.status.textContent=e.message||'Не удалось изменить файл.';}
-    };
+    const manage=()=>openDocumentDetails(state,item);
     card.addEventListener('contextmenu',e=>{e.preventDefault();void manage();});
     const wrap=el('div','sv-doc-local-file-wrap');const more=el('button','sv-doc-file-more','···');more.type='button';more.setAttribute('aria-label','Действия с файлом '+item.name);more.addEventListener('click',manage);wrap.append(card,more);state.recentGrid.append(wrap);
    }else state.recentGrid.append(card);
@@ -249,6 +295,7 @@ function paint(state){
   entry.type='button';entry.setAttribute('aria-pressed',String(state.filter===category.id));
   entry.setAttribute('aria-label','Подборка '+category.title+(state.unlocked?', '+count+' файлов':''));
   entry.append(folderArt(category.id==='new'),el('strong','',category.title));
+  if(category.smart){entry.classList.add('sv-doc-smart-folder');entry.title='Умная подборка · '+count;}
   if(category.id==='new')entry.setAttribute('aria-label','Создать новую пустую папку');
   if(state.unlocked)entry.title=count+' '+(count===1?'файл':count>=2&&count<=4?'файла':'файлов');
   let suppressClick=0;
