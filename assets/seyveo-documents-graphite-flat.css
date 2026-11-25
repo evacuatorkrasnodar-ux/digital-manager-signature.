@@ -1945,3 +1945,14 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-template
 .sv-doc-my-template-note:empty{display:none;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates .sv-doc-my-template-more{width:44px!important;height:44px!important;padding:0!important;background:transparent!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-template-input{width:100%!important;font-size:16px!important;}
+
+/* Professional document details: reuse the approved template sheet. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-professional-details .sv-doc-document-fields{display:grid;gap:10px;min-width:0;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-professional-details .sv-doc-document-field{display:grid;gap:4px;font-size:12px;color:#65707b;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-professional-details .sv-doc-document-field :is(input,select){box-sizing:border-box!important;width:100%!important;min-height:44px!important;padding:8px 12px!important;border:1px solid #e7e9ec!important;border-radius:14px!important;background:#f5f5f7!important;color:#20262d!important;font-size:16px!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-professional-details .sv-doc-document-name{font-size:14px;overflow-wrap:anywhere;text-align:center;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-professional-details .sv-doc-version-history{border-top:1px solid #e8e9ed;padding-top:4px;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-professional-details .sv-doc-version-history summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:14px;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-professional-details .sv-doc-version-history summary::after{content:"";width:7px;height:7px;border:solid #697583;border-width:0 1.5px 1.5px 0;transform:rotate(-45deg);margin-left:auto;margin-right:8px;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-professional-details .sv-doc-version-history[open] summary::after{transform:rotate(45deg);}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-smart-folder strong{color:#438cc5!important;}
