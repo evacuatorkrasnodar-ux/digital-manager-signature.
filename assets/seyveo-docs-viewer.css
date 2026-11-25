@@ -572,3 +572,12 @@ html:root body .svdv-inline-rail>button[aria-pressed="true"]{background:#0a84ff1
 html:root body .svdv-add-text-symbol{display:block;font:600 17px/1 system-ui;letter-spacing:-.5px;}
 html:root body .svdv-add-text-symbol sup{font-size:11px;vertical-align:super;margin-left:1px;}
 @media(prefers-reduced-motion:reduce){html:root body .sv-pdf-markup-body .svdv-ink-side-wrap{transition:none;}}
+
+/* Single bottom markup capsule; menus never take space from the paper. */
+html:root body .svdv-inline-controls .svdv-ink-menu{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:35;width:max-content;max-width:100%;box-sizing:border-box;padding:8px;border-radius:20px;background:var(--sv-menu-bg,#fcfcfd);border:var(--sv-menu-border,1px solid #e5e7eb);box-shadow:var(--sv-menu-shadow,0 5px 20px #0002);}
+html:root body .svdv-inline-controls .svdv-ink-menu[hidden]{display:none!important;}
+html:root body .svdv-ink-add-menu{display:grid;gap:2px;min-width:180px;}
+html:root body .svdv-ink-add-menu>button{display:flex;align-items:center;gap:12px;min-height:44px;padding:5px 10px;border:0;background:transparent;border-radius:12px;color:#20262d;font:500 14px/1.3 system-ui;text-align:left;box-shadow:none;}
+html:root body .svdv-ink-add-menu>button svg{width:22px;height:22px;}
+html:root body .svdv-ink-add-menu>button[aria-pressed="true"]{color:#176ab4;background:#0a84ff12;}
+html:root body .svdv-ink-menu-label{flex:1;}
