@@ -188,6 +188,10 @@
  if(photoInput)photoInput.multiple=true;
  // The capture="environment" camera input stays single-photo.
  function fileAction(item){
+  if((previewableImage(item.type)||item.type==='application/pdf'||/\.(docx|txt|md)$/i.test(item.name||''))&&window.SEYVEO_DOCS_VIEWER?.open){
+   const file=new File([item.blob],item.name||'Вложение',{type:item.type||item.blob.type});
+   if(window.SEYVEO_DOCS_VIEWER.open(file))return;
+  }
   const url=URL.createObjectURL(item.blob);
   const link=document.createElement('a');
   link.href=url;link.rel='noopener';
