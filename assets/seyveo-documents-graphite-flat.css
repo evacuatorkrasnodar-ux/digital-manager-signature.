@@ -1880,3 +1880,6 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-menu-action{min-height:44px!important;text-align:left!important;padding:0 10px!important;background:transparent!important;box-shadow:none!important;border:0!important;border-radius:10px!important;color:var(--sv-menu-text,#252a33)!important;font-size:13px!important}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-menu-action.sv-doc-folder-danger{color:#C13C37!important}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-caption:not(:empty){font-size:11px;white-space:normal;color:var(--secondary,#626A73)}
+
+/* The folder is the sole entry; show the secure archive only when opened. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-vault-shell.sv-doc-vault-folder-entry:not([open]){display:none!important;}
