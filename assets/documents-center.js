@@ -255,6 +255,18 @@ function draw(){
   getCurrentFile:()=>files[area]||null,
   onPick:()=>openPicker(),
   onSayvi:goSayvi,
+  onScanSaved:async id=>{
+   const scope=area,container=host;
+   const file=await window.SEYVEO_DOCUMENT_FILES.get(scope,id);
+   if(scope!==area||host!==container||!container?.isConnected||viewerSession)return;
+   const opened=window.SEYVEO_DOCS_VIEWER?.open?.(file,{
+    area:scope,onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
+    onSaveCopy:(copy,options)=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,options?.text?'created':'device',options||{}),
+    onSayvi:(intent,context)=>goSayvi(intent,context),
+    onClose(){viewerSession=null;}
+   });
+   if(opened)viewerSession=opened;
+  },
   onImport:file=>{
    if(!(file instanceof File)||file.size>MAX_FILE||!allowed.test(file.name))
     throw Error('Unsupported generated document');
