@@ -5,6 +5,10 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const checks=[
+  ["sayvi-chat-new.html","assets/seyveo-header-system.css?v="],
+  ["sayvi-chat-new.html","width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px)"],
+  ["sayvi-chat-new.html","body #sayviHistory .history-head #sayviHistoryMenuButton,"],
+  ["sayvi-chat-new.html","grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;"],
   ["assets/seyveo-work-inbox-actions.css","grid-template-rows:var(--sv-nav-single-size,44px)!important;"],
   ["assets/seyveo-work-inbox-actions.css",":is(#svcpWorkHistoryBack,#svcpWorkHistoryMenuButton):is(:active,:hover,:focus)"],
   ["assets/seyveo-chat-header-v2.css"," + var(--sv-nav-single-size,44px) + 20px)!important;"],

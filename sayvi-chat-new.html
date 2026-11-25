@@ -254,7 +254,8 @@ main.sayvi-menu-open #sayviPreflight{visibility:hidden}
 }
 #sayviTopActions .sv-top-action{
  pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;
- width:42px;height:42px;min-width:42px;min-height:42px;padding:0;
+ box-sizing:border-box;flex:0 0 var(--sv-nav-single-size,44px);
+ width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px);min-height:var(--sv-nav-single-size,44px);padding:0;
  border:0;border-radius:999px;
  background:var(--sayvi-glass);color:var(--sayvi-control-text);
  -webkit-backdrop-filter:blur(16px) saturate(105%);
@@ -1364,7 +1365,7 @@ html body main #sayviHistory{
 }
 #sayviHistory .history-head #sayviHistoryClose{
  display:grid;place-items:center;
- flex:0 0 44px;width:44px;min-width:44px;height:44px;min-height:44px;
+ flex:0 0 var(--sv-nav-single-size,44px);width:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);min-height:var(--sv-nav-single-size,44px);
  box-sizing:border-box;padding:0;margin:0;
  border:0;border-radius:50%;
  background:#38383A;color:#F6F7F8;
@@ -1513,8 +1514,8 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
 /* SEYVEO chat history · search and batch actions live in one graphite top menu. */
 #sayviHistory .history-shell{position:relative!important}
 #sayviHistory .history-head #sayviHistoryMenuButton{
- display:grid!important;place-items:center!important;flex:0 0 44px!important;
- width:44px!important;height:44px!important;margin-left:auto!important;
+ display:grid!important;place-items:center!important;flex:0 0 var(--sv-nav-single-size,44px)!important;
+ width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;margin-left:auto!important;
  padding:0!important;border:0!important;border-radius:50%!important;
  background:transparent!important;color:var(--sayvi-text)!important;
 }
@@ -1997,6 +1998,7 @@ html:root[data-theme="light"] body main #sayviMenu button{color:#252a33!importan
 html:root[data-theme="light"] body main #sayviMenu button:active{background:#EDEEF0!important}
 html:root[data-theme="light"] body main #sayviTopActions button#sayviHistoryTop.sv-top-action,
 html:root[data-theme="light"] body #sayviHistory .history-head #sayviHistoryClose,
+html:root[data-theme="light"] body #sayviHistory .history-head #sayviHistoryMenuButton,
 html:root[data-theme="light"] body #sayviTopActions .sv-top-action{
  background:var(--sv-white-pearl-surface)!important;
  color:var(--sv-white-pearl-ink)!important;
@@ -2005,16 +2007,43 @@ html:root[data-theme="light"] body #sayviTopActions .sv-top-action{
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
  backdrop-filter:var(--sv-white-pearl-blur)!important;
  transform:none!important;
+ opacity:1!important;
+ transition:none!important;
+}
+/* Standalone Sayvi uses the same white header axis and circle material as
+   the main app. The dark conversation scene and composer stay untouched. */
+html:root[data-theme="light"] body #sayviHistory .history-head{
+ display:grid!important;grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;
+ gap:var(--sv-header-gap,8px)!important;
+ height:var(--sv-header-compact-row,48px)!important;min-height:var(--sv-header-compact-row,48px)!important;
+}
+html:root[data-theme="light"] body #sayviHistory .history-head strong{
+ grid-column:2;text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:var(--sv-header-title-size,20px)!important;font-weight:var(--sv-header-title-weight,590)!important;
+ letter-spacing:var(--sv-header-title-tracking,-.02em)!important;
+}
+html:root[data-theme="light"] body #sayviHistory .history-head #sayviHistoryClose{grid-column:1;grid-row:1}
+html:root[data-theme="light"] body #sayviHistory .history-head #sayviHistoryMenuButton{grid-column:3;grid-row:1;margin:0!important}
+html:root[data-theme="light"] body #sayviTopActions #sayviBack svg,
+html:root[data-theme="light"] body #sayviHistory #sayviHistoryClose svg{
+ width:var(--sv-header-back-icon,22px);height:var(--sv-header-back-icon,22px);stroke-width:var(--sv-header-back-weight,1.45);
+}
+html:root[data-theme="light"] body #sayviTopActions #sayviHistoryTop svg{
+ width:var(--sv-header-action-icon,20px);height:var(--sv-header-action-icon,20px);stroke-width:var(--sv-nav-glyph-stroke,1.7);
+}
+html:root[data-theme="light"] body :is(#sayviTopActions .sv-top-action,#sayviHistoryClose,#sayviHistoryMenuButton):focus-visible{
+ outline:2px solid currentColor;outline-offset:3px;
 }
 </style>
 <link rel="stylesheet" href="assets/sayvi-notifications.css?v=4">
-<link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=9">
+<link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=20261125-axis-sync-v2">
 <link rel="stylesheet" href="assets/seyveo-dock-icon-standard.css?v=6">
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
 <link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=11">
 <link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=35">
 <link rel="stylesheet" href="assets/seyveo-white-pearl-tokens.css?v=2">
+<link rel="stylesheet" href="assets/seyveo-header-system.css?v=20261125-note-axis-v1">
 <link rel="stylesheet" href="assets/seyveo-depth-system.css?v=13">
 <link rel="stylesheet" href="assets/seyveo-sayvi-response-state.css?v=1">
 </head>
