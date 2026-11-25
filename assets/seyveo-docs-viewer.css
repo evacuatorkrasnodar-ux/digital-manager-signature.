@@ -683,3 +683,7 @@ html:root body .svdv-toolbar.svdv-photo-toolbar .svdv-more-button>span:last-chil
 .svdv-photo-color[aria-pressed=true]{box-shadow:0 0 0 2px #176ab4;}
 html:root body .svdv-toolbar.svdv-photo-toolbar .svdv-photo-rail>.svdv-action[aria-pressed=true]{color:#176ab4!important;background:var(--sv-white-pearl-selected,#e9edf1)!important;}
 html:root body .svdv-photo-mode.svdv-photo-adjust-mode{align-items:flex-start!important;}
+
+/* Short contextual toolsets are balanced; normal tools keep native horizontal scrolling. */
+html:root body .svdv-photo-toolbar .svdv-photo-rail.svdv-photo-short{justify-content:center!important;}
+.svdv-photo-rotated{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;}

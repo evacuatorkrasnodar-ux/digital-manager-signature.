@@ -154,7 +154,7 @@ async function readPdfText(file,isActive,recognizePages){
   return texts.map(p=>p.text).join('\n\n');
  }finally{try{await task.destroy();}catch{}}
 }
-function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy=null,area=null,asSheet=false,onClose=()=>{},onApplyPhoto=null,onPhotoMode=null}={}){
+function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy=null,area=null,asSheet=false,onClose=()=>{},onApplyPhoto=null,onPhotoMode=null,photoExtras=[]}={}){
  if(!target||!file||typeof file.name!=='string'||typeof file.size!=='number'||
     file.size<1||file.size>MAX||typeof file.text!=='function')return false;
  const info=format(file.name,file.type);
@@ -538,7 +538,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  let photoMode='',photoBusy=false,photoEpoch=0;
  const photoRail=el('div','svdv-photo-rail');
  let normalPhotoActions=[],photoOriginalNodes=[],photoOldTop=0,photoCanvas=null,photoOutput=null;
- function photoActions(...buttons){photoRail.replaceChildren(...buttons);photoRail.scrollLeft=0;}
+ function photoActions(...buttons){photoRail.replaceChildren(...buttons);photoRail.classList.toggle('svdv-photo-short',buttons.length<=3);photoRail.scrollLeft=0;}
  function beginPhoto(mode){
   if(!active||photoMode||photoBusy)return false;
   photoMode=mode;photoOriginalNodes=Array.from(stage.childNodes);photoOldTop=stage.scrollTop;
@@ -654,6 +654,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   ctx.drawImage(source,x,y,w,h,0,0,w,h);return canvas;
  }
  function showPhotoCanvas(canvas){
+  if(photoMode==='rotate')canvas.classList.add('svdv-photo-rotated');
   photoCanvas=canvas;stage.classList.add('svdv-photo-mode');stage.replaceChildren(canvas);
  }
  function saveImageAction(){
@@ -665,7 +666,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     const output=photoOutput?photoOutput():photoCanvas;
     const blob=await new Promise((resolve,reject)=>output.toBlob(b=>b?resolve(b):reject(Error('Не удалось создать копию.')),type,.94));
     if(!active||photoEpoch!==epoch)return;
-    const next=new File([blob],file.name.replace(/\.[^.]+$/,'')+' · копия.'+(type==='image/jpeg'?'jpg':'png'),{type});
+    const next=new File([blob],onApplyPhoto?file.name:file.name.replace(/\.[^.]+$/,'')+' · копия.'+(type==='image/jpeg'?'jpg':'png'),{type});
     if(onApplyPhoto){
      await onApplyPhoto(next);
      if(!active||photoEpoch!==epoch)return;
@@ -809,6 +810,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   toolbar.classList.add('svdv-photo-toolbar');photoRail.setAttribute('aria-label','Инструменты фотографии');
   if(onEdit)toolbar.append(action('Текст','ocr',()=>void recognizePhoto()));
   toolbar.append(action('Обрезать','crop',cropPhoto),action('Повернуть','rotate',rotatePhoto),action('Настроить','contrast',adjustPhoto),action('Разметка','marker',markupPhoto));
+  for(const extra of photoExtras){if(typeof extra.run==='function')toolbar.append(action(extra.label,extra.icon,extra.run));}
  }
  const doShare=()=>{
   if(typeof navigator==='undefined'||typeof navigator.share!=='function'){

@@ -179,7 +179,9 @@ function mount(target,{
  const scannerBack=button('',requestWorkspaceBack,'sv-doc-scanner-round');
  scannerBack.setAttribute('aria-label','Назад');scannerBack.append(toolArt('back'));scannerBack.autofocus=true;
  const scannerTitle=$('strong','','Сканер');scannerTitle.id='sv-doc-scanner-title';
- scannerHead.append(grip,scannerBack,scannerTitle);
+ const scannerDone=button('',()=>panel.querySelector('.sv-doc-scan-save')?.click(),'sv-doc-scanner-round sv-doc-scanner-done');
+ scannerDone.setAttribute('aria-label','Сохранить скан');scannerDone.title='Сохранить скан';scannerDone.append(toolArt('check'));scannerDone.hidden=true;
+ scannerHead.append(grip,scannerBack,scannerTitle,scannerDone);
  scannerSheet.append(scannerHead);
  const exitSheet=$('dialog','sv-doc-scanner-exit');
  exitSheet.setAttribute('aria-label','Несохранённый скан');
@@ -361,7 +363,7 @@ function mount(target,{
  activeDraftRefresh=scope=>{if(scope===area&&editor.isConnected)void refreshDrafts();};
  requestAnimationFrame(()=>void refreshDrafts());
  const clear=()=>{
-  activeScanViewer?.destroy();activeScanViewer=null;delete panel.dataset.photoMode;
+  activeScanViewer?.destroy();activeScanViewer=null;delete panel.dataset.photoMode;scannerDone.hidden=true;
   const sheet=panel.querySelector('dialog.sv-doc-edit-sheet[open]');
   if(sheet)sheet.close();
   panel.replaceChildren();cleanUrls();
@@ -487,7 +489,7 @@ function mount(target,{
   else if(selectedScan===next)selectedScan=index;
   renderScan();
  }
- function scannerStage(){
+ function scannerStage(photoExtras=[]){
   const stage=$('div','sv-doc-scan-stage');
   stage.setAttribute('aria-label',scans.length?'Предпросмотр отсканированной страницы':'Пример расположения листа для сканирования');
   if(scans.length&&window.SEYVEO_DOCS_VIEWER?.mount){
@@ -497,8 +499,8 @@ function mount(target,{
    const original=asFile(new Blob([page.jpegBytes],{type:'image/jpeg'}),'Страница '+(index+1)+'.jpg');
    const valid=()=>at===generation&&epoch===operationEpoch&&mode==='scan'&&selectedScan===index&&panel.isConnected;
    const viewer=window.SEYVEO_DOCS_VIEWER.mount(host,original,{
-    area,
-    onPhotoMode:mode=>{if(mode)panel.dataset.photoMode=mode;else delete panel.dataset.photoMode;},
+    area,photoExtras,
+    onPhotoMode:mode=>{if(mode)panel.dataset.photoMode=mode;else delete panel.dataset.photoMode;scannerDone.hidden=!!mode;},
     onEdit:payload=>activeHandoff?.({...payload,isActive:()=>valid()&&payload.isActive?.()!==false}),
     onSaveCopy:async(file,options)=>{if(!valid())throw Error('Сканер уже закрыт.');return window.SEYVEO_DOCUMENT_FILES.save(area,file,'created',options||{});},
     onApplyPhoto:async(file)=>{
@@ -513,7 +515,7 @@ function mount(target,{
     activeScanViewer=viewer;stage.classList.add('sv-doc-scan-with-editor');
     const footer=$('div','sv-doc-scan-stage-meta');
     footer.append($('span','','Страница '+(index+1)+' из '+scans.length));
-    stage.append(host,footer);return stage;
+    stage.append(footer,host);return stage;
    }
   }
   const board=$('div','sv-doc-scan-board');
@@ -577,9 +579,8 @@ function mount(target,{
  }
  function renderScan(){
   clear();
-  panel.dataset.hasScans=String(scans.length>0);
+  panel.dataset.hasScans=String(scans.length>0);panel.classList.remove('sv-doc-scan-shared-tools');
   if(!scans.length){const empty=$('div','sv-doc-scanner-empty');empty.append(toolArt('scan'),$('strong','','Добавьте страницы'),$('small','','Сделайте фото или выберите изображения'));panel.append(empty);}
-  if(scans.length)panel.append(scannerStage());
   const camera=$('input');camera.type='file';camera.accept='image/*';
   camera.setAttribute('capture','environment');camera.hidden=true;
   const library=$('input');library.type='file';library.accept='image/jpeg,image/png,image/webp';
@@ -590,7 +591,19 @@ function mount(target,{
   capture.prepend(toolArt('camera'));
   const gallery=button('Из галереи',()=>library.click(),'sv-doc-scan-source');
   gallery.prepend(toolArt('gallery'));
-  panel.append(camera,library,controls(capture,gallery));
+  panel.append(camera,library);
+  const deletePage=()=>{
+   if(importBusy||scanSaving||!scans.length)return;
+   const index=selectedScan;
+   if(!window.confirm('Удалить страницу '+(index+1)+'?'))return;
+   scans.splice(index,1);selectedScan=Math.min(index,Math.max(0,scans.length-1));renderScan();
+  };
+  if(scans.length)panel.prepend(scannerStage([
+   {label:'Камера',icon:'camera',run:()=>camera.click()},
+   {label:'Галерея',icon:'gallery',run:()=>library.click()},
+   {label:'Удалить',icon:'delete',run:deletePage}
+  ]));
+  if(!activeScanViewer)panel.append(controls(capture,gallery));
   const counter=$('div','sv-doc-tool-pages');
   if(scans.length){
    const index=selectedScan;
@@ -617,14 +630,11 @@ function mount(target,{
     const after=pageAction('Переместить страницу вперёд','back',()=>movePage(index,1));after.classList.add('sv-doc-scan-forward');after.disabled=index===scans.length-1;
     pageActions.append(before,after);
    }
-   pageActions.append(pageAction('Удалить страницу','delete',()=>{
-    if(!window.confirm('Удалить страницу '+(index+1)+'?'))return;
-    scans.splice(index,1);selectedScan=Math.min(index,Math.max(0,scans.length-1));renderScan();
-   }));
-   counter.append(pageActions);
+   if(!activeScanViewer)pageActions.append(pageAction('Удалить страницу','delete',deletePage));
+   if(pageActions.childNodes.length)counter.append(pageActions);
    const saveScan=async format=>{
     if(saveButton.disabled||scanSaving||importBusy||!scans.length||(format==='jpg'&&scans.length!==1))return;saveButton.disabled=true;scanSaving=true;
-    const at=generation,epoch=operationEpoch,pages=scans.slice();panel.inert=true;scannerBack.disabled=true;
+    const at=generation,epoch=operationEpoch,pages=scans.slice();panel.inert=true;scannerBack.disabled=true;scannerDone.disabled=true;
     try{
      const stamp=new Date(),name='Скан '+stamp.toLocaleDateString('ru-RU')+' '+stamp.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}).replace(':','-')+'.'+format;
      const blob=format==='jpg'?new Blob([pages[0].jpegBytes],{type:'image/jpeg'}):window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(pages);
@@ -632,7 +642,7 @@ function mount(target,{
      const id=await window.SEYVEO_DOCUMENT_FILES.save(area,file,'scan');
      if(at===generation&&epoch===operationEpoch&&mode==='scan'&&panel.isConnected){scans=[];selectedScan=0;closePanel();const note=editor.querySelector('.sv-doc-scan-saved-notice');if(note)note.textContent='Файл сохранён в папке «Сканы».';if(onScanSaved){try{await onScanSaved(id);}catch{if(note?.isConnected)note.textContent='Файл сохранён. Откройте его в папке «Сканы».';}}}
     }catch(e){if(at===generation&&epoch===operationEpoch)message(e.message||'Не удалось сохранить файл.');}
-    finally{scanSaving=false;panel.inert=false;scannerBack.disabled=false;saveButton.disabled=false;}
+    finally{scanSaving=false;panel.inert=false;scannerBack.disabled=false;scannerDone.disabled=false;saveButton.disabled=false;}
    };
    const saveButton=button('Сохранить',()=>{
     if(scanSaving||importBusy||!scans.length||panel.querySelector('.sv-doc-scan-format[open]'))return;
@@ -655,6 +665,8 @@ function mount(target,{
     panel.append(dlg);dlg.showModal();
    },'sv-doc-tool-primary sv-doc-scan-save');
    const finish=$('div','sv-doc-scan-finish');finish.append(saveButton);counter.append(finish);
+   if(activeScanViewer){finish.hidden=true;scannerDone.hidden=false;panel.classList.add('sv-doc-scan-shared-tools');}
+   else panel.classList.remove('sv-doc-scan-shared-tools');
   }
   if(scans.length)panel.append(counter);
   panel.append(status(''));

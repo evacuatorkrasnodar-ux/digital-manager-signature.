@@ -2596,3 +2596,20 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
  align-self:stretch;min-height:44px!important;border:0!important;border-radius:12px!important;background:#e84242!important;color:white!important;font-size:11px!important;
 }
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete svg{width:20px;height:20px;}
+
+/* Scanner: one action capsule, no duplicate acquisition/footer rows. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scanner-sheet>.sv-doc-scanner-head>.sv-doc-scanner-done{
+ grid-column:3!important;grid-row:2!important;color:#176ab4!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scanner-sheet>.sv-doc-scanner-head>.sv-doc-scanner-done[hidden]{display:none!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools .sv-doc-scan-finish[hidden]{display:none!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools .sv-doc-tool-pages{flex:0 0 auto!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools .sv-doc-tool-pages:has(>.sv-doc-scan-finish:only-child[hidden]){display:none!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools[data-photo-mode]>.sv-doc-tool-pages:not(:has(>.sv-doc-scan-finish:only-child[hidden])){
+ display:flex!important;visibility:hidden!important;pointer-events:none!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools[data-photo-mode] .sv-doc-scan-stage-meta{display:flex!important;visibility:hidden!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools .sv-doc-scan-stage-meta{order:0;flex:none!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools .sv-doc-scan-editor-host{order:1;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools .svdv-scan-embedded>.svdv-stage{min-height:0!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools .svdv-photo-rail.svdv-photo-short{justify-content:center!important;}
