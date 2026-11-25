@@ -134,8 +134,8 @@ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-do
  color:var(--sv-doc-primary-ink)!important;
 }
 html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-tool-icon svg{
- display:block!important;width:24px!important;height:24px!important;
- stroke:currentColor!important;stroke-width:1.55!important;
+ display:block!important;width:26px!important;height:26px!important;
+ stroke:currentColor!important;stroke-width:1.5!important;
  fill:none!important;filter:none!important;
 }
 html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-tool-scan::after,

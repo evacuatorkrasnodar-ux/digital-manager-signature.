@@ -37,11 +37,11 @@ const PICTOGRAMS=Object.freeze({
 const TOOL_LINES=Object.freeze({
  camera:'<path d="M4 7h4l2-3h4l2 3h4a2 2 0 0 1 2 2v10H2V9a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13" r="3.5"/>',
  gallery:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-5 5 6"/>',
- scan:'<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M7 12h10M9 8h6v8H9z"/>',
- file:'<path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v6h5M12 12v6M9 15h6"/>',
- create:'<path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/><path d="M8 8h5M8 12h3M13 17l1-4 5-5 3 3-5 5-4 1ZM17 10l3 3"/>',
- sign:'<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M7 9h10M7 12h7M6 17c2-3 2 2 4 0 2-2 2 1 4 0 2-2 2 0 4-1"/>',
- print:'<path d="M6 9V3h12v6M6 17H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6zM9 17h6"/>'
+ scan:'<path d="M8 3.5H6a2.5 2.5 0 0 0-2.5 2.5v2M16 3.5h2A2.5 2.5 0 0 1 20.5 6v2M20.5 16v2a2.5 2.5 0 0 1-2.5 2.5h-2M8 20.5H6A2.5 2.5 0 0 1 3.5 18v-2M7.5 12h9"/>',
+ file:'<path d="M7 3.5h6.5l4.5 4.5v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5ZM13.5 3.5V8H18M12 11.5v6M9 14.5h6"/>',
+ create:'<path d="M12 3.5H6.5A2 2 0 0 0 4.5 5.5v13a2 2 0 0 0 2 2H18a2 2 0 0 0 2-2V15M8 8h4M8 12h3M12 16l1-4 6-6a1.4 1.4 0 0 1 2 2l-6 6-3 2Z"/>',
+ sign:'<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M7 9h10M7 12h6M7 16c2-4 2 2 4 0s2 1 4 0l2-1"/>',
+ print:'<path d="M7 9V4h10v5M7 16.5H5a2 2 0 0 1-2-2v-3.5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3.5a2 2 0 0 1-2 2h-2M7 14.5h10V20H7zM17.5 12h.5"/>'
 });
 function toolArt(kind){
  const wrap=$('span','sv-doc-tool-icon');
