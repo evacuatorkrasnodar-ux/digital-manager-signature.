@@ -41,6 +41,11 @@
   document.body.append(probe);
   const safe=getComputedStyle(probe);
   const insets=[safe.paddingTop,safe.paddingRight,safe.paddingBottom,safe.paddingLeft].join('/');
+  probe.style.cssText='position:fixed;visibility:hidden;pointer-events:none;width:0;padding:0;border:0;box-sizing:content-box';
+  const unitHeights=['vh','dvh','svh','lvh'].map(unit=>{
+   probe.style.height='';probe.style.height='100'+unit;
+   return unit+'='+ (probe.style.height?probe.getBoundingClientRect().height:'unsupported');
+  }).join(' | ');
   probe.remove();
   const v=window.visualViewport;
   const standalone=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
@@ -50,6 +55,7 @@
     'Устройство: экран '+screen.width+' × '+screen.height+' | standalone: '+standalone+' | scale: '+(v?.scale??'-'),
     'Layout: '+document.documentElement.clientWidth+' × '+document.documentElement.clientHeight+' | visual offset: '+(v?[v.offsetLeft,v.offsetTop].join('/'):'-'),
     'Safe area (верх/право/низ/лево): '+insets+' | screen − innerHeight: '+(screen.height-h)+'px',
+    'CSS viewport: '+unitHeights,
     'Экран: '+document.documentElement.className,
     'Окна: '+[...document.querySelectorAll('dialog[open]')].map(tag).join(','),
     '--- СЛОИ НА КРАЯХ ---'];

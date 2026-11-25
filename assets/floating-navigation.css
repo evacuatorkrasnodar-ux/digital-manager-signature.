@@ -238,7 +238,10 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 @media(max-width:700px){
  html.seyveo-standalone:not(.seyveo-conversation),
  html.seyveo-standalone:not(.seyveo-conversation) body{
-  height:100%!important;overflow:hidden!important;
+  /* iOS standalone with black-translucent can resolve percentage root
+     height short by the status-bar inset. Use viewport height at the root;
+     leave the inner dynamic scroll frame and dock/keyboard geometry alone. */
+  height:100vh!important;overflow:hidden!important;
   overscroll-behavior-y:none!important;
  }
  html.seyveo-standalone:not(.seyveo-conversation) .app{
