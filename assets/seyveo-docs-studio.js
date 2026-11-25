@@ -248,15 +248,18 @@ function mount(target,{
   let items;
   try{items=await drafts.list(area);}catch{if(seq===draftRefresh){draftSection.hidden=false;draftSection.replaceChildren($('p','sv-doc-draft-feedback','Не удалось открыть черновики.'));}return;}
   if(seq!==draftRefresh||!editor.isConnected)return;
+  const wasOpen=Boolean(draftSection.querySelector('details[open]'));
   draftSection.hidden=!items.length;draftSection.replaceChildren();
   if(!items.length)return;
-  const details=$('details','sv-doc-draft-list');
+  const details=$('details','sv-doc-draft-list');details.open=wasOpen;
   const summary=$('summary','sv-doc-draft-summary');
   summary.append($('strong','','Черновики'),$('span','sv-doc-draft-count',String(items.length)));details.append(summary);
   for(const item of items){
    const row=$('div','sv-doc-draft-row');
    const title=item.name?.trim()||String(item.text||'').trim().split('\n')[0].slice(0,70)||'Документ';
-   const launch=button('',()=>{
+   const launch=button('',async()=>{
+    await persistDraft();if(saveFailed||!editor.isConnected)return;
+    if(draftId===item.id&&mode==='create'){panel.querySelector('.sv-doc-edit-resume')?.click();return;}
     newDraft();draftId=item.id;documentDraft=String(item.text||'').slice(0,12000);
     documentName=String(item.name||'').slice(0,100);documentFormat=item.format==='docx'?'docx':'pdf';
     documentTemplate=String(item.template||'');fromScan=item.fromScan===true;
@@ -591,13 +594,15 @@ function mount(target,{
   ];
 
   const sectionTitle=$('div','sv-doc-create-subhead');
-  function beginNew(content='',template=''){
-   if(saveFailed){setDraftFeedback(draftError);return;}
-   void persistDraft();newDraft();
+  let switchingDraft=false;
+  async function beginNew(content='',template=''){
+   if(switchingDraft)return;switchingDraft=true;
+   try{await persistDraft();if(saveFailed||!panel.isConnected)return;newDraft();
    body.value=content;documentDraft=content;documentTemplate=template;filename.value='';
    size.value='12';alignment.value='left';firstLine.setAttribute('aria-pressed','false');headingCheck.hidden=true;
    refreshStyle();syncFormat();syncTemplate();lastWordText=body.value;wordHistory.length=0;
    revealEditor();void persistDraft();
+   }finally{switchingDraft=false;}
   }
   const blank=button('Чистый лист',()=>beginNew(),'sv-doc-create-blank');
   sectionTitle.append($('strong','','Шаблоны'),blank);
@@ -818,11 +823,11 @@ function mount(target,{
   archive.append(actionIcon('<path d="M3.5 9V6a2 2 0 0 1 2-2h4l3 3h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/><path d="M3 10h18M9 15h6" opacity=".7"/>'),$('span','','В архив'));
   const footer=$('footer','sv-doc-edit-footer');
   const actions=$('div','sv-doc-edit-actions');actions.append(saveButton,shareButton,archive);
-  const draftIndicator=$('small','sv-doc-draft-indicator');draftIndicator.setAttribute('role','status');
+  const draftIndicator=$('small','sv-doc-draft-indicator');draftIndicator.setAttribute('role','status');draftIndicator.textContent=draftFeedback.textContent;
   footer.append(typography,formatSwitch,actions,status(''),draftIndicator);
   sheet.append(top,editing,footer);
   sheet.addEventListener('pointerdown',event=>{if(!typography.contains(event.target))setFormatMenu(false);});
-  sheet.addEventListener('cancel',event=>{if(!formatMenu.hidden){event.preventDefault();setFormatMenu(false);formatTrigger.focus();}});
+  sheet.addEventListener('cancel',event=>{event.preventDefault();if(!formatMenu.hidden){setFormatMenu(false);formatTrigger.focus();}else back.click();});
   let restingHeight=0,viewportFrame=0,viewportTimers=[],keyboardWasOpen=false;
   function syncEditorViewport(){
    viewportFrame=0;if(!sheet.open)return;
@@ -873,9 +878,8 @@ function mount(target,{
    sheet.style.removeProperty('--sv-doc-editor-height');sheet.style.removeProperty('--sv-doc-editor-top');
   });
   const resume=button('Продолжить документ',()=>revealEditor(),'sv-doc-edit-resume');
-  resume.hidden=!documentDraft.trim()&&!documentName.trim();
+  resume.hidden=!saveFailed;
   function revealEditor(){
-   resume.hidden=false;
    rail.scrollLeft=0;
    if(!sheet.open){
     if(typeof sheet.showModal==='function')sheet.showModal();
@@ -885,9 +889,8 @@ function mount(target,{
    back.focus({preventScroll:true});
   }
   sheet.addEventListener('close',()=>{
-   if(!panel.isConnected)return;
-   resume.hidden=!documentDraft.trim()&&!documentName.trim();
-   void persistDraft().then(refreshDrafts);
+   if(!panel.isConnected||!sheet.isConnected)return;
+   void persistDraft().then(()=>{resume.hidden=!saveFailed;void refreshDrafts();});
   });
   const sayvi=button('',()=>onSayvi('create'),'sv-doc-create-sayvi');
   const sayviMark=$('span','sv-doc-create-sayvi-mark sv-sayvi-symbol');
@@ -1223,7 +1226,7 @@ function mount(target,{
   if(payload.kind==='word'){
    const value=String(payload.text||'').slice(0,12000);
    if(!value.trim())return false;
-   void persistDraft();newDraft();documentDraft=value;documentFormat='docx';documentTemplate='';fromScan=true;wordStyle={size:12,alignment:'left',heading:false};
+   await persistDraft();if(saveFailed||!panel.isConnected)return false;newDraft();documentDraft=value;documentFormat='docx';documentTemplate='';fromScan=true;wordStyle={size:12,alignment:'left',heading:false};
    documentName=String(payload.title||'Скан').slice(0,100);
    operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();void persistDraft();
    panel.scrollIntoView?.({block:'nearest'});return true;
