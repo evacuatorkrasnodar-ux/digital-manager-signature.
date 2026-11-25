@@ -491,10 +491,8 @@ function mount(target,{
     button('Очистить страницы',()=>{scans=[];selectedScan=0;renderScan();})
    ));
   }
-  const info=$('details','sv-doc-tool-help');
-  info.append($('summary','','О сканировании'),warn('Сфотографируйте документ или выберите фото из галереи. Распознайте текст и сохраните документ в PDF. Фотографии обрабатываются на вашем устройстве. Автоматическая обрезка пока недоступна.'));
   if(scans.length)panel.append(counter);
-  panel.append(info,status(''));
+  panel.append(status(''));
  }
  function renderCreate(){
   panel.append(heading(fromScan?'Редактор Word':'Создать документ',fromScan?'Распознанный текст · редактирование в SEYVEO':'Начните с шаблона или чистого листа'));
