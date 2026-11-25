@@ -601,12 +601,14 @@ function mount(target,{
    formatMenu.hidden=!open;formatTrigger.setAttribute('aria-expanded',String(open));
   }
   const icon=(paths)=>{const el=$('span','sv-doc-word-menu-icon');el.setAttribute('aria-hidden','true');el.innerHTML=typographyIcon(paths);return el;};
-  const sizeControl=$('label','sv-doc-word-menu-row');
-  const sizeFace=$('span','sv-doc-word-menu-value');sizeFace.setAttribute('aria-hidden','true');
-  sizeControl.append(icon('<path d="M4 18 9 6l5 12M6 14h6M15 10h6M18 7v6"/>'),$('span','','Размер шрифта'),sizeFace,size);
-  const alignControl=$('label','sv-doc-word-menu-row');
-  const alignFace=$('span','sv-doc-word-menu-value');alignFace.setAttribute('aria-hidden','true');
-  const alignIcon=icon('');alignControl.append(alignIcon,$('span','','Выравнивание'),alignFace,alignment);
+  const rail=$('div','sv-doc-word-rail');
+  rail.setAttribute('role','group');rail.setAttribute('aria-label','Инструменты Word, листайте горизонтально');
+  const chevron=()=>{const node=icon('<path d="m7 10 5 5 5-5"/>');node.classList.add('sv-doc-word-rail-chevron');return node;};
+  const sizeControl=$('label','sv-doc-word-rail-choice');
+  const sizeFace=$('span','sv-doc-word-rail-size');sizeFace.setAttribute('aria-hidden','true');
+  sizeControl.append(sizeFace,chevron(),size);
+  const alignControl=$('label','sv-doc-word-rail-choice');
+  const alignIcon=icon('');alignControl.append(alignIcon,chevron(),alignment);
   const firstLine=button('',()=>{
    wordStyle.heading=!wordStyle.heading;
    firstLine.setAttribute('aria-pressed',String(wordStyle.heading));
@@ -622,13 +624,17 @@ function mount(target,{
   const refreshStyle=()=>{
    wordStyle.size=Number(size.value);wordStyle.alignment=alignment.value;
    body.style.fontSize=wordStyle.size+'pt';body.style.textAlign=wordStyle.alignment==='both'?'justify':wordStyle.alignment;
-   sizeFace.textContent=wordStyle.size+' пт';alignFace.textContent=alignNames[wordStyle.alignment];
+   sizeFace.textContent=wordStyle.size+' пт';
+   alignment.title='Выравнивание: '+alignNames[wordStyle.alignment];
+   sizeControl.classList.toggle('sv-doc-word-rail-active',wordStyle.size!==12);
+   alignControl.classList.toggle('sv-doc-word-rail-active',wordStyle.alignment!=='left');
    alignIcon.innerHTML=typographyIcon('<path d="'+(alignPaths[wordStyle.alignment]||alignPaths.left)+'"/>');
-   formatTrigger.classList.toggle('sv-doc-word-modified',wordStyle.size!==12||wordStyle.alignment!=='left'||wordStyle.heading);
+   formatTrigger.classList.toggle('sv-doc-word-modified',wordStyle.heading);
   };
   size.addEventListener('change',refreshStyle);alignment.addEventListener('change',refreshStyle);refreshStyle();
-  formatMenu.append(sizeControl,alignControl,firstLine);
-  typography.append(formatTrigger,formatMenu);
+  formatMenu.append(firstLine);
+  rail.append(sizeControl,alignControl,formatTrigger);
+  typography.append(rail,formatMenu);
   typography.addEventListener('keydown',event=>{
    if(event.key==='Escape'&&!formatMenu.hidden){event.preventDefault();event.stopPropagation();setFormatMenu(false);formatTrigger.focus();}
   });
@@ -663,6 +669,7 @@ function mount(target,{
 
    typography.hidden=documentFormat!=='docx';
    if(typography.hidden)setFormatMenu(false);
+   else rail.scrollLeft=0;
    body.style.fontSize=documentFormat==='docx'?wordStyle.size+'pt':'';
    body.style.textAlign=documentFormat==='docx'?(wordStyle.alignment==='both'?'justify':wordStyle.alignment):'';
   }
@@ -732,6 +739,7 @@ function mount(target,{
   resume.hidden=!documentDraft.trim();
   function revealEditor(){
    resume.hidden=false;
+   rail.scrollLeft=0;
    if(!sheet.open){
     if(typeof sheet.showModal==='function')sheet.showModal();
     else sheet.setAttribute('open','');

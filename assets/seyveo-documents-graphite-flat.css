@@ -1662,6 +1662,34 @@ html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-do
 html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-trigger:is([aria-expanded="true"],.sv-doc-word-modified){
  color:#176ab4!important;
 }
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail{
+ box-sizing:border-box;display:flex;align-items:center;gap:4px;
+ width:100%;max-width:404px;height:44px;margin:0 auto;padding:3px 5px;
+ border:var(--sv-white-pearl-edge,1px solid transparent);border-radius:999px;
+ background:var(--sv-white-pearl-surface,var(--card));box-shadow:var(--sv-white-pearl-dock-shadow,none);
+ overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+ overscroll-behavior-x:contain;scroll-snap-type:x proximity;touch-action:pan-x pan-y;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail::-webkit-scrollbar{display:none}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail-choice{
+ box-sizing:border-box;position:relative;display:flex;align-items:center;justify-content:center;gap:8px;
+ flex:0 0 46%;min-width:0;height:36px;border-radius:999px;scroll-snap-align:start;
+ color:inherit;font:550 13px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail-choice select{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ min-height:0!important;margin:0!important;padding:0!important;opacity:0!important;cursor:pointer;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail-choice .sv-doc-word-rail-chevron,
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail-choice .sv-doc-word-rail-chevron svg{width:12px;height:12px;opacity:.8}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail-choice:focus-within{outline:2px solid #397bc6;outline-offset:-2px}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail-choice.sv-doc-word-rail-active{color:#176ab4;background:rgba(10,132,255,.09)}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail .sv-doc-word-trigger{
+ flex:0 0 58px!important;width:58px!important;height:36px!important;min-height:36px!important;
+ border:0!important;box-shadow:none!important;background:transparent!important;scroll-snap-align:start;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail .sv-doc-word-trigger[aria-expanded="true"]{background:rgba(10,132,255,.09)!important}
+html:root[data-theme="dark"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail-choice.sv-doc-word-rail-active{color:#8bc3ff}
 html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-menu:not([hidden]){
  position:absolute;z-index:20;top:calc(100% + 6px);left:0;
  width:min(290px,100%);display:grid;gap:3px;padding:8px;margin:0;
