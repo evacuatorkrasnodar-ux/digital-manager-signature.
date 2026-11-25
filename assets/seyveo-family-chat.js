@@ -207,7 +207,13 @@ function previewSharedFile(file){
   const img=make('img');img.src=previewUrl;img.alt='Выбранное фото, локальный предпросмотр';
   preview.append(img);
  }
- preview.append(make('span',null,file.name+' · предпросмотр, без отправки'));
+ const name=make('button','svf-button-lite',file.name+' · предпросмотр');name.type='button';
+ name.setAttribute('aria-label','Открыть вложение '+file.name);
+ name.addEventListener('click',()=>{
+  if(selectedFile!==file)return;
+  if(!window.SEYVEO_DOCS_VIEWER?.open?.(file))status('Просмотр этого формата недоступен.');
+ });
+ preview.append(name);
  preview.append(button('Убрать',()=>{fileInput.value='';discardFile()},'svf-button-lite'));
  status('Вложение пока видно только здесь. Файл не загружается на сервер.');
  return true;
