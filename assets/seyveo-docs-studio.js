@@ -136,8 +136,8 @@ function shareMessage(status,format){
  if(status==='download')return format+' подготовлен для загрузки. Проверьте файлы браузера.';
  return 'Системное меню недоступно. Воспользуйтесь обычным сохранением файла.';
 }
-function textPdf(text){
- return window.SEYVEO_DOCS_EXPORT.pdfFromText(text,()=>$('canvas'));
+function textPdf(text,style){
+ return window.SEYVEO_DOCS_EXPORT.pdfFromText(text,()=>$('canvas'),style);
 }
 function labelRow(title,note){
  const node=$('div','sv-doc-tool-lead');
@@ -992,7 +992,7 @@ function mount(target,{
   const icon=(kind)=>{const el=$('span','sv-doc-word-menu-icon');el.setAttribute('aria-hidden','true');el.innerHTML=typographyIcon(kind);return el;};
   const rail=$('div','sv-doc-word-rail');
   window.SEYVEO_EDITOR_CAPSULE?.attach(rail,'word');
-  rail.setAttribute('role','group');rail.setAttribute('aria-label','Инструменты Word, листайте горизонтально');
+  rail.setAttribute('role','group');rail.setAttribute('aria-label','Инструменты документа, листайте горизонтально');
   const chevron=()=>{const node=icon('down');node.classList.add('sv-doc-word-rail-chevron');return node;};
   const sizeControl=button('',()=>toggleWordMenu('size'),'sv-doc-word-rail-choice');
   const sizeFace=$('span','sv-doc-word-rail-size');sizeFace.setAttribute('aria-hidden','true');
@@ -1089,16 +1089,10 @@ function mount(target,{
     button.setAttribute('aria-pressed',String(id===documentFormat)));
    saveButton.setAttribute('aria-label',documentFormat==='pdf'?'Сохранить PDF':'Сохранить Word');
 
-   const isWord=documentFormat==='docx';
-   typography.dataset.word=String(isWord);
+   // Export format is not an editor mode. Never change toolbar geometry,
+   // text styling, focus, selection or scroll position on PDF/DOCX toggle.
    typography.hidden=false;
-   for(const control of [sizeControl,alignControl,formatTrigger])control.hidden=!isWord;
-   if(!isWord)setFormatMenu(false);
-   // The common toolbar stays visible in both formats. Reset only horizontal position.
-   rail.setAttribute('aria-label',isWord?'Инструменты Word, листайте горизонтально':'Инструменты документа PDF');
-   if(rail.scrollLeft)rail.scrollLeft=0;
-   body.style.fontSize=documentFormat==='docx'?wordStyle.size+'pt':'';
-   body.style.textAlign=documentFormat==='docx'?(wordStyle.alignment==='both'?'justify':wordStyle.alignment):'';
+   rail.setAttribute('aria-label','Инструменты документа, листайте горизонтально');
   }
   function safeDocumentName(){
    const first=body.value.split('\n').map(x=>x.trim()).find(Boolean)||'Документ';
@@ -1111,7 +1105,7 @@ function mount(target,{
    }
    try{
     if(documentFormat==='pdf'){
-     return {blob:textPdf(body.value),name:safeDocumentName()+'.pdf',label:'PDF'};
+     return {blob:textPdf(body.value,wordStyle),name:safeDocumentName()+'.pdf',label:'PDF'};
     }
     return {blob:window.SEYVEO_DOCS_EXPORT.docxFromText(body.value,wordStyle),
      name:safeDocumentName()+'.docx',label:'Word'};

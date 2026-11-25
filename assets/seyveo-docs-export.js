@@ -64,51 +64,69 @@ function pdfFromJpegs(pages){
 }
 // Text PDF uses one fixed A4-ratio canvas for measuring AND drawing.
 // Never truncate the source text or shrink a paragraph to fit one line.
-function pdfFromText(text,createCanvas=()=>document.createElement('canvas')){
+function pdfFromText(text,createCanvas=()=>document.createElement('canvas'),options={}){
  if(typeof text!=='string'||!text.trim())throw Error('Введите текст');
  if(text.length>12000)throw Error('Введите текст до 12 000 знаков');
- const W=900,H=1273,M=70,guard=4,font='28px Arial,sans-serif',leading=36;
- const x=M+guard,firstBaseline=100,usable=W-2*x;
- const rows=Math.floor((H-M-8-firstBaseline)/leading)+1;
+ const W=900,H=1273,M=70,guard=4,x=M+guard,usable=W-2*x;
+ const size=[10,11,12,14,16,18].includes(Number(options.size))?Number(options.size):12;
+ const alignment=['left','center','right','both'].includes(options.alignment)?options.alignment:'left';
  const canvas=createCanvas();canvas.width=W;canvas.height=H;
  const ctx=canvas.getContext('2d');if(!ctx)throw Error('Canvas недоступен');
- ctx.font=font;ctx.textAlign='left';ctx.textBaseline='alphabetic';
+ const fontFor=heading=>(heading?'bold ':'')+((heading?Math.max(16,size):size)*W/595)+'px Arial,sans-serif';
+ const leadingFor=heading=>Math.max(24,Math.ceil((heading?Math.max(16,size):size)*W/595*1.45));
+ ctx.textAlign='left';ctx.textBaseline='alphabetic';
  const fits=value=>{
   const m=ctx.measureText(value);
   return Math.max(m.width,m.actualBoundingBoxRight||0)<=usable&&Math.max(0,m.actualBoundingBoxLeft||0)<=guard;
  };
  const lines=[];
- const push=line=>{lines.push(line);if(lines.length>rows*12)throw Error('Слишком много страниц PDF (максимум 12). Разделите документ.');};
+ const push=(value,heading,final=false)=>{lines.push({value,heading,final});if(lines.length>600)throw Error('Слишком много страниц PDF (максимум 12). Разделите документ.');};
  const segmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter(undefined,{granularity:'grapheme'}):null;
  const characters=value=>segmenter?Array.from(segmenter.segment(value),part=>part.segment):Array.from(value);
- for(const raw of text.replace(/\r\n?/g,'\n').replace(/\t/g,'    ').split('\n')){
+ const paragraphs=text.replace(/\r\n?/g,'\n').replace(/\t/g,'    ').split('\n');
+ for(const [index,raw] of paragraphs.entries()){
+  const heading=index===0&&options.heading===true;
+  ctx.font=fontFor(heading);
   let line='';
   for(const token of raw.match(/\s+|\S+/gu)||[]){
    if(fits(line+token)){line+=token;continue;}
-   if(line){push(line);line='';}
+   if(line){push(line,heading);line='';}
    if(fits(token)){line=token;continue;}
    for(const ch of characters(token)){
-    if(line&&!fits(line+ch)){push(line);line='';}
+    if(line&&!fits(line+ch)){push(line,heading);line='';}
     if(!fits(ch))throw Error('Символ не помещается на странице PDF');
     line+=ch;
    }
   }
-  push(line);
+  push(line,heading,true);
  }
  const pages=[];
- for(let i=0;i<lines.length;i+=rows){
-  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='#172027';ctx.font=font;ctx.textAlign='left';ctx.textBaseline='alphabetic';
-  let y=firstBaseline;
-  for(const line of lines.slice(i,i+rows)){
-   if(!fits(line))throw Error('Строка выходит за поля страницы PDF');
-   ctx.fillText(line,x,y,usable);y+=leading;
-  }
+ const newPage=()=>{ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.fillStyle='#172027';ctx.textAlign='left';ctx.textBaseline='alphabetic';};
+ const finish=()=>{
+  if(pages.length>=12)throw Error('Слишком много страниц PDF (максимум 12). Разделите документ.');
   const encoded=canvas.toDataURL('image/jpeg',0.90);
   if(!encoded.startsWith('data:image/jpeg;base64,'))throw Error('Не удалось сформировать страницу PDF');
-  const jpegBytes=Uint8Array.from(atob(encoded.split(',')[1]),ch=>ch.charCodeAt(0));
-  pages.push({width:W,height:H,jpegBytes});
+  pages.push({width:W,height:H,jpegBytes:Uint8Array.from(atob(encoded.split(',')[1]),ch=>ch.charCodeAt(0))});
+ };
+ newPage();let y=100;
+ for(const {value,heading,final} of lines){
+  const leading=leadingFor(heading);
+  if(y+8>H-M){finish();newPage();y=100;}
+  ctx.font=fontFor(heading);
+  if(!fits(value))throw Error('Строка выходит за поля страницы PDF');
+  const metrics=ctx.measureText(value),width=Math.max(metrics.width,metrics.actualBoundingBoxRight||0);
+  if(alignment==='both'&&!final&&value.trim()===value&&/\S\s+\S/.test(value)){
+   const words=value.split(/(\s+)/),spaces=words.filter(w=>/^\s+$/.test(w)).length;
+   const extra=(usable-width)/spaces;let pos=x;
+   // Justify wrapped paragraphs, not final lines or indented text.
+   for(const part of words){if(/^\s+$/.test(part)){pos+=ctx.measureText(part).width+extra;continue;}const m=ctx.measureText(part);ctx.fillText(part,pos,y,Math.max(1,x+usable-pos));pos+=m.width;}
+  }else{
+   const offset=alignment==='center'?(usable-width)/2:alignment==='right'?usable-width:0;
+   ctx.fillText(value,x+offset,y,usable-offset);
+  }
+  y+=leading;
  }
+ finish();
  return pdfFromJpegs(pages);
 }
 const escapeXml=value=>value.replace(/&/g,'&amp;').replace(/</g,'&lt;')

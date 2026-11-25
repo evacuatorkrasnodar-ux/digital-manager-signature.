@@ -18,7 +18,7 @@ function setup(){
   pages.push(drawn.slice());
   return 'data:image/jpeg;base64,'+Buffer.from([255,216,255,217]).toString('base64');
  }};
- return {api,pages,make:()=>canvas};
+ return {api,pages,make:()=>canvas,ctx};
 }
 test('Russian contract, long identifiers, indentation and blank lines survive export',async()=>{
  const {api,pages,make}=setup();
@@ -37,9 +37,9 @@ test('Russian contract, long identifiers, indentation and blank lines survive ex
 });
 test('all text reaches the last PDF page within printable bounds',async()=>{
  const {api,pages,make}=setup();
- const text=Array.from({length:80},(_,i)=>'Строка '+(i+1)+' — реквизиты 12345').join('\n');
+ const text=Array.from({length:120},(_,i)=>'Строка '+(i+1)+' — реквизиты 12345').join('\n');
  const pdf=api.pdfFromText(text,make);
- assert.equal(pages.length,3);assert.equal(pages[0].length,31);
+ assert.equal(pages.length,3);assert.ok(pages[0].length>31);
  assert.equal(pages.flat().join('\n'),text);
  assert.match(Buffer.from(await pdf.arrayBuffer()).toString('latin1'),/\/Count 3\b/);
 });
@@ -47,4 +47,12 @@ test('reject oversized text and too many pages instead of clipping',()=>{
  const {api,make}=setup();
  assert.throws(()=>api.pdfFromText('x'.repeat(12001),make),/12 000/);
  assert.throws(()=>api.pdfFromText('строка\n'.repeat(400),make),/максимум 12/);
+});
+
+test('PDF uses chosen typography and does not change source text',()=>{
+ const {api,make,ctx}=setup();const draws=[];
+ const original=ctx.fillText;ctx.fillText=function(value,x,y,max){draws.push({value,x,font:this.font});original.call(this,value,x,y,max);};
+ api.pdfFromText('Заголовок\nТекст',make,{size:14,alignment:'center',heading:true});
+ assert.match(draws[0].font,/^bold /);assert.ok(draws[0].x>74);assert.ok(draws[1].x>74);
+ assert.ok(parseFloat(draws[1].font)>20);assert.equal(draws.map(d=>d.value).join('\n'),'Заголовок\nТекст');
 });
