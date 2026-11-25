@@ -86,8 +86,11 @@
  const zodiacEmoji=['🐀','🐂','🐅','🐇','🐉','🐍','','🐐','🐒','🐓','🐕','🐖'];
  const horseArt='<svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="horseGold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#E9C58D"/><stop offset=".55" stop-color="#BD784C"/><stop offset="1" stop-color="#914E38"/></linearGradient></defs><path class="horse-heat" d="M18 36Q10 29 18 20M21 33Q15 24 23 16" fill="none" stroke="#EBA767" stroke-width="1.5" stroke-linecap="round"/><path d="M15 48c1-7 7-13 9-19l-1-12 7 3 7-12 4 16c8 5 11 11 10 17-2 4-6 6-11 5l-6-7-8-3-3 12z" fill="url(#horseGold)" stroke="#AE6A45" stroke-width=".7" stroke-linejoin="round"/><path d="M28 19c-1 7-4 13-8 20m6-20c2 9-2 16-5 20m9-20c3 7 0 13-3 17" fill="none" stroke="#F1AD69" stroke-width="2.5" stroke-linecap="round"/><path d="M37 8l1 12-5-1z" fill="#EBC18F"/><circle cx="41" cy="30" r="1.4" fill="#593D39"/><path d="M44 36c2 0 4 1 5 2" fill="none" stroke="#7B4539" stroke-width="1.15" stroke-linecap="round"/><path class="horse-spark" d="M12 15v7m-3.5-3.5h7M45 9v5m-2.5-2.5h5" fill="none" stroke="#EBA25E" stroke-width="1.1" stroke-linecap="round"/></svg>';
  const syncCalendarPeriod=()=>{
-  if(calendar.hidden||!calendarPeriodLabel)return;
+  if(calendar.hidden||!calendarPeriodLabel||heading.dataset.calendarPeriod!=='true')return;
   const label=calendarPeriodLabel.textContent.trim()||'Календарь';
+  // Keep the year artwork and text node mounted until the actual period changes.
+  if(title.dataset.calendarLabel===label)return;
+  title.dataset.calendarLabel=label;
   title.textContent=label;
   const year=Number(label);
   if(!/^[0-9]{4}$/.test(label)||year<1900)return;
@@ -631,13 +634,17 @@
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
   const nextTitle=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
-  if(title.textContent!==nextTitle)title.textContent=nextTitle;
+  const showCalendarPeriod=active==='calendar'&&!history&&!nested;
+  if(!showCalendarPeriod||!calendarPeriodLabel){
+   delete title.dataset.calendarLabel;
+   if(title.textContent!==nextTitle)title.textContent=nextTitle;
+  }
   // Every top-level Work section is already named inside the permanent
   // segmented capsule. Never display a duplicate page title above it.
   // Keep titles for nested All Tasks/History and the standalone Calendar.
   setHidden(title,!history&&!nested&&!nav.hidden);
-  heading.dataset.calendarPeriod=String(active==='calendar'&&!history&&!nested);
-  if(active==='calendar'&&!history&&!nested)syncCalendarPeriod();
+  setData(heading,'calendarPeriod',String(showCalendarPeriod));
+  if(showCalendarPeriod)syncCalendarPeriod();
   const showMonth=active==='personal'&&!history&&!nested&&visible;
   setHidden(month,!showMonth);
   heading.dataset.agenda=String(showMonth);
