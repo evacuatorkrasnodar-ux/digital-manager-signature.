@@ -1,0 +1,88 @@
+/* Shared SEYVEO document selectors; no native select/date popups. */
+(()=>{
+'use strict';
+const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
+const glyph=(paths)=>{const n=el('span','sv-doc-picker-icon');n.setAttribute('aria-hidden','true');n.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';return n;};
+const arrow='<path d="m9 5 7 7-7 7"/>';
+const cal='<rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 10h16M8 14h1m3 0h1m3 0h1M8 17h1m3 0h1"/>';
+function btn(text,cls,fn){const n=el('button',cls,text);n.type='button';n.addEventListener('click',fn);return n;}
+function backButton(fn){const n=btn('','sv-doc-picker-round',fn);n.setAttribute('aria-label','Назад');n.append(glyph('<path d="m14 5-7 7 7 7"/>'));return n;}
+function sheet(trigger,title){
+ const d=el('dialog','sv-doc-picker-sheet'),h=el('header','sv-doc-picker-head'),body=el('div','sv-doc-picker-body');
+ h.append(backButton(()=>d.close()),el('strong','',title));d.append(h,body);
+ (trigger.closest('dialog')||trigger.parentElement).append(d);
+ trigger.setAttribute('aria-expanded','true');
+ d.addEventListener('close',()=>{d.remove();trigger.setAttribute('aria-expanded','false');if(trigger.isConnected&&trigger.closest('dialog')?.open)trigger.focus({preventScroll:true});},{once:true});
+ d.showModal();return {d,body};
+}
+function control(label,placeholder,icon,open){
+ let value='',display='';
+ const b=btn('','sv-doc-picker-trigger',()=>open(b));
+ const text=el('span','sv-doc-picker-value');b.append(text,glyph(icon));b.setAttribute('aria-label',label);b.setAttribute('aria-haspopup','dialog');b.setAttribute('aria-expanded','false');
+ function sync(){text.textContent=display||placeholder;b.classList.toggle('is-empty',!value);b.setAttribute('aria-label',label+': '+(display||placeholder));}
+ b.setValue=(v,t,notify=false)=>{value=String(v??'');display=t===undefined?value:String(t);sync();if(notify)b.dispatchEvent(new Event('change',{bubbles:true}));};
+ Object.defineProperty(b,'value',{get:()=>value,set:v=>b.setValue(v)});
+ sync();return b;
+}
+function choice(label,values,initial='',placeholder='Выбрать'){
+ let options=values.map(([v,t])=>[String(v),String(t)]);
+ const b=control(label,placeholder,arrow,trigger=>{
+  const {d,body}=sheet(trigger,label);
+  for(const [v,t] of options){
+   const item=btn('','sv-doc-picker-option',()=>{trigger.setValue(v,t,true);d.close();});
+   item.append(el('span','',t));
+   if(v===trigger.value){item.classList.add('is-current');item.append(glyph('<path d="m5 12 4 4 10-10"/>'));}
+   body.append(item);
+  }
+ });
+ b.setChoices=(next,v='')=>{options=next.map(([id,t])=>[String(id),String(t)]);const entry=options.find(x=>x[0]===String(v))||options[0];b.setValue(entry?.[0]||'',entry?.[1]||'');};
+ b.setChoices(values,initial);return b;
+}
+const pad=n=>String(n).padStart(2,'0');
+const iso=(y,m,d)=>String(y).padStart(4,'0')+'-'+pad(m+1)+'-'+pad(d);
+const today=()=>{const n=new Date();return iso(n.getFullYear(),n.getMonth(),n.getDate());};
+function dateLabel(v){return /^\d{4}-\d{2}-\d{2}$/.test(v)?v.split('-').reverse().join('.'):'';}
+function date(label,initial='',placeholder='Выбрать дату'){
+ const b=control(label,placeholder,cal,trigger=>{
+  const {d,body}=sheet(trigger,label);
+  const now=new Date(),chosen=trigger.value||today(),parts=chosen.split('-').map(Number);
+  let year=parts[0],month=parts[1]-1;
+  const nav=el('div','sv-doc-picker-cal-nav'),grid=el('div','sv-doc-picker-cal-grid'),title=el('button','sv-doc-picker-month');title.type='button';
+  const move=delta=>{const next=new Date(year,month+delta,1);year=next.getFullYear();month=next.getMonth();paint();};
+  const prev=btn('','sv-doc-picker-round',()=>move(-1)),next=btn('','sv-doc-picker-round',()=>move(1));prev.append(glyph('<path d="m14 5-7 7 7 7"/>'));next.append(glyph(arrow));prev.setAttribute('aria-label','Предыдущий месяц');next.setAttribute('aria-label','Следующий месяц');
+  nav.append(prev,title,next);body.append(nav,grid);
+  function paint(){
+   title.textContent=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(new Date(year,month,1)).replace(/ г\.$/,'');
+   grid.replaceChildren();for(const name of ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'])grid.append(el('span','sv-doc-picker-weekday',name));
+   const offset=(new Date(year,month,1).getDay()+6)%7;
+   for(let i=0;i<offset;i++)grid.append(el('span',''));
+   for(let day=1;day<=new Date(year,month+1,0).getDate();day++){
+    const v=iso(year,month,day),n=btn(String(day),'sv-doc-picker-day',()=>{trigger.setValue(v,dateLabel(v),true);d.close();});
+    n.setAttribute('aria-label',dateLabel(v));if(v===today())n.classList.add('is-today');if(v===trigger.value){n.classList.add('is-current');n.setAttribute('aria-pressed','true');}grid.append(n);
+   }
+  }
+  title.addEventListener('click',()=>{
+   const years=choice('Год',Array.from({length:131},(_,i)=>[String(now.getFullYear()+20-i),String(now.getFullYear()+20-i)]),String(year));
+   const months=choice('Месяц',Array.from({length:12},(_,i)=>[String(i),new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(2026,i,1))]),String(month));
+   const pane=el('div','sv-doc-picker-period');pane.append(years,months,btn('Выбрать месяц','sv-doc-picker-option',()=>{year=Number(years.value);month=Number(months.value);pane.remove();nav.hidden=false;grid.hidden=false;paint();}));nav.hidden=true;grid.hidden=true;body.prepend(pane);
+  });
+  const actions=el('div','sv-doc-picker-date-actions');actions.append(btn('Сегодня','sv-doc-picker-link',()=>{const v=today();trigger.setValue(v,dateLabel(v),true);d.close();}),btn('Очистить','sv-doc-picker-link',()=>{trigger.setValue('','',true);d.close();}));body.append(actions);paint();
+ });
+ b.setValue(initial,dateLabel(initial));return b;
+}
+function period(label,kind){
+ if(kind==='date')return date(label);
+ const b=control(label,'Выбрать период',arrow,trigger=>{
+  const {d,body}=sheet(trigger,label),y=new Date().getFullYear(),years=Array.from({length:31},(_,i)=>[String(y+5-i),String(y+5-i)]);
+  const old=trigger.value.match(/\b\d{4}\b/)?.[0]||String(kind==='year'?y-1:y);
+  const year=choice('Год',years,old),mode=kind==='report'?choice('Вид периода',[['year','Год'],['quarter','Квартал'],['month','Месяц']],'year'):null;
+  const q=choice('Квартал',[1,2,3,4].map(n=>[String(n),n+' квартал']),'1');
+  const months=Array.from({length:12},(_,i)=>[String(i),new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(2026,i,1))]);
+  const m=choice('Месяц',months,'0');
+  function sync(){q.hidden=(mode?.value||kind)!=='quarter';m.hidden=(mode?.value||kind)!=='month';}
+  if(mode){body.append(mode);mode.addEventListener('change',sync);}
+  body.append(year,q,m,btn('Готово','sv-doc-picker-option sv-doc-picker-done',()=>{const type=mode?.value||kind,v=type==='quarter'?q.value+' квартал '+year.value:type==='month'?months[Number(m.value)][1]+' '+year.value:year.value;trigger.setValue(v,v,true);d.close();}));sync();
+ });return b;
+}
+window.SEYVEO_DOCUMENT_PICKERS=Object.freeze({choice,date,period,backButton});
+})();
