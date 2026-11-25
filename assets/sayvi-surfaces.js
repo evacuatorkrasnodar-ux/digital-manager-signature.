@@ -1019,9 +1019,11 @@ function mailView(){
   }
   accountField.append(senderCaption,senderOptions);form.append(accountField);refreshAccount();
   const makeField=(labelText,name,tag,value,type)=>{
-   const label=create(tag==='textarea'?'div':'label','sv-mail-field');
-   label.append(create('span','sv-mail-field-label',labelText));
+   const label=create(tag==='textarea'||name==='cc'?'div':'label','sv-mail-field');
+   const caption=create(name==='cc'?'label':'span','sv-mail-field-label',labelText);
+   label.append(caption);
    const input=create(tag,'sv-mail-input');input.dataset.mailField=name;
+   if(name==='cc'){input.id='svMailCcInput';caption.htmlFor=input.id;}
    if(type)input.type=type;
    if(tag==='textarea'){input.rows=6;input.setAttribute('aria-label',labelText);input.placeholder=labelText;label.classList.add('sv-mail-body-field');}
    if(type==='email'){input.multiple=true;input.autocomplete='off';}
@@ -1029,16 +1031,29 @@ function mailView(){
    label.append(input);form.append(label);return input;
   };
   const to=makeField('Кому','to','input',original?.to??seed?.to??'','email');
-  const copyToggle=create('button','sv-mail-copy-toggle','Копия / скрытая копия');
-  copyToggle.type='button';copyToggle.append(mailIcon('back'));form.append(copyToggle);
+  const copyToggle=create('button','sv-mail-copy-toggle');
+  const copyCaption=create('span','sv-mail-copy-caption','Копия / скрытая копия');
+  copyToggle.type='button';copyToggle.append(copyCaption,mailIcon('back'));form.append(copyToggle);
   const cc=makeField('Копия','cc','input',original?.cc,'email');
   const bcc=makeField('Скрытая копия','bcc','input',original?.bcc,'email');
-  cc.parentElement.id='svMailCcField';bcc.parentElement.id='svMailBccField';
+  const ccField=cc.parentElement,bccField=bcc.parentElement;
+  ccField.id='svMailCcField';bccField.id='svMailBccField';
   copyToggle.setAttribute('aria-controls','svMailCcField svMailBccField');
   let copiesOpen=!!(original?.cc||original?.bcc);
   function showCopies(){
-   cc.parentElement.hidden=bcc.parentElement.hidden=!copiesOpen;
+   const restoreFocus=document.activeElement===copyToggle;
+   const hasCc=!!cc.value.trim(),hasBcc=!!bcc.value.trim();
+   copyCaption.textContent=hasCc||hasBcc?'Копии · заполнено':'Копия / скрытая копия';
+   copyToggle.setAttribute('aria-label',copiesOpen?'Свернуть поля копий':('Показать поля копий'+(hasCc?', копия заполнена':'')+(hasBcc?', скрытая копия заполнена':'')));
    copyToggle.setAttribute('aria-expanded',String(copiesOpen));
+   if(copiesOpen){
+    ccField.hidden=bccField.hidden=false;
+    ccField.append(copyToggle);
+   }else{
+    form.insertBefore(copyToggle,ccField);
+    ccField.hidden=bccField.hidden=true;
+   }
+   if(restoreFocus)copyToggle.focus({preventScroll:true});
   }
   copyToggle.addEventListener('click',()=>{copiesOpen=!copiesOpen;showCopies();});
   showCopies();
