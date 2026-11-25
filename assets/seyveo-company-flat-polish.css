@@ -58,7 +58,7 @@ html body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passpor
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-dialog-head.has-edit-action{
- grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;
 }
 html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head .seyveo-company-dialog-identity{
  display:flex!important;min-width:0!important;align-items:center!important;gap:0!important;
@@ -524,9 +524,9 @@ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-mo
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-dialog-head,
 html:root[data-theme="light"] body dialog#seyveoQrCardDialog.sv-qr-dialog[open] > header{
  box-sizing:border-box!important;display:grid!important;
- grid-template-columns:44px minmax(0,1fr) 44px!important;
- grid-template-rows:48px!important;align-items:center!important;
- min-height:48px!important;height:48px!important;
+ grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;
+ grid-template-rows:var(--sv-header-compact-row,48px)!important;align-items:center!important;
+ min-height:var(--sv-header-compact-row,48px)!important;height:var(--sv-header-compact-row,48px)!important;
  gap:4px!important;padding:0!important;margin:0 0 12px!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
 }

@@ -30,6 +30,12 @@
  --sv-apple-top-gap:14px;
  --sv-apple-top-inset:calc(env(safe-area-inset-top,0px) + var(--sv-apple-top-gap));
  --sv-header-slot:var(--sv-nav-single-size);
+ --sv-header-symmetric-grid:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot);
+ --sv-header-compact-row:calc(var(--sv-header-slot) + 4px);
+ --sv-header-sheet-row:calc(var(--sv-header-slot) + 16px);
+ --sv-header-work-row:calc(var(--sv-header-slot) + var(--sv-apple-top-gap));
+ --sv-header-work-tabs-row:calc(var(--sv-header-work-row) + 16px);
+ --sv-header-double-reserve:calc(var(--sv-nav-double-width) + 4px);
  --sv-header-gap:8px;
  --sv-header-title-size:20px;
  --sv-header-title-weight:590;
@@ -74,7 +80,7 @@ html[data-theme="light"] body :is(#lifePage,#picturePage,#managePage,#sayviSurfa
  .sv-continuity-titlebar{
  box-sizing:border-box!important;
  display:grid!important;
- grid-template-columns:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot)!important;
+ grid-template-columns:var(--sv-header-symmetric-grid)!important;
  grid-template-rows:var(--sv-apple-nav-row)!important;
  gap:var(--sv-header-gap)!important;
  align-items:center!important;
@@ -166,7 +172,7 @@ html[data-theme="light"] body #sayviSurfacePage[data-sv-subject] .sv-deep-top{
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
 html[data-theme="light"] body #sayviSurfacePage[data-sv-subject] .sv-deep-top .sv-continuity-titlebar{
- grid-template-columns:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot)!important;
+ grid-template-columns:var(--sv-header-symmetric-grid)!important;
  grid-template-rows:var(--sv-apple-nav-row)!important;
  width:100%!important;height:var(--sv-apple-nav-row)!important;
  min-height:var(--sv-apple-nav-row)!important;
@@ -285,7 +291,7 @@ html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][
    The paper itself never inherits the header background. */
 html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
  box-sizing:border-box!important;
- grid-template-columns:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot)!important;
+ grid-template-columns:var(--sv-header-symmetric-grid)!important;
  min-height:calc(var(--sv-apple-nav-row) + var(--sv-apple-top-inset))!important;
  padding:var(--sv-apple-top-inset) max(14px,env(safe-area-inset-right,0px))
   8px max(14px,env(safe-area-inset-left,0px))!important;

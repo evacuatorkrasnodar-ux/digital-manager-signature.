@@ -11,26 +11,26 @@
  --work-left:max(12px,env(safe-area-inset-left,0px));
  --work-right:max(12px,env(safe-area-inset-right,0px));
  /* One 44px button axis with 14px of breathing room on every Work page. */
- --work-top:14px;
+ --work-top:var(--sv-apple-top-gap,14px);
  display:block;box-sizing:border-box;flex:none;order:0;align-self:stretch;
- width:100%;max-width:100%;height:58px;min-height:58px;margin:0;
+ width:100%;max-width:100%;height:var(--sv-header-work-row,58px);min-height:var(--sv-header-work-row,58px);margin:0;
  color:var(--sv-header-ink,#1C1C1E);
  background:transparent;border:0;box-shadow:none;filter:none;
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
 }
-:host([data-work-tabs="true"]){height:74px;min-height:74px}
+:host([data-work-tabs="true"]){height:var(--sv-header-work-tabs-row,74px);min-height:var(--sv-header-work-tabs-row,74px)}
 :host([hidden]){display:none!important}
 *,*::before,*::after{box-sizing:border-box}
 .bar{
- display:grid;grid-template-columns:44px 44px minmax(0,1fr) 44px;
- grid-template-rows:44px;column-gap:8px;row-gap:0;
+ display:grid;grid-template-columns:var(--sv-nav-single-size,44px) var(--sv-nav-single-size,44px) minmax(0,1fr) var(--sv-nav-single-size,44px);
+ grid-template-rows:var(--sv-nav-single-size,44px);column-gap:8px;row-gap:0;
  align-items:center;align-content:start;
  width:100%;height:100%;margin:0;
  padding:var(--work-top) var(--work-right) 0 var(--work-left);
  background:#fff;border:0;border-radius:0;box-shadow:none;overflow:visible;
 }
-:host([data-work-tabs="true"]) .bar{grid-template-rows:44px}
-:host(:not([data-work-tabs="true"])) .bar{grid-template-rows:44px}
+:host([data-work-tabs="true"]) .bar{grid-template-rows:var(--sv-nav-single-size,44px)}
+:host(:not([data-work-tabs="true"])) .bar{grid-template-rows:var(--sv-nav-single-size,44px)}
 .title{
  grid-column:2/4;grid-row:1;align-self:center;min-width:0;max-width:100%;
  margin:0;padding:0;color:inherit;
@@ -181,7 +181,7 @@
    Keep the 134px three-action capsule; narrower would shrink the touch areas. */
 :host([data-agenda="true"]) .bar{
  grid-template-columns:minmax(0,1fr) var(--sv-nav-triple-width,134px);
- grid-template-rows:44px;column-gap:8px;
+ grid-template-rows:var(--sv-nav-single-size,44px);column-gap:8px;
 }
 :host([data-agenda="true"]) .month{
  grid-column:1;grid-row:1;justify-self:start;align-self:center;

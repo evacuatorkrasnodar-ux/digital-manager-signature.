@@ -5,7 +5,7 @@
 html body #svcpWorkChatScreen .sv-inbox-history-proxy{display:none!important}
 html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header{
  box-sizing:border-box!important;display:grid!important;
- grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;
  grid-template-rows:44px!important;
  align-items:center!important;column-gap:8px!important;
  width:100%!important;
@@ -1077,7 +1077,7 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"]
  margin:0 auto!important;padding:0!important;
 }
 :root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head{
- display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
+ display:grid!important;grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;
  column-gap:0!important;align-items:center!important;
  width:100%!important;min-height:50px!important;height:50px!important;
  margin:0 0 10px!important;padding:0 0 3px!important;
@@ -1754,9 +1754,9 @@ html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-panel{
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-head{
  box-sizing:border-box!important;display:grid!important;flex:none!important;
- grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;
  align-items:center!important;column-gap:4px!important;
- height:60px!important;min-height:60px!important;max-height:60px!important;
+ height:var(--sv-header-sheet-row,60px)!important;min-height:var(--sv-header-sheet-row,60px)!important;max-height:var(--sv-header-sheet-row,60px)!important;
  padding:8px 15px!important;margin:0!important;
  border-bottom:0!important;
  background:var(--sv-inbox-sheet-base,var(--sv-inbox-ios-bg,#f6f6f8))!important;

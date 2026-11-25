@@ -70,7 +70,14 @@ const checks=[
   ["assets/seyveo-documents-graphite-flat.css","border-radius:var(--sv-menu-compact-radius,18px)!important"],
   ["assets/seyveo-docs-viewer.css","box-shadow:var(--sv-menu-shadow)!important"],
   ["assets/seyveo-mail-white-pearl.css","border-radius:var(--sv-menu-compact-radius,18px)!important"],
-  ["assets/seyveo-notebook-list-clean-v4.css","border-radius:var(--sv-menu-compact-radius,18px)!important"]
+  ["assets/seyveo-notebook-list-clean-v4.css","border-radius:var(--sv-menu-compact-radius,18px)!important"],
+  ["assets/seyveo-header-system.css","--sv-header-symmetric-grid:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot);"],
+  ["assets/seyveo-header-system.css","--sv-header-compact-row:calc(var(--sv-header-slot) + 4px);"],
+  ["assets/seyveo-header-system.css","--sv-header-sheet-row:calc(var(--sv-header-slot) + 16px);"],
+  ["assets/seyveo-work-header.js","height:var(--sv-header-work-tabs-row,74px)"],
+  ["assets/seyveo-mail-white-pearl.css","left:var(--sv-header-double-reserve,96px)!important"],
+  ["assets/seyveo-company-flat-polish.css","grid-template-rows:var(--sv-header-compact-row,48px)!important"],
+  ["assets/seyveo-work-inbox-actions.css","height:var(--sv-header-sheet-row,60px)!important"]
 ];
 for(const [file,fragment] of checks){
  assert.ok(fs.readFileSync(path.join(root,file),'utf8').includes(fragment),file+' must retain '+fragment);
