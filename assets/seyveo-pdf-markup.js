@@ -34,7 +34,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
  const textMode=capsule.button('text','Редактировать текст',undefined,()=>switchText(false));
  const sayvi=capsule.button('sayvi','Сэйви',undefined,()=>switchText(true));rail.append(textMode,sayvi);
  const tools=[];
- function tool(label,id){const b=capsule.button(id,label,undefined,()=>setMode(id));b.setAttribute('aria-pressed','false');tools.push([id,b]);side.append(b);}
+ function tool(label,id){const b=capsule.button(id,label,undefined,()=>setMode(id));b.setAttribute('aria-pressed','false');b.title=label+' · повторное нажатие выключает инструмент';tools.push([id,b]);side.append(b);}
  tool('Перо','pen');tool('Маркер','marker');tool('Ластик','eraser');
  const palette=el('div','sv-pdf-ink-palette');palette.hidden=true;
  const color=capsule.button('color','Цвет разметки',undefined,()=>{palette.hidden=!palette.hidden;color.setAttribute('aria-expanded',String(!palette.hidden));});
@@ -43,7 +43,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
   const swatch=button('',()=>{ink=value;side.style.setProperty('--sv-editor-ink',value);for(const b of palette.children)b.setAttribute('aria-pressed',String(b.dataset.color===ink));palette.hidden=true;color.setAttribute('aria-expanded','false');});
   swatch.dataset.color=value;swatch.style.setProperty('--swatch',value);swatch.setAttribute('aria-label',name);swatch.setAttribute('aria-pressed',String(value===ink));palette.append(swatch);
  }
- tool('Рукописная подпись','signature');tool('Добавить надпись','text');tool('Прокрутка страницы','view');
+ tool('Рукописная подпись','signature');tool('Добавить надпись','text');
  function remember(p){p.undo.push(p.ops.slice());if(p.undo.length>60)p.undo.shift();p.redo.length=0;}
  const history=(direction)=>{finishText();const p=pages[index];if(!p||drawing||busy)return;const from=direction==='undo'?p.undo:p.redo,to=direction==='undo'?p.redo:p.undo;if(!from.length)return;to.push(p.ops.slice());p.ops=from.pop();dirty=pages.some(x=>x.ops.length);paint(p);sync();};
  const undo=capsule.button('undo','Отменить действие',undefined,()=>history('undo'));
@@ -57,7 +57,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
   for(const [id,b] of tools){b.disabled=busy;b.setAttribute('aria-pressed',String(mode===id));}
   paper.dataset.mode=mode;
  }
- function setMode(value){if(busy)return;finishText();mode=mode===value&&value!=='view'?'view':value;value=mode;palette.hidden=true;color.setAttribute('aria-expanded','false');sync();status.textContent=value==='text'?'Коснитесь места на листе, чтобы написать или изменить пометку.':value==='pen'?'Рисуйте пальцем или мышью.':value==='marker'?'Проведите по месту, которое нужно выделить.':value==='eraser'?'Ластик удаляет только ваши пометки.':value==='signature'?'Распишитесь на листе пальцем или мышью. Это не электронная подпись.':'';}
+ function setMode(value){if(busy)return;finishText();mode=mode===value&&value!=='view'?'view':value;value=mode;palette.hidden=true;color.setAttribute('aria-expanded','false');sync();status.textContent=value==='text'?'Коснитесь места на листе, чтобы написать или изменить пометку.':value==='pen'?'Рисуйте пальцем или мышью.':value==='marker'?'Проведите по месту, которое нужно выделить.':value==='eraser'?'Ластик удаляет только ваши пометки.':value==='signature'?'Распишитесь на листе пальцем или мышью. Это не электронная подпись.':'Можно прокручивать документ.';}
  function paint(p){
   const c=p.overlay,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
   for(const op of p.ops){
@@ -153,7 +153,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
     for(let n=1;n<=doc.numPages;n++){if(closed)return;const page=await doc.getPage(n);if(closed)return;const v=page.getViewport({scale:1}),k=Math.min(2.5,1600/v.width,2200/v.height),vp=page.getViewport({scale:k}),base=canvas(Math.ceil(vp.width),Math.ceil(vp.height));await page.render({canvasContext:base.getContext('2d',{alpha:false}),viewport:vp}).promise;if(closed)return;page.cleanup();add(base);}
    }
    if(!pages.length)throw Error('Нет доступных страниц.');
-   busy=false;show();setMode('view');
+   busy=false;show();setMode('view');status.textContent='';
   }catch(e){if(!closed){status.textContent=e?.message||'Не удалось открыть страницы.';busy=false;sync();for(const [,b] of tools)b.disabled=true;}}
  }
  function add(base){base.className='sv-pdf-markup-base';const overlay=canvas(base.width,base.height);overlay.className='sv-pdf-markup-overlay';overlay.setAttribute('aria-label','Слой разметки страницы');const p={base,overlay,ops:[],undo:[],redo:[]};connect(p);pages.push(p);}
