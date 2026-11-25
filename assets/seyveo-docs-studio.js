@@ -206,7 +206,33 @@ function mount(target,{
  panel.id='svDocToolPanel';
  panel.setAttribute('aria-label','Инструменты документов');
  const draftSection=$('section','sv-doc-drafts');draftSection.hidden=true;
- editor.append(grid,panel,draftSection);target.append(editor);
+ const scannerSheet=$('dialog','sv-doc-scanner-sheet');
+ scannerSheet.setAttribute('aria-labelledby','sv-doc-scanner-title');
+ const scannerHead=$('header','sv-doc-scanner-head');
+ const grip=$('div','sv-doc-picker-grip');grip.setAttribute('aria-hidden','true');
+ const scannerBack=button('',()=>{if(mode==='sign'||mode==='print')open('scan');else requestScanExit();},'sv-doc-scanner-round');
+ scannerBack.setAttribute('aria-label','Назад');scannerBack.append(toolArt('back'));scannerBack.autofocus=true;
+ const scannerTitle=$('strong','','Сканер');scannerTitle.id='sv-doc-scanner-title';
+ scannerHead.append(grip,scannerBack,scannerTitle);
+ scannerSheet.append(scannerHead);
+ const exitSheet=$('dialog','sv-doc-scanner-exit');
+ exitSheet.setAttribute('aria-label','Несохранённый скан');
+ const exitTitle=$('strong','','Сохранить скан?');
+ const exitNote=$('p','','Страницы ещё не сохранены в PDF.');
+ const exitSave=button('Сохранить PDF',()=>{exitSheet.close();if(mode!=='scan')open('scan');panel.querySelector('.sv-doc-scan-save')?.click();},'sv-doc-scanner-exit-save');
+ const exitContinue=button('Продолжить редактирование',()=>exitSheet.close(),'sv-doc-scanner-exit-continue');
+ const exitDiscard=button('Выйти без сохранения',()=>{exitSheet.close();scans=[];selectedScan=0;closePanel();},'sv-doc-scanner-exit-discard');
+ exitSheet.append(exitTitle,exitNote,exitSave,exitContinue,exitDiscard);scannerSheet.append(exitSheet);
+ let scanSaving=false;
+ function requestScanExit(){
+  if(scanSaving){message('Сохранение PDF…');return;}
+  if(importBusy){message('Дождитесь обработки фотографий.');return;}
+  if(!scans.length){closePanel();return;}
+  if(!exitSheet.open)exitSheet.showModal();
+ }
+ scannerSheet.addEventListener('cancel',e=>{e.preventDefault();if(mode==='sign'||mode==='print')open('scan');else requestScanExit();});
+ window.SEYVEO_SHEET_NAVIGATION?.attach(scannerHead,null,()=>{if(mode==='sign'||mode==='print')open('scan');else requestScanExit();});
+ editor.append(grid,panel,draftSection,scannerSheet);target.append(editor);
  // Primary toolbar and contextual document actions open the existing panels.
  for(const action of grid.querySelectorAll('button[data-action]:not([data-action="file"])')){
   action.setAttribute('aria-pressed','false');
@@ -217,7 +243,7 @@ function mount(target,{
  const drafts=window.SEYVEO_DOCUMENT_DRAFTS;
  let draftId=null,draftRefresh=0,saveSeq=0,saveFailed=false,savePending=false,latestSave=Promise.resolve(),savedSignature='',draftEdited=false;
  const draftFeedback=$('p','sv-doc-draft-feedback');draftFeedback.setAttribute('role','status');
- editor.append(draftFeedback);
+ editor.append(draftFeedback);const savedNotice=$('p','sv-doc-scan-saved-notice');savedNotice.setAttribute('role','status');editor.append(savedNotice);
  const draftError='Черновик не сохранён. Не закрывайте приложение.';
  function setDraftFeedback(value){
   draftFeedback.textContent=value;
@@ -331,7 +357,7 @@ function mount(target,{
  };
  const syncToolSelection=()=>{
   grid.querySelectorAll('button[data-action]:not([data-action="file"])').forEach(action=>{
-   const selected=!panel.hidden&&(mode===action.dataset.action||action.dataset.action==='scan'&&mode==='sign');
+   const selected=!panel.hidden&&(mode===action.dataset.action||action.dataset.action==='scan'&&['sign','print'].includes(mode));
    action.setAttribute('aria-pressed',String(selected));
    action.setAttribute('aria-expanded',String(selected));
    if(action.dataset.action==='scan'){
@@ -343,7 +369,7 @@ function mount(target,{
  const closePanel=()=>{
   operationEpoch++;importBusy=false;panel.hidden=true;
   delete panel.dataset.mode;delete panel.dataset.hasScans;
-  mode='';clear();syncToolSelection();
+  mode='';clear();if(exitSheet.open)exitSheet.close();if(scannerSheet.open)scannerSheet.close();editor.insertBefore(panel,draftSection);syncToolSelection();
  };
  const warn=(text)=>$('p','sv-doc-tool-warning',text);
  const message=(text)=>{
@@ -351,7 +377,9 @@ function mount(target,{
   if(target)target.textContent=text;
  };
  function open(name){
-  if(mode===name&&!panel.hidden){closePanel();return;}
+  if(scanSaving)return;
+  if(mode===name&&!panel.hidden){if(name==='scan')requestScanExit();else closePanel();return;}
+  if(name==='scan')savedNotice.textContent='';
   if(mode!==name){operationEpoch++;importBusy=false;}
   mode=name;panel.dataset.mode=name;panel.hidden=false;
   delete panel.dataset.hasScans;
@@ -359,10 +387,20 @@ function mount(target,{
  }
  function render(){
   clear();if(!mode)return;
+  const separate=['scan','sign','print'].includes(mode);
+  if(separate){
+   scannerTitle.textContent=mode==='sign'?'Подпись':mode==='print'?'Печать':'Сканер';
+   scannerSheet.insertBefore(panel,exitSheet);
+  }else{
+   if(exitSheet.open)exitSheet.close();if(scannerSheet.open)scannerSheet.close();
+   editor.insertBefore(panel,draftSection);
+  }
   if(mode==='scan')renderScan();
   if(mode==='create')renderCreate();
   if(mode==='sign')renderSign();
   if(mode==='print')renderPrint();
+  if(separate&&scannerSheet.isConnected&&!scannerSheet.open)scannerSheet.showModal();
+  if(separate)panel.scrollTop=0;
  }
  async function ingest(list){
   const files=Array.from(list||[]);
@@ -506,7 +544,7 @@ function mount(target,{
  function renderScan(){
   clear();
   panel.dataset.hasScans=String(scans.length>0);
-  if(!scans.length)panel.append(heading('Сканер','Фото → PDF'));
+  if(!scans.length){const empty=$('div','sv-doc-scanner-empty');empty.append(toolArt('scan'),$('strong','','Добавьте страницы'),$('small','','Сделайте фото или выберите изображения'));panel.append(empty);}
   if(scans.length)panel.append(scannerStage());
   const camera=$('input');camera.type='file';camera.accept='image/*';
   camera.setAttribute('capture','environment');camera.hidden=true;
@@ -551,13 +589,15 @@ function mount(target,{
    }));
    counter.append(pageActions);
    const savePdf=button('Сохранить PDF',async()=>{
-    if(savePdf.disabled)return;savePdf.disabled=true;
+    if(savePdf.disabled||scanSaving||importBusy)return;savePdf.disabled=true;scanSaving=true;
+    const at=generation,epoch=operationEpoch,pages=scans.slice();panel.inert=true;scannerBack.disabled=true;
     try{
      const name='Скан '+new Date().toLocaleDateString('ru-RU')+' '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}).replace(':','-')+'.pdf';
-     const file=asFile(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),name);
-     await window.SEYVEO_DOCUMENT_FILES.save(area,file,'scan');message('PDF сохранён в папке «Сканы».');
-    }catch(e){message(e.message||'Не удалось сохранить PDF.');}
-    finally{savePdf.disabled=false;}
+     const file=asFile(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(pages),name);
+     await window.SEYVEO_DOCUMENT_FILES.save(area,file,'scan');
+     if(at===generation&&epoch===operationEpoch&&mode==='scan'&&panel.isConnected){scans=[];selectedScan=0;closePanel();const note=editor.querySelector('.sv-doc-scan-saved-notice');if(note)note.textContent='PDF сохранён в папке «Сканы».';}
+    }catch(e){if(at===generation&&epoch===operationEpoch)message(e.message||'Не удалось сохранить PDF.');}
+    finally{scanSaving=false;panel.inert=false;scannerBack.disabled=false;savePdf.disabled=false;}
    },'sv-doc-tool-primary sv-doc-scan-save');
    const more=$('details','sv-doc-scan-more');
    const summary=$('summary','sv-doc-scan-more-toggle');summary.append(toolArt('more'));summary.setAttribute('aria-label','Ещё действия со сканом');more.append(summary);
@@ -1172,7 +1212,6 @@ function mount(target,{
  }
  function renderSign(){
   panel.dataset.hasScans=String(scans.length>0);
-  panel.append(button('К страницам скана',()=>open('scan'),'sv-doc-scan-back'));
   panel.append(heading('Подпись',scans.length?
    'Выберите место и нарисуйте подпись':'Рисуйте пальцем или стилусом'));
   // The large paper is not a real document until a page is imported.
@@ -1373,7 +1412,6 @@ function mount(target,{
   panel.append(info,status(''));
  }
  function renderPrint(){
-  panel.append(button('К страницам скана',()=>open('scan'),'sv-doc-scan-back'));
   panel.append(heading('Печать','PDF или фото · через системное меню'));
   const filePicker=$('input');
   filePicker.type='file';filePicker.accept='.pdf,.jpg,.jpeg,.png,.webp';
