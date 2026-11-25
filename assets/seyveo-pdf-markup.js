@@ -48,6 +48,7 @@ function open(file,{parent,loadPdf,onSave,onSayvi}={}){
  const redo=capsule.button('redo','Повторить действие',undefined,()=>history('redo'));rail.append(undo,redo);
  const sayvi=onSayvi?capsule.button('sayvi','Сэйви поможет с исходным PDF',undefined,()=>{if(busy)return;if(dirty){status.textContent='Сначала сохраните разметку или вернитесь к оригиналу.';return;}d.close();onSayvi('review');}):null;
  if(sayvi)rail.append(sayvi);
+ capsule.prioritize(rail,'pdf');
  d.append(head,status,viewport,pager,inputRow,palette,rail);parent.append(d);
  const releaseViewport=capsule.viewport(d);
  function sync(){

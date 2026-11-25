@@ -746,7 +746,7 @@ function mount(target,{
    try{await persistDraft();if(saveFailed||!panel.isConnected||mode!=='create')return;newDraft();
    body.value=content;documentDraft=content;documentTemplate=template;documentFormat=format==='docx'?'docx':'pdf';filename.value='';
    size.value='12';alignment.value='left';firstLine.setAttribute('aria-pressed','false');headingCheck.hidden=true;
-   refreshStyle();syncFormat();syncTemplate();lastWordText=body.value;wordHistory.length=0;
+   refreshStyle();syncFormat();syncTemplate();lastWordText=body.value;wordHistory.length=0;wordRedo.length=0;syncHistory();
    revealEditor();
    }finally{switchingDraft=false;}
   }
@@ -1028,18 +1028,26 @@ function mount(target,{
   const changeStyle=()=>{if(wordStyle.size===Number(size.value)&&wordStyle.alignment===alignment.value)return;draftEdited=true;refreshStyle();void persistDraft();};
   size.addEventListener('change',changeStyle);alignment.addEventListener('change',changeStyle);refreshStyle();
   formatMenu.append(firstLine);
-  const wordHistory=[];let lastWordText=body.value;
+  const wordHistory=[],wordRedo=[];let lastWordText=body.value;
   body.addEventListener('input',()=>{
-   if(body.value!==lastWordText){wordHistory.push(lastWordText);if(wordHistory.length>50)wordHistory.shift();lastWordText=body.value;}
+   if(body.value!==lastWordText){wordHistory.push(lastWordText);if(wordHistory.length>50)wordHistory.shift();wordRedo.length=0;lastWordText=body.value;syncHistory();}
   });
   const replaceWordText=value=>{if(documentDraft===value)return;draftEdited=true;body.value=value;documentDraft=value;lastWordText=value;documentTemplate='';syncTemplate();void persistDraft();};
   const wordTool=(label,kind,fn)=>{const shared=window.SEYVEO_EDITOR_CAPSULE;const control=shared?shared.button(kind,label,'',fn):button('',fn);control.className='sv-doc-word-extra';control.setAttribute('aria-label',label);control.title=label;control.append(icon(kind));return control;};
-  const undoTool=wordTool('Отменить ввод','undo',()=>{if(wordHistory.length)replaceWordText(wordHistory.pop());body.focus({preventScroll:true});});
+  const undoTool=wordTool('Отменить ввод','undo',()=>{
+   if(wordHistory.length){wordRedo.push(body.value);replaceWordText(wordHistory.pop());syncHistory();}
+   body.focus({preventScroll:true});
+  });
+  const redoTool=wordTool('Повторить ввод','redo',()=>{
+   if(wordRedo.length){wordHistory.push(body.value);replaceWordText(wordRedo.pop());syncHistory();}
+   body.focus({preventScroll:true});
+  });
+  function syncHistory(){undoTool.disabled=!wordHistory.length;redoTool.disabled=!wordRedo.length;}
   const copyTool=wordTool('Копировать текст','copy',async()=>{
    try{await navigator.clipboard.writeText(body.value.slice(body.selectionStart,body.selectionEnd)||body.value);message('Текст скопирован.');}catch{message('Не удалось скопировать текст.');}
   });
   const clearTool=wordTool('Очистить текст','clear',()=>{
-   if(body.value&&window.confirm('Очистить текст документа?')){wordHistory.push(body.value);replaceWordText('');body.focus({preventScroll:true});}
+   if(body.value&&window.confirm('Очистить текст документа?')){wordHistory.push(body.value);wordRedo.length=0;replaceWordText('');syncHistory();body.focus({preventScroll:true});}
   });
   async function helpWithCurrentDocument(){
    if(!body.value.trim()){sheet.close();onSayvi('create');return;}
@@ -1050,7 +1058,10 @@ function mount(target,{
   }
   const sayviTool=button('',helpWithCurrentDocument,'sv-doc-word-extra');
   sayviTool.setAttribute('aria-label','Сэйви');sayviTool.append($('span','sv-doc-word-ai sv-sayvi-symbol'));
-  rail.append(sizeControl,alignControl,formatTrigger,sayviTool,undoTool,copyTool,clearTool);
+  sizeControl.dataset.svEditorTool='size';alignControl.dataset.svEditorTool='align';
+  formatTrigger.dataset.svEditorTool='format';sayviTool.dataset.svEditorTool='sayvi';
+  rail.append(sizeControl,alignControl,formatTrigger,sayviTool,undoTool,copyTool,clearTool,redoTool);
+  window.SEYVEO_EDITOR_CAPSULE?.prioritize(rail,'word');syncHistory();
   rail.addEventListener('mousedown',event=>{if(event.target.closest('button'))event.preventDefault();});
   typography.append(rail,formatMenu);
   formatMenu.addEventListener('mousedown',event=>{if(event.target.closest('button'))event.preventDefault();});

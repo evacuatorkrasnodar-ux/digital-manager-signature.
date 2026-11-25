@@ -21,6 +21,7 @@ const paths=Object.freeze({
  last:'<path d="M4.5 19.5h15M12 4v11.5m-4-4 4 4 4-4"/>',
  back:'<path d="m15.5 5-7 7 7 7"/>',
  undo:'<path d="m9 6-5 5 5 5M4 11h9a6 6 0 0 1 6 6v2"/>',
+ redo:'<path d="m15 6 5 5-5 5M20 11h-9a6 6 0 0 0-6 6v2"/>',
  copy:'<rect x="8.5" y="8.5" width="11.5" height="12" rx="2"/><path d="M15.5 8.5V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2.5"/>',
  clear:'<path d="m4.5 14.5 9-9a2 2 0 0 1 2.8 0l3 3a2 2 0 0 1 0 2.8L11.1 20H8L4.5 16.5a1.5 1.5 0 0 1 0-2Z"/><path d="m9 10 6.5 6.5M11.1 20H21"/>',
  heading:'<path d="m4 19 6-14 6 14M6 15h8M19 6v13"/>',

@@ -14,10 +14,34 @@ function icon(d){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentCol
 function artwork(id){if(id==='text')return '<span class="sv-smart-aa">Aa</span>';if(id==='sayvi')return '<span class="sv-smart-sayvi-icon" aria-hidden="true"></span>';if(id==='color')return '<span class="sv-editor-color-dot" aria-hidden="true"></span>';return paths[id]?icon(paths[id]):'';}
 function button(id,label,body=artwork(id),handler){const b=document.createElement('button');b.type='button';b.dataset.svSmartTool=id;b.setAttribute('aria-label',label);b.title=label;b.innerHTML=body;if(handler)b.addEventListener('click',handler);return b;}
 function attach(node,context){node.classList.add('sv-editor-capsule');node.dataset.svEditorContext=context;node.setAttribute('role','toolbar');return node;}
+// The same catalog is used everywhere. A context only prioritizes registered
+// controls: never manufacture actions that the current editor cannot execute.
+const priorities=Object.freeze({
+ word:Object.freeze(['size','align','format','sayvi','undo','copy','clear','redo','select-all']),
+ pdf:Object.freeze(['text','pen','marker','eraser','color','signature','view','undo','redo','sayvi']),
+ notebook:Object.freeze(['text','pen','attachment','checklist','sayvi','size','align','format','table','paper','voice','undo','copy','clear']),
+ 'notebook-ink':Object.freeze(['width','eraser','color','undo','redo','paper','voice'])
+});
+function toolId(node){
+ const d=node.dataset||{};
+ return d.svEditorTool||d.svSmartTool||d.noteLayout||d.svInkTool||({draw:'pen',heading:'format'}[d.noteTool]||d.noteTool)||'';
+}
+function prioritize(node,context=node.dataset.svEditorContext){
+ const list=priorities[context];if(!list)return node;
+ const rank=id=>{const i=list.indexOf(id);return i<0?list.length:i;};
+ const old=Array.from(node.children);
+ const ordered=old.map((control,index)=>({control,index,rank:rank(toolId(control))})).sort((a,b)=>a.rank-b.rank||a.index-b.index).map(x=>x.control);
+ if(ordered.some((control,index)=>control!==old[index])){
+  // Move the original elements, preserving handlers, state and accessibility.
+  for(const control of ordered)node.append(control);
+ }
+ node.dataset.svEditorPriority=context;
+ return node;
+}
 function viewport(dialog){
  const v=window.visualViewport;if(!v)return ()=>{};
  const sync=()=>{const keyboard=Math.max(0,window.innerHeight-v.height-v.offsetTop);dialog.style.setProperty('--sv-editor-keyboard',keyboard+'px');dialog.style.setProperty('--sv-editor-visible-height',v.height+'px');dialog.classList.toggle('sv-editor-keyboard-open',keyboard>80);};
  v.addEventListener('resize',sync);v.addEventListener('scroll',sync);sync();return ()=>{v.removeEventListener('resize',sync);v.removeEventListener('scroll',sync);};
 }
-window.SEYVEO_EDITOR_CAPSULE=Object.freeze({icon,artwork,button,attach,viewport});
+window.SEYVEO_EDITOR_CAPSULE=Object.freeze({icon,artwork,button,attach,prioritize,viewport});
 })();

@@ -79,6 +79,7 @@
  dlg.addEventListener('seyveo:note-layout',paintNoteLayout);dlg.addEventListener('seyveo:smart-note-open',paintNoteLayout);paintNoteLayout();
  const ribbon=[textBtn,draw,attach,check,sayviBtn,sizeChoice.wrap,alignChoice.wrap,formatButton,tableBtn,paperBtn,voiceBtn,undoQuick,copyQuick,clearQuick];
  for(const button of ribbon)if(button)bar.append(button);
+ capsule.prioritize(bar,'notebook');
  bar.setAttribute('aria-label','Прокручиваемые инструменты заметки');
  bar.dataset.svUnifiedTools='true';
  // The former Aa popover remains only as a hidden compatibility host.
@@ -163,6 +164,7 @@
   <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.7" y="3.7" width="12.6" height="16.6" rx="1.4"/><path d="M8.5 9h7M8.5 12.8h7M8.5 16.5H14"/>')}</button>
   <button type="button" data-sv-ink-tool="voice" aria-label="Голос — диктовка или запись" aria-controls="svSmartVoiceMenu" aria-expanded="false">${micGlyph}</button>
   <button type="button" data-sv-ink-tool="redo" aria-label="Повторить отменённый штрих" title="Повторить штрих" disabled>${icon('<path d="m14.5 8 4.6 4-4.6 4M19.1 12h-9c-4.5 0-6.5 3.5-5.5 7.2"/>')}</button>`;
+ capsule.prioritize(inkTools,'notebook-ink');
  dlg.append(inkTools);
  const inkEraser=inkTools.querySelector('[data-sv-ink-tool="eraser"]');
  const inkUndoBtn=inkTools.querySelector('[data-sv-ink-tool="undo"]');
