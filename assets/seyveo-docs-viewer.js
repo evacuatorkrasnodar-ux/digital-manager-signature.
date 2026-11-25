@@ -272,8 +272,9 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
  save.setAttribute('aria-label','Сохранить оригинал '+file.name);
  save.append(icon('download'),el('span','','Сохранить'));
  toolbar.append(save);
+ let editAction=null;
  if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf')){
-  const edit=action('Редактировать','edit',async()=>{
+  const edit=action(info.kind==='image'?'Обработка изображения':'Редактировать текст','edit',async()=>{
    if(edit.disabled)return;
    edit.disabled=true;
    try{
@@ -308,7 +309,25 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
    }catch(e){if(active)say(e?.message||'Не удалось открыть редактор.');}
    finally{edit.disabled=false;}
   });
-  edit.classList.add('svdv-edit');toolbar.prepend(edit);
+  editAction=edit;
+  // Text and full-page previews open a confirmed editable copy.
+  // Keep native selection, scrolling, zoom and inline PDF preview buttons intact.
+  if(info.kind!=='image'){
+   stage.classList.add('svdv-tap-edit');
+   let tapStart=null;
+   stage.addEventListener('pointerdown',event=>{
+    tapStart=event.isPrimary!==false&&event.button===0?{x:event.clientX,y:event.clientY,at:Date.now()}:null;
+   },{passive:true});
+   stage.addEventListener('pointercancel',()=>{tapStart=null;},{passive:true});
+   stage.addEventListener('click',event=>{
+    const start=tapStart;tapStart=null;
+    if(!active||!start||event.defaultPrevented||Math.hypot(event.clientX-start.x,event.clientY-start.y)>10||Date.now()-start.at>600)return;
+    if(event.target.closest('button,a,input,textarea,select,summary,[contenteditable]'))return;
+    if(!event.target.closest('.svdv-reader-page,.svdv-text'))return;
+    if(window.getSelection?.()?.toString().trim())return;
+    if(!edit.disabled)edit.click();
+   });
+  }
  }
  const doShare=()=>{
   if(typeof navigator==='undefined'||typeof navigator.share!=='function'){
@@ -331,6 +350,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
  summary.append(icon('more'),el('span','','Ещё'));
  more.append(summary);
  const moreBody=el('div','svdv-more-options');
+ if(editAction)moreBody.append(editAction);
  const openLink=el('a','svdv-link');
  openLink.href=objectUrl;openLink.target='_blank';openLink.rel='noopener noreferrer';
  openLink.append(icon('file'),el('span','','Открыть оригинал'));
