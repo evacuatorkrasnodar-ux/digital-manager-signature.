@@ -462,7 +462,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   };
   editorRail.replaceChildren();editorControls.replaceChildren(editorRail);editorControls.hidden=false;toolbar.hidden=true;more.open=false;
   stage.classList.add('svdv-ink-stage');stage.replaceChildren();doneControl.hidden=false;sheet?.classList.add('is-expanded','svdv-edit-fullscreen');
-  const result=api.open(file,{parent:root,loadPdf,onSave:onSaveCopy,initialMode,shared:{stage,rail:editorRail,controls:editorControls,done:doneControl,viewport:sheet||root,notice:say},onClose:restore,onText:(assistant=false)=>{sayviAfterEdit=assistant;editAction?.click();},onSaved:(next,id,output)=>{
+  const result=api.open(file,{parent:root,loadPdf,onSave:onSaveCopy,initialMode,shared:{stage,rail:editorRail,controls:editorControls,done:doneControl,viewport:sheet||root,notice:say,area},onClose:restore,onText:(assistant=false)=>{sayviAfterEdit=assistant;editAction?.click();},onSaved:(next,id,output)=>{
    if(!active)return;
    const old=objectUrl;objectUrl=URL.createObjectURL(next);file=next;sourceKey=typeof id==='string'?id:'';loadedText=null;
    save.href=objectUrl;save.download=next.name;save.setAttribute('aria-label','Скачать файл '+next.name);
@@ -868,10 +868,19 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    photoActions(photoCancel(),apply);say('Проведите пальцем по области, которую нужно оставить.');
   }catch(e){endPhoto();say(e.message);}
  }
+ async function signPhoto(){
+  const api=window.SEYVEO_HANDWRITTEN_SIGNATURE;if(!api||!beginPhoto('signature'))return;
+  const epoch=++photoEpoch;photoBusy=true;
+  try{const img=photoSource(),c=drawPhoto(img,{x:0,y:0,w:img.naturalWidth,h:img.naturalHeight});const mark=await api.open(c,{area});
+   if(!active||epoch!==photoEpoch)return;if(!mark){endPhoto();return;}
+   c.getContext('2d').drawImage(mark.image,mark.x*c.width,mark.y*c.height,mark.w*c.width,mark.h*c.height);
+   showPhotoCanvas(c);photoBusy=false;photoActions(photoCancel(),saveImageAction());say('Подпись добавлена.',3000);
+  }catch(e){if(active&&epoch===photoEpoch){endPhoto();say(e?.message||'Не удалось добавить подпись.');}}
+ }
  if(info.kind==='image'){
   toolbar.classList.add('svdv-photo-toolbar');photoRail.setAttribute('aria-label','Инструменты фотографии');
   if(onEdit)toolbar.append(action('Текст','ocr',()=>void recognizePhoto()));
-  toolbar.append(action('Обрезать','crop',cropPhoto),action('Повернуть','rotate',rotatePhoto),action('Настроить','contrast',adjustPhoto),action('Разметка','marker',markupPhoto));
+  toolbar.append(action('Обрезать','crop',cropPhoto),action('Повернуть','rotate',rotatePhoto),action('Настроить','contrast',adjustPhoto),action('Разметка','marker',markupPhoto),action('Подписать','signature',()=>void signPhoto()));
   for(const extra of photoExtras){if(typeof extra.run==='function')toolbar.append(action(extra.label,extra.icon,extra.run));}
  }
  const doShare=()=>{

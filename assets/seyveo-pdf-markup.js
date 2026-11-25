@@ -43,7 +43,16 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText,ini
   const swatch=button('',()=>{ink=value;rail.style.setProperty('--sv-editor-ink',value);for(const b of palette.children)b.setAttribute('aria-pressed',String(b.dataset.color===ink));hideMenus();});
   swatch.dataset.color=value;swatch.style.setProperty('--swatch',value);swatch.setAttribute('aria-label',name);swatch.setAttribute('aria-pressed',String(value===ink));palette.append(swatch);
  }
- const signature=tool('Рукописная подпись','signature');
+ const signature=capsule.button('signature','Рукописная подпись',undefined,()=>void addSignature());tools.push(['signature',signature]);
+ async function addSignature(){
+  if(busy||closed||!pages[index])return;finishText();hideMenus();
+  const page=pages[index],api=window.SEYVEO_HANDWRITTEN_SIGNATURE;if(!api){status.textContent='Редактор подписи недоступен.';return;}
+  busy=true;sync();
+  try{const c=canvas(page.base.width,page.base.height),ctx=c.getContext('2d');ctx.drawImage(page.base,0,0);ctx.drawImage(page.overlay,0,0);
+   const mark=await api.open(c,{area:shared.area});if(closed||!mark)return;
+   remember(page);page.ops.push({kind:'signature-image',...mark});dirty=true;mode='view';paint(page);status.textContent='Рукописная подпись добавлена.';
+  }catch(e){if(!closed)status.textContent=e?.message||'Не удалось добавить подпись.';}finally{busy=false;if(!closed)sync();}
+ }
  const annotation=tool('Добавить надпись','text','<span class="svdv-add-text-symbol">T<sup>+</sup></span>');
  function remember(p){p.undo.push(p.ops.slice());if(p.undo.length>60)p.undo.shift();p.redo.length=0;}
  const history=(direction)=>{finishText();const p=pages[index];if(!p||drawing||busy)return;const from=direction==='undo'?p.undo:p.redo,to=direction==='undo'?p.redo:p.undo;if(!from.length)return;to.push(p.ops.slice());p.ops=from.pop();dirty=pages.some(x=>x.ops.length);paint(p);sync();};
@@ -70,6 +79,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText,ini
  function paint(p){
   const c=p.overlay,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
   for(const op of p.ops){
+   if(op.kind==='signature-image'){ctx.drawImage(op.image,op.x*c.width,op.y*c.height,op.w*c.width,op.h*c.height);continue;}
    if(op.kind==='text'){
     if(editing?.p===p&&editing.original===op)continue;
     ctx.fillStyle=op.color||'#20262d';ctx.font=op.font+'px Arial, sans-serif';ctx.textBaseline='top';
@@ -182,7 +192,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText,ini
    if(!pages.length)throw Error('Нет доступных страниц.');
    busy=false;show();
    const startMode=['signature','pen'].includes(initialMode)?initialMode:'view';
-   setMode(startMode);
+   if(startMode==='signature'){mode='view';sync();void addSignature();}else setMode(startMode);
    if(startMode==='view')status.textContent='';
    else{
     const activeTool=tools.find(([id])=>id===startMode)?.[1];
