@@ -94,7 +94,17 @@ function schedulePdfPreview(state,item,card,art){
   try{
    const file=item.local?await localFiles().get(state.options.area,item.id):item.file;
    if(!current())return;
-   const canvas=await viewer.thumbnail(file,current);
+   let canvas;
+   if(classify(item.name)==='images'){
+    const url=URL.createObjectURL(file);
+    try{
+     const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=url;});
+     if(!current()||!img.naturalWidth||!img.naturalHeight)return;
+     const scale=Math.min(1,160/img.naturalWidth,200/img.naturalHeight);
+     canvas=el('canvas');canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+     canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+    }finally{URL.revokeObjectURL(url);}
+   }else canvas=await viewer.thumbnail(file,current);
    if(!canvas||!current())return;
    canvas.className='sv-doc-pdf-thumbnail';canvas.setAttribute('aria-hidden','true');
    art.classList.add('sv-doc-file-art-preview');art.querySelector('svg')?.remove();art.prepend(canvas);
@@ -247,7 +257,7 @@ function openFileActions(state,item,trigger=null){
     const file=await api.get(area,item.id);const url=URL.createObjectURL(file),a=el('a','');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);dlg.close();
    }),
    action('О документе','info',()=>{dlg.close();openDocumentDetails(state,item);}),
-   action('Удалить','delete',async()=>{if(!window.confirm('Удалить документ «'+item.name+'» и его версии?'))return;await api.remove(area,item.id);dlg.close();},true)
+   action('Удалить','delete',async()=>{if(!window.confirm('Переместить документ «'+item.name+'» и его версии в «Недавно удалённые» на 30 дней?'))return;await api.remove(area,item.id);dlg.close();},true)
   );position();
  };
  main();content.append(name,feedback,list);dlg.append(content);
@@ -316,33 +326,61 @@ function openDocumentDetails(state,item){
  const plus=el('span','sv-doc-detail-icon');plus.setAttribute('aria-hidden','true');plus.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
  addVersion.append(plus,el('span','','Добавить новую версию'));versions.append(addVersion,picker);history.append(versions);
  const identity=el('div','sv-doc-detail-identity');identity.append(documentArt(classify(item.name),formatOf(item.name)),el('strong','sv-doc-document-name',item.name),el('small','',formatOf(item.name)+' · '+dateOf(item.createdAt)));
- content.append(feedback,form,history,action('Удалить документ',async()=>{if(!window.confirm('Удалить локальный документ и его версии?'))return;try{await api.remove(area,item.id);dlg.close();}catch(e){feedback.textContent=e.message;}},'sv-doc-my-template-delete'));
+ content.append(feedback,form,history,action('Удалить документ',async()=>{if(!window.confirm('Переместить локальный документ и его версии в «Недавно удалённые» на 30 дней?'))return;try{await api.remove(area,item.id);dlg.close();}catch(e){feedback.textContent=e.message;}},'sv-doc-my-template-delete'));
  dlg.append(head,identity,content);(state.folderPage?.dialog.open?state.folderPage.dialog:state.recent).append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
 }
 // Folder contents are a separate sheet. The home shelf is never filtered by opening a folder.
+function folderItems(state,folder){
+ const items=folder.trash?state.trash.slice():itemsFor(state).filter(item=>folder.category.id==='all'||inFolder(item,folder.category.id));
+ if(folder.sort==='name')items.sort((a,b)=>a.name.localeCompare(b.name,'ru'));
+ else if(folder.sort==='old')items.sort((a,b)=>(a.deletedAt||a.createdAt)-(b.deletedAt||b.createdAt));
+ else items.sort((a,b)=>(b.deletedAt||b.createdAt)-(a.deletedAt||a.createdAt));
+ return items;
+}
+function eligible(folder,item){return folder.trash||item.local===true;}
 function paintFolder(state){
  const folder=state.folderPage;
  if(!folder?.dialog.open||state!==active)return;
  const category=folder.category.id==='all'?folder.category:folderEntries(state).find(x=>x.id===folder.category.id);
  if(!category){folder.dialog.close();return;}
- folder.title.textContent=category.title;
- const items=itemsFor(state).filter(item=>category.id==='all'||inFolder(item,category.id));
+ const items=folderItems(state,folder),selectable=items.filter(item=>eligible(folder,item));
+ const valid=new Set(selectable.map(item=>item.id));
+ for(const id of folder.selected)if(!valid.has(id))folder.selected.delete(id);
+ folder.title.textContent=folder.trash?'Недавно удалённые':folder.selecting?'Выбрано: '+folder.selected.size:category.title;
+ folder.more.setAttribute('aria-label',folder.selecting?'Завершить выбор':'Действия со списком');
+ folder.more.replaceChildren(actionIcon(folder.selecting?'check':'more'));
+ folder.bar.hidden=!folder.selecting;
+ folder.all.textContent=selectable.length&&folder.selected.size===selectable.length?'Снять выбор':'Выбрать все';
+ folder.all.disabled=!selectable.length||folder.busy;
+ folder.count.textContent=String(folder.selected.size);
+ folder.move.hidden=folder.trash;folder.remove.hidden=folder.trash;folder.restore.hidden=!folder.trash;
+ for(const b of [folder.move,folder.remove,folder.restore])b.disabled=!folder.selected.size||folder.busy;
+ folder.dialog.classList.toggle('sv-doc-selecting',folder.selecting);
  const scroll=folder.body.scrollTop;folder.list.replaceChildren();
  if(!items.length){
   const empty=el('div','sv-doc-folder-page-empty');
-  empty.append(folderArt(),el('strong','','В папке пока пусто'),el('small','',category.id==='scan'?'Новые сканы появятся здесь':'Документы появятся здесь'));
-  if(category.id==='all'){empty.querySelector('strong').textContent='Пока нет документов';}
+  empty.append(folderArt(),el('strong','',folder.trash?'Недавно удалённых нет':category.id==='all'?'Пока нет документов':'В папке пока пусто'),el('small','',folder.trash?'Документы хранятся здесь до 30 дней':'Документы появятся здесь'));
   folder.list.append(empty);
  }
  for(const item of items){
   const row=el('div','sv-doc-folder-file-row');
-  const open=el('button','sv-doc-folder-file-open');open.type='button';open.setAttribute('aria-label','Открыть '+item.name);
+  const open=el('button','sv-doc-folder-file-open');open.type='button';open.setAttribute('aria-label',(folder.selecting?'Выбрать ':'Открыть ')+item.name);
   const type=classify(item.name),art=documentArt(type,formatOf(item.name));
-  const copy=el('span','sv-doc-folder-file-copy');copy.append(el('strong','',item.name),el('small','',dateOf(item.createdAt)));
+  const detail=folder.trash?'Осталось '+Math.max(0,Math.ceil((item.deletedAt+30*86400000-Date.now())/86400000))+' дн.':dateOf(item.createdAt);
+  const copy=el('span','sv-doc-folder-file-copy');copy.append(el('strong','',item.name),el('small','',detail));
+  if(folder.selecting){
+   const checked=folder.selected.has(item.id),allowed=eligible(folder,item);
+   const mark=el('span','sv-doc-file-check');mark.setAttribute('aria-hidden','true');
+   if(checked)mark.append(actionIcon('check'));
+   open.append(mark);open.setAttribute('aria-pressed',String(checked));open.disabled=!allowed||folder.busy;
+   if(!allowed)row.classList.add('sv-doc-file-ineligible');
+  }
   open.append(art,copy);row.append(open);
-  if(type==='pdf')schedulePdfPreview(state,item,open,art);
+  if(!folder.trash&&(type==='pdf'||type==='images'))schedulePdfPreview(state,item,open,art);
   open.addEventListener('click',async()=>{
    if(state!==active||!folder.dialog.open||folder.busy)return;
+   if(folder.selecting){if(!eligible(folder,item))return;if(folder.selected.has(item.id))folder.selected.delete(item.id);else folder.selected.add(item.id);paintFolder(state);return;}
+   if(folder.trash){folder.selecting=true;folder.selected.add(item.id);paintFolder(state);return;}
    folder.busy=true;open.disabled=true;folder.status.textContent='';
    try{
     const file=item.local?await localFiles().get(state.options.area,item.id):item.saved?await vault()?.getFile(state.options.area,item.id):item.file;
@@ -350,7 +388,7 @@ function paintFolder(state){
    }catch(e){if(state===active&&folder.dialog.open)folder.status.textContent=e.message||'Не удалось открыть документ.';}
    finally{folder.busy=false;open.disabled=false;}
   });
-  if(item.local){
+  if(item.local&&!folder.selecting&&!folder.trash){
    const manage=event=>openFileActions(state,item,event?.currentTarget);
    open.addEventListener('contextmenu',e=>{e.preventDefault();manage(e);});
    const more=el('button','sv-doc-folder-file-more');more.type='button';more.setAttribute('aria-label','Действия с файлом '+item.name);more.append(actionIcon('more'));more.addEventListener('click',manage);row.append(more);
@@ -365,13 +403,70 @@ function openFolderPage(state,category,trigger){
  dialog.setAttribute('aria-label',category.title);
  const head=el('header','sv-doc-scanner-head');
  const grip=el('div','sv-doc-picker-grip');grip.setAttribute('aria-hidden','true');
- const back=window.SEYVEO_DOCUMENT_PICKERS.backButton(()=>dialog.close());back.classList.add('sv-doc-scanner-round');
- const title=el('strong','',category.title);head.append(grip,back,title);
+ let folder;
+ const hideMenu=()=>{folder.menu.hidden=true;folder.more.setAttribute('aria-expanded','false');};
+ const goBack=()=>{
+  if(folder.busy)return;
+  if(!folder.menu.hidden){hideMenu();return;}
+  if(folder.selecting){folder.selecting=false;folder.selected.clear();paintFolder(state);return;}
+  if(folder.trash){folder.trash=false;paintFolder(state);return;}
+  dialog.close();
+ };
+ const back=window.SEYVEO_DOCUMENT_PICKERS.backButton(goBack);back.classList.add('sv-doc-scanner-round');
+ const title=el('strong','',category.title);
+ const more=el('button','sv-doc-scanner-round sv-doc-list-more');more.type='button';more.append(actionIcon('more'));more.setAttribute('aria-expanded','false');
+ head.append(grip,back,title,more);
+ const menu=el('div','sv-doc-list-menu sv-menu-surface');menu.hidden=true;menu.setAttribute('aria-label','Действия со списком');
  const body=el('div','sv-doc-archive-body sv-doc-folder-page-body');
  const list=el('div','sv-doc-folder-page-list');
  const status=el('p','sv-doc-folder-page-status');status.setAttribute('role','status');
- body.append(list,status);dialog.append(head,body);state.recent.parentElement.append(dialog);
- state.folderPage={dialog,category,title,body,list,status,busy:false};
+ const bar=el('div','sv-doc-list-selection');bar.hidden=true;
+ const make=(label,kind,fn,cls='')=>{const b=el('button',cls);b.type='button';if(kind)b.append(actionIcon(kind));else b.textContent=label;b.setAttribute('aria-label',label);b.addEventListener('click',fn);return b;};
+ const all=make('Выбрать все','',()=>{
+  const ids=folderItems(state,folder).filter(item=>eligible(folder,item)).map(x=>x.id);
+  if(ids.length===folder.selected.size)folder.selected.clear();else folder.selected=new Set(ids);paintFolder(state);
+ });
+ const count=el('span','sv-doc-list-count','0');
+ const run=async(operation,ids,destination='')=>{
+  if(folder.busy||!ids.length)return;
+  hideMenu();
+  if(operation==='remove'&&!window.confirm('Переместить выбранные локальные файлы ('+ids.length+') в «Недавно удалённые» на 30 дней? Защищённый архив и оригиналы на телефоне не затрагиваются.'))return;
+  folder.busy=true;paintFolder(state);
+  try{
+   const api=localFiles(),area=state.options.area;
+   if(operation==='remove')await api.removeMany(area,ids);
+   else if(operation==='restore')await api.restoreMany(area,ids);
+   else await api.moveMany(area,ids,destination);
+   folder.selected.clear();folder.selecting=false;
+   status.textContent=operation==='remove'?'Перемещено в «Недавно удалённые».':operation==='restore'?'Файлы восстановлены.':'Файлы перемещены.';
+   await refresh();
+  }catch(e){status.textContent=e.message||'Не удалось выполнить действие.';}
+  finally{folder.busy=false;paintFolder(state);}
+ };
+ const menuAction=(label,kind,fn,danger=false)=>{const b=el('button','sv-doc-list-menu-action'+(danger?' is-danger':''));b.type='button';b.append(actionIcon(kind),el('span','',label));b.addEventListener('click',fn);return b;};
+ const showMenu=(...items)=>{menu.replaceChildren(...items);menu.hidden=false;more.setAttribute('aria-expanded','true');};
+ const move=make('Переместить','archive',()=>showMenu(...[['','Все файлы'],...ownFolders(state).map(x=>[x.id,x.name])].map(([id,label])=>menuAction(label,'archive',()=>void run('move',[...folder.selected],id)))));
+ const remove=make('Удалить выбранные','delete',()=>void run('remove',[...folder.selected]),'is-danger');
+ const restore=make('Восстановить','undo',()=>void run('restore',[...folder.selected]));
+ bar.append(all,count,move,restore,remove);
+ body.append(list,status);dialog.append(head,menu,body,bar);state.recent.parentElement.append(dialog);
+ folder={dialog,category,title,body,list,status,busy:false,selecting:false,selected:new Set(),sort:'new',trash:false,more,menu,bar,all,count,move,remove,restore};state.folderPage=folder;
+ more.addEventListener('click',()=>{
+  if(folder.busy)return;
+  if(folder.selecting){hideMenu();folder.selecting=false;folder.selected.clear();paintFolder(state);return;}
+  if(!menu.hidden){hideMenu();return;}
+  const choices=[menuAction('Выбрать','check',()=>{hideMenu();folder.selecting=true;paintFolder(state);}),menuAction('Сортировка','down',()=>showMenu(...[['new','Сначала новые'],['old','Сначала старые'],['name','По имени']].map(([id,label])=>menuAction(label,folder.sort===id?'check':'down',()=>{folder.sort=id;hideMenu();paintFolder(state);}))))];
+  if(!folder.trash){
+   choices.push(menuAction('Недавно удалённые','history',()=>{hideMenu();folder.trash=true;paintFolder(state);void refresh();}));
+   const ids=folderItems(state,folder).filter(x=>x.local).map(x=>x.id);
+   if(ids.length)choices.push(menuAction('Удалить все локальные','delete',()=>void run('remove',ids),true));
+  }else{
+   choices.push(menuAction('Восстановить все','undo',()=>void run('restore',folderItems(state,folder).map(x=>x.id))));
+  }
+  showMenu(...choices);
+ });
+ dialog.addEventListener('pointerdown',e=>{if(!menu.hidden&&!menu.contains(e.target)&&!more.contains(e.target)&&!bar.contains(e.target))hideMenu();});
+ dialog.addEventListener('cancel',e=>{if(folder.selecting||folder.trash||!menu.hidden||folder.busy){e.preventDefault();goBack();}});
  dialog.addEventListener('close',()=>{
   if(state.folderPage?.dialog===dialog)state.folderPage=null;
   dialog.remove();
@@ -380,7 +475,7 @@ function openFolderPage(state,category,trigger){
    target?.focus?.({preventScroll:true});
   }
  },{once:true});
- window.SEYVEO_SHEET_NAVIGATION?.attach(head,null,()=>dialog.close());
+ window.SEYVEO_SHEET_NAVIGATION?.attach(head,null,goBack);
  dialog.showModal();paintFolder(state);
 }
 function paint(state){
@@ -456,7 +551,7 @@ function paint(state){
    card.type='button';
    card.setAttribute('aria-label','Открыть '+item.name);
    const art=documentArt(type,formatOf(item.name));card.append(art);
-   if(type==='pdf')schedulePdfPreview(state,item,card,art);
+   if(type==='pdf'||type==='images')schedulePdfPreview(state,item,card,art);
    const fileName=el('strong','sv-doc-recent-name',item.name);
    fileName.title=item.name;
    const detail=el('small','sv-doc-recent-date',item.saved||item.local?dateOf(item.createdAt):'Не сохранён');
@@ -538,7 +633,7 @@ async function refresh(){
  const token=++state.token;
  // Never display metadata from the previous unlocked session while checking.
  state.records=[];state.unlocked=false;paint(state);
- try{const local=await localFiles()?.list(state.options.area)||[];if(state!==active||token!==state.token)return;state.local=local;paint(state);}catch(e){if(state===active&&token===state.token)state.status.textContent='Не удалось прочитать локальные файлы.';}
+ try{const local=await localFiles()?.list(state.options.area)||[];if(state!==active||token!==state.token)return;state.local=local;state.trash=await localFiles()?.listTrash?.(state.options.area)||[];if(state!==active||token!==state.token)return;paint(state);}catch(e){if(state===active&&token===state.token)state.status.textContent='Не удалось прочитать локальные файлы.';}
  try{
   const module=vault();
   if(!module)return;
@@ -558,7 +653,7 @@ async function refresh(){
 function mount(parent,options={}){
  if(!parent)return false;
  destroy();
- const state={options,token:0,filter:'all',query:'',expanded:false,unlocked:false,records:[],local:[]};
+ const state={options,token:0,filter:'all',query:'',expanded:false,unlocked:false,records:[],local:[],trash:[]};
  active=state;
  const recent=el('section','sv-doc-shelf sv-doc-recents');
  const header=el('div','sv-doc-shelf-heading');

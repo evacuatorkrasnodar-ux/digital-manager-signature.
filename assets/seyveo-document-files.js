@@ -86,7 +86,66 @@ async function save(a,file,source='device',options={}){
  const [metadata,content]=await Promise.all([seal(k,enc.encode(JSON.stringify(m)),tag+':meta'),seal(k,await file.arrayBuffer(),tag+':data')]);
  await run('files','readwrite',s=>s.add({id:i,area:a,meta:metadata,content}));changed(a);return i;
 }
-async function list(a){const all=await rows(a);if(!all.length)return [];const k=await key(a);return Promise.all(all.map(async r=>({id:r.id,...await meta(r,k)})));}
+const TRASH_LIFETIME=30*24*60*60*1000;
+// Compare encrypted metadata revisions in one transaction: no partial batch or stale overwrite.
+async function commitBatch(changes){
+ if(!changes.length)return;
+ const d=await db();
+ await new Promise((resolve,reject)=>{
+  const tx=d.transaction('files','readwrite'),s=tx.objectStore('files');
+  let conflict=false;
+  tx.oncomplete=()=>resolve();
+  tx.onabort=()=>reject(conflict?Error('Список изменился. Обновите его и повторите.'):tx.error||Error('Операция прервана'));
+  tx.onerror=()=>reject(tx.error||Error('Ошибка хранилища'));
+  for(const change of changes){
+   const request=s.get(change.before.id);
+   request.onsuccess=()=>{
+    const current=request.result,iv=current?.meta?.iv,expected=change.before.meta.iv;
+    if(!current||current.area!==change.before.area||!iv||iv.length!==expected.length||!Array.from(iv).every((v,n)=>v===expected[n])){
+     conflict=true;tx.abort();return;
+    }
+    if(change.after)s.put(change.after);else s.delete(current.id);
+   };
+  }
+ });
+}
+async function readIndex(a){
+ const all=await rows(a);if(!all.length)return [];
+ const k=await key(a),now=Date.now();
+ const entries=await Promise.all(all.map(async r=>({r,m:await meta(r,k)})));
+ const expired=entries.filter(x=>x.m.kind==='trash'&&x.m.deletedAt+TRASH_LIFETIME<=now);
+ if(expired.length)try{await commitBatch(expired.map(x=>({before:x.r,after:null})));}catch{/* A concurrent restore wins. */}
+ return entries.filter(x=>!expired.includes(x));
+}
+async function list(a){return (await readIndex(a)).filter(x=>x.m.kind!=='trash').map(x=>({id:x.r.id,...x.m}));}
+async function listTrash(a){return (await readIndex(a)).filter(x=>x.m.kind==='trash').map(x=>({id:x.r.id,...x.m})).sort((x,y)=>y.deletedAt-x.deletedAt);}
+async function changeFiles(a,ids,operation,folder=''){
+ check(a);const unique=[...new Set(ids)];if(!unique.length)return 0;
+ const k=await key(a),now=Date.now(),changes=[];
+ if(operation==='move'&&folder&&!['contracts','projects','clients'].includes(folder)){
+  if((await meta(await row(a,folder),k)).kind!=='folder')throw Error('Папка не найдена');
+ }
+ for(const i of unique){
+  const r=await row(a,i),m=await meta(r,k);
+  if(operation==='restore'){
+   if(m.kind!=='trash'||m.deletedAt+TRASH_LIFETIME<=now)throw Error('Срок восстановления истёк или файл уже восстановлен.');
+   m.kind='file';delete m.deletedAt;
+   if(m.folder&&!['contracts','projects','clients'].includes(m.folder)){
+    try{if((await meta(await row(a,m.folder),k)).kind!=='folder')m.folder='';}catch{m.folder='';}
+   }
+  }else{
+   if(m.kind!=='file')throw Error('Выберите только локальные документы.');
+   if(operation==='trash'){m.kind='trash';m.deletedAt=now;}
+   else if(operation==='move')m.folder=folder;
+   else throw Error('Неизвестное действие');
+  }
+  changes.push({before:r,after:{...r,meta:await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta')}});
+ }
+ await commitBatch(changes);changed(a);return changes.length;
+}
+const removeMany=(a,ids)=>changeFiles(a,ids,'trash');
+const restoreMany=(a,ids)=>changeFiles(a,ids,'restore');
+const moveMany=(a,ids,folder)=>changeFiles(a,ids,'move',folder);
 async function row(a,i){check(a);const r=await run('files','readonly',s=>s.get(i));if(!r||r.area!==a)throw Error('Файл не найден');return r;}
 // Only associate source text with the exact decrypted file instance, never with a filename.
 const editableSource=new WeakMap(),fileIds=new WeakMap();
@@ -101,7 +160,7 @@ function sourceText(file){return editableSource.get(file)||'';}
 function sourceId(file){return fileIds.get(file)||'';}
 async function createFolder(a,name){check(a);name=String(name||'').trim().slice(0,60);if(!name)throw Error('Введите название');const i=id(),k=await key(a),m=await seal(k,enc.encode(JSON.stringify({kind:'folder',name,createdAt:Date.now()})),prefix(a,i)+':meta');await run('files','readwrite',s=>s.add({id:i,area:a,meta:m}));changed(a);return i;}
 async function update(a,i,patch){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind==='folder'&&typeof patch.name==='string'){const name=patch.name.trim().slice(0,60);if(!name)throw Error('Введите название');m.name=name;}if(m.kind==='folder'&&Number.isFinite(patch.order))m.order=patch.order;if(m.kind==='file'&&typeof patch.name==='string'){const ext=String(m.name||'').match(/\.[^.]+$/)?.[0]||'';const base=patch.name.trim().replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').trim().slice(0,Math.max(1,180-ext.length));if(!base)throw Error('Введите название');m.name=base+ext;}if(m.kind==='file'&&typeof patch.folder==='string'){if(patch.folder&&!['contracts','projects','clients'].includes(patch.folder)){const target=await row(a,patch.folder);if((await meta(target,k)).kind!=='folder')throw Error('Папка не найдена');}m.folder=patch.folder;}r.meta=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');await run('files','readwrite',s=>s.put(r));changed(a);}
-async function remove(a,i){const r=await row(a,i),k=await key(a);if((await meta(r,k)).kind!=='file')throw Error('Нельзя удалить папку этим действием');await run('files','readwrite',s=>s.delete(i));changed(a);}
+async function remove(a,i){return removeMany(a,[i]);}
 async function removeFolder(a,i){const r=await row(a,i),k=await key(a);if((await meta(r,k)).kind!=='folder')throw Error('Папка не найдена');const all=await list(a);if(all.some(x=>x.kind==='file'&&x.folder===i))throw Error('Сначала переместите документы из папки.');await run('files','readwrite',s=>s.delete(i));changed(a);}
 async function setDefaultFolder(a,target,patch){
  check(a);if(!['contracts','projects','clients'].includes(target))throw Error('Системную папку изменять нельзя.');
@@ -125,7 +184,7 @@ async function saveAttachment(a,file,source,folder=''){
  const bytes=await file.arrayBuffer();
  const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
  const i='attachment-'+a+'-'+hash,k=await key(a),tag=prefix(a,i);
- const existing=await run('files','readonly',s=>s.get(i));if(existing)return {id:i,duplicate:true};
+ const existing=await run('files','readonly',s=>s.get(i));if(existing){const m=await meta(existing,k);if(m.kind==='trash'){if(m.deletedAt+TRASH_LIFETIME>Date.now()){await restoreMany(a,[i]);return {id:i,duplicate:true};}await commitBatch([{before:existing,after:null}]);}else return {id:i,duplicate:true};}
  const m={name:String(file.name||'Документ').slice(0,180),type:file.type,createdAt:Date.now(),source,folder,size:file.size,kind:'file',...documentMeta(file)};
  const [metadata,content]=await Promise.all([seal(k,enc.encode(JSON.stringify(m)),tag+':meta'),seal(k,bytes,tag+':data')]);
  try{await run('files','readwrite',s=>s.add({id:i,area:a,meta:metadata,content}));}
@@ -151,5 +210,5 @@ async function listTemplates(a){return (await list(a)).filter(x=>x.kind==='templ
 async function getTemplate(a,i){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='template')throw Error('Шаблон не найден');return {...m,...JSON.parse(dec.decode(await unseal(k,r.content,prefix(a,i)+':data')))};}
 async function renameTemplate(a,i,name){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='template')throw Error('Шаблон не найден');name=String(name||'').trim().slice(0,100);if(!name)throw Error('Введите название');m.name=name;r.meta=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');await run('files','readwrite',s=>s.put(r));changed(a);}
 async function removeTemplate(a,i){const r=await row(a,i),k=await key(a);if((await meta(r,k)).kind!=='template')throw Error('Шаблон не найден');await run('files','readwrite',s=>s.delete(i));changed(a);}
-window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,get,sourceText,sourceId,createFolder,update,remove,removeFolder,setDefaultFolder,saveAttachment,saveTemplate,listTemplates,getTemplate,renameTemplate,removeTemplate,docTypes,inferDocumentType,updateDocument,addVersion,getVersion});
+window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,listTrash,removeMany,restoreMany,moveMany,get,sourceText,sourceId,createFolder,update,remove,removeFolder,setDefaultFolder,saveAttachment,saveTemplate,listTemplates,getTemplate,renameTemplate,removeTemplate,docTypes,inferDocumentType,updateDocument,addVersion,getVersion});
 })();
