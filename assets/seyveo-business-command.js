@@ -1616,6 +1616,10 @@ $('svcpAttachChooseFile')?.addEventListener('click',()=>{
  const picker=$('svcpFile');if(!picker)return;
  picker.value='';picker.click();
 });
+$('svcpAttachScan')?.addEventListener('click',()=>{
+ closeWorkAttachMenu();const room=state.room;
+ window.SEYVEO_SCAN_AUTO?.capture(file=>{if(state.room!==room)return false;if(state.files.length>=10)return false;pickCaptureFile(file,'file');return true;});
+});
 $('svcpAttachChooseCamera')?.addEventListener('click',()=>{
  closeWorkAttachMenu();
  $('svcpCameraToggle')?.click();

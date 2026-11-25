@@ -2075,6 +2075,7 @@ html:root[data-theme="light"] body :is(#sayviTopActions .sv-top-action,#sayviHis
 </div>
 <div id="sayviMenu" role="group" aria-label="Действия чата" hidden>
  <button type="button" id="sayviNewChat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg><span>Новый разговор</span></button>
+ <button type="button" id="sayviAttachScan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4m12-4h4v4m0 8v4h-4M4 16v4h4M8 9h8M8 13h8M8 17h5"/></svg><span>Сканировать документ</span></button>
  <button type="button" id="sayviAttachFile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12.8 13.5 7a3.4 3.4 0 0 1 4.8 4.8l-7.2 7.3a5.2 5.2 0 0 1-7.4-7.3l7.7-7.7"/></svg><span>Добавить фото или файл</span></button>
  <button type="button" id="sayviDrawIdea"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/></svg><span>Нарисовать мысль</span></button>
 </div>
@@ -4226,6 +4227,7 @@ html:root[data-theme="light"] body :is(#sayviTopActions .sv-top-action,#sayviHis
   event.preventDefault();
   addAttachments(images);
  });
+ document.getElementById('sayviAttachScan').addEventListener('click',()=>{closeMenu();window.SEYVEO_SCAN_AUTO?.capture(file=>{addAttachments([file]);return true;});});
  document.getElementById('sayviAttachFile').addEventListener('click',()=>{closeMenu();filePicker.click()});
  photoPicker.addEventListener('change',()=>{addAttachments(photoPicker.files);photoPicker.value=''});
  filePicker.addEventListener('change',()=>{addAttachments(filePicker.files);filePicker.value=''});
@@ -5291,5 +5293,6 @@ html:root[data-theme="light"] body :is(#sayviTopActions .sv-top-action,#sayviHis
 })();
 </script>
 <link rel="stylesheet" href="assets/seyveo-landscape.css?v=20261125-1">
+<link rel="stylesheet" href="assets/seyveo-scan-auto.css?v=1"><script src="assets/seyveo-scan-auto.js?v=1"></script>
 </body>
 </html>

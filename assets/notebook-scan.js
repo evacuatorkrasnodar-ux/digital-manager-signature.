@@ -529,7 +529,7 @@ function scanIntoNote(){
  if(!camera)return false;
  camera.click();return true;
 }
-function select(file,{auto=true}={}){
+async function select(file,{auto=true}={}){
  if(!file)return;
  if(!file.type.startsWith('image/')||file.type==='image/svg+xml'||file.size>15*1024*1024){
   dialog.dataset.scanError='true';
@@ -540,7 +540,14 @@ function select(file,{auto=true}={}){
  text.value='';setStep('photo');
  preview.hidden=false;button.disabled=running;syncActions();
  message('');
- if(auto){pendingScanEdit=!intoOpenNote;button.click();}
+ if(auto){
+  const token=session;button.disabled=true;message('Проверяем границы документа…');
+  const result=await window.SEYVEO_SCAN_AUTO?.process(file);
+  if(token!==session||!dialog.open)return;
+  if(result?.corrected){selected=result.file;clearURL();localURL=URL.createObjectURL(selected);preview.src=localURL;}
+  button.disabled=running;message(result?.corrected?'Документ выровнен.':'');
+  pendingScanEdit=!intoOpenNote;button.click();
+ }
 }
 function loadEngine(){
  if(window.Tesseract?.createWorker)return Promise.resolve(window.Tesseract);

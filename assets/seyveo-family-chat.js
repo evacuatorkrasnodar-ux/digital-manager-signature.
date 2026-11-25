@@ -186,6 +186,7 @@ $('svfAttachButton').addEventListener('click',event=>{
  $('svfAttachButton').setAttribute('aria-expanded',String(open));
 });
 $('svfAttachChooseFile')?.addEventListener('click',()=>{closeFamilyAttachMenu();fileInput.click();});
+$('svfAttachScan')?.addEventListener('click',()=>{closeFamilyAttachMenu();window.SEYVEO_SCAN_AUTO?.capture(file=>dialog.open&&previewSharedFile(file));});
 $('svfAttachChoosePoll')?.addEventListener('click',()=>{closeFamilyAttachMenu();openFamilyPollEditor();});
 document.addEventListener('pointerdown',event=>{
  if(familyAttachMenu?.hidden)return;

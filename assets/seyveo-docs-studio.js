@@ -446,7 +446,9 @@ function mount(target,{
     // tool while camera/library was loading, discard the result.
     if(generationAtStart!==generation||epoch!==operationEpoch||
        mode!=='scan')return;
-    processed.push(jpegOf(canvasOf(image)));
+    const base=canvasOf(image),original=jpegOf(base);
+    let fixed=null;try{fixed=window.SEYVEO_SCAN_AUTO?.correct(base);}catch{}
+    processed.push(fixed?{...jpegOf(fixed),original,automatic:true}:{...original,original,automatic:false});
    }
    if(generationAtStart!==generation||epoch!==operationEpoch)return;
    const firstNew=scans.length;
@@ -512,7 +514,7 @@ function mount(target,{
      // Changes remain in this scan session until the explicit PDF/JPG Save.
      const bytes=new Uint8Array(await file.arrayBuffer());
      if(!valid())throw Error('Страница изменилась.');
-     scans[index]={width:image.naturalWidth,height:image.naturalHeight,jpegBytes:bytes};
+     scans[index]={...scans[index],width:image.naturalWidth,height:image.naturalHeight,jpegBytes:bytes};
      const thumb=panel.querySelectorAll('.sv-doc-scan-compact-thumbs img')[index];
      if(thumb){const url=URL.createObjectURL(file);temporaryUrls.push(url);thumb.src=url;}
     }
@@ -520,7 +522,7 @@ function mount(target,{
    if(viewer){
     activeScanViewer=viewer;stage.classList.add('sv-doc-scan-with-editor');
     const footer=$('div','sv-doc-scan-stage-meta');
-    footer.append($('span','','Страница '+(index+1)+' из '+scans.length));
+    footer.append($('span','','Страница '+(index+1)+' из '+scans.length+(page.automatic?' · Авто':'')));
     stage.append(footer,host);return stage;
    }
   }
@@ -604,7 +606,17 @@ function mount(target,{
    if(!window.confirm('Удалить страницу '+(index+1)+'?'))return;
    scans.splice(index,1);selectedScan=Math.min(index,Math.max(0,scans.length-1));renderScan();
   };
+  const autoActions=[];
+  const current=scans[selectedScan];
+  if(current?.original){
+   autoActions.push({label:'Оригинал',icon:'original',run:()=>{
+    if(importBusy||activeScanViewer?.isPhotoBusy?.())return;
+    if(!window.confirm('Вернуть исходный снимок страницы? Текущие правки будут сброшены.'))return;
+    scans[selectedScan]={...current.original,original:current.original,automatic:false};renderScan();
+   }});
+  }
   if(scans.length)panel.prepend(scannerStage([
+   ...autoActions,
    {label:'Камера',icon:'camera',run:()=>camera.click()},
    {label:'Галерея',icon:'gallery',run:()=>library.click()},
    {label:'Удалить',icon:'delete',run:deletePage}
