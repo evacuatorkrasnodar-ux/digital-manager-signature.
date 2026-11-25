@@ -140,7 +140,7 @@ async function readPdfText(file,isActive){
   return texts.join('\n\n');
  }finally{try{await task.destroy();}catch{}}
 }
-function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=false,onClose=()=>{}}={}){
+function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy=null,asSheet=false,onClose=()=>{}}={}){
  if(!target||!file||typeof file.name!=='string'||typeof file.size!=='number'||
     file.size<1||file.size>MAX||typeof file.text!=='function')return false;
  const info=format(file.name,file.type);
@@ -276,8 +276,9 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
  save.append(icon('download'),el('span','','Сохранить'));
  toolbar.append(save);
  let editAction=null;
+ const openMarkup=()=>{if(!window.SEYVEO_PDF_MARKUP?.open(file,{parent:root,loadPdf,onSave:onSaveCopy}))say('Разметка PDF недоступна.');};
  if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf')){
-  const edit=action(info.kind==='image'?'Обработка изображения':'Редактировать текст','edit',async()=>{
+  const edit=action(info.kind==='image'?'Обработка изображения':info.kind==='pdf'?'Текстовая копия (Word)':'Редактировать текст','edit',async()=>{
    if(edit.disabled)return;
    edit.disabled=true;
    try{
@@ -333,6 +334,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
     if(event.target.closest('button,a,input,textarea,select,summary,[contenteditable]'))return;
     if(!event.target.closest('.svdv-reader-page,.svdv-text'))return;
     if(window.getSelection?.()?.toString().trim())return;
+    if(info.kind==='pdf'){openMarkup();return;}
     if(!edit.disabled)edit.click();
    });
   }
@@ -358,6 +360,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
  summary.append(icon('more'),el('span','','Ещё'));
  more.append(summary);
  const moreBody=el('div','svdv-more-options');
+ if(info.kind==='pdf')moreBody.append(action('Разметка PDF','edit',openMarkup));
  if(editAction)moreBody.append(editAction);
  const openLink=el('a','svdv-link');
  openLink.href=objectUrl;openLink.target='_blank';openLink.rel='noopener noreferrer';
@@ -419,7 +422,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
  const session=Object.freeze({
   destroy(){
    if(!active)return;
-   active=false;if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}if(readerDialog?.open)readerDialog.close();readerDialog=null;for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
+   active=false;const markup=root.querySelector('.sv-pdf-markup[open]');if(markup)markup.close();if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}if(readerDialog?.open)readerDialog.close();readerDialog=null;for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
    document.removeEventListener('pointerdown',dismissMore);
    document.removeEventListener('keydown',closeMoreOnEscape);
    URL.revokeObjectURL(objectUrl);
