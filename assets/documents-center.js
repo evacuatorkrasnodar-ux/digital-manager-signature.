@@ -46,13 +46,26 @@ function setArea(next){
  if(host)draw();
  return true;
 }
-function goSayvi(intent){
- // Only a generic intent crosses pages. Never place file bytes, names,
- // decrypted content or vault keys into URL, storage or chat history.
- try{sessionStorage.setItem('seyveo.sayvi.document-handoff.v1',
-  JSON.stringify({intent,at:Date.now()}));}catch{}
+async function goSayvi(intent,context){
+ const key='seyveo.sayvi.document-handoff.v1';
+ if(intent==='edit-current'){
+  if(!context||typeof context.text!=='string'||!context.text.trim()||context.text.length>12000)return false;
+  try{
+   const payload={text:context.text,title:String(context.title||'').slice(0,100),format:context.format==='docx'?'docx':'pdf',template:String(context.template||''),area};
+   const file=new File([JSON.stringify(payload)],'seyveo-editor-handoff.json',{type:'application/json'});
+   const refs=await window.SEYVEO_CHAT_FILES?.remember([file]);
+   const ref=refs?.[file.name];if(!ref)return false;
+   sessionStorage.setItem(key,JSON.stringify({intent,ref,at:Date.now()}));
+   location.assign('sayvi-chat-new.html?documentEditor=1');
+   return true;
+  }catch{return false;}
+ }
+ // Generic task has no document content. Private editor data travels only
+ // through the encrypted per-tab cache, never in the navigation URL.
+ try{sessionStorage.setItem(key,JSON.stringify({intent,at:Date.now()}));}catch{}
  if(window.SEYVEO_CONVERSATION?.open)window.SEYVEO_CONVERSATION.open();
  else location.assign('sayvi-chat-new.html');
+ return true;
 }
 function makeIcon(kind){
  const wrap=el('span','sv-doc-symbol');wrap.setAttribute('aria-hidden','true');
