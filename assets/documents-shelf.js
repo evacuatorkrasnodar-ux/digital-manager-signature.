@@ -13,7 +13,6 @@ const el=(tag,cls,value)=>{
 };
 const localFiles=()=>window.SEYVEO_DOCUMENT_FILES;
 const categories=[
- {id:'all',title:'Все файлы'},
  {id:'device',title:'На устройстве'},
  {id:'scan',title:'Сканы'},
  {id:'new',title:'Новая папка'},
@@ -86,7 +85,7 @@ const ownFolders=state=>{
  });
  return [...defaults,...state.local.filter(x=>x.kind==='folder')].filter(x=>!x.hidden).sort((a,b)=>(a.order??a.createdAt)-(b.order??b.createdAt)||a.id.localeCompare(b.id));
 };
-const folderEntries=state=>[...categories.slice(0,4),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true,defaultFolder:x.defaultFolder===true})),categories[categories.length-1]];
+const folderEntries=state=>[...categories.filter(x=>['device','scan','new'].includes(x.id)),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true,defaultFolder:x.defaultFolder===true})),categories[categories.length-1]];
 const updateFolder=(state,category,patch)=>category.defaultFolder?localFiles().setDefaultFolder(state.options.area,category.id,patch):localFiles().update(state.options.area,category.id,patch);
 function notice(state,text){state.folderCaption.textContent=text;}
 function closeFolderMenu(state){state.folderMenu.hidden=true;state.folderMenu.replaceChildren();}
@@ -150,8 +149,8 @@ function paint(state){
  }
  state.recentTitle.textContent=state.filter==='all'?(state.expanded?'Все файлы':'Недавние'):(folderEntries(state).find(x=>x.id===state.filter)?.title||'Файлы');
  const hasMore=filtered.length>4;
- state.showAll.textContent=state.expanded?'Свернуть':'Все файлы ›';
- state.showAll.setAttribute('aria-label',state.expanded?'Свернуть список документов':'Показать все документы');
+ state.showAll.textContent=state.filter==='all'&&state.expanded?'Свернуть':'Все файлы ›';
+ state.showAll.setAttribute('aria-label',state.filter==='all'&&state.expanded?'Свернуть список документов':'Показать все документы');
  if(showingFormats&&state.unlocked){
   for(const example of examples){
    const card=el('button','sv-doc-recent-card sv-doc-example-card');
@@ -317,7 +316,7 @@ function mount(parent,options={}){
  showAll.type='button';
  showAll.addEventListener('click',()=>{
   if(state!==active)return;
-  if(state.filter!=='all'){state.filter='all';state.expanded=false;paint(state);return;}
+  if(state.filter!=='all'){state.filter='all';state.expanded=true;paint(state);return;}
   state.expanded=!state.expanded;paint(state);
  });
  header.append(showAll);
