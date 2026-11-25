@@ -181,7 +181,8 @@ html[data-theme="dark"] #seyveoPayDialog .syp-view-switch > button[aria-pressed=
 /* v9 · Wallet is an inline, seamless SEYVEO Work page.
    One existing #svWorkTabs navigation (not a cloned tab strip), one dock.
    The original card, QR, cards/history and Finance controllers are kept. */
-html body #svWorkShell[data-active="wallet"] > :not(#svWorkTabs):not(#seyveoPayDialog):not(seyveo-work-head):not(.syp-view-switch){
+/* Keep the shared full-header glass layer visible in both wallet modes. */
+html body #svWorkShell[data-active="wallet"] > :not(#svWorkTabs):not(#seyveoPayDialog):not(seyveo-work-head):not(.syp-view-switch):not(.sv-full-header-material){
  display:none!important;
 }
 html body #svWorkShell[data-active="wallet"]{

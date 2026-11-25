@@ -554,3 +554,14 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[
   height:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 24px)!important;
  }
 }
+
+/* Wallet uses the same full-header optical layer as Notebook. Its legacy
+   child visibility whitelist must never hide this decorative element. */
+@media not (prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-active="wallet"].sv-full-glass-ready > .sv-full-header-material{
+  display:block!important;visibility:visible!important;opacity:1!important;
+ }
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-active="wallet"].sv-full-glass-ready > dialog#seyveoPayDialog#seyveoPayDialog[open][data-sv-full-glass-port]{
+  z-index:1!important;
+ }
+}
