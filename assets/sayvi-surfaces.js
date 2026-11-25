@@ -638,7 +638,7 @@ function mailView(){
     catch{status.textContent='Не удалось сохранить настройки.';}
    }
    function syncModes(){
-    for(const [key,b] of buttons)b.setAttribute('aria-pressed',String(config.mode===key));
+    for(const [key,b] of buttons){const selected=config.mode===key;b.setAttribute('aria-pressed',String(selected));b.querySelector('small').hidden=!selected;}
     rules.hidden=config.mode!=='auto';
    }
    for(const [key,[label,hint]] of Object.entries(labels)){
@@ -686,7 +686,10 @@ function mailView(){
   }
   guardPanel.append(modes);
   const trustedDetails=create('details','sv-mail-gate-trusted-details');
-  trustedDetails.append(create('summary','','Доверенные адреса · '+mailGate[account].trusted.length));
+  const trustedSummary=create('summary','sv-mail-gate-trusted-summary');
+  const trustedLabel=create('span','sv-mail-gate-trusted-label','Доверенные адреса · '+mailGate[account].trusted.length);
+  const trustedArrow=mailIcon('back');trustedArrow.classList.add('sv-mail-gate-trusted-arrow');
+  trustedSummary.append(mailIcon('contacts'),trustedLabel,trustedArrow);trustedDetails.append(trustedSummary);
   const form=create('form','sv-mail-gate-form');
   const input=create('input','');input.type='text';input.required=true;input.maxLength=254;
   input.autocapitalize='off';input.autocomplete='off';input.spellcheck=false;
@@ -709,7 +712,7 @@ function mailView(){
     });
     chip.append(remove);trusted.append(chip);
    }
-   trustedDetails.querySelector('summary').textContent='Доверенные адреса · '+mailGate[account].trusted.length;
+   trustedLabel.textContent='Доверенные адреса · '+mailGate[account].trusted.length;
   }
   form.addEventListener('submit',event=>{
    event.preventDefault();
