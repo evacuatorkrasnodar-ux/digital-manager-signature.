@@ -1098,6 +1098,24 @@ $('calendarEventDialog').addEventListener('click',event=>{
  if(event.target===$('calendarEventDialog'))$('calendarEventDialog').close();
 });
 window.SEYVEO_CALENDAR_DATE=iso;
+// Read-only agenda for shared date pickers. Scope follows the same calendar
+// permissions, never changes the visible calendar or creates records.
+window.SEYVEO_CALENDAR_PICKER_DATA=Object.freeze({
+ day(date,requested){
+  if(!at(date))return [];
+  const permitted=requested==='business'?(managerPreview()?'business':'restricted'):requested==='personal'?'personal':selectedScope();
+  if(permitted==='restricted')return [];
+  const meeting=events().filter(x=>x.date===date&&(permitted==='all'||x.kind===permitted)).map(x=>({...x,source:'event',sort:x.time||'99:00'}));
+  const todo=permitted==='business'?[]:tasks().filter(x=>x.date===date&&!x.done).map(x=>({...x,source:'task',sort:x.time||'98:00'}));
+  const spaces=permitted==='business'?[]:(window.SEYVEO_SPACES?.calendarItems(date)||[]);
+  const notes=permitted==='business'?[]:(window.SEYVEO_NOTES_API?.getNotes?.()||[]).filter(x=>x.calendarDate===date&&typeof x.text==='string'&&x.text.trim()).map(x=>({id:x.id,source:'note',sort:'97:00',title:x.text.split('\n')[0].trim().slice(0,120)||'Заметка'}));
+  return [...meeting,...todo,...spaces,...notes].sort((a,b)=>String(a.sort||a.time||'99:00').localeCompare(String(b.sort||b.time||'99:00'))).map(x=>{
+   const tone=calendarTone(x,x.source);
+   return {id:x.id,title:String(x.title||'Событие').slice(0,140),time:x.time||'',tone,color:calendarPalette[tone][0]};
+  });
+ }
+});
+
 window.addEventListener('seyveo:calendar-focus-date',event=>{
  const day=at(event.detail?.date);
  if(!day)return;
