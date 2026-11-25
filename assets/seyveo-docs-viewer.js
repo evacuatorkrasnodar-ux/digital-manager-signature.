@@ -127,6 +127,15 @@ async function readDocxText(file){
  }
  return output.trim().slice(0,110000);
 }
+// Same pinned PDF.js module already used by Sayvi attachment thumbnails.
+// File bytes are passed locally; no document upload or automatic external links.
+let pdfLibrary=null;
+function loadPdf(){
+ if(!pdfLibrary)pdfLibrary=import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs').then(lib=>{
+  lib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';return lib;
+ }).catch(e=>{pdfLibrary=null;throw e;});
+ return pdfLibrary;
+}
 function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=false,onClose=()=>{}}={}){
  if(!target||!file||typeof file.name!=='string'||typeof file.size!=='number'||
     file.size<1||file.size>MAX||typeof file.text!=='function')return false;
@@ -171,14 +180,46 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
   }
   void (async()=>{
    try{
-    const pages=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);
+    let pages=null;
+    try{pages=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);}catch{}
     if(!active)return;
-    if(!pages?.length)throw Error('unsupported');
-    for(const page of pages)pageUrls.push(URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'})));
-    const preview=el('button','svdv-pdf-preview');preview.type='button';preview.setAttribute('aria-label','Открыть PDF на весь экран');
-    const img=el('img','svdv-pdf-page');img.src=pageUrls[0];img.alt='Первая страница документа';
-    const caption=el('span','svdv-pdf-caption',pages.length+' '+(pages.length===1?'страница':pages.length<5?'страницы':'страниц')+' · Открыть');preview.append(img,caption);preview.addEventListener('click',openReader);
-    stage.replaceChildren(preview);
+    if(pages?.length){
+     for(const page of pages)pageUrls.push(URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'})));
+     if(asSheet){
+      const list=el('div','svdv-sheet-pages');
+      for(const [i,url] of pageUrls.entries()){const img=el('img','svdv-reader-page');img.src=url;img.alt='Страница '+(i+1);if(i>0)img.loading='lazy';list.append(img);}
+      stage.replaceChildren(list);
+     }else{
+      const preview=el('button','svdv-pdf-preview');preview.type='button';preview.setAttribute('aria-label','Открыть PDF на весь экран');
+      const img=el('img','svdv-pdf-page');img.src=pageUrls[0];img.alt='Первая страница документа';
+      preview.append(img,el('span','svdv-pdf-caption',pages.length+' стр. · Открыть'));preview.addEventListener('click',openReader);stage.replaceChildren(preview);
+     }
+     return;
+    }
+    const lib=await loadPdf();if(!active)return;
+    const data=new Uint8Array(await file.arrayBuffer());if(!active)return;
+    pdfTask=lib.getDocument({data,useSystemFonts:true,isEvalSupported:false,disableAutoFetch:true,disableStream:true});
+    pdfDocument=await pdfTask.promise;if(!active)return;
+    const total=pdfDocument.numPages;
+    const list=el('div','svdv-sheet-pages');stage.replaceChildren(list);
+    let index=1,busy=false;
+    const next=el('button','svdv-load-more','Показать следующие страницы');next.type='button';
+    async function renderMore(){
+     if(!active||busy)return;busy=true;next.disabled=true;
+     try{
+      const end=Math.min(total,index+3);
+      while(index<=end&&active){
+       const number=index,page=await pdfDocument.getPage(number);if(!active)return;
+       const v=page.getViewport({scale:1});const scale=Math.min(2,1100/v.width,1500/v.height);
+       const viewport=page.getViewport({scale}),canvas=el('canvas','svdv-reader-page');canvas.width=Math.max(1,Math.ceil(viewport.width));canvas.height=Math.max(1,Math.ceil(viewport.height));canvas.setAttribute('aria-label','Страница '+number);
+       await page.render({canvasContext:canvas.getContext('2d',{alpha:false}),viewport}).promise;if(!active)return;
+       list.insertBefore(canvas,next.parentNode===list?next:null);page.cleanup();index++;
+      }
+      if(index<=total){next.textContent='Следующие страницы · '+(index-1)+' из '+total;if(!next.isConnected)list.append(next);}else next.remove();
+     }catch{if(active){next.remove();list.append(el('p','svdv-preview-note','Не удалось показать остальные страницы.'),openOriginal());}}
+     finally{busy=false;next.disabled=false;}
+    }
+    next.addEventListener('click',()=>void renderMore());await renderMore();
    }catch{
     if(!active)return;
     stage.replaceChildren(el('p','svdv-preview-note','Для этого PDF доступен просмотр оригинала.'),openOriginal());
@@ -322,7 +363,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
  const session=Object.freeze({
   destroy(){
    if(!active)return;
-   active=false;if(sheet?.open)sheet.close();try{pdfTask?.destroy();}catch{}if(readerDialog?.open)readerDialog.close();readerDialog=null;for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
+   active=false;if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}if(readerDialog?.open)readerDialog.close();readerDialog=null;for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
    document.removeEventListener('pointerdown',dismissMore);
    document.removeEventListener('keydown',closeMoreOnEscape);
    URL.revokeObjectURL(objectUrl);
