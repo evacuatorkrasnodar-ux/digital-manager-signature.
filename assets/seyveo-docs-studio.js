@@ -1709,6 +1709,23 @@ function mount(target,{
    operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();void persistDraft();
    panel.querySelector('.sv-doc-edit-resume')?.click();return true;
   }
+  if(payload.kind==='image-text'){
+   const file=payload.file;
+   if(!(file instanceof Blob)||!/^image\/(jpeg|png|webp)$/i.test(file.type)||file.size<1||file.size>20*1024*1024)return false;
+   const at=generation,epoch=operationEpoch;
+   const valid=()=>at===generation&&epoch===operationEpoch&&panel.isConnected&&payload.isActive?.()!==false;
+   if(!window.Tesseract?.createWorker&&!window.confirm('Для распознавания потребуется скачать языковые модели из интернета. Фото обрабатывается на устройстве. Продолжить?'))return false;
+   let worker;
+   try{
+    const engine=await getOcrEngine();if(!valid())return false;
+    worker=await createOcrWorker(engine);if(!valid())return false;
+    const result=await worker.recognize(file);
+    if(!valid())return false;
+    const value=String(result?.data?.text||'').trim();
+    if(!value)throw Error('На изображении не найден текст.');
+    return value;
+   }finally{if(worker)try{await worker.terminate();}catch{}}
+  }
   if(payload.kind==='pdf-text'){
    const at=generation,epoch=++operationEpoch;
    const valid=()=>at===generation&&epoch===operationEpoch&&panel.isConnected&&payload.isActive?.()!==false;

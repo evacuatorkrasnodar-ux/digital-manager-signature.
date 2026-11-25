@@ -477,17 +477,11 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   if(!result){restore();say('Рисование и подпись PDF недоступны.');return;}
   markupSession=result;
  };
- if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf')){
-  const edit=action(info.kind==='image'?'Обработать':'Изменить','edit',async()=>{
+ if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='pdf')){
+  const edit=action('Изменить','edit',async()=>{
    if(edit.disabled)return;
    edit.disabled=true;
    try{
-    if(info.kind==='image'){
-     const ok=await onEdit({kind:'pages',file});
-     if(ok&&sheet?.open)sheet.close();
-     else if(!ok&&active)say('Обработка изображения пока недоступна.');
-     return;
-    }
     if(inline||markupSession)return;
     if(sourceKey&&draftAPI()){
      const previous=(await draftAPI().list(area)).find(d=>d.sourceKey===sourceKey);
@@ -515,8 +509,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    finally{edit.disabled=false;sayviAfterEdit=false;}
   });
   editAction=edit;
-  // Text documents already support direct editing. Only images need a separate processing action.
-  if(info.kind==='image')toolbar.append(edit);
+  // Text documents support direct editing; images have their own in-place tools.
   // Text and full-page previews open a confirmed editable copy.
   // Keep native selection, scrolling, zoom and inline PDF preview buttons intact.
   if(info.kind!=='image'){
@@ -540,6 +533,142 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     if(!edit.disabled)edit.click();
    });
   }
+ }
+ // Image actions stay inside this viewer. Never reopen the scanner.
+ let photoMode='',photoBusy=false,photoEpoch=0;
+ const photoRail=el('div','svdv-photo-rail');
+ let normalPhotoActions=[],photoOriginalNodes=[],photoOldTop=0,photoCanvas=null;
+ function photoActions(...buttons){photoRail.replaceChildren(...buttons);photoRail.scrollLeft=0;}
+ function beginPhoto(mode){
+  if(!active||photoMode||photoBusy)return false;
+  photoMode=mode;photoOriginalNodes=Array.from(stage.childNodes);photoOldTop=stage.scrollTop;
+  more.open=false;more.hidden=true;return true;
+ }
+ function endPhoto(){
+  photoEpoch++;photoBusy=false;photoMode='';photoCanvas=null;
+  stage.classList.remove('svdv-photo-mode','svdv-photo-text-mode');
+  stage.replaceChildren(...photoOriginalNodes);stage.scrollTop=photoOldTop;
+  photoActions(...normalPhotoActions);
+  more.hidden=!Array.from(moreBody.children).some(n=>!n.hidden);
+  say('');
+ }
+ function photoCancel(){return action('Отмена','back',()=>endPhoto());}
+ async function savePhotoFile(next,options={}){
+  if(onSaveCopy)await onSaveCopy(next,options);
+  else{
+   const link=el('a');link.href=URL.createObjectURL(next);link.download=next.name;link.click();
+   setTimeout(()=>URL.revokeObjectURL(link.href),60000);
+  }
+ }
+ async function recognizePhoto(){
+  if(!onEdit||!beginPhoto('text'))return;
+  const epoch=++photoEpoch;photoBusy=true;
+  const cancel=photoCancel();photoActions(cancel);say('Распознаём текст…');
+  try{
+   const value=await onEdit({kind:'image-text',file,isActive:()=>active&&photoEpoch===epoch});
+   if(!active||photoEpoch!==epoch)return;
+   photoBusy=false;
+   if(typeof value!=='string'||!value.trim()){endPhoto();say('Распознавание отменено или недоступно.',3500);return;}
+   const field=el('textarea','svdv-photo-result');field.value=value;field.spellcheck=true;
+   field.setAttribute('aria-label','Распознанный текст. Можно выделять и исправлять.');
+   stage.classList.add('svdv-photo-text-mode');stage.replaceChildren(field);say('');
+   const copyText=action('Копировать','copy',async()=>{
+    const value=field.selectionStart!==field.selectionEnd?field.value.slice(field.selectionStart,field.selectionEnd):field.value;
+    try{await navigator.clipboard.writeText(value);say('Текст скопирован.',2000);}
+    catch{field.focus();field.select();say('Выделите текст и выберите «Копировать» в системном меню.');}
+   });
+   const createDoc=action('Документ','create',async()=>{
+    if(photoBusy||!field.value.trim())return;
+    if(field.value.length>12000){say('Для документа доступно до 12 000 знаков.');return;}
+    photoBusy=true;createDoc.disabled=true;
+    try{
+     const blob=window.SEYVEO_DOCS_EXPORT.docxFromText(field.value);
+     const next=new File([blob],file.name.replace(/\.[^.]+$/,'')+' · текст.docx',{type:blob.type});
+     await savePhotoFile(next,{text:field.value,status:'ready'});
+     if(active&&photoEpoch===epoch)say('Документ Word сохранён. Фото не изменено.',3500);
+    }catch(e){if(active&&photoEpoch===epoch)say(e?.message||'Не удалось сохранить документ.');}
+    finally{if(photoEpoch===epoch){photoBusy=false;createDoc.disabled=false;}}
+   });
+   photoActions(action('Фото','image',()=>endPhoto()),copyText,createDoc);
+  }catch(e){if(active&&photoEpoch===epoch){endPhoto();say(e?.message||'Не удалось распознать текст.');}}
+ }
+ function photoSource(){
+  const img=photoOriginalNodes.find(n=>n.tagName==='IMG');
+  if(!img?.naturalWidth||!img.naturalHeight)throw Error('Дождитесь загрузки фотографии.');
+  if(img.naturalWidth*img.naturalHeight>32000000)throw Error('Изображение слишком большое для редактора.');
+  return img;
+ }
+ function drawPhoto(source,rect,rotate=false){
+  const canvas=el('canvas','svdv-photo-canvas');
+  const {x,y,w,h}=rect;canvas.width=rotate?h:w;canvas.height=rotate?w:h;
+  const ctx=canvas.getContext('2d');if(!ctx)throw Error('Редактор изображения недоступен.');
+  if(rotate){ctx.translate(h,0);ctx.rotate(Math.PI/2);}
+  ctx.drawImage(source,x,y,w,h,0,0,w,h);return canvas;
+ }
+ function showPhotoCanvas(canvas){
+  photoCanvas=canvas;stage.classList.add('svdv-photo-mode');stage.replaceChildren(canvas);
+ }
+ function saveImageAction(){
+  const saveImage=action('Сохранить','check',async()=>{
+   if(!photoCanvas||photoBusy)return;
+   photoBusy=true;saveImage.disabled=true;const epoch=photoEpoch;
+   try{
+    const type=file.type==='image/jpeg'?'image/jpeg':'image/png';
+    const blob=await new Promise((resolve,reject)=>photoCanvas.toBlob(b=>b?resolve(b):reject(Error('Не удалось создать копию.')),type,.94));
+    if(!active||photoEpoch!==epoch)return;
+    const next=new File([blob],file.name.replace(/\.[^.]+$/,'')+' · копия.'+(type==='image/jpeg'?'jpg':'png'),{type});
+    await savePhotoFile(next,{status:'ready'});
+    if(active&&photoEpoch===epoch){endPhoto();say('Копия сохранена. Оригинал не изменён.',3500);}
+   }catch(e){if(active&&photoEpoch===epoch)say(e?.message||'Не удалось сохранить фото.');}
+   finally{if(photoEpoch===epoch){photoBusy=false;saveImage.disabled=false;}}
+  });
+  return saveImage;
+ }
+ function rotatePhoto(){
+  if(!beginPhoto('rotate'))return;
+  try{
+   const img=photoSource();
+   showPhotoCanvas(drawPhoto(img,{x:0,y:0,w:img.naturalWidth,h:img.naturalHeight},true));
+   photoActions(photoCancel(),action('Повернуть','rotate',()=>{
+    if(photoBusy)return;
+    try{showPhotoCanvas(drawPhoto(photoCanvas,{x:0,y:0,w:photoCanvas.width,h:photoCanvas.height},true));}
+    catch(e){say(e.message);}
+   }),saveImageAction());
+  }catch(e){endPhoto();say(e.message);}
+ }
+ function cropPhoto(){
+  if(!beginPhoto('crop'))return;
+  try{
+   const img=photoSource(),w=img.naturalWidth,h=img.naturalHeight;
+   const canvas=drawPhoto(img,{x:0,y:0,w,h});
+   const wrap=el('div','svdv-photo-crop'),selection=el('div','svdv-crop-selection');
+   wrap.append(canvas,selection);stage.classList.add('svdv-photo-mode');stage.replaceChildren(wrap);
+   let start=null,rect=null;
+   const apply=action('Обрезать','crop',()=>{
+    if(!rect)return;
+    const x=Math.floor(rect.x*w),y=Math.floor(rect.y*h);
+    const cw=Math.min(w-x,Math.max(1,Math.round(rect.w*w))),ch=Math.min(h-y,Math.max(1,Math.round(rect.h*h)));
+    try{showPhotoCanvas(drawPhoto(img,{x,y,w:cw,h:ch}));photoActions(photoCancel(),saveImageAction());say('');}
+    catch(e){say(e.message);}
+   });apply.disabled=true;
+   const point=e=>{const r=canvas.getBoundingClientRect();return {x:Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)),y:Math.min(1,Math.max(0,(e.clientY-r.top)/r.height))};};
+   function update(p){
+    rect={x:Math.min(start.x,p.x),y:Math.min(start.y,p.y),w:Math.abs(p.x-start.x),h:Math.abs(p.y-start.y)};
+    Object.assign(selection.style,{left:rect.x*100+'%',top:rect.y*100+'%',width:rect.w*100+'%',height:rect.h*100+'%'});
+    selection.hidden=false;apply.disabled=rect.w*w<4||rect.h*h<4;
+   }
+   selection.hidden=true;
+   canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();start=point(e);canvas.setPointerCapture?.(e.pointerId);update(start);});
+   canvas.addEventListener('pointermove',e=>{if(start)update(point(e));});
+   canvas.addEventListener('pointerup',e=>{if(start)update(point(e));start=null;});
+   canvas.addEventListener('pointercancel',()=>{start=null;rect=null;selection.hidden=true;apply.disabled=true;});
+   photoActions(photoCancel(),apply);say('Проведите пальцем по области, которую нужно оставить.');
+  }catch(e){endPhoto();say(e.message);}
+ }
+ if(info.kind==='image'){
+  toolbar.classList.add('svdv-photo-toolbar');photoRail.setAttribute('aria-label','Инструменты фотографии');
+  if(onEdit)toolbar.append(action('Текст','ocr',()=>void recognizePhoto()));
+  toolbar.append(action('Обрезать','crop',cropPhoto),action('Повернуть','rotate',rotatePhoto));
  }
  const doShare=()=>{
   if(typeof navigator==='undefined'||typeof navigator.share!=='function'){
@@ -596,7 +725,12 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  }
  if(onSayvi&&!editAction)moreBody.append(action('Сэйви поможет','sayvi',()=>onSayvi('review')));
  moreBody.addEventListener('click',event=>{if(event.target.closest('button,a'))more.open=false;});
- more.append(moreBody);toolbar.append(more);more.hidden=!Array.from(moreBody.children).some(n=>!n.hidden);
+ more.append(moreBody);
+ if(info.kind==='image'){
+  normalPhotoActions=Array.from(toolbar.children);
+  photoActions(...normalPhotoActions);toolbar.append(photoRail);
+ }
+ toolbar.append(more);more.hidden=!Array.from(moreBody.children).some(n=>!n.hidden);
  const dismissMore=event=>{if(!more.contains(event.target))more.open=false;};
  const closeMoreOnEscape=event=>{if(event.key==='Escape'&&more.open){event.preventDefault();more.open=false;summary.focus();}};
  document.addEventListener('pointerdown',dismissMore,{passive:true});
@@ -609,12 +743,12 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   const close=el('button','svdv-sheet-close');close.type='button';close.setAttribute('aria-label','Назад');close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 5-7 7 7 7"/></svg>';
   doneControl=el('button','svdv-inline-done');doneControl.type='button';doneControl.hidden=true;doneControl.setAttribute('aria-label','Готово · сохранить копию');doneControl.append(icon('check'));
   const top=el('div','svdv-sheet-top');top.append(close,copy,doneControl);header.replaceChildren(grip,top);
-  async function requestClose(){if(markupSession){markupSession.requestClose();return;}if(inline?.saving)return;if(inline&&!await persistInline())return;window.SEYVEO_DOCS_STUDIO?.refreshDrafts?.(area);sheet.close();}
+  async function requestClose(){if(photoMode){if(photoBusy&&photoMode!=='text')return;endPhoto();return;}if(markupSession){markupSession.requestClose();return;}if(inline?.saving)return;if(inline&&!await persistInline())return;window.SEYVEO_DOCS_STUDIO?.refreshDrafts?.(area);sheet.close();}
   close.addEventListener('click',()=>void requestClose());
   sheet.addEventListener('cancel',e=>{e.preventDefault();void requestClose();});
   window.SEYVEO_SHEET_NAVIGATION?.attach(grip,
    ()=>sheet.classList.add('is-expanded'),
-   ()=>{if(inline||markupSession||sheet.classList.contains('svdv-edit-fullscreen'))return;if(sheet.classList.contains('is-expanded'))sheet.classList.remove('is-expanded');else void requestClose();});
+   ()=>{if(inline||markupSession||photoMode||sheet.classList.contains('svdv-edit-fullscreen'))return;if(sheet.classList.contains('is-expanded'))sheet.classList.remove('is-expanded');else void requestClose();});
   sheet.append(root);target.replaceChildren(sheet);
   sheet.addEventListener('close',()=>{if(active){session.destroy();onClose();}},{once:true});
   sheet.addEventListener('click',e=>{if(e.target===sheet){const r=sheet.getBoundingClientRect();if(e.clientY<r.top||e.clientX<r.left||e.clientX>r.right)void requestClose();}});
