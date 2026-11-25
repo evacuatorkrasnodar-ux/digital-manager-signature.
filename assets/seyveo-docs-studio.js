@@ -137,42 +137,7 @@ function shareMessage(status,format){
  return 'Системное меню недоступно. Воспользуйтесь обычным сохранением файла.';
 }
 function textPdf(text){
- if(typeof text!=='string'||!text.trim())throw Error('Введите текст');
- const lines=[],measure=$('canvas').getContext('2d');
- if(!measure)throw Error('Canvas недоступен');
- measure.font='28px Arial,sans-serif';
- const pageWidth=900,pageHeight=1273,margin=70;
- const usable=pageWidth-2*margin;
- for(const raw of text.slice(0,12000).split(/\r?\n/)){
-  if(!raw.trim()){lines.push('');continue;}
-  let line='';
-  for(const word of raw.trim().split(/\s+/)){
-   const candidate=line?line+' '+word:word;
-   if(measure.measureText(candidate).width<=usable){line=candidate;continue;}
-   if(line){lines.push(line);line='';}
-   // Long identifiers and words must fit the printable width as well.
-   for(const ch of word){
-    if(line&&measure.measureText(line+ch).width>usable){lines.push(line);line='';}
-    line+=ch;
-   }
-  }
-  if(line)lines.push(line);
- }
- const pages=[];
- while(lines.length){
-  if(pages.length>=12)throw Error('Слишком много страниц');
-  const canvas=$('canvas');
-  canvas.width=pageWidth;canvas.height=pageHeight;
-  const ctx=canvas.getContext('2d');if(!ctx)throw Error('Canvas недоступен');
-  ctx.fillStyle='#fff';ctx.fillRect(0,0,pageWidth,pageHeight);
-  ctx.fillStyle='#172027';ctx.font='28px Arial,sans-serif';
-  let y=100;
-  // Enforce the printable width again at drawing time: the font metrics
-  // on a rendering canvas can differ from those of the measurement canvas.
-  for(const line of lines.splice(0,31)){ctx.fillText(line,margin,y,usable);y+=36;}
-  pages.push(jpegOf(canvas));
- }
- return window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(pages);
+ return window.SEYVEO_DOCS_EXPORT.pdfFromText(text,()=>$('canvas'));
 }
 function labelRow(title,note){
  const node=$('div','sv-doc-tool-lead');

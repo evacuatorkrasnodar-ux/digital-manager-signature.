@@ -62,6 +62,55 @@ function pdfFromJpegs(pages){
  put('trailer\n<< /Size '+count+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n');
  return new Blob(parts,{type:'application/pdf'});
 }
+// Text PDF uses one fixed A4-ratio canvas for measuring AND drawing.
+// Never truncate the source text or shrink a paragraph to fit one line.
+function pdfFromText(text,createCanvas=()=>document.createElement('canvas')){
+ if(typeof text!=='string'||!text.trim())throw Error('Введите текст');
+ if(text.length>12000)throw Error('Введите текст до 12 000 знаков');
+ const W=900,H=1273,M=70,guard=4,font='28px Arial,sans-serif',leading=36;
+ const x=M+guard,firstBaseline=100,usable=W-2*x;
+ const rows=Math.floor((H-M-8-firstBaseline)/leading)+1;
+ const canvas=createCanvas();canvas.width=W;canvas.height=H;
+ const ctx=canvas.getContext('2d');if(!ctx)throw Error('Canvas недоступен');
+ ctx.font=font;ctx.textAlign='left';ctx.textBaseline='alphabetic';
+ const fits=value=>{
+  const m=ctx.measureText(value);
+  return Math.max(m.width,m.actualBoundingBoxRight||0)<=usable&&Math.max(0,m.actualBoundingBoxLeft||0)<=guard;
+ };
+ const lines=[];
+ const push=line=>{lines.push(line);if(lines.length>rows*12)throw Error('Слишком много страниц PDF (максимум 12). Разделите документ.');};
+ const segmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter(undefined,{granularity:'grapheme'}):null;
+ const characters=value=>segmenter?Array.from(segmenter.segment(value),part=>part.segment):Array.from(value);
+ for(const raw of text.replace(/\r\n?/g,'\n').replace(/\t/g,'    ').split('\n')){
+  let line='';
+  for(const token of raw.match(/\s+|\S+/gu)||[]){
+   if(fits(line+token)){line+=token;continue;}
+   if(line){push(line);line='';}
+   if(fits(token)){line=token;continue;}
+   for(const ch of characters(token)){
+    if(line&&!fits(line+ch)){push(line);line='';}
+    if(!fits(ch))throw Error('Символ не помещается на странице PDF');
+    line+=ch;
+   }
+  }
+  push(line);
+ }
+ const pages=[];
+ for(let i=0;i<lines.length;i+=rows){
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#172027';ctx.font=font;ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  let y=firstBaseline;
+  for(const line of lines.slice(i,i+rows)){
+   if(!fits(line))throw Error('Строка выходит за поля страницы PDF');
+   ctx.fillText(line,x,y,usable);y+=leading;
+  }
+  const encoded=canvas.toDataURL('image/jpeg',0.90);
+  if(!encoded.startsWith('data:image/jpeg;base64,'))throw Error('Не удалось сформировать страницу PDF');
+  const jpegBytes=Uint8Array.from(atob(encoded.split(',')[1]),ch=>ch.charCodeAt(0));
+  pages.push({width:W,height:H,jpegBytes});
+ }
+ return pdfFromJpegs(pages);
+}
 const escapeXml=value=>value.replace(/&/g,'&amp;').replace(/</g,'&lt;')
  .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
 function crc32(data){
@@ -155,5 +204,5 @@ async function readScanPdf(file){
  if(!/^xref\n0 \d+\n[\s\S]*?trailer\n<< \/Size \d+ \/Root 1 0 R >>\nstartxref\n\d+\n%%EOF\n$/.test(trailer)||trailer.length>2000)throw Error('Неизвестная структура PDF.');
  return pages;
 }
-window.SEYVEO_DOCS_EXPORT=Object.freeze({pdfFromJpegs,docxFromText,readScanPdf});
+window.SEYVEO_DOCS_EXPORT=Object.freeze({pdfFromJpegs,pdfFromText,docxFromText,readScanPdf});
 })();
