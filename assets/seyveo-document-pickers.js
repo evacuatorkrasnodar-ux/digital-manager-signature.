@@ -42,36 +42,41 @@ const pad=n=>String(n).padStart(2,'0');
 const iso=(y,m,d)=>String(y).padStart(4,'0')+'-'+pad(m+1)+'-'+pad(d);
 const today=()=>{const n=new Date();return iso(n.getFullYear(),n.getMonth(),n.getDate());};
 function dateLabel(v){return /^\d{4}-\d{2}-\d{2}$/.test(v)?v.split('-').reverse().join('.'):'';}
-function date(label,initial='',placeholder='Выбрать дату'){
+function date(label,initial='',placeholder='Выбрать дату',scope='personal'){
  const b=control(label,placeholder,cal,trigger=>{
   const {d,body}=sheet(trigger,label);
   const now=new Date(),chosen=trigger.value||today(),parts=chosen.split('-').map(Number);
-  let year=parts[0],month=parts[1]-1;
+  let year=parts[0],month=parts[1]-1,selection=chosen;
   const nav=el('div','sv-doc-picker-cal-nav'),grid=el('div','sv-doc-picker-cal-grid'),title=el('button','sv-doc-picker-month');title.type='button';
   const move=delta=>{const next=new Date(year,month+delta,1);year=next.getFullYear();month=next.getMonth();paint();};
   const prev=btn('','sv-doc-picker-round',()=>move(-1)),next=btn('','sv-doc-picker-round',()=>move(1));prev.append(glyph('<path d="m14 5-7 7 7 7"/>'));next.append(glyph(arrow));prev.setAttribute('aria-label','Предыдущий месяц');next.setAttribute('aria-label','Следующий месяц');
-  nav.append(prev,title,next);body.append(nav,grid);
+  const week=el('div','sv-doc-picker-cal-grid');
+  for(const name of ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'])week.append(el('span','sv-doc-picker-weekday',name));
+  const agenda=el('div','sv-doc-picker-agenda');
+  nav.append(prev,title,next);body.append(nav,week,grid,agenda);
   function paint(){
-   title.textContent=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(new Date(year,month,1)).replace(/ г\.$/,'');
-   grid.replaceChildren();for(const name of ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'])grid.append(el('span','sv-doc-picker-weekday',name));
-   const offset=(new Date(year,month,1).getDay()+6)%7;
-   for(let i=0;i<offset;i++)grid.append(el('span',''));
-   for(let day=1;day<=new Date(year,month+1,0).getDate();day++){
-    const v=iso(year,month,day),n=btn(String(day),'sv-doc-picker-day',()=>{trigger.setValue(v,dateLabel(v),true);d.close();});
-    n.setAttribute('aria-label',dateLabel(v));if(v===today())n.classList.add('is-today');if(v===trigger.value){n.classList.add('is-current');n.setAttribute('aria-pressed','true');}grid.append(n);
+   window.SEYVEO_SHARED_DATE_CALENDAR.render(new Date(year,month,1),{value:selection},title,grid,{scope,dayClass:'sv-doc-picker-day',selectedClass:'is-current',onSelect:value=>{selection=value;paint();}});
+   const entries=window.SEYVEO_CALENDAR_PICKER_DATA?.day(selection,scope)||[];
+   agenda.replaceChildren(el('strong','',dateLabel(selection)));
+   if(!entries.length){agenda.append(el('small','','На этот день нет запланированных дел.'));return;}
+   for(const item of entries.slice(0,4)){
+    const row=el('div','sv-doc-picker-agenda-row'),dot=el('i','');dot.style.backgroundColor=item.color;
+    row.append(dot,el('span','',item.title),el('small','',item.time));agenda.append(row);
    }
+   if(entries.length>4)agenda.append(el('small','','Ещё '+(entries.length-4)+' дел'));
   }
   title.addEventListener('click',()=>{
    const years=choice('Год',Array.from({length:131},(_,i)=>[String(now.getFullYear()+20-i),String(now.getFullYear()+20-i)]),String(year));
    const months=choice('Месяц',Array.from({length:12},(_,i)=>[String(i),new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(2026,i,1))]),String(month));
-   const pane=el('div','sv-doc-picker-period');pane.append(years,months,btn('Выбрать месяц','sv-doc-picker-option',()=>{year=Number(years.value);month=Number(months.value);pane.remove();nav.hidden=false;grid.hidden=false;paint();}));nav.hidden=true;grid.hidden=true;body.prepend(pane);
+   const pane=el('div','sv-doc-picker-period');pane.append(years,months,btn('Выбрать месяц','sv-doc-picker-option',()=>{year=Number(years.value);month=Number(months.value);pane.remove();nav.hidden=false;grid.hidden=false;week.hidden=false;agenda.hidden=false;paint();}));nav.hidden=true;grid.hidden=true;week.hidden=true;agenda.hidden=true;body.prepend(pane);
   });
-  const actions=el('div','sv-doc-picker-date-actions');actions.append(btn('Сегодня','sv-doc-picker-link',()=>{const v=today();trigger.setValue(v,dateLabel(v),true);d.close();}),btn('Очистить','sv-doc-picker-link',()=>{trigger.setValue('','',true);d.close();}));body.append(actions);paint();
+  const actions=el('div','sv-doc-picker-date-actions');actions.append(btn('Сегодня','sv-doc-picker-link',()=>{selection=today();const n=new Date();year=n.getFullYear();month=n.getMonth();paint();}),btn('Очистить','sv-doc-picker-link',()=>{trigger.setValue('','',true);d.close();}));
+  body.append(actions,btn('Выбрать дату','sv-doc-picker-option sv-doc-picker-done',()=>{trigger.setValue(selection,dateLabel(selection),true);d.close();}));paint();
  });
  b.setValue(initial,dateLabel(initial));return b;
 }
-function period(label,kind){
- if(kind==='date')return date(label);
+function period(label,kind,scope='personal'){
+ if(kind==='date')return date(label,'','Выбрать дату',scope);
  const b=control(label,'Выбрать период',arrow,trigger=>{
   const {d,body}=sheet(trigger,label),y=new Date().getFullYear(),years=Array.from({length:31},(_,i)=>[String(y+5-i),String(y+5-i)]);
   const old=trigger.value.match(/\b\d{4}\b/)?.[0]||String(kind==='year'?y-1:y);
