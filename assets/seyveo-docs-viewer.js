@@ -140,7 +140,7 @@ async function readPdfText(file,isActive){
   return texts.join('\n\n');
  }finally{try{await task.destroy();}catch{}}
 }
-function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy=null,asSheet=false,onClose=()=>{}}={}){
+function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy=null,area=null,asSheet=false,onClose=()=>{}}={}){
  if(!target||!file||typeof file.name!=='string'||typeof file.size!=='number'||
     file.size<1||file.size>MAX||typeof file.text!=='function')return false;
  const info=format(file.name,file.type);
@@ -158,7 +158,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  header.append(glyph,copy);root.append(header);
  const stage=el('div','svdv-stage');
  let previewNeedsOriginal=info.kind==='original';
- let originalAction=null;
+ let originalAction=null,loadedText=null,inline=null,doneControl=null,stopViewport=null;
  const requireOriginal=()=>{previewNeedsOriginal=true;if(originalAction)originalAction.hidden=false;};
  if(info.kind==='image'){
   const img=el('img','svdv-picture');
@@ -237,8 +237,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   const pre=el('pre','svdv-text','Открываем текст…');
   stage.append(pre);
   file.text().then(text=>{
-   if(active&&pre.isConnected)pre.textContent=text.slice(0,120000)||
-    'Документ пуст.';
+   if(active&&pre.isConnected){loadedText=text;pre.textContent=text.slice(0,120000)||'Документ пуст.';}
   }).catch(()=>{
    if(active&&pre.isConnected){pre.textContent='Не удалось открыть текст.';requireOriginal();}
   });
@@ -252,7 +251,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    if(!active||!stage.isConnected)return;
    stage.removeAttribute('aria-busy');
    if(!text)throw Error('empty-docx-text');
-   pre.textContent=text;
+   loadedText=text;pre.textContent=text;
   }).catch(()=>{
    if(!active||!stage.isConnected)return;
    stage.removeAttribute('aria-busy');
@@ -268,7 +267,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  const notice=el('p','svdv-notice');
  notice.setAttribute('role','status');
  const say=(value)=>{if(active)notice.textContent=value;};
- const supportsPrint=info.kind==='pdf'||info.kind==='image';
+ const supportsPrint=info.kind==='pdf'||info.kind==='image'||info.kind==='text'||info.ext==='docx';
  const toolbar=el('div','svdv-toolbar');
  const save=el('a','svdv-action svdv-primary');
  save.href=objectUrl;save.download=file.name||'Документ';
@@ -276,47 +275,113 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  save.append(icon('download'),el('span','','Сохранить'));
  toolbar.append(save);
  let editAction=null;
+ const draftAPI=()=>area&&window.SEYVEO_DOCUMENT_DRAFTS;
+ function persistInline(){
+  if(!inline||!draftAPI())return Promise.resolve(true);
+  const state=inline;if(!state.changed)return Promise.resolve(true);
+  return draftAPI().save(area,{id:state.id,name:file.name.replace(/\.[^.]+$/,''),text:state.input.value,format:info.kind==='pdf'?'pdf':'docx',style:state.style,edited:true,fromScan:info.kind==='pdf',template:'',updatedAt:Date.now()}).then(()=>true,e=>{if(active)say(e?.message||'Не удалось сохранить черновик.');return false;});
+ }
+ function startInline(value){
+  if(!active||inline)return;
+  if(value.length>12000){say('Документ больше 12 000 знаков. Редактирование копии пока недоступно.');return;}
+  const api=window.SEYVEO_EDITOR_CAPSULE;
+  if(!api){say('Инструменты редактора недоступны.');return;}
+  const input=el('textarea','svdv-inline-text');input.value=value;input.maxLength=12000;input.spellcheck=true;input.setAttribute('aria-label','Текст документа');
+  const rail=api.attach(el('div','svdv-inline-rail'),'word');
+  rail.setAttribute('aria-label','Инструменты документа');
+  const state={input,rail,id:draftAPI()?.id(),changed:false,style:{size:12,alignment:'left',heading:false},history:[],redo:[],last:value,saving:false,originalNodes:Array.from(stage.childNodes),oldTop:stage.scrollTop};
+  inline=state;
+  const update=()=>{input.style.fontSize=(state.style.size*4/3)+'px';input.style.textAlign=state.style.alignment;};
+  const changed=()=>{state.changed=true;void persistInline();};
+  const record=next=>{if(next===state.last)return;state.history.push(state.last);if(state.history.length>60)state.history.shift();state.redo.length=0;state.last=next;changed();sync();};
+  const set=next=>{input.value=next;state.last=next;changed();sync();};
+  const size=el('select','svdv-inline-size');size.setAttribute('aria-label','Размер текста');size.dataset.svEditorTool='size';
+  for(const n of [10,11,12,14,16,18,20,24]){const opt=el('option','',n+' пт');opt.value=String(n);size.append(opt);}size.value='12';
+  size.addEventListener('change',()=>{state.style.size=Number(size.value);update();changed();});
+  const align=el('select','svdv-inline-align');align.setAttribute('aria-label','Выравнивание');align.dataset.svEditorTool='align';
+  for(const [id,label] of [['left','Слева'],['center','По центру'],['right','Справа']]){const opt=el('option','',label);opt.value=id;align.append(opt);}
+  align.addEventListener('change',()=>{state.style.alignment=align.value;update();changed();});
+  const make=(id,label,markup,handler)=>api.button(id,label,markup,handler);
+  const tidy=make('sayvi','Сэйви · привести в порядок',api.artwork('sayvi'),()=>{try{const next=api.tidyDocument(input.value);record(next);input.value=next;say('Лишние пробелы и пустые строки убраны.');}catch(e){say(e.message);}});
+  const undo=make('undo','Отменить',api.artwork('undo'),()=>{if(state.history.length){state.redo.push(input.value);set(state.history.pop());}});
+  const redo=make('redo','Повторить',api.artwork('redo'),()=>{if(state.redo.length){state.history.push(input.value);set(state.redo.pop());}});
+  function sync(){undo.disabled=!state.history.length;redo.disabled=!state.redo.length;}
+  const textTool=make('format','Редактировать текст','<span class="sv-smart-aa">Aa</span>',()=>input.focus({preventScroll:true}));
+  const done=make('done','Готово · сохранить копию',window.SEYVEO_DOCUMENT_ICONS?.markup('check')||'✓',()=>void finishInline());
+  if(doneControl){doneControl.hidden=false;doneControl.onclick=()=>void finishInline();}else rail.append(done);
+  rail.append(size,align,textTool,tidy,undo,redo);api.prioritize(rail,'word');sync();update();
+  input.addEventListener('input',()=>record(input.value));
+  rail.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault();});
+  more.open=false;toolbar.hidden=true;root.insertBefore(rail,notice);
+  stage.classList.add('svdv-inline-editing');stage.replaceChildren(input);
+  if(sheet)stopViewport=api.viewport(sheet);
+  say(info.kind==='pdf'||info.ext==='docx'?'Текстовая копия · исходный файл сохраняется без изменений.':'Редактирование текста');
+  input.focus({preventScroll:true});input.setSelectionRange(0,0);stage.scrollTop=state.oldTop;
+ }
+ function leaveInline(){
+  const state=inline;if(!state)return;
+  stopViewport?.();stopViewport=null;sheet?.classList.remove('sv-editor-keyboard-open');
+  state.rail.remove();stage.classList.remove('svdv-inline-editing');toolbar.hidden=false;
+  if(doneControl){doneControl.hidden=true;doneControl.onclick=null;}
+  inline=null;
+ }
+ async function finishInline(){
+  const state=inline;if(!state||state.saving)return;
+  if(!state.changed){leaveInline();stage.replaceChildren(...state.originalNodes);stage.scrollTop=state.oldTop;say('');return;}
+  if(!state.input.value.trim()){say('Введите текст документа.');return;}
+  state.saving=true;state.input.readOnly=true;
+  if(doneControl)doneControl.disabled=true;
+  try{
+   if(!await persistInline())return;
+   const text=state.input.value,ex=window.SEYVEO_DOCS_EXPORT;
+   const ext=info.kind==='pdf'?'pdf':info.ext==='docx'?'docx':info.ext;
+   const blob=ext==='pdf'?ex.pdfFromText(text,()=>document.createElement('canvas'),state.style):ext==='docx'?ex.docxFromText(text,state.style):new Blob([text],{type:'text/plain;charset=utf-8'});
+   const name=file.name.replace(/\.[^.]+$/,'').replace(/ · копия$/,'')+' · копия.'+ext;
+   const next=new File([blob],name,{type:blob.type});
+   if(onSaveCopy)await onSaveCopy(next,{text,status:'ready'});
+   else{const link=el('a');link.href=URL.createObjectURL(next);link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),60000);}
+   if(draftAPI())await draftAPI().remove(area,state.id).catch(()=>{});
+   if(!active)return;
+   const old=objectUrl;objectUrl=URL.createObjectURL(next);file=next;loadedText=text;
+   save.href=objectUrl;save.download=name;save.setAttribute('aria-label','Сохранить '+name);
+   if(originalAction)originalAction.href=objectUrl;
+   copy.querySelector('.svdv-name').textContent=name;copy.querySelector('.svdv-meta').textContent=info.label+' · '+Math.max(1,Math.ceil(next.size/1024))+' КБ';
+   // Pending renders of the original are detached; the edited copy remains on this screen.
+   leaveInline();stage.classList.remove('svdv-pdf-stage');stage.classList.add('svdv-stage-document');
+   const preview=el('pre','svdv-text',text);preview.style.fontSize=(state.style.size*4/3)+'px';preview.style.textAlign=state.style.alignment;
+   stage.replaceChildren(preview);URL.revokeObjectURL(old);say('Копия сохранена. Оригинал не изменён.');
+  }catch(e){if(active)say(e?.message||'Не удалось сохранить копию. Черновик сохранён.');}
+  finally{state.saving=false;state.input.readOnly=false;if(doneControl)doneControl.disabled=false;}
+ }
  const openMarkup=()=>{if(!window.SEYVEO_PDF_MARKUP?.open(file,{parent:root,loadPdf,onSave:onSaveCopy,onSayvi}))say('Разметка PDF недоступна.');};
  if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf')){
   const edit=action(info.kind==='image'?'Обработка изображения':info.kind==='pdf'?'Редактировать текст PDF':'Редактировать текст','edit',async()=>{
    if(edit.disabled)return;
    edit.disabled=true;
    try{
-    let payload;
-    if(info.kind==='text'||info.ext==='docx'){
-     const value=info.ext==='docx'?await readDocxText(file):await file.text();
-     if(!active)return;
-     if(value.length>12000){say('Документ больше 12 000 знаков. Редактирование копии пока недоступно.');return;}
-     if(!window.confirm('Открыть редактируемую текстовую копию? Исходное оформление может отличаться, оригинал не изменится.'))return;
-     payload={kind:'word',text:value,title:file.name.replace(/\.[^.]+$/,'')};
-    }else if(info.kind==='image'){
-     payload={kind:'pages',file};
-    }else{
-     const sourceText=window.SEYVEO_DOCUMENT_FILES?.sourceText?.(file)||'';
-     if(sourceText.trim()){
-      // A SEYVEO-created PDF already has an editable source. Opening a
-      // separate draft is non-destructive and needs no confirmation.
-      payload={kind:'word',text:sourceText,title:file.name.replace(/\.[^.]+$/,''),format:'pdf'};
-     }else{
-     if(!window.confirm('Создать текстовую копию стороннего PDF? Исходное оформление может отличаться, оригинал сохранится.'))return;
-     say('Подготавливаем текст…');
-     let scanned=null;
-     try{scanned=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);}catch{}
-     if(!active)return;
-     if(scanned?.length){
-      payload={kind:'pdf-text',file,isActive:()=>active};
-      say('Распознаём текст страниц…');
-     }else{
-      const value=await readPdfText(file,()=>active);
+    if(info.kind==='image'){
+     const ok=await onEdit({kind:'pages',file});
+     if(ok&&sheet?.open)sheet.close();
+     else if(!ok&&active)say('Обработка изображения пока недоступна.');
+     return;
+    }
+    if(inline)return;
+    let value=loadedText??(window.SEYVEO_DOCUMENT_FILES?.sourceText?.(file)||null);
+    if(value===null){
+     if(info.kind==='text')value=await file.text();
+     else if(info.ext==='docx')value=await readDocxText(file);
+     else{
+      say('Подготавливаем текст…');
+      let scanned=null;try{scanned=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);}catch{}
       if(!active)return;
-      if(!value.trim())throw Error('Текст не найден.');
-      payload={kind:'word',text:value,title:file.name.replace(/\.[^.]+$/,''),format:'pdf'};
-     }
+      if(scanned?.length){
+       say('Распознаём текст страниц…');
+       value=await onEdit({kind:'pdf-text',file,isActive:()=>active,inlineTextOnly:true});
+       if(typeof value!=='string'){say('Распознавание отменено или недоступно.');return;}
+      }else value=await readPdfText(file,()=>active);
      }
     }
-    const ok=await onEdit(payload);
-    if(!ok&&active)say('Этот формат пока нельзя редактировать здесь. Оригинал не изменён.');
-    else if(ok&&sheet?.open)sheet.close();
+    if(active)startInline(value);
    }catch(e){if(active)say(e?.message||'Не удалось открыть редактор.');}
    finally{edit.disabled=false;}
   });
@@ -336,7 +401,6 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     if(event.target.closest('button,a,input,textarea,select,summary,[contenteditable]'))return;
     if(!event.target.closest('.svdv-reader-page,.svdv-text'))return;
     if(window.getSelection?.()?.toString().trim())return;
-    if(info.kind==='pdf'&&!window.SEYVEO_DOCUMENT_FILES?.sourceText?.(file)?.trim()){openMarkup();return;}
     if(!edit.disabled)edit.click();
    });
   }
@@ -357,6 +421,18 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   }catch{say('Не удалось открыть системное меню.');}
  };
  toolbar.append(action('Поделиться','share',doShare));
+ if(supportsPrint)toolbar.append(action('Печать','print',()=>{
+  let url=objectUrl,temporary=false;
+  try{
+   if(info.kind==='text'||info.ext==='docx'){
+    if(loadedText===null){say('Дождись загрузки текста.');return;}
+    url=URL.createObjectURL(window.SEYVEO_DOCS_EXPORT.pdfFromText(loadedText));temporary=true;
+   }
+   const tab=window.open(url,'_blank','noopener,noreferrer');
+   if(temporary)setTimeout(()=>URL.revokeObjectURL(url),120000);
+   say('В открытом документе выбери системную печать.');
+  }catch(e){say(e?.message||'Не удалось подготовить печать.');}
+ }));
  const more=el('details','svdv-more');
  const summary=el('summary','svdv-more-button');
  summary.append(icon('more'),el('span','','Ещё'));
@@ -370,13 +446,6 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  openLink.hidden=!previewNeedsOriginal;
  originalAction=openLink;
  moreBody.append(openLink);
- if(supportsPrint){
-  moreBody.append(action('Печать','print',()=>{
-   const tab=window.open(objectUrl,'_blank','noopener,noreferrer');
-   if(!tab)requireOriginal();
-   say(tab?'В открытом документе выбери системную печать.':'Разреши открытие новой вкладки или открой файл вне SEYVEO для печати.');
-  }));
- }
  if(info.kind==='image'&&onSignImage){
   moreBody.append(action('Подписать скан','signature',()=>{
    try{
@@ -410,21 +479,22 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   sheet.setAttribute('aria-label','Просмотр '+file.name);
   const grip=el('div','svdv-sheet-grip');grip.setAttribute('aria-hidden','true');
   const close=el('button','svdv-sheet-close');close.type='button';close.setAttribute('aria-label','Назад');close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 5-7 7 7 7"/></svg>';
-  const expand=el('button','svdv-sheet-expand');expand.type='button';expand.setAttribute('aria-label','Развернуть');expand.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m7 13 5-5 5 5"/></svg>';
-  const top=el('div','svdv-sheet-top');top.append(close,copy,expand);header.replaceChildren(grip,top);
-  close.addEventListener('click',()=>sheet.close());
-  expand.addEventListener('click',()=>{const full=sheet.classList.toggle('is-expanded');expand.setAttribute('aria-label',full?'Свернуть':'Развернуть');expand.style.transform=full?'rotate(180deg)':'';});
-  window.SEYVEO_SHEET_NAVIGATION?.attach(header,
-   ()=>{if(!sheet.classList.contains('is-expanded'))expand.click();},
-   ()=>{if(sheet.classList.contains('is-expanded'))expand.click();else close.click();});
+  doneControl=el('button','svdv-inline-done');doneControl.type='button';doneControl.hidden=true;doneControl.setAttribute('aria-label','Готово · сохранить копию');doneControl.append(icon('check'));
+  const top=el('div','svdv-sheet-top');top.append(close,copy,doneControl);header.replaceChildren(grip,top);
+  async function requestClose(){if(inline?.saving)return;if(inline&&!await persistInline())return;sheet.close();}
+  close.addEventListener('click',()=>void requestClose());
+  sheet.addEventListener('cancel',e=>{e.preventDefault();void requestClose();});
+  window.SEYVEO_SHEET_NAVIGATION?.attach(grip,
+   ()=>sheet.classList.add('is-expanded'),
+   ()=>{if(sheet.classList.contains('is-expanded'))sheet.classList.remove('is-expanded');else void requestClose();});
   sheet.append(root);target.replaceChildren(sheet);
   sheet.addEventListener('close',()=>{if(active){session.destroy();onClose();}},{once:true});
-  sheet.addEventListener('click',e=>{if(e.target===sheet){const r=sheet.getBoundingClientRect();if(e.clientY<r.top||e.clientX<r.left||e.clientX>r.right)sheet.close();}});
+  sheet.addEventListener('click',e=>{if(e.target===sheet){const r=sheet.getBoundingClientRect();if(e.clientY<r.top||e.clientX<r.left||e.clientX>r.right)void requestClose();}});
  }else target.replaceChildren(root);
  const session=Object.freeze({
   destroy(){
    if(!active)return;
-   active=false;const markup=root.querySelector('.sv-pdf-markup[open]');if(markup)markup.close();if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}if(readerDialog?.open)readerDialog.close();readerDialog=null;for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
+   stopViewport?.();stopViewport=null;active=false;const markup=root.querySelector('.sv-pdf-markup[open]');if(markup)markup.close();if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}if(readerDialog?.open)readerDialog.close();readerDialog=null;for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
    document.removeEventListener('pointerdown',dismissMore);
    document.removeEventListener('keydown',closeMoreOnEscape);
    URL.revokeObjectURL(objectUrl);
