@@ -26,6 +26,8 @@ jobs:
         run: node tools/test-canonical-nav.cjs
       - name: Verify shared sheet gesture safety
         run: node tools/test-sheet-navigation.cjs
+      - name: Protect stable route and scroll updates
+        run: node tools/test-stable-view-updates.cjs
       - name: Verify restored original Tasks page header
         run: node tools/test-compact-tasks-header.cjs
       - name: Check black vinyl, white star and one role-safe searchable business chat

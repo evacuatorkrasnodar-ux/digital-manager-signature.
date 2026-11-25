@@ -154,7 +154,7 @@
  month.addEventListener('click',()=>{
   location.hash='#calendar';
   resetWorkScroll();
-  requestAnimationFrame(sync);
+  scheduleSync();
  });
  document.addEventListener('seyveo:agenda-month-changed',event=>{
   const detail=event.detail||{};
@@ -529,7 +529,15 @@
   return tasks.dataset.workView==='business'?'business':tasks.dataset.workView==='employee'?'employee':'personal';
  }
  let svAgendaWasVisible=null;
+ let syncFrame=0;
+ function scheduleSync(){
+  if(syncFrame)return;
+  syncFrame=requestAnimationFrame(()=>{syncFrame=0;sync()});
+ }
  function sync(){
+  // A direct route commit takes precedence over queued refreshes.
+  if(syncFrame){cancelAnimationFrame(syncFrame);syncFrame=0;}
+
   const active=activeSection();
   const managerTasks=!tasks.hidden&&oldTasks.dataset.manager==='true';
   const managerCal=!calendar.hidden&&!oldCalendar.hidden;
@@ -587,9 +595,10 @@
    // Older CSS has display:flex!important. Preserve hidden semantics even
    // if a previously cached stylesheet arrives after this component.
    tab.style.setProperty('display',hide?'none':'flex','important');
-   tab.textContent=employeeMode
+   const nextTabLabel=employeeMode
     ? (name==='personal'?'Мои дела':name==='employee'?'Моя работа':name==='wallet'?'Кошелёк':name==='business'?'Кабинет':'Блокнот')
     : name==='personal'?'Мои дела':name==='notes'?'Блокнот':name==='wallet'?'Кошелёк':name==='business'?'Кабинет':'Моя работа';
+   if(tab.textContent!==nextTabLabel)tab.textContent=nextTabLabel;
   }
   // Keep the exact same header footprint as Tasks/Notebook/Cabinet so
   // Wallet's shared capsule starts at the identical vertical coordinate.
@@ -607,14 +616,19 @@
   heading.dataset.businessTools=String(active==='business'&&!history);
   if(company)company.hidden=!visible||active!=='business'||history;
   if(toolMode&&(!visible||active!=='personal'||history)){setMode('');return;}
-  searchTasks.innerHTML=nested?searchIcon:historyIcon;
+  const nextSearchIcon=nested?'search':'history';
+  if(searchTasks.dataset.svHeaderIcon!==nextSearchIcon){
+   searchTasks.innerHTML=nested?searchIcon:historyIcon;
+   searchTasks.dataset.svHeaderIcon=nextSearchIcon;
+  }
   searchTasks.setAttribute('aria-label',nested?'Поиск по делам':'История и все дела');
   searchTasks.setAttribute('aria-expanded',String(nested&&searchOpen));
   nav.dataset.taskFilters=String(nested);
   nav.setAttribute('aria-label',nested?'Фильтры дел':managerMode?'Мои дела, Блокнот, Кошелёк и Кабинет':employeeMode?'Мои дела и Моя работа':'Мои дела, Блокнот и Кошелёк');
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
-  title.textContent=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
+  const nextTitle=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
+  if(title.textContent!==nextTitle)title.textContent=nextTitle;
   // Every top-level Work section is already named inside the permanent
   // segmented capsule. Never display a duplicate page title above it.
   // Keep titles for nested All Tasks/History and the standalone Calendar.
@@ -646,8 +660,9 @@
    const nav=document.getElementById('svTasksDateNav');
    const name=nav?.querySelector('.sv-agenda-month-name')?.textContent;
    const year=nav?.querySelector('.sv-agenda-year')?.textContent;
-   if(name)month.querySelector('.month-name').textContent=name;
-   if(year)month.querySelector('.month-year').textContent=year;
+   const monthName=month.querySelector('.month-name'),monthYear=month.querySelector('.month-year');
+   if(name&&monthName.textContent!==name)monthName.textContent=name;
+   if(year&&monthYear.textContent!==year)monthYear.textContent=year;
   }
   // In the personal landing use the same approved circle for History.
   // Every nested view (including History) retains the real Back arrow.
@@ -696,12 +711,12 @@
    // The Pay module owns the modal and bank integration limitations.
    if(typeof window.SEYVEO_PAY?.open==='function'){
     Promise.resolve(window.SEYVEO_PAY.open()).then(()=>{
-     requestAnimationFrame(sync);
-    }).catch(()=>requestAnimationFrame(sync));
+     scheduleSync();
+    }).catch(()=>scheduleSync());
    }else{
     const trigger=document.querySelector('[data-calendar-space="wallet"],[data-world-space="wallet"]');
     if(trigger)trigger.click();
-    else requestAnimationFrame(sync);
+    else scheduleSync();
    }
    return;
   }
@@ -731,7 +746,7 @@
    else if(location.hash!=='#tasks')location.hash='#tasks';
    else oldTab(oldTasks,'data-unified-tasks-tab','personal')?.click();
    resetWorkScroll();
-   requestAnimationFrame(sync);
+   scheduleSync();
    return;
   }
   if(target==='business'){
@@ -739,7 +754,7 @@
    if(typeof open==='function')open('preserve');
    else oldTab(oldTasks,'data-unified-tasks-tab','business')?.click();
    resetWorkScroll();
-   requestAnimationFrame(sync);
+   scheduleSync();
    return;
   }
   // ONE has no manager-calendar legacy tabs, so use the original routes.
@@ -747,7 +762,7 @@
    if(target==='calendar')location.hash='#calendar';
    else if(target==='personal')window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
    resetWorkScroll();
-   requestAnimationFrame(sync);
+   scheduleSync();
    return;
   }
   const employeePreview=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
@@ -757,7 +772,7 @@
    if(target==='personal')window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
    else if(target==='employee')window.SEYVEO_UNIFIED_TASKS?.openEmployee?.();
    resetWorkScroll();
-   requestAnimationFrame(sync);
+   scheduleSync();
    return;
   }
   const original=fromCalendar
@@ -766,7 +781,7 @@
   if(original&&!original.disabled&&!original.hidden){
    original.click();
    resetWorkScroll();
-   requestAnimationFrame(sync);
+   scheduleSync();
   }
  });
  const observer=new MutationObserver(sync);
@@ -781,11 +796,11 @@
  // calendar handlers close their menu (choice, outside tap or Escape).
  if(calendarAdd)observer.observe(calendarAdd,{attributes:true,attributeFilter:['aria-expanded']});
  if(createMenu)observer.observe(createMenu,{attributes:true,attributeFilter:['hidden']});
- window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
- window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
- window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
+ window.addEventListener('hashchange',()=>scheduleSync());
+ window.addEventListener('seyveo:route-changed',()=>scheduleSync());
+ window.addEventListener('seyveo:preview-role-changed',()=>scheduleSync());
  // Wallet is inline; the same bar stays mounted across every tab.
- walletDialog?.addEventListener('close',()=>requestAnimationFrame(sync));
+ walletDialog?.addEventListener('close',()=>scheduleSync());
  sync();
  // Reveal once every deferred Work/agenda initializer has run.
  // The route's old markup must never be painted as the first frame.
