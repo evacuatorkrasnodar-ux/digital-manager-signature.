@@ -1245,3 +1245,66 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item > button.sv-mail-attached-remove.sv-mail-icon-button:is(:hover,:active){
  color:#262c33!important;
 }
+
+/* Compact document shelf in mail: native horizontal scrolling, no edge fade. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf > .sv-mail-attached-list:not([hidden]){
+ display:flex!important;flex-flow:row nowrap!important;align-items:stretch!important;
+ gap:6px!important;overflow-x:auto!important;overflow-y:hidden!important;
+ scroll-snap-type:x proximity!important;scrollbar-width:none;
+ -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+ touch-action:pan-x pan-y!important;padding:2px 0 4px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf > .sv-mail-attached-list::-webkit-scrollbar{display:none}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-list > .sv-mail-attached-item{
+ position:relative!important;display:block!important;flex:0 0 90px!important;
+ width:90px!important;min-width:90px!important;max-width:90px!important;
+ height:114px!important;min-height:114px!important;max-height:114px!important;
+ border:0!important;border-radius:12px!important;padding:0!important;
+ background:#F7F7F8!important;box-shadow:none!important;
+ scroll-snap-align:start!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item > button.sv-mail-attached-preview{
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;
+ width:100%!important;min-width:0!important;height:100%!important;min-height:0!important;max-height:none!important;
+ padding:10px 5px 5px!important;gap:4px!important;border-radius:12px!important;
+ background:transparent!important;box-shadow:none!important;border:0!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attachment-art{
+ position:relative!important;display:grid!important;place-items:center!important;
+ width:42px;height:51px;flex:0 0 51px;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attachment-paper{
+ display:grid;place-items:center;width:35px;height:46px;
+ border:1px solid #DADDE2;border-radius:3px;background:white;
+ overflow:hidden;box-sizing:border-box;box-shadow:0 1px 3px rgba(30,40,50,.07);
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attachment-paper > svg{width:23px;height:27px;color:#9CA4AE;stroke:currentColor;stroke-width:1.1}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attachment-paper > canvas{display:block;width:100%;height:100%;object-fit:contain}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attachment-art > .sv-mail-kind-mark{
+ position:absolute!important;bottom:0;left:50%;transform:translateX(-50%);
+ width:auto!important;min-width:32px!important;max-width:42px!important;
+ height:13px!important;min-height:13px!important;padding:0 4px!important;
+ border-radius:5px!important;font-size:8px!important;line-height:1!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item[data-file-kind="pdf"] .sv-mail-kind-mark{background:#D95058!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item[data-file-kind="image"] .sv-mail-kind-mark{background:#49A99A!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item .sv-mail-attached-meta{
+ display:flex!important;flex:1 1 auto!important;flex-direction:column!important;align-items:center!important;
+ justify-content:space-between!important;width:100%!important;min-width:0!important;gap:1px!important;padding:0!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item .sv-mail-attached-name{
+ display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+ width:100%!important;white-space:normal!important;overflow:hidden!important;overflow-wrap:anywhere!important;
+ text-align:center!important;font-size:10px!important;line-height:1.15!important;font-weight:550!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item .sv-mail-attached-size{font-size:9px!important;line-height:1.15!important;text-align:center!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item > button.sv-mail-attached-remove.sv-mail-icon-button:not([hidden]){
+ position:absolute!important;top:0!important;right:0!important;z-index:2!important;
+ width:30px!important;min-width:30px!important;max-width:30px!important;
+ height:30px!important;min-height:30px!important;max-height:30px!important;
+ display:grid!important;place-items:center!important;background:transparent!important;
+ box-shadow:none!important;border:0!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item > button.sv-mail-attached-remove.sv-mail-icon-button > svg{
+ width:13px!important;height:13px!important;stroke-width:1.65!important;
+}
