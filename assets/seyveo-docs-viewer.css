@@ -456,3 +456,6 @@ html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-icon{display:grid
 html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-icon svg{display:block;width:100%!important;height:100%!important;stroke-width:1.55!important;}
 html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-more-options .svdv-icon{width:24px;height:24px;flex:0 0 24px;}
 html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-more-options .svdv-icon svg{padding:1px;}
+
+/* An external-open fallback must not occupy a row when the preview is usable. */
+html:root body .svdv-more-options > .svdv-link[hidden]{display:none!important;}
