@@ -212,6 +212,8 @@ function mount(target,{
  }
  let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='',documentName='SEYVEO-документ',fromScan=false,wordStyle={size:12,alignment:'left',heading:false};
  const clear=()=>{
+  const sheet=panel.querySelector('dialog.sv-doc-edit-sheet[open]');
+  if(sheet)sheet.close();
   panel.replaceChildren();cleanUrls();
  };
  const status=(text)=>{
@@ -241,7 +243,7 @@ function mount(target,{
  };
  const warn=(text)=>$('p','sv-doc-tool-warning',text);
  const message=(text)=>{
-  const target=panel.querySelector('.sv-doc-tool-status');
+  const target=panel.querySelector('dialog.sv-doc-edit-sheet[open] .sv-doc-tool-status')||panel.querySelector(':scope > .sv-doc-tool-status');
   if(target)target.textContent=text;
  };
  function open(name){
@@ -530,7 +532,7 @@ function mount(target,{
   examples.setAttribute('role','region');
   examples.setAttribute('aria-label','Шаблоны документов, листайте горизонтально');
   examples.tabIndex=0;
-  const body=$('textarea','sv-doc-tool-text');
+  const body=$('textarea','sv-doc-edit-body');
   body.rows=6;body.maxLength=12000;
   body.value=documentDraft;
   body.placeholder='Ваш текст документа…';
@@ -574,13 +576,10 @@ function mount(target,{
    documentDraft=body.value;
    documentTemplate='';syncTemplate();
   });
-  const editing=$('div','sv-doc-create-editor');
-  const editorTop=$('div','sv-doc-create-editor-heading');
-  editorTop.append($('strong','','Ваш документ'),
-   $('small','','Редактируемый текст'));
-  const filename=$('input','sv-doc-tool-text');filename.type='text';filename.value=documentName;filename.maxLength=100;filename.setAttribute('aria-label','Название документа');filename.placeholder='Название документа';
+  const editing=$('div','sv-doc-edit-content');
+  const filename=$('input','sv-doc-edit-name');filename.type='text';filename.value=documentName;filename.maxLength=100;filename.setAttribute('aria-label','Название документа');filename.placeholder='Название документа';
   filename.addEventListener('input',()=>{documentName=filename.value;});
-  const typography=$('div','sv-doc-create-typography');
+  const typography=$('div','sv-doc-edit-typography');
   const size=$('select','sv-doc-tool-page-select');size.setAttribute('aria-label','Размер шрифта');
   for(const n of [10,11,12,14,16,18]){const item=$('option','',n+' пт');item.value=String(n);size.append(item);}
   size.value=String(wordStyle.size);
@@ -596,16 +595,17 @@ function mount(target,{
    body.style.fontSize=wordStyle.size+'pt';body.style.textAlign=wordStyle.alignment==='both'?'justify':wordStyle.alignment;};
   size.addEventListener('change',refreshStyle);alignment.addEventListener('change',refreshStyle);refreshStyle();
   typography.append(size,alignment,firstLine);
-  editing.append(editorTop,filename,typography,body);
+  editing.append(filename,typography,body);
 
-  const formatLabel=$('div','sv-doc-create-subhead');
+  const formatLabel=$('div','sv-doc-edit-format-label');
   const formatHint=$('small','','');
   formatLabel.append($('strong','','Формат'),formatHint);
-  const formatSwitch=$('div','sv-doc-create-formats');
+  const formatSwitch=$('div','sv-doc-edit-formats');
   formatSwitch.setAttribute('role','group');
   formatSwitch.setAttribute('aria-label','Выбор формата документа');
-  const saveButton=button('Сохранить PDF',saveSelected,'sv-doc-tool-primary sv-doc-create-save');
-  const shareButton=button('Поделиться',shareSelected,'sv-doc-create-share');
+  const saveButton=button('',saveSelected,'sv-doc-edit-action');
+  const saveLabel=$('span','','Сохранить');
+  const shareButton=button('',shareSelected,'sv-doc-edit-action');
   const selectedFormat=[];
   for(const option of [
    {id:'pdf',label:'PDF',caption:'Для просмотра',art:'pdf'},
@@ -613,10 +613,8 @@ function mount(target,{
   ]){
    const optionButton=button('',()=>{
     documentFormat=option.id;syncFormat();
-   },'sv-doc-create-format sv-doc-create-format-'+option.id);
-   optionButton.append(art(option.art,true),
-    $('span','sv-doc-create-format-name',option.label),
-    $('small','sv-doc-create-format-caption',option.caption));
+   },'sv-doc-edit-format');
+   optionButton.append($('span','',option.label));
    optionButton.setAttribute('aria-pressed',String(documentFormat===option.id));
    optionButton.setAttribute('aria-label',option.label+' · '+option.caption);
    selectedFormat.push({id:option.id,button:optionButton});
@@ -625,7 +623,7 @@ function mount(target,{
   function syncFormat(){
    selectedFormat.forEach(({id,button})=>
     button.setAttribute('aria-pressed',String(id===documentFormat)));
-   saveButton.textContent=documentFormat==='pdf'?'Сохранить PDF':'Сохранить Word';
+   saveButton.setAttribute('aria-label',documentFormat==='pdf'?'Сохранить PDF':'Сохранить Word');
    formatHint.textContent=documentFormat==='pdf'?'Изображение текста':'Редактируемый DOCX';
    typography.hidden=documentFormat!=='docx';
    body.style.fontSize=documentFormat==='docx'?wordStyle.size+'pt':'';
@@ -662,25 +660,58 @@ function mount(target,{
    );
   }
   syncFormat();
-  const footer=controls(saveButton,shareButton,button('В архив',()=>{const ready=preparedFile();if(ready)onImport(asFile(ready.blob,ready.name));}));
-  const revealEditor=()=>{
-   editing.hidden=false;formatLabel.hidden=false;
-   formatSwitch.hidden=false;footer.hidden=false;
-   panel.dataset.createStage='editing';
+  const sheet=$('dialog','sv-doc-edit-sheet');
+  sheet.setAttribute('aria-label',fromScan?'Редактор Word':'Редактор документа');
+  const top=$('header','sv-doc-edit-top');
+  const actionIcon=(paths)=>{
+   const mark=$('span','sv-doc-edit-icon');
+   mark.setAttribute('aria-hidden','true');
+   mark.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';
+   return mark;
   };
-  const initialDraft=Boolean(documentDraft.trim());
-  editing.hidden=!initialDraft;
-  formatLabel.hidden=!initialDraft;
-  formatSwitch.hidden=!initialDraft;
-  footer.hidden=!initialDraft;
-  panel.dataset.createStage=initialDraft?'editing':'choose';
+  const back=button('',()=>{if(typeof sheet.close==='function')sheet.close();else sheet.removeAttribute('open');},'sv-doc-edit-back');
+  back.setAttribute('aria-label','Назад к документам');
+  back.append(actionIcon('<path d="m14 5-7 7 7 7"/>'));
+  const sayviEditor=button('',()=>{sheet.close();onSayvi('create');},'sv-doc-edit-ai');
+  sayviEditor.setAttribute('aria-label','Создать с Сэйви');
+  const aiMark=$('span','sv-doc-edit-ai-mark sv-sayvi-symbol');aiMark.setAttribute('aria-hidden','true');sayviEditor.append(aiMark);
+  top.append(back,$('strong','',fromScan?'Редактор Word':'Документ'),sayviEditor);
+  saveButton.append(actionIcon('<path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>'),saveLabel);
+  shareButton.append(actionIcon('<path d="M12 15V3m-5 5 5-5 5 5M7 10H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-2"/>'),$('span','','Поделиться'));
+  const archive=button('',()=>{
+   const ready=preparedFile();if(!ready)return;
+   try{onImport(asFile(ready.blob,ready.name));if(sheet.open)sheet.close();}
+   catch(error){message(error?.message||'Не удалось подготовить файл для архива.');}
+  },'sv-doc-edit-action');
+  archive.append(actionIcon('<path d="M3 7V5a1 1 0 0 1 1-1h6l2 3h8a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7Z"/><path d="M3 10h18M9 15h6" opacity=".7"/>'),$('span','','В архив'));
+  const footer=$('footer','sv-doc-edit-footer');
+  const actions=$('div','sv-doc-edit-actions');actions.append(saveButton,shareButton,archive);
+  footer.append(formatLabel,formatSwitch,actions,status(''));
+  sheet.append(top,editing,footer);
+  const resume=button('Продолжить документ',()=>revealEditor(),'sv-doc-edit-resume');
+  resume.hidden=!documentDraft.trim();
+  function revealEditor(){
+   resume.hidden=false;
+   if(!sheet.open){
+    if(typeof sheet.showModal==='function')sheet.showModal();
+    else sheet.setAttribute('open','');
+   }
+   back.focus({preventScroll:true});
+  }
+  sheet.addEventListener('close',()=>{
+   if(!panel.isConnected)return;
+   resume.hidden=false;
+   resume.focus({preventScroll:true});
+  });
   const sayvi=button('',()=>onSayvi('create'),'sv-doc-create-sayvi');
   const sayviMark=$('span','sv-doc-create-sayvi-mark sv-sayvi-symbol');
   sayviMark.setAttribute('aria-hidden','true');
   sayvi.append(sayviMark,$('span','','Создать с Сэйви'));
+  panel.dataset.createStage='choose';
   if(!fromScan)panel.append(sectionTitle,examples);
-  panel.append(editing,formatLabel,formatSwitch,footer,sayvi);
-  panel.append(status(''));
+  panel.append(resume,sayvi,status(''),sheet);
+  if(fromScan&&documentDraft.trim()&&sheet.isConnected)revealEditor();
+
  }
  function renderSign(){
   panel.dataset.hasScans=String(scans.length>0);
