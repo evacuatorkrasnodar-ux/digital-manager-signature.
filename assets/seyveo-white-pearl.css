@@ -444,3 +444,61 @@ html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-pap
  content:none!important;display:none!important;
 }
 
+
+/* Date pickers · approved White Pearl, only existing navigation and action surfaces.
+   No extra backing layer, no styling of date cells or semantic selection dots. */
+html:root[data-theme="light"] body .sv-month-nav.sv-month-nav > .sv-month-controls,
+html:root[data-theme="light"] body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog,#sayviSurfacePage) .sv-month-nav.sv-month-nav > .sv-month-controls,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-month-nav.sv-month-nav > .sv-month-controls,
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar > .sv-month-controls{
+ box-sizing:border-box!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+/* A single pearl capsule, not two separate raised buttons. */
+html:root[data-theme="light"] body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog,#sayviSurfacePage) .sv-month-nav.sv-month-nav > .sv-month-controls > button,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-month-nav.sv-month-nav > .sv-month-controls > button,
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar > .sv-month-controls > button{
+ background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;color:#007aff!important;
+}
+/* Independent round back and close controls, identical material to the app header. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-head > .sv-doc-picker-round,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-bottom .sv-doc-picker-head > .sv-doc-picker-round,
+html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-picker-back,
+html:root[data-theme="light"] body #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-header > button.sv-task-date-back,
+html:root[data-theme="light"] body #calendarEventDialog #seyveoPickDate .cal-pick-date-close{
+ box-sizing:border-box!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+/* Secondary date actions: same pearl skin; preserve dimensions and blue labels. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-date-footer .sv-doc-picker-link,
+html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-picker-actions > .sv-standard-picker-secondary,
+html:root[data-theme="light"] body #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick > button,
+html:root[data-theme="light"] body #calendarEventDialog #seyveoPickDate .cal-pick-today,
+html:root[data-theme="light"] body #calendarSpaceDialog .cal-velvet-picker-foot > button{
+ box-sizing:border-box!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+/* Confirm retains its existing pale blue semantic fill, with the same pearl relief. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-date-footer .sv-doc-picker-done{
+ box-sizing:border-box!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] :is(.sv-doc-picker-head > .sv-doc-picker-round,.sv-doc-picker-date-footer .sv-doc-picker-link,.sv-doc-picker-date-footer .sv-doc-picker-done):active,
+html:root[data-theme="light"] body #svStandardPickerDialog :is(.sv-standard-picker-back,.sv-standard-picker-secondary):active,
+html:root[data-theme="light"] body #personalTaskDialog #seyveoTaskDuePicker :is(.sv-task-date-back,.sv-task-date-quick > button):active,
+html:root[data-theme="light"] body #calendarEventDialog #seyveoPickDate :is(.cal-pick-today,.cal-pick-date-close):active,
+html:root[data-theme="light"] body #calendarSpaceDialog .cal-velvet-picker-foot > button:active{
+ box-shadow:var(--sv-white-pearl-press-shadow)!important;
+}
