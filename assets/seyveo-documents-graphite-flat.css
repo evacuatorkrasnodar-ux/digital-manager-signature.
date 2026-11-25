@@ -1800,3 +1800,34 @@ html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-do
 html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet.sv-doc-keyboard-open .sv-doc-edit-typography{min-height:44px}
 html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet.sv-doc-keyboard-open .sv-doc-edit-content{padding-bottom:8px}
 html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-menu-row{min-height:44px!important}
+
+/* iPhone document editor: native text caret, without the global black focus frame.
+   Touch focus must not introduce a rectangle around the full writing canvas.
+   Preserve a visible focus indication for keyboard navigation on other controls. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-edit-body:focus,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-edit-body:focus-visible{
+ outline:0!important;border:0!important;box-shadow:none!important;
+ caret-color:#0A84FF!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-edit-name:focus,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-edit-name:focus-visible{
+ outline:0!important;box-shadow:none!important;
+ border-bottom:1px solid rgba(10,132,255,.40)!important;caret-color:#0A84FF!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] > .sv-doc-edit-resume{
+ box-sizing:border-box!important;width:100%!important;min-height:44px!important;height:44px!important;
+ border:var(--sv-white-pearl-edge,1px solid #E8E9EC)!important;border-radius:999px!important;
+ background:var(--sv-white-pearl-surface,#F5F5F7)!important;
+ color:#20262D!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] > .sv-doc-edit-resume:focus{
+ outline:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] > .sv-doc-edit-resume:focus-visible{
+ outline:2px solid #397bc6!important;outline-offset:2px!important;
+}
+@media (hover:none) and (pointer:coarse){
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] > .sv-doc-edit-resume:focus-visible{
+  outline:0!important;box-shadow:none!important;
+ }
+}
