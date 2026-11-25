@@ -497,3 +497,17 @@ html:root body .svdv-inline-option[aria-pressed="true"]{color:#176ab4;}
 html:root body .svdv-inline-option:active{background:#0a84ff12;}
 html:root body .svdv-inline-option svg{display:block;width:19px;height:19px;}
 html:root body .svdv-inline-option-art,html:root body .svdv-inline-option-check{display:grid;place-items:center;}
+
+/* Sayvi actions stay anchored to the single editing capsule, without layout shifts. */
+html:root body .svdv-inline-controls .svdv-sayvi-menu{left:50%;transform:translateX(-50%);width:min(340px,100%);max-height:min(63dvh,480px);padding:8px;}
+html:root body .svdv-sayvi-title{display:flex;align-items:center;justify-content:center;gap:8px;padding:7px 8px 10px;font:600 15px/1.2 system-ui;color:var(--sv-menu-text,#20262d);}
+html:root body .svdv-sayvi-title .svdv-sayvi-mark,html:root body .svdv-sayvi-menu .svdv-sayvi-mark{width:24px;height:24px;flex:0 0 24px;}
+html:root body .svdv-sayvi-choices{display:grid;gap:1px;}
+html:root body .svdv-sayvi-feedback{margin:7px 8px;font:400 12px/1.45 system-ui;color:var(--muted,#687584);}
+html:root body .svdv-sayvi-feedback:empty,html:root body .svdv-sayvi-menu [hidden]{display:none!important;}
+html:root body .svdv-sayvi-question,html:root body .svdv-sayvi-preview{display:block;box-sizing:border-box;width:100%;margin:5px 0;padding:10px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;color:#20262d;font:400 14px/1.45 system-ui;resize:vertical;}
+html:root body .svdv-sayvi-actions{display:flex;gap:8px;padding-top:5px;}
+html:root body .svdv-sayvi-actions>button{flex:1;min-height:44px;border:0;border-radius:999px;background:var(--sv-white-pearl-surface,#f5f5f7);color:var(--sv-menu-text,#20262d);font:500 13px system-ui;}
+html:root body .svdv-sayvi-actions>.svdv-sayvi-apply{color:#176ab4;font-weight:600;}
+html:root body .svdv-viewer{position:relative;}
+html:root body .svdv-viewer>.svdv-notice:not(:empty){position:absolute!important;left:50%;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 66px);z-index:25;transform:translateX(-50%);box-sizing:border-box;width:max-content;max-width:calc(100% - 30px);margin:0!important;padding:8px 13px;border:var(--sv-menu-border,1px solid #e5e7eb);border-radius:15px;background:var(--sv-menu-bg,#fcfcfd);box-shadow:var(--sv-menu-shadow,0 4px 12px #0001);font:500 12px/1.4 system-ui;color:var(--sv-menu-text,#20262d)!important;text-align:center;pointer-events:none;}
