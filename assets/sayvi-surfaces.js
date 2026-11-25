@@ -217,7 +217,7 @@ function readMailSessionDrafts(){
    .slice(0,60).map(d=>({
     id:d.id.slice(0,100),account:['personal','business'].includes(d.account)?d.account:'',
     to:String(d.to||'').slice(0,254),cc:String(d.cc||'').slice(0,1000),bcc:String(d.bcc||'').slice(0,1000),subject:String(d.subject||'').slice(0,240),
-    body:String(d.body||'').slice(0,10000),quote:String(d.quote||'').slice(0,12000),
+    body:String(d.body||'').slice(0,10000),quote:String(d.quote||'').slice(0,12000),composeMode:['reply','forward'].includes(d.composeMode)?d.composeMode:(d.quote&&/^Fwd:/i.test(d.subject||'')?'forward':d.quote?'reply':'new'),
     attachments:Array.isArray(d.attachments)?d.attachments.filter(a=>a&&typeof a.id==='string'&&typeof a.name==='string')
      .slice(0,5).map(a=>({id:a.id.slice(0,90),name:a.name.slice(0,150),
       size:Math.max(0,Number(a.size)||0),type:String(a.type||'').slice(0,110)})):[]
@@ -989,12 +989,13 @@ function mailView(){
   const original=mailDrafts.find(d=>d.id===mailEditingId);
   const seed=mailComposeSeed;mailComposeSeed=null;
   const quotedText=String(original?.quote||seed?.quote||'').slice(0,12000);
+  const composeMode=original?.composeMode||seed?.mode||(quotedText?(/^Fwd:/i.test(original?.subject||'')?'forward':'reply'):'new');
   const form=create('form','sv-mail-editor');
   form.setAttribute('aria-label','Черновик письма SEYVEO');
   const heading=create('header','sv-mail-editor-header');
   const editorBack=iconButton('back','Назад к письмам',()=>mailEditorExitHandler?.());
   editorBack.classList.add('sv-mail-editor-back');
-  heading.append(editorBack,create('h2','sv-mail-editor-title',original?'Изменить черновик':'Новое письмо'));
+  heading.append(editorBack,create('h2','sv-mail-editor-title',composeMode==='reply'?'Ответ':composeMode==='forward'?'Пересылка':original?'Изменить черновик':'Новое письмо'));
   form.append(heading);
   // One inline sender selection, no duplicate bottom dialog.
   let accountValue=original?.account||mailComposeScope||'';
@@ -1175,7 +1176,7 @@ function mailView(){
    const recipient=to.value.trim(),copy=cc.value.trim(),blind=bcc.value.trim(),subjectText=subj.value.trim(),bodyText=message.value.trim();
    if(!recipient&&!copy&&!blind&&!subjectText&&!bodyText&&!attachments.length&&!original)return false;
    const item={id:draftId,account:original?.account||accountValue||'',
-    to:recipient.slice(0,254),cc:copy.slice(0,1000),bcc:blind.slice(0,1000),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000),quote:quotedText,attachments:attachments.map(a=>({...a}))};
+    to:recipient.slice(0,254),cc:copy.slice(0,1000),bcc:blind.slice(0,1000),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000),quote:quotedText,composeMode,attachments:attachments.map(a=>({...a}))};
    const index=mailDrafts.findIndex(d=>d.id===draftId);
    if(index<0)mailDrafts.unshift(item);else mailDrafts[index]=item;
    persistMailDrafts();
@@ -1243,28 +1244,40 @@ function mailView(){
   });
   heading.append(send);
   actions.append(attachButton,polish);
-  const composerFooter=create('div','sv-mail-compose-footer');
+  const composerFooter=create('div','sv-mail-compose-tools-portal');
+  composerFooter.setAttribute('role','toolbar');composerFooter.setAttribute('aria-label','Инструменты письма');
   composerFooter.append(actions);
-  form.append(attachmentShelf,preview,status,composerFooter);
+  form.append(attachmentShelf,preview,status);
   content.append(form);
+  document.body.append(composerFooter);
   // Only this editor tracks the visible keyboard boundary. No scroll handler,
   // no dynamic padding and no changes to other workspaces.
   const viewport=window.visualViewport;
+  const sizeReply=()=>{
+   if(!quotedText||!form.isConnected)return;
+   message.style.setProperty('--sv-mail-reply-height','54px');
+   message.style.setProperty('--sv-mail-reply-height',Math.max(54,message.scrollHeight+2)+'px');
+  };
   const syncTools=()=>{
    if(!form.isConnected)return;
-   const editing=form.contains(document.activeElement)&&document.activeElement.matches('input,textarea');
-   const inset=editing&&viewport&&Math.abs(viewport.scale-1)<.01
-    ?Math.max(0,document.documentElement.clientHeight-viewport.height-viewport.offsetTop):0;
-   form.style.setProperty('--sv-mail-keyboard-inset',Math.round(inset)+'px');
-   form.classList.toggle('sv-mail-keyboard-open',inset>80);
+   const v=viewport;
+   const bottom=v?v.offsetTop+v.height:window.innerHeight;
+   const right=v?v.offsetLeft+v.width:window.innerWidth;
+   const column=form.getBoundingClientRect();
+   composerFooter.style.setProperty('--sv-mail-tools-bottom',Math.round(bottom)+'px');
+   composerFooter.style.setProperty('--sv-mail-tools-right',Math.round(Math.min(right-12,column.right))+'px');
   };
-  viewport?.addEventListener('resize',syncTools);
+  const resizeTools=()=>{sizeReply();syncTools();};
+  viewport?.addEventListener('resize',resizeTools);
   viewport?.addEventListener('scroll',syncTools);
-  form.addEventListener('focusin',syncTools);form.addEventListener('focusout',syncTools);
+  window.addEventListener('resize',resizeTools);
+  message.addEventListener('input',sizeReply);
   mailEditorViewportCleanup=()=>{
-   viewport?.removeEventListener('resize',syncTools);viewport?.removeEventListener('scroll',syncTools);
-   form.removeEventListener('focusin',syncTools);form.removeEventListener('focusout',syncTools);
+   viewport?.removeEventListener('resize',resizeTools);viewport?.removeEventListener('scroll',syncTools);
+   window.removeEventListener('resize',resizeTools);message.removeEventListener('input',sizeReply);
+   composerFooter.remove();
   };
+  sizeReply();
   mailGuardListenerAbort.signal.addEventListener('abort',mailEditorViewportCleanup,{once:true});
   syncTools();
  }
