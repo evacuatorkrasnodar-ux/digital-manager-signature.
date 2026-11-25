@@ -1,6 +1,6 @@
 /* SEYVEO temporary frame inspector.
-   Query flag or deliberate long press on Home brand in installed iOS PWA.
-   No personal content or storage is read. No new visible controls by default. */
+   Query flag or temporary visible diagnostic button in installed iOS PWA.
+   No personal content or storage is read. */
 (()=>{'use strict';
  const queryEnabled=new URLSearchParams(location.search).get('frame-debug')==='1';
  const ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||
@@ -139,32 +139,7 @@
  });
  attach();
  }
- if(queryEnabled){enable();return}
- if(!ios||!installed)return;
- const brand=document.getElementById('homeBrandTrigger');
- if(!brand)return;
- let timer=0,startX=0,startY=0,pointer=null,suppressUntil=0;
- const cancel=()=>{clearTimeout(timer);timer=0;pointer=null};
- brand.addEventListener('pointerdown',event=>{
-  if(!event.isPrimary||event.button!==0)return;
-  cancel();
-  pointer=event.pointerId;startX=event.clientX;startY=event.clientY;
-  timer=setTimeout(()=>{
-   timer=0;
-   suppressUntil=Date.now()+1800;
-   enable();
-  },1000);
- },{passive:true});
- document.addEventListener('pointermove',event=>{
-  if(event.pointerId===pointer&&Math.hypot(event.clientX-startX,event.clientY-startY)>12)cancel();
- },{passive:true});
- for(const type of ['pointerup','pointercancel'])document.addEventListener(type,event=>{
-  if(event.pointerId===pointer)cancel();
- },{passive:true});
- brand.addEventListener('contextmenu',event=>{if(timer||Date.now()<suppressUntil)event.preventDefault()});
- document.addEventListener('click',event=>{
-  if(Date.now()<suppressUntil&&brand.contains(event.target)){
-   event.preventDefault();event.stopImmediatePropagation();suppressUntil=0;
-  }
- },true);
+ // Temporary diagnostic button is visible only in the installed iOS PWA
+ // or when explicitly requested by the browser query flag.
+ if(queryEnabled||(ios&&installed))enable();
 })();
