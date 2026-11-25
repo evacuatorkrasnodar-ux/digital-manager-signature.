@@ -27,10 +27,21 @@ function findFiles(dir,extension){
 const html=read('index.html');
 // Protect the one-controller design from regressions: the hidden controls
 // are internal playback targets for the dock, never a second visible player.
-const linkedAssets=[...html.matchAll(/<(?:script|link)\b[^>]*\b(?:src|href)=["']([^"']+)["'][^>]*>/gi)]
- .map(m=>m[1].split(/[?#]/)[0]).filter(x=>x.startsWith('assets/'));
-check(new Set(linkedAssets).size===linkedAssets.length,
- 'No duplicate stylesheet or script imports');
+// Count only actual stylesheet and script imports. Preloading an image and
+// using it as the tab icon is intentional, not a duplicated import.
+function importedAssets(markup){
+ return [...markup.matchAll(/<(?:script|link)\b[^>]*\b(?:src|href)=["']([^"']+)["'][^>]*>/gi)]
+  .filter(m=>/^<script\b/i.test(m[0])||/\brel\s*=\s*["']stylesheet["']/i.test(m[0]))
+  .map(m=>m[1].split(/[?#]/)[0]).filter(x=>x.startsWith('assets/'));
+}
+const linkedAssets=importedAssets(html);
+const duplicateAssets=[...new Set(linkedAssets.filter((asset,index)=>linkedAssets.indexOf(asset)!==index))];
+check(duplicateAssets.length===0,
+ 'No duplicate stylesheet or script imports'+(duplicateAssets.length?': '+duplicateAssets.join(', '):''));
+// Guard against false positives without allowing repeated CSS or JS versions.
+const importFixture=importedAssets('<link rel="preload" as="image" href="assets/mark.svg"><link rel="icon" href="assets/mark.svg"><link rel="stylesheet" href="assets/test.css?v=1"><link rel="stylesheet" href="assets/test.css?v=2"><script src="assets/test.js?v=1"></script><script src="assets/test.js?v=2"></script>');
+check(JSON.stringify(importFixture)===JSON.stringify(['assets/test.css','assets/test.css','assets/test.js','assets/test.js']),
+ 'Import classifier distinguishes image hints from duplicate CSS/JS');
 // Inline application scripts contain mutually exclusive HTML strings. They
 // are not elements of the document until a branch renders into a container.
 const staticMarkup=html.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi,'');

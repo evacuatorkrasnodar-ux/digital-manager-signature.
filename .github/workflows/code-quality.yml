@@ -20,16 +20,6 @@ jobs:
           node-version: '22'
       - name: Check JavaScript, CSS and project links
         run: node tools/check-quality.cjs
-      - name: Protect unified SEYVEO navigation and dialog materials
-        run: node tools/test-seyveo-ui-contract.cjs
-      - name: Protect canonical Cabinet navigation tokens
-        run: node tools/test-canonical-nav.cjs
-      - name: Verify shared sheet gesture safety
-        run: node tools/test-sheet-navigation.cjs
-      - name: Protect stable route and scroll updates
-        run: node tools/test-stable-view-updates.cjs
-      - name: Verify restored original Tasks page header
-        run: node tools/test-compact-tasks-header.cjs
       - name: Check black vinyl, white star and one role-safe searchable business chat
         run: node tools/test-black-vinyl-work-chats.cjs
       - name: Verify Business is in Dela and Management routes are clean
@@ -84,3 +74,28 @@ jobs:
         run: node tools/test-reminder-dialogue.cjs
       - name: Verify SEYVEO Open Canvas chat layout contracts
         run: node tools/test-open-canvas.cjs
+
+  design-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Protect unified SEYVEO navigation and dialog materials
+        if: ${{ !cancelled() }}
+        run: node tools/test-seyveo-ui-contract.cjs
+      - name: Protect canonical Cabinet navigation tokens
+        if: ${{ !cancelled() }}
+        run: node tools/test-canonical-nav.cjs
+      - name: Verify shared sheet gesture safety
+        if: ${{ !cancelled() }}
+        run: node tools/test-sheet-navigation.cjs
+      - name: Protect stable route and scroll updates
+        if: ${{ !cancelled() }}
+        run: node tools/test-stable-view-updates.cjs
+      - name: Verify restored original Tasks page header
+        if: ${{ !cancelled() }}
+        run: node tools/test-compact-tasks-header.cjs
