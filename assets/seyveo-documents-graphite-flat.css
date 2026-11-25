@@ -2576,3 +2576,23 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-panel[
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-panel[data-mode="scan"][data-photo-mode] .sv-doc-scan-stage-meta{display:none!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .svdv-scan-embedded .svdv-photo-text-mode{align-items:stretch!important;justify-content:flex-start!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .svdv-scan-embedded .svdv-photo-adjust-mode{align-items:flex-start!important;}
+
+/* Independent swipe rails. A partial next tile makes more content discoverable. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody :is(.sv-doc-recent-grid,.sv-doc-folders-grid){
+ display:grid!important;grid-template-columns:none!important;grid-auto-flow:column!important;
+ grid-auto-columns:calc((100% - 18px)/3.65)!important;gap:6px!important;
+ min-width:0!important;max-width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;
+ scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x pan-y!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody :is(.sv-doc-recent-grid,.sv-doc-folders-grid)>*{min-width:0!important;scroll-snap-align:start;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody :is(.sv-doc-recent-grid,.sv-doc-folders-grid)::-webkit-scrollbar{display:none;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody :is(.sv-doc-recent-grid,.sv-doc-folders-grid).sv-doc-rail-dragging{scroll-snap-type:none;cursor:grabbing;user-select:none;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-recent-grid>.sv-doc-recents-empty{grid-column:1/-1;width:100%!important;grid-column-start:1;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-file-row{touch-action:pan-y;overflow:hidden;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-file-row .sv-doc-swipe-delete[hidden]{display:none!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-file-row.sv-doc-swiped>.sv-doc-folder-file-more{display:none!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-file-row>.sv-doc-swipe-delete:not([hidden]){
+ display:flex!important;flex:0 0 78px;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+ align-self:stretch;min-height:44px!important;border:0!important;border-radius:12px!important;background:#e84242!important;color:white!important;font-size:11px!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete svg{width:20px;height:20px;}

@@ -338,6 +338,56 @@ function folderItems(state,folder){
  return items;
 }
 function eligible(folder,item){return folder.trash||item.local===true;}
+// Horizontal shelf scrolling is native on touch; desktop can drag with a mouse.
+function enableMouseRail(rail){
+ let drag=null,blocked=false;
+ rail.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='mouse'||e.button!==0||rail.scrollWidth<=rail.clientWidth||e.target.closest('.sv-doc-file-more'))return;
+  blocked=false;drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:rail.scrollLeft,moved:false};
+ });
+ rail.addEventListener('pointermove',e=>{
+  if(!drag||drag.id!==e.pointerId)return;
+  const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(!drag.moved){
+   if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){drag=null;return;}
+   if(Math.abs(dx)<7)return;
+   drag.moved=true;rail.setPointerCapture?.(e.pointerId);rail.classList.add('sv-doc-rail-dragging');
+  }
+  e.preventDefault();rail.scrollLeft=drag.left-dx;
+ });
+ const stop=()=>{if(drag?.moved){blocked=true;setTimeout(()=>{blocked=false;},100);}drag=null;rail.classList.remove('sv-doc-rail-dragging');};
+ rail.addEventListener('pointerup',stop);rail.addEventListener('pointercancel',stop);rail.addEventListener('lostpointercapture',stop);
+ rail.addEventListener('pointerleave',()=>{if(!drag?.moved)stop();});
+ rail.addEventListener('click',e=>{if(blocked){e.preventDefault();e.stopImmediatePropagation();}},true);
+}
+function attachFileSwipe(state,folder,row,open,item){
+ const remove=el('button','sv-doc-swipe-delete');remove.type='button';remove.append(actionIcon('delete'),el('span','','Удалить'));
+ remove.setAttribute('aria-label','Удалить '+item.name);remove.hidden=true;row.append(remove);
+ let start=null,swiped=false,suppressUntil=0;
+ const close=()=>{row.classList.remove('sv-doc-swiped');remove.hidden=true;swiped=false;if(folder.swipeClose===close)folder.swipeClose=null;};
+ const reveal=()=>{folder.swipeClose?.();folder.swipeClose=close;swiped=true;remove.hidden=false;row.classList.add('sv-doc-swiped');};
+ row.addEventListener('pointerdown',e=>{
+  if(e.button!==0||e.target.closest('.sv-doc-swipe-delete,.sv-doc-folder-file-more'))return;
+  if(folder.swipeClose&&folder.swipeClose!==close)folder.swipeClose();
+  start={x:e.clientX,y:e.clientY,id:e.pointerId};
+ });
+ row.addEventListener('pointerup',e=>{
+  if(!start||start.id!==e.pointerId)return;
+  const dx=e.clientX-start.x,dy=e.clientY-start.y;start=null;
+  if(Math.abs(dx)<40||Math.abs(dx)<Math.abs(dy)*1.4)return;
+  suppressUntil=Date.now()+450;if(dx<0)reveal();else close();
+ });
+ row.addEventListener('pointercancel',()=>{start=null;});
+ open.addEventListener('click',e=>{if(Date.now()<suppressUntil||swiped){e.preventDefault();e.stopImmediatePropagation();if(swiped&&Date.now()>=suppressUntil)close();}},true);
+ remove.addEventListener('click',async()=>{
+  if(folder.busy)return;
+  if(!window.confirm('Переместить «'+item.name+'» в «Недавно удалённые»?')){close();return;}
+  folder.busy=true;remove.disabled=true;
+  try{await localFiles().remove(state.options.area,item.id);await refresh();}
+  catch(e){folder.status.textContent=e.message||'Не удалось удалить документ.';}
+  finally{folder.busy=false;remove.disabled=false;close();}
+ });
+}
 function paintFolder(state){
  const folder=state.folderPage;
  if(!folder?.dialog.open||state!==active)return;
@@ -356,6 +406,7 @@ function paintFolder(state){
  folder.move.hidden=folder.trash;folder.remove.hidden=folder.trash;folder.restore.hidden=!folder.trash;
  for(const b of [folder.move,folder.remove,folder.restore])b.disabled=!folder.selected.size||folder.busy;
  folder.dialog.classList.toggle('sv-doc-selecting',folder.selecting);
+ folder.swipeClose?.();
  const scroll=folder.body.scrollTop;folder.list.replaceChildren();
  if(!items.length){
   const empty=el('div','sv-doc-folder-page-empty');
@@ -393,6 +444,7 @@ function paintFolder(state){
    open.addEventListener('contextmenu',e=>{e.preventDefault();manage(e);});
    const more=el('button','sv-doc-folder-file-more');more.type='button';more.setAttribute('aria-label','Действия с файлом '+item.name);more.append(actionIcon('more'));more.addEventListener('click',manage);row.append(more);
   }
+  if(item.local&&!folder.selecting&&!folder.trash)attachFileSwipe(state,folder,row,open,item);
   folder.list.append(row);
  }
  folder.body.scrollTop=scroll;
@@ -485,7 +537,7 @@ function paint(state){
  const normalize=value=>String(value||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е');
  const filtered=all.filter(item=>(state.filter==='all'||inFolder(item,state.filter))&&
   (!state.query||normalize([item.name,item.local?item.counterparty:'',item.local?item.reference:'',item.local?item.searchText:''].join(' ')).includes(normalize(state.query))));
- const subset=state.expanded?filtered:filtered.slice(0,4);
+ const subset=filtered;
  const recentScroll=state.recentGrid.scrollLeft;
  state.recentGrid.replaceChildren();
  // Sample icons are a format picker, not invented 'recent documents'.
@@ -670,7 +722,7 @@ function mount(parent,options={}){
  const recentGrid=el('div','sv-doc-recent-grid');
  recentGrid.setAttribute('role','region');
  recentGrid.setAttribute('aria-label','Карточки форматов и документы, листайте горизонтально');
- recentGrid.tabIndex=0;
+ recentGrid.tabIndex=0;enableMouseRail(recentGrid);
  const status=el('p','sv-doc-recent-status');status.setAttribute('role','status');
  recent.append(header,recentGrid,status);
  const folders=el('section','sv-doc-shelf sv-doc-folders');
@@ -682,7 +734,7 @@ function mount(parent,options={}){
  const foldersGrid=el('div','sv-doc-folders-grid');
  foldersGrid.setAttribute('role','region');
  foldersGrid.setAttribute('aria-label','Папки документов, листайте горизонтально');
- foldersGrid.tabIndex=0;
+ foldersGrid.tabIndex=0;enableMouseRail(foldersGrid);
  const folderMenu=el('div','sv-doc-folder-menu sv-menu-surface');folderMenu.hidden=true;folderMenu.setAttribute('role','group');folderMenu.setAttribute('aria-label','Действия с папкой');
  folders.append(folderHeader,foldersGrid,folderMenu);
  folders.addEventListener('keydown',e=>{if(e.key==='Escape')closeFolderMenu(state);});
