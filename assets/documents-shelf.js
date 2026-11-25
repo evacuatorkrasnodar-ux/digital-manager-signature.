@@ -149,15 +149,16 @@ function editFolderName(state,category=null){
  sync();dlg.showModal();field.focus();if(category)field.select();
 }
 function makeFolder(state){editFolderName(state);}
+function actionIcon(kind){const mark=el('span','sv-doc-menu-icon');mark.setAttribute('aria-hidden','true');mark.innerHTML=window.SEYVEO_DOCUMENT_ICONS?.markup(kind)||'';return mark;}
 function openFolderMenu(state,category){
  if(state!==active)return;
  closeFolderMenu(state);
  const menu=state.folderMenu;menu.hidden=false;
- const action=(label,fn,destructive=false)=>{const b=el('button','sv-doc-folder-menu-action'+(destructive?' sv-doc-folder-danger':''),label);b.type='button';b.addEventListener('click',async()=>{closeFolderMenu(state);try{await fn();}catch(e){notice(state,e.message||'Не удалось изменить папку.');}});menu.append(b);};
- action('Переименовать',()=>editFolderName(state,category));
- action('В начало моих папок',async()=>{const own=ownFolders(state);const first=Math.min(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:first-1});revealOwnFolder(state,category.id);});
- action('В конец моих папок',async()=>{const own=ownFolders(state);const last=Math.max(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:last+1});revealOwnFolder(state,category.id);});
- action('Удалить папку',async()=>{
+ const action=(label,kind,fn,destructive=false)=>{const b=el('button','sv-doc-folder-menu-action'+(destructive?' sv-doc-folder-danger':''));b.append(actionIcon(kind),el('span','',label));b.type='button';b.addEventListener('click',async()=>{closeFolderMenu(state);try{await fn();}catch(e){notice(state,e.message||'Не удалось изменить папку.');}});menu.append(b);};
+ action('Переименовать','rename',()=>editFolderName(state,category));
+ action('В начало моих папок','first',async()=>{const own=ownFolders(state);const first=Math.min(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:first-1});revealOwnFolder(state,category.id);});
+ action('В конец моих папок','last',async()=>{const own=ownFolders(state);const last=Math.max(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:last+1});revealOwnFolder(state,category.id);});
+ action('Удалить папку','delete',async()=>{
   if(category.defaultFolder){
    if(!window.confirm('Удалить папку «'+category.title+'» из списка? Документы останутся в «Все файлы».'))return;
    await updateFolder(state,category,{hidden:true});
@@ -316,7 +317,7 @@ function paint(state){
    if(item.local){
     const manage=()=>openDocumentDetails(state,item);
     card.addEventListener('contextmenu',e=>{e.preventDefault();void manage();});
-    const wrap=el('div','sv-doc-local-file-wrap');const more=el('button','sv-doc-file-more','···');more.type='button';more.setAttribute('aria-label','Действия с файлом '+item.name);more.addEventListener('click',manage);wrap.append(card,more);state.recentGrid.append(wrap);
+    const wrap=el('div','sv-doc-local-file-wrap');const more=el('button','sv-doc-file-more');more.append(actionIcon('more'));more.type='button';more.setAttribute('aria-label','Действия с файлом '+item.name);more.addEventListener('click',manage);wrap.append(card,more);state.recentGrid.append(wrap);
    }else state.recentGrid.append(card);
   }
  }
@@ -357,7 +358,7 @@ function paint(state){
    entry.addEventListener('pointermove',e=>{if(start&&Math.hypot(e.clientX-start.x,e.clientY-start.y)>10)cancel();});
    for(const event of ['pointerup','pointercancel','pointerleave'])entry.addEventListener(event,cancel);
    const wrap=el('div','sv-doc-custom-folder-wrap');
-   const more=el('button','sv-doc-custom-folder-more','···');more.type='button';more.setAttribute('aria-label','Действия с папкой '+category.title);more.addEventListener('click',menu);
+   const more=el('button','sv-doc-custom-folder-more');more.append(actionIcon('more'));more.type='button';more.setAttribute('aria-label','Действия с папкой '+category.title);more.addEventListener('click',menu);
    wrap.append(entry,more);state.foldersGrid.append(wrap);
   }else state.foldersGrid.append(entry);
  }

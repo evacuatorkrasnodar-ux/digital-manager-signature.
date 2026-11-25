@@ -144,6 +144,7 @@ function fixture({shareNavigator=null,deferImageLoad=false,currentFile=null}={})
   Blob,File,TextEncoder,Uint8Array,atob:globalThis.atob,
   navigator:shareNavigator,Date,Error
  };
+ vm.runInNewContext(fs.readFileSync(path.join(root,'assets/seyveo-document-icons.js'),'utf8'),context);
  vm.runInNewContext(studioCode,context,{filename:'seyveo-docs-studio.js'});
  const root=new FakeNode('main');
  window.SEYVEO_DOCS_STUDIO.mount(root,{

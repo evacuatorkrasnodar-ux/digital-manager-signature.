@@ -5,6 +5,12 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const checks=[
+  ["assets/seyveo-document-icons.js","root.SEYVEO_DOCUMENT_ICONS=Object.freeze({markup});"],
+  ["assets/seyveo-docs-studio.js","window.SEYVEO_DOCUMENT_ICONS?.markup(kind)"],
+  ["assets/seyveo-docs-viewer.js","action('Редактировать','edit',"],
+  ["assets/documents-shelf.js","action('Переименовать','rename',"],
+  ["index.html","assets/seyveo-document-icons.js?v=1"],
+  ["sayvi-chat-new.html","assets/seyveo-document-icons.js?v=1"],
   ["assets/seyveo-docs-viewer.js","mark.className+=' sv-sayvi-symbol'"],
   ["assets/seyveo-docs-viewer.css","display:block;flex:0 0 24px;width:24px;height:24px;"],
   ["assets/seyveo-docs-studio.js","ctx.fillText(line,margin,y,usable)"],

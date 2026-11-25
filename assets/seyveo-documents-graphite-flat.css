@@ -2047,3 +2047,9 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog.sv-doc-folde
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-name-form > input{box-sizing:border-box!important;min-height:var(--sv-nav-single-size,44px)!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-name-form > button:disabled{opacity:.42!important;cursor:default!important;}
 @media(prefers-reduced-motion:reduce){html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog.sv-doc-folder-name-sheet[open]{animation:none!important;}}
+
+/* Common document glyphs, independent of colored folder/file illustrations. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-menu-action{display:flex!important;align-items:center!important;gap:10px!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-menu-icon{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-menu-icon svg{display:block;width:22px;height:22px;stroke-width:1.55;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-delete{gap:8px!important;}

@@ -34,19 +34,11 @@ const PICTOGRAMS=Object.freeze({
 });
 /* Small, consistent iOS-style line icons for the five document actions.
    Full-feature editor illustrations elsewhere retain their existing art. */
-const TOOL_LINES=Object.freeze({
- camera:'<path d="M4 7h4l2-3h4l2 3h4a2 2 0 0 1 2 2v10H2V9a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13" r="3.5"/>',
- gallery:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-5 5 6"/>',
- scan:'<path d="M8 3.5H6A2.5 2.5 0 0 0 3.5 6v2M16 3.5h2A2.5 2.5 0 0 1 20.5 6v2M20.5 16v2a2.5 2.5 0 0 1-2.5 2.5h-2M8 20.5H6A2.5 2.5 0 0 1 3.5 18v-2"/><rect x="8" y="6.5" width="8" height="11" rx="1.3" opacity=".55"/><path d="M6 12h12"/>',
- file:'<path d="M7 3.5h6.5L18 8v10.5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2Z"/><path d="M13.5 3.5V7a1 1 0 0 0 1 1H18" opacity=".7"/><circle cx="15.8" cy="16.8" r="4.2" fill="currentColor" fill-opacity=".10" stroke="none"/><path d="M12.8 16.8h6M15.8 13.8v6"/>',
- create:'<path d="M12 3.5H6.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2H18a2 2 0 0 0 2-2v-3.5"/><path d="M8 8h5M8 12h3" opacity=".7"/><path d="m11.5 17 1-4 6-6a1.4 1.4 0 0 1 2 2l-6 6-3 2Z" fill="currentColor" fill-opacity=".08"/><path d="m17 8.5 2 2" opacity=".6"/>',
- sign:'<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M7 9h10M7 12h6" opacity=".7"/><path d="M7 16c2-4 2 2 4 0s2 1 4 0l2-1"/><path d="M7 17.5h10" opacity=".32"/>',
- print:'<path d="M7 9V4h10v5M7 16.5H5a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3.5a2 2 0 0 1-2 2h-2M7 14.5h10V20H7z"/><path d="M9.5 17.3h5" opacity=".55"/><circle cx="17.8" cy="11.8" r=".75" fill="currentColor" opacity=".6" stroke="none"/>'
-});
+// Shared glyphs are supplied by seyveo-document-icons.js.
 function toolArt(kind){
  const wrap=$('span','sv-doc-tool-icon');
  wrap.setAttribute('aria-hidden','true');
- wrap.innerHTML='<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round">'+(TOOL_LINES[kind]||'')+'</svg>';
+ wrap.innerHTML=window.SEYVEO_DOCUMENT_ICONS?.markup(kind)||'';
  return wrap;
 }
 function art(kind,small=false){
@@ -287,13 +279,14 @@ function mount(target,{
    const more=button('',()=>toggleActions(!row.classList.contains('sv-doc-draft-revealed')),'sv-doc-draft-more');
    more.setAttribute('aria-label','Действия с черновиком '+title);
    more.setAttribute('aria-expanded','false');
-   more.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>';
+   more.innerHTML=window.SEYVEO_DOCUMENT_ICONS?.markup('more')||'';
    const erase=button('Удалить',async()=>{
     if(!window.confirm('Удалить этот черновик?'))return;
     try{await drafts.remove(area,item.id);if(draftId===item.id){newDraft();if(mode==='create')render();}await refreshDrafts();}
     catch{setDraftFeedback('Не удалось удалить черновик.');}
    },'sv-doc-draft-delete');
    erase.setAttribute('aria-label','Удалить черновик '+title);
+   erase.textContent='';erase.append(toolArt('delete'),$('span','','Удалить'));
    const actions=$('div','sv-doc-draft-actions sv-menu-surface');actions.hidden=true;
    actions.append(erase);
    function toggleActions(open){
@@ -1082,10 +1075,10 @@ function mount(target,{
   const sheet=$('dialog','sv-doc-edit-sheet');
   sheet.setAttribute('aria-label',fromScan?'Редактор Word':'Редактор документа');
   const top=$('header','sv-doc-edit-top');
-  const actionIcon=(paths)=>{
+  const actionIcon=(kind)=>{
    const mark=$('span','sv-doc-edit-icon');
    mark.setAttribute('aria-hidden','true');
-   mark.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';
+   mark.innerHTML=window.SEYVEO_DOCUMENT_ICONS?.markup(kind)||'';
    return mark;
   };
   const back=button('',async()=>{
@@ -1094,19 +1087,19 @@ function mount(target,{
    if(typeof sheet.close==='function')sheet.close();else sheet.removeAttribute('open');
   },'sv-doc-edit-back');
   back.setAttribute('aria-label','Назад к документам');
-  back.append(actionIcon('<path d="m14 5-7 7 7 7"/>'));
+  back.append(actionIcon('back'));
   const sayviEditor=button('',helpWithCurrentDocument,'sv-doc-edit-ai');
   sayviEditor.setAttribute('aria-label','Создать с Сэйви');
   const aiMark=$('span','sv-doc-edit-ai-mark sv-sayvi-symbol');aiMark.setAttribute('aria-hidden','true');sayviEditor.append(aiMark);
   top.append(back,$('strong','',fromScan?'Редактор Word':'Документ'),sayviEditor);
-  saveButton.append(actionIcon('<path d="M12 3.5v11m-4-4 4 4 4-4M4.5 15v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V15"/>'),saveLabel);
-  shareButton.append(actionIcon('<path d="M12 15V3.5m-4 4 4-4 4 4M7.5 10H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1.5"/>'),$('span','','Поделиться'));
+  saveButton.append(actionIcon('download'),saveLabel);
+  shareButton.append(actionIcon('share'),$('span','','Поделиться'));
   const archive=button('',()=>{
    const ready=preparedFile();if(!ready)return;
    try{onImport(asFile(ready.blob,ready.name));if(sheet.open)sheet.close();}
    catch(error){message(error?.message||'Не удалось подготовить файл для архива.');}
   },'sv-doc-edit-action');
-  archive.append(actionIcon('<path d="M3.5 9V6a2 2 0 0 1 2-2h4l3 3h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/><path d="M3 10h18M9 15h6" opacity=".7"/>'),$('span','','В архив'));
+  archive.append(actionIcon('archive'),$('span','','В архив'));
   const footer=$('footer','sv-doc-edit-footer');
   const actions=$('div','sv-doc-edit-actions');actions.append(saveButton,shareButton,archive);
   const draftIndicator=$('small','sv-doc-draft-indicator');draftIndicator.setAttribute('role','status');draftIndicator.textContent=draftFeedback.textContent;

@@ -13,32 +13,14 @@ const el=(tag,cls,text)=>{
  if(text!==undefined)node.textContent=text;
  return node;
 };
-const icons={
- file:'<path d="M7 2h7l5 5v15H7zM14 2v6h5M10 13h6M10 17h6"/>',
- pdf:'<path d="M7 2h7l5 5v15H7zM14 2v6h5M10 13h6M10 17h4"/>',
- image:'<rect x="2.5" y="4" width="19" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m3 17 6-5 4 3 3-4 5 6"/>',
- signature:'<path d="M4 17c3-7 4 4 7-2 3-8 4 3 8-3M4 21h16"/>',
- share:'<path d="M12 16V3m-5 5 5-5 5 5M4 14v7h16v-7"/>',
- print:'<path d="M6 9V3h12v6M6 17H4V9h16v8h-2M6 15h12v6H6zM17 12h.01"/>',
- more:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
- download:'<path d="M12 3v13m-5-5 5 5 5-5M4 18v3h16v-3"/>'
-};
+// Semantic document glyphs come from the shared document icon catalog.
 function icon(key){
  if(key==='sayvi'){
   const mark=el('span','svdv-sayvi-mark');mark.className+=' sv-sayvi-symbol';mark.setAttribute('aria-hidden','true');return mark;
  }
- const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
- svg.setAttribute('viewBox','0 0 24 24');
- svg.setAttribute('aria-hidden','true');
- svg.setAttribute('fill','none');
- svg.setAttribute('stroke','currentColor');
- svg.setAttribute('stroke-width','1.45');
- svg.setAttribute('stroke-linecap','round');
- svg.setAttribute('stroke-linejoin','round');
- const group=document.createElementNS('http://www.w3.org/2000/svg','g');
- // Constant in-repo SVG paths, never document-controlled markup.
- group.innerHTML=icons[key]||icons.file;
- svg.append(group);return svg;
+ const wrap=el('span','svdv-icon');wrap.setAttribute('aria-hidden','true');
+ wrap.innerHTML=window.SEYVEO_DOCUMENT_ICONS?.markup(key==='file'?'original':key)||'';
+ return wrap;
 }
 function action(label,picture,handler,cls=''){
  const button=el('button','svdv-action'+(cls?' '+cls:''));button.type='button';
@@ -271,7 +253,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
  save.append(icon('download'),el('span','','Сохранить'));
  toolbar.append(save);
  if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf')){
-  const edit=action('Редактировать','file',async()=>{
+  const edit=action('Редактировать','edit',async()=>{
    if(edit.disabled)return;
    edit.disabled=true;
    try{

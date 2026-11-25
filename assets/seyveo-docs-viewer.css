@@ -450,3 +450,9 @@ html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-more-options :is(
 }
 html:root body .svdv-bottom-sheet .svdv-sheet-close svg{stroke-width:var(--sv-header-back-weight,1.45);width:var(--sv-header-back-icon,22px);height:var(--sv-header-back-icon,22px);}
 html:root body .svdv-bottom-sheet :is(.svdv-sheet-close,.svdv-sheet-expand):focus-visible{outline:2px solid currentColor!important;outline-offset:2px!important;}
+
+/* Shared action icon wrapper: stable optical slot in the viewer and its menu. */
+html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-icon{display:grid;place-items:center;flex:none;width:20px;height:20px;}
+html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-icon svg{display:block;width:100%!important;height:100%!important;stroke-width:1.55!important;}
+html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-more-options .svdv-icon{width:24px;height:24px;flex:0 0 24px;}
+html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-more-options .svdv-icon svg{padding:1px;}

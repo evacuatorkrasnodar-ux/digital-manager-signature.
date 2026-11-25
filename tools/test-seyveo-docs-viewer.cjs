@@ -36,6 +36,7 @@ function fixture({shareAvailable=true}={}){
  };
  const window={open:(url,target,flags)=>{calls.push(['print',url,target,flags]);return {}}};
  const context={window,document,navigator,URL};
+ vm.runInNewContext(fs.readFileSync(path.join(root,'assets/seyveo-document-icons.js'),'utf8'),context);
  vm.runInNewContext(source,context,{filename:'seyveo-docs-viewer.js'});
  const root=new Element('main');root._root=true;
  const file=(name,type)=>new File(['test document content'],name,{type});
