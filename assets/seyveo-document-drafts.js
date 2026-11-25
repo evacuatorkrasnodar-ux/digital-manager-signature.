@@ -44,7 +44,14 @@ function serial(id,work){
 function save(area,value){
  if(!allowed(area)||!value?.id)return Promise.reject(Error('Некорректный черновик'));
  const snapshot=JSON.stringify(value),id=value.id;
+ const untouchedLegacyTemplate=Boolean(value.template)&&value.edited!==true&&!String(value.name||'').trim()&&!value.fromScan&&value.format==='pdf'&&Number(value.style?.size??12)===12&&(value.style?.alignment??'left')==='left'&&!value.style?.heading;
  return serial(id,async()=>{
+  // Older cached editors submitted unmodified template previews. Never create
+  // a new record from those calls; preserve any previously stored drafts.
+  if(untouchedLegacyTemplate){
+   const existing=await request('drafts','readonly',s=>s.get(id));
+   if(!existing)return;
+  }
   const k=await key(area),iv=crypto.getRandomValues(new Uint8Array(12));
   const data=await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:aad(area,id)},k,enc.encode(snapshot));
   await request('drafts','readwrite',s=>s.put({id,area,iv,data}));
