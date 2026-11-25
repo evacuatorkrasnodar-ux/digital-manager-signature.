@@ -154,7 +154,7 @@ async function readPdfText(file,isActive,recognizePages){
   return texts.map(p=>p.text).join('\n\n');
  }finally{try{await task.destroy();}catch{}}
 }
-function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy=null,area=null,asSheet=false,onClose=()=>{}}={}){
+function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy=null,area=null,asSheet=false,onClose=()=>{},onApplyPhoto=null,onPhotoMode=null}={}){
  if(!target||!file||typeof file.name!=='string'||typeof file.size!=='number'||
     file.size<1||file.size>MAX||typeof file.text!=='function')return false;
  const info=format(file.name,file.type);
@@ -162,7 +162,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  try{objectUrl=URL.createObjectURL(file);}catch{return false;}
  let active=true;
  const pageUrls=[];let pdfDocument=null,pdfTask=null,sheet=null;
- const root=el('section','svdv-viewer');
+ const root=el('section','svdv-viewer'+(onApplyPhoto?' svdv-scan-embedded':''));
  root.setAttribute('aria-label','Просмотр документа '+file.name);
  const header=el('div','svdv-header');
  const glyph=el('span','svdv-file-icon');glyph.append(icon(info.kind==='image'?'image':info.kind==='pdf'?'pdf':'file'));
@@ -542,15 +542,15 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  function beginPhoto(mode){
   if(!active||photoMode||photoBusy)return false;
   photoMode=mode;photoOriginalNodes=Array.from(stage.childNodes);photoOldTop=stage.scrollTop;
-  more.open=false;more.hidden=true;return true;
+  more.open=false;more.hidden=true;onPhotoMode?.(mode);return true;
  }
  function endPhoto(){
   photoEpoch++;photoBusy=false;photoMode='';photoCanvas=null;photoOutput=null;
   stage.classList.remove('svdv-photo-mode','svdv-photo-text-mode','svdv-photo-adjust-mode');
   stage.replaceChildren(...photoOriginalNodes);stage.scrollTop=photoOldTop;
   photoActions(...normalPhotoActions);
-  more.hidden=!Array.from(moreBody.children).some(n=>!n.hidden);
-  say('');
+  more.hidden=!!onApplyPhoto||!Array.from(moreBody.children).some(n=>!n.hidden);
+  onPhotoMode?.('');say('');
  }
  function photoCancel(){return action('Отмена','back',()=>endPhoto());}
  async function savePhotoFile(next,options={}){
@@ -657,7 +657,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   photoCanvas=canvas;stage.classList.add('svdv-photo-mode');stage.replaceChildren(canvas);
  }
  function saveImageAction(){
-  const saveImage=action('Сохранить','check',async()=>{
+  const saveImage=action(onApplyPhoto?'Готово':'Сохранить','check',async()=>{
    if(!photoCanvas||photoBusy)return;
    photoBusy=true;saveImage.disabled=true;const epoch=photoEpoch;
    try{
@@ -666,8 +666,17 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     const blob=await new Promise((resolve,reject)=>output.toBlob(b=>b?resolve(b):reject(Error('Не удалось создать копию.')),type,.94));
     if(!active||photoEpoch!==epoch)return;
     const next=new File([blob],file.name.replace(/\.[^.]+$/,'')+' · копия.'+(type==='image/jpeg'?'jpg':'png'),{type});
-    await savePhotoFile(next,{status:'ready'});
-    if(active&&photoEpoch===epoch){endPhoto();say('Копия сохранена. Оригинал не изменён.',3500);}
+    if(onApplyPhoto){
+     await onApplyPhoto(next);
+     if(!active||photoEpoch!==epoch)return;
+     const old=objectUrl;objectUrl=URL.createObjectURL(next);file=next;
+     const img=el('img','svdv-picture');img.src=objectUrl;img.alt='Обновлённая страница скана';
+     photoOriginalNodes=[img];save.href=objectUrl;originalAction.href=objectUrl;
+     endPhoto();URL.revokeObjectURL(old);say('Страница обновлена.',2000);
+    }else{
+     await savePhotoFile(next,{status:'ready'});
+     if(active&&photoEpoch===epoch){endPhoto();say('Копия сохранена. Оригинал не изменён.',3500);}
+    }
    }catch(e){if(active&&photoEpoch===epoch)say(e?.message||'Не удалось сохранить фото.');}
    finally{if(photoEpoch===epoch){photoBusy=false;saveImage.disabled=false;}}
   });
@@ -816,8 +825,8 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    });
   }catch{say('Не удалось открыть системное меню.');}
  };
- toolbar.append(action('Поделиться','share',doShare));
- if(supportsPrint)toolbar.append(action('Печать','print',()=>{
+ if(!onApplyPhoto)toolbar.append(action('Поделиться','share',doShare));
+ if(supportsPrint&&!onApplyPhoto)toolbar.append(action('Печать','print',()=>{
   let url=objectUrl,temporary=false;
   try{
    if(info.kind==='text'||info.ext==='docx'){
@@ -861,7 +870,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   normalPhotoActions=Array.from(toolbar.children);
   photoActions(...normalPhotoActions);toolbar.append(photoRail);
  }
- toolbar.append(more);more.hidden=!Array.from(moreBody.children).some(n=>!n.hidden);
+ toolbar.append(more);more.hidden=!!onApplyPhoto||!Array.from(moreBody.children).some(n=>!n.hidden);
  const dismissMore=event=>{if(!more.contains(event.target))more.open=false;};
  const closeMoreOnEscape=event=>{if(event.key==='Escape'&&more.open){event.preventDefault();more.open=false;summary.focus();}};
  document.addEventListener('pointerdown',dismissMore,{passive:true});
@@ -885,6 +894,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   sheet.addEventListener('click',e=>{if(e.target===sheet){const r=sheet.getBoundingClientRect();if(e.clientY<r.top||e.clientX<r.left||e.clientX>r.right)void requestClose();}});
  }else target.replaceChildren(root);
  const session=Object.freeze({
+  backPhoto(){if(!photoMode)return false;if(!photoBusy||photoMode==='text')endPhoto();return true;},
   destroy(){
    if(!active)return;
    clearTimeout(noticeTimer);inline?.closeMenu?.();if(inline?.dismiss)document.removeEventListener('pointerdown',inline.dismiss);stopViewport?.();stopViewport=null;active=false;markupSession?.destroy?.();markupSession=null;if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();

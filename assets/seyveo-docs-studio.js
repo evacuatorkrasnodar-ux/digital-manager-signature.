@@ -60,12 +60,13 @@ function pictorialSteps(steps){
  });
  return group;
 }
-let scans=[],mode='',temporaryUrls=[],generation=0,operationEpoch=0,importBusy=false,selectedScan=0,activeStudio=null,activeHandoff=null,activeDraftRefresh=null;
+let scans=[],mode='',temporaryUrls=[],generation=0,operationEpoch=0,importBusy=false,selectedScan=0,activeStudio=null,activeHandoff=null,activeDraftRefresh=null,activeScanViewer=null;
 function cleanUrls(){
  for(const url of temporaryUrls)URL.revokeObjectURL(url);
  temporaryUrls=[];
 }
 function reset(){
+ activeScanViewer?.destroy();activeScanViewer=null;
  generation++;operationEpoch++;importBusy=false;activeStudio=null;activeHandoff=null;activeDraftRefresh=null;
  cleanUrls();scans=[];mode='';selectedScan=0;
 }
@@ -207,6 +208,7 @@ function mount(target,{
   }finally{createLeaving=false;scannerBack.disabled=false;}
  }
  function requestWorkspaceBack(){
+  if(mode==='scan'&&activeScanViewer?.backPhoto?.())return;
   if(mode==='create'){void requestCreateExit();return;}
   if(mode==='sign'||mode==='print')open('scan');else requestScanExit();
  }
@@ -359,6 +361,7 @@ function mount(target,{
  activeDraftRefresh=scope=>{if(scope===area&&editor.isConnected)void refreshDrafts();};
  requestAnimationFrame(()=>void refreshDrafts());
  const clear=()=>{
+  activeScanViewer?.destroy();activeScanViewer=null;delete panel.dataset.photoMode;
   const sheet=panel.querySelector('dialog.sv-doc-edit-sheet[open]');
   if(sheet)sheet.close();
   panel.replaceChildren();cleanUrls();
@@ -487,6 +490,32 @@ function mount(target,{
  function scannerStage(){
   const stage=$('div','sv-doc-scan-stage');
   stage.setAttribute('aria-label',scans.length?'Предпросмотр отсканированной страницы':'Пример расположения листа для сканирования');
+  if(scans.length&&window.SEYVEO_DOCS_VIEWER?.mount){
+   selectedScan=Math.min(Math.max(0,selectedScan),scans.length-1);
+   const index=selectedScan,at=generation,epoch=operationEpoch;
+   const page=scans[index],host=$('div','sv-doc-scan-editor-host');
+   const original=asFile(new Blob([page.jpegBytes],{type:'image/jpeg'}),'Страница '+(index+1)+'.jpg');
+   const valid=()=>at===generation&&epoch===operationEpoch&&mode==='scan'&&selectedScan===index&&panel.isConnected;
+   const viewer=window.SEYVEO_DOCS_VIEWER.mount(host,original,{
+    area,
+    onPhotoMode:mode=>{if(mode)panel.dataset.photoMode=mode;else delete panel.dataset.photoMode;},
+    onEdit:payload=>activeHandoff?.({...payload,isActive:()=>valid()&&payload.isActive?.()!==false}),
+    onSaveCopy:async(file,options)=>{if(!valid())throw Error('Сканер уже закрыт.');return window.SEYVEO_DOCUMENT_FILES.save(area,file,'created',options||{});},
+    onApplyPhoto:async(file)=>{
+     if(!valid())throw Error('Страница изменилась.');
+     const image=await imageOf(file);
+     if(!valid())throw Error('Страница изменилась.');
+     // Changes remain in this scan session until the explicit PDF/JPG Save.
+     scans[index]=jpegOf(canvasOf(image,Math.max(image.naturalWidth,image.naturalHeight)));
+    }
+   });
+   if(viewer){
+    activeScanViewer=viewer;stage.classList.add('sv-doc-scan-with-editor');
+    const footer=$('div','sv-doc-scan-stage-meta');
+    footer.append($('span','','Страница '+(index+1)+' из '+scans.length));
+    stage.append(host,footer);return stage;
+   }
+  }
   const board=$('div','sv-doc-scan-board');
   const guide=$('div','sv-doc-scan-guide');
   const sheet=$('div','sv-doc-scan-sheet');
@@ -582,7 +611,7 @@ function mount(target,{
    };
    const rotate=pageAction('Повернуть страницу','undo',()=>{void rotatePage(index);});
    rotate.querySelector('.sv-doc-tool-icon').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 4v6h-6M20 10a8 8 0 1 0-1.5 7.5"/></svg>';
-   pageActions.append(rotate);
+   if(!activeScanViewer)pageActions.append(rotate);
    if(scans.length>1){
     const before=pageAction('Переместить страницу назад','back',()=>movePage(index,-1));before.disabled=index===0;
     const after=pageAction('Переместить страницу вперёд','back',()=>movePage(index,1));after.classList.add('sv-doc-scan-forward');after.disabled=index===scans.length-1;
