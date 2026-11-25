@@ -544,32 +544,6 @@ function mount(target,{
   pending.then(w=>{if(expired)void w.terminate().catch(()=>{});},()=>{});
   try{return await Promise.race([pending,timeout]);}finally{clearTimeout(timer);}
  }
- async function recognizeScanText(page,output,action){
-  if(!page||action.disabled)return;
-  if(!window.Tesseract?.createWorker&&!window.confirm(
-   'Для распознавания потребуется скачать движок и языковые модели из интернета. Фото обрабатывается на этом устройстве. Продолжить?'))return;
-  const startEpoch=operationEpoch, startGeneration=generation;
-  action.disabled=true;output.hidden=false;output.value='Подготавливаю распознавание…';
-  let worker;
-  try{
-   const tesseract=await getOcrEngine();
-   if(startEpoch!==operationEpoch||startGeneration!==generation||!scans.includes(page))return;
-   worker=await createOcrWorker(tesseract);
-   if(startEpoch!==operationEpoch||startGeneration!==generation||!scans.includes(page))return;
-   const image=new Blob([page.jpegBytes],{type:'image/jpeg'});
-   const result=await worker.recognize(image);
-   if(startEpoch!==operationEpoch||startGeneration!==generation||!scans.includes(page))return;
-   const value=String(result?.data?.text||'').trim();
-   output.value=value||'Текст не найден. Попробуйте более чёткое фото.';
-   message(value?'Текст распознан. Проверьте ошибки перед использованием.':'Текст на странице не обнаружен.');
-  }catch(error){
-   if(startEpoch===operationEpoch&&startGeneration===generation)
-    output.value=(error?.message||'Не удалось распознать текст.');
-  }finally{
-   if(worker)try{await worker.terminate();}catch{}
-   action.disabled=false;
-  }
- }
  function renderScan(){
   clear();
   panel.dataset.hasScans=String(scans.length>0);
@@ -1720,15 +1694,20 @@ function mount(target,{
    if(!window.Tesseract?.createWorker&&!window.confirm('Для распознавания потребуется скачать движок и языковые модели из интернета. Страницы обрабатываются на устройстве. Продолжить?'))return false;
    let worker;
    try{
-    const pages=await window.SEYVEO_DOCS_EXPORT.readScanPdf(payload.file);
+    const pages=Array.isArray(payload.pages)?payload.pages:await window.SEYVEO_DOCS_EXPORT.readScanPdf(payload.file);
     if(!valid())return false;
+    if(!pages.length||pages.length>12)throw Error('Распознавание доступно для PDF до 12 страниц.');
     const engine=await getOcrEngine();if(!valid())return false;
     worker=await createOcrWorker(engine);if(!valid())return false;
     const texts=[];
     for(const page of pages){
-     const result=await worker.recognize(new Blob([page.jpegBytes],{type:'image/jpeg'}));
      if(!valid())return false;
-     const value=String(result?.data?.text||'').trim();
+     let value=typeof page.text==='string'?page.text.trim():'';
+     if(!value){
+      const result=await worker.recognize(new Blob([page.jpegBytes],{type:'image/jpeg'}));
+      if(!valid())return false;
+      value=String(result?.data?.text||'').trim();
+     }
      if(!value)throw Error('Не удалось распознать текст одной из страниц. Оригинал не изменён.');
      texts.push(value);
      if(texts.join('\n\n').length>12000)throw Error('Документ больше 12 000 знаков. Редактирование копии пока недоступно.');
