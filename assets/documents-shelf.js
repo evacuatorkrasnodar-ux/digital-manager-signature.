@@ -163,7 +163,7 @@ function openDocumentDetails(state,item){
  const type=field('Тип документа',select('Тип документа',Object.entries(api.docTypes),docType(item)));
  const counterparty=field('Контрагент',input(item.counterparty,120));
  const ref=field('Номер / связанный договор',input(item.reference,100));
- const due=field('Контрольная дата',pickers.date('Контрольная дата',item.dueDate));
+ const due=field('Контрольная дата',pickers.date('Контрольная дата',item.dueDate,'Выбрать дату',area));
  const status=field('Статус (вручную)',select('Статус',[['','Не указан'],['draft','Черновик'],['ready','Готов'],['sent','Отправлен'],['signed','Подписан'],['paid','Оплачен'],['closed','Закрыт']],item.status||''));
  const folder=field('Папка',select('Папка',[['','Без папки'],...ownFolders(state).map(x=>[x.id,x.name])],item.folder||''));
  if(type.value==='other'||item.typeOrigin!=='user')form.append(el('small','sv-doc-my-template-note','Тип предложен по названию. Проверьте его. Статусы не подтверждают подпись или оплату.'));
