@@ -768,3 +768,40 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
  max-width:var(--sv-header-action-icon,20px)!important;max-height:var(--sv-header-action-icon,20px)!important;
  stroke-width:var(--sv-nav-glyph-stroke,1.7)!important;
 }
+
+/* Mail folders: four permanent equal cells, then an optional review row.
+   Never let the security queue displace Trash into an orphaned grid cell. */
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders:not([hidden]){
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[data-mail-review]:not([hidden]){
+ grid-column:1/-1!important;
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ gap:8px!important;box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;min-height:44px!important;
+ margin:2px 0 6px!important;padding:7px 12px!important;
+ border:1px solid var(--soft-line,rgba(130,139,150,.16))!important;border-radius:14px!important;
+ background:var(--card,rgba(130,139,150,.07))!important;
+ box-shadow:none!important;text-align:left!important;font-weight:500!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[data-mail-review]:not([hidden]){
+ background:#F7F7F8!important;border:var(--sv-white-pearl-edge)!important;
+ color:var(--sv-white-pearl-ink,#17191d)!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[data-mail-review] > .sv-mail-review-label{
+ flex:1 1 auto;min-width:0;text-align:left;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[data-mail-review] > svg{
+ flex:none;width:18px!important;height:18px!important;
+ stroke:currentColor;fill:none;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[data-mail-review] > .sv-mail-review-chevron{
+ width:15px!important;height:15px!important;transform:rotate(180deg);opacity:.65;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[data-mail-review] > small{
+ flex:none;position:static!important;min-width:16px;margin:0!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[data-mail-review] > small:empty{display:none!important}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[data-mail-review][aria-current="page"]::before{content:none!important;display:none!important}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[data-mail-review][aria-current="page"]{font-weight:650!important}
+html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > [data-mail-review][hidden]{display:none!important}
