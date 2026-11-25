@@ -663,7 +663,7 @@ html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons[hi
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-top-actions > #sayviSurfaceBack,.sv-mail-top-buttons > .sv-mail-icon-button,.sv-mail-detail-bar > .sv-mail-icon-button,.sv-mail-detail-tools > .sv-mail-icon-button,.sv-mail-editor-header > .sv-mail-editor-back,.sv-mail-file-preview-head > .sv-mail-icon-button):not([hidden]):is(:active,:hover){
  transform:none!important;translate:none!important;scale:none!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-top-actions > #sayviSurfaceBack,.sv-mail-detail-bar > .sv-mail-icon-button,.sv-mail-detail-tools > .sv-mail-icon-button,.sv-mail-editor-header > .sv-mail-editor-back,.sv-mail-file-preview-head > .sv-mail-icon-button):is(:active,:hover){
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-top-actions > #sayviSurfaceBack,.sv-mail-detail-bar > .sv-mail-icon-button,.sv-mail-editor-header > .sv-mail-editor-back,.sv-mail-file-preview-head > .sv-mail-icon-button):is(:active,:hover){
  background:var(--sv-white-pearl-surface)!important;box-shadow:var(--sv-white-pearl-circle-shadow)!important;
 }
 
@@ -830,7 +830,7 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > .sv-mail-icon-button:not([hidden]):active{
- background:var(--sv-white-pearl-press-fill)!important;box-shadow:var(--sv-white-pearl-press-shadow)!important;
+ background:transparent!important;box-shadow:none!important;color:#176AB4!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-inspect-trigger{
  font-weight:500!important;color:#52718A!important;
@@ -892,4 +892,16 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > button.sv-mail-icon-button::before,
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > button.sv-mail-icon-button::after{
  content:none!important;display:none!important;
+}
+
+/* Grouped mail actions remain bare glyphs in every pointer state.
+   Keyboard focus remains visible via a thin outline, not a filled circle. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > button.sv-mail-icon-button:not([hidden]):is(:hover,:focus,:active,[aria-expanded="true"]){
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;transform:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > button.sv-mail-icon-button:focus-visible{
+ outline:2px solid #007AFF!important;outline-offset:-4px!important;
 }
