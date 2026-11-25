@@ -931,7 +931,17 @@ function mount(target,{
     act:'<path d="M8 10h8M8 13h5" opacity=".7"/><circle cx="15" cy="17" r="3" fill="currentColor" fill-opacity=".08"/><path d="m13.5 17 1 1 2-2"/>',
     receipt:'<path d="M8 10h8M8 13h5" opacity=".7"/><path d="M8 17h8M10 15.5v3" opacity=".8"/>'
    };
-   paper.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h6l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M13 3v4a1 1 0 0 0 1 1h4" opacity=".65"/>'+(motifs[item.icon]||motifs.statement)+'</svg>';
+   const taxMotifs={
+    usn:'<path d="M8 11h7M8 14h4M9 18l6-6"/><circle cx="9" cy="13" r=".7"/><circle cx="15" cy="18" r=".7"/>',
+    vat:'<rect x="8" y="10" width="7" height="8" rx="1"/><path d="M9.5 13h4M10 16h.1m3 0h.1"/>',
+    profit:'<path d="M8 18v-3m3 3v-5m3 5v-8M8 11l3-2 3 1"/>',
+    customs:'<path d="m8 12 4-2 4 2v5l-4 2-4-2zM8 12l4 2 4-2M12 14v5"/>',
+    income:'<circle cx="12" cy="12" r="2"/><path d="M8 18v-1a4 4 0 0 1 8 0v1"/>',
+    report:'<path d="M8 10h8M8 13h8M8 16h8M11 10v6"/>'
+   };
+   const taxKind=/usn/.test(item.id)?'usn':/vat/.test(item.id)?'vat':/profit/.test(item.id)?'profit':/customs/.test(item.id)?'customs':/income|3ndfl|^official-armenia$/.test(item.id)?'income':/official-armenia-business/.test(item.id)?'report':'';
+   card.title=item.url?'Официальная форма · '+item.name:item.name;
+   paper.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h6l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M13 3v4a1 1 0 0 0 1 1h4" opacity=".65"/>'+(taxMotifs[taxKind]||motifs[item.icon]||motifs.statement)+'</svg>';
    card.append(paper,$('strong','sv-doc-template-name',item.name));
    bindTemplateHold(card,item);
    cards.push({id:item.id,button:card});
@@ -939,10 +949,15 @@ function mount(target,{
   }
 
   const templateSearch=$('input','sv-doc-template-search');templateSearch.type='search';templateSearch.placeholder='Найти шаблон';templateSearch.setAttribute('aria-label','Поиск шаблонов документов');
+  const searchWrap=$('div','sv-doc-template-search-wrap');
+  const clearSearch=button('',()=>{templateSearch.value='';templateSearch.dispatchEvent(new Event('input'));templateSearch.focus();},'sv-doc-template-search-clear');
+  clearSearch.setAttribute('aria-label','Очистить поиск');clearSearch.hidden=true;
+  clearSearch.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>';
+  searchWrap.append(templateSearch,clearSearch);
   const templateEmpty=$('small','sv-doc-template-empty','Ничего не найдено');templateEmpty.hidden=true;
   templateSearch.addEventListener('input',()=>{
    const query=templateSearch.value.trim().toLocaleLowerCase('ru-RU').replace(/ё/g,'е');
-   myCard.hidden=Boolean(query);
+   myCard.hidden=Boolean(query);clearSearch.hidden=!templateSearch.value;
    let count=0;
    cards.forEach(({id,button})=>{const item=templates.find(t=>t.id===id);const match=(!query||[item.name,item.content?.split('\n')[0],item.url?'официальная декларация отчётность налоги':''].join(' ').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').includes(query));button.hidden=!match;if(match)count++;});
    examples.scrollLeft=0;templateEmpty.hidden=count>0;
@@ -1199,7 +1214,14 @@ function mount(target,{
    sheet.style.removeProperty('--sv-doc-editor-height');sheet.style.removeProperty('--sv-doc-editor-top');
   });
   const resume=button('Продолжить документ',()=>revealEditor(),'sv-doc-edit-resume');
-  resume.hidden=!(saveFailed||draftId||draftEdited||documentDraft.trim());
+  function syncResume(){
+   const hasContent=Boolean(documentDraft.trim()||documentName.trim());
+   resume.hidden=!(hasContent&&(draftId||draftEdited||saveFailed));
+   const title=documentName.trim()||documentDraft.trim().split('\n')[0].slice(0,80)||'Документ';
+   resume.replaceChildren(toolArt('create'),$('span','sv-doc-resume-copy','Продолжить: '+title));
+   resume.title=title;
+  }
+  syncResume();
   function revealEditor(){
    rail.scrollLeft=0;
    if(!sheet.open){
@@ -1211,7 +1233,7 @@ function mount(target,{
   }
   sheet.addEventListener('close',()=>{
    if(!panel.isConnected||!sheet.isConnected)return;
-   void persistDraft().then(()=>{resume.hidden=!(saveFailed||draftId||draftEdited||documentDraft.trim());void refreshDrafts();});
+   void persistDraft().then(()=>{syncResume();void refreshDrafts();});
   });
   const sayvi=button('',()=>onSayvi('create'),'sv-doc-create-sayvi');
   const sayviMark=$('span','sv-doc-create-sayvi-mark sv-sayvi-symbol');
@@ -1219,7 +1241,7 @@ function mount(target,{
   sayvi.append(sayviMark,$('span','','Создать с Сэйви'));
   panel.dataset.createStage='choose';
   if(!fromScan){
-   panel.append(sectionTitle,templateSearch,examples,templateEmpty);
+   panel.append(sectionTitle,searchWrap,examples,templateEmpty);
   }
   panel.append(resume,sayvi,status(''),sheet);
   if(fromScan&&documentDraft.trim()&&sheet.isConnected){revealEditor();void persistDraft();}
