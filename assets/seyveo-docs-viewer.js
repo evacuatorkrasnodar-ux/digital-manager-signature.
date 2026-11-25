@@ -158,7 +158,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  header.append(glyph,copy);root.append(header);
  const stage=el('div','svdv-stage');
  let previewNeedsOriginal=info.kind==='original';
- let originalAction=null,loadedText=null,inline=null,doneControl=null,stopViewport=null,pagesAction=null,canManagePages=false;
+ let originalAction=null,loadedText=null,inline=null,doneControl=null,stopViewport=null,markupSession=null,sayviAfterEdit=false,pagesAction=null,canManagePages=false;
  const requireOriginal=()=>{previewNeedsOriginal=true;if(originalAction){originalAction.hidden=false;originalAction.closest('details').hidden=false;}};
  if(info.kind==='image'){
   const img=el('img','svdv-picture');
@@ -250,6 +250,8 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  const say=(value,timeout=0)=>{if(!active)return;clearTimeout(noticeTimer);notice.textContent=value;if(timeout&&value)noticeTimer=setTimeout(()=>{notice.textContent='';},timeout);};
  const supportsPrint=info.kind==='pdf'||info.kind==='image'||info.kind==='text'||info.ext==='docx';
  const toolbar=el('div','svdv-toolbar');
+ const editorControls=el('div','svdv-inline-controls');editorControls.hidden=true;
+ const editorRail=el('div','svdv-inline-rail');editorControls.append(editorRail);
  const save=el('a','svdv-action svdv-primary');
  save.href=objectUrl;save.download=file.name||'Документ';
  save.setAttribute('aria-label','Скачать файл '+file.name);
@@ -265,14 +267,13 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   return draftAPI().save(area,{id:state.id,sourceKey,name:state.name,text:state.input.value,format:info.kind==='pdf'?'pdf':'docx',style:state.style,edited:true,fromScan:info.kind==='pdf',template:'',updatedAt:Date.now()}).then(()=>true,e=>{if(active)say(e?.message||'Не удалось сохранить черновик.');return false;});
  }
  function startInline(value,existing=null){
-  if(!active||inline)return;
+  if(!active||inline||markupSession)return;
   if(value.length>12000){say('Документ больше 12 000 знаков. Редактирование копии пока недоступно.');return;}
   const api=window.SEYVEO_EDITOR_CAPSULE;
   if(!api){say('Инструменты редактора недоступны.');return;}
   const input=el('textarea','svdv-inline-text');input.value=value;input.maxLength=12000;input.spellcheck=true;input.setAttribute('aria-label','Текст документа');
-  const controls=el('div','svdv-inline-controls');
-  const rail=api.attach(el('div','svdv-inline-rail'),'word');
-  const menu=el('div','svdv-inline-menu');menu.hidden=true;menu.setAttribute('role','group');controls.append(menu,rail);
+  const controls=editorControls,rail=api.attach(editorRail,'word');rail.replaceChildren();
+  const menu=el('div','svdv-inline-menu');menu.hidden=true;menu.setAttribute('role','group');controls.replaceChildren(menu,rail);
   rail.setAttribute('aria-label','Инструменты документа');
   const state={input,rail,controls,id:existing?.id||draftAPI()?.id(),name:existing?.name||file.name.replace(/\.[^.]+$/,''),changed:!!existing,style:existing?.style?{size:[10,11,12,14,16,18,20,24].includes(existing.style.size)?existing.style.size:12,alignment:['left','center','right','both'].includes(existing.style.alignment)?existing.style.alignment:'left',heading:existing.style.heading===true}:{size:12,alignment:'left',heading:false},history:[],redo:[],last:value,saving:false,originalNodes:Array.from(stage.childNodes),oldTop:stage.scrollTop};
   inline=state;
@@ -390,18 +391,19 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   rail.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault();});
   controls.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault();});
   state.dismiss=e=>{if(!controls.contains(e.target))closeMenu();};document.addEventListener('pointerdown',state.dismiss,{passive:true});
-  more.open=false;toolbar.hidden=true;root.insertBefore(controls,notice);
+  more.open=false;toolbar.hidden=true;controls.hidden=false;
   stage.classList.add('svdv-inline-editing');stage.replaceChildren(input);
   if(sheet)stopViewport=api.viewport(sheet);
   const meta=copy.querySelector('.svdv-meta');state.metaBefore=meta.textContent;
   if(info.kind==='pdf'||info.ext==='docx')meta.textContent=state.metaBefore+' · Текстовая копия';
   say(existing?'Черновик восстановлен.':'',existing?3000:0);
   input.focus({preventScroll:true});input.setSelectionRange(0,0);stage.scrollTop=state.oldTop;
+  if(sayviAfterEdit){sayviAfterEdit=false;openSayvi();}
  }
  function leaveInline(){
   const state=inline;if(!state)return;
   stopViewport?.();stopViewport=null;sheet?.classList.remove('sv-editor-keyboard-open');
-  state.closeMenu?.();document.removeEventListener('pointerdown',state.dismiss);state.controls.remove();copy.querySelector('.svdv-meta').textContent=state.metaBefore;stage.classList.remove('svdv-inline-editing');toolbar.hidden=false;
+  state.closeMenu?.();document.removeEventListener('pointerdown',state.dismiss);state.controls.hidden=true;state.rail.replaceChildren();state.controls.replaceChildren(state.rail);copy.querySelector('.svdv-meta').textContent=state.metaBefore;stage.classList.remove('svdv-inline-editing');toolbar.hidden=false;
   if(doneControl){doneControl.hidden=true;doneControl.onclick=null;}
   inline=null;
  }
@@ -434,7 +436,34 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   }catch(e){if(active)say(e?.message||'Не удалось сохранить копию. Черновик сохранён.');}
   finally{state.saving=false;state.input.readOnly=false;if(doneControl)doneControl.disabled=false;}
  }
- const openMarkup=()=>{if(!window.SEYVEO_PDF_MARKUP?.open(file,{parent:root,loadPdf,onSave:onSaveCopy,embedded:true,onSaved:()=>{if(active)say('Копия с пометками сохранена.',3500);}}))say('Рисование и подпись PDF недоступны.');};
+ const openMarkup=()=>{
+  if(markupSession||inline)return;
+  const api=window.SEYVEO_PDF_MARKUP;
+  if(!api||!doneControl){say('Рисование и подпись PDF недоступны.');return;}
+  const originalNodes=Array.from(stage.childNodes),oldTop=stage.scrollTop;
+  const restore=()=>{
+   if(!active)return;
+   markupSession=null;editorControls.hidden=true;editorRail.replaceChildren();editorControls.replaceChildren(editorRail);
+   toolbar.hidden=false;doneControl.hidden=true;doneControl.disabled=false;doneControl.onclick=null;
+   stage.classList.remove('svdv-ink-stage');stage.replaceChildren(...originalNodes);stage.scrollTop=oldTop;
+  };
+  editorRail.replaceChildren();editorControls.replaceChildren(editorRail);editorControls.hidden=false;toolbar.hidden=true;more.open=false;
+  stage.classList.add('svdv-ink-stage');stage.replaceChildren();doneControl.hidden=false;
+  const result=api.open(file,{parent:root,loadPdf,onSave:onSaveCopy,shared:{stage,rail:editorRail,controls:editorControls,done:doneControl,viewport:sheet||root,notice:say},onClose:restore,onText:(assistant=false)=>{sayviAfterEdit=assistant;editAction?.click();},onSaved:(next,id,output)=>{
+   if(!active)return;
+   const old=objectUrl;objectUrl=URL.createObjectURL(next);file=next;sourceKey=typeof id==='string'?id:'';loadedText=null;
+   save.href=objectUrl;save.download=next.name;save.setAttribute('aria-label','Скачать файл '+next.name);
+   if(originalAction)originalAction.href=objectUrl;
+   copy.querySelector('.svdv-name').textContent=next.name;copy.querySelector('.svdv-meta').textContent=info.label+' · '+Math.max(1,Math.ceil(next.size/1024))+' КБ';
+   stage.classList.remove('svdv-stage-document');stage.classList.add('svdv-pdf-stage');
+   const list=el('div','svdv-sheet-pages');
+   for(const [i,page] of output.entries()){const url=URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'}));pageUrls.push(url);const img=el('img','svdv-reader-page');img.src=url;img.alt='Страница '+(i+1);list.append(img);}
+   stage.replaceChildren(list);canManagePages=true;if(pagesAction)pagesAction.hidden=false;
+   URL.revokeObjectURL(old);say('Копия с пометками сохранена.',3500);
+  }});
+  if(!result){restore();say('Рисование и подпись PDF недоступны.');return;}
+  markupSession=result;
+ };
  if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf')){
   const edit=action('Изменить','edit',async()=>{
    if(edit.disabled)return;
@@ -446,7 +475,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
      else if(!ok&&active)say('Обработка изображения пока недоступна.');
      return;
     }
-    if(inline)return;
+    if(inline||markupSession)return;
     if(sourceKey&&draftAPI()){
      const previous=(await draftAPI().list(area)).find(d=>d.sourceKey===sourceKey);
      if(!active)return;if(previous){startInline(String(previous.text||''),previous);return;}
@@ -468,7 +497,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     }
     if(active)startInline(value);
    }catch(e){if(active)say(e?.message||'Не удалось открыть редактор.');}
-   finally{edit.disabled=false;}
+   finally{edit.disabled=false;sayviAfterEdit=false;}
   });
   editAction=edit;toolbar.append(edit);
   // Text and full-page previews open a confirmed editable copy.
@@ -482,7 +511,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    stage.addEventListener('pointercancel',()=>{tapStart=null;},{passive:true});
    stage.addEventListener('click',event=>{
     const start=tapStart;tapStart=null;
-    if(!active||!start||event.defaultPrevented||Math.hypot(event.clientX-start.x,event.clientY-start.y)>10||Date.now()-start.at>600)return;
+    if(!active||markupSession||!start||event.defaultPrevented||Math.hypot(event.clientX-start.x,event.clientY-start.y)>10||Date.now()-start.at>600)return;
     if(event.target.closest('button,a,input,textarea,select,summary,[contenteditable]'))return;
     if(!event.target.closest('.svdv-reader-page,.svdv-text'))return;
     if(window.getSelection?.()?.toString().trim())return;
@@ -559,7 +588,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  const closeMoreOnEscape=event=>{if(event.key==='Escape'&&more.open){event.preventDefault();more.open=false;summary.focus();}};
  document.addEventListener('pointerdown',dismissMore,{passive:true});
  document.addEventListener('keydown',closeMoreOnEscape);
- root.append(toolbar,notice);
+ root.append(toolbar,editorControls,notice);
  if(asSheet){
   sheet=el('dialog','svdv-bottom-sheet');
   sheet.setAttribute('aria-label','Просмотр '+file.name);
@@ -567,7 +596,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   const close=el('button','svdv-sheet-close');close.type='button';close.setAttribute('aria-label','Назад');close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 5-7 7 7 7"/></svg>';
   doneControl=el('button','svdv-inline-done');doneControl.type='button';doneControl.hidden=true;doneControl.setAttribute('aria-label','Готово · сохранить копию');doneControl.append(icon('check'));
   const top=el('div','svdv-sheet-top');top.append(close,copy,doneControl);header.replaceChildren(grip,top);
-  async function requestClose(){const drawing=root.querySelector('.sv-pdf-markup[open]');if(drawing){drawing.querySelector('.sv-pdf-markup-round')?.click();return;}if(inline?.saving)return;if(inline&&!await persistInline())return;window.SEYVEO_DOCS_STUDIO?.refreshDrafts?.(area);sheet.close();}
+  async function requestClose(){if(markupSession){markupSession.requestClose();return;}if(inline?.saving)return;if(inline&&!await persistInline())return;window.SEYVEO_DOCS_STUDIO?.refreshDrafts?.(area);sheet.close();}
   close.addEventListener('click',()=>void requestClose());
   sheet.addEventListener('cancel',e=>{e.preventDefault();void requestClose();});
   window.SEYVEO_SHEET_NAVIGATION?.attach(grip,
@@ -580,7 +609,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  const session=Object.freeze({
   destroy(){
    if(!active)return;
-   clearTimeout(noticeTimer);inline?.closeMenu?.();if(inline?.dismiss)document.removeEventListener('pointerdown',inline.dismiss);stopViewport?.();stopViewport=null;active=false;const markup=root.querySelector('.sv-pdf-markup[open]');if(markup)markup.close();if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
+   clearTimeout(noticeTimer);inline?.closeMenu?.();if(inline?.dismiss)document.removeEventListener('pointerdown',inline.dismiss);stopViewport?.();stopViewport=null;active=false;markupSession?.destroy?.();markupSession=null;if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
    document.removeEventListener('pointerdown',dismissMore);
    document.removeEventListener('keydown',closeMoreOnEscape);
    URL.revokeObjectURL(objectUrl);
