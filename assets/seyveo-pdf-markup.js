@@ -4,6 +4,11 @@
 const el=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;return n;};
 function button(label,fn,cls=''){const n=el('button',cls,label);n.type='button';n.addEventListener('click',fn);return n;}
 const MAX_PAGES=12,MAX_FILE=20*1024*1024;
+const stylusPressure=e=>e.pointerType==='pen'&&Number.isFinite(e.pressure)?Math.max(.12,Math.min(1,e.pressure)):.5;
+const stylusWeight=p=>.35+1.3*(Number.isFinite(p)?p:.5);
+const stylusSamples=e=>{const a=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[];return a.length?[...a,e]:[e];};
+const palmTouch=(e,until)=>e.pointerType==='touch'&&(Date.now()<until||Math.max(e.width||0,e.height||0)>27);
+
 async function imageFrom(page){
  const url=URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'}));
  try{const img=new Image();img.src=url;await img.decode();return img;}finally{URL.revokeObjectURL(url);}
@@ -23,7 +28,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText,ini
  const status={set textContent(value){shared.notice?.(value,value==='Подготавливаем страницы…'||value==='Сохраняем копию…'?0:3500);}};
  status.textContent='Подготавливаем страницы…';
  const viewport=el('div','sv-pdf-markup-viewport'),paper=el('div','sv-pdf-markup-paper');viewport.append(paper);
- let zoom=1,pinch=null,touchLock=false;
+ let zoom=1,pinch=null,touchLock=false,penUntil=0;
  const pager=el('div','sv-pdf-markup-pager'),count=el('span','','');
  const prev=round('Предыдущая страница','back',()=>go(-1)),next=round('Следующая страница','back',()=>go(1));next.classList.add('sv-pdf-markup-next');pager.append(prev,count,next);
  let editing=null;
@@ -86,8 +91,10 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText,ini
     ctx.fillText(op.text,op.x,op.y,Math.max(1,c.width-op.x-3));continue;
    }
    ctx.save();if(op.kind==='eraser')ctx.globalCompositeOperation='destination-out';ctx.globalAlpha=op.kind==='marker'?.32:1;ctx.strokeStyle=op.color||'#20262d';ctx.lineWidth=op.width;ctx.lineCap='round';ctx.lineJoin='round';
-   ctx.beginPath();ctx.moveTo(op.points[0].x,op.points[0].y);for(const pt of op.points.slice(1))ctx.lineTo(pt.x,pt.y);
-   if(op.points.length===1)ctx.lineTo(op.points[0].x+.1,op.points[0].y);ctx.stroke();ctx.restore();
+   if(op.pressureSensitive&&op.kind==='pen'){
+    for(let j=0;j<op.points.length;j++){const a=op.points[Math.max(0,j-1)],b=op.points[j];ctx.lineWidth=op.width*stylusWeight((a.p+b.p)/2);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x+(j===0?.01:0),b.y);ctx.stroke();}
+   }else{ctx.beginPath();ctx.moveTo(op.points[0].x,op.points[0].y);for(const pt of op.points.slice(1))ctx.lineTo(pt.x,pt.y);if(op.points.length===1)ctx.lineTo(op.points[0].x+.1,op.points[0].y);ctx.stroke();}
+   ctx.restore();
   }
  }
  function show(){const p=pages[index];if(!p)return;paper.replaceChildren(p.base,p.overlay);paint(p);zoom=1;paper.style.width='100%';viewport.scrollTop=0;viewport.scrollLeft=0;sync();}
@@ -100,7 +107,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText,ini
  function cancelStroke(){if(!drawing)return;const {p,op,oldUndo,oldRedo}=drawing;drawing=null;p.ops=p.ops.filter(x=>x!==op);p.undo=oldUndo;p.redo=oldRedo;dirty=pages.some(x=>x.ops.length);d.classList.remove('svdv-ink-stroking');paint(p);sync();}
  const fingers=e=>{const a=e.touches[0],b=e.touches[1];return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2,dist:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)};};
  viewport.addEventListener('touchstart',e=>{
-  if(busy||e.touches.length!==2)return;cancelStroke();finishText(true);touchLock=true;
+  if(busy||e.touches.length!==2||drawing?.pointerKind==='pen')return;cancelStroke();finishText(true);touchLock=true;
   const f=fingers(e);pinch={start:zoom,dist:Math.max(1,f.dist),anchor:anchorAt(f.x,f.y)};d.classList.add('svdv-pinching');if(e.cancelable)e.preventDefault();
  },{passive:false,capture:true});
  viewport.addEventListener('touchmove',e=>{
@@ -110,7 +117,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText,ini
  viewport.addEventListener('touchend',endPinch,{passive:true});viewport.addEventListener('touchcancel',endPinch,{passive:true});
  viewport.addEventListener('wheel',e=>{if(busy||drawing||!(e.ctrlKey||e.metaKey))return;e.preventDefault();zoomAt(zoom*Math.exp(-e.deltaY*.008),e.clientX,e.clientY);},{passive:false});
  viewport.addEventListener('dblclick',e=>{if(busy||mode!=='view'||e.target===input)return;zoomAt(zoom>1?1:2,e.clientX,e.clientY);});
- function point(event,c){const r=c.getBoundingClientRect();return {x:Math.max(0,Math.min(c.width-1,(event.clientX-r.left)*c.width/r.width)),y:Math.max(0,Math.min(c.height-1,(event.clientY-r.top)*c.height/r.height))};}
+ function point(event,c){const r=c.getBoundingClientRect();return {x:Math.max(0,Math.min(c.width-1,(event.clientX-r.left)*c.width/r.width)),y:Math.max(0,Math.min(c.height-1,(event.clientY-r.top)*c.height/r.height)),p:stylusPressure(event)};}
  function finishText(cancel=false){
   if(!editing)return;
   const {p,original,op}=editing;const value=input.value.trim();editing=null;input.remove();
@@ -148,15 +155,16 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText,ini
  function connect(p){
   const c=p.overlay;
   c.addEventListener('pointerdown',e=>{
-   if(busy||touchLock||pinch||mode==='view'||e.button!==0||!e.isPrimary)return;
+   if(e.pointerType==='pen'){penUntil=Date.now()+2800;if(drawing?.pointerKind==='touch')cancelStroke();}
+   if(busy||drawing||touchLock||pinch||mode==='view'||e.button!==0||!e.isPrimary||palmTouch(e,penUntil))return;
    e.preventDefault();const pt=point(e,c),factor=c.width/595;
    if(mode==='text'){
     startText(p,pt);return;
    }
-   const op={kind:mode,width:(mode==='eraser'?16:mode==='marker'?12:1.8)*factor,color:mode==='marker'&&ink==='#20262d'?'#f2c500':ink,points:[pt]};const oldUndo=p.undo.slice(),oldRedo=p.redo.slice();remember(p);
-   drawing={id:e.pointerId,p,op,oldUndo,oldRedo};d.classList.add('svdv-ink-stroking');p.ops.push(op);c.setPointerCapture?.(e.pointerId);dirty=true;paint(p);sync();
+   const op={kind:mode,width:(mode==='eraser'?16:mode==='marker'?12:1.8)*factor,color:mode==='marker'&&ink==='#20262d'?'#f2c500':ink,pressureSensitive:e.pointerType==='pen',points:[pt]};const oldUndo=p.undo.slice(),oldRedo=p.redo.slice();remember(p);
+   drawing={id:e.pointerId,p,op,oldUndo,oldRedo,pointerKind:e.pointerType};d.classList.add('svdv-ink-stroking');p.ops.push(op);c.setPointerCapture?.(e.pointerId);dirty=true;paint(p);sync();
   });
-  c.addEventListener('pointermove',e=>{if(drawing?.id!==e.pointerId||drawing.p!==p)return;drawing.op.points.push(point(e,c));paint(p);});
+  c.addEventListener('pointermove',e=>{if(e.pointerType==='pen')penUntil=Date.now()+2800;if(drawing?.id!==e.pointerId||drawing.p!==p)return;for(const sample of stylusSamples(e))drawing.op.points.push(point(sample,c));paint(p);});
   const finish=e=>{if(drawing?.id===e.pointerId){drawing=null;d.classList.remove('svdv-ink-stroking');sync();}};
   c.addEventListener('pointerup',finish);c.addEventListener('pointercancel',finish);c.addEventListener('lostpointercapture',finish);
  }

@@ -808,25 +808,30 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   try{
    const img=photoSource(),w=img.naturalWidth,h=img.naturalHeight;
    const scale=Math.min(1,1600/Math.max(w,h)),canvas=el('canvas','svdv-photo-canvas svdv-photo-drawing');
-   const strokes=[];let current=null,color='#176ab4',marker=false;
+   const strokes=[];let current=null,color='#176ab4',marker=false,penUntil=0;
+   const stylusPressure=e=>e.pointerType==='pen'&&Number.isFinite(e.pressure)?Math.max(.12,Math.min(1,e.pressure)):.5;
+const stylusWeight=p=>.35+1.3*(Number.isFinite(p)?p:.5);
+const stylusSamples=e=>{const a=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[];return a.length?[...a,e]:[e];};
+const palmTouch=(e,until)=>e.pointerType==='touch'&&(Date.now()<until||Math.max(e.width||0,e.height||0)>27);
+
    function paint(target,factor){
     target.width=Math.max(1,Math.round(w*factor));target.height=Math.max(1,Math.round(h*factor));
     const ctx=target.getContext('2d');ctx.drawImage(img,0,0,target.width,target.height);
     for(const stroke of strokes){
      ctx.globalAlpha=stroke.marker?.35:1;ctx.strokeStyle=stroke.color;ctx.fillStyle=stroke.color;
      ctx.lineWidth=Math.max(1,stroke.width*target.width);ctx.lineCap='round';ctx.lineJoin='round';
-     ctx.beginPath();const p=stroke.points[0];ctx.moveTo(p.x*target.width,p.y*target.height);
-     for(const q of stroke.points.slice(1))ctx.lineTo(q.x*target.width,q.y*target.height);
-     if(stroke.points.length===1){ctx.arc(p.x*target.width,p.y*target.height,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();}else ctx.stroke();
+     if(stroke.pressureSensitive&&!stroke.marker){
+      for(let j=0;j<stroke.points.length;j++){const a=stroke.points[Math.max(0,j-1)],b=stroke.points[j];ctx.lineWidth=Math.max(1,stroke.width*target.width*stylusWeight((a.p+b.p)/2));ctx.beginPath();ctx.moveTo(a.x*target.width,a.y*target.height);ctx.lineTo(b.x*target.width+(j===0?.01:0),b.y*target.height);ctx.stroke();}
+     }else{ctx.beginPath();const p=stroke.points[0];ctx.moveTo(p.x*target.width,p.y*target.height);for(const q of stroke.points.slice(1))ctx.lineTo(q.x*target.width,q.y*target.height);if(stroke.points.length===1){ctx.arc(p.x*target.width,p.y*target.height,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();}else ctx.stroke();}
     }
     return target;
    }
    const repaint=()=>paint(canvas,scale);
-   const point=e=>{const r=canvas.getBoundingClientRect();return {x:Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),y:Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))};};
-   canvas.addEventListener('pointerdown',e=>{if(e.button!==0||current||photoBusy)return;e.preventDefault();current={points:[point(e)],color,marker,width:(marker?12:3)/Math.max(1,canvas.getBoundingClientRect().width),id:e.pointerId};strokes.push(current);canvas.setPointerCapture?.(e.pointerId);repaint();});
-   canvas.addEventListener('pointermove',e=>{if(!current||e.pointerId!==current.id)return;current.points.push(point(e));repaint();});
+   const point=e=>{const r=canvas.getBoundingClientRect();return {x:Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),y:Math.max(0,Math.min(1,(e.clientY-r.top)/r.height)),p:stylusPressure(e)};};
+   canvas.addEventListener('pointerdown',e=>{if(e.pointerType==='pen'){penUntil=Date.now()+2800;if(current?.pointerKind==='touch'){strokes.pop();current=null;}}if(e.button!==0||current||photoBusy||palmTouch(e,penUntil))return;e.preventDefault();current={points:[point(e)],color,marker,width:(marker?12:3)/Math.max(1,canvas.getBoundingClientRect().width),id:e.pointerId,pointerKind:e.pointerType,pressureSensitive:e.pointerType==='pen'};strokes.push(current);canvas.setPointerCapture?.(e.pointerId);repaint();});
+   canvas.addEventListener('pointermove',e=>{if(e.pointerType==='pen')penUntil=Date.now()+2800;if(!current||e.pointerId!==current.id)return;for(const sample of stylusSamples(e))current.points.push(point(sample));repaint();});
    const stop=e=>{if(current&&e.pointerId===current.id)current=null;};
-   canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
+   canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);canvas.addEventListener('lostpointercapture',stop);
    const wrap=el('div','svdv-photo-markup'),palette=el('div','svdv-photo-colors');
    for(const shade of ['#20262d','#176ab4','#e34646','#e9b900','#26965b']){
     const b=el('button','svdv-photo-color');b.type='button';b.style.background=shade;b.setAttribute('aria-label',({'#20262d':'Чёрный','#176ab4':'Синий','#e34646':'Красный','#e9b900':'Жёлтый','#26965b':'Зелёный'})[shade]);

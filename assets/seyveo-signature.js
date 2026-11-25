@@ -1,6 +1,11 @@
 /* SEYVEO: reusable local signature editor. No network, no certificate. */
 (()=>{'use strict';
 const cache=new Map();
+const stylusPressure=e=>e.pointerType==='pen'&&Number.isFinite(e.pressure)?Math.max(.12,Math.min(1,e.pressure)):.5;
+const stylusWeight=p=>.35+1.3*(Number.isFinite(p)?p:.5);
+const stylusSamples=e=>{const a=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[];return a.length?[...a,e]:[e];};
+const palmTouch=(e,until)=>e.pointerType==='touch'&&(Date.now()<until||Math.max(e.width||0,e.height||0)>27);
+
 const el=(tag,cls='',text='')=>{const e=document.createElement(tag);e.className=cls;e.textContent=text;return e;};
 const canvas=(w,h)=>{const c=el('canvas');c.width=w;c.height=h;return c;};
 function button(text,fn){const b=el('button','',text);b.type='button';b.onclick=fn;return b;}
@@ -10,17 +15,17 @@ function open(source,{area}={}){
  return new Promise(resolve=>{
   const d=el('dialog','sv-sign-dialog'),head=el('header'),title=el('strong','','Подпись'),stage=el('div','sv-sign-stage'),rail=el('div','sv-sign-rail');
   d.setAttribute('aria-label','Рукописная подпись');
-  let phase='draw',result=null,strokes=[],ink='#17447d',pointer=null,markImage=null,pos=null,observer=null;
+  let phase='draw',result=null,strokes=[],ink='#17447d',pointer=null,penUntil=0,pointerKind='',markImage=null,pos=null,observer=null;
   const pad=canvas(1000,360);pad.className='sv-sign-pad';pad.setAttribute('aria-label','Нарисуйте подпись пальцем');
   const ctx=pad.getContext('2d'),remember=el('input');remember.type='checkbox';
   const label=el('label','sv-sign-remember');label.append(remember,el('span','','Запомнить до закрытия приложения'));
   const back=button('‹',()=>{if(phase==='place')draw();else d.close();});back.setAttribute('aria-label','Назад');
   const done=button('✓',()=>{if(phase==='draw'){if(strokes.length)place();return;}result={image:markImage,...pos};if(scope){if(remember.checked)cache.set(scope,{strokes:strokes.map(s=>s.map(p=>({...p}))),ink});else cache.delete(scope);}d.close();});done.setAttribute('aria-label','Готово');
   head.append(back,title,done);d.append(head,stage,rail);document.body.append(d);
-  function paint(){ctx.clearRect(0,0,pad.width,pad.height);ctx.strokeStyle=ink;ctx.lineWidth=5;ctx.lineCap='round';ctx.lineJoin='round';for(const s of strokes){ctx.beginPath();ctx.moveTo(s[0].x,s[0].y);for(const q of s.slice(1))ctx.lineTo(q.x,q.y);if(s.length===1)ctx.lineTo(s[0].x+.1,s[0].y+.1);ctx.stroke();}done.disabled=!strokes.length;}
-  function point(e){const r=pad.getBoundingClientRect();return {x:Math.max(0,Math.min(pad.width,(e.clientX-r.left)*pad.width/r.width)),y:Math.max(0,Math.min(pad.height,(e.clientY-r.top)*pad.height/r.height))};}
-  pad.onpointerdown=e=>{if(!e.isPrimary||e.button!==0)return;e.preventDefault();pointer=e.pointerId;pad.setPointerCapture?.(pointer);strokes.push([point(e)]);paint();};
-  pad.onpointermove=e=>{if(pointer!==e.pointerId)return;e.preventDefault();strokes[strokes.length-1].push(point(e));paint();};
+  function paint(){ctx.clearRect(0,0,pad.width,pad.height);ctx.strokeStyle=ink;ctx.lineWidth=5;ctx.lineCap='round';ctx.lineJoin='round';for(const s of strokes){for(let j=0;j<s.length;j++){const a=s[Math.max(0,j-1)],b=s[j];ctx.lineWidth=5*stylusWeight((a.p+b.p)/2);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x+(j===0?.01:0),b.y);ctx.stroke();}}done.disabled=!strokes.length;}
+  function point(e){const r=pad.getBoundingClientRect();return {x:Math.max(0,Math.min(pad.width,(e.clientX-r.left)*pad.width/r.width)),y:Math.max(0,Math.min(pad.height,(e.clientY-r.top)*pad.height/r.height)),p:stylusPressure(e)};}
+  pad.onpointerdown=e=>{if(e.pointerType==='pen'){penUntil=Date.now()+2800;if(pointer!==null&&pointerKind==='touch'){strokes.pop();pointer=null;}}if(pointer!==null||!e.isPrimary||e.button!==0||palmTouch(e,penUntil))return;e.preventDefault();pointer=e.pointerId;pointerKind=e.pointerType;pad.setPointerCapture?.(pointer);strokes.push([point(e)]);paint();};
+  pad.onpointermove=e=>{if(e.pointerType==='pen')penUntil=Date.now()+2800;if(pointer!==e.pointerId)return;e.preventDefault();for(const sample of stylusSamples(e))strokes[strokes.length-1].push(point(sample));paint();};
   for(const event of ['pointerup','pointercancel','lostpointercapture'])pad.addEventListener(event,e=>{if(pointer===e.pointerId)pointer=null;});
   function draw(){observer?.disconnect();phase='draw';d.dataset.phase=phase;title.textContent='Подпись';stage.replaceChildren(el('p','sv-sign-hint','Распишитесь пальцем или стилусом'),pad);if(scope)stage.append(label);
    const blue=button('Синий',()=>{ink='#17447d';paint();colors();}),black=button('Чёрный',()=>{ink='#20262d';paint();colors();});
