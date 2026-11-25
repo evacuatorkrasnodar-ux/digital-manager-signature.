@@ -107,7 +107,7 @@
   button.classList.add('sv-connect-prompt','sv-connect-prompt--'+service);
   button.type='button';
   const icon=node('span','sv-connect-prompt-icon');
-  icon.setAttribute('aria-hidden','true');icon.append(svg(ICONS[service]));
+  icon.setAttribute('aria-hidden','true');icon.append(svg(service==='documents'&&options.scope!=='business'?'<path d="M6.5 18a4.5 4.5 0 0 1-.6-9 6.2 6.2 0 0 1 11.8 1.2A3.9 3.9 0 1 1 18 18Z"/>':ICONS[service]));
   const copy=node('span','sv-connect-prompt-copy');
   const heading=node('strong','sv-connect-prompt-title');
   const caption=node('small','sv-connect-prompt-caption');
