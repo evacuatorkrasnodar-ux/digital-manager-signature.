@@ -158,7 +158,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  header.append(glyph,copy);root.append(header);
  const stage=el('div','svdv-stage');
  let previewNeedsOriginal=info.kind==='original';
- let originalAction=null,loadedText=null,inline=null,doneControl=null,stopViewport=null,markupSession=null,sayviAfterEdit=false,pagesAction=null,canManagePages=false;
+ let originalAction=null,loadedText=null,inline=null,doneControl=null,stopViewport=null,markupSession=null,sayviAfterEdit=false;
  const requireOriginal=()=>{previewNeedsOriginal=true;if(originalAction){originalAction.hidden=false;originalAction.closest('details').hidden=false;}};
  if(info.kind==='image'){
   const img=el('img','svdv-picture');
@@ -176,7 +176,6 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     try{pages=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);}catch{}
     if(!active)return;
     if(pages?.length){
-     canManagePages=true;if(pagesAction)pagesAction.hidden=false;
      for(const page of pages)pageUrls.push(URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'})));
      const list=el('div','svdv-sheet-pages');
      for(const [i,url] of pageUrls.entries()){const img=el('img','svdv-reader-page');img.src=url;img.alt='Страница '+(i+1);if(i>0)img.loading='lazy';list.append(img);}
@@ -386,7 +385,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   const done=make('done','Готово · сохранить копию',window.SEYVEO_DOCUMENT_ICONS?.markup('check')||'✓',()=>void finishInline());
   if(doneControl){doneControl.hidden=false;doneControl.onclick=()=>void finishInline();}else rail.append(done);
   rail.append(size,align,tidy,undo,redo);
-  if(info.kind==='pdf')rail.append(make('pen','Подписать или рисовать',api.artwork('pen'),()=>{if(state.changed){say('Сначала нажмите галочку, чтобы сохранить изменения.',4000);return;}leaveInline();stage.replaceChildren(...state.originalNodes);stage.scrollTop=state.oldTop;openMarkup();}));api.prioritize(rail,'word');sync();update();
+  if(info.kind==='pdf')rail.append(make('pen','Рисование',api.artwork('pen'),()=>{if(state.changed){say('Сначала нажмите галочку, чтобы сохранить изменения.',4000);return;}leaveInline();stage.replaceChildren(...state.originalNodes);stage.scrollTop=state.oldTop;openMarkup('pen');}));api.prioritize(rail,'word');sync();update();
   input.addEventListener('input',()=>record(input.value));
   rail.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault();});
   controls.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault();});
@@ -436,7 +435,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   }catch(e){if(active)say(e?.message||'Не удалось сохранить копию. Черновик сохранён.');}
   finally{state.saving=false;state.input.readOnly=false;if(doneControl)doneControl.disabled=false;}
  }
- const openMarkup=()=>{
+ const openMarkup=(initialMode='view')=>{
   if(markupSession||inline)return;
   const api=window.SEYVEO_PDF_MARKUP;
   if(!api||!doneControl){say('Рисование и подпись PDF недоступны.');return;}
@@ -449,7 +448,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   };
   editorRail.replaceChildren();editorControls.replaceChildren(editorRail);editorControls.hidden=false;toolbar.hidden=true;more.open=false;
   stage.classList.add('svdv-ink-stage');stage.replaceChildren();doneControl.hidden=false;sheet?.classList.add('is-expanded','svdv-edit-fullscreen');
-  const result=api.open(file,{parent:root,loadPdf,onSave:onSaveCopy,shared:{stage,rail:editorRail,controls:editorControls,done:doneControl,viewport:sheet||root,notice:say},onClose:restore,onText:(assistant=false)=>{sayviAfterEdit=assistant;editAction?.click();},onSaved:(next,id,output)=>{
+  const result=api.open(file,{parent:root,loadPdf,onSave:onSaveCopy,initialMode,shared:{stage,rail:editorRail,controls:editorControls,done:doneControl,viewport:sheet||root,notice:say},onClose:restore,onText:(assistant=false)=>{sayviAfterEdit=assistant;editAction?.click();},onSaved:(next,id,output)=>{
    if(!active)return;
    const old=objectUrl;objectUrl=URL.createObjectURL(next);file=next;sourceKey=typeof id==='string'?id:'';loadedText=null;
    save.href=objectUrl;save.download=next.name;save.setAttribute('aria-label','Скачать файл '+next.name);
@@ -458,7 +457,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    stage.classList.remove('svdv-stage-document');stage.classList.add('svdv-pdf-stage');
    const list=el('div','svdv-sheet-pages');
    for(const [i,page] of output.entries()){const url=URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'}));pageUrls.push(url);const img=el('img','svdv-reader-page');img.src=url;img.alt='Страница '+(i+1);list.append(img);}
-   stage.replaceChildren(list);canManagePages=true;if(pagesAction)pagesAction.hidden=false;
+   stage.replaceChildren(list);
    URL.revokeObjectURL(old);say('Копия с пометками сохранена.',3500);
   }});
   if(!result){restore();say('Рисование и подпись PDF недоступны.');return;}
@@ -553,7 +552,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  more.append(summary);
  const moreBody=el('div','svdv-more-options');
  // Drawing on the original PDF is also accessible from the editor capsule.
- if(info.kind==='pdf')moreBody.append(action('Подписать или рисовать','signature',openMarkup));
+ if(info.kind==='pdf')moreBody.append(action('Подписать','signature',()=>openMarkup('signature')));
  if(!hasFileCard())moreBody.append(save);
  const openLink=el('a','svdv-link');
  openLink.href=objectUrl;openLink.target='_blank';openLink.rel='noopener noreferrer';
@@ -571,15 +570,6 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     else if(result!==true)say('Инструмент подписи недоступен.');
    }catch{say('Не удалось открыть подпись.');}
   }));
- }
- if(info.kind==='pdf'&&onEdit){
-  const pages=action('Страницы документа','original',async()=>{
-   if(pages.disabled)return;pages.disabled=true;
-   try{const ok=await onEdit({kind:'pdf-file',file});if(ok&&sheet?.open)sheet.close();else if(!ok&&active)say('Управление страницами пока недоступно.');}
-   catch(e){if(active)say(e?.message||'Не удалось открыть управление страницами.');}
-   finally{pages.disabled=false;}
-  });
-  pagesAction=pages;pages.hidden=!canManagePages;moreBody.append(pages);
  }
  if(onSayvi&&!editAction)moreBody.append(action('Сэйви поможет','sayvi',()=>onSayvi('review')));
  moreBody.addEventListener('click',event=>{if(event.target.closest('button,a'))more.open=false;});
