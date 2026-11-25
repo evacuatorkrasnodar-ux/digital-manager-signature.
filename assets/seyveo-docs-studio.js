@@ -846,6 +846,7 @@ function mount(target,{
   }
   async function openMyTemplates(){
    const {dlg,content}=templateDialog('Мои шаблоны');
+   dlg.classList.add('sv-doc-library-sheet');
    const list=$('div','sv-doc-my-template-list'),feedback=$('small','sv-doc-my-template-note','Загрузка…');
    async function paint(){
     try{
