@@ -304,6 +304,20 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  color:var(--sv-white-pearl-segment-ink,#444B56)!important;
 }
 
+/* 25 Nov · Compact two-way Documents switch. Geometry only; White Pearl
+   above remains the material owner. Keep other screens and themes intact. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch{
+ box-sizing:border-box!important;
+ width:85%!important;max-width:340px!important;
+ height:42px!important;min-height:42px!important;max-height:42px!important;
+ margin:0 auto 11px!important;padding:3px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab{
+ box-sizing:border-box!important;
+ height:34px!important;min-height:34px!important;max-height:34px!important;
+ padding:0 6px!important;
+}
+
 /* 24 Nov · Approved light-theme material for the REAL 44px navigation and Add
    buttons. Preserve the existing size, alignment, icon and handler: only face,
    pearl edge, blur and soft shadow change. Blue/dark palettes remain native. */
