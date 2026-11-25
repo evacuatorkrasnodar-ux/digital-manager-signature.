@@ -23,6 +23,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
  const status={set textContent(value){shared.notice?.(value,value==='Подготавливаем страницы…'||value==='Сохраняем копию…'?0:3500);}};
  status.textContent='Подготавливаем страницы…';
  const viewport=el('div','sv-pdf-markup-viewport'),paper=el('div','sv-pdf-markup-paper');viewport.append(paper);
+ let zoom=1,pinch=null,touchLock=false;
  const pager=el('div','sv-pdf-markup-pager'),count=el('span','','');
  const prev=round('Предыдущая страница','back',()=>go(-1)),next=round('Следующая страница','back',()=>go(1));next.classList.add('sv-pdf-markup-next');pager.append(prev,count,next);
  let editing=null;
@@ -34,7 +35,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
  const textMode=capsule.button('text','Редактировать текст',undefined,()=>switchText(false));
  const sayvi=capsule.button('sayvi','Сэйви',undefined,()=>switchText(true));rail.append(textMode,sayvi);
  const tools=[];
- function tool(label,id){const b=capsule.button(id,label,undefined,()=>setMode(id));b.setAttribute('aria-pressed','false');b.title=label+' · повторное нажатие выключает инструмент';tools.push([id,b]);side.append(b);}
+ function tool(label,id){const b=capsule.button(id,label,id==='text'?'<span class="svdv-add-text-symbol">T<sup>+</sup></span>':undefined,()=>setMode(id));b.setAttribute('aria-pressed','false');b.title=label+' · повторное нажатие выключает инструмент';tools.push([id,b]);side.append(b);}
  tool('Перо','pen');tool('Маркер','marker');tool('Ластик','eraser');
  const palette=el('div','sv-pdf-ink-palette');palette.hidden=true;
  const color=capsule.button('color','Цвет разметки',undefined,()=>{palette.hidden=!palette.hidden;color.setAttribute('aria-expanded',String(!palette.hidden));});
@@ -49,11 +50,13 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
  const undo=capsule.button('undo','Отменить действие',undefined,()=>history('undo'));
  const redo=capsule.button('redo','Повторить действие',undefined,()=>history('redo'));rail.append(undo,redo);
  const sideWrap=el('div','svdv-ink-side-wrap');sideWrap.append(side,palette);
+ const sideToggle=capsule.button('pen','Показать или скрыть инструменты рисования',undefined,()=>{sideWrap.hidden=!sideWrap.hidden;sideToggle.setAttribute('aria-pressed',String(!sideWrap.hidden));palette.hidden=true;color.setAttribute('aria-expanded','false');if(sideWrap.hidden&&mode!=='view')setMode('view');});
+ sideToggle.setAttribute('aria-pressed','true');rail.insertBefore(sideToggle,undo);
  d.append(viewport,pager,sideWrap);shared.stage.append(d);
  const releaseViewport=capsule.viewport(shared.viewport);
  function sync(){
   prev.disabled=busy||index===0;next.disabled=busy||index>=pages.length-1;count.textContent=pages.length?(index+1)+' из '+pages.length:'';
-  pager.hidden=pages.length<=1;save.disabled=busy;textMode.disabled=busy;undo.disabled=busy||!pages[index]?.undo.length;redo.disabled=busy||!pages[index]?.redo.length;color.disabled=busy;if(sayvi)sayvi.disabled=busy;
+  pager.hidden=pages.length<=1;save.disabled=busy;textMode.disabled=busy;sideToggle.disabled=busy;undo.disabled=busy||!pages[index]?.undo.length;redo.disabled=busy||!pages[index]?.redo.length;color.disabled=busy;if(sayvi)sayvi.disabled=busy;
   for(const [id,b] of tools){b.disabled=busy;b.setAttribute('aria-pressed',String(mode===id));}
   paper.dataset.mode=mode;
  }
@@ -71,8 +74,26 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
    if(op.points.length===1)ctx.lineTo(op.points[0].x+.1,op.points[0].y);ctx.stroke();ctx.restore();
   }
  }
- function show(){const p=pages[index];if(!p)return;paper.replaceChildren(p.base,p.overlay);paint(p);viewport.scrollTop=0;sync();}
+ function show(){const p=pages[index];if(!p)return;paper.replaceChildren(p.base,p.overlay);paint(p);zoom=1;paper.style.width='100%';viewport.scrollTop=0;viewport.scrollLeft=0;sync();}
  function go(delta){if(busy||drawing)return;finishText();index=Math.max(0,Math.min(pages.length-1,index+delta));show();}
+ function anchorAt(x,y){const r=paper.getBoundingClientRect();return {u:(x-r.left)/Math.max(1,r.width),v:(y-r.top)/Math.max(1,r.height)};}
+ function zoomAt(value,x,y,anchor=anchorAt(x,y)){
+  zoom=Math.max(1,Math.min(4,value));paper.style.width=(zoom*100)+'%';
+  const r=paper.getBoundingClientRect();viewport.scrollLeft+=r.left+anchor.u*r.width-x;viewport.scrollTop+=r.top+anchor.v*r.height-y;
+ }
+ function cancelStroke(){if(!drawing)return;const {p,op,oldUndo,oldRedo}=drawing;drawing=null;p.ops=p.ops.filter(x=>x!==op);p.undo=oldUndo;p.redo=oldRedo;dirty=pages.some(x=>x.ops.length);d.classList.remove('svdv-ink-stroking');paint(p);sync();}
+ const fingers=e=>{const a=e.touches[0],b=e.touches[1];return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2,dist:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)};};
+ viewport.addEventListener('touchstart',e=>{
+  if(busy||e.touches.length!==2)return;cancelStroke();finishText(true);touchLock=true;
+  const f=fingers(e);pinch={start:zoom,dist:Math.max(1,f.dist),anchor:anchorAt(f.x,f.y)};d.classList.add('svdv-pinching');if(e.cancelable)e.preventDefault();
+ },{passive:false,capture:true});
+ viewport.addEventListener('touchmove',e=>{
+  if(!pinch||e.touches.length!==2)return;if(e.cancelable)e.preventDefault();const f=fingers(e);zoomAt(pinch.start*f.dist/pinch.dist,f.x,f.y,pinch.anchor);
+ },{passive:false,capture:true});
+ function endPinch(e){if(e.touches.length<2){pinch=null;d.classList.remove('svdv-pinching');}if(!e.touches.length)touchLock=false;}
+ viewport.addEventListener('touchend',endPinch,{passive:true});viewport.addEventListener('touchcancel',endPinch,{passive:true});
+ viewport.addEventListener('wheel',e=>{if(busy||drawing||!(e.ctrlKey||e.metaKey))return;e.preventDefault();zoomAt(zoom*Math.exp(-e.deltaY*.008),e.clientX,e.clientY);},{passive:false});
+ viewport.addEventListener('dblclick',e=>{if(busy||mode!=='view'||e.target===input)return;zoomAt(zoom>1?1:2,e.clientX,e.clientY);});
  function point(event,c){const r=c.getBoundingClientRect();return {x:Math.max(0,Math.min(c.width-1,(event.clientX-r.left)*c.width/r.width)),y:Math.max(0,Math.min(c.height-1,(event.clientY-r.top)*c.height/r.height))};}
  function finishText(cancel=false){
   if(!editing)return;
@@ -111,16 +132,16 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
  function connect(p){
   const c=p.overlay;
   c.addEventListener('pointerdown',e=>{
-   if(busy||mode==='view'||e.button!==0||!e.isPrimary)return;
+   if(busy||touchLock||pinch||mode==='view'||e.button!==0||!e.isPrimary)return;
    e.preventDefault();const pt=point(e,c),factor=c.width/595;
    if(mode==='text'){
     startText(p,pt);return;
    }
-   const op={kind:mode,width:(mode==='eraser'?16:mode==='marker'?12:1.8)*factor,color:mode==='marker'&&ink==='#20262d'?'#f2c500':ink,points:[pt]};remember(p);
-   drawing={id:e.pointerId,p,op};p.ops.push(op);c.setPointerCapture?.(e.pointerId);dirty=true;paint(p);sync();
+   const op={kind:mode,width:(mode==='eraser'?16:mode==='marker'?12:1.8)*factor,color:mode==='marker'&&ink==='#20262d'?'#f2c500':ink,points:[pt]};const oldUndo=p.undo.slice(),oldRedo=p.redo.slice();remember(p);
+   drawing={id:e.pointerId,p,op,oldUndo,oldRedo};d.classList.add('svdv-ink-stroking');p.ops.push(op);c.setPointerCapture?.(e.pointerId);dirty=true;paint(p);sync();
   });
   c.addEventListener('pointermove',e=>{if(drawing?.id!==e.pointerId||drawing.p!==p)return;drawing.op.points.push(point(e,c));paint(p);});
-  const finish=e=>{if(drawing?.id===e.pointerId){drawing=null;sync();}};
+  const finish=e=>{if(drawing?.id===e.pointerId){drawing=null;d.classList.remove('svdv-ink-stroking');sync();}};
   c.addEventListener('pointerup',finish);c.addEventListener('pointercancel',finish);c.addEventListener('lostpointercapture',finish);
  }
  function closeMarkup(){if(closed)return;closed=true;releaseViewport();shared.viewport.classList.remove('sv-editor-keyboard-open');try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}d.remove();rail.replaceChildren();save.onclick=null;save.disabled=false;shared.notice?.('');onClose?.();}
