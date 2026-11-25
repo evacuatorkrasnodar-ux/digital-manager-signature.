@@ -2086,6 +2086,9 @@ html:root[data-theme="light"] body #sayviTopActions .sv-top-action{
 </main>
 <script src="./assets/seyveo-pdf-export.js"></script>
 <script src="./assets/sayvi-session-files.js?v=1"></script>
+<link rel="stylesheet" href="./assets/seyveo-docs-viewer.css?v=20261125-sheet-v1">
+<script src="./assets/seyveo-docs-export.js?v=20261124-document-edit-entry"></script>
+<script src="./assets/seyveo-docs-viewer.js?v=20261125-sheet-v1"></script>
 <script src="./assets/sayvi-rich-replies.js?v=5"></script>
 <link rel="stylesheet" href="assets/seyveo-weather-brief.css?v=15">
 <script src="assets/seyveo-weather-brief.js?v=14"></script>
@@ -3384,6 +3387,7 @@ html:root[data-theme="light"] body #sayviTopActions .sv-top-action{
  function openSentPhoto(turn,item){
   closeSentPhoto();
   const original=sentPhotoOriginals.get(turn)?.find(file=>file.name===item.name);
+  if(original&&window.SEYVEO_DOCS_VIEWER?.open?.(original))return;
   if(original){
    sentPhotoViewerUrl=URL.createObjectURL(original);
    imageViewerImg.src=sentPhotoViewerUrl;
@@ -3411,6 +3415,9 @@ html:root[data-theme="light"] body #sayviTopActions .sv-top-action{
   if(viewer.url)setTimeout(()=>URL.revokeObjectURL(viewer.url),10000);
  }
  function openSentDocument(file){
+  if(file&&/\.(pdf|docx|txt|md|png|jpe?g|webp)$/i.test(file.name)&&window.SEYVEO_DOCS_VIEWER?.open){
+   closeSentPdf();if(window.SEYVEO_DOCS_VIEWER.open(file))return;
+  }
   if(!file){status.textContent='Файл недоступен после обновления страницы. Прикрепи его ещё раз.';return}
   const ext=(file.name.split('.').pop()||'').toLowerCase();
   if(ext==='pdf'){
