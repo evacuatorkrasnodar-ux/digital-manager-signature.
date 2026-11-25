@@ -19,7 +19,17 @@ const paths=Object.freeze({
  delete:'<path d="M4.5 6.5h15M9 6.5V4.8a1.3 1.3 0 0 1 1.3-1.3h3.4A1.3 1.3 0 0 1 15 4.8v1.7M6.5 6.5l.8 12.2a2 2 0 0 0 2 1.8h5.4a2 2 0 0 0 2-1.8l.8-12.2M10 10v6.5M14 10v6.5"/>',
  first:'<path d="M4.5 4.5h15M12 20V8.5m-4 4 4-4 4 4"/>',
  last:'<path d="M4.5 19.5h15M12 4v11.5m-4-4 4 4 4-4"/>',
- back:'<path d="m14.5 5-7 7 7 7"/>'
+ back:'<path d="m14.5 5-7 7 7 7"/>',
+ undo:'<path d="m9 6-5 5 5 5M4 11h9a6 6 0 0 1 6 6v2"/>',
+ copy:'<rect x="8.5" y="8.5" width="11.5" height="12" rx="2"/><path d="M15.5 8.5V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2.5"/>',
+ clear:'<path d="m4.5 14.5 9-9a2 2 0 0 1 2.8 0l3 3a2 2 0 0 1 0 2.8L11.1 20H8L4.5 16.5a1.5 1.5 0 0 1 0-2Z"/><path d="m9 10 6.5 6.5M11.1 20H21"/>',
+ heading:'<path d="m4 19 6-14 6 14M6 15h8M19 6v13"/>',
+ check:'<path d="m5 12 4 4 10-10"/>',
+ down:'<path d="m7 10 5 5 5-5"/>',
+ 'align-left':'<path d="M4 5h16M4 10h10M4 15h16M4 20h10"/>',
+ 'align-center':'<path d="M4 5h16M7 10h10M4 15h16M7 20h10"/>',
+ 'align-right':'<path d="M4 5h16M10 10h10M4 15h16M10 20h10"/>',
+ 'align-both':'<path d="M4 5h16M4 10h16M4 15h16M4 20h16"/>'
 });
 const aliases=Object.freeze({edit:'create',signature:'sign',image:'gallery',pdf:'original'});
 function markup(key){

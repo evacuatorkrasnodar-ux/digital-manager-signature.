@@ -923,7 +923,7 @@ function mount(target,{
    const item=$('option','',label);item.value=id;alignment.append(item);
   }
   alignment.value=wordStyle.alignment;
-  const typographyIcon=paths=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';
+  const typographyIcon=kind=>window.SEYVEO_DOCUMENT_ICONS?.markup(kind)||'';
   const formatMenu=$('div','sv-doc-word-menu sv-menu-surface');
   formatMenu.id='svDocWordFormatMenu';formatMenu.hidden=true;
   formatMenu.setAttribute('role','group');formatMenu.setAttribute('aria-label','Оформление текста');
@@ -934,10 +934,10 @@ function mount(target,{
   function setFormatMenu(open){
    formatMenu.hidden=!open;formatTrigger.setAttribute('aria-expanded',String(open));
   }
-  const icon=(paths)=>{const el=$('span','sv-doc-word-menu-icon');el.setAttribute('aria-hidden','true');el.innerHTML=typographyIcon(paths);return el;};
+  const icon=(kind)=>{const el=$('span','sv-doc-word-menu-icon');el.setAttribute('aria-hidden','true');el.innerHTML=typographyIcon(kind);return el;};
   const rail=$('div','sv-doc-word-rail');
   rail.setAttribute('role','group');rail.setAttribute('aria-label','Инструменты Word, листайте горизонтально');
-  const chevron=()=>{const node=icon('<path d="m7 10 5 5 5-5"/>');node.classList.add('sv-doc-word-rail-chevron');return node;};
+  const chevron=()=>{const node=icon('down');node.classList.add('sv-doc-word-rail-chevron');return node;};
   const sizeControl=$('label','sv-doc-word-rail-choice');
   const sizeFace=$('span','sv-doc-word-rail-size');sizeFace.setAttribute('aria-hidden','true');
   sizeControl.append(sizeFace,chevron(),size);
@@ -951,9 +951,9 @@ function mount(target,{
   },'sv-doc-word-menu-row sv-doc-word-menu-heading');
   firstLine.setAttribute('aria-label','Первую строку оформить жирным заголовком');
   firstLine.setAttribute('aria-pressed',String(wordStyle.heading));
-  const headingCheck=icon('<path d="m5 12 4 4L19 6"/>');headingCheck.classList.add('sv-doc-word-menu-check');headingCheck.hidden=!wordStyle.heading;
-  firstLine.append(icon('<path d="m4 19 6-14 6 14M6 15h8M19 6v13"/>'),$('span','','Заголовок'),headingCheck);
-  const alignPaths={left:'M4 5h16M4 10h10M4 15h16M4 20h10',center:'M4 5h16M7 10h10M4 15h16M7 20h10',right:'M4 5h16M10 10h10M4 15h16M10 20h10',both:'M4 5h16M4 10h16M4 15h16M4 20h16'};
+  const headingCheck=icon('check');headingCheck.classList.add('sv-doc-word-menu-check');headingCheck.hidden=!wordStyle.heading;
+  firstLine.append(icon('heading'),$('span','','Заголовок'),headingCheck);
+  const alignKinds={left:'align-left',center:'align-center',right:'align-right',both:'align-both'};
   const alignNames={left:'Слева',center:'По центру',right:'Справа',both:'По ширине'};
   const refreshStyle=()=>{
    wordStyle.size=Number(size.value);wordStyle.alignment=alignment.value;
@@ -962,7 +962,7 @@ function mount(target,{
    alignment.title='Выравнивание: '+alignNames[wordStyle.alignment];
    sizeControl.classList.toggle('sv-doc-word-rail-active',wordStyle.size!==12);
    alignControl.classList.toggle('sv-doc-word-rail-active',wordStyle.alignment!=='left');
-   alignIcon.innerHTML=typographyIcon('<path d="'+(alignPaths[wordStyle.alignment]||alignPaths.left)+'"/>');
+   alignIcon.innerHTML=typographyIcon(alignKinds[wordStyle.alignment]||alignKinds.left);
    formatTrigger.classList.toggle('sv-doc-word-modified',wordStyle.heading);
   };
   const changeStyle=()=>{if(wordStyle.size===Number(size.value)&&wordStyle.alignment===alignment.value)return;draftEdited=true;refreshStyle();void persistDraft();};
@@ -973,12 +973,12 @@ function mount(target,{
    if(body.value!==lastWordText){wordHistory.push(lastWordText);if(wordHistory.length>50)wordHistory.shift();lastWordText=body.value;}
   });
   const replaceWordText=value=>{if(documentDraft===value)return;draftEdited=true;body.value=value;documentDraft=value;lastWordText=value;documentTemplate='';syncTemplate();void persistDraft();};
-  const wordTool=(label,paths,fn)=>{const control=button('',fn,'sv-doc-word-extra');control.setAttribute('aria-label',label);control.title=label;control.append(icon(paths));return control;};
-  const undoTool=wordTool('Отменить ввод','<path d="M9 8 5 12l4 4M5 12h8a6 6 0 0 1 6 6"/>',()=>{if(wordHistory.length)replaceWordText(wordHistory.pop());body.focus({preventScroll:true});});
-  const copyTool=wordTool('Копировать текст','<rect x="8.5" y="8.5" width="11" height="11" rx="1.8"/><path d="M15.5 8.5V6.1a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7.4a2 2 0 0 0 2 2h2.5"/>',async()=>{
+  const wordTool=(label,kind,fn)=>{const control=button('',fn,'sv-doc-word-extra');control.setAttribute('aria-label',label);control.title=label;control.append(icon(kind));return control;};
+  const undoTool=wordTool('Отменить ввод','undo',()=>{if(wordHistory.length)replaceWordText(wordHistory.pop());body.focus({preventScroll:true});});
+  const copyTool=wordTool('Копировать текст','copy',async()=>{
    try{await navigator.clipboard.writeText(body.value.slice(body.selectionStart,body.selectionEnd)||body.value);message('Текст скопирован.');}catch{message('Не удалось скопировать текст.');}
   });
-  const clearTool=wordTool('Очистить текст','<path d="m4.5 14.5 9-9a2 2 0 0 1 2.8 0l3 3a2 2 0 0 1 0 2.8L11.1 20H8L4.5 16.5a1.5 1.5 0 0 1 0-2Z"/><path d="M11.1 20h9"/>',()=>{
+  const clearTool=wordTool('Очистить текст','clear',()=>{
    if(body.value&&window.confirm('Очистить текст документа?')){wordHistory.push(body.value);replaceWordText('');body.focus({preventScroll:true});}
   });
   async function helpWithCurrentDocument(){
