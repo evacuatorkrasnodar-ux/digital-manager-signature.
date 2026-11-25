@@ -203,7 +203,8 @@ function mount(target,{
  const panel=$('section','sv-doc-tool-panel');panel.hidden=true;
  panel.id='svDocToolPanel';
  panel.setAttribute('aria-label','Инструменты документов');
- editor.append(grid,panel);target.append(editor);
+ const draftSection=$('section','sv-doc-drafts');draftSection.hidden=true;
+ editor.append(grid,panel,draftSection);target.append(editor);
  // The five-action toolbar is the only opener/closer for its panels.
  for(const action of grid.querySelectorAll('button[data-action]:not([data-action="file"])')){
   action.setAttribute('aria-pressed','false');
@@ -211,6 +212,75 @@ function mount(target,{
   action.setAttribute('aria-controls','svDocToolPanel');
  }
  let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='',documentName='',fromScan=false,wordStyle={size:12,alignment:'left',heading:false};
+ const drafts=window.SEYVEO_DOCUMENT_DRAFTS;
+ let draftId=null,draftRefresh=0,saveSeq=0,saveFailed=false,savePending=false,latestSave=Promise.resolve(),savedSignature='';
+ const draftFeedback=$('p','sv-doc-draft-feedback');draftFeedback.setAttribute('role','status');
+ editor.append(draftFeedback);
+ const draftError='Черновик не сохранён. Не закрывайте приложение.';
+ function setDraftFeedback(value){
+  draftFeedback.textContent=value;
+  const indicator=panel.querySelector('.sv-doc-draft-indicator');
+  if(indicator)indicator.textContent=value;
+ }
+ function newDraft(){
+  draftId=null;documentDraft='';documentFormat='pdf';documentTemplate='';documentName='';fromScan=false;wordStyle={size:12,alignment:'left',heading:false};savedSignature='';
+ }
+ function persistDraft(){
+  if(!draftId&&!documentDraft.trim()&&!documentName.trim())return Promise.resolve();
+  if(!drafts){saveFailed=true;setDraftFeedback(draftError);return Promise.resolve();}
+  if(!draftId)draftId=drafts.id();
+  const value={id:draftId,text:documentDraft,name:documentName,format:documentFormat,template:documentTemplate,fromScan,style:{...wordStyle}};
+  const sig=JSON.stringify(value);
+  if(sig===savedSignature&&!saveFailed)return latestSave;
+  savedSignature=sig;
+  const seq=++saveSeq;savePending=true;setDraftFeedback('Сохранение черновика…');
+  latestSave=drafts.save(area,{...value,updatedAt:Date.now()}).then(()=>{
+   if(seq===saveSeq){savePending=false;saveFailed=false;setDraftFeedback('');}
+   if(!panel.querySelector('dialog[open]'))void refreshDrafts();
+  },()=>{
+   if(seq===saveSeq){savePending=false;saveFailed=true;setDraftFeedback(draftError);}
+  });
+  return latestSave;
+ }
+ async function refreshDrafts(){
+  const seq=++draftRefresh;
+  if(!drafts)return;
+  let items;
+  try{items=await drafts.list(area);}catch{if(seq===draftRefresh){draftSection.hidden=false;draftSection.replaceChildren($('p','sv-doc-draft-feedback','Не удалось открыть черновики.'));}return;}
+  if(seq!==draftRefresh||!editor.isConnected)return;
+  draftSection.hidden=!items.length;draftSection.replaceChildren();
+  if(!items.length)return;
+  const details=$('details','sv-doc-draft-list');
+  const summary=$('summary','sv-doc-draft-summary');
+  summary.append($('strong','','Черновики'),$('span','sv-doc-draft-count',String(items.length)));details.append(summary);
+  for(const item of items){
+   const row=$('div','sv-doc-draft-row');
+   const title=item.name?.trim()||String(item.text||'').trim().split('\n')[0].slice(0,70)||'Документ';
+   const launch=button('',()=>{
+    newDraft();draftId=item.id;documentDraft=String(item.text||'').slice(0,12000);
+    documentName=String(item.name||'').slice(0,100);documentFormat=item.format==='docx'?'docx':'pdf';
+    documentTemplate=String(item.template||'');fromScan=item.fromScan===true;
+    wordStyle={size:[10,11,12,14,16,18].includes(item.style?.size)?item.style.size:12,alignment:['left','center','right','both'].includes(item.style?.alignment)?item.style.alignment:'left',heading:item.style?.heading===true};
+    mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();
+    panel.querySelector('.sv-doc-edit-resume')?.click();
+   },'sv-doc-draft-open');
+   launch.append(toolArt('create'),$('span','sv-doc-draft-title',title),$('small','',new Date(item.updatedAt).toLocaleDateString('ru-RU')));
+   const erase=button('Удалить',async()=>{
+    if(!window.confirm('Удалить этот черновик?'))return;
+    try{await drafts.remove(area,item.id);if(draftId===item.id){newDraft();if(mode==='create')render();}await refreshDrafts();}
+    catch{setDraftFeedback('Не удалось удалить черновик.');}
+   },'sv-doc-draft-delete');
+   erase.setAttribute('aria-label','Удалить черновик '+title);
+   let start=null;
+   row.addEventListener('touchstart',e=>{const t=e.touches[0];start=t?{x:t.clientX,y:t.clientY}:null;},{passive:true});
+   row.addEventListener('touchend',e=>{const t=e.changedTouches[0];if(start&&t&&Math.abs(t.clientY-start.y)<45){if(start.x-t.clientX>45)row.classList.add('sv-doc-draft-revealed');else if(t.clientX-start.x>45)row.classList.remove('sv-doc-draft-revealed');}start=null;},{passive:true});
+   row.append(launch,erase);details.append(row);
+  }
+  details.append($('small','sv-doc-draft-privacy','На этом устройстве · шифрование ключом браузера, без отдельного пароля.'));
+  draftSection.append(details);
+ }
+ // The containing Documents screen attaches this slot just after mount.
+ requestAnimationFrame(()=>void refreshDrafts());
  const clear=()=>{
   const sheet=panel.querySelector('dialog.sv-doc-edit-sheet[open]');
   if(sheet)sheet.close();
@@ -521,12 +591,15 @@ function mount(target,{
   ];
 
   const sectionTitle=$('div','sv-doc-create-subhead');
-  const blank=button('Чистый лист',()=>{
-   if(body.value.trim()&&typeof window.confirm==='function'&&
-       !window.confirm('Открыть чистый лист вместо текущего текста?'))return;
-   body.value='';documentDraft='';documentTemplate='';
-   syncTemplate();revealEditor();
-  },'sv-doc-create-blank');
+  function beginNew(content='',template=''){
+   if(saveFailed){setDraftFeedback(draftError);return;}
+   void persistDraft();newDraft();
+   body.value=content;documentDraft=content;documentTemplate=template;filename.value='';
+   size.value='12';alignment.value='left';firstLine.setAttribute('aria-pressed','false');headingCheck.hidden=true;
+   refreshStyle();syncFormat();syncTemplate();lastWordText=body.value;wordHistory.length=0;
+   revealEditor();void persistDraft();
+  }
+  const blank=button('Чистый лист',()=>beginNew(),'sv-doc-create-blank');
   sectionTitle.append($('strong','','Шаблоны'),blank);
   const examples=$('div','sv-doc-tool-templates');
   examples.setAttribute('role','region');
@@ -539,16 +612,7 @@ function mount(target,{
   body.setAttribute('aria-label','Текст создаваемого документа');
   const cards=[];
 
-  function selectTemplate(id,content){
-   // A new template replaces an existing draft only after confirmation.
-   // Never silently discard text the person has already typed.
-   if(body.value.trim()&&body.value!==content&&
-      typeof window.confirm==='function'&&
-      !window.confirm('Заменить текущий текст выбранным шаблоном?'))return;
-   body.value=content;documentDraft=content;documentTemplate=id;
-   syncTemplate();lastWordText=body.value;wordHistory.length=0;revealEditor();
-
-  }
+  function selectTemplate(id,content){beginNew(content,id);}
   function syncTemplate(){
    cards.forEach(({id,button})=>
     button.setAttribute('aria-pressed',String(documentTemplate===id)));
@@ -574,11 +638,11 @@ function mount(target,{
 
   body.addEventListener('input',()=>{
    documentDraft=body.value;
-   documentTemplate='';syncTemplate();
+   documentTemplate='';syncTemplate();void persistDraft();
   });
   const editing=$('div','sv-doc-edit-content');
   const filename=$('input','sv-doc-edit-name');filename.type='text';filename.value=documentName;filename.maxLength=100;filename.setAttribute('aria-label','Название документа');filename.placeholder='Название документа';
-  filename.addEventListener('input',()=>{documentName=filename.value;});
+  filename.addEventListener('input',()=>{documentName=filename.value;void persistDraft();});
   const typography=$('div','sv-doc-edit-typography');
   typography.setAttribute('role','group');typography.setAttribute('aria-label','Форматирование Word');
   const size=$('select','sv-doc-tool-page-select');size.setAttribute('aria-label','Размер шрифта');
@@ -613,7 +677,7 @@ function mount(target,{
    wordStyle.heading=!wordStyle.heading;
    firstLine.setAttribute('aria-pressed',String(wordStyle.heading));
    headingCheck.hidden=!wordStyle.heading;
-   refreshStyle();
+   refreshStyle();void persistDraft();
   },'sv-doc-word-menu-row sv-doc-word-menu-heading');
   firstLine.setAttribute('aria-label','Первую строку оформить жирным заголовком');
   firstLine.setAttribute('aria-pressed',String(wordStyle.heading));
@@ -631,13 +695,14 @@ function mount(target,{
    alignIcon.innerHTML=typographyIcon('<path d="'+(alignPaths[wordStyle.alignment]||alignPaths.left)+'"/>');
    formatTrigger.classList.toggle('sv-doc-word-modified',wordStyle.heading);
   };
-  size.addEventListener('change',refreshStyle);alignment.addEventListener('change',refreshStyle);refreshStyle();
+  const changeStyle=()=>{refreshStyle();void persistDraft();};
+  size.addEventListener('change',changeStyle);alignment.addEventListener('change',changeStyle);refreshStyle();
   formatMenu.append(firstLine);
   const wordHistory=[];let lastWordText=body.value;
   body.addEventListener('input',()=>{
    if(body.value!==lastWordText){wordHistory.push(lastWordText);if(wordHistory.length>50)wordHistory.shift();lastWordText=body.value;}
   });
-  const replaceWordText=value=>{body.value=value;documentDraft=value;lastWordText=value;documentTemplate='';syncTemplate();};
+  const replaceWordText=value=>{body.value=value;documentDraft=value;lastWordText=value;documentTemplate='';syncTemplate();void persistDraft();};
   const wordTool=(label,paths,fn)=>{const control=button('',fn,'sv-doc-word-extra');control.setAttribute('aria-label',label);control.title=label;control.append(icon(paths));return control;};
   const undoTool=wordTool('Отменить ввод','<path d="M9 8 5 12l4 4M5 12h8a6 6 0 0 1 6 6"/>',()=>{if(wordHistory.length)replaceWordText(wordHistory.pop());body.focus({preventScroll:true});});
   const copyTool=wordTool('Копировать текст','<rect x="8.5" y="8.5" width="11" height="11" rx="1.8"/><path d="M15.5 8.5V6.1a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7.4a2 2 0 0 0 2 2h2.5"/>',async()=>{
@@ -668,7 +733,7 @@ function mount(target,{
    {id:'docx',label:'Word',caption:'Для правок',art:'file'}
   ]){
    const optionButton=button('',()=>{
-    documentFormat=option.id;syncFormat();
+    documentFormat=option.id;syncFormat();void persistDraft();
    },'sv-doc-edit-format');
    optionButton.append($('span','',option.label));
    optionButton.setAttribute('aria-pressed',String(documentFormat===option.id));
@@ -732,7 +797,11 @@ function mount(target,{
    mark.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';
    return mark;
   };
-  const back=button('',()=>{if(typeof sheet.close==='function')sheet.close();else sheet.removeAttribute('open');},'sv-doc-edit-back');
+  const back=button('',async()=>{
+   await persistDraft();
+   if(saveFailed&&!window.confirm('Черновик не сохранён. Выйти из редактора?'))return;
+   if(typeof sheet.close==='function')sheet.close();else sheet.removeAttribute('open');
+  },'sv-doc-edit-back');
   back.setAttribute('aria-label','Назад к документам');
   back.append(actionIcon('<path d="m14 5-7 7 7 7"/>'));
   const sayviEditor=button('',()=>{sheet.close();onSayvi('create');},'sv-doc-edit-ai');
@@ -749,7 +818,8 @@ function mount(target,{
   archive.append(actionIcon('<path d="M3.5 9V6a2 2 0 0 1 2-2h4l3 3h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/><path d="M3 10h18M9 15h6" opacity=".7"/>'),$('span','','В архив'));
   const footer=$('footer','sv-doc-edit-footer');
   const actions=$('div','sv-doc-edit-actions');actions.append(saveButton,shareButton,archive);
-  footer.append(typography,formatSwitch,actions,status(''));
+  const draftIndicator=$('small','sv-doc-draft-indicator');draftIndicator.setAttribute('role','status');
+  footer.append(typography,formatSwitch,actions,status(''),draftIndicator);
   sheet.append(top,editing,footer);
   sheet.addEventListener('pointerdown',event=>{if(!typography.contains(event.target))setFormatMenu(false);});
   sheet.addEventListener('cancel',event=>{if(!formatMenu.hidden){event.preventDefault();setFormatMenu(false);formatTrigger.focus();}});
@@ -803,7 +873,7 @@ function mount(target,{
    sheet.style.removeProperty('--sv-doc-editor-height');sheet.style.removeProperty('--sv-doc-editor-top');
   });
   const resume=button('Продолжить документ',()=>revealEditor(),'sv-doc-edit-resume');
-  resume.hidden=!documentDraft.trim();
+  resume.hidden=!documentDraft.trim()&&!documentName.trim();
   function revealEditor(){
    resume.hidden=false;
    rail.scrollLeft=0;
@@ -816,8 +886,8 @@ function mount(target,{
   }
   sheet.addEventListener('close',()=>{
    if(!panel.isConnected)return;
-   resume.hidden=false;
-   resume.focus({preventScroll:true});
+   resume.hidden=!documentDraft.trim()&&!documentName.trim();
+   void persistDraft().then(refreshDrafts);
   });
   const sayvi=button('',()=>onSayvi('create'),'sv-doc-create-sayvi');
   const sayviMark=$('span','sv-doc-create-sayvi-mark sv-sayvi-symbol');
@@ -826,7 +896,7 @@ function mount(target,{
   panel.dataset.createStage='choose';
   if(!fromScan)panel.append(sectionTitle,examples);
   panel.append(resume,sayvi,status(''),sheet);
-  if(fromScan&&documentDraft.trim()&&sheet.isConnected)revealEditor();
+  if(fromScan&&documentDraft.trim()&&sheet.isConnected){revealEditor();void persistDraft();}
 
  }
  function renderSign(){
@@ -1153,9 +1223,9 @@ function mount(target,{
   if(payload.kind==='word'){
    const value=String(payload.text||'').slice(0,12000);
    if(!value.trim())return false;
-   documentDraft=value;documentFormat='docx';documentTemplate='';fromScan=true;wordStyle={size:12,alignment:'left',heading:false};
+   void persistDraft();newDraft();documentDraft=value;documentFormat='docx';documentTemplate='';fromScan=true;wordStyle={size:12,alignment:'left',heading:false};
    documentName=String(payload.title||'Скан').slice(0,100);
-   operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();
+   operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();void persistDraft();
    panel.scrollIntoView?.({block:'nearest'});return true;
   }
   if(payload.kind==='pdf-file'){
