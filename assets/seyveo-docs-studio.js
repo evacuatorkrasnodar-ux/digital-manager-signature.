@@ -213,7 +213,7 @@ function mount(target,{
  }
  let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='',documentName='',fromScan=false,wordStyle={size:12,alignment:'left',heading:false};
  const drafts=window.SEYVEO_DOCUMENT_DRAFTS;
- let draftId=null,draftRefresh=0,saveSeq=0,saveFailed=false,savePending=false,latestSave=Promise.resolve(),savedSignature='',previewSignature=null;
+ let draftId=null,draftRefresh=0,saveSeq=0,saveFailed=false,savePending=false,latestSave=Promise.resolve(),savedSignature='',draftEdited=false;
  const draftFeedback=$('p','sv-doc-draft-feedback');draftFeedback.setAttribute('role','status');
  editor.append(draftFeedback);
  const draftError='Черновик не сохранён. Не закрывайте приложение.';
@@ -223,16 +223,15 @@ function mount(target,{
   if(indicator)indicator.textContent=value;
  }
  function newDraft(){
-  draftId=null;documentDraft='';documentFormat='pdf';documentTemplate='';documentName='';fromScan=false;wordStyle={size:12,alignment:'left',heading:false};savedSignature='';previewSignature=null;
+  draftId=null;documentDraft='';documentFormat='pdf';documentTemplate='';documentName='';fromScan=false;wordStyle={size:12,alignment:'left',heading:false};savedSignature='';draftEdited=false;
  }
- function draftContentSignature(){return JSON.stringify([documentDraft,documentName,documentFormat,wordStyle]);}
  function persistDraft(){
-  // Opening or closing an unmodified template is a preview, not a draft.
-  if(!draftId&&previewSignature!==null&&draftContentSignature()===previewSignature)return Promise.resolve();
+  // A new draft requires an explicit user edit or an intentional scan import.
+  if(!draftId&&!draftEdited)return Promise.resolve();
   if(!draftId&&!documentDraft.trim()&&!documentName.trim())return Promise.resolve();
   if(!drafts){saveFailed=true;setDraftFeedback(draftError);return Promise.resolve();}
   if(!draftId)draftId=drafts.id();
-  const value={id:draftId,text:documentDraft,name:documentName,format:documentFormat,template:documentTemplate,fromScan,style:{...wordStyle}};
+  const value={id:draftId,text:documentDraft,name:documentName,format:documentFormat,template:documentTemplate,fromScan,edited:true,style:{...wordStyle}};
   const sig=JSON.stringify(value);
   if(sig===savedSignature&&!saveFailed)return latestSave;
   savedSignature=sig;
@@ -631,7 +630,6 @@ function mount(target,{
    body.value=content;documentDraft=content;documentTemplate=template;filename.value='';
    size.value='12';alignment.value='left';firstLine.setAttribute('aria-pressed','false');headingCheck.hidden=true;
    refreshStyle();syncFormat();syncTemplate();lastWordText=body.value;wordHistory.length=0;
-   previewSignature=draftContentSignature();
    revealEditor();
    }finally{switchingDraft=false;}
   }
@@ -673,12 +671,13 @@ function mount(target,{
   }
 
   body.addEventListener('input',()=>{
-   documentDraft=body.value;
+   if(documentDraft===body.value)return;
+   draftEdited=true;documentDraft=body.value;
    documentTemplate='';syncTemplate();void persistDraft();
   });
   const editing=$('div','sv-doc-edit-content');
   const filename=$('input','sv-doc-edit-name');filename.type='text';filename.value=documentName;filename.maxLength=100;filename.setAttribute('aria-label','Название документа');filename.placeholder='Название документа';
-  filename.addEventListener('input',()=>{documentName=filename.value;void persistDraft();});
+  filename.addEventListener('input',()=>{if(documentName===filename.value)return;draftEdited=true;documentName=filename.value;void persistDraft();});
   const typography=$('div','sv-doc-edit-typography');
   typography.setAttribute('role','group');typography.setAttribute('aria-label','Форматирование Word');
   const size=$('select','sv-doc-tool-page-select');size.setAttribute('aria-label','Размер шрифта');
@@ -710,7 +709,7 @@ function mount(target,{
   const alignControl=$('label','sv-doc-word-rail-choice');
   const alignIcon=icon('');alignControl.append(alignIcon,chevron(),alignment);
   const firstLine=button('',()=>{
-   wordStyle.heading=!wordStyle.heading;
+   draftEdited=true;wordStyle.heading=!wordStyle.heading;
    firstLine.setAttribute('aria-pressed',String(wordStyle.heading));
    headingCheck.hidden=!wordStyle.heading;
    refreshStyle();void persistDraft();
@@ -731,14 +730,14 @@ function mount(target,{
    alignIcon.innerHTML=typographyIcon('<path d="'+(alignPaths[wordStyle.alignment]||alignPaths.left)+'"/>');
    formatTrigger.classList.toggle('sv-doc-word-modified',wordStyle.heading);
   };
-  const changeStyle=()=>{refreshStyle();void persistDraft();};
+  const changeStyle=()=>{if(wordStyle.size===Number(size.value)&&wordStyle.alignment===alignment.value)return;draftEdited=true;refreshStyle();void persistDraft();};
   size.addEventListener('change',changeStyle);alignment.addEventListener('change',changeStyle);refreshStyle();
   formatMenu.append(firstLine);
   const wordHistory=[];let lastWordText=body.value;
   body.addEventListener('input',()=>{
    if(body.value!==lastWordText){wordHistory.push(lastWordText);if(wordHistory.length>50)wordHistory.shift();lastWordText=body.value;}
   });
-  const replaceWordText=value=>{body.value=value;documentDraft=value;lastWordText=value;documentTemplate='';syncTemplate();void persistDraft();};
+  const replaceWordText=value=>{if(documentDraft===value)return;draftEdited=true;body.value=value;documentDraft=value;lastWordText=value;documentTemplate='';syncTemplate();void persistDraft();};
   const wordTool=(label,paths,fn)=>{const control=button('',fn,'sv-doc-word-extra');control.setAttribute('aria-label',label);control.title=label;control.append(icon(paths));return control;};
   const undoTool=wordTool('Отменить ввод','<path d="M9 8 5 12l4 4M5 12h8a6 6 0 0 1 6 6"/>',()=>{if(wordHistory.length)replaceWordText(wordHistory.pop());body.focus({preventScroll:true});});
   const copyTool=wordTool('Копировать текст','<rect x="8.5" y="8.5" width="11" height="11" rx="1.8"/><path d="M15.5 8.5V6.1a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7.4a2 2 0 0 0 2 2h2.5"/>',async()=>{
@@ -769,7 +768,7 @@ function mount(target,{
    {id:'docx',label:'Word',caption:'Для правок',art:'file'}
   ]){
    const optionButton=button('',()=>{
-    documentFormat=option.id;syncFormat();void persistDraft();
+    if(documentFormat===option.id)return;draftEdited=true;documentFormat=option.id;syncFormat();void persistDraft();
    },'sv-doc-edit-format');
    optionButton.append($('span','',option.label));
    optionButton.setAttribute('aria-pressed',String(documentFormat===option.id));
@@ -1257,7 +1256,7 @@ function mount(target,{
   if(payload.kind==='word'){
    const value=String(payload.text||'').slice(0,12000);
    if(!value.trim())return false;
-   await persistDraft();if(saveFailed||!panel.isConnected)return false;newDraft();documentDraft=value;documentFormat='docx';documentTemplate='';fromScan=true;wordStyle={size:12,alignment:'left',heading:false};
+   await persistDraft();if(saveFailed||!panel.isConnected)return false;newDraft();draftEdited=true;documentDraft=value;documentFormat='docx';documentTemplate='';fromScan=true;wordStyle={size:12,alignment:'left',heading:false};
    documentName=String(payload.title||'Скан').slice(0,100);
    operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();void persistDraft();
    panel.scrollIntoView?.({block:'nearest'});return true;
