@@ -732,7 +732,7 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after{
  content:""!important;display:block!important;position:absolute!important;
  top:calc(100% - 7px)!important;left:0!important;right:0!important;width:auto!important;height:24px!important;
- background:linear-gradient(to bottom,rgba(255,255,255,.77) 0%,rgba(255,255,255,.49) 45%,rgba(255,255,255,0) 100%)!important;
+ background:linear-gradient(to bottom,rgba(255,255,255,.69) 0%,rgba(255,255,255,.44) 45%,rgba(255,255,255,0) 100%)!important;
  pointer-events:none!important;z-index:1!important;
 }
 @media(prefers-reduced-transparency:reduce){
