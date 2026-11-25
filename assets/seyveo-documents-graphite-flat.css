@@ -1883,3 +1883,9 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
 
 /* The folder is the sole entry; show the secure archive only when opened. */
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-vault-shell.sv-doc-vault-folder-entry:not([open]){display:none!important;}
+
+/* Verified connections remain available as a compact settings entry. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-connections-entry[data-sv-document-connected="true"]{
+ min-height:48px!important;padding-block:5px!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-connections-entry[data-sv-document-connected="true"] .sv-connect-prompt-caption{display:none!important;}
