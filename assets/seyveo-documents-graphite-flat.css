@@ -1895,3 +1895,9 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] .sv-doc-template-card{justify-content:flex-start!important;padding-top:4px!important;}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] .sv-doc-template-name{min-height:2.4em;display:flex;align-items:center;justify-content:center;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-template-note{display:block;padding:2px 3px 4px;font-size:10px;line-height:1.4;color:var(--secondary,#626A73);}
+
+/* Expanded template library: searchable, without changing the four-slot rail. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] .sv-doc-template-card[hidden],html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-template-empty[hidden]{display:none!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-template-search{box-sizing:border-box;width:100%;min-width:0;min-height:36px;padding:6px 12px;margin:0 0 4px;border:1px solid var(--sv-white-pearl-edge,#E8E9EC);border-radius:12px;background:var(--sv-white-pearl-surface,#F5F5F7);color:var(--text);font:inherit;font-size:16px;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-template-empty:not([hidden]){display:block;padding:5px 2px;font-size:12px;color:var(--secondary,#626A73);}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-template-official .sv-doc-template-name{color:var(--sv-doc-link,#397FB8)!important;}
