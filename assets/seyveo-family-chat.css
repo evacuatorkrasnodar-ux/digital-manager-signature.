@@ -6,9 +6,9 @@
 .svf-shell{box-sizing:border-box;height:100%;min-height:0;max-height:100%;display:flex;flex-direction:column;overflow:hidden}
 .svf-head{flex:none;padding:16px 16px 12px;background:transparent;border-bottom:1px solid var(--sv-ui-divider)}
 .svf-overline{display:flex;align-items:center;justify-content:flex-start;gap:9px}
-.svf-overline #svfClose.sv-nav-arrow{order:-1;flex:0 0 44px!important;margin-left:-6px!important}
+.svf-overline #svfClose.sv-nav-arrow{order:-1;flex:0 0 var(--sv-nav-single-size,44px)!important;margin-left:-6px!important}
 .svf-overline small{color:var(--secondary);font-size:9px;letter-spacing:.16em;font-weight:620}
-.svf-iconbutton{width:42px;height:42px;border:1px solid var(--soft-line);border-radius:50%;display:grid;place-items:center;background:transparent;color:var(--text);cursor:pointer;flex:none}
+.svf-iconbutton{width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);border:1px solid var(--soft-line);border-radius:50%;display:grid;place-items:center;background:transparent;color:var(--text);cursor:pointer;flex:none}
 .svf-iconbutton svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .svf-personas{display:flex;align-items:center;gap:13px;margin:8px 0 9px}
 .svf-faces{display:flex;align-items:center;padding-left:5px}

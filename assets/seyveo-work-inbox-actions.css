@@ -6,7 +6,7 @@ html body #svcpWorkChatScreen .sv-inbox-history-proxy{display:none!important}
 html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header{
  box-sizing:border-box!important;display:grid!important;
  grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;
- grid-template-rows:44px!important;
+ grid-template-rows:var(--sv-nav-single-size,44px)!important;
  align-items:center!important;column-gap:8px!important;
  width:100%!important;
  /* The fixed inbox matches the physical Work tab position:
@@ -31,7 +31,7 @@ html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > .svc
  box-sizing:border-box!important;position:relative!important;
  grid-column:2!important;grid-row:1!important;
  min-width:0!important;width:100%!important;
- min-height:44px!important;max-height:44px!important;
+ min-height:var(--sv-nav-single-size,44px)!important;max-height:var(--sv-nav-single-size,44px)!important;
  display:grid!important;place-items:center!important;
  justify-self:stretch!important;align-self:center!important;
  margin:0!important;padding:0!important;gap:0!important;
@@ -1079,8 +1079,8 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"]
 :root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head{
  display:grid!important;grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;
  column-gap:0!important;align-items:center!important;
- width:100%!important;min-height:50px!important;height:50px!important;
- margin:0 0 10px!important;padding:0 0 3px!important;
+ width:100%!important;min-height:var(--sv-header-compact-row,48px)!important;height:var(--sv-header-compact-row,48px)!important;
+ margin:0 0 10px!important;padding:0!important;
  border:0!important;background:transparent!important;
 }
 :root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > strong{
@@ -1095,9 +1095,9 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"]
 :root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > :is(#svcpWorkHistoryBack,#svcpWorkHistoryMenuButton){
  display:grid!important;place-items:center!important;
  box-sizing:border-box!important;align-self:center!important;
- width:44px!important;min-width:44px!important;max-width:44px!important;
- height:44px!important;min-height:44px!important;max-height:44px!important;
- margin:0!important;padding:10px!important;
+ width:var(--sv-nav-single-size,44px)!important;min-width:var(--sv-nav-single-size,44px)!important;max-width:var(--sv-nav-single-size,44px)!important;
+ height:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;max-height:var(--sv-nav-single-size,44px)!important;
+ margin:0!important;padding:0!important;
  border:var(--sv-white-pearl-edge,1px solid rgba(204,211,219,.48))!important;
  border-radius:50%!important;
  background:var(--sv-white-pearl-surface,rgba(255,255,255,.89))!important;
@@ -1115,9 +1115,10 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"]
 :root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > #svcpWorkHistoryMenuButton{
  grid-column:3!important;justify-self:end!important;
 }
-:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > :is(#svcpWorkHistoryBack,#svcpWorkHistoryMenuButton):active{
- background:rgba(230,235,242,.72)!important;
- box-shadow:var(--sv-white-pearl-press-shadow,inset 0 2px 3px rgba(31,42,58,.12))!important;
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > :is(#svcpWorkHistoryBack,#svcpWorkHistoryMenuButton):is(:active,:hover,:focus){
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.89))!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 20px rgba(30,40,58,.10))!important;
+ transform:none!important;transition:none!important;
 }
 :root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head button svg{
  display:block!important;position:static!important;

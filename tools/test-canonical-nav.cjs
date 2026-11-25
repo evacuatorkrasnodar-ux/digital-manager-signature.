@@ -5,6 +5,10 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const checks=[
+  ["assets/seyveo-work-inbox-actions.css","grid-template-rows:var(--sv-nav-single-size,44px)!important;"],
+  ["assets/seyveo-work-inbox-actions.css",":is(#svcpWorkHistoryBack,#svcpWorkHistoryMenuButton):is(:active,:hover,:focus)"],
+  ["assets/seyveo-chat-header-v2.css"," + var(--sv-nav-single-size,44px) + 20px)!important;"],
+  ["assets/seyveo-family-chat.css",".svf-iconbutton{width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);"],
   ["assets/seyveo-header-system.css","--sv-note-header-top:max(26px,env(safe-area-inset-top,0px));"],
   ["assets/seyveo-notebook-editor-v3.css","top:var(--sv-note-header-top,max(26px,env(safe-area-inset-top,0px)))!important;"],
   ["assets/notebook-scan.css","top:var(--sv-note-header-top,max(26px,env(safe-area-inset-top,0px)))!important;"],

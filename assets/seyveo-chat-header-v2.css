@@ -146,7 +146,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
  /* End the glass 20px below the shared 44px Back control.
     The avatar/name stack keeps its original position and height. */
  left:0!important;right:0!important;top:0!important;bottom:auto!important;
- height:calc(var(--svcp-nav-back-y,calc(12px + env(safe-area-inset-top,0px))) + 44px + 20px)!important;
+ height:calc(var(--svcp-nav-back-y,calc(12px + env(safe-area-inset-top,0px))) + var(--sv-nav-single-size,44px) + 20px)!important;
  z-index:-1!important;pointer-events:none!important;
  border:0!important;border-radius:0!important;box-shadow:none!important;
  -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
@@ -439,8 +439,8 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  > .svcp-call-actions > .svcp-call-button:not([hidden]){
  box-sizing:border-box!important;
- width:44px!important;min-width:44px!important;max-width:44px!important;
- height:44px!important;min-height:44px!important;max-height:44px!important;
+ width:var(--sv-nav-single-size,44px)!important;min-width:var(--sv-nav-single-size,44px)!important;max-width:var(--sv-nav-single-size,44px)!important;
+ height:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;max-height:var(--sv-nav-single-size,44px)!important;
  margin:0!important;padding:0!important;
  display:grid!important;place-items:center!important;flex-shrink:0!important;
  border-radius:50%!important;
