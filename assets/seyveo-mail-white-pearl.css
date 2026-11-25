@@ -713,6 +713,26 @@ html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="over
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head{
  background:#fff!important;
 }
+
+/* Overview only: quieter segmented glass; fade the moving content after
+   the stationary header, never the capsule or its controls. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head > .sv-mail-accounts:not([hidden]){
+ background:rgba(247,247,248,.80)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head > .sv-mail-accounts:not([hidden]) .sv-mail-account-switch[aria-pressed="true"]{
+ background:rgba(255,255,255,.88)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after{
+ content:"";position:absolute;top:100%;left:0;right:0;height:16px;
+ background:linear-gradient(to bottom,#fff 0%,rgba(255,255,255,0) 100%);
+ pointer-events:none;z-index:1;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head > .sv-mail-accounts:not([hidden]){background:#F7F7F8!important}
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head > .sv-mail-accounts:not([hidden]) .sv-mail-account-switch[aria-pressed="true"]{background:#fff!important}
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after{content:none}
+}
+
 html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-top-actions:not([hidden]){
  position:relative!important;top:auto!important;
  background:transparent!important;
