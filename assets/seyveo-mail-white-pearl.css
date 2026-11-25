@@ -216,13 +216,14 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-inspect-panel:not([hidden]),
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sayvi-note:not([hidden]),
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-block-confirm:not([hidden]),
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-message-menu:not([hidden]){
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-block-confirm:not([hidden]){
  background:var(--sv-white-pearl-solid,#F7F7F8)!important;color:#242930!important;border:var(--sv-white-pearl-edge)!important;border-radius:16px!important;box-shadow:none!important;
 }
 
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-message-menu:not([hidden]){
- box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ background:var(--sv-menu-bg)!important;background-image:none!important;color:var(--sv-menu-text)!important;
+ border:var(--sv-menu-border)!important;border-radius:var(--sv-menu-compact-radius,18px)!important;box-shadow:var(--sv-menu-shadow)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-message-menu-item,

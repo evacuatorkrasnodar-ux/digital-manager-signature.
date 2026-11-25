@@ -389,8 +389,8 @@ html:root body > #svNotebookListMenu:not([hidden]){
  position:fixed!important;top:var(--sv-nb-collection-top,0px)!important;left:var(--sv-nb-collection-left,0px)!important;right:auto!important;bottom:auto!important;z-index:2147482000!important;
  display:block!important;width:218px!important;max-width:calc(100% - 32px)!important;
  box-sizing:border-box!important;padding:5px!important;margin:0!important;
- background:#fff!important;border:1px solid rgba(30,40,50,.06)!important;border-radius:15px!important;
- box-shadow:0 8px 26px rgba(20,30,45,.13)!important;
+ background:var(--sv-menu-bg,#fcfcfd)!important;border:var(--sv-menu-border)!important;border-radius:var(--sv-menu-compact-radius,18px)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
 }
 html:root body > #svNotebookListMenu #svNotebookDeleteAll{
  display:flex!important;align-items:center!important;gap:10px!important;width:100%!important;
@@ -494,7 +494,7 @@ html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog
 html:root body > #svNotebookListMenu:not([hidden]){
  width:190px!important;max-width:calc(100% - 24px)!important;
  right:auto!important;top:var(--sv-nb-collection-top,0px)!important;
- padding:4px!important;border-radius:16px!important;
+ padding:4px!important;border-radius:var(--sv-menu-compact-radius,18px)!important;
  background:var(--sv-menu-bg,#fcfcfd)!important;
  border:var(--sv-menu-border,1px solid rgba(226,229,234,.65))!important;
  box-shadow:var(--sv-menu-shadow,0 9px 24px rgba(38,48,60,.10))!important;
@@ -528,8 +528,8 @@ html:root body > #svNotebookListMenu:not([hidden]){visibility:visible!important;
    collection toolbar and full-height note rows retained. */
 html:root body > #svNotebookListMenu:not([hidden]) #svNotebookSelect{
  display:flex!important;align-items:center!important;justify-content:flex-start!important;
- width:100%!important;min-height:44px!important;gap:8px!important;padding:0 8px!important;
- margin:0!important;border:0!important;border-radius:10px!important;background:transparent!important;
+ width:100%!important;min-height:var(--sv-menu-action-height,44px)!important;gap:8px!important;padding:0 8px!important;
+ margin:0!important;border:0!important;border-radius:var(--sv-menu-row-radius,11px)!important;background:transparent!important;
  box-shadow:none!important;color:var(--sv-menu-text,#252a33)!important;
  font:500 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }

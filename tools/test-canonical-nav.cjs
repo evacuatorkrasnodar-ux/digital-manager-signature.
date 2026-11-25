@@ -64,7 +64,13 @@ const checks=[
   ["assets/seyveo-docs-viewer.css","width:var(--sv-nav-single-size,44px)"],
   ["assets/seyveo-fan-workshop.css","width:var(--sv-nav-single-size,44px)"],
   ["assets/seyveo-connect.css","width:var(--sv-nav-single-size,44px)"],
-  ["assets/seyveo-white-pearl.css",".svdv-sheet-top > :is(.svdv-sheet-close,.svdv-sheet-expand)"]
+  ["assets/seyveo-white-pearl.css",".svdv-sheet-top > :is(.svdv-sheet-close,.svdv-sheet-expand)"],
+  ["assets/seyveo-unified-menu-material.css","--sv-menu-compact-radius:18px;"],
+  ["assets/seyveo-unified-menu-material.css","--sv-menu-action-height:44px;"],
+  ["assets/seyveo-documents-graphite-flat.css","border-radius:var(--sv-menu-compact-radius,18px)!important"],
+  ["assets/seyveo-docs-viewer.css","box-shadow:var(--sv-menu-shadow)!important"],
+  ["assets/seyveo-mail-white-pearl.css","border-radius:var(--sv-menu-compact-radius,18px)!important"],
+  ["assets/seyveo-notebook-list-clean-v4.css","border-radius:var(--sv-menu-compact-radius,18px)!important"]
 ];
 for(const [file,fragment] of checks){
  assert.ok(fs.readFileSync(path.join(root,file),'utf8').includes(fragment),file+' must retain '+fragment);

@@ -15,6 +15,9 @@
  --sv-menu-item-selected-border:#d8dde4;
  --sv-menu-rule:rgba(130,139,150,.16);
  --sv-menu-radius:20px;
+ --sv-menu-compact-radius:18px;
+ --sv-menu-row-radius:11px;
+ --sv-menu-action-height:44px;
  --sv-menu-blur:none;
 }
 /* Light reading menus use the opaque companion of White Pearl. Text stays fully opaque

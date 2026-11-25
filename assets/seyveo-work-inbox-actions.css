@@ -107,7 +107,7 @@ html body #svcpWorkChatScreen[data-view="room"] .sv-inbox-options-button{display
 html body #svcpWorkChatScreen .sv-inbox-popover{
  position:absolute!important;top:calc(72px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));
  z-index:570!important;width:min(277px,calc(100vw - 24px));padding:7px;box-sizing:border-box;
- border:1px solid rgba(180,189,200,.24);border-radius:19px;
+ border:1px solid rgba(180,189,200,.24);border-radius:var(--sv-menu-radius,20px);
  background:var(--sv-inbox-panel-bg)!important;color:var(--sv-inbox-panel-ink);
  box-shadow:0 15px 45px rgba(22,30,47,.16),0 2px 7px rgba(22,30,47,.04);
  -webkit-backdrop-filter:blur(24px) saturate(110%);backdrop-filter:blur(24px) saturate(110%);
