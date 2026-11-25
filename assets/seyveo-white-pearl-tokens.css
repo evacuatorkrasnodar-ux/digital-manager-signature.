@@ -2,18 +2,18 @@
 :root[data-theme="light"]{
  /* Refined neutral white pearl, applied to existing white-theme
     controls WITHOUT changing their geometry or behavior. */
- --sv-white-pearl-surface:rgba(247,247,248,.92);
- /* Real dock glass, separate from the more opaque stationary buttons. */
+ --sv-white-pearl-surface:var(--sv-white-pearl-floating-dock);
+ /* The same real dock glass for every ordinary button and capsule. */
  --sv-white-pearl-floating-dock:rgba(247,247,248,.46);
  --sv-white-pearl-floating-blur:blur(8px) saturate(108%);
  --sv-white-pearl-solid:#F7F7F8;
  --sv-white-pearl-rim-color:rgba(233,235,239,.82);
  --sv-white-pearl-edge:1px solid var(--sv-white-pearl-rim-color);
  --sv-white-pearl-segment-ink:#444B56;
- --sv-white-pearl-blur:blur(16px) saturate(100%);
+ --sv-white-pearl-blur:var(--sv-white-pearl-floating-blur);
  --sv-white-pearl-ink:#0b0b0d;
  /* One quiet white selected state for segmented capsules and new screens. */
- --sv-white-pearl-selected:rgba(255,255,255,.96);
+ --sv-white-pearl-selected:rgba(255,255,255,.82);
  --sv-white-pearl-selected-shadow:0 1px 3px rgba(38,48,60,.045);
  /* EXACT white-chat shadows: one fine readable rim and soft lift.
     No second outline pseudo element or heavy embossed gradient. */
