@@ -413,6 +413,7 @@ const mailIcons=Object.freeze({
  search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
  pencil:'<path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M17.4 2.6a2.1 2.1 0 0 1 3 3L12 14l-4 1 1-4Z"/>',
  back:'<path d="m14.5 5-7 7 7 7"/>',
+ forward:'<path d="m15 7 5 5-5 5"/><path d="M20 12H9a5 5 0 0 0-5 5v2"/>',
  reply:'<path d="m9 7-5 5 5 5"/><path d="M4 12h11a5 5 0 0 1 5 5v2"/>',
  paperclip:'<path d="m8 12 6-6a4 4 0 0 1 6 6l-8 8a6 6 0 0 1-9-9l8-8"/>',
  settings:'<path d="M4 7h16M4 17h16M8 4v6M16 14v6"/><circle cx="8" cy="7" r="2"/><circle cx="16" cy="17" r="2"/>',
@@ -1256,14 +1257,6 @@ function mailView(){
   const panel=create('article','sv-mail-detail');
   const heading=create('div','sv-mail-detail-bar');
   const backButton=iconButton('back','Вернуться к списку',()=>{mailCurrent=null;paint()});
-  const opts=create('div','sv-mail-detail-tools');
-  const favorite=iconButton('starred',item.starred?'Убрать из важных':'Отметить важным',()=>{
-   item.starred=!item.starred;saveSampleActions();
-   const label=item.starred?'Убрать из важных':'Отметить важным';
-   favorite.setAttribute('aria-pressed',String(item.starred));
-   favorite.setAttribute('aria-label',label);favorite.title=label;
-  });
-  favorite.setAttribute('aria-pressed',String(item.starred));
   const moreMenu=create('div','sv-mail-message-menu');
   moreMenu.hidden=true;moreMenu.setAttribute('role','group');
   moreMenu.setAttribute('aria-label','Другие действия с письмом');
@@ -1272,32 +1265,43 @@ function mailView(){
    more.setAttribute('aria-expanded',String(!moreMenu.hidden));
    blockConfirm.hidden=true;
   });
+  more.classList.add('sv-mail-detail-more');
   more.setAttribute('aria-expanded','false');more.setAttribute('aria-controls','svMailMoreActions');
   moreMenu.id='svMailMoreActions';
-  if(item.trashed){
-   // Trash is a destination, not a place for Star, Archive, Reply or Spam.
-   // Restoration is immediate; permanent deletion always asks permission.
-   opts.append(
-    iconButton('restore','Восстановить письмо',()=>updateSampleMail(item,'restore')),
-    iconButton('trash','Удалить навсегда',()=>{
-     if(window.confirm('Удалить это учебное письмо навсегда? Отменить нельзя.'))
-      updateSampleMail(item,'remove');
-    })
-   );
-  }else{
-   opts.append(favorite,iconButton('archive',item.archived?'Вернуть во входящие':'В архив · образец',()=>{
-    item.archived=!item.archived;saveSampleActions();mailCurrent=null;paint();
-   }),iconButton('trash','Переместить в Корзину',()=>{
-    updateSampleMail(item,'trash');
-   }),more);
-  }
-  heading.append(backButton,opts);
+  heading.append(backButton,more,moreMenu);
   panel.append(heading,create('h2','sv-mail-detail-title',item.subject));
-  const addMenuAction=(icon,label,callback)=>{
+  function closeMore(){
+   moreMenu.hidden=true;more.setAttribute('aria-expanded','false');
+  }
+  const addMenuAction=(icon,label,callback,destructive=false)=>{
    const control=create('button','sv-mail-message-menu-item');control.type='button';
+   if(destructive)control.classList.add('sv-mail-menu-destructive');
    control.append(mailIcon(icon),create('span','',label));
-   control.addEventListener('click',callback);moreMenu.append(control);
+   control.addEventListener('click',()=>{closeMore();callback();});
+   moreMenu.append(control);
   };
+  if(item.trashed){
+   addMenuAction('restore','Восстановить письмо',()=>updateSampleMail(item,'restore'));
+  }else{
+   addMenuAction('starred',item.starred?'Убрать из важных':'Добавить в важные',()=>{
+    item.starred=!item.starred;saveSampleActions();paintList();
+    content.querySelector('.sv-mail-detail-more')?.focus();
+   });
+   addMenuAction('archive',item.archived?'Вернуть во входящие':'В архив',()=>{
+    item.archived=!item.archived;saveSampleActions();mailCurrent=null;paint();
+   });
+   addMenuAction('forward','Переслать',()=>{
+    openEditor(null,item);
+    const subject=content.querySelector('[data-mail-field="subject"]');
+    const field=content.querySelector('[data-mail-field="body"]');
+    if(subject)subject.value=('Fwd: '+item.subject).slice(0,240);
+    if(field){
+     field.value=('\n\n—— Пересланное письмо ——\nОт: '+item.from+'\nТема: '+item.subject+'\n\n'+String(item.body||'')).slice(0,10000);
+     field.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+    info.textContent='Черновик пересылки учебного письма. Укажите получателя.';
+   });
+  }
   if(!item.trashed&&!sampleBlocked(item)){
    addMenuAction(item.spam?'restore':'spam',item.spam?'Не спам':'В спам',()=>{
     updateSampleMail(item,item.spam?'notspam':'spam');
@@ -1328,7 +1332,18 @@ function mailView(){
   if(!item.trashed&&!sampleBlocked(item)&&!gateTrusted(item.account,sampleMailAddress(item))){
    addMenuAction('shield','Доверять отправителю',()=>updateSampleMail(item,'trust'));
   }
-  panel.append(moreMenu,blockConfirm);
+  addMenuAction('trash',item.trashed?'Удалить навсегда':'В корзину',()=>{
+   if(!item.trashed){updateSampleMail(item,'trash');return;}
+   if(window.confirm('Удалить это учебное письмо навсегда? Отменить нельзя.'))
+    updateSampleMail(item,'remove');
+  },true);
+  panel.append(blockConfirm);
+  panel.addEventListener('click',event=>{
+   if(!moreMenu.hidden&&!moreMenu.contains(event.target)&&!more.contains(event.target))closeMore();
+  });
+  panel.addEventListener('keydown',event=>{
+   if(event.key==='Escape'&&!moreMenu.hidden){event.preventDefault();event.stopPropagation();closeMore();more.focus();}
+  });
   const person=create('div','sv-mail-detail-person');
   person.append(tintMailAvatar(create('span','sv-mail-avatar',item.initial),item));
   const who=create('div','sv-mail-detail-who');
