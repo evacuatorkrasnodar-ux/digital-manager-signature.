@@ -122,3 +122,23 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpC
 html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs .sv-inbox-muted-tab::before{
  content:none!important;display:none!important;
 }
+
+
+/* Floating search circle: the real glass is the footer's existing ::after,
+   not a second glass coating on the button. Exact same tokens as dock ::before.
+   Preserve size, click, blue open state and active tactile response. */
+html:root[data-theme="light"] body footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer)::after{
+ background:var(--sv-white-pearl-floating-dock)!important;background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;border-radius:999px!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ opacity:1!important;pointer-events:none!important;
+}
+html:root[data-theme="light"]:not(.sv-global-search-open) body footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > #navManage#navManage:not(:active):not([aria-expanded="true"]){
+ background:transparent!important;background-image:none!important;
+ border-color:transparent!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root[data-theme="light"]:not(.sv-global-search-open) body footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > #navManage#navManage:not(:active):not([aria-expanded="true"])::before,html:root[data-theme="light"]:not(.sv-global-search-open) body footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > #navManage#navManage:not(:active):not([aria-expanded="true"])::after{
+ content:none!important;display:none!important;
+}
