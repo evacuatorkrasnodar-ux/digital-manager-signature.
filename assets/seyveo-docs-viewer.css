@@ -541,3 +541,22 @@ html:root body .sv-pdf-markup-body .sv-pdf-markup-pager[hidden]{display:none!imp
 html:root body .sv-pdf-markup-body .sv-pdf-inline-text{box-sizing:border-box!important;position:absolute!important;z-index:3;min-height:0!important;padding:0 1px!important;border:0!important;border-bottom:1px solid #176ab4!important;background:#fff!important;outline:0!important;margin:0!important;}
 html:root body .svdv-inline-rail .sv-smart-aa{font:600 20px/1 system-ui;}
 @media(max-height:490px){html:root body .svdv-ink-side{max-height:calc(var(--sv-editor-visible-height,100dvh) - 150px);overflow:auto;scrollbar-width:none;}}
+
+/* Editing is a full-height workspace, not a floating preview. Keep the same
+   document instance and safe-area header; do not expose the background. */
+html:root body .svdv-bottom-sheet.svdv-edit-fullscreen{
+ height:100vh!important;height:100dvh!important;max-height:100%!important;
+ border-radius:0!important;box-shadow:none!important;
+}
+html:root body .svdv-bottom-sheet.svdv-edit-fullscreen .svdv-sheet-grip{display:none!important;}
+html:root body .svdv-bottom-sheet.svdv-edit-fullscreen .svdv-header{
+ padding-top:max(8px,env(safe-area-inset-top))!important;touch-action:auto!important;
+}
+html:root body .svdv-bottom-sheet.svdv-edit-fullscreen.sv-editor-keyboard-open{
+ bottom:var(--sv-editor-keyboard,0px)!important;
+ height:var(--sv-editor-visible-height,100%)!important;max-height:var(--sv-editor-visible-height,100%)!important;
+ transition:none!important;
+}
+@media(max-width:680px){
+ html:root body .svdv-bottom-sheet.svdv-edit-fullscreen{width:100%!important;max-width:100%!important;}
+}
