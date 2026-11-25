@@ -511,3 +511,27 @@ html:root[data-theme="light"] body #calendarEventDialog #seyveoPickDate .cal-pic
  background:var(--sv-white-pearl-surface)!important;border:var(--sv-white-pearl-edge)!important;
  box-shadow:var(--sv-white-pearl-circle-shadow)!important;transform:none!important;opacity:1!important;filter:none!important;
 }
+
+/* Existing single navigation controls share the Cabinet token contract.
+   Never apply to the dock, semantic confirmations or colored chat. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-template-head > .sv-doc-my-template-back,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-template-head > .sv-doc-my-template-back:is(:hover,:active,:focus),
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-doc-search-toggle,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-doc-search-toggle:is(:hover,:active,:focus),
+html:root[data-theme="light"] body dialog#noteScanDialog.paper-scan-dialog[open] > #noteScanBack,
+html:root[data-theme="light"] body dialog#noteScanDialog.paper-scan-dialog[open] > #noteScanBack:is(:hover,:active,:focus),
+html:root[data-theme="light"] body dialog#noteReadDialog.notes-dialog.note-read-dialog[open] .sv-note-reader-header > .sv-note-reader-circle,
+html:root[data-theme="light"] body dialog#noteReadDialog.notes-dialog.note-read-dialog[open] .sv-note-reader-header > .sv-note-reader-circle:is(:hover,:active,:focus){
+ box-sizing:border-box!important;
+ width:var(--sv-nav-single-size)!important;height:var(--sv-nav-single-size)!important;
+ min-width:var(--sv-nav-single-size)!important;min-height:var(--sv-nav-single-size)!important;
+ max-width:var(--sv-nav-single-size)!important;max-height:var(--sv-nav-single-size)!important;
+ border:var(--sv-white-pearl-edge)!important;border-radius:50%!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;
+ color:var(--sv-header-icon-ink)!important;box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+ transform:none!important;opacity:1!important;filter:none!important;transition:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-doc-search-toggle svg{
+ width:var(--sv-nav-icon-size)!important;height:var(--sv-nav-icon-size)!important;stroke-width:var(--sv-nav-glyph-stroke)!important;
+}

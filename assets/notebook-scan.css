@@ -45,8 +45,8 @@ html body dialog#noteScanDialog.paper-scan-dialog[open] > #noteScanBack{
  left:max(16px,env(safe-area-inset-left,0px))!important;
  right:auto!important;bottom:auto!important;
  display:grid!important;place-items:center!important;
- width:44px!important;min-width:44px!important;
- height:44px!important;min-height:44px!important;
+ width:var(--sv-nav-single-size,44px)!important;min-width:var(--sv-nav-single-size,44px)!important;
+ height:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;
  margin:0!important;padding:0!important;
  border:1px solid rgba(40,40,44,.10)!important;border-radius:50%!important;
  background:#fff!important;background-image:none!important;

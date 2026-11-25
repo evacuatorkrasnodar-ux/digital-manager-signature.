@@ -67,8 +67,8 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow{
  left:19px!important;
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
- width:44px!important;min-width:44px!important;max-width:44px!important;
- height:44px!important;min-height:44px!important;max-height:44px!important;
+ width:var(--sv-nav-single-size,44px)!important;min-width:var(--sv-nav-single-size,44px)!important;max-width:var(--sv-nav-single-size,44px)!important;
+ height:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;max-height:var(--sv-nav-single-size,44px)!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:50%!important;outline:0!important;
  box-shadow:none!important;background:var(--note-control)!important;
@@ -1402,8 +1402,8 @@ html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open] #noteRe
 }
 html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open] .sv-note-reader-circle{
  position:static!important;box-sizing:border-box!important;display:grid!important;place-items:center!important;
- width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
- max-width:44px!important;max-height:44px!important;margin:0!important;padding:0!important;
+ width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;min-width:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;
+ max-width:var(--sv-nav-single-size,44px)!important;max-height:var(--sv-nav-single-size,44px)!important;margin:0!important;padding:0!important;
  border:var(--sv-white-pearl-edge,.75px solid rgba(220,224,231,.65))!important;
  border-radius:50%!important;background:var(--sv-reader-card)!important;
  color:var(--sv-reader-ink)!important;box-shadow:0 2px 7px rgba(32,42,56,.06)!important;

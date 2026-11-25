@@ -1771,8 +1771,8 @@ html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-head > .sv-inbox
 html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-head > .sv-inbox-sheet-back:is(:active,:hover,:focus-visible){
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
  grid-column:1!important;align-self:center!important;justify-self:start!important;
- width:44px!important;min-width:44px!important;max-width:44px!important;
- height:44px!important;min-height:44px!important;max-height:44px!important;
+ width:var(--sv-nav-single-size,44px)!important;min-width:var(--sv-nav-single-size,44px)!important;max-width:var(--sv-nav-single-size,44px)!important;
+ height:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;max-height:var(--sv-nav-single-size,44px)!important;
  margin:0!important;padding:0!important;
  border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.92))!important;
  border-radius:50%!important;
