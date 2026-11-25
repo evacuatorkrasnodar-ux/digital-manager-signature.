@@ -98,3 +98,31 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-library-she
 html:root body #seyveoOfflineDialog .seyveo-offline-shell{box-sizing:border-box;max-height:90vh;max-height:90dvh;overscroll-behavior:contain;padding-bottom:max(20px,env(safe-area-inset-bottom,0px))}
 .sv-offline-sheet-grip{display:grid;place-items:center;height:24px;margin:-12px auto 4px;touch-action:none}
 .sv-offline-sheet-grip::after{content:"";display:block;width:var(--sv-sheet-grip-width);height:var(--sv-sheet-grip-height);border-radius:999px;background:var(--sv-sheet-grip-color)}
+
+/* Inbox: reuse one real overlay, opt in only safe list/information views.
+   Editors and the special full-screen avatar keep their existing geometry. */
+html:root body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-shared-swipe:not([hidden]) > .sv-inbox-sheet-panel{
+ box-sizing:border-box!important;width:100%!important;max-width:var(--sv-sheet-max-width)!important;
+ max-height:90vh!important;max-height:var(--sv-sheet-form-max-height)!important;
+ border-radius:var(--sv-sheet-radius) var(--sv-sheet-radius) 0 0!important;
+ animation:svSharedSheetEnter var(--sv-sheet-enter-duration) var(--sv-sheet-enter-ease)!important;
+ overflow:hidden!important;
+}
+html:root body #svcpWorkChatScreen #svcpInboxSheet .sv-inbox-shared-grip[hidden]{display:none!important}
+html:root body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-shared-swipe:not([hidden]) .sv-inbox-shared-grip:not([hidden]){
+ display:grid!important;place-items:center;flex:0 0 20px;height:20px;touch-action:none;
+}
+.sv-inbox-shared-grip::after{content:"";display:block;width:var(--sv-sheet-grip-width);height:var(--sv-sheet-grip-height);border-radius:999px;background:var(--sv-sheet-grip-color)}
+html:root body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-shared-swipe:not([hidden]) .sv-inbox-sheet-body{min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain!important}
+/* Cabinet is a draft editor: entrance only, no swipe-to-close. */
+html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open]{
+ position:fixed!important;inset:auto 0 0!important;margin:0 auto!important;
+ width:100%!important;max-width:var(--sv-sheet-max-width)!important;
+ max-height:90vh!important;max-height:var(--sv-sheet-form-max-height)!important;
+ border-radius:var(--sv-sheet-radius) var(--sv-sheet-radius) 0 0!important;
+ animation:svSharedSheetEnter var(--sv-sheet-enter-duration) var(--sv-sheet-enter-ease)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html:root body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-shared-swipe:not([hidden]) > .sv-inbox-sheet-panel,
+ html:root body dialog#svCabinetDialog.sv-cabinet-dialog[open]{animation:none!important}
+}

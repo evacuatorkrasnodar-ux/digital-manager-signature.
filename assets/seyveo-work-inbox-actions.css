@@ -146,10 +146,10 @@ html body #svcpWorkChatScreen .sv-inbox-sheet-backdrop{
 }
 html body #svcpWorkChatScreen .sv-inbox-sheet-panel{
  position:relative;z-index:1;display:flex;flex-direction:column;
- box-sizing:border-box;width:min(100%,460px);height:auto;max-height:min(78dvh,740px);
+ box-sizing:border-box;width:min(100%,var(--sv-sheet-max-width,680px));height:auto;max-height:min(78dvh,740px);
  margin:0;padding:7px 0 max(14px,env(safe-area-inset-bottom,0px));
  overflow:hidden;border:1px solid rgba(190,196,204,.28);border-bottom:0;
- border-radius:27px 27px 0 0;background:var(--sv-inbox-panel-bg)!important;color:var(--sv-inbox-panel-ink)!important;
+ border-radius:var(--sv-sheet-radius,28px) var(--sv-sheet-radius,28px) 0 0;background:var(--sv-inbox-panel-bg)!important;color:var(--sv-inbox-panel-ink)!important;
  box-shadow:0 -11px 34px rgba(28,36,52,.12);font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif
 }
 html body #svcpWorkChatScreen .sv-inbox-sheet-grab{

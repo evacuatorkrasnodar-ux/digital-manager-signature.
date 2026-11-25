@@ -30,4 +30,8 @@ const onlyClose=handle();attach(onlyClose,null,()=>down++);onlyClose.fire('point
 assert.match(read('assets/seyveo-document-pickers.js'),/bottom=true/);
 assert.match(read('assets/seyveo-docs-studio.js'),/templateDialog\('Мои шаблоны',\{librarySheet:true\}\)/);
 assert.match(read('assets/seyveo-docs-studio.js'),/if\(librarySheet\)\{/);
+const inbox=read('assets/seyveo-work-inbox-actions.js');
+assert.match(inbox,/swipeSafeViews=new Set\(\['new','staff','team-structure','one','archives'\]\)/);
+assert.match(inbox,/if\(!overlay.hidden&&swipeSafeViews.has\(sheetType\)\)back.click\(\)/);
+assert.match(inbox,/sheetGrip.hidden=!safeSwipe/);
 console.log('Shared sheet navigation: gesture direction, threshold, cancellation, interactive targets and opt-in checks passed.');

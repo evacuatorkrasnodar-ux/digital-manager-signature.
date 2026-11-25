@@ -484,8 +484,13 @@ back.setAttribute('aria-label','Назад к сообщениям');
 const title=node('strong');title.id='svInboxSheetTitle';
 top.append(back,title,node('span'));
 const body=node('div','sv-inbox-sheet-body');
-// Shared SEYVEO sheet header starts at the top; no decorative drag bar.
-panel.append(top,body);
+// Existing overlay and Back handler are the sole navigation owners.
+const sheetGrip=node('div','sv-inbox-shared-grip');sheetGrip.setAttribute('aria-hidden','true');sheetGrip.hidden=true;
+panel.append(sheetGrip,top,body);
+const swipeSafeViews=new Set(['new','staff','team-structure','one','archives']);
+window.SEYVEO_SHEET_NAVIGATION?.attach(sheetGrip,null,()=>{
+ if(!overlay.hidden&&swipeSafeViews.has(sheetType))back.click();
+});
 overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
 function closeSheet(){panel.querySelector(':scope > .sv-avatar-floating-actions')?.remove();overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
@@ -507,6 +512,9 @@ function openSheet(type,id='',nested=false){
  overlay.hidden=false;
  overlay.classList.toggle('sv-inbox-sheet-notifications',type==='notifications'||type==='muted-chats');
  overlay.dataset.svInboxScreen=type;
+ const safeSwipe=swipeSafeViews.has(type);
+ sheetGrip.hidden=!safeSwipe;
+ overlay.classList.toggle('sv-inbox-shared-swipe',safeSwipe);
  if(type==='new')showContacts(type);
  else if(type==='staff')showStaff();
  else if(type==='team-structure')showTeamStructure();

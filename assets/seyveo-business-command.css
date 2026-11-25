@@ -1660,7 +1660,7 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 .sv-cabinet-dialog *{box-sizing:border-box}
 .sv-cabinet-dialog-body{padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
 .sv-cabinet-grabber{
- width:36px;height:4px;margin:0 auto 14px;border-radius:999px;
+ width:var(--sv-sheet-grip-width,34px);height:var(--sv-sheet-grip-height,4px);margin:0 auto 14px;border-radius:999px;
  background:var(--secondary);opacity:.3
 }
 .sv-cabinet-dialog-head{
