@@ -330,3 +330,17 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpC
  box-shadow:var(--sv-white-pearl-dock-shadow)!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > #svcpChatFilters:not([hidden])::before{content:none!important;display:none!important}
+
+/* Mail-style fade: keep the controls sharp and moving content behind the glass. */
+html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tabs{
+ background:var(--sv-white-pearl-floating-dock)!important;background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > #svcpChatFilters:not([hidden]),html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tabs{
+ --sv-nav-glass-feather:linear-gradient(to bottom,rgba(255,255,255,.58),rgba(255,255,255,.30) 45%,transparent);
+ --sv-nav-glass-feather-height:24px;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > #svcpChatFilters:not([hidden]),html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tabs{background:#F7F7F8!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
