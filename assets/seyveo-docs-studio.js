@@ -1597,12 +1597,12 @@ function mount(target,{
    await persistDraft();return !saveFailed;
   }
   if(payload.kind==='word'){
-   const value=String(payload.text||'').slice(0,12000);
-   if(!value.trim())return false;
+   const value=String(payload.text||'');
+   if(!value.trim()||value.length>12000)return false;
    await persistDraft();if(saveFailed||!panel.isConnected)return false;newDraft();draftEdited=true;documentDraft=value;documentFormat=payload.format==='pdf'?'pdf':'docx';documentTemplate='';fromScan=true;wordStyle={size:12,alignment:'left',heading:false};
    documentName=String(payload.title||'Документ').slice(0,100);
    operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();void persistDraft();
-   panel.scrollIntoView?.({block:'nearest'});return true;
+   panel.querySelector('.sv-doc-edit-resume')?.click();return true;
   }
   if(payload.kind==='pdf-text'){
    const at=generation,epoch=++operationEpoch;
