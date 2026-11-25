@@ -42,8 +42,8 @@
 .control{
  appearance:none;-webkit-appearance:none;
  grid-row:1;display:grid;place-items:center;align-self:center;justify-self:center;
- box-sizing:border-box;flex:0 0 44px;width:44px;min-width:44px;max-width:44px;
- height:44px;min-height:44px;max-height:44px;
+ box-sizing:border-box;flex:0 0 var(--sv-nav-single-size,44px);width:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px);max-width:var(--sv-nav-single-size,44px);
+ height:var(--sv-nav-single-size,44px);min-height:var(--sv-nav-single-size,44px);max-height:var(--sv-nav-single-size,44px);
  padding:0;margin:0;border-radius:50%;
  border:var(--sv-header-circle-border,var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88)));
  background:var(--sv-header-circle,var(--sv-white-pearl-surface,rgba(255,255,255,.18)));
@@ -94,17 +94,17 @@
 :host([data-task-tools="true"]) .sv-history-dual{
  grid-column:3/5;grid-row:1;justify-self:end;align-self:center;
  display:flex;align-items:center;justify-content:center;
- width:134px;height:44px;margin:0;padding:0 3px;gap:0;
+ width:var(--sv-nav-triple-width,134px);height:var(--sv-nav-capsule-height,44px);margin:0;padding:0 var(--sv-nav-capsule-padding,3px);gap:0;
  border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88));
- border-radius:999px;background:var(--sv-white-pearl-surface,rgba(255,255,255,.18));
- box-shadow:var(--sv-white-pearl-dock-shadow,0 7px 21px rgba(42,52,72,.105));
+ border-radius:var(--sv-nav-capsule-radius,999px);background:var(--sv-white-pearl-surface,rgba(255,255,255,.18));
+ box-shadow:var(--sv-nav-capsule-shadow,var(--sv-white-pearl-dock-shadow,0 7px 21px rgba(42,52,72,.105)));
  -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%));
  backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%));
 }
 :host([data-task-tools="true"]) .sv-history-dual .control,
 :host([data-task-tools="true"]) .sv-history-dual .control:is(:hover,:focus,:active){
- display:grid;flex:0 0 42px;width:42px;min-width:42px;max-width:42px;
- height:42px;min-height:42px;max-height:42px;
+ display:grid;flex:0 0 var(--sv-nav-capsule-cell,42px);width:var(--sv-nav-capsule-cell,42px);min-width:var(--sv-nav-capsule-cell,42px);max-width:var(--sv-nav-capsule-cell,42px);
+ height:var(--sv-nav-capsule-cell,42px);min-height:var(--sv-nav-capsule-cell,42px);max-height:var(--sv-nav-capsule-cell,42px);
  margin:0;padding:0;border:0;border-radius:50%;
  background:transparent;background-image:none;box-shadow:none;
  -webkit-backdrop-filter:none;backdrop-filter:none;
@@ -120,10 +120,10 @@
 :host([data-business-tools="true"]) .sv-history-dual{
  grid-column:3/5;grid-row:1;justify-self:end;align-self:center;
  display:flex;align-items:center;justify-content:center;
- width:92px;height:44px;margin:0;padding:0 3px;gap:0;
+ width:var(--sv-nav-double-width,92px);height:var(--sv-nav-capsule-height,44px);margin:0;padding:0 var(--sv-nav-capsule-padding,3px);gap:0;
  border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88));
- border-radius:999px;background:var(--sv-white-pearl-surface,rgba(255,255,255,.18));
- box-shadow:var(--sv-white-pearl-dock-shadow,0 7px 21px rgba(42,52,72,.105));
+ border-radius:var(--sv-nav-capsule-radius,999px);background:var(--sv-white-pearl-surface,rgba(255,255,255,.18));
+ box-shadow:var(--sv-nav-capsule-shadow,var(--sv-white-pearl-dock-shadow,0 7px 21px rgba(42,52,72,.105)));
  -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%));
  backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%));
 }
@@ -132,8 +132,8 @@
 }
 :host([data-business-tools="true"]) .sv-history-dual :is(.sv-review-cards-control,.action),
 :host([data-business-tools="true"]) .sv-history-dual :is(.sv-review-cards-control,.action):is(:active,:hover,:focus){
- display:grid;flex:0 0 42px;width:42px;min-width:42px;max-width:42px;
- height:42px;min-height:42px;max-height:42px;
+ display:grid;flex:0 0 var(--sv-nav-capsule-cell,42px);width:var(--sv-nav-capsule-cell,42px);min-width:var(--sv-nav-capsule-cell,42px);max-width:var(--sv-nav-capsule-cell,42px);
+ height:var(--sv-nav-capsule-cell,42px);min-height:var(--sv-nav-capsule-cell,42px);max-height:var(--sv-nav-capsule-cell,42px);
  margin:0;padding:0;border:0;border-radius:50%;
  background:transparent;background-image:none;box-shadow:none;
  -webkit-backdrop-filter:none;backdrop-filter:none;
@@ -144,7 +144,7 @@
 :host([data-business-tools="true"]) .sv-history-dual .action{order:2}
 :host([data-business-tools="true"]) .title{pointer-events:none}
 .company[hidden]{display:none!important}
-:host([data-business-tools="true"]) .bar{grid-template-columns:minmax(0,1fr) 92px;column-gap:8px}
+:host([data-business-tools="true"]) .bar{grid-template-columns:minmax(0,1fr) var(--sv-nav-double-width,92px);column-gap:8px}
 :host([data-business-tools="true"]) .sv-history-dual{grid-column:2;grid-row:1}
 .company{
  grid-column:1;grid-row:1;align-self:center;justify-self:start;
@@ -180,7 +180,7 @@
    The month itself opens Calendar, alongside the original three 42px actions.
    Keep the 134px three-action capsule; narrower would shrink the touch areas. */
 :host([data-agenda="true"]) .bar{
- grid-template-columns:minmax(0,1fr) 134px;
+ grid-template-columns:minmax(0,1fr) var(--sv-nav-triple-width,134px);
  grid-template-rows:44px;column-gap:8px;
 }
 :host([data-agenda="true"]) .month{
@@ -194,7 +194,7 @@
  min-width:0;overflow:hidden;text-overflow:ellipsis;
 }
 :host([data-agenda="true"]) .sv-history-dual{
- grid-column:2;grid-row:1;justify-self:end;width:134px;
+ grid-column:2;grid-row:1;justify-self:end;width:var(--sv-nav-triple-width,134px);
 }
 /* Same right-hand action order as Cabinet: History · Cards · Plus.
    CSS-only reorder keeps original listeners, 42px slots and stable capsule. */

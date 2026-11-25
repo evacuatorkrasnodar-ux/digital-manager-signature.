@@ -2147,7 +2147,7 @@ html:root[data-theme="light"] body #svStandardPickerDialog button:focus-visible{
 html:root body .sv-month-nav.sv-month-nav:not([hidden]),
 html:root body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog,#sayviSurfacePage) .sv-month-nav.sv-month-nav:not([hidden]){
  display:flex!important;align-items:center!important;justify-content:space-between!important;
- gap:8px!important;min-height:44px!important;min-width:0!important;
+ gap:8px!important;min-height:var(--sv-nav-capsule-height,44px)!important;min-width:0!important;
  grid-template-columns:none!important;
 }
 html:root body .sv-month-nav[hidden]{display:none!important}
@@ -2159,28 +2159,28 @@ html:root body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog
 }
 html:root body .sv-month-nav.sv-month-nav > .sv-month-controls,
 html:root body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog,#sayviSurfacePage) .sv-month-nav.sv-month-nav > .sv-month-controls{
- display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 88px!important;
- width:88px!important;min-width:88px!important;height:44px!important;gap:0!important;padding:0!important;margin:0!important;
- border:0!important;border-radius:999px!important;background:#f2f2f5!important;box-shadow:none!important;
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 var(--sv-nav-double-width,92px)!important;
+ width:var(--sv-nav-double-width,92px)!important;min-width:var(--sv-nav-double-width,92px)!important;height:var(--sv-nav-capsule-height,44px)!important;gap:0!important;padding:0 var(--sv-nav-capsule-padding,3px)!important;margin:0!important;
+ border:0!important;border-radius:var(--sv-nav-capsule-radius,999px)!important;background:#35363b!important;box-shadow:none!important;
 }
 html:root body .sv-month-nav.sv-month-nav > .sv-month-controls > button,
 html:root body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog,#sayviSurfacePage) .sv-month-nav.sv-month-nav > .sv-month-controls > button{
- box-sizing:border-box!important;display:grid!important;place-items:center!important;flex:0 0 44px!important;
- width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;max-width:44px!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;flex:0 0 var(--sv-nav-capsule-cell,42px)!important;
+ width:var(--sv-nav-capsule-cell,42px)!important;height:var(--sv-nav-capsule-cell,42px)!important;min-width:var(--sv-nav-capsule-cell,42px)!important;min-height:var(--sv-nav-capsule-cell,42px)!important;max-width:var(--sv-nav-capsule-cell,42px)!important;
  padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;background:transparent!important;
  color:#007aff!important;box-shadow:none!important;font:400 25px/1 system-ui!important;cursor:pointer;
 }
 html:root body .sv-month-nav.sv-month-nav .sv-month-controls svg,
 html:root body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog,#sayviSurfacePage) .sv-month-nav.sv-month-nav .sv-month-controls svg{
  width:20px!important;height:20px!important;display:block!important;fill:none!important;stroke:currentColor!important;
- stroke-width:1.65!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+ stroke-width:var(--sv-nav-glyph-stroke,1.7)!important;stroke-linecap:round!important;stroke-linejoin:round!important;
 }
-html:root body .sv-month-nav .sv-month-controls > button:active{opacity:.55}
+html:root body .sv-month-nav .sv-month-controls > button:is(:hover,:active,:focus){opacity:1!important;transform:none!important;filter:none!important;box-shadow:none!important;}
 html:root body .sv-month-nav .sv-month-controls > button:focus-visible{outline:2px solid #007aff!important;outline-offset:-3px!important}
 html:root[data-theme="dark"] body .sv-month-nav.sv-month-nav > .sv-month-controls{background:#35363b!important}
 html:root[data-theme="dark"] body .sv-month-nav.sv-month-nav > .sv-month-controls > button{color:#64b5ff!important}
 /* Document pickers are intentionally white even in the surrounding dark theme. */
-html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-month-nav.sv-month-nav > .sv-month-controls{background:#f2f2f5!important}
+html:root[data-theme="dark"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-month-nav.sv-month-nav > .sv-month-controls{background:#f2f2f5!important}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-month-nav.sv-month-nav > .sv-month-controls > button{color:#007aff!important}
 
 /* Date selectors retain explicit controls on phones, as well as existing swipe gestures. */
@@ -2188,12 +2188,4 @@ html:root.sv-phone-navigation body #personalTaskDialog #seyveoTaskDuePicker .sv-
 html:root[data-theme="dark"] body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog) .sv-month-nav.sv-month-nav > .sv-month-controls{background:#35363b!important}
 html:root[data-theme="dark"] body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog) .sv-month-nav.sv-month-nav > .sv-month-controls > button{color:#64b5ff!important}
 
-/* V3 editor had an older narrow-screen rule hiding both month buttons.
-   Preserve the already approved shared 88×44 navigation on every viewport. */
-html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar.sv-month-nav{
- display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:44px!important;
-}
-html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar.sv-month-nav > .sv-month-controls > button{
- display:grid!important;place-items:center!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
- background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
+/* V3 uses the same shared month navigation; old local geometry removed from the editor stylesheet. */

@@ -198,19 +198,8 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskTime{
  font:520 14px/1.3 system-ui!important;text-align:center!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar{padding:2px 0 4px!important}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar{
- display:grid!important;grid-template-columns:44px 1fr 44px!important;align-items:center!important;
- min-height:34px!important;text-align:center!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar strong{
- color:#17191E!important;font:640 18px/1.2 system-ui!important;text-transform:capitalize!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar button{
- width:34px!important;height:34px!important;padding:0!important;border:0!important;border-radius:50%!important;
- background:var(--sv-task-action-fill)!important;color:#202329!important;font:400 28px/1 system-ui!important;
- box-shadow:var(--sv-task-action-shadow)!important;
- -webkit-backdrop-filter:var(--sv-task-action-blur)!important;backdrop-filter:var(--sv-task-action-blur)!important;
-}
+/* Month controls inherit the shared header geometry in calendar.css. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar strong{color:#17191E!important;}
 html body dialog#personalTaskDialog.sv-task-editor-v3 :is(.sv-new-task-weekdays,.sv-new-task-calendar-days){
  display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;text-align:center!important;
 }
@@ -936,19 +925,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-orange{backgr
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-green{background:#9BD6B2!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-red{background:#EE8B9B!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-yellow{background:#E8D280!important}
-@media(max-width:620px){
- html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar{
-  display:flex!important;align-items:flex-end!important;justify-content:flex-start!important;
-  min-height:35px!important;padding:0 2px 6px!important;text-align:left!important;
- }
- html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar strong{
-  font:620 21px/1.16 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
-  letter-spacing:-.035em!important;text-align:left!important;
- }
- html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar button{
-  display:none!important;
- }
-}
+/* Mobile month controls use the same capsule as desktop. */
 
 /* New Task · two real inputs, each in the approved dock material. */
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-main{

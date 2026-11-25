@@ -12,6 +12,10 @@
  --sv-nav-single-size:44px;
  --sv-nav-capsule-height:44px;
  --sv-nav-capsule-cell:42px;
+ --sv-nav-capsule-padding:3px;
+ --sv-nav-capsule-shadow:var(--sv-white-pearl-dock-shadow);
+ --sv-nav-capsule-radius:999px;
+ --sv-nav-glyph-stroke:1.7;
  --sv-nav-double-width:92px;
  --sv-nav-triple-width:134px;
  --sv-nav-icon-size:20px;
