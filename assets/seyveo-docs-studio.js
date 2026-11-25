@@ -1027,7 +1027,11 @@ function mount(target,{
    body.style.fontSize=documentFormat==='docx'?wordStyle.size+'pt':'';
    body.style.textAlign=documentFormat==='docx'?(wordStyle.alignment==='both'?'justify':wordStyle.alignment):'';
   }
-  function safeDocumentName(){return documentName.replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').trim()||'Документ';}
+  function safeDocumentName(){
+   const first=body.value.split('\n').map(x=>x.trim()).find(Boolean)||'Документ';
+   const title=documentName.trim()||first.slice(0,80);
+   return title.replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').trim()||'Документ';
+  }
   function preparedFile(){
    if(!body.value.trim()||body.value.length>12000){
     message('Напишите текст документа.');return null;
