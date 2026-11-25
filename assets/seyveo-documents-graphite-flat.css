@@ -1466,3 +1466,22 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-vault-shell > .sv-doc-safety > summary{
  min-height:44px!important;padding:0!important;
 }
+
+/* Scanner: real capture actions only, no sample illustration before import. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"] > .sv-doc-tool-controls > .sv-doc-scan-source{
+ display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
+ min-height:44px!important;border:0!important;border-radius:999px!important;
+ background:#FFFFFF!important;color:#0068D9!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"] > .sv-doc-tool-controls > .sv-doc-scan-source .sv-doc-tool-icon{
+ display:grid!important;place-items:center!important;width:20px!important;height:20px!important;
+ flex:0 0 20px!important;background:none!important;color:inherit!important;border:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"] > .sv-doc-tool-controls > .sv-doc-scan-source svg{
+ width:20px!important;height:20px!important;stroke:currentColor!important;fill:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] > .sv-doc-tool-help{
+ margin:4px 0 0!important;padding:0!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"] > .sv-doc-tool-help > summary{min-height:44px!important;}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"] > :is(.sv-doc-tool-status,.sv-doc-tool-message):empty{display:none!important;}

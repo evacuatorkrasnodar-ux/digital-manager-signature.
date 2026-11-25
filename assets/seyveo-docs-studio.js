@@ -35,6 +35,8 @@ const PICTOGRAMS=Object.freeze({
 /* Small, consistent iOS-style line icons for the five document actions.
    Full-feature editor illustrations elsewhere retain their existing art. */
 const TOOL_LINES=Object.freeze({
+ camera:'<path d="M4 7h4l2-3h4l2 3h4a2 2 0 0 1 2 2v10H2V9a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13" r="3.5"/>',
+ gallery:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-5 5 6"/>',
  scan:'<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M7 12h10M9 8h6v8H9z"/>',
  file:'<path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v6h5M12 12v6M9 15h6"/>',
  create:'<path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/><path d="M8 8h5M8 12h3M13 17l1-4 5-5 3 3-5 5-4 1ZM17 10l3 3"/>',
@@ -421,18 +423,18 @@ function mount(target,{
   clear();
   panel.dataset.hasScans=String(scans.length>0);
   panel.append(heading('Сканер','Фото → PDF'));
-  panel.append(scannerStage());
-  panel.append(pictorialSteps([['camera','Фото'],['pages','Страницы'],['pdf','PDF']]));
+  if(scans.length)panel.append(scannerStage());
   const camera=$('input');camera.type='file';camera.accept='image/*';
   camera.setAttribute('capture','environment');camera.hidden=true;
   const library=$('input');library.type='file';library.accept='image/jpeg,image/png,image/webp';
   library.multiple=true;library.hidden=true;
   camera.addEventListener('change',()=>{void ingest(camera.files);camera.value='';});
   library.addEventListener('change',()=>{void ingest(library.files);library.value='';});
-  panel.append(camera,library,controls(
-   button('Камера',()=>camera.click(),'sv-doc-tool-primary'),
-   button('Фото из галереи',()=>library.click())
-  ));
+  const capture=button('Камера',()=>camera.click(),'sv-doc-tool-primary sv-doc-scan-source');
+  capture.prepend(toolArt('camera'));
+  const gallery=button('Из галереи',()=>library.click(),'sv-doc-scan-source');
+  gallery.prepend(toolArt('gallery'));
+  panel.append(camera,library,controls(capture,gallery));
   const counter=$('div','sv-doc-tool-pages');
   if(scans.length){
    counter.append($('strong','','Страницы · '+scans.length));
@@ -491,7 +493,8 @@ function mount(target,{
   }
   const info=$('details','sv-doc-tool-help');
   info.append($('summary','','О сканировании'),warn('Фотографии обрабатываются на устройстве. OCR доступен по нажатию «Распознать текст»; движок и языковые модели загружаются из интернета после согласия. Автоматическая обрезка пока не подключена.'));
-  panel.append(counter,info,status(''));
+  if(scans.length)panel.append(counter);
+  panel.append(info,status(''));
  }
  function renderCreate(){
   panel.append(heading(fromScan?'Редактор Word':'Создать документ',fromScan?'Распознанный текст · редактирование в SEYVEO':'Начните с шаблона или чистого листа'));
