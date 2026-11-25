@@ -2182,3 +2182,8 @@ html:root[data-theme="dark"] body .sv-month-nav.sv-month-nav > .sv-month-control
 /* Document pickers are intentionally white even in the surrounding dark theme. */
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-month-nav.sv-month-nav > .sv-month-controls{background:#f2f2f5!important}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-month-nav.sv-month-nav > .sv-month-controls > button{color:#007aff!important}
+
+/* Date selectors retain explicit controls on phones, as well as existing swipe gestures. */
+html:root.sv-phone-navigation body #personalTaskDialog #seyveoTaskDuePicker .sv-month-nav > .sv-month-controls{display:flex!important}
+html:root[data-theme="dark"] body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog) .sv-month-nav.sv-month-nav > .sv-month-controls{background:#35363b!important}
+html:root[data-theme="dark"] body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog) .sv-month-nav.sv-month-nav > .sv-month-controls > button{color:#64b5ff!important}
