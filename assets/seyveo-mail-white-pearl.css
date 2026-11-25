@@ -1131,7 +1131,7 @@ html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="edit
  box-sizing:border-box!important;margin:0 0 16px!important;padding:4px 0 4px 12px!important;
  border:0!important;border-inline-start:2px solid #007AFF!important;
  background:transparent!important;color:var(--secondary,#59636d)!important;
- font:400 14px/1.6 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font:400 14px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  overflow-wrap:anywhere!important;
 }
 html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-compose-quote > strong{
@@ -1302,8 +1302,9 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
  display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;
  width:100%!important;white-space:normal!important;overflow:hidden!important;overflow-wrap:anywhere!important;
  text-align:center!important;font-size:10px!important;line-height:1.15!important;font-weight:550!important;
+ flex:0 0 23px!important;min-height:23px!important;max-height:23px!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item .sv-mail-attached-size{font-size:9px!important;line-height:1.15!important;text-align:center!important}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item .sv-mail-attached-size{font-size:9px!important;line-height:1.15!important;text-align:center!important;flex:0 0 auto!important;white-space:nowrap!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-attachment-shelf .sv-mail-attached-item > button.sv-mail-attached-remove.sv-mail-icon-button:not([hidden]){
  position:absolute!important;top:0!important;right:0!important;z-index:2!important;
  width:30px!important;min-width:30px!important;max-width:30px!important;
