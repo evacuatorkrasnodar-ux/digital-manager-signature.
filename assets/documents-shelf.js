@@ -340,9 +340,10 @@ function folderItems(state,folder){
 function eligible(folder,item){return folder.trash||item.local===true;}
 // Horizontal shelf scrolling is native on touch; desktop can drag with a mouse.
 function syncShelfEdges(rail){
- const end=rail.scrollWidth-rail.clientWidth;
- rail.classList.toggle('sv-doc-rail-before',rail.scrollLeft>2);
- rail.classList.toggle('sv-doc-rail-after',end-rail.scrollLeft>2);
+ const end=Math.max(0,rail.scrollWidth-rail.clientWidth);
+ const overflow=end>3&&!rail.classList.contains('sv-doc-folders-fit');
+ rail.classList.toggle('sv-doc-rail-before',overflow&&rail.scrollLeft>3);
+ rail.classList.toggle('sv-doc-rail-after',overflow&&end-rail.scrollLeft>3);
 }
 function enableMouseRail(rail){
  let drag=null,blocked=false;
@@ -685,7 +686,10 @@ function paint(state){
   }
   state.foldersGrid.append(entry);
  }
- state.foldersGrid.scrollLeft=folderScroll;requestAnimationFrame(()=>syncShelfEdges(state.foldersGrid));
+ const folderCount=state.foldersGrid.childElementCount;
+ state.foldersGrid.classList.toggle('sv-doc-folders-fit',folderCount<=4);
+ state.foldersGrid.scrollLeft=folderCount<=4?0:folderScroll;
+ requestAnimationFrame(()=>syncShelfEdges(state.foldersGrid));
  if(state.pendingFolder&&ownFolders(state).some(x=>x.id===state.pendingFolder)){
   const target=state.foldersGrid.querySelector('.sv-doc-folder-'+state.pendingFolder);
   if(target){const left=target.getBoundingClientRect().left-state.foldersGrid.getBoundingClientRect().left+state.foldersGrid.scrollLeft;state.foldersGrid.scrollLeft=Math.max(0,left);}

@@ -2690,3 +2690,20 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
 }
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody{scroll-padding-bottom:calc(86px + env(safe-area-inset-bottom,0px));}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody::after{content:"";display:block;flex:0 0 auto;height:calc(76px + env(safe-area-inset-bottom,0px));pointer-events:none;}
+
+/* Four folders are a complete balanced row. The swipe rail only overflows
+   when there really are additional folders. Keep the full first/last label. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid.sv-doc-folders-fit{
+ grid-auto-columns:calc((100% - 18px)/4)!important;
+ overflow-x:hidden!important;scroll-snap-type:none!important;
+ -webkit-mask-image:none!important;mask-image:none!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid:not(.sv-doc-folders-fit){
+ grid-auto-columns:calc((100% - 18px)/4)!important;
+ scroll-snap-type:x mandatory!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid.sv-doc-rail-dragging{scroll-snap-type:none!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid>.sv-doc-folder-card{min-width:0!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid>.sv-doc-folder-card>strong{
+ max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
