@@ -216,7 +216,7 @@ function readMailSessionDrafts(){
   return data.filter(d=>d&&typeof d==='object'&&typeof d.id==='string')
    .slice(0,60).map(d=>({
     id:d.id.slice(0,100),account:['personal','business'].includes(d.account)?d.account:'',
-    to:String(d.to||'').slice(0,254),subject:String(d.subject||'').slice(0,240),
+    to:String(d.to||'').slice(0,254),cc:String(d.cc||'').slice(0,1000),bcc:String(d.bcc||'').slice(0,1000),subject:String(d.subject||'').slice(0,240),
     body:String(d.body||'').slice(0,10000),
     attachments:Array.isArray(d.attachments)?d.attachments.filter(a=>a&&typeof a.id==='string'&&typeof a.name==='string')
      .slice(0,5).map(a=>({id:a.id.slice(0,90),name:a.name.slice(0,150),
@@ -980,6 +980,7 @@ function mailView(){
    if(['png','jpg','jpeg','webp'].includes(extension))return {code:'IMG',name:'Изображение',kind:'image'};
    return {code:'TXT',name:'Текстовый файл',kind:'text'};
   };
+ let mailEditorViewportCleanup=null;
  function drawEditor(){
   const original=mailDrafts.find(d=>d.id===mailEditingId);
   const form=create('form','sv-mail-editor');
@@ -1009,11 +1010,25 @@ function mailView(){
    label.append(create('span','sv-mail-field-label',labelText));
    const input=create(tag,'sv-mail-input');input.dataset.mailField=name;
    if(type)input.type=type;
-   if(tag==='textarea'){input.rows=6;input.setAttribute('aria-label',labelText)}
-   input.maxLength=name==='body'?10000:name==='to'?254:240;input.value=value||'';
+   if(tag==='textarea'){input.rows=6;input.setAttribute('aria-label',labelText);input.placeholder=labelText;label.classList.add('sv-mail-body-field');}
+   if(type==='email'){input.multiple=true;input.autocomplete='off';}
+   input.maxLength=name==='body'?10000:name==='to'?254:['cc','bcc'].includes(name)?1000:240;input.value=value||'';
    label.append(input);form.append(label);return input;
   };
   const to=makeField('Кому','to','input',original?.to,'email');
+  const copyToggle=create('button','sv-mail-copy-toggle','Копия / скрытая копия');
+  copyToggle.type='button';copyToggle.append(mailIcon('back'));form.append(copyToggle);
+  const cc=makeField('Копия','cc','input',original?.cc,'email');
+  const bcc=makeField('Скрытая копия','bcc','input',original?.bcc,'email');
+  cc.parentElement.id='svMailCcField';bcc.parentElement.id='svMailBccField';
+  copyToggle.setAttribute('aria-controls','svMailCcField svMailBccField');
+  let copiesOpen=!!(original?.cc||original?.bcc);
+  function showCopies(){
+   cc.parentElement.hidden=bcc.parentElement.hidden=!copiesOpen;
+   copyToggle.setAttribute('aria-expanded',String(copiesOpen));
+  }
+  copyToggle.addEventListener('click',()=>{copiesOpen=!copiesOpen;showCopies();});
+  showCopies();
   const subj=makeField('Тема','subject','input',original?.subject,'text');
   const message=makeField('Сообщение','body','textarea',original?.body);
   const attachmentPicker=create('input','sv-mail-attachment-picker');
@@ -1145,17 +1160,17 @@ function mailView(){
   });
   renderAttachments();
   function autosaveDraft(){
-   const recipient=to.value.trim(),subjectText=subj.value.trim(),bodyText=message.value.trim();
-   if(!recipient&&!subjectText&&!bodyText&&!attachments.length&&!original)return false;
+   const recipient=to.value.trim(),copy=cc.value.trim(),blind=bcc.value.trim(),subjectText=subj.value.trim(),bodyText=message.value.trim();
+   if(!recipient&&!copy&&!blind&&!subjectText&&!bodyText&&!attachments.length&&!original)return false;
    const item={id:draftId,account:original?.account||accountValue||'',
-    to:recipient.slice(0,254),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000),attachments:attachments.map(a=>({...a}))};
+    to:recipient.slice(0,254),cc:copy.slice(0,1000),bcc:blind.slice(0,1000),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000),attachments:attachments.map(a=>({...a}))};
    const index=mailDrafts.findIndex(d=>d.id===draftId);
    if(index<0)mailDrafts.unshift(item);else mailDrafts[index]=item;
    persistMailDrafts();
    mailEditingId=draftId;
    return true;
   }
-  for(const field of [to,subj,message])field.addEventListener('input',autosaveDraft);
+  for(const field of [to,cc,bcc,subj,message])field.addEventListener('input',autosaveDraft);
   const leaveEditor=()=>{
    autosaveDraft();
    mailEditorOpen=false;mailEditingId=null;
@@ -1205,18 +1220,34 @@ function mailView(){
   send.addEventListener('click',()=>{
    const saved=autosaveDraft();
    status.textContent=saved?'Для отправки подключите почту. Черновик сохранён, письмо не отправлено.':'Для отправки подключите почтовый ящик. Письмо не отправлено.';
+   status.scrollIntoView({block:'nearest',behavior:'auto'});
   });
-  const primaryActions=create('div','sv-mail-primary-actions');
-  primaryActions.append(send);
-  actions.append(polish,primaryActions);
-  // Files have their own swipeable full-width row ABOVE the controls.
-  // Below: the paperclip stays at left; Sayvi and Send stay at right.
+  heading.append(send);
+  actions.append(attachButton,polish);
   const composerFooter=create('div','sv-mail-compose-footer');
-  const filesArea=create('div','sv-mail-footer-files');
-  filesArea.append(attachButton);
-  composerFooter.append(filesArea,actions);
-  form.append(attachmentShelf,composerFooter,preview,status);
+  composerFooter.append(actions);
+  form.append(attachmentShelf,preview,status,composerFooter);
   content.append(form);
+  // Only this editor tracks the visible keyboard boundary. No scroll handler,
+  // no dynamic padding and no changes to other workspaces.
+  const viewport=window.visualViewport;
+  const syncTools=()=>{
+   if(!form.isConnected)return;
+   const editing=form.contains(document.activeElement)&&document.activeElement.matches('input,textarea');
+   const inset=editing&&viewport&&Math.abs(viewport.scale-1)<.01
+    ?Math.max(0,document.documentElement.clientHeight-viewport.height-viewport.offsetTop):0;
+   form.style.setProperty('--sv-mail-keyboard-inset',Math.round(inset)+'px');
+   form.classList.toggle('sv-mail-keyboard-open',inset>80);
+  };
+  viewport?.addEventListener('resize',syncTools);
+  viewport?.addEventListener('scroll',syncTools);
+  form.addEventListener('focusin',syncTools);form.addEventListener('focusout',syncTools);
+  mailEditorViewportCleanup=()=>{
+   viewport?.removeEventListener('resize',syncTools);viewport?.removeEventListener('scroll',syncTools);
+   form.removeEventListener('focusin',syncTools);form.removeEventListener('focusout',syncTools);
+  };
+  mailGuardListenerAbort.signal.addEventListener('abort',mailEditorViewportCleanup,{once:true});
+  syncTools();
  }
  /* Local, explainable mail assistance for the development prototype.
     No remote AI, no sending, no invented prices or commitments. */
@@ -1840,6 +1871,7 @@ function mailView(){
   // All bulk actions live beside the selection count, never below the list.
  }
  function paintList(){
+  if(mailEditorViewportCleanup){mailGuardListenerAbort.signal.removeEventListener('abort',mailEditorViewportCleanup);mailEditorViewportCleanup();mailEditorViewportCleanup=null;}
   pinnedMailHead.querySelector(':scope > .sv-mail-bulk-toolbar')?.remove();
   section.classList.toggle('sv-mail-bulk-active',mailBulkSelecting&&mailFolder!=='overview'&&!mailEditorOpen&&!mailCurrent);
   content.replaceChildren();
