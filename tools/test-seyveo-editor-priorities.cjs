@@ -23,3 +23,13 @@ test('notebook controls recognize original delegated data attributes',()=>{
  api.prioritize(node,'notebook');
  assert.equal(node.children[0].handle(),'text');assert.equal(node.children[1].handle(),'draw');
 });
+
+test('local document cleanup preserves facts, indentation and numbered items',()=>{
+ const original='ДОГОВОР  № 12  \r\n\r\n\r\n  1. Сумма 10 000 ₽  \nДата 25.11.2026';
+ assert.equal(api.tidyDocument(original),'ДОГОВОР  № 12\n\n  1. Сумма 10 000 ₽\nДата 25.11.2026');
+ assert.throws(()=>api.tidyDocument('x'.repeat(12001)),/12 000/);
+});
+test('assistant never silently truncates private text to fit local endpoint',()=>{
+ assert.ok(api.documentPrompt('correct','Сумма 100').endsWith('Сумма 100'));
+ assert.throws(()=>api.documentPrompt('review','x'.repeat(4000)),/фрагмент/);
+});

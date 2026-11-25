@@ -1049,15 +1049,78 @@ function mount(target,{
   const clearTool=wordTool('Очистить текст','clear',()=>{
    if(body.value&&window.confirm('Очистить текст документа?')){wordHistory.push(body.value);wordRedo.length=0;replaceWordText('');syncHistory();body.focus({preventScroll:true});}
   });
-  async function helpWithCurrentDocument(){
-   if(!body.value.trim()){sheet.close();onSayvi('create');return;}
-   await persistDraft();
-   if(saveFailed){message('Не удалось сохранить изменения. Повторите попытку.');return;}
-   const ok=await onSayvi('edit-current',{text:body.value,title:filename.value.trim(),format:documentFormat,template:documentTemplate,purpose:'format'});
-   if(ok===false)message('Не удалось передать документ Сэйви. Текст остался в редакторе.');
+  function helpWithCurrentDocument(){
+   if(sheet.querySelector('.sv-doc-sayvi-tools[open]'))return;
+   setFormatMenu(false);
+   const api=window.SEYVEO_EDITOR_CAPSULE;
+   const {dlg,content}=templateDialog('Сэйви');
+   dlg.classList.add('sv-doc-sayvi-tools');dlg.setAttribute('aria-label','Инструменты Сэйви');
+   const source=body.value;
+   const begin=body.selectionStart||0,end=body.selectionEnd||0;
+   const selected=end>begin?source.slice(begin,end):source;
+   const styleBefore=JSON.stringify(wordStyle);
+   let proposal=null,controller=null,closed=false,busy=false;
+   const choices=$('div','sv-doc-sayvi-choices');
+   const note=$('p','sv-doc-sayvi-note','Выберите действие. Исходный текст останется без изменений до подтверждения.');
+   const question=$('textarea','sv-doc-sayvi-question');question.hidden=true;question.rows=2;question.maxLength=500;question.placeholder='Что нужно уточнить?';question.setAttribute('aria-label','Вопрос Сэйви');
+   const feedback=$('p','sv-doc-sayvi-feedback');feedback.setAttribute('role','status');
+   const preview=$('textarea','sv-doc-sayvi-preview');preview.hidden=true;preview.rows=8;preview.setAttribute('aria-label','Предложение Сэйви');preview.maxLength=12000;
+   const controls=$('div','sv-doc-sayvi-actions');controls.hidden=true;
+   const apply=button('Применить',()=>{
+    if(!proposal||busy||!proposal.apply)return;
+    if(body.value!==source||JSON.stringify(wordStyle)!==styleBefore){feedback.textContent='Документ изменился. Откройте Сэйви заново.';return;}
+    const value=proposal.fragment?source.slice(0,begin)+preview.value+source.slice(end):preview.value;
+    if(!value.trim()||value.length>12000){feedback.textContent='Проверьте объём и содержимое текста.';return;}
+    if(value!==body.value){wordHistory.push(body.value);wordRedo.length=0;replaceWordText(value);syncHistory();}
+    if(proposal.layout){size.value='12';alignment.value='left';wordStyle.heading=true;firstLine.setAttribute('aria-pressed','true');headingCheck.hidden=false;draftEdited=true;refreshStyle();void persistDraft();}
+    dlg.close();message('Оформление применено. Черновик сохранится автоматически.');
+   },'sv-doc-sayvi-apply');
+   const cancel=button('Отменить',()=>dlg.close(),'sv-doc-sayvi-cancel');controls.append(cancel,apply);
+   const show=(value,{canApply=false,fragment=false,layout=false,description='' }={})=>{
+    proposal={apply:canApply,fragment,layout};preview.value=value;preview.readOnly=!canApply;preview.hidden=false;controls.hidden=false;apply.hidden=!canApply;feedback.textContent=description;
+   };
+   const run=async action=>{
+    if(busy||closed)return;
+    if(!source.trim()){feedback.textContent='Сначала напишите текст документа.';return;}
+    proposal=null;preview.hidden=true;controls.hidden=true;
+    if(action==='tidy'||action==='format'){
+     const value=api?.tidyDocument(source);
+     if(typeof value!=='string'){feedback.textContent='Оформление недоступно.';return;}
+     show(value,{canApply:true,layout:action==='format',description:action==='format'?'Предложение: первая строка — заголовок, размер 12 пт, выравнивание слева. Проверьте результат.':'Убраны лишние пустые строки и пробелы в конце строк. Смысл и реквизиты не изменены.'});return;
+    }
+    if(!['127.0.0.1','localhost'].includes(location.hostname)){
+     feedback.textContent='Языковые инструменты доступны в локальном SEYVEO с Ollama. На публичном демо работает базовое оформление.';return;
+    }
+    if(action==='ask'&&!question.value.trim()){question.hidden=false;question.focus();feedback.textContent='Напишите вопрос и нажмите «Спросить Сэйви» ещё раз.';return;}
+    const inputText=selected;
+    let prompt;
+    try{prompt=api.documentPrompt(action,inputText,question.value.trim());}catch(e){feedback.textContent=e.message;return;}
+    if(!window.confirm('Передать '+(end>begin?'выделенный фрагмент':'текст документа')+' локальной Сэйви для обработки?'))return;
+    busy=true;controller=new AbortController();const current=controller;
+    const timeout=setTimeout(()=>current.abort(),45000);feedback.textContent='Сэйви обрабатывает текст…';
+    for(const b of choices.children)b.disabled=true;
+    try{
+     const response=await fetch('/api/seyveo-ask',{method:'POST',credentials:'same-origin',signal:current.signal,headers:{'content-type':'application/json'},body:JSON.stringify({message:prompt})});
+     const data=await response.json().catch(()=>({}));
+     if(!response.ok)throw Error(data.error||'Локальная Сэйви недоступна.');
+     if(closed||!dlg.open||current.signal.aborted)return;
+     const result=typeof data.text==='string'?data.text.trim():'';
+     if(!result||result.length>12000)throw Error('Ответ пуст или слишком длинный.');
+     show(result,{canApply:action==='correct',fragment:end>begin,description:action==='correct'?'Проверьте текст, особенно имена, даты и суммы.':'Ответ Сэйви. Документ не изменён.'});
+    }catch(e){if(!closed)feedback.textContent=e.name==='AbortError'?'Сэйви не ответила вовремя.':e.message||'Не удалось получить ответ.';}
+    finally{clearTimeout(timeout);busy=false;controller=null;if(!closed)for(const b of choices.children)b.disabled=false;}
+   };
+   for(const [action,label,kind] of [['tidy','Привести в порядок','check'],['correct','Исправить ошибки','edit'],['format','Оформить документ','align-left'],['review','Проверить содержание','file'],['ask','Спросить Сэйви','sayvi']]){
+    const item=button('',()=>void run(action),'sv-doc-sayvi-choice');item.dataset.action=action;
+    const mark=action==='ask'?$('span','sv-doc-word-ai sv-sayvi-symbol'):icon(kind);
+    item.append(mark,$('span','',label));choices.append(item);
+   }
+   content.append(note,choices,question,feedback,preview,controls);
+   sayviTool.setAttribute('aria-expanded','true');
+   dlg.addEventListener('close',()=>{closed=true;controller?.abort();sayviTool.setAttribute('aria-expanded','false');if(sheet.open)sayviTool.focus({preventScroll:true});},{once:true});
   }
   const sayviTool=button('',helpWithCurrentDocument,'sv-doc-word-extra');
-  sayviTool.setAttribute('aria-label','Сэйви');sayviTool.append($('span','sv-doc-word-ai sv-sayvi-symbol'));
+  sayviTool.setAttribute('aria-label','Сэйви');sayviTool.setAttribute('aria-haspopup','dialog');sayviTool.setAttribute('aria-expanded','false');sayviTool.append($('span','sv-doc-word-ai sv-sayvi-symbol'));
   sizeControl.dataset.svEditorTool='size';alignControl.dataset.svEditorTool='align';
   formatTrigger.dataset.svEditorTool='format';sayviTool.dataset.svEditorTool='sayvi';
   rail.append(sizeControl,alignControl,formatTrigger,sayviTool,undoTool,copyTool,clearTool,redoTool);
