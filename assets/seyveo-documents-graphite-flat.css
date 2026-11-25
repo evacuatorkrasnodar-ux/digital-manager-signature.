@@ -2707,3 +2707,28 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid>.sv-doc-folder-card>strong{
  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
+
+/* Compact native-style confirmation; a single material with thin separators,
+   no large individual pill buttons. Cancel remains the safe default. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody dialog.sv-doc-scanner-exit[open]{
+ position:fixed!important;inset:0!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ justify-content:flex-start!important;gap:0!important;box-sizing:border-box!important;
+ width:min(300px,calc(100vw - 40px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
+ max-width:300px!important;min-width:0!important;height:auto!important;min-height:0!important;max-height:calc(100dvh - 32px)!important;
+ margin:auto!important;padding:0!important;border-radius:22px!important;
+ border:1px solid var(--soft-line,#e7e9ec)!important;background:var(--card,#fff)!important;
+ box-shadow:0 8px 32px #00000018!important;overflow:auto!important;text-align:center!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody dialog.sv-doc-scanner-exit>strong{display:block!important;margin:0!important;padding:19px 14px 0!important;font:650 17px/1.25 system-ui!important;color:var(--text,#20262d)!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody dialog.sv-doc-scanner-exit>p{margin:0!important;padding:8px 18px 17px!important;font:400 13px/1.4 system-ui!important;color:var(--secondary,#697583)!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody dialog.sv-doc-scanner-exit .sv-doc-exit-actions{display:flex!important;flex-direction:column!important;gap:0!important;margin:0!important;padding:0!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody dialog.sv-doc-scanner-exit .sv-doc-exit-actions>button{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;min-height:44px!important;height:46px!important;width:100%!important;
+ flex:none!important;margin:0!important;padding:8px 12px!important;border:0!important;border-top:1px solid var(--soft-line,#e7e9ec)!important;
+ border-radius:0!important;background:transparent!important;box-shadow:none!important;font:500 15px/1.2 system-ui!important;color:#176ab4!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody dialog.sv-doc-scanner-exit .sv-doc-exit-actions>button.sv-doc-scanner-exit-save{font-weight:650!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody dialog.sv-doc-scanner-exit .sv-doc-exit-actions>button.sv-doc-scanner-exit-discard{color:#d82d36!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody dialog.sv-doc-scanner-exit .sv-doc-exit-actions>button:active{background:var(--sv-white-pearl-selected,#eef1f4)!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody dialog.sv-doc-scanner-exit::backdrop{background:#0005!important;backdrop-filter:blur(3px);}

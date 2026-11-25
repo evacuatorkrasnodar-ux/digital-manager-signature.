@@ -186,11 +186,15 @@ function mount(target,{
  const exitSheet=$('dialog','sv-doc-scanner-exit');
  exitSheet.setAttribute('aria-label','Несохранённый скан');
  const exitTitle=$('strong','','Сохранить скан?');
- const exitNote=$('p','','Страницы ещё не сохранены.');
+ const exitNote=$('p','','Несохранённые страницы будут потеряны.');
  const exitSave=button('Сохранить',()=>{exitSheet.close();if(mode!=='scan')open('scan');panel.querySelector('.sv-doc-scan-save')?.click();},'sv-doc-scanner-exit-save');
- const exitContinue=button('Продолжить редактирование',()=>exitSheet.close(),'sv-doc-scanner-exit-continue');
+ const exitContinue=button('Продолжить работу',()=>exitSheet.close(),'sv-doc-scanner-exit-continue');
+ exitContinue.autofocus=true;
  const exitDiscard=button('Выйти без сохранения',()=>{exitSheet.close();scans=[];selectedScan=0;closePanel();},'sv-doc-scanner-exit-discard');
- exitSheet.append(exitTitle,exitNote,exitSave,exitContinue,exitDiscard);scannerSheet.append(exitSheet);
+ const exitActions=$('div','sv-doc-exit-actions');exitActions.append(exitSave,exitDiscard,exitContinue);
+ exitTitle.id='sv-doc-exit-title';exitNote.id='sv-doc-exit-note';
+ exitSheet.setAttribute('aria-labelledby',exitTitle.id);exitSheet.setAttribute('aria-describedby',exitNote.id);
+ exitSheet.append(exitTitle,exitNote,exitActions);scannerSheet.append(exitSheet);
  let scanSaving=false;
  function requestScanExit(){
   if(scanSaving){message('Сохранение…');return;}
