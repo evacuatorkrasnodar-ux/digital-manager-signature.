@@ -538,7 +538,38 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  let photoMode='',photoBusy=false,photoEpoch=0;
  const photoRail=el('div','svdv-photo-rail');
  let normalPhotoActions=[],photoOriginalNodes=[],photoOldTop=0,photoCanvas=null,photoOutput=null;
- function photoActions(...buttons){photoRail.replaceChildren(...buttons);photoRail.classList.toggle('svdv-photo-short',buttons.length<=3);photoRail.scrollLeft=0;}
+ let photoRailObserver=null,photoRailFrame=0,railDrag=null,railBlockClick=false;
+ function syncPhotoRail(){
+  cancelAnimationFrame(photoRailFrame);
+  photoRailFrame=requestAnimationFrame(()=>{
+   if(!active||!photoRail.isConnected)return;
+   const vertical=getComputedStyle(photoRail).flexDirection==='column';
+   const offset=vertical?photoRail.scrollTop:photoRail.scrollLeft;
+   const end=vertical?photoRail.scrollHeight-photoRail.clientHeight:photoRail.scrollWidth-photoRail.clientWidth;
+   photoRail.classList.toggle('svdv-rail-before',offset>2);
+   photoRail.classList.toggle('svdv-rail-after',end-offset>2);
+   photoRail.classList.toggle('svdv-rail-vertical',vertical);
+  });
+ }
+ photoRail.addEventListener('scroll',syncPhotoRail,{passive:true});
+ photoRail.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='mouse'||e.button!==0)return;
+  railBlockClick=false;const vertical=getComputedStyle(photoRail).flexDirection==='column';
+  if(vertical?photoRail.scrollHeight<=photoRail.clientHeight:photoRail.scrollWidth<=photoRail.clientWidth)return;
+  railDrag={id:e.pointerId,x:e.clientX,y:e.clientY,vertical,offset:vertical?photoRail.scrollTop:photoRail.scrollLeft,moved:false};
+ });
+ photoRail.addEventListener('pointermove',e=>{
+  if(!railDrag||railDrag.id!==e.pointerId)return;
+  const delta=railDrag.vertical?e.clientY-railDrag.y:e.clientX-railDrag.x;
+  if(!railDrag.moved&&Math.abs(delta)<6)return;
+  if(!railDrag.moved){railDrag.moved=true;photoRail.setPointerCapture?.(e.pointerId);photoRail.classList.add('svdv-rail-dragging');}
+  e.preventDefault();if(railDrag.vertical)photoRail.scrollTop=railDrag.offset-delta;else photoRail.scrollLeft=railDrag.offset-delta;
+ });
+ function stopRailDrag(){if(railDrag?.moved){railBlockClick=true;setTimeout(()=>{railBlockClick=false;},120);}railDrag=null;photoRail.classList.remove('svdv-rail-dragging');}
+ for(const event of ['pointerup','pointercancel','lostpointercapture'])photoRail.addEventListener(event,stopRailDrag);
+ photoRail.addEventListener('pointerleave',()=>{if(!railDrag?.moved)stopRailDrag();});
+ photoRail.addEventListener('click',e=>{if(railBlockClick){e.preventDefault();e.stopImmediatePropagation();}},true);
+ function photoActions(...buttons){photoRail.replaceChildren(...buttons);photoRail.classList.toggle('svdv-photo-short',buttons.length<=3);photoRail.scrollLeft=0;photoRail.scrollTop=0;syncPhotoRail();}
  function beginPhoto(mode){
   if(!active||photoMode||photoBusy)return false;
   photoMode=mode;photoOriginalNodes=Array.from(stage.childNodes);photoOldTop=stage.scrollTop;
@@ -902,6 +933,8 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  if(info.kind==='image'){
   normalPhotoActions=Array.from(toolbar.children);
   photoActions(...normalPhotoActions);toolbar.append(photoRail);
+  if(typeof ResizeObserver==='function'){photoRailObserver=new ResizeObserver(syncPhotoRail);photoRailObserver.observe(photoRail);}
+  window.addEventListener('resize',syncPhotoRail,{passive:true});
  }
  toolbar.append(more);more.hidden=!!onApplyPhoto||!Array.from(moreBody.children).some(n=>!n.hidden);
  const dismissMore=event=>{if(!more.contains(event.target))more.open=false;};
@@ -931,6 +964,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   backPhoto(){if(!photoMode)return photoBusy;if(!photoBusy||photoMode==='text')endPhoto();return true;},
   destroy(){
    if(!active)return;
+   photoRailObserver?.disconnect();cancelAnimationFrame(photoRailFrame);window.removeEventListener('resize',syncPhotoRail);
    clearTimeout(noticeTimer);inline?.closeMenu?.();if(inline?.dismiss)document.removeEventListener('pointerdown',inline.dismiss);stopViewport?.();stopViewport=null;active=false;markupSession?.destroy?.();markupSession=null;if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
    document.removeEventListener('pointerdown',dismissMore);
    document.removeEventListener('keydown',closeMoreOnEscape);

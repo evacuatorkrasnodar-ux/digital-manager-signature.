@@ -703,3 +703,18 @@ html:root body .svdv-viewer .svdv-photo-canvas{
  box-shadow:0 2px 7px rgba(30,40,55,.07);
 }
 html:root body .svdv-viewer .svdv-photo-crop{outline:1px solid rgba(105,118,132,.24);outline-offset:-1px;}
+
+/* Scroll hints fade the actual tools, not the pearl material. Full opacity
+   returns at either end, so no permanently clipped label or ghost overlay. */
+.svdv-photo-rail{--sv-rail-start:0px;--sv-rail-end:0px;}
+.svdv-photo-rail.svdv-rail-before{--sv-rail-start:15px;}
+.svdv-photo-rail.svdv-rail-after{--sv-rail-end:15px;}
+.svdv-photo-rail:is(.svdv-rail-before,.svdv-rail-after){
+ -webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--sv-rail-start),#000 calc(100% - var(--sv-rail-end)),transparent 100%);
+ mask-image:linear-gradient(to right,transparent 0,#000 var(--sv-rail-start),#000 calc(100% - var(--sv-rail-end)),transparent 100%);
+}
+.svdv-photo-rail.svdv-rail-vertical:is(.svdv-rail-before,.svdv-rail-after){
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--sv-rail-start),#000 calc(100% - var(--sv-rail-end)),transparent 100%);
+ mask-image:linear-gradient(to bottom,transparent 0,#000 var(--sv-rail-start),#000 calc(100% - var(--sv-rail-end)),transparent 100%);
+}
+.svdv-photo-rail.svdv-rail-dragging{cursor:grabbing;user-select:none;-webkit-user-select:none;}

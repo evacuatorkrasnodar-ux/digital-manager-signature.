@@ -2665,3 +2665,10 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
 @media(orientation:landscape) and (max-height:540px) and (max-width:1100px){
  html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scanner-sheet.sv-doc-scan-fullscreen>.sv-doc-tool-panel[data-mode="scan"][data-has-scans="true"].sv-doc-scan-shared-tools .svdv-scan-embedded>.svdv-toolbar.svdv-photo-toolbar{margin-bottom:0!important;}
 }
+
+@media not all and (orientation:landscape) {
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdv-scan-embedded .svdv-toolbar.svdv-photo-toolbar .svdv-photo-rail>.svdv-action{
+  flex:0 0 62px!important;width:62px!important;min-width:62px!important;max-width:62px!important;padding:0 2px!important;
+  font-size:10px!important;min-height:44px!important;
+ }
+}
