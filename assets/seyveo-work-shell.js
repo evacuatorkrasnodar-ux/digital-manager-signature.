@@ -63,6 +63,13 @@
  // Active tab draws its own flat white background; no floating duplicate.
  // The old moving lens caused subpixel offsets on Safari.
  shell.prepend(nav);
+ // Cabinet list scrolls under the real shared capsule, without moving the header.
+ const cabinetScroll=document.getElementById('unifiedBusinessTasksView');
+ if(cabinetScroll){
+  const syncCabinetGlass=()=>shell.classList.toggle('sv-cabinet-under-scroll',cabinetScroll.scrollTop>2);
+  cabinetScroll.addEventListener('scroll',syncCabinetGlass,{passive:true});
+  syncCabinetGlass();
+ }
  // Mount one isolated, newly written header. Its controls live inside
  // Shadow DOM, so old app styles cannot remove Back's circular material.
  const workHeader=window.SEYVEO_WORK_HEADER?.create();
