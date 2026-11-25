@@ -142,3 +142,33 @@ html:root[data-theme="light"]:not(.sv-global-search-open) body footer.dock.sv-sh
 html:root[data-theme="light"]:not(.sv-global-search-open) body footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > #navManage#navManage:not(:active):not([aria-expanded="true"])::before,html:root[data-theme="light"]:not(.sv-global-search-open) body footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > #navManage#navManage:not(:active):not([aria-expanded="true"])::after{
  content:none!important;display:none!important;
 }
+
+
+/* Cabinet: preserve the stationary title and capsule, allow the native
+   cabinet scrollport to extend below the glass. Compensating top padding
+   keeps the initial list position exactly where it was. */
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="business"] > #svWorkTabs:not([hidden]){
+ margin-bottom:calc(0px - var(--sv-cabinet-tab-height,32px))!important;
+ position:relative!important;z-index:20!important;overflow:visible!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="business"] > #tasksPage:not([hidden]) > #unifiedBusinessTasksView:not([hidden]){
+ padding-top:calc(var(--sv-cabinet-tab-height,32px) + 9px)!important;
+ scroll-padding-top:calc(var(--sv-cabinet-tab-height,32px) + 24px)!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="business"].sv-cabinet-under-scroll > #svWorkTabs:not([hidden])::after{
+ content:""!important;display:block!important;position:absolute!important;
+ top:100%!important;left:-6px!important;right:-6px!important;
+ height:var(--sv-nav-glass-feather-height,24px)!important;
+ background:var(--sv-nav-glass-feather)!important;
+ border:0!important;box-shadow:none!important;pointer-events:none!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="business"] #unifiedBusinessTasksView [data-cabinet-tool="documents"] .svcp-manager-row-text > small,
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="business"] #unifiedBusinessTasksView [data-cabinet-tool="documents"] .svcp-manager-row-text::before,
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="business"] #unifiedBusinessTasksView [data-cabinet-tool="documents"] .svcp-manager-row-text::after{
+ content:none!important;display:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="business"] > #svWorkTabs:not([hidden]){margin-bottom:9px!important}
+ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="business"] > #tasksPage:not([hidden]) > #unifiedBusinessTasksView:not([hidden]){padding-top:0!important;scroll-padding-top:0!important}
+ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="business"].sv-cabinet-under-scroll > #svWorkTabs:not([hidden])::after{content:none!important;display:none!important}
+}
