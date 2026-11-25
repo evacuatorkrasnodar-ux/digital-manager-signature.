@@ -1026,6 +1026,7 @@ function mount(target,{
   }
   const icon=(kind)=>{const el=$('span','sv-doc-word-menu-icon');el.setAttribute('aria-hidden','true');el.innerHTML=typographyIcon(kind);return el;};
   const rail=$('div','sv-doc-word-rail');
+  window.SEYVEO_EDITOR_CAPSULE?.attach(rail,'word');
   rail.setAttribute('role','group');rail.setAttribute('aria-label','Инструменты Word, листайте горизонтально');
   const chevron=()=>{const node=icon('down');node.classList.add('sv-doc-word-rail-chevron');return node;};
   const sizeControl=button('',()=>toggleWordMenu('size'),'sv-doc-word-rail-choice');
@@ -1067,7 +1068,7 @@ function mount(target,{
    if(body.value!==lastWordText){wordHistory.push(lastWordText);if(wordHistory.length>50)wordHistory.shift();lastWordText=body.value;}
   });
   const replaceWordText=value=>{if(documentDraft===value)return;draftEdited=true;body.value=value;documentDraft=value;lastWordText=value;documentTemplate='';syncTemplate();void persistDraft();};
-  const wordTool=(label,kind,fn)=>{const control=button('',fn,'sv-doc-word-extra');control.setAttribute('aria-label',label);control.title=label;control.append(icon(kind));return control;};
+  const wordTool=(label,kind,fn)=>{const shared=window.SEYVEO_EDITOR_CAPSULE;const control=shared?shared.button(kind,label,'',fn):button('',fn);control.className='sv-doc-word-extra';control.setAttribute('aria-label',label);control.title=label;control.append(icon(kind));return control;};
   const undoTool=wordTool('Отменить ввод','undo',()=>{if(wordHistory.length)replaceWordText(wordHistory.pop());body.focus({preventScroll:true});});
   const copyTool=wordTool('Копировать текст','copy',async()=>{
    try{await navigator.clipboard.writeText(body.value.slice(body.selectionStart,body.selectionEnd)||body.value);message('Текст скопирован.');}catch{message('Не удалось скопировать текст.');}
