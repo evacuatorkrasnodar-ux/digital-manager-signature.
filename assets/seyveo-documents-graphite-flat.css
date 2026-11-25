@@ -1871,14 +1871,14 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid{display:grid!important;grid-template-columns:none!important;grid-auto-flow:column!important;grid-auto-columns:calc((100% - 12px) / 4)!important;overflow-x:auto!important;overflow-y:hidden!important;gap:4px!important;scrollbar-width:none;scroll-snap-type:x proximity;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid::-webkit-scrollbar{display:none}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-card{min-width:0!important;scroll-snap-align:start}
-html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-card strong{font-size:11px!important;white-space:normal!important;text-align:center!important;line-height:1.25!important}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-card strong{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden!important;overflow-wrap:anywhere;font-size:11px!important;white-space:normal!important;text-align:center!important;line-height:1.25!important;min-height:2.5em;max-height:2.5em;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-local-file-wrap{position:relative;min-width:0;display:flex;flex-direction:column;align-items:stretch}
-html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-file-more{align-self:flex-end;min-height:32px!important;min-width:44px!important;border:0!important;background:transparent!important;color:inherit!important;box-shadow:none!important}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-file-more{align-self:center;display:grid!important;place-items:center!important;box-sizing:border-box!important;width:var(--sv-nav-single-size,44px)!important;min-width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;color:inherit!important;box-shadow:none!important}
 
 /* User folders: permanent New Folder slot and contextual management. */
-html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-custom-folder-wrap{position:relative;min-width:0;scroll-snap-align:start;display:flex;align-items:flex-start;justify-content:center}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-custom-folder-wrap{position:relative;min-width:0;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-custom-folder-wrap>.sv-doc-folder-card{width:100%!important;min-width:0!important}
-html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-custom-folder-more{position:absolute;top:0;right:0;width:28px!important;min-width:28px!important;height:28px!important;min-height:28px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;color:var(--secondary,#626A73)!important;font-size:17px!important;line-height:1!important}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-custom-folder-more{position:static;display:grid!important;place-items:center!important;box-sizing:border-box!important;width:var(--sv-nav-single-size,44px)!important;min-width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;padding:0!important;background:transparent!important;border:0!important;border-radius:50%!important;box-shadow:none!important;color:var(--secondary,#626A73)!important;font-size:17px!important;line-height:1!important}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders{position:relative}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-menu[hidden]{display:none!important}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-menu:not([hidden]){position:absolute;z-index:35;right:0;top:100%;display:grid;gap:2px;width:min(100%,250px);margin:4px 0 0;padding:6px;border-radius:var(--sv-menu-compact-radius,18px)!important;background:var(--sv-menu-bg,#FCFCFD)!important;border:var(--sv-menu-border,1px solid #E5E7EB)!important;box-shadow:var(--sv-menu-shadow,0 8px 24px rgba(25,33,45,.12))!important;background-image:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;}
@@ -2053,3 +2053,20 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-menu-icon{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-menu-icon svg{display:block;width:22px;height:22px;stroke-width:1.55;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-delete{gap:8px!important;}
+
+/* Shelf rhythm: keep real paper/folder artwork and semantic format colors.
+   The title has two reserved lines; no clipped words or overlapping menu targets. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-card{
+ height:auto!important;min-height:76px!important;justify-content:flex-start!important;padding:5px 2px!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-recent-card{
+ height:auto!important;min-height:100px!important;justify-content:flex-start!important;gap:4px!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-recent-name{
+ min-height:2.4em;max-height:2.4em!important;overflow-wrap:anywhere;line-height:1.2!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-file-art .sv-doc-format-label{
+ left:1px!important;width:calc(100% - 2px)!important;max-width:100%!important;bottom:5px!important;padding:2px 1px!important;
+ font-size:8px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody :is(.sv-doc-file-more,.sv-doc-custom-folder-more):focus-visible{outline:2px solid currentColor!important;outline-offset:-2px!important;}

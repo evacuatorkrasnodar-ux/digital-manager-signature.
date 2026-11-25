@@ -5,6 +5,9 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const checks=[
+  ["assets/seyveo-documents-graphite-flat.css","min-height:2.5em;max-height:2.5em;"],
+  ["assets/seyveo-documents-graphite-flat.css","height:auto!important;min-height:76px!important;"],
+  ["assets/documents-shelf.js","folderName.title=category.title;"],
   ["assets/seyveo-document-icons.js","root.SEYVEO_DOCUMENT_ICONS=Object.freeze({markup});"],
   ["assets/seyveo-docs-studio.js","window.SEYVEO_DOCUMENT_ICONS?.markup(kind)"],
   ["assets/seyveo-docs-viewer.js","action('Редактировать','edit',"],

@@ -333,7 +333,8 @@ function paint(state){
   const entry=el('button','sv-doc-folder-card sv-doc-folder-'+category.id);
   entry.type='button';entry.setAttribute('aria-pressed',String(state.filter===category.id));
   entry.setAttribute('aria-label','Подборка '+category.title+(state.unlocked?', '+count+' файлов':''));
-  entry.append(folderArt(category.id==='new'),el('strong','',category.title));
+  const folderName=el('strong','',category.title);folderName.title=category.title;
+  entry.append(folderArt(category.id==='new'),folderName);
   if(category.smart){entry.classList.add('sv-doc-smart-folder');entry.title='Умная подборка · '+count;}
   if(category.id==='new')entry.setAttribute('aria-label','Создать новую пустую папку');
   if(state.unlocked)entry.title=count+' '+(count===1?'файл':count>=2&&count<=4?'файла':'файлов');
