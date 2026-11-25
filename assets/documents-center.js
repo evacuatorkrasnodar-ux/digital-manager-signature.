@@ -121,7 +121,7 @@ function connectionsEntry(){
   return action;
  }
  action.setAttribute('aria-label','Открыть подключения документов');
- action.append(makeIcon('connection'));
+ const cloud=el('span','sv-doc-symbol');cloud.setAttribute('aria-hidden','true');cloud.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 18a4.5 4.5 0 0 1-.6-9 6.2 6.2 0 0 1 11.8 1.2A3.9 3.9 0 1 1 18 18Z"/></svg>';action.append(cloud);
  const copy=el('span','sv-doc-connections-copy');
  copy.append(el('strong','',area==='personal'?'Подключить хранилище':'Подключить документы'),
   el('small','',area==='personal'?'Синхронизация между устройствами':'1С · ЭДО · серверы'));
@@ -273,7 +273,6 @@ function draw(){
  }
  const feedback=el('p','sv-doc-selection-status');
  feedback.setAttribute('role','status');
- if(selected&&!stored[area])feedback.textContent='Выбран «'+selected.name+'». Откройте архив и подтвердите сохранение.';
  host.append(feedback);
  // Recent files and type folders use existing selected files and decrypted
  // vault metadata only while the password-protected vault is unlocked.
