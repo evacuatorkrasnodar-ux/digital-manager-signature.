@@ -77,5 +77,24 @@ async function saveAttachment(a,file,source,folder=''){
  catch(e){if(await run('files','readonly',s=>s.get(i)))return {id:i,duplicate:true};throw e;}
  changed(a);return {id:i,duplicate:false};
 }
-window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,get,createFolder,update,remove,removeFolder,setDefaultFolder,saveAttachment});
+// Templates are independent encrypted records, not documents or folders.
+async function saveTemplate(a,value){
+ check(a);
+ const name=String(value.name||'').trim().slice(0,100),officialId=String(value.officialId||'').slice(0,100),text=String(value.text||'');
+ if(!name||(!officialId&&!text.trim())||text.length>12000)throw Error('Введите название и текст шаблона.');
+ const data=JSON.stringify({text:officialId?'':text,officialId,format:value.format==='docx'?'docx':'pdf'});
+ const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',enc.encode(data))),n=>n.toString(16).padStart(2,'0')).join('');
+ const i='template-'+a+'-'+digest,k=await key(a),tag=prefix(a,i);
+ if(await run('files','readonly',s=>s.get(i)))return {id:i,duplicate:true};
+ const m={kind:'template',name,official:Boolean(officialId),createdAt:Date.now()};
+ const [metadata,content]=await Promise.all([seal(k,enc.encode(JSON.stringify(m)),tag+':meta'),seal(k,enc.encode(data),tag+':data')]);
+ try{await run('files','readwrite',s=>s.add({id:i,area:a,meta:metadata,content}));}
+ catch(e){if(await run('files','readonly',s=>s.get(i)))return {id:i,duplicate:true};throw e;}
+ changed(a);return {id:i,duplicate:false};
+}
+async function listTemplates(a){return (await list(a)).filter(x=>x.kind==='template').sort((x,y)=>y.createdAt-x.createdAt);}
+async function getTemplate(a,i){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='template')throw Error('Шаблон не найден');return {...m,...JSON.parse(dec.decode(await unseal(k,r.content,prefix(a,i)+':data')))};}
+async function renameTemplate(a,i,name){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='template')throw Error('Шаблон не найден');name=String(name||'').trim().slice(0,100);if(!name)throw Error('Введите название');m.name=name;r.meta=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');await run('files','readwrite',s=>s.put(r));changed(a);}
+async function removeTemplate(a,i){const r=await row(a,i),k=await key(a);if((await meta(r,k)).kind!=='template')throw Error('Шаблон не найден');await run('files','readwrite',s=>s.delete(i));changed(a);}
+window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,get,createFolder,update,remove,removeFolder,setDefaultFolder,saveAttachment,saveTemplate,listTemplates,getTemplate,renameTemplate,removeTemplate});
 })();
