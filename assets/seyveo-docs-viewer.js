@@ -147,7 +147,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  let objectUrl;
  try{objectUrl=URL.createObjectURL(file);}catch{return false;}
  let active=true;
- const pageUrls=[];let readerDialog=null,pdfDocument=null,pdfTask=null,sheet=null;
+ const pageUrls=[];let pdfDocument=null,pdfTask=null,sheet=null;
  const root=el('section','svdv-viewer');
  root.setAttribute('aria-label','Просмотр документа '+file.name);
  const header=el('div','svdv-header');
@@ -170,21 +170,6 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   const openOriginal=()=>{
    const link=el('a','svdv-original-link','Открыть PDF');link.href=objectUrl;link.target='_blank';link.rel='noopener noreferrer';return link;
   };
-  function openReader(){
-   if(!active||readerDialog||!pageUrls.length)return;
-   const d=el('dialog','svdv-reader');readerDialog=d;d.setAttribute('aria-label','Просмотр PDF');
-   const top=el('header','svdv-reader-head');
-   const close=window.SEYVEO_DOCUMENT_PICKERS?.backButton(()=>d.close())||el('button','svdv-reader-back','‹');
-   close.type='button';close.onclick=()=>d.close();close.setAttribute('aria-label','Назад');
-   const title=el('strong','',file.name),zoom=el('button','svdv-reader-zoom','+');zoom.type='button';zoom.setAttribute('aria-label','Увеличить страницу');
-   top.append(close,title,zoom);
-   const pages=el('div','svdv-reader-pages');
-   for(const [i,url] of pageUrls.entries()){const img=el('img','svdv-reader-page');img.src=url;img.alt='Страница '+(i+1);if(i>0)img.loading='lazy';pages.append(img);}
-   zoom.addEventListener('click',()=>{const bigger=d.classList.toggle('is-zoomed');zoom.textContent=bigger?'−':'+';zoom.setAttribute('aria-label',bigger?'Уменьшить страницу':'Увеличить страницу');if(!bigger)pages.scrollLeft=0;});
-   const footer=el('footer','svdv-reader-footer'),save=el('a','svdv-reader-save');save.href=objectUrl;save.download=file.name;save.append(icon('download'),el('span','','Сохранить'));
-   footer.append(save,openOriginal());d.append(top,pages,footer);root.append(d);
-   d.addEventListener('close',()=>{d.remove();if(readerDialog===d)readerDialog=null;stage.querySelector('button')?.focus({preventScroll:true});},{once:true});d.showModal();
-  }
   void (async()=>{
    try{
     let pages=null;
@@ -192,15 +177,9 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     if(!active)return;
     if(pages?.length){
      for(const page of pages)pageUrls.push(URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'})));
-     if(asSheet){
-      const list=el('div','svdv-sheet-pages');
-      for(const [i,url] of pageUrls.entries()){const img=el('img','svdv-reader-page');img.src=url;img.alt='Страница '+(i+1);if(i>0)img.loading='lazy';list.append(img);}
-      stage.replaceChildren(list);
-     }else{
-      const preview=el('button','svdv-pdf-preview');preview.type='button';preview.setAttribute('aria-label','Открыть PDF на весь экран');
-      const img=el('img','svdv-pdf-page');img.src=pageUrls[0];img.alt='Первая страница документа';
-      preview.append(img,el('span','svdv-pdf-caption',pages.length+' стр. · Открыть'));preview.addEventListener('click',openReader);stage.replaceChildren(preview);
-     }
+     const list=el('div','svdv-sheet-pages');
+     for(const [i,url] of pageUrls.entries()){const img=el('img','svdv-reader-page');img.src=url;img.alt='Страница '+(i+1);if(i>0)img.loading='lazy';list.append(img);}
+     stage.replaceChildren(list);
      return;
     }
     const lib=await loadPdf();if(!active)return;
@@ -277,8 +256,9 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  let editAction=null;
  const draftAPI=()=>area&&window.SEYVEO_DOCUMENT_DRAFTS;
  function persistInline(){
-  if(!inline||!draftAPI())return Promise.resolve(true);
-  const state=inline;if(!state.changed)return Promise.resolve(true);
+  if(!inline||!inline.changed||!area)return Promise.resolve(true);
+  const state=inline;
+  if(!draftAPI()){say('Хранилище черновиков недоступно.');return Promise.resolve(false);}
   return draftAPI().save(area,{id:state.id,name:file.name.replace(/\.[^.]+$/,''),text:state.input.value,format:info.kind==='pdf'?'pdf':'docx',style:state.style,edited:true,fromScan:info.kind==='pdf',template:'',updatedAt:Date.now()}).then(()=>true,e=>{if(active)say(e?.message||'Не удалось сохранить черновик.');return false;});
  }
  function startInline(value){
@@ -302,7 +282,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   for(const [id,label] of [['left','Слева'],['center','По центру'],['right','Справа']]){const opt=el('option','',label);opt.value=id;align.append(opt);}
   align.addEventListener('change',()=>{state.style.alignment=align.value;update();changed();});
   const make=(id,label,markup,handler)=>api.button(id,label,markup,handler);
-  const tidy=make('sayvi','Сэйви · привести в порядок',api.artwork('sayvi'),()=>{try{const next=api.tidyDocument(input.value);record(next);input.value=next;say('Лишние пробелы и пустые строки убраны.');}catch(e){say(e.message);}});
+  const tidy=make('sayvi','Сэйви · привести в порядок',api.artwork('sayvi'),()=>{try{const next=api.tidyDocument(input.value);input.value=next;record(next);say('Лишние пробелы и пустые строки убраны.');}catch(e){say(e.message);}});
   const undo=make('undo','Отменить',api.artwork('undo'),()=>{if(state.history.length){state.redo.push(input.value);set(state.history.pop());}});
   const redo=make('redo','Повторить',api.artwork('redo'),()=>{if(state.redo.length){state.history.push(input.value);set(state.redo.pop());}});
   function sync(){undo.disabled=!state.history.length;redo.disabled=!state.redo.length;}
@@ -494,7 +474,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  const session=Object.freeze({
   destroy(){
    if(!active)return;
-   stopViewport?.();stopViewport=null;active=false;const markup=root.querySelector('.sv-pdf-markup[open]');if(markup)markup.close();if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}if(readerDialog?.open)readerDialog.close();readerDialog=null;for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
+   stopViewport?.();stopViewport=null;active=false;const markup=root.querySelector('.sv-pdf-markup[open]');if(markup)markup.close();if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
    document.removeEventListener('pointerdown',dismissMore);
    document.removeEventListener('keydown',closeMoreOnEscape);
    URL.revokeObjectURL(objectUrl);
