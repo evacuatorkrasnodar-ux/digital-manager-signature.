@@ -210,7 +210,7 @@ function mount(target,{
   action.setAttribute('aria-expanded','false');
   action.setAttribute('aria-controls','svDocToolPanel');
  }
- let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='',documentName='SEYVEO-документ',fromScan=false,wordStyle={size:12,alignment:'left',heading:false};
+ let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='',documentName='',fromScan=false,wordStyle={size:12,alignment:'left',heading:false};
  const clear=()=>{
   const sheet=panel.querySelector('dialog.sv-doc-edit-sheet[open]');
   if(sheet)sheet.close();
@@ -673,7 +673,7 @@ function mount(target,{
    body.style.fontSize=documentFormat==='docx'?wordStyle.size+'pt':'';
    body.style.textAlign=documentFormat==='docx'?(wordStyle.alignment==='both'?'justify':wordStyle.alignment):'';
   }
-  function safeDocumentName(){return documentName.replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').trim()||'SEYVEO-документ';}
+  function safeDocumentName(){return documentName.replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').trim()||'Документ';}
   function preparedFile(){
    if(!body.value.trim()||body.value.length>12000){
     message('Напишите текст документа.');return null;
