@@ -1544,9 +1544,35 @@ function mount(target,{
    const value=String(payload.text||'').slice(0,12000);
    if(!value.trim())return false;
    await persistDraft();if(saveFailed||!panel.isConnected)return false;newDraft();draftEdited=true;documentDraft=value;documentFormat='docx';documentTemplate='';fromScan=true;wordStyle={size:12,alignment:'left',heading:false};
-   documentName=String(payload.title||'Скан').slice(0,100);
+   documentName=String(payload.title||'Документ').slice(0,100);
    operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();void persistDraft();
    panel.scrollIntoView?.({block:'nearest'});return true;
+  }
+  if(payload.kind==='pdf-text'){
+   const at=generation,epoch=++operationEpoch;
+   const valid=()=>at===generation&&epoch===operationEpoch&&panel.isConnected&&payload.isActive?.()!==false;
+   if(!window.Tesseract?.createWorker&&!window.confirm('Для распознавания потребуется скачать движок и языковые модели из интернета. Страницы обрабатываются на устройстве. Продолжить?'))return false;
+   let worker;
+   try{
+    const pages=await window.SEYVEO_DOCS_EXPORT.readScanPdf(payload.file);
+    if(!valid())return false;
+    const engine=await getOcrEngine();if(!valid())return false;
+    worker=await engine.createWorker(['rus','eng'],1);if(!valid())return false;
+    const texts=[];
+    for(const page of pages){
+     const result=await worker.recognize(new Blob([page.jpegBytes],{type:'image/jpeg'}));
+     if(!valid())return false;
+     const value=String(result?.data?.text||'').trim();
+     if(!value)throw Error('Не удалось распознать текст одной из страниц. Оригинал не изменён.');
+     texts.push(value);
+     if(texts.join('\n\n').length>12000)throw Error('Документ больше 12 000 знаков. Редактирование копии пока недоступно.');
+    }
+    await persistDraft();if(saveFailed||!valid())return false;
+    newDraft();draftEdited=true;documentDraft=texts.join('\n\n');documentFormat='docx';fromScan=true;
+    documentName=String(payload.file.name||'Документ').replace(/\.[^.]+$/,'').slice(0,100);
+    mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();
+    void persistDraft();return true;
+   }finally{if(worker)try{await worker.terminate();}catch{}}
   }
   if(payload.kind==='pdf-file'){
    const at=generation,epoch=++operationEpoch;
