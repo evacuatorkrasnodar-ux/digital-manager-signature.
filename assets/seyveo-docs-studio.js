@@ -1163,10 +1163,18 @@ function mount(target,{
   },'sv-doc-edit-back');
   back.setAttribute('aria-label','Назад к созданию документа');
   back.append(actionIcon('back'));
-  const sayviEditor=button('',helpWithCurrentDocument,'sv-doc-edit-ai');
-  sayviEditor.setAttribute('aria-label','Создать с Сэйви');
-  const aiMark=$('span','sv-doc-edit-ai-mark sv-sayvi-symbol');aiMark.setAttribute('aria-hidden','true');sayviEditor.append(aiMark);
-  top.append(back,$('strong','','Документ'),sayviEditor);
+  const done=button('',async()=>{
+   if(done.disabled)return;
+   done.disabled=true;
+   try{
+    await persistDraft();
+    if(saveFailed){message('Не удалось сохранить черновик. Повторите попытку.');return;}
+    if(typeof sheet.close==='function')sheet.close();else sheet.removeAttribute('open');
+   }finally{done.disabled=false;}
+  },'sv-doc-edit-done');
+  done.setAttribute('aria-label','Готово · сохранить черновик');
+  done.append(actionIcon('check'));
+  top.append(back,$('strong','','Документ'),done);
   saveButton.append(actionIcon('download'),saveLabel);
   shareButton.append(actionIcon('share'),$('span','','Поделиться'));
   const archive=button('',()=>chooseExportFormat('В архив',format=>{
