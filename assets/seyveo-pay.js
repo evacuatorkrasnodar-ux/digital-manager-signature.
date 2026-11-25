@@ -28,7 +28,7 @@ if(workShell?.contains(dialog))workShell.append(tabs);
 else home.before(tabs);
 const financeCss=document.createElement('link');
 financeCss.rel='stylesheet';
-financeCss.href='assets/seyveo-personal-wallet.css?v=20261125-canonical-nav-v3';
+financeCss.href='assets/seyveo-personal-wallet.css?v=20261125-wallet-axis-v1';
 document.head.append(financeCss);
 const ready=new Promise(resolve=>{
  const script=document.createElement('script');script.src='assets/seyveo-personal-wallet.js?v=20261125-canonical-nav-v3';

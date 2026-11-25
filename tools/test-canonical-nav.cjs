@@ -5,6 +5,10 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const checks=[
+  ["assets/seyveo-pay.css","flex:0 0 var(--sv-nav-single-size,44px);display:grid;place-items:center;appearance:none;"],
+  ["assets/seyveo-personal-wallet.css",".sw-row-main > div{flex:1 1 auto;min-width:0;overflow:hidden}"],
+  ["assets/seyveo-personal-wallet.css","white-space:normal;overflow-wrap:anywhere;font-variant-numeric:tabular-nums"],
+  ["assets/seyveo-personal-wallet.css","box-sizing:border-box;width:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px);"],
   ["sayvi-chat-new.html","assets/seyveo-header-system.css?v="],
   ["sayvi-chat-new.html","width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px)"],
   ["sayvi-chat-new.html","body #sayviHistory .history-head #sayviHistoryMenuButton,"],

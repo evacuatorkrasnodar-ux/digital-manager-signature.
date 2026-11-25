@@ -32,12 +32,12 @@ html[data-theme="dark"] #seyveoPayDialog{
 #seyveoPayDialog .sw-row-tools button:active{background:var(--sw-press);box-shadow:inset 0 2px 4px rgba(40,50,70,.12)}
 #seyveoPayDialog .sw-month strong{font-size:15px;font-weight:630;letter-spacing:-.02em;text-align:left}
 #seyveoPayDialog .sw-overline{display:block;font-size:12px;color:var(--sw-muted);margin-bottom:5px}
-#seyveoPayDialog .sw-balance{display:block;font-size:clamp(30px,8vw,38px);font-weight:640;letter-spacing:-1.4px;line-height:1.14;color:var(--sw-ink)}
+#seyveoPayDialog .sw-balance{display:block;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;font-size:clamp(30px,8vw,38px);font-weight:640;letter-spacing:-1.4px;line-height:1.14;color:var(--sw-ink)}
 #seyveoPayDialog .sw-balance-note{font-size:11px;color:var(--sw-muted);line-height:1.45;margin:8px 0 16px}
 #seyveoPayDialog .sw-totals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 #seyveoPayDialog .sw-totals>div{min-width:0;border:1px solid var(--sw-line);border-radius:14px;background:var(--sw-bg);padding:12px}
 #seyveoPayDialog .sw-totals span{display:block;color:var(--sw-muted);font-size:12px;margin-bottom:6px}
-#seyveoPayDialog .sw-totals strong{display:block;font-size:clamp(16px,4.5vw,21px);font-weight:620;white-space:nowrap}
+#seyveoPayDialog .sw-totals strong{display:block;font-size:clamp(16px,4.5vw,21px);font-weight:620;white-space:normal;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
 #seyveoPayDialog .sw-income{color:#247d58!important}
 #seyveoPayDialog .sw-editor,#seyveoPayDialog .sw-block{margin:0 0 22px}
 #seyveoPayDialog .sw-editor{padding:17px 0 0;background:transparent;border:0;border-top:1px solid var(--sw-line);border-radius:0}
@@ -92,17 +92,19 @@ html[data-theme="dark"] #seyveoPayDialog{
 #seyveoPayDialog .sw-category strong{font-size:15px;font-weight:620}
 #seyveoPayDialog .sw-bar{grid-column:1/-1;height:5px;border-radius:5px;background:var(--sw-panel);overflow:hidden}
 #seyveoPayDialog .sw-bar i{display:block;height:100%;background:var(--sw-muted);border-radius:5px}
-#seyveoPayDialog .sw-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;padding:12px 0;border-bottom:1px solid var(--sw-line);align-items:center}
+#seyveoPayDialog .sw-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,max-content);gap:7px;padding:12px 0;border-bottom:1px solid var(--sw-line);align-items:center}
 #seyveoPayDialog .sw-row-main{display:flex;gap:11px;align-items:center;min-width:0}
 #seyveoPayDialog .sw-row-icon{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:var(--sw-panel);color:var(--sw-ink);font-size:19px;flex:none}
+/* Allow a long transaction title to shrink inside the flex row. Keep full amounts readable. */
+#seyveoPayDialog .sw-row-main > div{flex:1 1 auto;min-width:0;overflow:hidden}
 #seyveoPayDialog .sw-row-main strong{display:block;font-size:15px;font-weight:540;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #seyveoPayDialog .sw-row-main small{display:block;color:var(--sw-muted);font-size:12px;margin-top:4px}
-#seyveoPayDialog .sw-row>strong{font-weight:620;white-space:nowrap;font-size:15px}
+#seyveoPayDialog .sw-row>strong{font-weight:620;white-space:normal;overflow-wrap:anywhere;font-size:15px;text-align:right;font-variant-numeric:tabular-nums}
 #seyveoPayDialog .sw-row-tools{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px}
 #seyveoPayDialog .sw-row-tools button{
  display:grid;place-items:center;border:var(--sw-pearl-edge);border-radius:50%;
  background:var(--sw-pearl);box-shadow:var(--sw-pearl-shadow);color:var(--sw-ink);
- width:44px;min-width:44px;height:44px;min-height:44px;padding:0;font-size:18px;
+ box-sizing:border-box;width:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);min-height:var(--sv-nav-single-size,44px);padding:0;font-size:18px;
 }
 #seyveoPayDialog .sw-empty{font-size:14px;color:var(--sw-muted);line-height:1.5;padding:10px 0}
 #seyveoPayDialog .sw-privacy{margin:22px 1px 0;color:var(--sw-muted);font-size:11px;line-height:1.5}
