@@ -12,6 +12,10 @@ on:
       - 'tools/test-seyveo-docs-viewer.cjs'
       - 'tools/test-seyveo-docs-studio.cjs'
       - 'tools/test-seyveo-pdf-layout.cjs'
+      - 'tools/test-seyveo-editor-priorities.cjs'
+      - 'assets/seyveo-editor-capsule.js'
+      - 'assets/seyveo-pdf-markup.js'
+      - 'assets/seyveo-smart-note-ink.js'
       - 'docs/SEYVEO-DOCS-PRODUCT-SPEC.md'
       - 'assets/seyveo-document-flow.js'
       - 'assets/seyveo-document-flow.css'
@@ -31,6 +35,10 @@ on:
       - 'tools/test-seyveo-docs-viewer.cjs'
       - 'tools/test-seyveo-docs-studio.cjs'
       - 'tools/test-seyveo-pdf-layout.cjs'
+      - 'tools/test-seyveo-editor-priorities.cjs'
+      - 'assets/seyveo-editor-capsule.js'
+      - 'assets/seyveo-pdf-markup.js'
+      - 'assets/seyveo-smart-note-ink.js'
       - 'docs/SEYVEO-DOCS-PRODUCT-SPEC.md'
       - 'assets/seyveo-document-flow.js'
       - 'assets/seyveo-document-flow.css'
@@ -57,6 +65,8 @@ jobs:
           node-version: '22'
       - name: Verify Documents JavaScript syntax
         run: node --check assets/documents-center.js && node --check assets/seyveo-docs-export.js && node --check assets/seyveo-docs-studio.js && node --check assets/seyveo-docs-viewer.js && node --check assets/seyveo-document-flow.js
+      - name: Verify shared editor contextual tool order
+        run: node --test tools/test-seyveo-editor-priorities.cjs
       - name: Verify original PDF layout and pagination
         run: node --test tools/test-seyveo-pdf-layout.cjs
       - name: Verify Documents real render actions and CSS scope
