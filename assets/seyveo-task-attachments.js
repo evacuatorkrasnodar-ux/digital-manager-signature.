@@ -155,6 +155,11 @@
   try{
    const item=await get(taskId);
    if(!item?.blob){report('Вложение на этом устройстве не найдено.');return false}
+   const name=String(item.name||item.meta?.name||'Вложение').slice(0,130);
+   if(/\.(pdf|docx|txt|md|png|jpe?g|webp)$/i.test(name)&&window.SEYVEO_DOCS_VIEWER?.open){
+    const file=new File([item.blob],name,{type:item.blob.type||item.meta?.type||''});
+    if(window.SEYVEO_DOCS_VIEWER.open(file))return true;
+   }
    const url=URL.createObjectURL(item.blob);
    const link=document.createElement('a');link.href=url;
    link.download=String(item.name||'Вложение').slice(0,130);
