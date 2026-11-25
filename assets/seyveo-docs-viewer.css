@@ -399,11 +399,11 @@ html:root body .svdv-bottom-sheet :is(.svdv-reader-zoom,.svdv-reader-back){displ
 .svdv-reader-save{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;color:#20262d;text-decoration:none;font:550 13px/1.2 system-ui;}
 .svdv-reader-save svg{width:20px;height:20px;}
 
-html:root body .svdv-bottom-sheet{box-sizing:border-box!important;position:fixed!important;inset:auto 0 0!important;margin:0 auto!important;width:100%!important;max-width:680px!important;height:86vh!important;height:86dvh!important;max-height:100%!important;padding:0!important;border:0!important;border-radius:28px 28px 0 0!important;background:#fff!important;color:#20262d!important;overflow:hidden!important;box-shadow:0 -10px 45px #0002!important;transition:height .22s ease,border-radius .22s ease;}
-html:root body .svdv-bottom-sheet[open]{display:block!important;animation:svdv-rise .24s cubic-bezier(.22,.7,.25,1) both;}
+html:root body .svdv-bottom-sheet{box-sizing:border-box!important;position:fixed!important;inset:auto 0 0!important;margin:0 auto!important;width:100%!important;max-width:var(--sv-sheet-max-width,680px)!important;height:88vh!important;height:var(--sv-sheet-preview-height,88dvh)!important;max-height:100%!important;padding:0!important;border:0!important;border-radius:var(--sv-sheet-radius,28px) var(--sv-sheet-radius,28px) 0 0!important;background:#fff!important;color:#20262d!important;overflow:hidden!important;box-shadow:0 -10px 45px #0002!important;transition:height .22s ease,border-radius .22s ease;}
+html:root body .svdv-bottom-sheet[open]{display:block!important;animation:svSharedSheetEnter var(--sv-sheet-enter-duration,.28s) var(--sv-sheet-enter-ease,cubic-bezier(.22,.7,.25,1)) both;}
 html:root body .svdv-bottom-sheet.is-expanded{height:100vh!important;height:100dvh!important;border-radius:0!important;}
 .svdv-bottom-sheet::backdrop{background:rgba(23,30,39,.27);backdrop-filter:blur(3px);}
-@keyframes svdv-rise{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
 html:root body .svdv-bottom-sheet .svdv-viewer{display:flex!important;flex-direction:column!important;height:100%!important;min-height:0!important;box-sizing:border-box!important;gap:8px!important;padding:0 12px max(12px,env(safe-area-inset-bottom))!important;margin:0!important;}
 html:root body .svdv-bottom-sheet .svdv-header{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important;flex:none!important;touch-action:none!important;padding:8px 0 4px!important;}
 .svdv-bottom-sheet.is-expanded .svdv-header{padding-top:max(8px,env(safe-area-inset-top))!important;}

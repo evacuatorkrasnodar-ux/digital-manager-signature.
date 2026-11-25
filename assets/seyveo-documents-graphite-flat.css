@@ -2016,11 +2016,11 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] :is(.sv-doc-picker-
 
 /* Shared calendar sheet: full-width bottom entrance, fixed head and action capsule. */
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-sheet.sv-doc-picker-bottom{
- inset:auto 0 0!important;margin:0 auto!important;width:100%!important;max-width:680px!important;height:auto!important;max-height:94vh!important;max-height:94dvh!important;
- padding:10px 16px max(12px,env(safe-area-inset-bottom,0px))!important;border:0!important;border-radius:28px 28px 0 0!important;overflow:hidden!important;
+ inset:auto 0 0!important;margin:0 auto!important;width:100%!important;max-width:var(--sv-sheet-max-width,680px)!important;height:auto!important;max-height:94vh!important;max-height:var(--sv-sheet-form-max-height,94dvh)!important;
+ padding:10px 16px max(12px,env(safe-area-inset-bottom,0px))!important;border:0!important;border-radius:var(--sv-sheet-radius,28px) var(--sv-sheet-radius,28px) 0 0!important;overflow:hidden!important;
 }
-html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-bottom[open]{display:flex!important;flex-direction:column!important;gap:10px!important;animation:sv-doc-calendar-rise .24s cubic-bezier(.22,.7,.25,1) both;}
-@keyframes sv-doc-calendar-rise{from{transform:translateY(100%)}to{transform:translateY(0)}}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-bottom[open]{display:flex!important;flex-direction:column!important;gap:10px!important;animation:svSharedSheetEnter var(--sv-sheet-enter-duration,.28s) var(--sv-sheet-enter-ease,cubic-bezier(.22,.7,.25,1)) both;}
+
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-bottom .sv-doc-picker-head{flex:none!important;grid-template-rows:8px 44px!important;row-gap:6px!important;touch-action:none!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-bottom .sv-doc-picker-head strong{grid-row:2!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-bottom .sv-doc-picker-head>.sv-doc-picker-round{grid-column:1!important;grid-row:2!important;}

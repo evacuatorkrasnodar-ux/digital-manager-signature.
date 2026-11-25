@@ -14,10 +14,7 @@ function sheet(trigger,title,{bottom=false}={}){
   d.classList.add('sv-doc-picker-bottom');
   const grip=el('div','sv-doc-picker-grip');grip.setAttribute('aria-hidden','true');
   h.prepend(grip);
-  let start=null;
-  h.addEventListener('pointerdown',e=>{if(e.target.closest('button')||e.button!==0)return;start={id:e.pointerId,x:e.clientX,y:e.clientY};h.setPointerCapture?.(e.pointerId);});
-  h.addEventListener('pointerup',e=>{if(!start||start.id!==e.pointerId)return;const dx=e.clientX-start.x,dy=e.clientY-start.y;start=null;if(dy>48&&Math.abs(dy)>Math.abs(dx))d.close();});
-  h.addEventListener('pointercancel',()=>{start=null;});
+  window.SEYVEO_SHEET_NAVIGATION?.attach(h,null,()=>d.close());
  }
  d.append(h,body);
  (trigger.closest('dialog')||trigger.parentElement).append(d);

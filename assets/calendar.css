@@ -2029,14 +2029,7 @@ html body :is(.sv-standard-picker-back,.sv-standard-picker-option,.sv-standard-m
  .sv-standard-picker-secondary):focus-visible{
  outline:2px solid #FFFFFF!important;outline-offset:1px!important;
 }
-@media(min-width:700px){
- html body dialog#svStandardPickerDialog.sv-standard-picker-sheet[open]{
-  left:50%!important;right:auto!important;bottom:50%!important;
-  transform:translate(-50%,50%)!important;
-  width:min(390px,96vw)!important;max-width:390px!important;
-  border-radius:20px!important;padding:17px 19px 19px!important;
- }
-}
+/* Standard picker placement is owned by shared sheet navigation. */
 @media(max-width:360px){
  html body .sv-standard-picker-week,
  html body .sv-standard-picker-days{gap:2px!important}
@@ -2120,7 +2113,7 @@ html:root[data-theme="light"] body .sv-standard-picker-launch:is(:active,[aria-e
 html:root[data-theme="light"] body .sv-standard-picker-launch:focus-visible{outline:1.5px solid #6b9ac7!important;outline-offset:2px!important}
 html:root[data-theme="light"] body dialog#svStandardPickerDialog.sv-standard-picker-sheet[open]{
  background:#fcfcfd!important;color:#20242a!important;border:var(--sv-menu-border,1px solid #e7e9ed)!important;
- border-radius:22px!important;box-shadow:var(--sv-menu-shadow,0 12px 34px rgba(25,33,45,.16))!important;
+ box-shadow:var(--sv-menu-shadow,0 12px 34px rgba(25,33,45,.16))!important;
 }
 html:root[data-theme="light"] body dialog#svStandardPickerDialog::backdrop{background:rgba(30,40,52,.18)!important}
 html:root[data-theme="light"] body #svStandardPickerDialog .sv-standard-picker-back{

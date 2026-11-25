@@ -403,7 +403,7 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
  sheet.id='svStandardPickerDialog';sheet.className='sv-standard-picker-sheet';
  sheet.setAttribute('aria-labelledby','svStandardPickerTitle');
  sheet.innerHTML=[
-  '<header class="sv-standard-picker-head">',
+  '<header class="sv-standard-picker-head"><div class="sv-standard-picker-grip" aria-hidden="true"></div>',
   '<button class="sv-standard-picker-back" type="button" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>',
   '<h2 id="svStandardPickerTitle"></h2></header>',
   '<div id="svStandardPickerBody" class="sv-standard-picker-body"></div>'
@@ -439,6 +439,7 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
  }
  function close(){if(sheet.open)sheet.close()}
  back.addEventListener('click',close);
+ window.SEYVEO_SHEET_NAVIGATION?.attach(sheet.querySelector('.sv-standard-picker-head'),null,close);
  sheet.addEventListener('click',e=>{if(e.target===sheet)close()});
  sheet.addEventListener('close',()=>{
   if(trigger){trigger.setAttribute('aria-expanded','false');trigger.focus({preventScroll:true})}

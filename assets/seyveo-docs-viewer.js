@@ -352,10 +352,9 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
   const top=el('div','svdv-sheet-top');top.append(close,copy,expand);header.replaceChildren(grip,top);
   close.addEventListener('click',()=>sheet.close());
   expand.addEventListener('click',()=>{const full=sheet.classList.toggle('is-expanded');expand.setAttribute('aria-label',full?'Свернуть':'Развернуть');expand.style.transform=full?'rotate(180deg)':'';});
-  let start=null;
-  header.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;start={id:e.pointerId,x:e.clientX,y:e.clientY};header.setPointerCapture?.(e.pointerId);});
-  header.addEventListener('pointerup',e=>{if(!start||start.id!==e.pointerId)return;const dy=e.clientY-start.y,dx=e.clientX-start.x;start=null;if(Math.abs(dx)>Math.abs(dy))return;if(dy<-42){if(!sheet.classList.contains('is-expanded'))expand.click();}else if(dy>48){if(sheet.classList.contains('is-expanded'))expand.click();else sheet.close();}});
-  header.addEventListener('pointercancel',()=>{start=null;});
+  window.SEYVEO_SHEET_NAVIGATION?.attach(header,
+   ()=>{if(!sheet.classList.contains('is-expanded'))expand.click();},
+   ()=>{if(sheet.classList.contains('is-expanded'))expand.click();else close.click();});
   sheet.append(root);target.replaceChildren(sheet);
   sheet.addEventListener('close',()=>{if(active){session.destroy();onClose();}},{once:true});
   sheet.addEventListener('click',e=>{if(e.target===sheet){const r=sheet.getBoundingClientRect();if(e.clientY<r.top||e.clientX<r.left||e.clientX>r.right)sheet.close();}});
