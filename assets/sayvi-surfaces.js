@@ -1497,7 +1497,10 @@ function mailView(){
    mailBulkSelecting=!mailBulkSelecting;
    selectedMailIds.clear();paintList();
   });
-  bar.append(select);content.append(bar);
+  bar.append(select);
+  // Keep selection actions in the existing sticky header; normal counts stay in the list.
+  if(mailBulkSelecting&&pinnedMailHead.isConnected)pinnedMailHead.append(bar);
+  else content.append(bar);
  }
  function drawExamples(limit=0){
   // Keep the query local to this renderer too. A prior cached revision
@@ -1800,6 +1803,7 @@ function mailView(){
   // All bulk actions live beside the selection count, never below the list.
  }
  function paintList(){
+  pinnedMailHead.querySelector(':scope > .sv-mail-bulk-toolbar')?.remove();
   section.classList.toggle('sv-mail-bulk-active',mailBulkSelecting&&mailFolder!=='overview'&&!mailEditorOpen&&!mailCurrent);
   content.replaceChildren();
   if(mailEditorOpen){drawEditor();return}
