@@ -27,9 +27,21 @@
  };
  function report(){
   const w=innerWidth,h=innerHeight;
+  // Read actual safe-area CSS lengths, not hard-coded iPhone dimensions.
+  const probe=document.createElement('div');
+  probe.style.cssText='position:fixed;visibility:hidden;pointer-events:none;width:0;height:0;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)';
+  document.body.append(probe);
+  const safe=getComputedStyle(probe);
+  const insets=[safe.paddingTop,safe.paddingRight,safe.paddingBottom,safe.paddingLeft].join('/');
+  probe.remove();
+  const v=window.visualViewport;
+  const standalone=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
   const lines=['SEYVEO · ДИАГНОСТИКА ВНЕШНЕЙ РАМКИ',
     'Размер: '+w+' × '+h+' | DPR: '+devicePixelRatio+
     ' | visualViewport: '+(visualViewport?[visualViewport.width,visualViewport.height].join('×'):'-'),
+    'Устройство: экран '+screen.width+' × '+screen.height+' | standalone: '+standalone+' | scale: '+(v?.scale??'-'),
+    'Layout: '+document.documentElement.clientWidth+' × '+document.documentElement.clientHeight+' | visual offset: '+(v?[v.offsetLeft,v.offsetTop].join('/'):'-'),
+    'Safe area (верх/право/низ/лево): '+insets+' | screen − innerHeight: '+(screen.height-h)+'px',
     'Экран: '+document.documentElement.className,
     'Окна: '+[...document.querySelectorAll('dialog[open]')].map(tag).join(','),
     '--- СЛОИ НА КРАЯХ ---'];
@@ -44,6 +56,9 @@
   lines.push('--- ОБОЛОЧКИ И ПСЕВДОЭЛЕМЕНТЫ ---');
   const primary=[document.documentElement,document.body,document.querySelector('.app'),
    ...document.querySelectorAll('dialog[open]'),
+   document.querySelector('footer.dock'),document.querySelector('#svWorkShell'),
+   document.querySelector('#svcpWorkChatScreen'),document.querySelector('#svcpConversation'),
+   document.querySelector('#svcpMessages'),document.querySelector('#svcpChatFormReset'),
    document.querySelector('#svCareScroll'),document.querySelector('#sayviMusicPage'),
    document.querySelector('#seyveoFamilyDialog'),document.querySelector('.svf-shell')].filter(Boolean);
   for(const el of [...new Set(primary)]){
