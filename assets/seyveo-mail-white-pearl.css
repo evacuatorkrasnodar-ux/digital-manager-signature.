@@ -1191,7 +1191,13 @@ html:root body > .sv-mail-compose-tools-portal .sv-mail-attach-count:not([hidden
 }
 html:root body > .sv-mail-compose-tools-portal .sv-mail-assist-symbol{
  display:block!important;width:26px!important;height:26px!important;min-width:26px!important;min-height:26px!important;
+ max-width:26px!important;max-height:26px!important;margin:0!important;padding:0!important;
+ background:transparent url("./seyveo-sayvi-avatar-crisp.png") center / contain no-repeat!important;
+ border:0!important;border-radius:50%!important;box-shadow:none!important;filter:none!important;
+ -webkit-mask:none!important;mask:none!important;overflow:hidden!important;
 }
+html:root body > .sv-mail-compose-tools-portal .sv-mail-assist-symbol::before,
+html:root body > .sv-mail-compose-tools-portal .sv-mail-assist-symbol::after{content:none!important;display:none!important}
 html:root body > .sv-mail-compose-tools-portal button:focus-visible{
  outline:2px solid #007AFF!important;outline-offset:-3px!important;
 }
