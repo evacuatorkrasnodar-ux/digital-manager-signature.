@@ -2061,10 +2061,10 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
  height:auto!important;min-height:76px!important;justify-content:flex-start!important;padding:5px 2px!important;
 }
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-recent-card{
- height:auto!important;min-height:100px!important;justify-content:flex-start!important;gap:4px!important;
+ height:auto!important;min-height:88px!important;justify-content:flex-start!important;gap:3px!important;
 }
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-recent-name{
- min-height:2.4em;max-height:2.4em!important;overflow-wrap:anywhere;line-height:1.2!important;
+ min-height:1.2em;max-height:2.4em!important;overflow-wrap:anywhere;line-height:1.2!important;
 }
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-file-art .sv-doc-format-label{
  left:1px!important;width:calc(100% - 2px)!important;max-width:100%!important;bottom:5px!important;padding:2px 1px!important;
@@ -2211,3 +2211,8 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-saved-notice{margin:4px 0;font-size:13px;color:var(--secondary,#697583);}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-saved-notice:empty{display:none!important;}
 @media(prefers-reduced-motion:reduce){html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scanner-sheet[open]{animation:none!important;}}
+
+/* Quiet recent cards and paper-light service rows; keep the four-slot folder rail. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-recent-card > .sv-doc-recent-date{margin:1px 0 0!important;line-height:1.25!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-local-file-wrap > .sv-doc-recent-card{padding-bottom:5px!important;}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody :is(.sv-doc-connections-entry,.sv-doc-assistant-summary){background:#FAFAFB!important;background-image:none!important;box-shadow:none!important;border:1px solid rgba(30,40,55,.045)!important;}
