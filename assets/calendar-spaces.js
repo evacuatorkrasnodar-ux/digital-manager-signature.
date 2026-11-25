@@ -197,27 +197,23 @@ const healthNumberSpecs={
  calendarBpPulse:{title:'Пульс',min:30,max:240,fallback:72}
 };
 let healthPickerId='',healthPickerNumber=0,healthPickerPreviousFocus=null;
+let healthWheelController=null;
 function refreshHealthPicker(){
  const spec=healthNumberSpecs[healthPickerId];if(!spec)return;
- const val=$('calendarHealthPickerValue'),wheel=$('calendarHealthPickerWheel');
- val.textContent=String(healthPickerNumber);
- $('calendarHealthPickerPrevious').textContent=healthPickerNumber>spec.min?String(healthPickerNumber-1):'';
- $('calendarHealthPickerNext').textContent=healthPickerNumber<spec.max?String(healthPickerNumber+1):'';
- wheel.setAttribute('aria-valuemin',String(spec.min));
- wheel.setAttribute('aria-valuemax',String(spec.max));
- wheel.setAttribute('aria-valuenow',String(healthPickerNumber));
- wheel.setAttribute('aria-valuetext',healthPickerNumber+' '+(healthPickerId==='calendarHealthAge'?'лет':healthPickerId.toLowerCase().includes('pulse')||healthPickerId.endsWith('P')?'уд/мин':'мм рт. ст.'));
-}
-function moveHealthPicker(delta){
- const spec=healthNumberSpecs[healthPickerId];if(!spec)return;
- healthPickerNumber=Math.max(spec.min,Math.min(spec.max,healthPickerNumber+delta));
- refreshHealthPicker();
+ const old=$('calendarHealthPickerWheel'),wheel=document.createElement('div');
+ wheel.id=old.id;wheel.className=old.className;wheel.setAttribute('aria-label',spec.title);
+ old.replaceWith(wheel);
+ const choices=Array.from({length:spec.max-spec.min+1},(_,i)=>({value:spec.min+i,label:String(spec.min+i)}));
+ healthWheelController=window.SEYVEO_WHEEL.mount(wheel,choices,healthPickerNumber,n=>{healthPickerNumber=n;});
+ healthWheelController.center();
+ wheel.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();closeHealthPicker(true);}});
 }
 function closeHealthPicker(apply){
  const picker=$('calendarHealthNumberPicker');
  if(picker.hidden)return;
  if(apply&&healthPickerId){
   const field=$(healthPickerId);
+  if(healthWheelController)healthPickerNumber=healthWheelController.value;
   field.value=String(healthPickerNumber);
   field.dispatchEvent(new Event('input',{bubbles:true}));
   field.dispatchEvent(new Event('change',{bubbles:true}));
@@ -252,36 +248,6 @@ $('calendarHealthPickerCancel').addEventListener('click',()=>closeHealthPicker(f
 $('calendarHealthPickerDone').addEventListener('click',()=>closeHealthPicker(true));
 $('calendarHealthNumberPicker').addEventListener('click',event=>{
  if(event.target.closest('[data-health-picker-cancel]'))closeHealthPicker(false);
-});
-$('calendarHealthPickerWheel').addEventListener('keydown',event=>{
- if(event.key==='ArrowUp'){event.preventDefault();moveHealthPicker(1)}
- else if(event.key==='ArrowDown'){event.preventDefault();moveHealthPicker(-1)}
- else if(event.key==='PageUp'){event.preventDefault();moveHealthPicker(10)}
- else if(event.key==='PageDown'){event.preventDefault();moveHealthPicker(-10)}
- else if(event.key==='Enter'){event.preventDefault();closeHealthPicker(true)}
- else if(event.key==='Escape'){event.preventDefault();closeHealthPicker(false)}
-});
-let healthPickerStartY=0,healthPickerMoved=0;
-const wheel=$('calendarHealthPickerWheel');
-wheel.addEventListener('pointerdown',event=>{
- healthPickerStartY=event.clientY;healthPickerMoved=0;
- wheel.setPointerCapture?.(event.pointerId);
-});
-wheel.addEventListener('pointermove',event=>{
- if(!wheel.hasPointerCapture?.(event.pointerId))return;
- const dist=healthPickerStartY-event.clientY;
- const steps=dist>0?Math.floor(dist/27):Math.ceil(dist/27);
- if(!steps)return;
- moveHealthPicker(steps);healthPickerStartY+=-steps*27;healthPickerMoved+=Math.abs(steps);
-});
-wheel.addEventListener('wheel',event=>{
- event.preventDefault();moveHealthPicker(event.deltaY>0?-1:1);
-},{passive:false});
-wheel.addEventListener('click',event=>{
- if(healthPickerMoved)return;
- const bounds=wheel.getBoundingClientRect();
- if(event.clientY<bounds.top+bounds.height/3)moveHealthPicker(1);
- else if(event.clientY>bounds.top+bounds.height*2/3)moveHealthPicker(-1);
 });
 $('calendarHealthNumberPicker').addEventListener('keydown',event=>{
  if(event.key==='Escape'){event.preventDefault();closeHealthPicker(false)}
