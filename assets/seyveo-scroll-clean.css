@@ -207,3 +207,67 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
   -webkit-backdrop-filter:none;backdrop-filter:none;
  }
 }
+
+
+/* SEYVEO · Approved Mail Glass standard (25 Nov 2026).
+   Only existing navigation capsules and audited scroll edges, never the dock,
+   editor toolbar, hit targets, native scrolling or dark theme. */
+:root[data-theme="light"]{
+ --sv-nav-glass-face:rgba(239,241,244,.50);
+ --sv-nav-glass-selected:rgba(255,255,255,.82);
+ --sv-nav-glass-filter:blur(12px) saturate(105%);
+ --sv-nav-glass-shadow:0 3px 9px rgba(38,48,60,.045),inset 0 1px 0 rgba(255,255,255,.85);
+ --sv-nav-glass-feather:linear-gradient(to bottom,rgba(255,255,255,.96) 0%,rgba(255,255,255,.60) 45%,rgba(255,255,255,0) 100%);
+ --sv-nav-glass-feather-height:24px;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch,
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]),
+html:root[data-theme="light"] body #calendarPage :is(.cal-scope,#managerCalendarTabs):not([hidden]),
+html:root[data-theme="light"] body #tasksPage #unifiedTasksTabs:not([hidden]),
+html:root[data-theme="light"] body #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters,
+html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs{
+ background:var(--sv-nav-glass-face)!important;background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-nav-glass-filter)!important;backdrop-filter:var(--sv-nav-glass-filter)!important;
+ box-shadow:var(--sv-nav-glass-shadow)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab[aria-pressed="true"],
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]) button[aria-pressed="true"],
+html:root[data-theme="light"] body #calendarPage :is(.cal-scope,#managerCalendarTabs):not([hidden]) button[aria-pressed="true"],
+html:root[data-theme="light"] body #tasksPage #unifiedTasksTabs:not([hidden]) button[aria-pressed="true"],
+html:root[data-theme="light"] body #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters > button[aria-pressed="true"],
+html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs .sv-inbox-muted-tab[aria-pressed="true"]{
+ background:var(--sv-nav-glass-selected)!important;
+}
+/* Documents: the existing sticky capsule, with the feather outside its face. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch{
+ background:rgba(255,255,255,.82)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch::after{
+ content:""!important;display:block!important;position:absolute!important;
+ top:calc(100% - 7px)!important;height:var(--sv-nav-glass-feather-height)!important;
+ background:var(--sv-nav-glass-feather)!important;
+ -webkit-mask-image:none!important;mask-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;pointer-events:none!important;
+}
+/* Notebook and agenda: reuse their existing scroll-state hooks, no new overlays. */
+html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden])::after,
+html:root[data-theme="light"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading[data-sv-edge-fade]::after{
+ height:var(--sv-nav-glass-feather-height)!important;
+ background:var(--sv-nav-glass-feather)!important;pointer-events:none!important;
+}
+/* Existing scroll-under dialogs: full opacity through the title, then fade
+   below its measured edge. Preserve their native scroll and measurements. */
+html:root[data-theme="light"] body :is(dialog[open],#picturePage:not([hidden])).sv-scroll-glass-ready > .sv-scroll-glass-head > .sv-scroll-glass-material{
+ background:rgba(255,255,255,.84);
+ -webkit-backdrop-filter:var(--sv-nav-glass-filter);backdrop-filter:var(--sv-nav-glass-filter);
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - var(--sv-scroll-glass-tail,12px)),transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - var(--sv-scroll-glass-tail,12px)),transparent 100%);
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"]{
+  --sv-nav-glass-face:#F7F7F8;--sv-nav-glass-selected:#fff;--sv-nav-glass-filter:none;
+ }
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch{background:#fff!important}
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch::after,html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden])::after,html:root[data-theme="light"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading[data-sv-edge-fade]::after{content:none!important;display:none!important}
+ html:root[data-theme="light"] body :is(dialog[open],#picturePage:not([hidden])).sv-scroll-glass-ready > .sv-scroll-glass-head > .sv-scroll-glass-material{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;-webkit-mask-image:none;mask-image:none}
+}
