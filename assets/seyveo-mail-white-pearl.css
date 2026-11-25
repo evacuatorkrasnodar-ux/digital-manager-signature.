@@ -718,7 +718,7 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
    the lower 45px of the header lets moving content diffuse behind the glass.
    The feather starts at the capsule bottom, not on the controls. */
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head > .sv-mail-accounts:not([hidden]){
- background:rgba(239,241,244,.45)!important;
+ background:rgba(239,241,244,.36)!important;
  -webkit-backdrop-filter:blur(12px) saturate(105%)!important;
  backdrop-filter:blur(12px) saturate(105%)!important;
  box-shadow:0 3px 9px rgba(38,48,60,.045),inset 0 1px 0 rgba(255,255,255,.85)!important;
@@ -727,7 +727,7 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
  background:rgba(255,255,255,.82)!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden])){
- background:linear-gradient(to bottom,#fff 0%,#fff calc(100% - 45px),rgba(255,255,255,.82) calc(100% - 38px),rgba(255,255,255,.82) calc(100% - 7px),transparent calc(100% - 7px))!important;
+ background:linear-gradient(to bottom,#fff 0%,#fff calc(100% - 45px),rgba(255,255,255,.65) calc(100% - 38px),rgba(255,255,255,.65) calc(100% - 7px),transparent calc(100% - 7px))!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after{
  content:""!important;display:block!important;position:absolute!important;
