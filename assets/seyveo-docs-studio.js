@@ -148,7 +148,7 @@ function controls(...actions){
 }
 function mount(target,{
  area='personal',getCurrentFile=()=>null,onPick=()=>{},onImport=()=>{},
- onSayvi=()=>{}
+ onSayvi=()=>{},onScanSaved=null
 }={}){
  if(!target)return false;
  const editor=$('section','sv-doc-tools');
@@ -445,7 +445,7 @@ function mount(target,{
    if(generationAtStart!==generation||epoch!==operationEpoch)return;
    const firstNew=scans.length;
    scans.push(...processed);selectedScan=firstNew;renderScan();
-   message('Добавлено страниц: '+scans.length+'. Можно собрать настоящий PDF.');
+
   }catch{
    if(generationAtStart===generation&&epoch===operationEpoch)
     message('Не удалось обработать фото. Попробуйте другой файл.');
@@ -469,7 +469,7 @@ function mount(target,{
    ctx.translate(canvas.width,0);ctx.rotate(Math.PI/2);
    ctx.drawImage(image,0,0,page.width,page.height);
    scans[index]=jpegOf(canvas);selectedScan=index;renderScan();
-   message('Страница '+(index+1)+' повёрнута на 90°.');
+
   }catch{
    if(at===generation&&epoch===operationEpoch)
     message('Не удалось повернуть страницу.');
@@ -482,7 +482,7 @@ function mount(target,{
   scans.splice(next,0,page);
   if(selectedScan===index)selectedScan=next;
   else if(selectedScan===next)selectedScan=index;
-  renderScan();message('Изменён порядок страниц.');
+  renderScan();
  }
  function scannerStage(){
   const stage=$('div','sv-doc-scan-stage');
@@ -623,38 +623,12 @@ function mount(target,{
     try{
      const name='Скан '+new Date().toLocaleDateString('ru-RU')+' '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}).replace(':','-')+'.pdf';
      const file=asFile(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(pages),name);
-     await window.SEYVEO_DOCUMENT_FILES.save(area,file,'scan');
-     if(at===generation&&epoch===operationEpoch&&mode==='scan'&&panel.isConnected){scans=[];selectedScan=0;closePanel();const note=editor.querySelector('.sv-doc-scan-saved-notice');if(note)note.textContent='PDF сохранён в папке «Сканы».';}
+     const id=await window.SEYVEO_DOCUMENT_FILES.save(area,file,'scan');
+     if(at===generation&&epoch===operationEpoch&&mode==='scan'&&panel.isConnected){scans=[];selectedScan=0;closePanel();const note=editor.querySelector('.sv-doc-scan-saved-notice');if(note)note.textContent='PDF сохранён в папке «Сканы».';if(onScanSaved){try{await onScanSaved(id);}catch{if(note?.isConnected)note.textContent='PDF сохранён. Откройте его в папке «Сканы».';}}}
     }catch(e){if(at===generation&&epoch===operationEpoch)message(e.message||'Не удалось сохранить PDF.');}
     finally{scanSaving=false;panel.inert=false;scannerBack.disabled=false;savePdf.disabled=false;}
    },'sv-doc-tool-primary sv-doc-scan-save');
-   const more=$('details','sv-doc-scan-more');
-   const summary=$('summary','sv-doc-scan-more-toggle');summary.append(toolArt('more'));summary.setAttribute('aria-label','Ещё действия со сканом');more.append(summary);
-   const menu=$('div','sv-doc-scan-more-menu');
-   const add=(label,kind,fn)=>{
-    const n=button(label,()=>{more.open=false;fn();},'sv-doc-scan-menu-action');n.prepend(toolArt(kind));menu.append(n);
-   };
-   add('Подписать скан','sign',()=>open('sign'));
-   add('Посмотреть PDF','original',()=>{
-    try{
-     const url=URL.createObjectURL(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans));temporaryUrls.push(url);
-     const link=$('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';document.body.append(link);link.click();link.remove();
-    }catch{message('Не удалось открыть предпросмотр PDF.');}
-   });
-   add('Печать','print',()=>open('print'));
-   add('Поделиться','share',()=>{
-    try{void shareExport(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf').then(result=>message(shareMessage(result,'PDF')));}
-    catch{message('Не удалось подготовить PDF.');}
-   });
-   add('В защищённый архив','archive',()=>{
-    try{onImport(asFile(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf'));}
-    catch{message('Не удалось передать PDF в архив.');}
-   });
-   add('Очистить страницы','delete',()=>{
-    if(window.confirm('Удалить все страницы текущего скана?')){scans=[];selectedScan=0;renderScan();}
-   });
-   more.append(menu);
-   const finish=$('div','sv-doc-scan-finish');finish.append(savePdf,more);counter.append(finish);
+   const finish=$('div','sv-doc-scan-finish');finish.append(savePdf);counter.append(finish);
   }
   if(scans.length)panel.append(counter);
   panel.append(status(''));
