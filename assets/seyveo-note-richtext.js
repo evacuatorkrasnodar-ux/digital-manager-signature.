@@ -18,6 +18,8 @@
  rich.hidden=true;
  textarea.after(rich);
  let active=false,savedRange=null,locked=false,plainSelection=null;
+ let noteSize=12,noteAlign='left';
+ const sizes=[10,11,12,14,16,18],aligns=['left','center','right','both'];
  // Only a closed set of tones can be persisted. Do not trust arbitrary
  // inline CSS when loading a note, pasted HTML or a shared document.
  const MARKER_TONES=new Set(['lemon','mint','sky','rose']);
@@ -33,6 +35,12 @@
    ?node.getAttribute('data-sv-marker'):null;
   const safe=allowed.has(tag)?tag==='H2'?'H3':tag:markerKind?'SPAN':null;
   const dest=safe?document.createElement(safe.toLowerCase()):into;
+  if(tag==='DIV'&&node.hasAttribute('data-sv-note-layout')){
+   const size=Number(node.getAttribute('data-sv-note-size')),align=node.getAttribute('data-sv-note-align');
+   dest.setAttribute('data-sv-note-layout','');
+   dest.setAttribute('data-sv-note-size',String(sizes.includes(size)?size:12));
+   dest.setAttribute('data-sv-note-align',aligns.includes(align)?align:'left');
+  }
   if(markerKind){
    const tone=node.getAttribute('data-sv-marker-tone');
    dest.setAttribute('data-sv-marker',markerKind);
@@ -105,7 +113,14 @@
   locked=false;
  }
  function load(html){
-  const clean=safeHTML(html);
+  let clean=safeHTML(html);
+  const parsed=document.createElement('template');parsed.innerHTML=clean;
+  const layout=parsed.content.firstElementChild;
+  noteSize=12;noteAlign='left';
+  if(layout?.hasAttribute('data-sv-note-layout')&&parsed.content.childNodes.length===1){
+   noteSize=Number(layout.dataset.svNoteSize)||12;noteAlign=layout.dataset.svNoteAlign||'left';clean=layout.innerHTML;
+  }
+  paintLayout();
   locked=true;
   active=Boolean(clean);
   savedRange=null;plainSelection=null;
@@ -245,9 +260,25 @@
   rich.focus({preventScroll:true});
   return true;
  }
+ function paintLayout(){
+  for(const field of [textarea,rich]){
+   field.dataset.svNoteSize=String(noteSize);field.dataset.svNoteAlign=noteAlign;
+  }
+  dialog.dispatchEvent(new CustomEvent('seyveo:note-layout',{detail:{size:noteSize,alignment:noteAlign}}));
+ }
+ function setLayout(size,alignment){
+  noteSize=sizes.includes(Number(size))?Number(size):12;
+  noteAlign=aligns.includes(alignment)?alignment:'left';
+  if(!active)activate();
+  paintLayout();sync();
+ }
  function getHTML(){
-  if(!active)return'';
-  return safeHTML(rich.innerHTML);
+  if(!active&&noteSize===12&&noteAlign==='left')return'';
+  const clean=active?safeHTML(rich.innerHTML):'';
+  if(noteSize===12&&noteAlign==='left')return clean;
+  const wrapper=document.createElement('div');
+  wrapper.dataset.svNoteLayout='';wrapper.dataset.svNoteSize=String(noteSize);wrapper.dataset.svNoteAlign=noteAlign;
+  wrapper.innerHTML=clean;return wrapper.outerHTML;
  }
  function insertText(text){
   if(!active)return false;
@@ -282,7 +313,7 @@
  });
  dialog.addEventListener('close',()=>{savedRange=null});
  window.SEYVEO_NOTE_RICH=Object.freeze({
-  load,format:applyFormat,getHTML,safeHTML,isActive:()=>active,
+  load,format:applyFormat,getHTML,safeHTML,isActive:()=>active,setLayout,getLayout:()=>({size:noteSize,alignment:noteAlign}),
   sync,insertText,appendText,rememberSelection:remember,
   markerTone:()=>markerTone,
   focus:()=>active&&rich.focus({preventScroll:true})

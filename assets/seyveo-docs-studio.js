@@ -546,7 +546,7 @@ function mount(target,{
       typeof window.confirm==='function'&&
       !window.confirm('Заменить текущий текст выбранным шаблоном?'))return;
    body.value=content;documentDraft=content;documentTemplate=id;
-   syncTemplate();revealEditor();
+   syncTemplate();lastWordText=body.value;wordHistory.length=0;revealEditor();
 
   }
   function syncTemplate(){
@@ -633,12 +633,28 @@ function mount(target,{
   };
   size.addEventListener('change',refreshStyle);alignment.addEventListener('change',refreshStyle);refreshStyle();
   formatMenu.append(firstLine);
-  rail.append(sizeControl,alignControl,formatTrigger);
+  const wordHistory=[];let lastWordText=body.value;
+  body.addEventListener('input',()=>{
+   if(body.value!==lastWordText){wordHistory.push(lastWordText);if(wordHistory.length>50)wordHistory.shift();lastWordText=body.value;}
+  });
+  const replaceWordText=value=>{body.value=value;documentDraft=value;lastWordText=value;documentTemplate='';syncTemplate();};
+  const wordTool=(label,paths,fn)=>{const control=button('',fn,'sv-doc-word-extra');control.setAttribute('aria-label',label);control.title=label;control.append(icon(paths));return control;};
+  const undoTool=wordTool('Отменить ввод','<path d="M9 8 5 12l4 4M5 12h8a6 6 0 0 1 6 6"/>',()=>{if(wordHistory.length)replaceWordText(wordHistory.pop());body.focus({preventScroll:true});});
+  const copyTool=wordTool('Копировать текст','<rect x="8.5" y="8.5" width="11" height="11" rx="1.8"/><path d="M15.5 8.5V6.1a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7.4a2 2 0 0 0 2 2h2.5"/>',async()=>{
+   try{await navigator.clipboard.writeText(body.value.slice(body.selectionStart,body.selectionEnd)||body.value);message('Текст скопирован.');}catch{message('Не удалось скопировать текст.');}
+  });
+  const clearTool=wordTool('Очистить текст','<path d="m4.5 14.5 9-9a2 2 0 0 1 2.8 0l3 3a2 2 0 0 1 0 2.8L11.1 20H8L4.5 16.5a1.5 1.5 0 0 1 0-2Z"/><path d="M11.1 20h9"/>',()=>{
+   if(body.value&&window.confirm('Очистить текст документа?')){wordHistory.push(body.value);replaceWordText('');body.focus({preventScroll:true});}
+  });
+  const sayviTool=button('',()=>{sheet.close();onSayvi('create');},'sv-doc-word-extra');
+  sayviTool.setAttribute('aria-label','Сэйви');sayviTool.append($('span','sv-doc-word-ai sv-sayvi-symbol'));
+  rail.append(sizeControl,alignControl,formatTrigger,sayviTool,undoTool,copyTool,clearTool);
+  rail.addEventListener('mousedown',event=>{if(event.target.closest('button'))event.preventDefault();});
   typography.append(rail,formatMenu);
   typography.addEventListener('keydown',event=>{
    if(event.key==='Escape'&&!formatMenu.hidden){event.preventDefault();event.stopPropagation();setFormatMenu(false);formatTrigger.focus();}
   });
-  editing.append(filename,typography,body);
+  editing.append(filename,body);
 
   const formatSwitch=$('div','sv-doc-edit-formats');
   formatSwitch.setAttribute('role','group');
@@ -730,11 +746,26 @@ function mount(target,{
   archive.append(actionIcon('<path d="M3.5 9V6a2 2 0 0 1 2-2h4l3 3h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/><path d="M3 10h18M9 15h6" opacity=".7"/>'),$('span','','В архив'));
   const footer=$('footer','sv-doc-edit-footer');
   const actions=$('div','sv-doc-edit-actions');actions.append(saveButton,shareButton,archive);
-  footer.append(formatSwitch,actions,status(''));
+  footer.append(typography,formatSwitch,actions,status(''));
   sheet.append(top,editing,footer);
   sheet.addEventListener('pointerdown',event=>{if(!typography.contains(event.target))setFormatMenu(false);});
   sheet.addEventListener('cancel',event=>{if(!formatMenu.hidden){event.preventDefault();setFormatMenu(false);formatTrigger.focus();}});
-  sheet.addEventListener('close',()=>setFormatMenu(false));
+  let restingHeight=0,viewportFrame=0;
+  function syncEditorViewport(){
+   viewportFrame=0;if(!sheet.open)return;
+   const v=window.visualViewport,height=Math.round(v?.height||window.innerHeight);
+   const focused=sheet.contains(document.activeElement)&&document.activeElement.matches('textarea,input,select');
+   if(!restingHeight)restingHeight=Math.max(height,window.innerHeight);
+   if(!focused&&height>restingHeight-25)restingHeight=Math.max(height,restingHeight);
+   const keyboard=restingHeight-height>=120;
+   sheet.classList.toggle('sv-doc-keyboard-open',keyboard);
+   if(keyboard){sheet.style.setProperty('--sv-doc-editor-height',height+'px');sheet.style.setProperty('--sv-doc-editor-top',Math.round(v?.offsetTop||0)+'px');}
+   else{sheet.style.removeProperty('--sv-doc-editor-height');sheet.style.removeProperty('--sv-doc-editor-top');}
+  }
+  function queueEditorViewport(){if(!viewportFrame)viewportFrame=requestAnimationFrame(syncEditorViewport);}
+  function startEditorViewport(){restingHeight=Math.max(window.innerHeight,window.visualViewport?.height||0);window.visualViewport?.addEventListener('resize',queueEditorViewport);window.visualViewport?.addEventListener('scroll',queueEditorViewport);window.addEventListener('resize',queueEditorViewport);queueEditorViewport();}
+  sheet.addEventListener('focusin',queueEditorViewport);sheet.addEventListener('focusout',queueEditorViewport);
+  sheet.addEventListener('close',()=>{setFormatMenu(false);window.visualViewport?.removeEventListener('resize',queueEditorViewport);window.visualViewport?.removeEventListener('scroll',queueEditorViewport);window.removeEventListener('resize',queueEditorViewport);if(viewportFrame)cancelAnimationFrame(viewportFrame);viewportFrame=0;restingHeight=0;sheet.classList.remove('sv-doc-keyboard-open');sheet.style.removeProperty('--sv-doc-editor-height');sheet.style.removeProperty('--sv-doc-editor-top');});
   const resume=button('Продолжить документ',()=>revealEditor(),'sv-doc-edit-resume');
   resume.hidden=!documentDraft.trim();
   function revealEditor(){
@@ -743,6 +774,7 @@ function mount(target,{
    if(!sheet.open){
     if(typeof sheet.showModal==='function')sheet.showModal();
     else sheet.setAttribute('open','');
+    startEditorViewport();
    }
    back.focus({preventScroll:true});
   }

@@ -59,7 +59,27 @@
  // Primary order: Aa / pen / attachments / checklist / Sayvi.
  // A short swipe reveals list, real existing table insertion, formatting,
  // templates, voice, undo, copy, and protected clear.
- const ribbon=[textBtn,draw,attach,check,sayviBtn,tableBtn,formatButton,paperBtn,voiceBtn,undoQuick,copyQuick,clearQuick];
+ const layoutChoice=(name,values,label,glyph)=>{
+  const wrap=document.createElement('label');wrap.className='sv-note-layout-choice';
+  const face=document.createElement('span');face.className='sv-note-layout-face';face.setAttribute('aria-hidden','true');
+  const select=document.createElement('select');select.setAttribute('aria-label',label);
+  for(const [value,title] of values){const option=document.createElement('option');option.value=value;option.textContent=title;select.append(option);}
+  wrap.dataset.noteLayout=name;wrap.append(face);
+  wrap.insertAdjacentHTML('beforeend',icon('<path d="m7 10 5 5 5-5"/>'));
+  wrap.append(select);return {wrap,face,select,glyph};
+ };
+ const sizeChoice=layoutChoice('size',[10,11,12,14,16,18].map(n=>[n,n+' пт']),'Размер шрифта');
+ const alignChoice=layoutChoice('align',[['left','Слева'],['center','По центру'],['right','Справа'],['both','По ширине']],'Выравнивание');
+ const alignGlyphs={left:'M4 5h16M4 10h10M4 15h16M4 20h10',center:'M4 5h16M7 10h10M4 15h16M7 20h10',right:'M4 5h16M10 10h10M4 15h16M10 20h10',both:'M4 5h16M4 10h16M4 15h16M4 20h16'};
+ function paintNoteLayout(){
+  const state=window.SEYVEO_NOTE_RICH?.getLayout?.()||{size:12,alignment:'left'};
+  sizeChoice.select.value=String(state.size);alignChoice.select.value=state.alignment;
+  sizeChoice.face.textContent=state.size+' пт';alignChoice.face.innerHTML=icon('<path d="'+(alignGlyphs[state.alignment]||alignGlyphs.left)+'"/>');
+ }
+ const applyLayout=()=>{window.SEYVEO_NOTE_RICH?.setLayout?.(Number(sizeChoice.select.value),alignChoice.select.value);paintNoteLayout();};
+ sizeChoice.select.addEventListener('change',applyLayout);alignChoice.select.addEventListener('change',applyLayout);
+ dlg.addEventListener('seyveo:note-layout',paintNoteLayout);dlg.addEventListener('seyveo:smart-note-open',paintNoteLayout);paintNoteLayout();
+ const ribbon=[textBtn,draw,attach,check,sayviBtn,sizeChoice.wrap,alignChoice.wrap,formatButton,tableBtn,paperBtn,voiceBtn,undoQuick,copyQuick,clearQuick];
  for(const button of ribbon)if(button)bar.append(button);
  bar.setAttribute('aria-label','Прокручиваемые инструменты заметки');
  bar.dataset.svUnifiedTools='true';
