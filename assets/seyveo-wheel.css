@@ -1,0 +1,22 @@
+/* Five rows and a centered magnetic selection, shared by every wheel consumer. */
+html body .sv-unified-wheel{
+ box-sizing:border-box!important;display:block!important;position:relative!important;min-width:0!important;width:100%!important;height:200px!important;max-height:200px!important;
+ overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;scroll-snap-type:y mandatory;scroll-padding:80px 0!important;
+ padding:80px 0!important;margin:0!important;border:0!important;border-radius:14px!important;background:transparent!important;box-shadow:none!important;
+ scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+}
+html body .sv-unified-wheel::-webkit-scrollbar{display:none;}
+html body .sv-unified-wheel > .sv-unified-wheel-option{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;height:40px!important;min-height:40px!important;max-height:40px!important;
+ padding:0 4px!important;margin:0!important;border:0!important;border-radius:10px!important;background:transparent!important;box-shadow:none!important;scroll-snap-align:center;flex:none!important;
+ font:500 17px/1.15 system-ui,-apple-system,sans-serif!important;color:var(--text,#20262d)!important;white-space:nowrap!important;transition:opacity .1s,transform .1s;
+}
+html body .sv-unified-wheel > .sv-unified-wheel-option[data-distance="1"]{opacity:.55;transform:scale(.9);}
+html body .sv-unified-wheel > .sv-unified-wheel-option[data-distance="2"]{opacity:.28;transform:scale(.8);}
+html body .sv-unified-wheel > .sv-unified-wheel-option[data-distance="3"]{opacity:.12;transform:scale(.75);}
+html body .sv-unified-wheel > .sv-unified-wheel-option.is-selected{opacity:1;background:rgba(115,127,145,.12)!important;font-weight:600!important;}
+html body .sv-unified-wheel:focus-visible{outline:2px solid #397bc6;outline-offset:2px;}
+html body .sv-wheel-feedback{min-height:44px;border:0;background:transparent;color:var(--secondary,#697583);font:500 12px system-ui;}
+html body .sv-wheel-group{display:flex;gap:8px;align-items:center;width:100%;min-width:0;}
+html body .sv-wheel-group > *{flex:1;min-width:0;}
+@media(prefers-reduced-motion:reduce){html body .sv-unified-wheel-option{transition:none!important;}}
