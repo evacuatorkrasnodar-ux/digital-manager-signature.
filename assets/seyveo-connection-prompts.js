@@ -81,9 +81,14 @@
   const scope=typeof item.scope==='function'?item.scope():item.scope;
   const connected=verified(item.service,scope);
   const allowed=typeof item.visible==='function'?item.visible():true;
-  button.hidden=connected||!allowed;
+  const showStatus=item.service==='documents'&&connected;
+  button.hidden=!allowed||(connected&&!showStatus);
+  if(item.service==='documents')button.dataset.svDocumentConnected=String(showStatus);
   if(button.hidden)return;
-  const content=displayCopy(item.service,scope);if(!content)return;
+  const content=showStatus
+   ?{heading:scope==='business'?'Документы подключены':'Хранилище подключено',caption:'Управление подключениями'}
+   :displayCopy(item.service,scope);
+  if(!content)return;
   item.heading.textContent=content.heading;
   item.caption.textContent=content.caption;
   button.setAttribute('aria-label',content.heading+'. '+content.caption+'. Открыть настройки подключений.');
