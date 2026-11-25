@@ -292,12 +292,14 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     }else if(info.kind==='image'){
      payload={kind:'pages',file};
     }else{
-     if(!window.confirm('Открыть редактируемую текстовую копию PDF? Оригинал сохранится, оформление может отличаться.'))return;
-     say('Подготавливаем текст…');
      const sourceText=window.SEYVEO_DOCUMENT_FILES?.sourceText?.(file)||'';
      if(sourceText.trim()){
+      // A SEYVEO-created PDF already has an editable source. Opening a
+      // separate draft is non-destructive and needs no confirmation.
       payload={kind:'word',text:sourceText,title:file.name.replace(/\.[^.]+$/,''),format:'pdf'};
      }else{
+     if(!window.confirm('Создать текстовую копию стороннего PDF? Исходное оформление может отличаться, оригинал сохранится.'))return;
+     say('Подготавливаем текст…');
      let scanned=null;
      try{scanned=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);}catch{}
      if(!active)return;

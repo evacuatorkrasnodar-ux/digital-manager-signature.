@@ -1206,6 +1206,24 @@ function mount(target,{
     ()=>message('Не удалось открыть системное меню.')
    );
   }
+  function printSelected(){
+   if(sheet.querySelector('.sv-doc-edit-print[open]'))return;
+   // Print the exact generated PDF, never the surrounding application UI.
+   const ready=preparedFile('pdf');if(!ready)return;
+   let url;
+   try{url=URL.createObjectURL(ready.blob);}catch{message('Не удалось подготовить PDF для печати.');return;}
+   const {dlg,content}=templateDialog('Печать');
+   dlg.classList.add('sv-doc-edit-print');
+   const preview=$('iframe','sv-doc-edit-print-preview');
+   preview.title='Предпросмотр документа для печати';preview.src=url;
+   const name=$('strong','sv-doc-edit-print-name',ready.name);
+   const open=$('a','sv-doc-edit-print-open','Открыть для печати');
+   open.href=url;open.target='_blank';open.rel='noopener noreferrer';
+   const hint=$('p','sv-doc-edit-print-hint','В открытом PDF выберите системную печать. На iPhone: «Поделиться» → «Печать».');
+   content.append(name,preview,open,hint);
+   // Keep the object URL valid while the separate native PDF viewer opens.
+   dlg.addEventListener('close',()=>setTimeout(()=>URL.revokeObjectURL(url),120000),{once:true});
+  }
   syncFormat();
   const sheet=$('dialog','sv-doc-edit-sheet');
   sheet.setAttribute('aria-label','Редактор документа');
@@ -1245,7 +1263,9 @@ function mount(target,{
   archive.setAttribute('aria-label','В архив');
   archive.append(actionIcon('archive'),$('span','','В архив'));
   const footer=$('footer','sv-doc-edit-footer');
-  const actions=$('div','sv-doc-edit-actions');actions.append(saveButton,shareButton,archive);
+  const printButton=button('',printSelected,'sv-doc-edit-action');
+  printButton.setAttribute('aria-label','Печать');printButton.append(actionIcon('print'),$('span','','Печать'));
+  const actions=$('div','sv-doc-edit-actions');actions.append(saveButton,shareButton,printButton,archive);
   const draftIndicator=$('small','sv-doc-draft-indicator');draftIndicator.setAttribute('role','status');draftIndicator.textContent=draftFeedback.textContent;
   footer.append(typography,actions,status(''),draftIndicator);
   sheet.append(top,editing,footer);
