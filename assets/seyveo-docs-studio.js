@@ -476,7 +476,7 @@ function mount(target,{
    ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
    ctx.translate(canvas.width,0);ctx.rotate(Math.PI/2);
    ctx.drawImage(image,0,0,page.width,page.height);
-   scans[index]=jpegOf(canvas);selectedScan=index;renderScan();
+   scans[index]={...page,...jpegOf(canvas)};selectedScan=index;renderScan();
 
   }catch{
    if(at===generation&&epoch===operationEpoch)
@@ -609,6 +609,13 @@ function mount(target,{
   const autoActions=[];
   const current=scans[selectedScan];
   if(current?.original){
+   autoActions.push({label:'Авто',icon:'scan',run:async()=>{
+    if(importBusy||activeScanViewer?.isPhotoBusy?.())return;
+    if(!window.confirm('Повторно обработать исходный снимок? Текущие правки будут сброшены.'))return;
+    const index=selectedScan,at=generation,epoch=operationEpoch;
+    importBusy=true;
+    try{const image=await imageOf(new Blob([current.original.jpegBytes],{type:'image/jpeg'}));if(at!==generation||epoch!==operationEpoch||scans[index]!==current)return;const fixed=window.SEYVEO_SCAN_AUTO?.correct(canvasOf(image));if(!fixed){message('Границы листа не подтверждены. Можно обрезать вручную.');return;}scans[index]={...jpegOf(fixed),original:current.original,automatic:true};renderScan();}catch{message('Не удалось обработать снимок.');}finally{if(at===generation&&epoch===operationEpoch)importBusy=false;}
+   }});
    autoActions.push({label:'Оригинал',icon:'original',run:()=>{
     if(importBusy||activeScanViewer?.isPhotoBusy?.())return;
     if(!window.confirm('Вернуть исходный снимок страницы? Текущие правки будут сброшены.'))return;

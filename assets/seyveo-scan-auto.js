@@ -110,7 +110,7 @@ function capture(onAttach){
  dialog.append(head,stage,rail,camera,gallery);document.body.append(dialog);
  let original=null,processed=null,chosen=null,url='',epoch=0;
  function show(file){chosen=file;if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(file);img.src=url;img.hidden=false;done.disabled=false;}
- async function load(file){if(!file)return;const t=++epoch;done.disabled=true;toggle.hidden=true;original=file;processed=null;status.textContent='Проверяем границы документа…';const result=await process(file);if(!dialog.open||t!==epoch)return;processed=result.corrected?result.file:null;show(result.file);toggle.hidden=!processed;toggle.textContent='Оригинал';status.textContent=result.corrected?'Документ выровнен':'Границы не подтверждены — снимок без обрезки';}
+ async function load(file){if(!file)return;if(!/^image\/(jpeg|png|webp)$/i.test(file.type)||!file.size||file.size>12*1024*1024){status.textContent='Выберите JPEG, PNG или WebP до 12 МБ.';return;}const t=++epoch;done.disabled=true;toggle.hidden=true;original=file;processed=null;status.textContent='Проверяем границы документа…';const result=await process(file);if(!dialog.open||t!==epoch)return;processed=result.corrected?result.file:null;show(result.file);toggle.hidden=!processed;toggle.textContent='Оригинал';status.textContent=result.corrected?'Документ выровнен':'Границы не подтверждены — снимок без обрезки';}
  cam.onclick=()=>camera.click();pick.onclick=()=>gallery.click();
  for(const x of [camera,gallery])x.onchange=()=>{void load(x.files[0]);x.value='';};
  toggle.onclick=()=>{show(chosen===original?processed:original);toggle.textContent=chosen===original?'Авто':'Оригинал';};

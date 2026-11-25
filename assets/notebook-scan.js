@@ -9,6 +9,8 @@ const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanTe
  button=$('noteScanRecognize');
 let selected=null,localURL='',running=false,session=0,loading=null,consented=false,intoOpenNote=false;
 let leavingForDocs=false,editingScanText=false,pendingScanEdit=false,autoReadExisting=false,markPreviewURL='';
+let scanSource=null,scanCorrected=null,scanPreparing=false;
+const originalToggle=document.createElement('button');originalToggle.type='button';originalToggle.className='sv-note-scan-original';originalToggle.hidden=true;originalToggle.textContent='Оригинал';button.before(originalToggle);
 const OCR_PERMISSION='seyveo-local-ocr-consent-v1';
 try{consented=localStorage.getItem(OCR_PERMISSION)==='yes';}catch{}
 let savedScan=null,menuPage='root',exportBusy=false,outputIntent='',preparedFile=null,preparedURL='';
@@ -427,6 +429,7 @@ function offerManual(){
 }
 // Show only usable actions. OCR result remains editable, including manual text.
 function syncActions(){
+ originalToggle.hidden=!(scanSource&&scanCorrected&&!savedScan&&!running&&!scanPreparing&&dialog.dataset.step==='photo'&&!editingScanText);
  if(toPaperButton)toPaperButton.disabled=!selected||running;
  if(toTextButton)toTextButton.disabled=!text.value.trim()||running;
  syncMenu();
@@ -486,7 +489,7 @@ function message(s){status.textContent=s||''}
 function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}if(markPreviewURL){URL.revokeObjectURL(markPreviewURL);markPreviewURL=''}}
 function reset(){
  shareCache=null;clearPrepared();outputIntent='';editingScanText=false;pendingScanEdit=false;delete dialog.dataset.editScanText;savedScan=null;knownScanText=null;editStartText='';showDocument(false);delete dialog.dataset.savedScan;$('noteScanTitle').textContent='Сканировать';
- selected=null;autoReadExisting=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
+ selected=null;scanSource=null;scanCorrected=null;scanPreparing=false;originalToggle.hidden=true;autoReadExisting=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
  if(consentBox)consentBox.hidden=true;
  text.value='';text.wrap='soft';button.disabled=true;
  setStep('pick');syncActions();message('');
@@ -535,20 +538,25 @@ async function select(file,{auto=true}={}){
   dialog.dataset.scanError='true';
   message('Выберите обычную фотографию до 15 МБ.');return;
  }
- clearPrepared();showDocument(false);outputIntent='';session++;selected=file;clearURL();localURL=URL.createObjectURL(file);preview.src=localURL;
+ clearPrepared();showDocument(false);outputIntent='';session++;scanSource=file;scanCorrected=null;scanPreparing=false;selected=file;clearURL();localURL=URL.createObjectURL(file);preview.src=localURL;
  if(consentBox)consentBox.hidden=true;
  text.value='';setStep('photo');
  preview.hidden=false;button.disabled=running;syncActions();
  message('');
  if(auto){
-  const token=session;button.disabled=true;message('Проверяем границы документа…');
+  const token=session;scanPreparing=true;button.disabled=true;syncActions();message('Проверяем границы документа…');
   const result=await window.SEYVEO_SCAN_AUTO?.process(file);
   if(token!==session||!dialog.open)return;
-  if(result?.corrected){selected=result.file;clearURL();localURL=URL.createObjectURL(selected);preview.src=localURL;}
-  button.disabled=running;message(result?.corrected?'Документ выровнен.':'');
-  pendingScanEdit=!intoOpenNote;button.click();
+  scanPreparing=false;
+  if(result?.corrected){scanCorrected=result.file;selected=result.file;clearURL();localURL=URL.createObjectURL(selected);preview.src=localURL;originalToggle.textContent='Оригинал';}
+  button.disabled=running;syncActions();message(result?.corrected?'Документ выровнен. Проверьте снимок.':'');
+  pendingScanEdit=!intoOpenNote;if(!result?.corrected)button.click();
  }
 }
+originalToggle.addEventListener('click',()=>{
+ if(!scanSource||!scanCorrected||running||scanPreparing||savedScan)return;
+ selected=selected===scanSource?scanCorrected:scanSource;clearURL();localURL=URL.createObjectURL(selected);preview.src=localURL;originalToggle.textContent=selected===scanSource?'Авто':'Оригинал';text.value='';syncActions();message(selected===scanSource?'Исходная фотография.':'Документ выровнен.');
+});
 function loadEngine(){
  if(window.Tesseract?.createWorker)return Promise.resolve(window.Tesseract);
  if(loading)return loading;
@@ -565,7 +573,7 @@ function loadEngine(){
  return loading;
 }
 async function recognize(){
- if(running||!selected)return;
+ if(running||scanPreparing||!selected)return;
  const file=selected,token=++session,retainLines=keepLines?.checked!==false;
  running=true;button.disabled=true;
  if(manualButton)manualButton.hidden=true;
