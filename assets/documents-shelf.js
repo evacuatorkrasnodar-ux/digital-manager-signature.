@@ -219,9 +219,8 @@ function openDocumentDetails(state,item){
  due.classList.add('sv-doc-detail-date');
  const extra=el('details','sv-doc-version-history sv-doc-detail-extra');
  const extraTitle=el('summary','');extraTitle.append(actionIcon('info'),el('span','','Дополнительные сведения'));extra.append(extraTitle);
- const status=field('Статус',select('Статус',[['','Не указан'],['draft','Черновик'],['ready','Готов'],['sent','Отправлен'],['signed','Подписан'],['paid','Оплачен'],['closed','Закрыт']],item.status||''),'check',extra);
+ const status=field('Состояние документа',select('Состояние документа',[['','Не указано'],['draft','Черновик'],['ready','Подготовлен'],['sent','Отправлен'],['signed','Подписан'],['paid','Оплачен'],['closed','Закрыт']],item.status||''),'check',extra);
  extra.append(el('small','sv-doc-my-template-note','Ручная отметка не подтверждает подпись или оплату.'));
- if(item.typeOrigin!=='user')extra.append(el('small','sv-doc-my-template-note','Категория предложена по названию файла.'));
  form.append(extra);
  const action=(name,fn,cls='sv-doc-my-template-option')=>{const n=el('button',cls,name);n.type='button';n.addEventListener('click',fn);return n;};
  const save=action('',async()=>{if(save.disabled)return;save.disabled=true;back.disabled=true;feedback.textContent='';try{
@@ -240,7 +239,9 @@ function openDocumentDetails(state,item){
  if(!item.versions?.length)versions.append(el('small','sv-doc-my-template-note','Предыдущих версий пока нет.'));
  const picker=el('input','');picker.type='file';picker.accept='.pdf,.docx,.xlsx,.pptx,.txt,.md,.png,.jpg,.jpeg,.webp';picker.hidden=true;
  picker.addEventListener('change',async()=>{const f=picker.files?.[0];if(!f)return;try{if(!/\.(pdf|docx|xlsx|pptx|txt|md|png|jpe?g|webp)$/i.test(f.name))throw Error('Неподдерживаемый формат.');if(!window.confirm('Добавить новую версию? Предыдущая версия останется в истории.'))return;await api.addVersion(area,item.id,f);dlg.close();}catch(e){feedback.textContent=e.message;}finally{picker.value='';}});
- versions.append(action('Добавить новую версию',()=>picker.click()),picker);history.append(versions);
+ const addVersion=action('',()=>picker.click(),'sv-doc-my-template-option sv-doc-detail-add-version');
+ const plus=el('span','sv-doc-detail-icon');plus.setAttribute('aria-hidden','true');plus.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+ addVersion.append(plus,el('span','','Добавить новую версию'));versions.append(addVersion,picker);history.append(versions);
  const identity=el('div','sv-doc-detail-identity');identity.append(documentArt(classify(item.name),formatOf(item.name)),el('strong','sv-doc-document-name',item.name),el('small','',formatOf(item.name)+' · '+dateOf(item.createdAt)));
  content.append(feedback,form,history,action('Удалить документ',async()=>{if(!window.confirm('Удалить локальный документ и его версии?'))return;try{await api.remove(area,item.id);dlg.close();}catch(e){feedback.textContent=e.message;}},'sv-doc-my-template-delete'));
  dlg.append(head,identity,content);state.recent.append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
