@@ -20,3 +20,10 @@ html body .sv-wheel-feedback{min-height:44px;border:0;background:transparent;col
 html body .sv-wheel-group{display:flex;gap:8px;align-items:center;width:100%;min-width:0;}
 html body .sv-wheel-group > *{flex:1;min-width:0;}
 @media(prefers-reduced-motion:reduce){html body .sv-unified-wheel-option{transition:none!important;}}
+
+html body .sv-unified-wheel[hidden]{display:none!important;}
+html:root body #sayviSurfacePage .sv-doc-picker-sheet.sv-wheel-sheet[open]{height:auto!important;max-height:80vh!important;max-height:80dvh!important;}
+html:root body #sayviSurfacePage .sv-wheel-sheet > .sv-doc-picker-body{display:flex!important;flex-direction:column!important;gap:8px!important;flex:0 1 auto!important;}
+html:root body #sayviSurfacePage .sv-wheel-sheet .sv-wheel-done{grid-column:3!important;grid-row:2!important;justify-self:end;color:#176ab4!important;}
+html body .sv-wheel-group .sv-unified-wheel-option{font-size:clamp(13px,3.8vw,17px)!important;}
+html body .sv-wheel-feedback{margin:0 auto;display:block;}
