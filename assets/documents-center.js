@@ -210,7 +210,7 @@ function draw(){
  };
  picker.accept=allFileTypes;
  picker.setAttribute('aria-label','Добавить документ в архив');
- picker.addEventListener('change',()=>{
+ picker.addEventListener('change',async()=>{
   const file=picker.files?.[0];
   if(!file)return;
   if(file.size>MAX_FILE||file.size===0||!allowed.test(file.name)){
@@ -218,8 +218,10 @@ function draw(){
    if(feedback)feedback.textContent='Выберите PDF, Word, Excel, PowerPoint, текст или изображение до 20 МБ.';
    picker.value='';return;
   }
-  files[area]=file;stored[area]=false;archiveExpanded=true;showPreview=false;
-  draw();
+  const scope=area;
+  try{await window.SEYVEO_DOCUMENT_FILES.save(scope,file,'device');}catch(e){const feedback=host?.querySelector('.sv-doc-selection-status');if(feedback)feedback.textContent=e.message||'Не удалось сохранить локальную копию.';return;}
+  if(scope!==area||!picker.isConnected)return;
+  files[scope]=file;stored[scope]=false;showPreview=true;draw();
  });
  // One working developer tool surface (scan, file, create, signature,
  // print). Existing archive file picker and encryption remain authoritative.
@@ -271,7 +273,7 @@ function draw(){
   onOpenFile(file,fromVault){
    if(!(file instanceof File))return;
    files[area]=file;stored[area]=!!fromVault;
-   showPreview=true;archiveExpanded=true;draw();
+   showPreview=true;archiveExpanded=!!fromVault;draw();
   }
  });
 
@@ -338,7 +340,7 @@ function draw(){
  host.append(archive);
  const safety=el('details','sv-doc-safety');
  safety.append(el('summary','','О защите данных'),
-  note('Архив защищён отдельным паролем, который нельзя восстановить. Черновики автоматически сохраняются на этом устройстве и шифруются ключом браузера без отдельного пароля; это не резервная копия. Очистка данных браузера может удалить документы и черновики. Сохраните важные файлы отдельно. Учебные согласования не шифруются — не используйте в них реальные данные.'));
+  note('Архив защищён отдельным паролем, который нельзя восстановить. Черновики и локальные копии файлов шифруются ключом браузера без отдельного пароля. Это не резервная копия и не парольный архив. Очистка данных браузера может удалить документы и черновики. Сохраните важные файлы отдельно. Учебные согласования не шифруются — не используйте в них реальные данные.'));
  // Keep the legal/storage explanation accessible when the vault opens,
  // without a second visual section under the collapsed archive card.
  archive.append(safety);

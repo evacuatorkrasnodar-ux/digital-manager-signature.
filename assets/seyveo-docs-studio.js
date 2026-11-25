@@ -571,10 +571,11 @@ function mount(target,{
    });
    counter.append(thumbs,pdfPreviewCard());
    counter.append(controls(
-    button('Сохранить PDF',()=>{
-     try{save(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf');
-      message('PDF подготовлен для сохранения. Проверьте загрузки.');
-     }catch{message('Не удалось собрать PDF.');}
+    button('Сохранить PDF',async()=>{
+     try{const name='Скан '+new Date().toLocaleDateString('ru-RU')+' '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}).replace(':','-')+'.pdf';
+      const file=asFile(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),name);
+      await window.SEYVEO_DOCUMENT_FILES.save(area,file,'scan');message('PDF сохранён в папке «Сканы».');
+     }catch(e){message(e.message||'Не удалось сохранить PDF.');}
     },'sv-doc-tool-primary'),
     button('В Файлы / поделиться',()=>{
      try{
@@ -804,12 +805,12 @@ function mount(target,{
     return null;
    }
   }
-  function saveSelected(){
+  async function saveSelected(){
    const ready=preparedFile();if(!ready)return;
    try{
-    save(ready.blob,ready.name);
-    message(ready.label==='PDF'?'PDF сохранён как изображение текста. Проверьте загрузки.':'Word подготовлен. Проверьте загрузки.');
-   }catch{message('Не удалось сохранить документ.');}
+    await window.SEYVEO_DOCUMENT_FILES.save(area,asFile(ready.blob,ready.name),'created');
+    message('Документ сохранён в папке «Созданные».');
+   }catch(e){message(e.message||'Не удалось сохранить документ.');}
   }
   function shareSelected(){
    const ready=preparedFile();if(!ready)return;

@@ -11,7 +11,12 @@ const el=(tag,cls,value)=>{
  if(value!==undefined)n.textContent=value;
  return n;
 };
+const localFiles=()=>window.SEYVEO_DOCUMENT_FILES;
 const categories=[
+ {id:'all',title:'Все файлы'},
+ {id:'device',title:'На устройстве'},
+ {id:'scan',title:'Сканы'},
+ {id:'created',title:'Созданные'},
  {id:'contracts',title:'Договоры'},
  {id:'projects',title:'Проекты'},
  {id:'clients',title:'Клиенты'},
@@ -23,9 +28,11 @@ const examples=[
  {type:'images',format:'JPG',name:'Фотография'},
  {type:'sheets',format:'XLSX',name:'Таблица'}
 ];
-const inFolder=(name,id)=>{
- if(id==='archive')return true;
- const value=String(name||'').toLocaleLowerCase('ru-RU');
+const inFolder=(item,id)=>{
+ if(id==='archive')return item.saved===true;
+ if(['scan','created','device'].includes(id))return item.source===id;
+ if(item.folder)return item.folder===id;
+ const value=String(item.name||'').toLocaleLowerCase('ru-RU');
  if(id==='contracts')return /договор|контракт|соглашен|contract|agreement/.test(value);
  if(id==='projects')return /проект|project|бриф|brief|задач/.test(value);
  if(id==='clients')return /клиент|customer|client|заказчик/.test(value);
@@ -79,8 +86,9 @@ function itemsFor(state){
  const records=state.unlocked?state.records.map(item=>({
   id:item.id,name:item.name,createdAt:item.createdAt,saved:true
  })):[];
+ records.push(...state.local.filter(item=>item.kind==='file').map(item=>({...item,local:true,saved:false})));
  const selected=state.options.getSelected?.();
- if(selected instanceof File){
+ if(selected instanceof File&&!records.some(item=>item.local&&item.name===selected.name&&item.size===selected.size)){
   records.unshift({id:'selected',name:selected.name,createdAt:Date.now(),saved:false,file:selected});
  }
  return records.sort((a,b)=>b.createdAt-a.createdAt);
@@ -88,7 +96,7 @@ function itemsFor(state){
 function paint(state){
  if(state!==active)return;
  const all=itemsFor(state);
- const filtered=all.filter(item=>(state.filter==='all'||inFolder(item.name,state.filter))&&
+ const filtered=all.filter(item=>(state.filter==='all'||inFolder(item,state.filter))&&
   (!state.query||item.name.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').includes(state.query.toLocaleLowerCase('ru-RU').replace(/ё/g,'е'))));
  const subset=state.expanded?filtered:filtered.slice(0,4);
  const recentScroll=state.recentGrid.scrollLeft;
@@ -104,7 +112,7 @@ function paint(state){
   if(showingFormats)state.recent.style.setProperty('display','none','important');
   else state.recent.style.removeProperty('display');
  }
- state.recentTitle.textContent='Недавние';
+ state.recentTitle.textContent=state.filter==='all'?(state.expanded?'Все файлы':'Недавние'):([...categories,...state.local.filter(x=>x.kind==='folder').map(x=>({id:x.id,title:x.name}))].find(x=>x.id===state.filter)?.title||'Файлы');
  const hasMore=filtered.length>4;
  state.showAll.textContent=state.expanded?'Свернуть':'Все файлы ›';
  state.showAll.setAttribute('aria-label',state.expanded?'Свернуть список документов':'Показать все документы');
@@ -131,9 +139,9 @@ function paint(state){
   const empty=el('div','sv-doc-recents-empty');
   empty.append(documentArt('empty',''));
   const copy=el('span','sv-doc-recents-empty-copy');
-  const filteredName=categories.find(x=>x.id===state.filter)?.title;
+  const filteredName=[...categories,...state.local.filter(x=>x.kind==='folder').map(x=>({id:x.id,title:x.name}))].find(x=>x.id===state.filter)?.title;
   // The locked vault does not reveal whether files exist.
-  const locked=!state.unlocked;
+  const locked=!state.unlocked&&state.filter==='archive';
   if(locked)empty.classList.add('sv-doc-recents-locked');
   copy.append(el('strong','',locked?'Архив закрыт'
    :filteredName?'В папке «'+filteredName+'» пусто':'Пока нет документов'));
@@ -154,18 +162,18 @@ function paint(state){
    card.append(documentArt(type,formatOf(item.name)));
    const fileName=el('strong','sv-doc-recent-name',item.name);
    fileName.title=item.name;
-   const detail=el('small','sv-doc-recent-date',item.saved?dateOf(item.createdAt):'Не сохранён');
+   const detail=el('small','sv-doc-recent-date',item.saved||item.local?dateOf(item.createdAt):'Не сохранён');
    card.append(fileName,detail);
    card.addEventListener('click',async()=>{
     if(state!==active)return;
-    if(!item.saved){state.options.onOpenFile?.(item.file,false);return;}
+    if(!item.saved&&!item.local){state.options.onOpenFile?.(item.file,false);return;}
     card.disabled=true;
     state.status.textContent='Открываем документ…';
     try{
-     const f=await vault()?.getFile(state.options.area,item.id);
+     const f=item.local?await localFiles().get(state.options.area,item.id):await vault()?.getFile(state.options.area,item.id);
      if(state!==active)return;
      state.status.textContent='';
-     state.options.onOpenFile?.(f,true);
+     state.options.onOpenFile?.(f,!item.local);
     }catch(err){
      if(state!==active)return;
      state.status.textContent=err?.message||'Не удалось открыть файл.';
@@ -173,7 +181,21 @@ function paint(state){
      refresh();
     }
    });
-   state.recentGrid.append(card);
+   if(item.local){
+    const manage=async()=>{
+     const folders=[...categories.filter(x=>['contracts','projects','clients'].includes(x.id)),...state.local.filter(x=>x.kind==='folder').map(x=>({id:x.id,title:x.name}))];
+     const choices=folders.map((x,i)=>(i+1)+'. '+x.title).join('\n');
+     const answer=window.prompt('Переместить в папку — введите номер. 0 — без папки. У — удалить локальную копию.\n'+choices);
+     if(answer===null)return;
+     try{
+      if(answer.toLowerCase()==='у'){if(window.confirm('Удалить локальную копию файла?'))await localFiles().remove(state.options.area,item.id);}
+      else if(answer==='0')await localFiles().update(state.options.area,item.id,{folder:''});
+      else if(folders[Number(answer)-1])await localFiles().update(state.options.area,item.id,{folder:folders[Number(answer)-1].id});
+     }catch(e){state.status.textContent=e.message||'Не удалось изменить файл.';}
+    };
+    card.addEventListener('contextmenu',e=>{e.preventDefault();void manage();});
+    const wrap=el('div','sv-doc-local-file-wrap');const more=el('button','sv-doc-file-more','···');more.type='button';more.setAttribute('aria-label','Действия с файлом '+item.name);more.addEventListener('click',manage);wrap.append(card,more);state.recentGrid.append(wrap);
+   }else state.recentGrid.append(card);
   }
  }
  state.recentGrid.scrollLeft=recentScroll;
@@ -183,8 +205,8 @@ function paint(state){
  // Repainting after selecting a folder must not jump the swipe row back to start.
  const folderScroll=state.foldersGrid.scrollLeft;
  state.foldersGrid.replaceChildren();
- for(const category of categories){
-  const count=all.filter(item=>inFolder(item.name,category.id)).length;
+ for(const category of [...categories,...state.local.filter(x=>x.kind==='folder').map(x=>({id:x.id,title:x.name,custom:true}))]){
+  const count=all.filter(item=>category.id==='all'||inFolder(item,category.id)).length;
   const entry=el('button','sv-doc-folder-card sv-doc-folder-'+category.id);
   entry.type='button';entry.setAttribute('aria-pressed',String(state.filter===category.id));
   entry.setAttribute('aria-label','Подборка '+category.title+(state.unlocked?', '+count+' файлов':''));
@@ -192,12 +214,17 @@ function paint(state){
   if(state.unlocked)entry.title=count+' '+(count===1?'файл':count>=2&&count<=4?'файла':'файлов');
   entry.addEventListener('click',()=>{
    if(state!==active)return;
-   state.filter=state.filter===category.id?'all':category.id;
-   state.expanded=false;paint(state);
-   if(!state.unlocked)openArchive(state);
+   if(category.id==='device'){state.options.onPick?.('all');return;}
+   state.filter=category.id;state.expanded=true;paint(state);
+   if(category.id==='archive'&&!state.unlocked)openArchive(state);
+   else state.recent.scrollIntoView?.({block:'nearest',behavior:'smooth'});
   });
+  if(category.custom)entry.addEventListener('contextmenu',async e=>{e.preventDefault();const name=window.prompt('Название папки',category.title);if(name?.trim())try{await localFiles().update(state.options.area,category.id,{name});}catch(err){state.status.textContent=err.message;}});
   state.foldersGrid.append(entry);
  }
+ const add=el('button','sv-doc-folder-card sv-doc-folder-add');add.type='button';add.append(folderArt(),el('strong','','Новая папка'));
+ add.addEventListener('click',async()=>{const name=window.prompt('Название папки');if(!name?.trim())return;try{await localFiles().createFolder(state.options.area,name);}catch(err){state.status.textContent=err.message||'Не удалось создать папку';}});
+ state.foldersGrid.append(add);
  state.foldersGrid.scrollLeft=folderScroll;
  state.folderCaption.textContent='';
 }
@@ -206,6 +233,7 @@ async function refresh(){
  const token=++state.token;
  // Never display metadata from the previous unlocked session while checking.
  state.records=[];state.unlocked=false;paint(state);
+ try{const local=await localFiles()?.list(state.options.area)||[];if(state!==active||token!==state.token)return;state.local=local;paint(state);}catch(e){if(state===active&&token===state.token)state.status.textContent='Не удалось прочитать локальные файлы.';}
  try{
   const module=vault();
   if(!module)return;
@@ -225,7 +253,7 @@ async function refresh(){
 function mount(parent,options={}){
  if(!parent)return false;
  destroy();
- const state={options,token:0,filter:'all',query:'',expanded:false,unlocked:false,records:[]};
+ const state={options,token:0,filter:'all',query:'',expanded:false,unlocked:false,records:[],local:[]};
  active=state;
  const recent=el('section','sv-doc-shelf sv-doc-recents');
  const header=el('div','sv-doc-shelf-heading');
@@ -235,9 +263,7 @@ function mount(parent,options={}){
  showAll.type='button';
  showAll.addEventListener('click',()=>{
   if(state!==active)return;
-  if(!state.unlocked){openArchive(state);return;}
   if(state.filter!=='all'){state.filter='all';state.expanded=false;paint(state);return;}
-  if(itemsFor(state).length<=4&&!state.expanded){openArchive(state);return;}
   state.expanded=!state.expanded;paint(state);
  });
  header.append(showAll);
@@ -269,6 +295,7 @@ function destroy(){
 document.addEventListener('seyveo:documents-vault-changed',event=>{
  if(active&&(!event.detail?.area||event.detail.area===active.options.area))refresh();
 });
+document.addEventListener('seyveo:document-files-changed',event=>{if(active?.options.area===event.detail?.area)void refresh();});
 window.addEventListener('pagehide',()=>{
  if(!active)return;
  active.token++;active.records=[];active.unlocked=false;paint(active);

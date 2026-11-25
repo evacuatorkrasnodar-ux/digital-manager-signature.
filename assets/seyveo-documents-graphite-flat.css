@@ -1861,3 +1861,11 @@ html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-do
 html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-feedback:empty,html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-indicator:empty{display:none!important}
 html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-feedback,html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-indicator{font-size:11px;color:var(--secondary,#626A73);margin:0!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"][data-create-stage="choose"]:not([hidden]){margin-bottom:2px!important;padding-bottom:1px!important}
+
+/* Documents: continuous horizontal folders, four visible slots. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid{display:grid!important;grid-template-columns:none!important;grid-auto-flow:column!important;grid-auto-columns:calc((100% - 12px) / 4)!important;overflow-x:auto!important;overflow-y:hidden!important;gap:4px!important;scrollbar-width:none;scroll-snap-type:x proximity;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid::-webkit-scrollbar{display:none}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-card{min-width:0!important;scroll-snap-align:start}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folder-card strong{font-size:11px!important;white-space:normal!important;text-align:center!important;line-height:1.25!important}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-local-file-wrap{position:relative;min-width:0;display:flex;flex-direction:column;align-items:stretch}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-file-more{align-self:flex-end;min-height:32px!important;min-width:44px!important;border:0!important;background:transparent!important;color:inherit!important;box-shadow:none!important}
