@@ -67,6 +67,11 @@
  const cabinetScroll=document.getElementById('unifiedBusinessTasksView');
  if(cabinetScroll){
   const syncCabinetGlass=()=>shell.classList.toggle('sv-cabinet-under-scroll',cabinetScroll.scrollTop>2);
+  const measureCabinetTabs=()=>{
+   if(nav.offsetHeight>0)shell.style.setProperty('--sv-cabinet-tab-height',nav.offsetHeight+'px');
+  };
+  if(typeof ResizeObserver==='function')new ResizeObserver(measureCabinetTabs).observe(nav);
+  measureCabinetTabs();
   cabinetScroll.addEventListener('scroll',syncCabinetGlass,{passive:true});
   syncCabinetGlass();
  }
