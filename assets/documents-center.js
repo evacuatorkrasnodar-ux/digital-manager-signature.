@@ -325,6 +325,7 @@ function draw(){
    clearSession(){reset();draw();}
   });
  }
+ archive.addEventListener('seyveo:open-archive',openArchiveSheet);
  archive.addEventListener('close',()=>{if(archive.isConnected&&area===scopeArchive){archiveExpanded=false;contents.replaceChildren();}});
  window.SEYVEO_SHEET_NAVIGATION?.attach(archiveHead,null,()=>archive.close());
  if(selected&&showPreview){
@@ -479,11 +480,7 @@ async function searchInCurrentDocuments(query,{requestArchive=false,scope=area}=
  if(unlocked)void window.SEYVEO_DOCUMENT_SHELF?.refresh?.();
  window.SEYVEO_DOCUMENT_SHELF?.search?.(String(query||'').slice(0,160));
  if(!unlocked&&requestArchive){
-  const details=host.querySelector('.sv-doc-vault-shell');
-  if(details){
-   details.open=true; // the existing vault UI handles password input
-   details.scrollIntoView?.({block:'nearest',behavior:'smooth'});
-  }
+  host.querySelector('.sv-doc-archive-sheet')?.dispatchEvent(new Event('seyveo:open-archive'));
  }
  return true;
 }
@@ -493,11 +490,10 @@ function revealArchiveForSearch(scope='personal',query=''){
  const target=scope==='business'&&!employeePreview()?'business':'personal';
  if(target!==area)setArea(target);
  if(view==='flow'&&!employeePreview()){view='archive';draw()}
- const details=host?.querySelector('.sv-doc-vault-shell');
+ const details=host?.querySelector('.sv-doc-archive-sheet');
  if(!details)return false;
- details.open=true;
+ details.dispatchEvent(new Event('seyveo:open-archive'));
  if(query)window.SEYVEO_DOCUMENT_SHELF?.search?.(query);
- details.scrollIntoView?.({block:'nearest',behavior:'smooth'});
  return true;
 }
 function destroy(){
