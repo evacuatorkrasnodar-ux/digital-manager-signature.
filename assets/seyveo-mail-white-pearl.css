@@ -718,7 +718,7 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
    the lower 45px of the header lets moving content diffuse behind the glass.
    The feather starts at the capsule bottom, not on the controls. */
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head > .sv-mail-accounts:not([hidden]){
- background:rgba(239,241,244,.50)!important;
+ background:rgba(239,241,244,.45)!important;
  -webkit-backdrop-filter:blur(12px) saturate(105%)!important;
  backdrop-filter:blur(12px) saturate(105%)!important;
  box-shadow:0 3px 9px rgba(38,48,60,.045),inset 0 1px 0 rgba(255,255,255,.85)!important;
