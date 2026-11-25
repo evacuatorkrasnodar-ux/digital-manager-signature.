@@ -1878,25 +1878,16 @@ function installDocumentsSearch(){
 function render(kind){
  const descriptor=subjects[kind];if(!descriptor)return false;
  releaseFile();page.dataset.svSubject=kind;
- // This Back button is shared; don't leak Mail's graphite inline face
- // onto Documents and Health when switching views.
- if(kind!=='mail'){
-  for(const property of ['background','background-image','border-radius','box-shadow','color']){
-   back.style.removeProperty(property);
-  }
+ // Shared Back keeps its original node and handler. Remove the old
+ // inline Documents overrides; theme and geometry are owned by CSS.
+ for(const property of ['background','background-image','border-radius','box-shadow','color','width','height','min-width','min-height','padding','border']){
+  back.style.removeProperty(property);
  }
  // Documents use one real navigation row, with Back beside the title.
  // Keep the same Back element and click handler across every surface.
  const header=title.closest('.sv-deep-top');
  if(header){
   if(kind==='contract'){
-   // Unlike Search, Back uses the approved graphite navigation circle.
-   // Late legacy selectors otherwise erase its background in Safari.
-   for(const [property,value] of Object.entries({
-    background:'#38383A','background-image':'none','border-radius':'50%',
-    'box-shadow':'none',color:'#F3F5F6',width:'44px',height:'44px',
-    'min-width':'44px','min-height':'44px',padding:'0',border:'0'
-   }))back.style.setProperty(property,value,'important');
    // Keep Back INSIDE the titlebar grid, alongside the centered heading.
    // Putting it on the outer header creates a second row and clips the title.
    const titlebar=title.closest('.sv-continuity-titlebar')||header;
