@@ -527,7 +527,12 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
   background:transparent!important;z-index:8!important;
  }
  html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2::before{
-  height:auto!important;bottom:-24px!important;
+  /* End the clear glass at the name capsule, not at the role or the
+     full conversation header. Keep identity and message geometry intact. */
+  bottom:auto!important;
+  height:calc(2px + env(safe-area-inset-top,0px) + var(--svcp-header-avatar,56px) + var(--svcp-header-overlap,-5px) + var(--svcp-header-label,28px) + 12px)!important;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)!important;
+  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)!important;
  }
 }
 
