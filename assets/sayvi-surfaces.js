@@ -217,7 +217,7 @@ function readMailSessionDrafts(){
    .slice(0,60).map(d=>({
     id:d.id.slice(0,100),account:['personal','business'].includes(d.account)?d.account:'',
     to:String(d.to||'').slice(0,254),cc:String(d.cc||'').slice(0,1000),bcc:String(d.bcc||'').slice(0,1000),subject:String(d.subject||'').slice(0,240),
-    body:String(d.body||'').slice(0,10000),
+    body:String(d.body||'').slice(0,10000),quote:String(d.quote||'').slice(0,12000),
     attachments:Array.isArray(d.attachments)?d.attachments.filter(a=>a&&typeof a.id==='string'&&typeof a.name==='string')
      .slice(0,5).map(a=>({id:a.id.slice(0,90),name:a.name.slice(0,150),
       size:Math.max(0,Number(a.size)||0),type:String(a.type||'').slice(0,110)})):[]
@@ -884,7 +884,14 @@ function mailView(){
    mailVisible(m.account)&&!m.trashed&&!m.removed&&(m.spam||sampleBlocked(m))).length;
   return 0;
  }
- function openEditor(id=null,reply=null){
+ let mailComposeSeed=null;
+ function openEditor(id=null,reply=null,mode='reply'){
+  mailComposeSeed=reply?{
+   to:mode==='forward'?'':sampleMailAddress(reply),
+   subject:(mode==='forward'?'Fwd: ':'Re: ')+String(reply.subject||''),
+   quote:('От: '+reply.from+' · '+sampleMailAddress(reply)+'\nТема: '+reply.subject+'\n\n'+String(reply.body||'')).slice(0,12000),
+   mode
+  }:null;
   mailDraftSelecting=false;selectedDraftIds.clear();
   mailBulkSelecting=false;selectedMailIds.clear();
   guardOpen=false;
@@ -893,14 +900,8 @@ function mailView(){
   mailComposeScope=reply?.account||(id?mailDrafts.find(d=>d.id===id)?.account:null)||(mailScope==='all'?null:mailScope);
   if(reply)mailEditingId=null;
   paint();
-  if(reply){
-   const subjectField=content.querySelector('[data-mail-field="subject"]');
-   if(subjectField)subjectField.value='Re: '+reply.subject;
-   info.textContent='Черновик ответа на учебный пример — не отправляется.';
-  }
-  // Generated replies should open as a readable draft, without forcing the
-  // iOS keyboard over the suggested text and bottom actions.
-  // A real recipient address is not present in example mail, so leave it blank.
+  if(reply)info.textContent=mode==='forward'?'Черновик пересылки учебного письма. Укажите получателя.':'Ответ на учебный пример. Адрес демонстрационный, письмо не отправляется.';
+  // Do not force the keyboard open when reading the original message.
   if(!reply)content.querySelector('[data-mail-field="to"]')?.focus();
  }
  function selectFolder(folder){
@@ -986,6 +987,8 @@ function mailView(){
  let mailEditorViewportCleanup=null;
  function drawEditor(){
   const original=mailDrafts.find(d=>d.id===mailEditingId);
+  const seed=mailComposeSeed;mailComposeSeed=null;
+  const quotedText=String(original?.quote||seed?.quote||'').slice(0,12000);
   const form=create('form','sv-mail-editor');
   form.setAttribute('aria-label','Черновик письма SEYVEO');
   const heading=create('header','sv-mail-editor-header');
@@ -1018,7 +1021,7 @@ function mailView(){
    input.maxLength=name==='body'?10000:name==='to'?254:['cc','bcc'].includes(name)?1000:240;input.value=value||'';
    label.append(input);form.append(label);return input;
   };
-  const to=makeField('Кому','to','input',original?.to,'email');
+  const to=makeField('Кому','to','input',original?.to??seed?.to??'','email');
   const copyToggle=create('button','sv-mail-copy-toggle','Копия / скрытая копия');
   copyToggle.type='button';copyToggle.append(mailIcon('back'));form.append(copyToggle);
   const cc=makeField('Копия','cc','input',original?.cc,'email');
@@ -1032,8 +1035,14 @@ function mailView(){
   }
   copyToggle.addEventListener('click',()=>{copiesOpen=!copiesOpen;showCopies();});
   showCopies();
-  const subj=makeField('Тема','subject','input',original?.subject,'text');
+  const subj=makeField('Тема','subject','input',original?.subject??seed?.subject??'','text');
   const message=makeField('Сообщение','body','textarea',original?.body);
+  if(quotedText){
+   form.classList.add('sv-mail-has-quote');
+   const quote=create('blockquote','sv-mail-compose-quote');
+   quote.append(create('strong','','Исходное письмо'),create('p','',quotedText));
+   form.append(quote);
+  }
   const attachmentPicker=create('input','sv-mail-attachment-picker');
   attachmentPicker.type='file';attachmentPicker.hidden=true;attachmentPicker.multiple=true;
   attachmentPicker.accept='.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv,.png,.jpg,.jpeg,.webp';
@@ -1166,7 +1175,7 @@ function mailView(){
    const recipient=to.value.trim(),copy=cc.value.trim(),blind=bcc.value.trim(),subjectText=subj.value.trim(),bodyText=message.value.trim();
    if(!recipient&&!copy&&!blind&&!subjectText&&!bodyText&&!attachments.length&&!original)return false;
    const item={id:draftId,account:original?.account||accountValue||'',
-    to:recipient.slice(0,254),cc:copy.slice(0,1000),bcc:blind.slice(0,1000),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000),attachments:attachments.map(a=>({...a}))};
+    to:recipient.slice(0,254),cc:copy.slice(0,1000),bcc:blind.slice(0,1000),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000),quote:quotedText,attachments:attachments.map(a=>({...a}))};
    const index=mailDrafts.findIndex(d=>d.id===draftId);
    if(index<0)mailDrafts.unshift(item);else mailDrafts[index]=item;
    persistMailDrafts();
@@ -1220,6 +1229,13 @@ function mailView(){
   send.append(mailIcon('send'));
   send.setAttribute('aria-label','Отправить письмо');
   send.title='Отправить письмо';
+  const syncSend=()=>{
+   const valid=!!to.value.trim()&&to.validity.valid&&cc.validity.valid&&bcc.validity.valid;
+   send.disabled=!valid;
+   send.title=valid?'Отправить письмо':'Укажите корректный адрес получателя';
+  };
+  for(const field of [to,cc,bcc])field.addEventListener('input',syncSend);
+  syncSend();
   send.addEventListener('click',()=>{
    const saved=autosaveDraft();
    status.textContent=saved?'Для отправки подключите почту. Черновик сохранён, письмо не отправлено.':'Для отправки подключите почтовый ящик. Письмо не отправлено.';
@@ -1435,17 +1451,7 @@ function mailView(){
   };
   addReplyAction('reply','Ответить',()=>openEditor(null,item));
   // Samples have no verified recipient list; never fabricate Reply All.
-  addReplyAction('forward','Переслать',()=>{
-    openEditor(null,item);
-    const subject=content.querySelector('[data-mail-field="subject"]');
-    const field=content.querySelector('[data-mail-field="body"]');
-    if(subject)subject.value=('Fwd: '+item.subject).slice(0,240);
-    if(field){
-     field.value=('\n\n—— Пересланное письмо ——\nОт: '+item.from+'\nТема: '+item.subject+'\n\n'+String(item.body||'')).slice(0,10000);
-     field.dispatchEvent(new Event('input',{bubbles:true}));
-    }
-    info.textContent='Черновик пересылки учебного письма. Укажите получателя.';
-   });
+  addReplyAction('forward','Переслать',()=>openEditor(null,item,'forward'));
   reply.classList.add('sv-mail-reply-action');
   reply.replaceChildren(mailIcon('reply'));
   reply.setAttribute('aria-label','Ответить или переслать письмо');
