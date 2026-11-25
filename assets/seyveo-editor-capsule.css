@@ -1,33 +1,51 @@
 /* Shared notebook pearl material for the PDF/Word contextual ribbons. */
-/* The pearl shell stays still; only the rectangular inner track scrolls.
-   Separate the PDF track from notebook layout selectors. */
-html:root body .sv-pdf-markup .sv-pdf-tool-shell{
- box-sizing:border-box;display:flex;align-items:center;flex:0 0 54px;min-width:0;width:100%;height:54px;padding:3px 9px;
- border-radius:999px;border:var(--sv-dock-pearl-border,var(--sv-white-pearl-edge,1px solid #e6e8eb));
- background:var(--sv-dock-pearl-bg,var(--sv-white-pearl-surface,#f5f5f7));
- box-shadow:var(--sv-dock-pearl-shadow,var(--sv-white-pearl-dock-shadow,none));
- -webkit-backdrop-filter:var(--sv-dock-pearl-blur,none);backdrop-filter:var(--sv-dock-pearl-blur,none);
+/* One shared geometry and material for document typing and PDF markup.
+   The document typing ribbon is the reference, not the larger main dock. */
+html:root body .sv-editor-capsule{
+ --sv-editor-rail-height:50px;
+ --sv-editor-rail-width:404px;
+ --sv-editor-rail-target:44px;
+ --sv-editor-rail-gap:1px;
+ --sv-editor-rail-padding:2px 3px;
+ --sv-editor-rail-border:var(--sv-white-pearl-edge,1px solid transparent);
+ --sv-editor-rail-bg:var(--sv-white-pearl-surface,var(--card,#f5f5f7));
+ --sv-editor-rail-shadow:var(--sv-white-pearl-dock-shadow,none);
+ --sv-editor-rail-active:rgba(10,132,255,.09);
+ --sv-editor-rail-active-ink:#176ab4;
+ --sv-editor-rail-icon:20px;
+ --sv-editor-rail-sayvi:26px;
 }
+html:root[data-theme="dark"] body .sv-editor-capsule{--sv-editor-rail-active-ink:#8bc3ff;}
 html:root body .sv-pdf-markup .sv-editor-capsule[data-sv-editor-context="pdf"]{
- box-sizing:border-box;display:flex;align-items:center;justify-content:flex-start;gap:1px;flex:1 1 auto;min-width:0;width:100%;height:46px;padding:1px 0;
- overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain;scroll-snap-type:x proximity;
- -webkit-overflow-scrolling:touch;touch-action:pan-x;scroll-padding-inline:0;
- border:0;border-radius:0;background:transparent;box-shadow:none;
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;flex:none!important;
+ width:100%!important;max-width:var(--sv-editor-rail-width)!important;min-width:0!important;
+ height:var(--sv-editor-rail-height)!important;min-height:var(--sv-editor-rail-height)!important;max-height:var(--sv-editor-rail-height)!important;
+ margin:0 auto!important;padding:var(--sv-editor-rail-padding)!important;gap:var(--sv-editor-rail-gap)!important;
+ border:var(--sv-editor-rail-border)!important;border-radius:999px!important;background:var(--sv-editor-rail-bg)!important;
+ box-shadow:var(--sv-editor-rail-shadow)!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none;
+ -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-snap-type:none;touch-action:pan-x pan-y;
 }
 html:root body .sv-editor-capsule::-webkit-scrollbar{display:none;}
 html:root body .sv-pdf-markup .sv-editor-capsule[data-sv-editor-context="pdf"]>button{
- box-sizing:border-box!important;position:relative!important;display:grid!important;place-items:center!important;flex:1 0 44px!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;max-height:44px!important;padding:0!important;margin:0!important;
- border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;color:var(--text,#27313a)!important;scroll-snap-align:start;line-height:1;
+ box-sizing:border-box!important;position:relative!important;display:grid!important;place-items:center!important;
+ flex:0 0 var(--sv-editor-rail-target)!important;width:var(--sv-editor-rail-target)!important;min-width:var(--sv-editor-rail-target)!important;max-width:var(--sv-editor-rail-target)!important;
+ height:var(--sv-editor-rail-target)!important;min-height:var(--sv-editor-rail-target)!important;max-height:var(--sv-editor-rail-target)!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:999px!important;background:transparent!important;
+ box-shadow:none!important;color:inherit!important;line-height:1;
 }
 html:root body .sv-pdf-markup .sv-editor-capsule[data-sv-editor-context="pdf"]>button:is([aria-pressed="true"],[aria-expanded="true"]){
- color:#176ab4!important;background:rgba(10,132,255,.085)!important;box-shadow:none!important;
+ color:var(--sv-editor-rail-active-ink)!important;background:transparent!important;
 }
-html:root[data-theme="dark"] body .sv-pdf-markup .sv-editor-capsule[data-sv-editor-context="pdf"]>button:is([aria-pressed="true"],[aria-expanded="true"]){color:#8bc3ff!important;background:rgba(139,195,255,.12)!important;}
-html:root body .sv-pdf-markup .sv-editor-capsule[data-sv-editor-context="pdf"]>button:active{background:rgba(116,126,145,.12)!important;}
-html:root body .sv-pdf-markup .sv-editor-capsule[data-sv-editor-context="pdf"]>button>svg{display:block!important;width:23px!important;height:23px!important;margin:0!important;stroke-width:1.7!important;}
-html:root body .sv-pdf-markup .sv-editor-capsule[data-sv-editor-context="pdf"]>button:focus-visible{outline:2px solid #2586ed!important;outline-offset:-3px;}
-html:root body .sv-editor-capsule[data-sv-editor-context="pdf"] .sv-smart-aa{font:600 20px/1 -apple-system,BlinkMacSystemFont,system-ui;letter-spacing:-.06em;}
-html:root body .sv-editor-capsule[data-sv-editor-context="pdf"] .sv-smart-sayvi-icon{display:block;width:29px;height:29px;background:var(--sv-sayvi-mark-image,url("./seyveo-sayvi-user-upload.svg?v=3")) center/contain no-repeat;}
+html:root body .sv-pdf-markup .sv-editor-capsule[data-sv-editor-context="pdf"]>button:is([aria-pressed="true"],[aria-expanded="true"])::before{
+ content:"";position:absolute;inset:5px;border-radius:50%;background:var(--sv-editor-rail-active);pointer-events:none;
+}
+html:root body .sv-pdf-markup .sv-editor-capsule[data-sv-editor-context="pdf"]>button:active{background:var(--sv-editor-rail-active)!important;}
+html:root body .sv-pdf-markup .sv-editor-capsule[data-sv-editor-context="pdf"]>button>svg{
+ display:block!important;width:var(--sv-editor-rail-icon)!important;height:var(--sv-editor-rail-icon)!important;margin:0!important;stroke-width:1.7!important;
+}
+html:root body .sv-pdf-markup .sv-editor-capsule[data-sv-editor-context="pdf"]>button:focus-visible{outline:2px solid #397bc6!important;outline-offset:-2px;}
+html:root body .sv-editor-capsule[data-sv-editor-context="pdf"] .sv-smart-aa{font:600 20px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:-.06em;}
+html:root body .sv-editor-capsule[data-sv-editor-context="pdf"] .sv-smart-sayvi-icon{display:block;width:var(--sv-editor-rail-sayvi);height:var(--sv-editor-rail-sayvi);background:var(--sv-sayvi-mark-image,url("./seyveo-sayvi-user-upload.svg?v=3")) center/contain no-repeat;}
 .sv-editor-color-dot{display:block;width:23px;height:23px;border-radius:50%;background:var(--sv-editor-ink,#20262d);box-shadow:0 0 0 2px #fff,0 0 0 3px #adb4bc;}
 html:root body .sv-pdf-markup.sv-editor-keyboard-open{bottom:var(--sv-editor-keyboard,0px);height:var(--sv-editor-visible-height,100%);max-height:var(--sv-editor-visible-height,100%);border-radius:0;}
 /* Same geometry with or without keyboard: no resizing of tool targets. */

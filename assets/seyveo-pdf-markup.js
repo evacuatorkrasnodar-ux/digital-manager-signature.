@@ -30,9 +30,7 @@ function open(file,{parent,loadPdf,onSave,onSayvi}={}){
  const inputRow=el('div','sv-pdf-markup-input-row');inputRow.hidden=true;
  const input=el('input','sv-pdf-markup-input');input.type='text';input.maxLength=240;input.placeholder='Введите текст, затем коснитесь листа';input.setAttribute('aria-label','Текст для добавления');
  inputRow.append(input);
- const railShell=el('div','sv-pdf-tool-shell');
  const rail=capsule.attach(el('div','sv-pdf-tool-track'),'pdf');
- railShell.append(rail);
  rail.setAttribute('aria-label','Инструменты PDF · листайте вправо для остальных');
  const tools=[];
  function tool(label,id){const b=capsule.button(id,label,undefined,()=>setMode(id));b.setAttribute('aria-pressed','false');tools.push([id,b]);rail.append(b);}
@@ -50,7 +48,7 @@ function open(file,{parent,loadPdf,onSave,onSayvi}={}){
  const redo=capsule.button('redo','Повторить действие',undefined,()=>history('redo'));rail.append(undo,redo);
  const sayvi=onSayvi?capsule.button('sayvi','Сэйви поможет с исходным PDF',undefined,()=>{if(busy)return;if(dirty){status.textContent='Сначала сохраните разметку или вернитесь к оригиналу.';return;}d.close();onSayvi('review');}):null;
  if(sayvi)rail.append(sayvi);
- d.append(head,status,viewport,pager,inputRow,palette,railShell);parent.append(d);
+ d.append(head,status,viewport,pager,inputRow,palette,rail);parent.append(d);
  const releaseViewport=capsule.viewport(d);
  function sync(){
   prev.disabled=busy||index===0;next.disabled=busy||index>=pages.length-1;count.textContent=pages.length?(index+1)+' из '+pages.length:'';
