@@ -244,6 +244,7 @@ for(const id of Object.keys(healthNumberSpecs)){
   if(event.key==='Enter'||event.key===' '){event.preventDefault();openHealthPicker(id)}
  });
 }
+$('calendarHealthPickerDone').parentElement.after(window.SEYVEO_WHEEL.feedbackButton());
 $('calendarHealthPickerCancel').addEventListener('click',()=>closeHealthPicker(false));
 $('calendarHealthPickerDone').addEventListener('click',()=>closeHealthPicker(true));
 $('calendarHealthNumberPicker').addEventListener('click',event=>{
