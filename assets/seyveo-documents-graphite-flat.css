@@ -2091,7 +2091,7 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-template
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-my-template-content{display:block!important;flex:1 1 auto!important;min-height:0!important;overflow:auto!important;overscroll-behavior:contain; padding:0 0 max(8px,env(safe-area-inset-bottom))!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-save{grid-column:3;grid-row:1;justify-self:end;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;padding:0!important;display:grid!important;place-items:center!important;border-radius:50%!important;color:#176ab4!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-save svg{width:22px;height:22px;}
-html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-identity{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 9px;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-identity{display:flex;flex:0 0 auto;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 9px;min-width:0;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-identity .sv-doc-file-art{width:48px!important;height:54px!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-identity small{font-size:12px;color:#697583;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-document-fields{display:block!important;gap:0!important;}
@@ -2124,3 +2124,13 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-template
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-date > .sv-doc-picker-icon svg{display:none!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-date > .sv-doc-picker-icon{display:grid!important;place-items:center;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-date > .sv-doc-picker-icon::after{content:"";width:7px;height:7px;box-sizing:border-box;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(-45deg);}
+
+/* Keep the complete file identity visible while expanding sections. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-detail-identity .sv-doc-file-art{flex:0 0 auto;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-detail-identity .sv-doc-document-name{max-width:100%;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-my-template-content{overflow-anchor:none;}
+@media (max-height:460px){
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-detail-identity{display:grid;grid-template-columns:36px minmax(0,1fr);column-gap:10px;row-gap:1px;align-items:center;text-align:left;padding:2px 0 6px;}
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-detail-identity .sv-doc-file-art{grid-row:1 / span 2;width:32px!important;height:36px!important;}
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-detail-identity .sv-doc-document-name{text-align:left;}
+}
