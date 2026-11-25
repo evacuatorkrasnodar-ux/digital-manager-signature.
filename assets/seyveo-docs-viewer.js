@@ -120,7 +120,7 @@ function loadPdf(){
  }).catch(e=>{pdfLibrary=null;throw e;});
  return pdfLibrary;
 }
-async function readPdfText(file,isActive){
+async function readPdfText(file,isActive,recognizePages){
  const lib=await loadPdf();
  if(!isActive())return '';
  const task=lib.getDocument({data:new Uint8Array(await file.arrayBuffer()),useSystemFonts:true,isEvalSupported:false,disableAutoFetch:true,disableStream:true});
@@ -132,12 +132,26 @@ async function readPdfText(file,isActive){
    if(!isActive())return '';
    const page=await doc.getPage(i),content=await page.getTextContent();
    const text=content.items.filter(x=>typeof x.str==='string').map(x=>x.str+(x.hasEOL?'\n':' ')).join('').trim();
-   page.cleanup();
-   if(!text)throw Error('В PDF есть страницы без текстового слоя. Для них нужно распознавание скана.');
-   texts.push(text);
-   if(texts.join('\n\n').length>12000)throw Error('Документ больше 12 000 знаков. Редактирование копии пока недоступно.');
+   try{
+    if(text){texts.push({text});}
+    else{
+     if(!recognizePages)throw Error('Распознавание текста недоступно.');
+     const v=page.getViewport({scale:1}),scale=Math.min(3,1800/v.width,2400/v.height),vp=page.getViewport({scale});
+     const canvas=document.createElement('canvas');canvas.width=Math.ceil(vp.width);canvas.height=Math.ceil(vp.height);
+     try{
+      await page.render({canvasContext:canvas.getContext('2d',{alpha:false}),viewport:vp}).promise;
+      if(!isActive())return null;
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.92));
+      if(!blob)throw Error('Не удалось подготовить страницу для распознавания.');
+      texts.push({jpegBytes:new Uint8Array(await blob.arrayBuffer())});
+     }finally{canvas.width=0;canvas.height=0;}
+    }
+   }finally{page.cleanup();}
+   if(texts.map(p=>p.text||'').join('\n\n').length>12000)throw Error('Документ больше 12 000 знаков. Редактирование копии пока недоступно.');
   }
-  return texts.join('\n\n');
+  if(!isActive())return null;
+  if(texts.some(p=>p.jpegBytes))return await recognizePages(texts);
+  return texts.map(p=>p.text).join('\n\n');
  }finally{try{await task.destroy();}catch{}}
 }
 function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy=null,area=null,asSheet=false,onClose=()=>{}}={}){
@@ -487,11 +501,13 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
       say('Подготавливаем текст…');
       let scanned=null;try{scanned=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);}catch{}
       if(!active)return;
-      if(scanned?.length){
+      const recognize=pages=>{
+       if(!active)return null;
        say('Распознаём текст страниц…');
-       value=await onEdit({kind:'pdf-text',file,isActive:()=>active,inlineTextOnly:true});
-       if(typeof value!=='string'){say('Распознавание отменено или недоступно.');return;}
-      }else value=await readPdfText(file,()=>active);
+       return onEdit({kind:'pdf-text',file,pages,isActive:()=>active,inlineTextOnly:true});
+      };
+      value=scanned?.length?await recognize(scanned):await readPdfText(file,()=>active,recognize);
+      if(typeof value!=='string'){if(active)say('Распознавание отменено или недоступно.',3500);return;}
      }
     }
     if(active)startInline(value);
