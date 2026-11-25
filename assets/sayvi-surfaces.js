@@ -1114,7 +1114,54 @@ function mailView(){
    if(typeof filePreview.showModal==='function')filePreview.showModal();
    else filePreview.setAttribute('open','');
   };
+  // Local thumbnails share the document viewer's PDF renderer. One job at
+  // a time; do not fabricate a preview for unsupported Office formats.
+  let thumbnailQueue=Promise.resolve(),thumbsActive=true;
+  const attachmentThumbs=new Map();
+  function attachmentThumbnail(entry){
+   if(attachmentThumbs.has(entry.id))return attachmentThumbs.get(entry.id);
+   const current=()=>thumbsActive&&attachments.some(a=>a.id===entry.id);
+   const task=thumbnailQueue.catch(()=>{}).then(async()=>{
+    if(!current())return null;
+    const file=await readMailAttachment(draftId,entry.id);
+    if(!file||!current())return null;
+    if(/\.pdf$/i.test(entry.name))return await window.SEYVEO_DOCS_VIEWER?.thumbnail?.(file,current)||null;
+    if(!/\.(png|jpe?g|webp)$/i.test(entry.name))return null;
+    const url=URL.createObjectURL(file);
+    try{
+     const img=new Image();
+     await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=url;});
+     if(!current()||!img.naturalWidth||!img.naturalHeight)return null;
+     const scale=Math.min(1,160/img.naturalWidth,200/img.naturalHeight);
+     const canvas=create('canvas');canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+     canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+     return canvas;
+    }finally{URL.revokeObjectURL(url);}
+   }).catch(()=>null);
+   attachmentThumbs.set(entry.id,task);thumbnailQueue=task;return task;
+  }
+  attachmentList.tabIndex=0;
+  let railDrag=null,railSuppress=false;
+  attachmentList.addEventListener('pointerdown',e=>{
+   if(e.pointerType!=='mouse'||e.button!==0||e.target.closest('.sv-mail-attached-remove')||attachmentList.scrollWidth<=attachmentList.clientWidth)return;
+   railSuppress=false;railDrag={id:e.pointerId,x:e.clientX,y:e.clientY,left:attachmentList.scrollLeft,moved:false};
+  });
+  attachmentList.addEventListener('pointermove',e=>{
+   if(!railDrag||railDrag.id!==e.pointerId)return;
+   const dx=e.clientX-railDrag.x,dy=e.clientY-railDrag.y;
+   if(!railDrag.moved){
+    if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){railDrag=null;return;}
+    if(Math.abs(dx)<7)return;
+    railDrag.moved=true;attachmentList.setPointerCapture?.(e.pointerId);
+   }
+   e.preventDefault();attachmentList.scrollLeft=railDrag.left-dx;
+  });
+  const endRail=()=>{if(railDrag?.moved){railSuppress=true;setTimeout(()=>{railSuppress=false;},100);}railDrag=null;};
+  for(const event of ['pointerup','pointercancel','lostpointercapture'])attachmentList.addEventListener(event,endRail);
+  attachmentList.addEventListener('pointerleave',()=>{if(!railDrag?.moved)endRail();});
+  attachmentList.addEventListener('click',e=>{if(railSuppress){e.preventDefault();e.stopImmediatePropagation();}},true);
   function renderAttachments(){
+   const left=attachmentList.scrollLeft;
    attachmentList.replaceChildren();
    attachmentShelf.hidden=!attachments.length;
    attachmentList.hidden=!attachments.length;
@@ -1132,16 +1179,27 @@ function mailView(){
     view.type='button';
     view.title=kind.name+' · '+entry.name;
     view.setAttribute('aria-label','Открыть '+kind.name+': '+entry.name);
-    const badge=create('span','sv-mail-kind-mark',kind.code);
+    const art=create('span','sv-mail-attachment-art');
+    art.setAttribute('aria-hidden','true');
+    const paper=create('span','sv-mail-attachment-paper');
+    paper.append(mailIcon('drafts'));
+    const extension=entry.name.split('.').pop().toUpperCase();
+    const badge=create('span','sv-mail-kind-mark',extension||kind.code);
+    art.append(paper,badge);
+    if(kind.kind==='pdf'||kind.kind==='image')void attachmentThumbnail(entry).then(canvas=>{
+     if(!canvas||!art.isConnected||!thumbsActive)return;
+     paper.replaceChildren(canvas);paper.classList.add('has-thumbnail');
+    });
     badge.setAttribute('aria-hidden','true');
     const meta=create('span','sv-mail-attached-meta');
     const name=create('span','sv-mail-attached-name',entry.name);
     name.title=entry.name;
     meta.append(name,create('small','sv-mail-attached-size',attachmentSize(entry.size)));
-    view.append(badge,meta);
+    view.append(art,meta);
     view.addEventListener('click',()=>{void showFile(entry)});
     const remove=iconButton('closeAttachment','Убрать вложение '+entry.name,()=>{
      attachments=attachments.filter(a=>a.id!==entry.id);
+     attachmentThumbs.delete(entry.id);
      void deleteMailAttachment(draftId,entry.id);
      autosaveDraft();renderAttachments();
      status.textContent='';
@@ -1152,7 +1210,7 @@ function mailView(){
    }
    // Always start at the first file. Auto-scrolling to the last attachment
    // previously left the first card visibly cut off on iPhone.
-   attachmentList.scrollLeft=0;
+   attachmentList.scrollLeft=left;
   }
   attachmentPicker.addEventListener('change',async()=>{
    const chosen=Array.from(attachmentPicker.files||[]);
@@ -1281,6 +1339,7 @@ function mailView(){
   mailEditorViewportCleanup=()=>{
    viewport?.removeEventListener('resize',resizeTools);viewport?.removeEventListener('scroll',syncTools);
    window.removeEventListener('resize',resizeTools);message.removeEventListener('input',sizeReply);
+   thumbsActive=false;attachmentThumbs.clear();
    composerFooter.remove();
   };
   sizeReply();
