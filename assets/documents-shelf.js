@@ -324,13 +324,17 @@ function paint(state){
   if(locked)empty.classList.add('sv-doc-recents-locked');
   copy.append(el('strong','',locked?'Архив закрыт'
    :filteredName?'В папке «'+filteredName+'» пусто':'Пока нет документов'));
-  if(!locked)copy.append(el('small','','Добавьте файл'));
+  if(!locked)copy.append(el('small','',state.filter==='scan'?'Новые сканы появятся здесь':'Добавьте файл через верхнюю панель'));
   empty.append(copy);
-  const act=el('button','sv-doc-shelf-add',locked?'Открыть архив':'Добавить');
-  act.type='button';
-  act.setAttribute('aria-label',locked?'Открыть защищённый архив':'Добавить документ');
-  act.addEventListener('click',()=>locked?openArchive(state):state.options.onPick?.());
-  empty.append(act);
+  // Scanner and Add already live in the toolbar; only the locked archive
+  // needs its own action because opening it is a separate protected flow.
+  if(locked){
+   const act=el('button','sv-doc-shelf-add','Открыть архив');
+   act.type='button';
+   act.setAttribute('aria-label','Открыть защищённый архив');
+   act.addEventListener('click',()=>openArchive(state));
+   empty.append(act);
+  }
   state.recentGrid.append(empty);
  }else{
   for(const item of subset){
