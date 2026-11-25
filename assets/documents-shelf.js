@@ -211,16 +211,17 @@ function openDocumentDetails(state,item){
  };
  const select=(label,values,initial)=>pickers.choice(label,values,initial);
  const input=(value,max,type='text')=>{const n=el('input','');n.type=type;n.value=value||'';n.placeholder='Указать';if(max)n.maxLength=max;return n;};
- const type=field('Тип',select('Тип документа',Object.entries(api.docTypes),docType(item)),'original');
+ const type=field('Категория',select('Категория',Object.entries(api.docTypes).map(([key,label])=>[key,key==='other'?'Прочее':label]),docType(item)),'original');
  const folder=field('Папка',select('Папка',[['','Все файлы'],...ownFolders(state).map(x=>[x.id,x.name])],item.folder||''),'archive');
  const counterparty=field('Контрагент',input(item.counterparty,120),'building');
  const ref=field('Номер договора',input(item.reference,100),'hash');
  const due=field('Важная дата',pickers.date('Важная дата',item.dueDate,'Не задана',area),'calendar');
+ due.classList.add('sv-doc-detail-date');
  const extra=el('details','sv-doc-version-history sv-doc-detail-extra');
- extra.append(el('summary','','Дополнительные сведения'));
+ const extraTitle=el('summary','');extraTitle.append(actionIcon('info'),el('span','','Дополнительные сведения'));extra.append(extraTitle);
  const status=field('Статус',select('Статус',[['','Не указан'],['draft','Черновик'],['ready','Готов'],['sent','Отправлен'],['signed','Подписан'],['paid','Оплачен'],['closed','Закрыт']],item.status||''),'check',extra);
  extra.append(el('small','sv-doc-my-template-note','Ручная отметка не подтверждает подпись или оплату.'));
- if(item.typeOrigin!=='user')extra.append(el('small','sv-doc-my-template-note','Тип предложен по названию файла.'));
+ if(item.typeOrigin!=='user')extra.append(el('small','sv-doc-my-template-note','Категория предложена по названию файла.'));
  form.append(extra);
  const action=(name,fn,cls='sv-doc-my-template-option')=>{const n=el('button',cls,name);n.type='button';n.addEventListener('click',fn);return n;};
  const save=action('',async()=>{if(save.disabled)return;save.disabled=true;back.disabled=true;feedback.textContent='';try{
@@ -231,7 +232,7 @@ function openDocumentDetails(state,item){
  },'sv-doc-picker-round sv-doc-detail-save');
  save.setAttribute('aria-label','Сохранить сведения');save.title='Сохранить сведения';save.append(actionIcon('check'));head.append(save);
  form.addEventListener('submit',e=>e.preventDefault());
- const history=el('details','sv-doc-version-history');const historyTitle=el('summary','');historyTitle.append(actionIcon('copy'),el('span','','История версий'));history.append(historyTitle);
+ const history=el('details','sv-doc-version-history');const historyTitle=el('summary','');historyTitle.append(actionIcon('history'),el('span','','История версий'));history.append(historyTitle);
  const versions=el('div','sv-doc-my-template-list');
  for(const v of [...(item.versions||[])].reverse()){
   versions.append(action('Версия '+v.version+' · '+dateOf(v.at),async()=>{try{const f=await api.getVersion(area,item.id,v.version);const url=URL.createObjectURL(f);const a=el('a','');a.href=url;a.download=f.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}catch(e){feedback.textContent=e.message;}}));
