@@ -339,8 +339,22 @@ function folderItems(state,folder){
 }
 function eligible(folder,item){return folder.trash||item.local===true;}
 // Horizontal shelf scrolling is native on touch; desktop can drag with a mouse.
+function syncShelfEdges(rail){
+ const end=rail.scrollWidth-rail.clientWidth;
+ rail.classList.toggle('sv-doc-rail-before',rail.scrollLeft>2);
+ rail.classList.toggle('sv-doc-rail-after',end-rail.scrollLeft>2);
+}
 function enableMouseRail(rail){
  let drag=null,blocked=false;
+ rail.addEventListener('scroll',()=>syncShelfEdges(rail),{passive:true});
+ rail.addEventListener('focusin',()=>requestAnimationFrame(()=>syncShelfEdges(rail)));
+ if(typeof ResizeObserver==='function'){
+  const observer=new ResizeObserver(()=>syncShelfEdges(rail));
+  observer.observe(rail);
+  // The shelf is replaced on route changes; disconnect when its node is removed.
+  const cleanup=new MutationObserver(()=>{if(!rail.isConnected){observer.disconnect();cleanup.disconnect();}});
+  cleanup.observe(document.body,{childList:true,subtree:true});
+ }
  rail.addEventListener('pointerdown',e=>{
   if(e.pointerType!=='mouse'||e.button!==0||rail.scrollWidth<=rail.clientWidth||e.target.closest('.sv-doc-file-more'))return;
   blocked=false;drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:rail.scrollLeft,moved:false};
@@ -632,7 +646,7 @@ function paint(state){
    }else state.recentGrid.append(card);
   }
  }
- state.recentGrid.scrollLeft=recentScroll;
+ state.recentGrid.scrollLeft=recentScroll;requestAnimationFrame(()=>syncShelfEdges(state.recentGrid));
  // Keep a stable «Все файлы» destination even with just one document.
  // It opens the protected archive when there are no more tiles to expand.
  state.showAll.hidden=false;
@@ -671,7 +685,7 @@ function paint(state){
   }
   state.foldersGrid.append(entry);
  }
- state.foldersGrid.scrollLeft=folderScroll;
+ state.foldersGrid.scrollLeft=folderScroll;requestAnimationFrame(()=>syncShelfEdges(state.foldersGrid));
  if(state.pendingFolder&&ownFolders(state).some(x=>x.id===state.pendingFolder)){
   const target=state.foldersGrid.querySelector('.sv-doc-folder-'+state.pendingFolder);
   if(target){const left=target.getBoundingClientRect().left-state.foldersGrid.getBoundingClientRect().left+state.foldersGrid.scrollLeft;state.foldersGrid.scrollLeft=Math.max(0,left);}

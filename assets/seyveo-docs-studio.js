@@ -228,6 +228,11 @@ function mount(target,{
  let draftSourceKey='',draftId=null,draftRefresh=0,saveSeq=0,saveFailed=false,savePending=false,latestSave=Promise.resolve(),savedSignature='',draftEdited=false;
  const draftFeedback=$('p','sv-doc-draft-feedback');draftFeedback.setAttribute('role','status');
  editor.append(draftFeedback);const savedNotice=$('p','sv-doc-scan-saved-notice');savedNotice.setAttribute('role','status');editor.append(savedNotice);
+ let savedNoticeTimer=0;
+ function announceScanSaved(value){
+  clearTimeout(savedNoticeTimer);savedNotice.textContent=value;
+  savedNoticeTimer=setTimeout(()=>{if(savedNotice.textContent===value)savedNotice.textContent='';},3500);
+ }
  const draftError='Черновик не сохранён. Не закрывайте приложение.';
  function setDraftFeedback(value){
   draftFeedback.textContent=value;
@@ -671,7 +676,7 @@ function mount(target,{
      const blob=format==='jpg'?new Blob([pages[0].jpegBytes],{type:'image/jpeg'}):window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(pages);
      const file=asFile(blob,name);
      const id=await window.SEYVEO_DOCUMENT_FILES.save(area,file,'scan');
-     if(at===generation&&epoch===operationEpoch&&mode==='scan'&&panel.isConnected){scans=[];selectedScan=0;closePanel();const note=editor.querySelector('.sv-doc-scan-saved-notice');if(note)note.textContent='Файл сохранён в папке «Сканы».';if(onScanSaved){try{await onScanSaved(id);}catch{if(note?.isConnected)note.textContent='Файл сохранён. Откройте его в папке «Сканы».';}}}
+     if(at===generation&&epoch===operationEpoch&&mode==='scan'&&panel.isConnected){scans=[];selectedScan=0;closePanel();const note=editor.querySelector('.sv-doc-scan-saved-notice');if(note)announceScanSaved('Сохранено в «Сканы»');if(onScanSaved){try{await onScanSaved(id);}catch{if(note?.isConnected)announceScanSaved('Сохранено в «Сканы»');}}}
     }catch(e){if(at===generation&&epoch===operationEpoch)message(e.message||'Не удалось сохранить файл.');}
     finally{scanSaving=false;panel.inert=false;scannerBack.disabled=false;scannerDone.disabled=false;saveButton.disabled=false;}
    };
