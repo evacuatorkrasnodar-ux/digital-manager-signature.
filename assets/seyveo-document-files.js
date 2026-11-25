@@ -48,5 +48,16 @@ async function createFolder(a,name){check(a);name=String(name||'').trim().slice(
 async function update(a,i,patch){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind==='folder'&&typeof patch.name==='string'){const name=patch.name.trim().slice(0,60);if(!name)throw Error('Введите название');m.name=name;}if(m.kind==='folder'&&Number.isFinite(patch.order))m.order=patch.order;if(m.kind==='file'&&typeof patch.folder==='string'){if(patch.folder&&!['contracts','projects','clients'].includes(patch.folder)){const target=await row(a,patch.folder);if((await meta(target,k)).kind!=='folder')throw Error('Папка не найдена');}m.folder=patch.folder;}r.meta=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');await run('files','readwrite',s=>s.put(r));changed(a);}
 async function remove(a,i){const r=await row(a,i),k=await key(a);if((await meta(r,k)).kind!=='file')throw Error('Нельзя удалить папку этим действием');await run('files','readwrite',s=>s.delete(i));changed(a);}
 async function removeFolder(a,i){const r=await row(a,i),k=await key(a);if((await meta(r,k)).kind!=='folder')throw Error('Папка не найдена');const all=await list(a);if(all.some(x=>x.kind==='file'&&x.folder===i))throw Error('Сначала переместите документы из папки.');await run('files','readwrite',s=>s.delete(i));changed(a);}
-window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,get,createFolder,update,remove,removeFolder});
+async function setDefaultFolder(a,target,patch){
+ check(a);if(!['contracts','projects','clients'].includes(target))throw Error('Системную папку изменять нельзя.');
+ const i=a+':folder-pref:'+target,k=await key(a);
+ const previous=await run('files','readonly',s=>s.get(i));
+ const m=previous?await meta(previous,k):{kind:'folder-pref',target};
+ if(typeof patch.name==='string'){const name=patch.name.trim().slice(0,60);if(!name)throw Error('Введите название');m.name=name;}
+ if(Number.isFinite(patch.order))m.order=patch.order;
+ if(typeof patch.hidden==='boolean')m.hidden=patch.hidden;
+ const sealed=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');
+ await run('files','readwrite',s=>s.put({id:i,area:a,meta:sealed}));changed(a);
+}
+window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,get,createFolder,update,remove,removeFolder,setDefaultFolder});
 })();

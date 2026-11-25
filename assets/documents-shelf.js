@@ -78,8 +78,16 @@ function folderArt(plus=false){
  return art;
 }
 let active=null;
-const ownFolders=state=>state.local.filter(x=>x.kind==='folder').sort((a,b)=>(a.order??a.createdAt)-(b.order??b.createdAt)||a.id.localeCompare(b.id));
-const folderEntries=state=>[...categories.slice(0,4),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true})),...categories.slice(4)];
+const defaultIds=['contracts','projects','clients'];
+const ownFolders=state=>{
+ const defaults=categories.filter(x=>defaultIds.includes(x.id)).map((x,i)=>{
+  const prefs=state.local.find(p=>p.kind==='folder-pref'&&p.target===x.id);
+  return {id:x.id,name:prefs?.name||x.title,createdAt:i,order:prefs?.order??i,hidden:prefs?.hidden===true,defaultFolder:true};
+ });
+ return [...defaults,...state.local.filter(x=>x.kind==='folder')].filter(x=>!x.hidden).sort((a,b)=>(a.order??a.createdAt)-(b.order??b.createdAt)||a.id.localeCompare(b.id));
+};
+const folderEntries=state=>[...categories.slice(0,4),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true,defaultFolder:x.defaultFolder===true})),categories[categories.length-1]];
+const updateFolder=(state,category,patch)=>category.defaultFolder?localFiles().setDefaultFolder(state.options.area,category.id,patch):localFiles().update(state.options.area,category.id,patch);
 function notice(state,text){state.folderCaption.textContent=text;}
 function closeFolderMenu(state){state.folderMenu.hidden=true;state.folderMenu.replaceChildren();}
 function revealOwnFolder(state,id){state.pendingFolder=id;void refresh();}
@@ -92,10 +100,19 @@ function openFolderMenu(state,category){
  closeFolderMenu(state);
  const menu=state.folderMenu;menu.hidden=false;
  const action=(label,fn,destructive=false)=>{const b=el('button','sv-doc-folder-menu-action'+(destructive?' sv-doc-folder-danger':''),label);b.type='button';b.addEventListener('click',async()=>{closeFolderMenu(state);try{await fn();}catch(e){notice(state,e.message||'Не удалось изменить папку.');}});menu.append(b);};
- action('Переименовать',async()=>{const name=window.prompt('Название папки',category.title);if(name?.trim())await localFiles().update(state.options.area,category.id,{name});});
- action('В начало моих папок',async()=>{const own=ownFolders(state);const first=Math.min(...own.map(x=>x.order??x.createdAt));await localFiles().update(state.options.area,category.id,{order:first-1});revealOwnFolder(state,category.id);});
- action('В конец моих папок',async()=>{const own=ownFolders(state);const last=Math.max(...own.map(x=>x.order??x.createdAt));await localFiles().update(state.options.area,category.id,{order:last+1});revealOwnFolder(state,category.id);});
- action('Удалить папку',async()=>{if(!window.confirm('Удалить пустую папку «'+category.title+'»?'))return;await localFiles().removeFolder(state.options.area,category.id);if(state.filter===category.id){state.filter='all';state.expanded=false;paint(state);}},true);
+ action('Переименовать',async()=>{const name=window.prompt('Название папки',category.title);if(name?.trim())await updateFolder(state,category,{name});});
+ action('В начало моих папок',async()=>{const own=ownFolders(state);const first=Math.min(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:first-1});revealOwnFolder(state,category.id);});
+ action('В конец моих папок',async()=>{const own=ownFolders(state);const last=Math.max(...own.map(x=>x.order??x.createdAt));await updateFolder(state,category,{order:last+1});revealOwnFolder(state,category.id);});
+ action('Удалить папку',async()=>{
+  if(category.defaultFolder){
+   if(!window.confirm('Удалить папку «'+category.title+'» из списка? Документы останутся в «Все файлы».'))return;
+   await updateFolder(state,category,{hidden:true});
+  }else{
+   if(!window.confirm('Удалить пустую папку «'+category.title+'»?'))return;
+   await localFiles().removeFolder(state.options.area,category.id);
+  }
+  if(state.filter===category.id){state.filter='all';state.expanded=false;paint(state);}
+ },true);
 }
 function openArchive(state){
  if(state!==active)return;
@@ -131,7 +148,7 @@ function paint(state){
   if(showingFormats)state.recent.style.setProperty('display','none','important');
   else state.recent.style.removeProperty('display');
  }
- state.recentTitle.textContent=state.filter==='all'?(state.expanded?'Все файлы':'Недавние'):([...categories,...state.local.filter(x=>x.kind==='folder').map(x=>({id:x.id,title:x.name}))].find(x=>x.id===state.filter)?.title||'Файлы');
+ state.recentTitle.textContent=state.filter==='all'?(state.expanded?'Все файлы':'Недавние'):(folderEntries(state).find(x=>x.id===state.filter)?.title||'Файлы');
  const hasMore=filtered.length>4;
  state.showAll.textContent=state.expanded?'Свернуть':'Все файлы ›';
  state.showAll.setAttribute('aria-label',state.expanded?'Свернуть список документов':'Показать все документы');
@@ -158,7 +175,7 @@ function paint(state){
   const empty=el('div','sv-doc-recents-empty');
   empty.append(documentArt('empty',''));
   const copy=el('span','sv-doc-recents-empty-copy');
-  const filteredName=[...categories,...state.local.filter(x=>x.kind==='folder').map(x=>({id:x.id,title:x.name}))].find(x=>x.id===state.filter)?.title;
+  const filteredName=folderEntries(state).find(x=>x.id===state.filter)?.title;
   // The locked vault does not reveal whether files exist.
   const locked=!state.unlocked&&state.filter==='archive';
   if(locked)empty.classList.add('sv-doc-recents-locked');
@@ -202,7 +219,7 @@ function paint(state){
    });
    if(item.local){
     const manage=async()=>{
-     const folders=[...categories.filter(x=>['contracts','projects','clients'].includes(x.id)),...state.local.filter(x=>x.kind==='folder').map(x=>({id:x.id,title:x.name}))];
+     const folders=ownFolders(state).map(x=>({id:x.id,title:x.name}));
      const choices=folders.map((x,i)=>(i+1)+'. '+x.title).join('\n');
      const answer=window.prompt('Переместить в папку — введите номер. 0 — без папки. У — удалить локальную копию.\n'+choices);
      if(answer===null)return;
@@ -258,7 +275,7 @@ function paint(state){
   }else state.foldersGrid.append(entry);
  }
  state.foldersGrid.scrollLeft=folderScroll;
- if(state.pendingFolder&&state.local.some(x=>x.id===state.pendingFolder)){
+ if(state.pendingFolder&&ownFolders(state).some(x=>x.id===state.pendingFolder)){
   const target=state.foldersGrid.querySelector('.sv-doc-folder-'+state.pendingFolder);
   if(target){const left=target.getBoundingClientRect().left-state.foldersGrid.getBoundingClientRect().left+state.foldersGrid.scrollLeft;state.foldersGrid.scrollLeft=Math.max(0,left);}
   state.pendingFolder=null;
