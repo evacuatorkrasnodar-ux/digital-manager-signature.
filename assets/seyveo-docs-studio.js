@@ -253,7 +253,7 @@ function mount(target,{
   if(!items.length)return;
   const details=$('details','sv-doc-draft-list');details.open=wasOpen;
   const summary=$('summary','sv-doc-draft-summary');
-  summary.append($('strong','','Черновики'),$('span','sv-doc-draft-count',String(items.length)));details.append(summary);
+  summary.append(toolArt('create'),$('strong','','Черновики'),$('span','sv-doc-draft-count',String(items.length)));details.append(summary);
   for(const item of items){
    const row=$('div','sv-doc-draft-row');
    const title=item.name?.trim()||String(item.text||'').trim().split('\n')[0].slice(0,70)||'Документ';
@@ -267,19 +267,45 @@ function mount(target,{
     mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();
     panel.querySelector('.sv-doc-edit-resume')?.click();
    },'sv-doc-draft-open');
-   launch.append(toolArt('create'),$('span','sv-doc-draft-title',title),$('small','',new Date(item.updatedAt).toLocaleDateString('ru-RU')));
+   const copy=$('span','sv-doc-draft-copy');
+   copy.append($('span','sv-doc-draft-title',title),$('small','',new Date(item.updatedAt).toLocaleDateString('ru-RU')));
+   launch.append(toolArt('create'),copy);
+   const more=button('',()=>toggleActions(!row.classList.contains('sv-doc-draft-revealed')),'sv-doc-draft-more');
+   more.setAttribute('aria-label','Действия с черновиком '+title);
+   more.setAttribute('aria-expanded','false');
+   more.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>';
    const erase=button('Удалить',async()=>{
     if(!window.confirm('Удалить этот черновик?'))return;
     try{await drafts.remove(area,item.id);if(draftId===item.id){newDraft();if(mode==='create')render();}await refreshDrafts();}
     catch{setDraftFeedback('Не удалось удалить черновик.');}
    },'sv-doc-draft-delete');
    erase.setAttribute('aria-label','Удалить черновик '+title);
-   let start=null;
+   const actions=$('div','sv-doc-draft-actions sv-menu-surface');actions.hidden=true;
+   actions.append(erase);
+   function toggleActions(open){
+    if(open)for(const other of details.querySelectorAll('.sv-doc-draft-row.sv-doc-draft-revealed')){
+     if(other===row)continue;
+     other.classList.remove('sv-doc-draft-revealed');
+     other.querySelector('.sv-doc-draft-actions').hidden=true;
+     other.querySelector('.sv-doc-draft-more').setAttribute('aria-expanded','false');
+    }
+    row.classList.toggle('sv-doc-draft-revealed',open);
+    actions.hidden=!open;more.setAttribute('aria-expanded',String(open));
+   }
+   let start=null,suppressClickUntil=0;
    row.addEventListener('touchstart',e=>{const t=e.touches[0];start=t?{x:t.clientX,y:t.clientY}:null;},{passive:true});
-   row.addEventListener('touchend',e=>{const t=e.changedTouches[0];if(start&&t&&Math.abs(t.clientY-start.y)<45){if(start.x-t.clientX>45)row.classList.add('sv-doc-draft-revealed');else if(t.clientX-start.x>45)row.classList.remove('sv-doc-draft-revealed');}start=null;},{passive:true});
-   row.append(launch,erase);details.append(row);
+   row.addEventListener('touchend',e=>{
+    const t=e.changedTouches[0];
+    if(start&&t&&Math.abs(t.clientY-start.y)<45&&Math.abs(t.clientX-start.x)>45){
+     toggleActions(start.x>t.clientX);suppressClickUntil=Date.now()+400;
+    }
+    start=null;
+   },{passive:true});
+   row.addEventListener('click',e=>{if(Date.now()<suppressClickUntil){e.preventDefault();e.stopImmediatePropagation();}else if(!actions.contains(e.target)&&!more.contains(e.target)&&row.classList.contains('sv-doc-draft-revealed')){e.preventDefault();e.stopImmediatePropagation();toggleActions(false);}},true);
+   row.addEventListener('contextmenu',e=>{e.preventDefault();toggleActions(true);});
+   row.addEventListener('keydown',e=>{if(e.key==='Escape'){toggleActions(false);more.focus();}});
+   row.append(launch,more,actions);details.append(row);
   }
-  details.append($('small','sv-doc-draft-privacy','На этом устройстве · шифрование ключом браузера, без отдельного пароля.'));
   draftSection.append(details);
  }
  // The containing Documents screen attaches this slot just after mount.
