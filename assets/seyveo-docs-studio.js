@@ -728,6 +728,57 @@ function mount(target,{
    revealEditor();
    }finally{switchingDraft=false;}
   }
+  const officialForms=[
+   {id:'official-3ndfl',name:'3-НДФЛ',country:'RU',type:'personal',url:'https://www.nalog.gov.ru/rn77/taxation/taxes/ndfl/form_ndfl/',period:'year'},
+   {id:'official-armenia',name:'Декларация доходов',country:'AM',type:'personal',url:'https://src.am/ru/getMenusContents/122',period:'year'},
+   {id:'official-customs',name:'Пассажирская декларация',country:'RU',type:'personal',url:'https://domodedovo.customs.gov.ru/ved/pravila-peremeshheniya-tovarov/elektronnyj-blank-passazhirskoj-tamozhennoj-deklaraczii',period:'date'},
+   {id:'official-usn',name:'Декларация УСН',country:'RU',type:'business',url:'https://www.nalog.gov.ru/rn77/taxation/taxes/usn/',period:'year'},
+   {id:'official-vat',name:'Декларация НДС',country:'RU',type:'business',url:'https://www.nalog.gov.ru/rn77/taxation/taxes/nds/',period:'quarter'},
+   {id:'official-profit',name:'Налог на прибыль',country:'RU',type:'business',url:'https://www.nalog.gov.ru/rn77/taxation/taxes/profitul/',period:'report'},
+   {id:'official-armenia-business',name:'Налоговая отчётность',country:'AM',type:'business',url:'https://www.src.am/ru/legal',period:'report'}
+  ];
+  const official=officialForms.filter(x=>x.type===area),countryNames={RU:'Россия',AM:'Армения'};
+  const countryKey='seyveo.documents.country.'+area;
+  function preferredCountry(){
+   try{const stored=localStorage.getItem(countryKey);if(countryNames[stored])return stored;}catch{}
+   try{const region=new Intl.Locale(navigator.language).region;const zone=Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if(region==='RU'&&/^(Europe\/(Moscow|Samara|Volgograd|Kirov|Kaliningrad|Astrakhan|Saratov|Ulyanovsk)|Asia\/(Yekaterinburg|Omsk|Novosibirsk|Krasnoyarsk|Irkutsk|Yakutsk|Vladivostok|Magadan|Kamchatka|Sakhalin|Anadyr|Barnaul|Tomsk|Chita|Srednekolymsk))$/.test(zone))return 'RU';
+    if(region==='AM'&&zone==='Asia/Yerevan')return 'AM';
+   }catch{}
+   return '';
+  }
+  for(let i=templates.length-1;i>=0;i--)if(templates[i].url)templates.splice(i,1);
+  templates.push(...official.sort((a,b)=>Number(b.country===preferredCountry())-Number(a.country===preferredCountry())).map(x=>({...x,icon:'receipt',name:x.name+' · '+(x.country==='RU'?'РФ':'РА')})));
+  function openOfficial(selected){
+   const dlg=$('dialog','sv-doc-official-dialog');
+   const header=$('div','sv-doc-official-header');
+   const close=button('‹',()=>dlg.close(),'sv-doc-official-back');close.setAttribute('aria-label','Назад');
+   header.append(close,$('strong','','Официальная форма'));
+   const country=$('select','');country.setAttribute('aria-label','Страна документа');
+   for(const c of [...new Set(official.map(x=>x.country))]){const o=$('option','',countryNames[c]);o.value=c;country.append(o);}
+   // A named country-specific form is an explicit choice, even if a different
+   // jurisdiction is remembered. Never infer tax residency from device region.
+   country.value=selected.country;
+   const form=$('select','');form.setAttribute('aria-label','Вид документа');
+   const period=$('input','');period.type='text';period.maxLength=60;period.required=true;period.setAttribute('aria-label','Отчётный период или дата');
+   const info=$('small','sv-doc-official-note','Сэйви поможет подготовить сведения. Актуальный бланк и порядок подачи проверяйте на сайте ведомства.');
+   const source=$('a','sv-doc-official-source','Официальный источник');source.target='_blank';source.rel='noopener noreferrer';
+   const label=(name,node)=>{const l=$('label','sv-doc-official-field');l.append($('span','',name),node);return l;};
+   function current(){return official.find(x=>x.id===form.value);}
+   function syncPeriod(){const item=current();if(!item)return;period.value='';period.placeholder=item.period==='date'?'Дата пересечения границы':item.period==='quarter'?'Например, 3 квартал 2026':item.period==='report'?'Год, квартал или месяц':'Например, 2025';source.href=item.url;}
+   function syncForms(preferred){form.replaceChildren();for(const x of official.filter(x=>x.country===country.value)){const o=$('option','',x.name);o.value=x.id;form.append(o);}if([...form.options].some(o=>o.value===preferred))form.value=preferred;syncPeriod();}
+   country.addEventListener('change',()=>{try{localStorage.setItem(countryKey,country.value)}catch{}syncForms('');});form.addEventListener('change',syncPeriod);syncForms(selected.id);
+   const help=button('Заполнить с Сэйви',async()=>{
+    const item=current();if(!item||!period.value.trim()){period.reportValidity();return;}
+    try{localStorage.setItem(countryKey,item.country)}catch{}
+    help.disabled=true;
+    const ok=await onSayvi('official-form',{name:item.name,country:countryNames[item.country],period:period.value.trim(),url:item.url});
+    if(ok===false){info.textContent='Не удалось открыть Сэйви. Официальный источник остаётся доступен.';help.disabled=false;}
+   },'sv-doc-official-help');
+   dlg.append(header,label('Страна',country),label('Документ',form),label('Период',period),source,help,info);
+   dlg.addEventListener('close',()=>dlg.remove(),{once:true});panel.append(dlg);
+   if(typeof dlg.showModal==='function')dlg.showModal();else dlg.setAttribute('open','');
+  }
   const blank=button('Чистый лист',()=>beginNew(),'sv-doc-create-blank');
   sectionTitle.append($('strong','','Шаблоны'),blank);
   const examples=$('div','sv-doc-tool-templates');
@@ -748,10 +799,10 @@ function mount(target,{
     button.setAttribute('aria-pressed',String(documentTemplate===id)));
   }
   for(const item of templates){
-   const card=button('',()=>{if(item.url){window.open(item.url,'_blank','noopener,noreferrer');return;}selectTemplate(item.id,item.content);},
+   const card=button('',()=>{if(item.url){openOfficial(item);return;}selectTemplate(item.id,item.content);},
     'sv-doc-template-card sv-doc-template-'+item.id);
    card.setAttribute('aria-label',(item.url?'Открыть официальный источник: ':'Выбрать шаблон: ')+item.name);
-   if(item.url){card.title='Официальный сайт · откроется в новой вкладке';card.classList.add('sv-doc-template-official');}
+   if(item.url){card.title='Официальная форма · выбор периода';card.classList.add('sv-doc-template-official');}
    card.setAttribute('aria-pressed',String(documentTemplate===item.id));
    const paper=$('span','sv-doc-template-glyph');
    paper.setAttribute('aria-hidden','true');
@@ -1040,8 +1091,7 @@ function mount(target,{
   sayvi.append(sayviMark,$('span','','Создать с Сэйви'));
   panel.dataset.createStage='choose';
   if(!fromScan){
-   const templateNote=$('small','sv-doc-template-note','Образцы для редактирования. Официальные бланки — по ссылкам на сайты ведомств.');
-   panel.append(sectionTitle,templateSearch,examples,templateEmpty,templateNote);
+   panel.append(sectionTitle,templateSearch,examples,templateEmpty);
   }
   panel.append(resume,sayvi,status(''),sheet);
   if(fromScan&&documentDraft.trim()&&sheet.isConnected){revealEditor();void persistDraft();}
