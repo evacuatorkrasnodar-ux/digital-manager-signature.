@@ -1391,9 +1391,10 @@ html body #sayviSurfacePage[data-sv-subject="contract"]
 /* Light documents use the shared white palette, not graphite foregrounds.
    Keep the existing tool layout, folder artwork and document handlers. */
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]{
- --sv-doc-graphite:#F5F5F7;
+ /* Paper surfaces are deliberately lighter than White Pearl controls. */
+ --sv-doc-graphite:#FAFAFB;
  --sv-doc-graphite-raised:#FFFFFF;
- --sv-doc-graphite-deep:#EDEEF1;
+ --sv-doc-graphite-deep:#F5F6F8;
  --sv-doc-primary-ink:#17191C;
  --sv-doc-subtle-ink:#626A73;
  --sv-doc-hairline:rgba(28,36,50,.10);
@@ -1411,7 +1412,7 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
  -webkit-text-fill-color:currentColor!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab[aria-pressed="true"]{
- color:var(--sv-doc-primary-ink)!important;
+ background:#EDF5FF!important;color:#176AB4!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid{
  gap:4px!important;padding:4px!important;
@@ -1574,7 +1575,7 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
 /* Compact scanner finish. Keep both 44px capture buttons and real previews. */
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"]{
  border:0!important;border-radius:14px!important;
- background:var(--sv-doc-graphite,#F5F5F7)!important;box-shadow:none!important;
+ background:var(--sv-doc-graphite,#FAFAFB)!important;box-shadow:none!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"]{
  gap:5px!important;padding:10px 12px 6px!important;
@@ -2070,3 +2071,15 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
  font-size:8px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody :is(.sv-doc-file-more,.sv-doc-custom-folder-more):focus-visible{outline:2px solid currentColor!important;outline-offset:-2px!important;}
+
+/* Light paper cards, not a second glass material. Keep folder colors, action
+   capsules, dark mode, existing layout and the shared app dock untouched. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody :is(.sv-doc-recent-card,.sv-doc-vault-shell,.sv-doc-draft-list,.sv-doc-connections-entry,.sv-doc-flow-card){
+ background:var(--sv-doc-graphite)!important;background-image:none!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] .sv-doc-template-card:not([aria-pressed="true"]){
+ background:var(--sv-doc-graphite)!important;background-image:none!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] .sv-doc-template-card[aria-pressed="true"]{
+ background:#EDF5FF!important;outline:1px solid rgba(23,106,180,.16)!important;outline-offset:-1px;
+}
