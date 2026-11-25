@@ -1668,7 +1668,19 @@ html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-do
  background:transparent!important;box-shadow:none!important;color:inherit!important;font-size:13px!important;
 }
 html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-edit-format[aria-pressed="true"]{background:var(--sv-white-pearl-selected,var(--card2))!important;font-weight:600!important}
-html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-edit-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-edit-actions{
+ box-sizing:border-box;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;
+ width:min(100%,340px);margin:0 auto;padding:3px;
+ border:var(--sv-white-pearl-edge,1px solid transparent);border-radius:999px;
+ background:var(--sv-white-pearl-surface,var(--card));
+ box-shadow:var(--sv-white-pearl-dock-shadow,none);
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,none);backdrop-filter:var(--sv-white-pearl-blur,none);
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-edit-actions .sv-doc-edit-icon svg{stroke-width:1.15!important}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-edit-top .sv-doc-edit-ai{
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-edit-top .sv-doc-edit-ai-mark{width:34px;height:34px}
 html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-edit-action{
  display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;
  min-width:0!important;min-height:52px!important;margin:0!important;padding:3px 1px!important;gap:2px!important;

@@ -547,7 +547,7 @@ function mount(target,{
       !window.confirm('Заменить текущий текст выбранным шаблоном?'))return;
    body.value=content;documentDraft=content;documentTemplate=id;
    syncTemplate();revealEditor();
-   message('Образец открыт. Заполните поля и проверьте содержание.');
+
   }
   function syncTemplate(){
    cards.forEach(({id,button})=>
@@ -597,9 +597,6 @@ function mount(target,{
   typography.append(size,alignment,firstLine);
   editing.append(filename,typography,body);
 
-  const formatLabel=$('div','sv-doc-edit-format-label');
-  const formatHint=$('small','','');
-  formatLabel.append($('strong','','Формат'),formatHint);
   const formatSwitch=$('div','sv-doc-edit-formats');
   formatSwitch.setAttribute('role','group');
   formatSwitch.setAttribute('aria-label','Выбор формата документа');
@@ -616,7 +613,9 @@ function mount(target,{
    },'sv-doc-edit-format');
    optionButton.append($('span','',option.label));
    optionButton.setAttribute('aria-pressed',String(documentFormat===option.id));
-   optionButton.setAttribute('aria-label',option.label+' · '+option.caption);
+   const formatDescription=option.id==='pdf'?'PDF · изображение текста':'Word · редактируемый DOCX';
+   optionButton.setAttribute('aria-label',formatDescription);
+   optionButton.title=formatDescription;
    selectedFormat.push({id:option.id,button:optionButton});
    formatSwitch.append(optionButton);
   }
@@ -624,7 +623,7 @@ function mount(target,{
    selectedFormat.forEach(({id,button})=>
     button.setAttribute('aria-pressed',String(id===documentFormat)));
    saveButton.setAttribute('aria-label',documentFormat==='pdf'?'Сохранить PDF':'Сохранить Word');
-   formatHint.textContent=documentFormat==='pdf'?'Изображение текста':'Редактируемый DOCX';
+
    typography.hidden=documentFormat!=='docx';
    body.style.fontSize=documentFormat==='docx'?wordStyle.size+'pt':'';
    body.style.textAlign=documentFormat==='docx'?(wordStyle.alignment==='both'?'justify':wordStyle.alignment):'';
@@ -649,7 +648,7 @@ function mount(target,{
    const ready=preparedFile();if(!ready)return;
    try{
     save(ready.blob,ready.name);
-    message(ready.label+' подготовлен. Проверьте загрузки.');
+    message(ready.label==='PDF'?'PDF сохранён как изображение текста. Проверьте загрузки.':'Word подготовлен. Проверьте загрузки.');
    }catch{message('Не удалось сохранить документ.');}
   }
   function shareSelected(){
@@ -676,17 +675,17 @@ function mount(target,{
   sayviEditor.setAttribute('aria-label','Создать с Сэйви');
   const aiMark=$('span','sv-doc-edit-ai-mark sv-sayvi-symbol');aiMark.setAttribute('aria-hidden','true');sayviEditor.append(aiMark);
   top.append(back,$('strong','',fromScan?'Редактор Word':'Документ'),sayviEditor);
-  saveButton.append(actionIcon('<path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>'),saveLabel);
-  shareButton.append(actionIcon('<path d="M12 15V3m-5 5 5-5 5 5M7 10H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-2"/>'),$('span','','Поделиться'));
+  saveButton.append(actionIcon('<path d="M12 3.5v11m-4-4 4 4 4-4M4.5 15v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V15"/>'),saveLabel);
+  shareButton.append(actionIcon('<path d="M12 15V3.5m-4 4 4-4 4 4M7.5 10H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1.5"/>'),$('span','','Поделиться'));
   const archive=button('',()=>{
    const ready=preparedFile();if(!ready)return;
    try{onImport(asFile(ready.blob,ready.name));if(sheet.open)sheet.close();}
    catch(error){message(error?.message||'Не удалось подготовить файл для архива.');}
   },'sv-doc-edit-action');
-  archive.append(actionIcon('<path d="M3 7V5a1 1 0 0 1 1-1h6l2 3h8a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7Z"/><path d="M3 10h18M9 15h6" opacity=".7"/>'),$('span','','В архив'));
+  archive.append(actionIcon('<path d="M3.5 9V6a2 2 0 0 1 2-2h4l3 3h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/><path d="M3 10h18M9 15h6" opacity=".7"/>'),$('span','','В архив'));
   const footer=$('footer','sv-doc-edit-footer');
   const actions=$('div','sv-doc-edit-actions');actions.append(saveButton,shareButton,archive);
-  footer.append(formatLabel,formatSwitch,actions,status(''));
+  footer.append(formatSwitch,actions,status(''));
   sheet.append(top,editing,footer);
   const resume=button('Продолжить документ',()=>revealEditor(),'sv-doc-edit-resume');
   resume.hidden=!documentDraft.trim();
