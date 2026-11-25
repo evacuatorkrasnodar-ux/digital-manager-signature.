@@ -135,7 +135,7 @@ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-do
 }
 html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-tool-icon svg{
  display:block!important;width:26px!important;height:26px!important;
- stroke:currentColor!important;stroke-width:1.5!important;
+ stroke:currentColor!important;stroke-width:1.15!important;
  fill:none!important;filter:none!important;
 }
 html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-tool-scan::after,

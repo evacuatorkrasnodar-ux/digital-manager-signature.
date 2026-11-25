@@ -37,11 +37,11 @@ const PICTOGRAMS=Object.freeze({
 const TOOL_LINES=Object.freeze({
  camera:'<path d="M4 7h4l2-3h4l2 3h4a2 2 0 0 1 2 2v10H2V9a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13" r="3.5"/>',
  gallery:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-5 5 6"/>',
- scan:'<path d="M8 3.5H6a2.5 2.5 0 0 0-2.5 2.5v2M16 3.5h2A2.5 2.5 0 0 1 20.5 6v2M20.5 16v2a2.5 2.5 0 0 1-2.5 2.5h-2M8 20.5H6A2.5 2.5 0 0 1 3.5 18v-2M7.5 12h9"/>',
- file:'<path d="M7 3.5h6.5l4.5 4.5v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5ZM13.5 3.5V8H18M12 11.5v6M9 14.5h6"/>',
- create:'<path d="M12 3.5H6.5A2 2 0 0 0 4.5 5.5v13a2 2 0 0 0 2 2H18a2 2 0 0 0 2-2V15M8 8h4M8 12h3M12 16l1-4 6-6a1.4 1.4 0 0 1 2 2l-6 6-3 2Z"/>',
- sign:'<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M7 9h10M7 12h6M7 16c2-4 2 2 4 0s2 1 4 0l2-1"/>',
- print:'<path d="M7 9V4h10v5M7 16.5H5a2 2 0 0 1-2-2v-3.5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3.5a2 2 0 0 1-2 2h-2M7 14.5h10V20H7zM17.5 12h.5"/>'
+ scan:'<path d="M8 3.5H6A2.5 2.5 0 0 0 3.5 6v2M16 3.5h2A2.5 2.5 0 0 1 20.5 6v2M20.5 16v2a2.5 2.5 0 0 1-2.5 2.5h-2M8 20.5H6A2.5 2.5 0 0 1 3.5 18v-2"/><rect x="8" y="6.5" width="8" height="11" rx="1.3" opacity=".55"/><path d="M6 12h12"/>',
+ file:'<path d="M7 3.5h6.5L18 8v10.5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2Z"/><path d="M13.5 3.5V7a1 1 0 0 0 1 1H18" opacity=".7"/><circle cx="15.8" cy="16.8" r="4.2" fill="currentColor" fill-opacity=".10" stroke="none"/><path d="M12.8 16.8h6M15.8 13.8v6"/>',
+ create:'<path d="M12 3.5H6.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2H18a2 2 0 0 0 2-2v-3.5"/><path d="M8 8h5M8 12h3" opacity=".7"/><path d="m11.5 17 1-4 6-6a1.4 1.4 0 0 1 2 2l-6 6-3 2Z" fill="currentColor" fill-opacity=".08"/><path d="m17 8.5 2 2" opacity=".6"/>',
+ sign:'<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M7 9h10M7 12h6" opacity=".7"/><path d="M7 16c2-4 2 2 4 0s2 1 4 0l2-1"/><path d="M7 17.5h10" opacity=".32"/>',
+ print:'<path d="M7 9V4h10v5M7 16.5H5a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3.5a2 2 0 0 1-2 2h-2M7 14.5h10V20H7z"/><path d="M9.5 17.3h5" opacity=".55"/><circle cx="17.8" cy="11.8" r=".75" fill="currentColor" opacity=".6" stroke="none"/>'
 });
 function toolArt(kind){
  const wrap=$('span','sv-doc-tool-icon');
