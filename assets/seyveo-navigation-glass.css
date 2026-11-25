@@ -487,3 +487,46 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
  html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden])),html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll{background:#fff!important}
  html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after,html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll::after{content:none!important;display:none!important}
 }
+
+/* Approved Avatar reference, 25 Nov. Full stationary header, not the pill.
+   Exact same glass tokens and 24px fade. Existing native scrolling stays. */
+.sv-full-header-material{display:none!important}
+@media not (prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready.sv-full-glass-static-root{position:relative!important}
+ html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready > .sv-full-header-material{
+  display:block!important;position:absolute!important;z-index:5!important;
+  inset:0 0 auto!important;height:calc(var(--sv-full-glass-height,0px) + 24px)!important;
+  background:var(--sv-white-pearl-floating-dock)!important;background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;pointer-events:none!important;
+ }
+ html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready :is(#notesList#notesList,#seyveoPayDialog#seyveoPayDialog,#unifiedBusinessTasksView#unifiedBusinessTasksView,#svcpConversationList#svcpConversationList,#sayviSurfaceBody#sayviSurfaceBody,#svcpManagerPeopleScroll#svcpManagerPeopleScroll)[data-sv-full-glass-port]{
+  box-sizing:border-box!important;
+  margin-top:var(--sv-full-glass-margin)!important;
+  padding-top:var(--sv-full-glass-padding)!important;
+  scroll-padding-top:var(--sv-full-glass-scroll-padding)!important;
+ }
+ html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready :is(#notesList#notesList,#seyveoPayDialog#seyveoPayDialog,#unifiedBusinessTasksView#unifiedBusinessTasksView,#svcpConversationList#svcpConversationList,#sayviSurfaceBody#sayviSurfaceBody,#svcpManagerPeopleScroll#svcpManagerPeopleScroll)[data-sv-full-glass-port][data-sv-full-glass-port="plain"]{position:relative!important;z-index:1!important}
+ html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready [data-sv-full-glass-pass]{overflow:visible!important;z-index:auto!important;isolation:auto!important}
+ html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready [data-sv-full-glass-control]{z-index:8!important}
+ html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready [data-sv-full-glass-sticky]{top:var(--sv-full-glass-sticky-top)!important;background:transparent!important;isolation:auto!important}
+ html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready :is(#svWorkTabs,#svNotebookListTools,#svcpChatFilters,.sv-doc-pinned-switch,.sv-staff-pinned-tabs)[data-sv-full-glass-control]::after{content:none!important;display:none!important}
+ html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready > .sv-scroll-glass-head > .sv-scroll-glass-material{display:none!important}
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-active="notes"] > #notesDialog[open],
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-active="notes"] #notesDialog > #svNotebookListTools:not([hidden]){
+  background:transparent!important;background-image:none!important;
+ }
+ html:root[data-theme="light"] body #svcpWorkChatScreen#svcpWorkChatScreen.sv-full-glass-ready[data-view="inbox"] > .svcp-work-chat-header{
+  position:relative!important;z-index:8!important;background:transparent!important;
+ }
+ html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"] > .sv-deep-top{
+  position:relative!important;z-index:8!important;background:transparent!important;
+ }
+ html:root[data-theme="light"] body dialog#svcpManagerPeople#svcpManagerPeople.sv-full-glass-ready[open] > .sv-staff-head{
+  background:transparent!important;z-index:8!important;
+ }
+ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2::before{
+  height:auto!important;bottom:-24px!important;
+ }
+}
