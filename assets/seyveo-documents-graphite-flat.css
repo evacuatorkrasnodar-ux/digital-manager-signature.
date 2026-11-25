@@ -2216,3 +2216,10 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-recent-card > .sv-doc-recent-date{margin:1px 0 0!important;line-height:1.25!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-local-file-wrap > .sv-doc-recent-card{padding-bottom:5px!important;}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody :is(.sv-doc-connections-entry,.sv-doc-assistant-summary){background:#FAFAFB!important;background-image:none!important;box-shadow:none!important;border:1px solid rgba(30,40,55,.045)!important;}
+
+/* Document creation uses the same independent sheet as the scanner. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scanner-sheet.sv-doc-create-sheet > .sv-doc-tool-panel[data-mode="create"]{padding:8px 0 16px!important;gap:10px!important;background:transparent!important;align-content:start!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scanner-sheet.sv-doc-create-sheet .sv-doc-create-subhead{min-height:44px!important;align-items:center!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scanner-sheet.sv-doc-create-sheet .sv-doc-tool-templates{min-width:0!important;max-width:100%!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scanner-sheet.sv-doc-create-sheet .sv-doc-create-sayvi{min-height:44px!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scanner-sheet.sv-doc-create-sheet .sv-doc-edit-resume:not([hidden]){min-height:44px!important;}
