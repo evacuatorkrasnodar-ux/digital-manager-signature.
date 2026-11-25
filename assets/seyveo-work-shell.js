@@ -75,6 +75,12 @@
   cabinetScroll.addEventListener('scroll',syncCabinetGlass,{passive:true});
   syncCabinetGlass();
  }
+ // Wallet uses its own native scrollport, but shares the measured work capsule.
+ if(walletDialog){
+  const syncWalletGlass=()=>shell.classList.toggle('sv-wallet-under-scroll',walletDialog.scrollTop>2);
+  walletDialog.addEventListener('scroll',syncWalletGlass,{passive:true});
+  syncWalletGlass();
+ }
  // Mount one isolated, newly written header. Its controls live inside
  // Shadow DOM, so old app styles cannot remove Back's circular material.
  const workHeader=window.SEYVEO_WORK_HEADER?.create();
