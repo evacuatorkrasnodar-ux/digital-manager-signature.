@@ -129,12 +129,14 @@ function connectionsEntry(){
  return action;
 }
 function renderPreview(parent,file){
+ const scope=area;
  clearPreview();
  // One visual-first viewer for imported and decrypted files. It owns and
  // revokes only its own local blob URL. Keep the existing browser fallback.
  const opened=window.SEYVEO_DOCS_VIEWER?.mount?.(parent,file,{
   onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
   onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
+  onSaveCopy:copy=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,'device'),
   onSayvi:intent=>goSayvi(intent)
  });
  if(opened&&typeof opened.destroy==='function'){
@@ -327,12 +329,13 @@ function draw(){
  });
  archive.open=archiveExpanded;
  if(selected&&showPreview){
-  const selectedFile=selected;
+  const selectedFile=selected,scope=area;
   requestAnimationFrame(()=>{
    if(!host?.isConnected||files[area]!==selectedFile||!showPreview||viewerSession)return;
    const opened=window.SEYVEO_DOCS_VIEWER?.open?.(selectedFile,{
     onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
     onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
+    onSaveCopy:copy=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,'device'),
     onSayvi:intent=>goSayvi(intent),
     onClose(){showPreview=false;viewerSession=null;}
    });
