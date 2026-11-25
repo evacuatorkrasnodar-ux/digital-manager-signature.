@@ -809,7 +809,7 @@ function mount(target,{
    const ready=preparedFile();if(!ready)return;
    try{
     await window.SEYVEO_DOCUMENT_FILES.save(area,asFile(ready.blob,ready.name),'created');
-    message('Документ сохранён в папке «Созданные».');
+    message('Документ сохранён в разделе «Все файлы».');
    }catch(e){message(e.message||'Не удалось сохранить документ.');}
   }
   function shareSelected(){

@@ -16,7 +16,7 @@ const categories=[
  {id:'all',title:'Все файлы'},
  {id:'device',title:'На устройстве'},
  {id:'scan',title:'Сканы'},
- {id:'created',title:'Созданные'},
+ {id:'new',title:'Новая папка'},
  {id:'contracts',title:'Договоры'},
  {id:'projects',title:'Проекты'},
  {id:'clients',title:'Клиенты'},
@@ -72,12 +72,31 @@ function documentArt(type,label){
  art.append(el('span','sv-doc-format-label',label));
  return art;
 }
-function folderArt(){
+function folderArt(plus=false){
  const art=el('span','sv-doc-folder-art');
- art.append(svg('<path d="M5 19a5 5 0 0 1 5-5h17l6 7h21a5 5 0 0 1 5 5v26a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5Z" class="sv-doc-folder-back"/><path d="M5 30a5 5 0 0 1 5-5h44a5 5 0 0 1 5 5v22a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5Z" class="sv-doc-folder-front"/>'));
+ art.append(svg('<path d="M5 19a5 5 0 0 1 5-5h17l6 7h21a5 5 0 0 1 5 5v26a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5Z" class="sv-doc-folder-back"/><path d="M5 30a5 5 0 0 1 5-5h44a5 5 0 0 1 5 5v22a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5Z" class="sv-doc-folder-front"/>'+(plus?'<path d="M32 34v14M25 41h14" fill="none" stroke="white" stroke-width="2.6" stroke-linecap="round"/>':'')));
  return art;
 }
 let active=null;
+const ownFolders=state=>state.local.filter(x=>x.kind==='folder').sort((a,b)=>(a.order??a.createdAt)-(b.order??b.createdAt)||a.id.localeCompare(b.id));
+const folderEntries=state=>[...categories.slice(0,4),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true})),...categories.slice(4)];
+function notice(state,text){state.folderCaption.textContent=text;}
+function closeFolderMenu(state){state.folderMenu.hidden=true;state.folderMenu.replaceChildren();}
+function revealOwnFolder(state,id){state.pendingFolder=id;void refresh();}
+async function makeFolder(state){
+ const name=window.prompt('Название папки','Новая папка');if(!name?.trim()||state!==active)return;
+ try{const id=await localFiles().createFolder(state.options.area,name);if(state===active)revealOwnFolder(state,id);}catch(e){notice(state,e.message||'Не удалось создать папку.');}
+}
+function openFolderMenu(state,category){
+ if(state!==active)return;
+ closeFolderMenu(state);
+ const menu=state.folderMenu;menu.hidden=false;
+ const action=(label,fn,destructive=false)=>{const b=el('button','sv-doc-folder-menu-action'+(destructive?' sv-doc-folder-danger':''),label);b.type='button';b.addEventListener('click',async()=>{closeFolderMenu(state);try{await fn();}catch(e){notice(state,e.message||'Не удалось изменить папку.');}});menu.append(b);};
+ action('Переименовать',async()=>{const name=window.prompt('Название папки',category.title);if(name?.trim())await localFiles().update(state.options.area,category.id,{name});});
+ action('В начало моих папок',async()=>{const own=ownFolders(state);const first=Math.min(...own.map(x=>x.order??x.createdAt));await localFiles().update(state.options.area,category.id,{order:first-1});revealOwnFolder(state,category.id);});
+ action('В конец моих папок',async()=>{const own=ownFolders(state);const last=Math.max(...own.map(x=>x.order??x.createdAt));await localFiles().update(state.options.area,category.id,{order:last+1});revealOwnFolder(state,category.id);});
+ action('Удалить папку',async()=>{if(!window.confirm('Удалить пустую папку «'+category.title+'»?'))return;await localFiles().removeFolder(state.options.area,category.id);if(state.filter===category.id){state.filter='all';state.expanded=false;paint(state);}},true);
+}
 function openArchive(state){
  if(state!==active)return;
  state.options.onArchive?.();
@@ -102,7 +121,7 @@ function paint(state){
  const recentScroll=state.recentGrid.scrollLeft;
  state.recentGrid.replaceChildren();
  // Sample icons are a format picker, not invented 'recent documents'.
- const showingFormats=!subset.length&&!state.query&&state.filter==='all'&&(!state.unlocked||all.length===0);
+ const showingFormats=!subset.length&&!state.query&&state.filter==='all'&&!state.expanded&&(!state.unlocked||all.length===0);
  // The document toolbar already has one Add action. Hide the four sample-format
  // buttons when there are no real recents; keep real files, search and folders.
  if(state.recent){
@@ -116,7 +135,7 @@ function paint(state){
  const hasMore=filtered.length>4;
  state.showAll.textContent=state.expanded?'Свернуть':'Все файлы ›';
  state.showAll.setAttribute('aria-label',state.expanded?'Свернуть список документов':'Показать все документы');
- if(!subset.length&&state.unlocked&&all.length===0&&!state.query&&state.filter==='all'){
+ if(showingFormats&&state.unlocked){
   for(const example of examples){
    const card=el('button','sv-doc-recent-card sv-doc-example-card');
    card.type='button';
@@ -126,7 +145,7 @@ function paint(state){
    card.addEventListener('click',()=>state.options.onPick?.(example.type));
    state.recentGrid.append(card);
   }
- }else if(!subset.length&&!state.unlocked&&!state.query&&state.filter==='all'){
+ }else if(showingFormats&&!state.unlocked){
   for(const example of examples){
    const card=el('button','sv-doc-recent-card sv-doc-example-card');
    card.type='button';card.setAttribute('aria-label','Выбрать файл '+example.format);
@@ -205,29 +224,47 @@ function paint(state){
  // Repainting after selecting a folder must not jump the swipe row back to start.
  const folderScroll=state.foldersGrid.scrollLeft;
  state.foldersGrid.replaceChildren();
- for(const category of [...categories,...state.local.filter(x=>x.kind==='folder').map(x=>({id:x.id,title:x.name,custom:true}))]){
+ for(const category of folderEntries(state)){
   const count=all.filter(item=>category.id==='all'||inFolder(item,category.id)).length;
   const entry=el('button','sv-doc-folder-card sv-doc-folder-'+category.id);
   entry.type='button';entry.setAttribute('aria-pressed',String(state.filter===category.id));
   entry.setAttribute('aria-label','Подборка '+category.title+(state.unlocked?', '+count+' файлов':''));
-  entry.append(folderArt(),el('strong','',category.title));
+  entry.append(folderArt(category.id==='new'),el('strong','',category.title));
+  if(category.id==='new')entry.setAttribute('aria-label','Создать новую пустую папку');
   if(state.unlocked)entry.title=count+' '+(count===1?'файл':count>=2&&count<=4?'файла':'файлов');
+  let suppressClick=0;
   entry.addEventListener('click',()=>{
-   if(state!==active)return;
+   if(state!==active||Date.now()<suppressClick)return;
+   closeFolderMenu(state);
+   if(category.id==='new'){void makeFolder(state);return;}
    if(category.id==='device'){state.options.onPick?.('all');return;}
    state.filter=category.id;state.expanded=true;paint(state);
    if(category.id==='archive'&&!state.unlocked)openArchive(state);
    else state.recent.scrollIntoView?.({block:'nearest',behavior:'smooth'});
   });
-  if(category.custom)entry.addEventListener('contextmenu',async e=>{e.preventDefault();const name=window.prompt('Название папки',category.title);if(name?.trim())try{await localFiles().update(state.options.area,category.id,{name});}catch(err){state.status.textContent=err.message;}});
-  state.foldersGrid.append(entry);
+  if(category.custom){
+   entry.setAttribute('aria-haspopup','true');
+   const menu=()=>{suppressClick=Date.now()+650;openFolderMenu(state,category);};
+   entry.addEventListener('contextmenu',e=>{e.preventDefault();menu();});
+   entry.addEventListener('keydown',e=>{if(e.key==='ContextMenu'||(e.shiftKey&&e.key==='F10')){e.preventDefault();menu();}});
+   let timer=0,start=null;
+   const cancel=()=>{clearTimeout(timer);timer=0;start=null;};
+   entry.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;cancel();start={x:e.clientX,y:e.clientY};timer=setTimeout(()=>{timer=0;menu();},550);});
+   entry.addEventListener('pointermove',e=>{if(start&&Math.hypot(e.clientX-start.x,e.clientY-start.y)>10)cancel();});
+   for(const event of ['pointerup','pointercancel','pointerleave'])entry.addEventListener(event,cancel);
+   const wrap=el('div','sv-doc-custom-folder-wrap');
+   const more=el('button','sv-doc-custom-folder-more','···');more.type='button';more.setAttribute('aria-label','Действия с папкой '+category.title);more.addEventListener('click',menu);
+   wrap.append(entry,more);state.foldersGrid.append(wrap);
+  }else state.foldersGrid.append(entry);
  }
- const add=el('button','sv-doc-folder-card sv-doc-folder-add');add.type='button';add.append(folderArt(),el('strong','','Новая папка'));
- add.addEventListener('click',async()=>{const name=window.prompt('Название папки');if(!name?.trim())return;try{await localFiles().createFolder(state.options.area,name);}catch(err){state.status.textContent=err.message||'Не удалось создать папку';}});
- state.foldersGrid.append(add);
  state.foldersGrid.scrollLeft=folderScroll;
- state.folderCaption.textContent='';
+ if(state.pendingFolder&&state.local.some(x=>x.id===state.pendingFolder)){
+  const target=state.foldersGrid.querySelector('.sv-doc-folder-'+state.pendingFolder);
+  if(target){const left=target.getBoundingClientRect().left-state.foldersGrid.getBoundingClientRect().left+state.foldersGrid.scrollLeft;state.foldersGrid.scrollLeft=Math.max(0,left);}
+  state.pendingFolder=null;
+ }
 }
+
 async function refresh(){
  const state=active;if(!state)return;
  const token=++state.token;
@@ -282,9 +319,12 @@ function mount(parent,options={}){
  foldersGrid.setAttribute('role','region');
  foldersGrid.setAttribute('aria-label','Папки документов, листайте горизонтально');
  foldersGrid.tabIndex=0;
- folders.append(folderHeader,foldersGrid);
+ const folderMenu=el('div','sv-doc-folder-menu sv-menu-surface');folderMenu.hidden=true;folderMenu.setAttribute('role','group');folderMenu.setAttribute('aria-label','Действия с папкой');
+ folders.append(folderHeader,foldersGrid,folderMenu);
+ folders.addEventListener('keydown',e=>{if(e.key==='Escape')closeFolderMenu(state);});
+ foldersGrid.addEventListener('scroll',()=>closeFolderMenu(state),{passive:true});
  parent.append(recent,folders);
- Object.assign(state,{recent,recentTitle,showAll,recentGrid,status,foldersGrid,folderCaption});
+ Object.assign(state,{recent,recentTitle,showAll,recentGrid,status,foldersGrid,folderCaption,folderMenu});
  refresh();
  return true;
 }
