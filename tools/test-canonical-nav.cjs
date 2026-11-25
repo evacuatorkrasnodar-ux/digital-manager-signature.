@@ -5,6 +5,9 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const checks=[
+  ["assets/seyveo-mail-white-pearl.css","left:var(--sv-header-compact-row,48px)!important;right:var(--sv-header-compact-row,48px)!important;"],
+  ["assets/seyveo-mail-white-pearl.css",".sv-mail-top-buttons{align-items:center!important;height:var(--sv-nav-capsule-height,44px)!important"],
+  ["assets/seyveo-mail-white-pearl.css","flex:0 0 var(--sv-nav-single-size,44px)!important;width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;"],
   ["assets/seyveo-header-system.css","--sv-header-action-top:calc((var(--sv-apple-nav-row) - var(--sv-header-slot)) / 2);"],
   ["assets/seyveo-header-system.css","top:var(--sv-header-action-top,0px)!important;right:0!important;"],
   ["assets/seyveo-header-search-flat.css","top:var(--sv-header-action-top,0px)!important;"],
