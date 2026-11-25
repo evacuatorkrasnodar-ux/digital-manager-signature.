@@ -257,9 +257,9 @@ function paint(state){
    closeFolderMenu(state);
    if(category.id==='new'){void makeFolder(state);return;}
    if(category.id==='device'){state.options.onPick?.('all');return;}
+   if(category.id==='archive'){openArchive(state);return;}
    state.filter=category.id;state.expanded=true;paint(state);
-   if(category.id==='archive'&&!state.unlocked)openArchive(state);
-   else state.recent.scrollIntoView?.({block:'nearest',behavior:'smooth'});
+   state.recent.scrollIntoView?.({block:'nearest',behavior:'smooth'});
   });
   if(category.custom){
    entry.setAttribute('aria-haspopup','true');
