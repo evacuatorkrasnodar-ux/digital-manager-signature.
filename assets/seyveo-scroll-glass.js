@@ -134,3 +134,67 @@ document.addEventListener('focusout',schedule);
 window.addEventListener('pageshow',schedule);
 schedule();
 })();
+
+/* SEYVEO · calm mechanical-wheel scrolling, native touch/trackpad unchanged.
+   Only established vertical list scrollports; never intercept editors, rails,
+   nested scroll regions, calendar snapping or accessibility navigation. */
+(()=>{
+'use strict';
+const docs='#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"]:not([hidden]) > #sayviSurfaceBody';
+const targets=[docs,
+ '#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"]:not([hidden]) > #sayviSurfaceBody',
+ '#svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage:not([hidden]) #personalTaskList.personal-tasks-list',
+ '#svWorkShell[data-active="notes"] #notesDialog:not(.sv-nb-selecting) > #notesList.sv-note-clean-list',
+ '#svWorkShell[data-shared-work="true"][data-active="business"] > #tasksPage:not([hidden]) > #unifiedBusinessTasksView:not([hidden])',
+ 'dialog:is(#svcpManagerPeople,#svStaffProfile,#svRecruitDetail,#svHrInterview,#seyveoCompanyDialog,#seyveoQrCardDialog,#seyveoContactsDialog)[open] > .sv-page-scroll'
+].join(',');
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+let active=null,frame=0;
+function stop(){if(frame)cancelAnimationFrame(frame);frame=0;active=null;}
+function paintEdge(el){
+ if(el.matches(docs))el.style.setProperty('--sv-doc-edge-opacity',String(Math.max(0,Math.min(1,el.scrollTop/20))));
+}
+document.addEventListener('scroll',e=>{if(e.target instanceof Element)paintEdge(e.target);},true);
+function tick(now){
+ frame=0;
+ if(!active)return;
+ const {el}=active;
+ if(!el.isConnected||el.closest('[hidden]')||!el.matches(targets)||reduced.matches){stop();return;}
+ const dt=Math.min(40,Math.max(1,now-active.last));active.last=now;
+ const remaining=active.goal-el.scrollTop;
+ if(Math.abs(remaining)<1){el.scrollTop=active.goal;stop();return;}
+ el.scrollTop+=remaining*(1-Math.exp(-dt/70));
+ frame=requestAnimationFrame(tick);
+}
+document.addEventListener('wheel',e=>{
+ if(e.defaultPrevented||!e.cancelable||reduced.matches||e.ctrlKey||e.metaKey||e.shiftKey||!e.deltaY||Math.abs(e.deltaX)>0.5*Math.abs(e.deltaY))return;
+ const origin=e.target instanceof Element?e.target:null;
+ if(!origin||origin.closest('input,textarea,select,[contenteditable],canvas,iframe,[role="slider"],[role="spinbutton"],.sv-doc-recent-grid,.sv-doc-folders-grid'))return;
+ const el=origin.closest(targets);
+ if(!el||el.closest('[hidden]')||origin.closest('dialog[open]')!==el.closest('dialog[open]'))return;
+ // Do not guess a continuous trackpad gesture: only line/page events or
+ // conventional discrete 100/120-pixel wheel steps get animation.
+ const n=Math.abs(e.deltaY);
+ const discrete=e.deltaMode!==0||[100,120].some(k=>n>=k&&Math.abs(n/k-Math.round(n/k))<.001);
+ if(!discrete){stop();return;}
+ for(let node=origin;node&&node!==el;node=node.parentElement){
+  const s=getComputedStyle(node);
+  if((/(auto|scroll|overlay)/.test(s.overflowY)&&node.scrollHeight>node.clientHeight+2)||
+     (/(auto|scroll|overlay)/.test(s.overflowX)&&node.scrollWidth>node.clientWidth+2))return;
+ }
+ const style=getComputedStyle(el);
+ if(!/(auto|scroll|overlay)/.test(style.overflowY)||(style.scrollSnapType&&style.scrollSnapType!=='none'))return;
+ const max=el.scrollHeight-el.clientHeight;
+ if(max<2)return;
+ const delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?el.clientHeight:1);
+ const step=Math.sign(delta)*Math.min(Math.abs(delta),Math.max(48,Math.min(160,el.clientHeight*.28)));
+ if((step<0&&el.scrollTop<=0)||(step>0&&el.scrollTop>=max-1)){stop();return;}
+ e.preventDefault();
+ const now=performance.now();
+ if(!active||active.el!==el){stop();active={el,goal:el.scrollTop,last:now};}
+ if(Math.sign(active.goal-el.scrollTop)!==Math.sign(step))active.goal=el.scrollTop;
+ active.goal=Math.max(0,Math.min(max,el.scrollTop+Math.sign(step)*Math.min(el.clientHeight*.7,Math.abs(active.goal-el.scrollTop)+Math.abs(step))));
+ if(!frame)frame=requestAnimationFrame(tick);
+},{passive:false});
+ for(const type of ['pointerdown','touchstart','keydown','pagehide'])window.addEventListener(type,stop,{passive:true,capture:true});
+})();
