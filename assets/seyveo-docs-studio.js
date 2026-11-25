@@ -763,7 +763,7 @@ function mount(target,{
    const source=$('a','sv-doc-official-source','Официальный источник');source.target='_blank';source.rel='noopener noreferrer';
    const label=(name,node)=>{const l=$('div','sv-doc-official-field');l.append($('span','',name),node);return l;};
    function current(){return official.find(x=>x.id===form.value);}
-   function syncPeriod(){const item=current();if(!item)return;period=pickers.period(item.period==='date'?'Дата пересечения границы':'Отчётный период',item.period);periodSlot.replaceChildren(period);source.href=item.url;info.textContent='Актуальность бланка проверяйте на сайте ведомства.';}
+   function syncPeriod(){const item=current();if(!item)return;period=pickers.period(item.period==='date'?'Дата пересечения границы':'Отчётный период',item.period,area);periodSlot.replaceChildren(period);source.href=item.url;info.textContent='Актуальность бланка проверяйте на сайте ведомства.';}
    function syncForms(preferred){form.setChoices(official.filter(x=>x.country===country.value).map(x=>[x.id,x.name]),preferred);syncPeriod();}
    country.addEventListener('change',()=>{try{localStorage.setItem(countryKey,country.value)}catch{}syncForms('');});form.addEventListener('change',syncPeriod);syncForms(selected.id);
    const help=button('',async()=>{
