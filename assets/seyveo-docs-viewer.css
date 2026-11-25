@@ -522,3 +522,22 @@ html:root body .svdv-viewer>.sv-pdf-markup-embedded[open]{position:relative!impo
 html:root body .svdv-viewer>.sv-pdf-markup-embedded .sv-pdf-markup-head strong{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:14px;}
 
 html:root body .svdv-more-options>[hidden]{display:none!important;}
+
+/* One persistent document header and editor capsule; notebook-style vertical ink controls. */
+html:root body .svdv-inline-controls[hidden]{display:none!important;}
+html:root body .svdv-viewer .svdv-ink-stage{display:flex!important;flex-direction:column!important;overflow:hidden!important;}
+html:root body .sv-pdf-markup-body{position:relative;display:flex;flex:1;flex-direction:column;min-height:0;min-width:0;gap:5px;padding-right:50px;box-sizing:border-box;}
+html:root body .sv-pdf-markup-body .sv-pdf-markup-viewport{flex:1;min-height:0;overflow:auto;}
+html:root body .svdv-ink-side-wrap{position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:4;}
+html:root body .svdv-ink-side{display:flex;flex-direction:column;gap:1px;padding:3px;box-sizing:border-box;border-radius:999px;border:var(--sv-white-pearl-edge,1px solid #e8eaed);background:var(--sv-white-pearl-surface,#f5f5f7);box-shadow:var(--sv-white-pearl-dock-shadow,0 3px 12px #0001);}
+html:root body .svdv-ink-side>button{display:grid;place-items:center;width:36px;min-width:36px;height:36px;min-height:36px;border:0;border-radius:50%;padding:0;background:transparent;box-shadow:none;color:#20262d;}
+html:root body .svdv-ink-side>button>svg{width:20px;height:20px;}
+html:root body .svdv-ink-side>button:is([aria-pressed="true"],[aria-expanded="true"]){background:#0a84ff12;color:#176ab4;}
+html:root body .svdv-ink-side>button:disabled{opacity:.35;}
+html:root body .svdv-ink-side .sv-smart-aa{font:600 17px/1 system-ui;}
+html:root body .svdv-ink-side .sv-editor-color-dot{width:19px;height:19px;}
+html:root body .svdv-ink-side-wrap .sv-pdf-ink-palette:not([hidden]){position:absolute;right:calc(100% + 6px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:7px;padding:7px;border-radius:999px;background:var(--sv-white-pearl-surface,#f5f5f7);border:var(--sv-white-pearl-edge,1px solid #e8eaed);box-shadow:var(--sv-white-pearl-dock-shadow,none);}
+html:root body .sv-pdf-markup-body .sv-pdf-markup-pager[hidden]{display:none!important;}
+html:root body .sv-pdf-markup-body .sv-pdf-inline-text{box-sizing:border-box!important;position:absolute!important;z-index:3;min-height:0!important;padding:0 1px!important;border:0!important;border-bottom:1px solid #176ab4!important;background:#fff!important;outline:0!important;margin:0!important;}
+html:root body .svdv-inline-rail .sv-smart-aa{font:600 20px/1 system-ui;}
+@media(max-height:490px){html:root body .svdv-ink-side{max-height:calc(var(--sv-editor-visible-height,100dvh) - 150px);overflow:auto;scrollbar-width:none;}}
