@@ -188,7 +188,7 @@ function mount(target,{
  if(!target)return false;
  const editor=$('section','sv-doc-tools');
  editor.append($('h2','sv-doc-tools-heading','Быстрые действия'));
- // Five working document actions, one balanced iPhone row.
+ // Three primary document actions; contextual actions live with the document.
  const grid=$('div','sv-doc-tool-grid');
  const scan=button('Сканер',()=>open('scan'),'sv-doc-tool-scan');
  scan.dataset.action='scan';
@@ -196,9 +196,7 @@ function mount(target,{
  scan.append(toolArt('scan'));grid.append(scan);
  const items=[
   ['Добавить','file',()=>onPick()],
-  ['Создать','create',()=>open('create')],
-  ['Подписать','sign',()=>open('sign')],
-  ['Печать','print',()=>open('print')]
+  ['Создать','create',()=>open('create')]
  ];
  for(const [label,key,action] of items){
   const control=button(label,action,'sv-doc-tool-'+key);
@@ -209,7 +207,7 @@ function mount(target,{
  panel.setAttribute('aria-label','Инструменты документов');
  const draftSection=$('section','sv-doc-drafts');draftSection.hidden=true;
  editor.append(grid,panel,draftSection);target.append(editor);
- // The five-action toolbar is the only opener/closer for its panels.
+ // Primary toolbar and contextual document actions open the existing panels.
  for(const action of grid.querySelectorAll('button[data-action]:not([data-action="file"])')){
   action.setAttribute('aria-pressed','false');
   action.setAttribute('aria-expanded','false');
@@ -333,7 +331,7 @@ function mount(target,{
  };
  const syncToolSelection=()=>{
   grid.querySelectorAll('button[data-action]:not([data-action="file"])').forEach(action=>{
-   const selected=!panel.hidden&&mode===action.dataset.action;
+   const selected=!panel.hidden&&(mode===action.dataset.action||action.dataset.action==='scan'&&mode==='sign');
    action.setAttribute('aria-pressed',String(selected));
    action.setAttribute('aria-expanded',String(selected));
    if(action.dataset.action==='scan'){
@@ -460,31 +458,9 @@ function mount(target,{
   }
   board.append(guide);
   const footer=$('div','sv-doc-scan-stage-meta');
-  footer.append(
-   $('span','',scans.length?'Страница '+(selectedScan+1)+' из '+scans.length:'Пример листа'),
-   $('span','',scans.length?'Ваше фото':'Направляющие · пример')
-  );
+  footer.append($('span','',scans.length?'Страница '+(selectedScan+1)+' из '+scans.length:'Пример листа'));
   stage.append(board,footer);
   return stage;
- }
- function pdfPreviewCard(){
-  const card=$('div','sv-doc-tool-pdf-card');
-  const image=art('pdf');
-  const copy=$('div','sv-doc-tool-pdf-copy');
-  copy.append($('strong','','PDF из сканов'),
-   $('small','',scans.length+' стр. · будет создан по нажатию'));
-  const preview=button('Посмотреть',()=>{
-   try{
-    const blob=window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans);
-    const url=URL.createObjectURL(blob);
-    temporaryUrls.push(url);
-    const link=$('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';
-    document.body.append(link);link.click();link.remove();
-    message('Предпросмотр PDF открыт, если это разрешает браузер.');
-   }catch{message('Не удалось открыть предпросмотр PDF.');}
-  },'sv-doc-tool-pdf-preview');
-  preview.setAttribute('aria-label','Посмотреть собранный PDF в отдельном окне');
-  card.append(image,copy,preview);return card;
  }
  let ocrEnginePromise=null;
  function getOcrEngine(){
@@ -530,7 +506,7 @@ function mount(target,{
  function renderScan(){
   clear();
   panel.dataset.hasScans=String(scans.length>0);
-  panel.append(heading('Сканер','Фото → PDF'));
+  if(!scans.length)panel.append(heading('Сканер','Фото → PDF'));
   if(scans.length)panel.append(scannerStage());
   const camera=$('input');camera.type='file';camera.accept='image/*';
   camera.setAttribute('capture','environment');camera.hidden=true;
@@ -545,60 +521,69 @@ function mount(target,{
   panel.append(camera,library,controls(capture,gallery));
   const counter=$('div','sv-doc-tool-pages');
   if(scans.length){
-   counter.append($('strong','','Страницы · '+scans.length));
-   const thumbs=$('div','sv-doc-tool-thumbs');
-   scans.forEach((page,index)=>{
-    const wrap=$('div','sv-doc-tool-thumb');
-    const url=URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'}));
-    temporaryUrls.push(url);
-    const img=$('img');img.src=url;img.alt='Страница '+(index+1);
-    const select=button('',()=>{selectedScan=index;renderScan();},
-     'sv-doc-tool-thumb-select');
-    select.setAttribute('aria-label','Просмотреть страницу '+(index+1));
-    select.setAttribute('aria-pressed',String(index===selectedScan));
-    select.append(img);
-    const actions=$('div','sv-doc-tool-thumb-actions');
-    const turn=button('↻',()=>{void rotatePage(index);});
-    turn.setAttribute('aria-label','Повернуть страницу '+(index+1));
-    const before=button('←',()=>movePage(index,-1));
-    before.setAttribute('aria-label','Переместить страницу '+(index+1)+' назад');
-    before.disabled=index===0;
-    const after=button('→',()=>movePage(index,1));
-    after.setAttribute('aria-label','Переместить страницу '+(index+1)+' вперёд');
-    after.disabled=index===scans.length-1;
-    actions.append(turn,before,after);
-    const del=button('Удалить '+(index+1),()=>{
-     scans.splice(index,1);
-     if(selectedScan>index)selectedScan--;
-     selectedScan=Math.min(selectedScan,Math.max(0,scans.length-1));
-     renderScan();
+   const index=selectedScan;
+   if(scans.length>1){
+    const thumbs=$('div','sv-doc-tool-thumbs sv-doc-scan-compact-thumbs');
+    scans.forEach((page,i)=>{
+     const url=URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'}));temporaryUrls.push(url);
+     const img=$('img');img.src=url;img.alt='Страница '+(i+1);
+     const select=button('',()=>{selectedScan=i;renderScan();},'sv-doc-tool-thumb-select');
+     select.setAttribute('aria-label','Просмотреть страницу '+(i+1));select.setAttribute('aria-pressed',String(i===index));
+     select.append(img);thumbs.append(select);
     });
-    del.setAttribute('aria-label','Удалить страницу '+(index+1));
-    wrap.append(select,actions,del);thumbs.append(wrap);
+    counter.append(thumbs);
+   }
+   const pageActions=$('div','sv-doc-tool-thumb-actions sv-doc-scan-page-actions');
+   const pageAction=(label,kind,fn)=>{
+    const n=button('',fn);n.setAttribute('aria-label',label);n.title=label;n.append(toolArt(kind));return n;
+   };
+   pageActions.append(pageAction('Повернуть страницу','undo',()=>{void rotatePage(index);}));
+   if(scans.length>1){
+    const before=pageAction('Переместить страницу назад','back',()=>movePage(index,-1));before.disabled=index===0;
+    const after=pageAction('Переместить страницу вперёд','back',()=>movePage(index,1));after.classList.add('sv-doc-scan-forward');after.disabled=index===scans.length-1;
+    pageActions.append(before,after);
+   }
+   pageActions.append(pageAction('Удалить страницу','delete',()=>{
+    if(!window.confirm('Удалить страницу '+(index+1)+'?'))return;
+    scans.splice(index,1);selectedScan=Math.min(index,Math.max(0,scans.length-1));renderScan();
+   }));
+   counter.append(pageActions);
+   const savePdf=button('Сохранить PDF',async()=>{
+    if(savePdf.disabled)return;savePdf.disabled=true;
+    try{
+     const name='Скан '+new Date().toLocaleDateString('ru-RU')+' '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}).replace(':','-')+'.pdf';
+     const file=asFile(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),name);
+     await window.SEYVEO_DOCUMENT_FILES.save(area,file,'scan');message('PDF сохранён в папке «Сканы».');
+    }catch(e){message(e.message||'Не удалось сохранить PDF.');}
+    finally{savePdf.disabled=false;}
+   },'sv-doc-tool-primary sv-doc-scan-save');
+   const more=$('details','sv-doc-scan-more');
+   const summary=$('summary','sv-doc-scan-more-toggle');summary.append(toolArt('more'));summary.setAttribute('aria-label','Ещё действия со сканом');more.append(summary);
+   const menu=$('div','sv-doc-scan-more-menu');
+   const add=(label,kind,fn)=>{
+    const n=button(label,()=>{more.open=false;fn();},'sv-doc-scan-menu-action');n.prepend(toolArt(kind));menu.append(n);
+   };
+   add('Подписать скан','sign',()=>open('sign'));
+   add('Посмотреть PDF','original',()=>{
+    try{
+     const url=URL.createObjectURL(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans));temporaryUrls.push(url);
+     const link=$('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';document.body.append(link);link.click();link.remove();
+    }catch{message('Не удалось открыть предпросмотр PDF.');}
    });
-   counter.append(thumbs,pdfPreviewCard());
-   counter.append(controls(
-    button('Сохранить PDF',async()=>{
-     try{const name='Скан '+new Date().toLocaleDateString('ru-RU')+' '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}).replace(':','-')+'.pdf';
-      const file=asFile(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),name);
-      await window.SEYVEO_DOCUMENT_FILES.save(area,file,'scan');message('PDF сохранён в папке «Сканы».');
-     }catch(e){message(e.message||'Не удалось сохранить PDF.');}
-    },'sv-doc-tool-primary'),
-    button('В Файлы / поделиться',()=>{
-     try{
-      const pdf=window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans);
-      void shareExport(pdf,'SEYVEO-скан.pdf').then(
-       result=>message(shareMessage(result,'PDF'))
-      );
-     }catch{message('Не удалось подготовить PDF.');}
-    }),
-    button('В архив',()=>{
-     try{
-      onImport(asFile(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf'));
-     }catch{message('Не удалось передать PDF в архив.');}
-    }),
-    button('Очистить страницы',()=>{scans=[];selectedScan=0;renderScan();})
-   ));
+   add('Печать','print',()=>open('print'));
+   add('Поделиться','share',()=>{
+    try{void shareExport(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf').then(result=>message(shareMessage(result,'PDF')));}
+    catch{message('Не удалось подготовить PDF.');}
+   });
+   add('В защищённый архив','archive',()=>{
+    try{onImport(asFile(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf'));}
+    catch{message('Не удалось передать PDF в архив.');}
+   });
+   add('Очистить страницы','delete',()=>{
+    if(window.confirm('Удалить все страницы текущего скана?')){scans=[];selectedScan=0;renderScan();}
+   });
+   more.append(menu);
+   const finish=$('div','sv-doc-scan-finish');finish.append(savePdf,more);counter.append(finish);
   }
   if(scans.length)panel.append(counter);
   panel.append(status(''));
@@ -1185,6 +1170,7 @@ function mount(target,{
  }
  function renderSign(){
   panel.dataset.hasScans=String(scans.length>0);
+  panel.append(button('К страницам скана',()=>open('scan'),'sv-doc-scan-back'));
   panel.append(heading('Подпись',scans.length?
    'Выберите место и нарисуйте подпись':'Рисуйте пальцем или стилусом'));
   // The large paper is not a real document until a page is imported.
@@ -1385,6 +1371,7 @@ function mount(target,{
   panel.append(info,status(''));
  }
  function renderPrint(){
+  panel.append(button('К страницам скана',()=>open('scan'),'sv-doc-scan-back'));
   panel.append(heading('Печать','PDF или фото · через системное меню'));
   const filePicker=$('input');
   filePicker.type='file';filePicker.accept='.pdf,.jpg,.jpeg,.png,.webp';
