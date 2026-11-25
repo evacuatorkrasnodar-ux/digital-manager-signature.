@@ -379,13 +379,13 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
   }));
  }
  if(info.kind==='pdf'&&onEdit){
-  const pages=action('Обработка страниц','scan',async()=>{
+  const pages=action('Управление страницами','scan',async()=>{
    if(pages.disabled)return;pages.disabled=true;
-   try{const ok=await onEdit({kind:'pdf-file',file});if(ok&&sheet?.open)sheet.close();else if(!ok&&active)say('Обработка страниц пока недоступна.');}
-   catch(e){if(active)say(e?.message||'Не удалось открыть обработку страниц.');}
+   try{const ok=await onEdit({kind:'pdf-file',file});if(ok&&sheet?.open)sheet.close();else if(!ok&&active)say('Управление страницами пока недоступно.');}
+   catch(e){if(active)say(e?.message||'Не удалось открыть управление страницами.');}
    finally{pages.disabled=false;}
   });
-  moreBody.append(pages);
+  if(editAction)editAction.after(pages);else moreBody.prepend(pages);
  }
  if(onSayvi)moreBody.append(action('Сэйви поможет','sayvi',()=>onSayvi('review')));
  moreBody.addEventListener('click',event=>{if(event.target.closest('button,a'))more.open=false;});
