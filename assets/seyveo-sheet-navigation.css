@@ -2,7 +2,7 @@
    Read-only previews and secondary forms rise from the bottom.
    Long-lived workspaces retain their approved full-screen geometry.
    Never target all dialogs, main routes, consent, passwords, calls or menus. */
-@keyframes svSharedSheetEnter{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes svSharedSheetEnter{from{translate:0 100%}to{translate:0 0}}
 @keyframes svSharedSheetShade{from{opacity:0}to{opacity:1}}
 /* Secondary document forms. Keep their existing save, cancel and scroll behavior. */
 html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog:is(.sv-doc-official-dialog,.sv-doc-professional-details,.sv-doc-library-sheet)[open]{
@@ -56,3 +56,6 @@ html:root body .svcp-doc-overlay.sv-shared-work-sheet .svcp-doc-top{touch-action
  html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog:is(.sv-doc-official-dialog,.sv-doc-professional-details,.sv-doc-library-sheet,.sv-doc-edit-sheet)[open],
  html:root body .svcp-doc-overlay.sv-shared-work-sheet,.sv-work-sheet-shade{animation:none!important;}
 }
+
+/* Preserve opening motion in browsers with the older transform-only API. */
+@supports not (translate:0 1px){@keyframes svSharedSheetEnter{from{opacity:0}to{opacity:1}}}
