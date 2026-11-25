@@ -25,6 +25,8 @@ const paths=Object.freeze({
  clear:'<path d="m4.5 14.5 9-9a2 2 0 0 1 2.8 0l3 3a2 2 0 0 1 0 2.8L11.1 20H8L4.5 16.5a1.5 1.5 0 0 1 0-2Z"/><path d="m9 10 6.5 6.5M11.1 20H21"/>',
  heading:'<path d="m4 19 6-14 6 14M6 15h8M19 6v13"/>',
  check:'<path d="m5 12 4 4 10-10"/>',
+ info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5m0-8h.01"/>',
+ history:'<path d="M3.5 11a8.5 8.5 0 1 1 3 7.5M3.5 5v6h6M12 7.5V12l3 2"/>',
  down:'<path d="m7 10 5 5 5-5"/>',
  'align-left':'<path d="M4 5h16M4 10h10M4 15h16M4 20h10"/>',
  'align-center':'<path d="M4 5h16M7 10h10M4 15h16M7 20h10"/>',
