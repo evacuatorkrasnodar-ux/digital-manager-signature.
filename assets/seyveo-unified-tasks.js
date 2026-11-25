@@ -1100,7 +1100,6 @@
   {id:'chats',name:'Чаты команды',category:'Общение',description:'Рабочие переписки',tags:'мессенджер сообщения коллектив связь персонал'},
   {id:'mail',name:'Рабочая почта',category:'Общение',description:'Письма и черновики',tags:'помощник секретарь сообщения'},
   {id:'documents',name:'Документы бизнеса',category:'Документы',description:'Договоры и согласования',tags:'юрист бухгалтер договор акты счета документы подписи'},
-  {id:'company',name:'Моя компания',category:'Управление',description:'Контакты и QR-визитка',tags:'организация реквизиты ип визитка'},
   {id:'people',name:'Сотрудники и кадры',category:'Команда и кадры',description:'Карточки, смены, подбор',tags:'кадровик отдел кадров персонал график отпуска найм кассир'}
  ];
  const upcoming=[
@@ -1117,7 +1116,6 @@
   chats:{title:'Общаться с командой',description:'Рабочие и групповые переписки',benefit:'Открывайте существующие рабочие чаты из кабинета.',hint:'Сейчас часть переписок работает локально на устройстве. Между сотрудниками потребуется защищённая серверная связь.'},
   mail:{title:'Работать с письмами',description:'Почта и черновики',benefit:'Открывайте рабочую почту из кабинета.',hint:'Для реальной переписки потребуется подключить почтовый ящик с отдельным разрешением.'},
   documents:{title:'Готовить документы',description:'Договоры и согласования',benefit:'Быстрый доступ к документам и подготовке договоров.',hint:'Реальные корпоративные документы потребуют подключённого хранилища и настроенных прав доступа.'},
-  company:{title:'Хранить реквизиты компании',description:'Контакты и QR-визитка',benefit:'Открывайте карточку организации, реквизиты и QR-визитку.',hint:'Данные карточки в текущем прототипе сохраняются локально на устройстве.'},
   people:{title:'Управлять сотрудниками',description:'Карточки, смены и подбор',benefit:'Рабочий раздел с сотрудниками, сменами и поручениями.',hint:'Пока учебные сотрудники и графики находятся в локальном прототипе; права реальных людей будут назначаться отдельно.'}
  };
  /* Quiet line icons explain each cabinet tool without adding another button. */
@@ -1126,7 +1124,6 @@
   chats:'<path d="M4 5h16v12H9l-5 3V5Z"/>',
   mail:'<rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4.5 8 7.5 5.5L19.5 8"/>',
   documents:'<path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6"/>',
-  company:'<path d="M4 20V7l8-4 8 4v13M4 20h16M9 20v-6h6v6M8 10h1M15 10h1"/>',
   people:'<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 8a3 3 0 0 1 0 6M18 16a4 4 0 0 1 3 4"/>'
  };
  const goalIcon=id=>{
@@ -1152,7 +1149,8 @@
    const record=JSON.parse(localStorage.getItem(KEY)||'null');
    if(!record||!Array.isArray(record.order))return DEFAULT.slice();
    // Whitelist known module IDs. Future versions will safely ignore old IDs.
-   return [...new Set(record.order.filter(id=>typeof id==='string'&&itemById.has(id)))];
+   const valid=[...new Set(record.order.filter(id=>typeof id==='string'&&itemById.has(id)))];
+   return valid.length===0&&record.order.includes('company')?DEFAULT.slice():valid;
   }catch{return DEFAULT.slice()}
  }
  function apply(){
@@ -1531,13 +1529,13 @@
   const systems=Array.isArray(plan?.sources)?plan.sources:[];
   const business=String(plan?.business||'');
   if(business==='Для себя')return [];
-  const want=new Set(['company','mail']);
+  const want=new Set(['mail']);
   if(features.includes('team')||(Number(plan?.employees)||0)>1){
    want.add('chats');want.add('people');
   }
   if(features.includes('sales')||systems.some(x=>['1С','Битрикс24','Кассовая система'].includes(x)))want.add('pulse');
   if(features.includes('docs')||features.includes('finance'))want.add('documents');
-  return ['pulse','chats','people','documents','mail','company'].filter(id=>want.has(id)&&tools.has(id));
+  return ['pulse','chats','people','documents','mail'].filter(id=>want.has(id)&&tools.has(id));
  }
  function prepareFromPlan(plan,options={}){
   const suggested=suggestFromPlan(plan);
