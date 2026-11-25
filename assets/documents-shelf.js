@@ -61,7 +61,7 @@ const dateOf=stamp=>{
  if(d.toDateString()===today.toDateString())return 'Сегодня, '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
  const yesterday=new Date(today);yesterday.setDate(today.getDate()-1);
  if(d.toDateString()===yesterday.toDateString())return 'Вчера, '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
- return d.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+ return d.toLocaleDateString('ru-RU',{day:'numeric',month:'short'})+' · '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
 };
 const svg=(paths,viewBox='0 0 64 72')=>{
  const icon=document.createElementNS('http://www.w3.org/2000/svg','svg');
