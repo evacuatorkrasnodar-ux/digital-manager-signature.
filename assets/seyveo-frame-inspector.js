@@ -108,10 +108,26 @@
   if(!panel.open)panel.showModal();
  });
  panel.querySelector('#svFrameInspectClose').addEventListener('click',()=>panel.close());
- panel.querySelector('#svFrameInspectCopy').addEventListener('click',async e=>{
-  const value=panel.querySelector('#svFrameInspectReport').textContent;
-  try{await navigator.clipboard.writeText(value);e.currentTarget.textContent='Скопировано';}
-  catch{panel.querySelector('#svFrameInspectReport').focus();e.currentTarget.textContent='Выделите текст отчёта';}
+ const copyButton=panel.querySelector('#svFrameInspectCopy');
+ const reportNode=panel.querySelector('#svFrameInspectReport');
+ copyButton.addEventListener('click',async ()=>{
+  const value=reportNode.textContent;
+  // Event.currentTarget is cleared once an async event handler yields.
+  // Retain the actual DOM references before invoking the clipboard API.
+  try{
+   await navigator.clipboard.writeText(value);
+   copyButton.textContent='Скопировано';
+  }catch{
+   // iOS/Safari may reject clipboard access. Select the report for manual copy.
+   try{
+    const selection=window.getSelection();
+    const range=document.createRange();
+    range.selectNodeContents(reportNode);
+    selection.removeAllRanges();
+    selection.addRange(range);
+   }catch{}
+   copyButton.textContent='Скопируйте выделенный текст вручную';
+  }
  });
  attach();
 })();
