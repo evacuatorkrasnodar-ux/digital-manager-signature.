@@ -430,6 +430,21 @@ function mount(parent){
   if(work.kind==='archive'){files.personal=work.file;stored.personal=false;archiveExpanded=true;showPreview=true;}
  }
  host=el('div','sv-doc-center');parent.append(host);draw();
+ const returnKey='seyveo.document-editor-return.v1';
+ let returned=null;try{returned=JSON.parse(sessionStorage.getItem(returnKey)||'null');sessionStorage.removeItem(returnKey);}catch{}
+ if(returned?.ref&&Date.now()-returned.at>=0&&Date.now()-returned.at<180000){
+  const target=host;
+  void (async()=>{
+   const file=await window.SEYVEO_CHAT_FILES?.restore(returned.ref);if(!file)throw Error('Результат Сэйви недоступен.');
+   const payload=JSON.parse(await file.text());
+   if(payload.kind!=='sayvi-result'||typeof payload.text!=='string'||!payload.text.trim()||payload.text.length>12000||!names[payload.area])throw Error('Некорректный результат.');
+   if(host!==target||!host.isConnected)return;
+   if(payload.area==='business'&&employeePreview())throw Error('Недоступно в текущей роли.');
+   if(area!==payload.area)setArea(payload.area);
+   if(!await window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload))throw Error('Не удалось открыть результат.');
+  })().catch(error=>{if(host===target&&host.isConnected)host.prepend(note(error.message||'Не удалось восстановить результат Сэйви.'));});
+ }
+
  if(work&&work.kind!=='archive'){
   const target=host;
   requestAnimationFrame(()=>{if(host!==target||!host.isConnected)return;
