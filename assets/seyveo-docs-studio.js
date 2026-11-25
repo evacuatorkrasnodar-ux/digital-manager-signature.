@@ -495,7 +495,9 @@ function mount(target,{
   panel.append(status(''));
  }
  function renderCreate(){
-  panel.append(heading(fromScan?'Редактор Word':'Создать документ',fromScan?'Распознанный текст · редактирование в SEYVEO':''));
+  const createHeading=heading(fromScan?'Редактор Word':'Создать документ',fromScan?'Распознанный текст · редактирование в SEYVEO':'');
+  if(!fromScan)createHeading.classList.add('sv-doc-create-regular-heading');
+  panel.append(createHeading);
 
   const templates=[
    {
