@@ -149,7 +149,8 @@ function textPdf(text){
  const lines=[],measure=$('canvas').getContext('2d');
  if(!measure)throw Error('Canvas недоступен');
  measure.font='28px Arial,sans-serif';
- const usable=760;
+ const pageWidth=900,pageHeight=1273,margin=70;
+ const usable=pageWidth-2*margin;
  for(const raw of text.slice(0,12000).split(/\r?\n/)){
   if(!raw.trim()){lines.push('');continue;}
   let line='';
@@ -169,12 +170,14 @@ function textPdf(text){
  while(lines.length){
   if(pages.length>=12)throw Error('Слишком много страниц');
   const canvas=$('canvas');
-  canvas.width=900;canvas.height=1273;
+  canvas.width=pageWidth;canvas.height=pageHeight;
   const ctx=canvas.getContext('2d');if(!ctx)throw Error('Canvas недоступен');
-  ctx.fillStyle='#fff';ctx.fillRect(0,0,900,1273);
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,pageWidth,pageHeight);
   ctx.fillStyle='#172027';ctx.font='28px Arial,sans-serif';
   let y=100;
-  for(const line of lines.splice(0,31)){ctx.fillText(line,70,y);y+=36;}
+  // Enforce the printable width again at drawing time: the font metrics
+  // on a rendering canvas can differ from those of the measurement canvas.
+  for(const line of lines.splice(0,31)){ctx.fillText(line,margin,y,usable);y+=36;}
   pages.push(jpegOf(canvas));
  }
  return window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(pages);

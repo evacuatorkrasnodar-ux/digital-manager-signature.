@@ -5,6 +5,10 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const checks=[
+  ["assets/seyveo-docs-studio.js","ctx.fillText(line,margin,y,usable)"],
+  ["assets/seyveo-docs-viewer.css","grid-template-columns:minmax(0,1fr);min-width:0;width:100%;max-width:100%;"],
+  ["assets/seyveo-docs-viewer.js","el('span','svdv-sayvi-mark')"],
+  ["assets/seyveo-docs-viewer.js","event.preventDefault();more.open=false;summary.focus();"],
   ["assets/documents-shelf.js","function editFolderName(state,category=null)"],
   ["assets/documents-shelf.js","await localFiles().createFolder(state.options.area,name)"],
   ["assets/documents-shelf.js","if(category)await updateFolder(state,category,{name});"],

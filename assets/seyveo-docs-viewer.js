@@ -25,6 +25,9 @@ const icons={
  sayvi:'<path d="m5 18 5-10 3 6 3-4 3 8M3 20h18"/>'
 };
 function icon(key){
+ if(key==='sayvi'){
+  const mark=el('span','svdv-sayvi-mark');mark.setAttribute('aria-hidden','true');return mark;
+ }
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
  svg.setAttribute('viewBox','0 0 24 24');
  svg.setAttribute('aria-hidden','true');
@@ -339,7 +342,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
  moreBody.addEventListener('click',event=>{if(event.target.closest('button,a'))more.open=false;});
  more.append(moreBody);toolbar.append(more);
  const dismissMore=event=>{if(!more.contains(event.target))more.open=false;};
- const closeMoreOnEscape=event=>{if(event.key==='Escape'&&more.open){more.open=false;summary.focus();}};
+ const closeMoreOnEscape=event=>{if(event.key==='Escape'&&more.open){event.preventDefault();more.open=false;summary.focus();}};
  document.addEventListener('pointerdown',dismissMore,{passive:true});
  document.addEventListener('keydown',closeMoreOnEscape);
  root.append(toolbar,notice);
@@ -347,7 +350,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
   sheet=el('dialog','svdv-bottom-sheet');
   sheet.setAttribute('aria-label','Просмотр '+file.name);
   const grip=el('div','svdv-sheet-grip');grip.setAttribute('aria-hidden','true');
-  const close=el('button','svdv-sheet-close');close.type='button';close.setAttribute('aria-label','Закрыть');close.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>';
+  const close=el('button','svdv-sheet-close');close.type='button';close.setAttribute('aria-label','Назад');close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 5-7 7 7 7"/></svg>';
   const expand=el('button','svdv-sheet-expand');expand.type='button';expand.setAttribute('aria-label','Развернуть');expand.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m7 13 5-5 5 5"/></svg>';
   const top=el('div','svdv-sheet-top');top.append(close,copy,expand);header.replaceChildren(grip,top);
   close.addEventListener('click',()=>sheet.close());

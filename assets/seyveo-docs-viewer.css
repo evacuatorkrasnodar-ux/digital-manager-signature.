@@ -414,9 +414,10 @@ html:root body .svdv-bottom-sheet :is(.svdv-sheet-close,.svdv-sheet-expand){disp
 html:root body .svdv-bottom-sheet .svdv-heading{text-align:center;align-items:center;gap:3px;}
 html:root body .svdv-bottom-sheet .svdv-name{font-size:14px;color:#20262d!important;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 html:root body .svdv-bottom-sheet .svdv-meta{color:#697583!important;}
-html:root body .svdv-bottom-sheet .svdv-stage{flex:1;min-height:0!important;overflow:auto!important;overscroll-behavior:contain;background:#fff!important;scrollbar-width:none;border-radius:12px!important;}
+html:root body .svdv-bottom-sheet .svdv-stage{flex:1;min-height:0!important;min-width:0!important;max-width:100%!important;overflow:auto!important;overscroll-behavior:contain;background:#fff!important;scrollbar-width:none;border-radius:12px!important;}
 .svdv-bottom-sheet .svdv-stage::-webkit-scrollbar{display:none;}
-.svdv-sheet-pages{display:grid;gap:10px;padding:4px 0;}
+/* Replaced images and PDF canvases must not grow the grid's intrinsic width. */
+.svdv-sheet-pages{box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr);min-width:0;width:100%;max-width:100%;gap:10px;padding:4px 0;}
 html:root body .svdv-bottom-sheet .svdv-reader-page{width:100%!important;max-width:100%!important;height:auto!important;margin:0!important;border:1px solid #e8eaed!important;border-radius:8px!important;box-sizing:border-box!important;}
 html:root body .svdv-bottom-sheet .svdv-picture{width:100%!important;max-height:none!important;object-fit:contain!important;}
 html:root body .svdv-bottom-sheet .svdv-text{max-height:none!important;background:#fff!important;color:#20262d!important;padding:16px!important;}
@@ -428,3 +429,19 @@ html:root body .svdv-bottom-sheet .svdv-notice{flex:none;color:#697583!important
 html:root body .svdv-bottom-sheet .svdv-unavailable{color:#697583!important;}
 html:root body .svdv-bottom-sheet .svdv-load-more{min-height:44px;border:0;border-radius:999px;background:#f5f5f7;color:#176ab4;font:550 13px/1.2 system-ui;}
 @media(prefers-reduced-motion:reduce){html:root body .svdv-bottom-sheet{animation:none!important;transition:none!important;}}
+
+/* Viewer polish: one stationary pearl navigation row and capsule. No change
+   to original PDF bytes, user actions or the app's main dock. */
+html:root body .svdv-bottom-sheet .svdv-sheet-top .svdv-heading{min-width:0!important;overflow:hidden!important;}
+html:root body .svdv-bottom-sheet .svdv-sheet-pages > .svdv-reader-page{display:block;min-width:0!important;object-fit:contain!important;}
+html:root[data-theme="light"] body .svdv-bottom-sheet .svdv-toolbar{
+ background:var(--sv-white-pearl-surface,#f5f5f7)!important;border:var(--sv-white-pearl-edge,1px solid #e8eaed)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow,none)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,none);backdrop-filter:var(--sv-white-pearl-blur,none);
+}
+html:root body :is(.svdv-bottom-sheet,#sayviSurfacePage) .svdv-sayvi-mark{
+ display:block;flex:0 0 20px;width:20px;height:20px;
+ background:var(--sv-sayvi-mark-image,url("./seyveo-sayvi-user-upload.svg?v=3")) center / contain no-repeat;
+}
+html:root body .svdv-bottom-sheet .svdv-sheet-close svg{stroke-width:var(--sv-header-back-weight,1.45);width:var(--sv-header-back-icon,22px);height:var(--sv-header-back-icon,22px);}
+html:root body .svdv-bottom-sheet :is(.svdv-sheet-close,.svdv-sheet-expand):focus-visible{outline:2px solid currentColor!important;outline-offset:2px!important;}
