@@ -268,7 +268,71 @@ function openDocumentDetails(state,item){
  addVersion.append(plus,el('span','','Добавить новую версию'));versions.append(addVersion,picker);history.append(versions);
  const identity=el('div','sv-doc-detail-identity');identity.append(documentArt(classify(item.name),formatOf(item.name)),el('strong','sv-doc-document-name',item.name),el('small','',formatOf(item.name)+' · '+dateOf(item.createdAt)));
  content.append(feedback,form,history,action('Удалить документ',async()=>{if(!window.confirm('Удалить локальный документ и его версии?'))return;try{await api.remove(area,item.id);dlg.close();}catch(e){feedback.textContent=e.message;}},'sv-doc-my-template-delete'));
- dlg.append(head,identity,content);state.recent.append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
+ dlg.append(head,identity,content);(state.folderPage?.dialog.open?state.folderPage.dialog:state.recent).append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
+}
+// Folder contents are a separate sheet. The home shelf is never filtered by opening a folder.
+function paintFolder(state){
+ const folder=state.folderPage;
+ if(!folder?.dialog.open||state!==active)return;
+ const category=folder.category.id==='all'?folder.category:folderEntries(state).find(x=>x.id===folder.category.id);
+ if(!category){folder.dialog.close();return;}
+ folder.title.textContent=category.title;
+ const items=itemsFor(state).filter(item=>category.id==='all'||inFolder(item,category.id));
+ const scroll=folder.body.scrollTop;folder.list.replaceChildren();
+ if(!items.length){
+  const empty=el('div','sv-doc-folder-page-empty');
+  empty.append(folderArt(),el('strong','','В папке пока пусто'),el('small','',category.id==='scan'?'Новые сканы появятся здесь':'Документы появятся здесь'));
+  if(category.id==='all'){empty.querySelector('strong').textContent='Пока нет документов';}
+  folder.list.append(empty);
+ }
+ for(const item of items){
+  const row=el('div','sv-doc-folder-file-row');
+  const open=el('button','sv-doc-folder-file-open');open.type='button';open.setAttribute('aria-label','Открыть '+item.name);
+  const type=classify(item.name),art=documentArt(type,formatOf(item.name));
+  const copy=el('span','sv-doc-folder-file-copy');copy.append(el('strong','',item.name),el('small','',dateOf(item.createdAt)));
+  open.append(art,copy);row.append(open);
+  if(type==='pdf')schedulePdfPreview(state,item,open,art);
+  open.addEventListener('click',async()=>{
+   if(state!==active||!folder.dialog.open||folder.busy)return;
+   folder.busy=true;open.disabled=true;folder.status.textContent='';
+   try{
+    const file=item.local?await localFiles().get(state.options.area,item.id):item.saved?await vault()?.getFile(state.options.area,item.id):item.file;
+    if(state===active&&folder.dialog.open&&file instanceof File)state.options.onOpenFile?.(file,!!item.saved,true);
+   }catch(e){if(state===active&&folder.dialog.open)folder.status.textContent=e.message||'Не удалось открыть документ.';}
+   finally{folder.busy=false;open.disabled=false;}
+  });
+  if(item.local){
+   const manage=()=>openDocumentDetails(state,item);
+   open.addEventListener('contextmenu',e=>{e.preventDefault();manage();});
+   const more=el('button','sv-doc-folder-file-more');more.type='button';more.setAttribute('aria-label','Действия с файлом '+item.name);more.append(actionIcon('more'));more.addEventListener('click',manage);row.append(more);
+  }
+  folder.list.append(row);
+ }
+ folder.body.scrollTop=scroll;
+}
+function openFolderPage(state,category,trigger){
+ if(state!==active||state.folderPage?.dialog.open)return;
+ const dialog=el('dialog','sv-doc-archive-sheet sv-doc-folder-page');
+ dialog.setAttribute('aria-label',category.title);
+ const head=el('header','sv-doc-scanner-head');
+ const grip=el('div','sv-doc-picker-grip');grip.setAttribute('aria-hidden','true');
+ const back=window.SEYVEO_DOCUMENT_PICKERS.backButton(()=>dialog.close());back.classList.add('sv-doc-scanner-round');
+ const title=el('strong','',category.title);head.append(grip,back,title);
+ const body=el('div','sv-doc-archive-body sv-doc-folder-page-body');
+ const list=el('div','sv-doc-folder-page-list');
+ const status=el('p','sv-doc-folder-page-status');status.setAttribute('role','status');
+ body.append(list,status);dialog.append(head,body);state.recent.parentElement.append(dialog);
+ state.folderPage={dialog,category,title,body,list,status,busy:false};
+ dialog.addEventListener('close',()=>{
+  if(state.folderPage?.dialog===dialog)state.folderPage=null;
+  dialog.remove();
+  if(state===active){
+   const target=trigger?.isConnected?trigger:category.id==='all'?state.showAll:state.foldersGrid.querySelector('.sv-doc-folder-'+category.id);
+   target?.focus?.({preventScroll:true});
+  }
+ },{once:true});
+ window.SEYVEO_SHEET_NAVIGATION?.attach(head,null,()=>dialog.close());
+ dialog.showModal();paintFolder(state);
 }
 function paint(state){
  if(state!==active)return;
@@ -293,8 +357,8 @@ function paint(state){
  }
  state.recentTitle.textContent=state.filter==='all'?(state.expanded?'Все файлы':'Недавние'):(folderEntries(state).find(x=>x.id===state.filter)?.title||'Файлы');
  const hasMore=filtered.length>4;
- state.showAll.textContent=state.filter==='all'&&state.expanded?'Свернуть':'Все файлы ›';
- state.showAll.setAttribute('aria-label',state.filter==='all'&&state.expanded?'Свернуть список документов':'Показать все документы');
+ state.showAll.textContent='Все файлы ›';
+ state.showAll.setAttribute('aria-label','Показать все документы');
  if(showingFormats&&state.unlocked){
   for(const example of examples){
    const card=el('button','sv-doc-recent-card sv-doc-example-card');
@@ -382,7 +446,7 @@ function paint(state){
  for(const category of folderEntries(state)){
   const count=all.filter(item=>category.id==='all'||inFolder(item,category.id)).length;
   const entry=el('button','sv-doc-folder-card sv-doc-folder-'+category.id);
-  entry.type='button';entry.setAttribute('aria-pressed',String(state.filter===category.id));
+  entry.type='button';entry.setAttribute('aria-haspopup','dialog');
   entry.setAttribute('aria-label','Подборка '+category.title+(state.unlocked?', '+count+' файлов':''));
   const folderName=el('strong','',category.title);folderName.title=category.title;
   entry.append(folderArt(),folderName);
@@ -394,8 +458,7 @@ function paint(state){
    closeFolderMenu(state);
    if(category.id==='device'){state.options.onPick?.('all');return;}
    if(category.id==='archive'){openArchive(state);return;}
-   state.filter=category.id;state.expanded=true;paint(state);
-   state.recent.scrollIntoView?.({block:'nearest',behavior:'smooth'});
+   openFolderPage(state,category,entry);
   });
   if(category.custom){
    entry.setAttribute('aria-haspopup','true');
@@ -418,6 +481,7 @@ function paint(state){
   if(target){const left=target.getBoundingClientRect().left-state.foldersGrid.getBoundingClientRect().left+state.foldersGrid.scrollLeft;state.foldersGrid.scrollLeft=Math.max(0,left);}
   state.pendingFolder=null;
  }
+ paintFolder(state);
 }
 
 async function refresh(){
@@ -455,8 +519,8 @@ function mount(parent,options={}){
  showAll.type='button';
  showAll.addEventListener('click',()=>{
   if(state!==active)return;
-  if(state.filter!=='all'){state.filter='all';state.expanded=true;paint(state);return;}
-  state.expanded=!state.expanded;paint(state);
+  if(state.query){state.query='';state.filter='all';state.expanded=false;paint(state);}
+  openFolderPage(state,{id:'all',title:'Все файлы'},showAll);
  });
  header.append(showAll);
  const recentGrid=el('div','sv-doc-recent-grid');
@@ -486,7 +550,7 @@ function mount(parent,options={}){
 }
 function destroy(){
  if(!active)return;
- active.token++;active.records=[];if(active.folderEditor?.open)active.folderEditor.close();active=null;
+ const state=active;active=null;state.token++;state.records=[];if(state.folderEditor?.open)state.folderEditor.close();if(state.folderPage?.dialog.open)state.folderPage.dialog.close();
 }
 document.addEventListener('seyveo:documents-vault-changed',event=>{
  if(active&&(!event.detail?.area||event.detail.area===active.options.area))refresh();
@@ -494,7 +558,7 @@ document.addEventListener('seyveo:documents-vault-changed',event=>{
 document.addEventListener('seyveo:document-files-changed',event=>{if(active?.options.area===event.detail?.area)void refresh();});
 window.addEventListener('pagehide',()=>{
  if(!active)return;
- active.token++;active.records=[];active.unlocked=false;paint(active);
+ active.token++;active.records=[];active.unlocked=false;if(active.folderPage?.dialog.open)active.folderPage.dialog.close();paint(active);
 });
 window.addEventListener('pageshow',()=>{if(active)refresh();});
 function search(query){

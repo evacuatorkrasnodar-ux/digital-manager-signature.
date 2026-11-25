@@ -287,8 +287,20 @@ function draw(){
   onArchive(){
    openArchiveSheet();
   },
-  onOpenFile(file,fromVault){
+  onOpenFile(file,fromVault,fromFolder=false){
    if(!(file instanceof File))return;
+   if(fromFolder){
+    const scope=area;
+    clearPreview();
+    const opened=window.SEYVEO_DOCS_VIEWER?.open?.(file,{
+     onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
+     onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
+     onSaveCopy:copy=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,'device'),
+     onSayvi:intent=>goSayvi(intent),
+     onClose(){viewerSession=null;}
+    });
+    if(opened){viewerSession=opened;return;}
+   }
    files[area]=file;stored[area]=!!fromVault;
    showPreview=true;archiveExpanded=!!fromVault;draw();
   }
@@ -373,6 +385,7 @@ function draw(){
  if(archiveExpanded)openArchiveSheet();
 }
 function backFromNested(){
+ const folder=host?.querySelector('.sv-doc-folder-page[open]');if(folder){folder.close();return true;}
  const archive=host?.querySelector('.sv-doc-archive-sheet[open]');if(archive){archive.close();return true;}
  // Shared titlebar Back navigates within Documents first.
  // An employee has no business vault, so their Back exits normally.
