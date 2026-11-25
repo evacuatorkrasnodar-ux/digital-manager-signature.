@@ -520,3 +520,5 @@ html:root body .svdv-bottom-sheet .svdv-toolbar>.svdv-action,html:root body .svd
 html:root body .svdv-viewer.svdv-markup-active>:not(.sv-pdf-markup){display:none!important;}
 html:root body .svdv-viewer>.sv-pdf-markup-embedded[open]{position:relative!important;inset:auto!important;flex:1!important;width:100%!important;max-width:none!important;height:100%!important;max-height:none!important;margin:0!important;padding:8px 0 0!important;border:0!important;border-radius:0!important;animation:none!important;box-shadow:none!important;min-height:0!important;}
 html:root body .svdv-viewer>.sv-pdf-markup-embedded .sv-pdf-markup-head strong{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:14px;}
+
+html:root body .svdv-more-options>[hidden]{display:none!important;}
