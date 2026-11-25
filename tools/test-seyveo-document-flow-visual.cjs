@@ -16,6 +16,9 @@ class Node{
  replaceChildren(...children){for(const c of this.children)c.parentNode=null;
   this.children=[];this.append(...children);}
  setAttribute(name,value){this.attributes[name]=String(value);}
+ getAttribute(name){return this.attributes[name]??null;}
+ showModal(){this.open=true;}
+ close(){this.open=false;for(const fn of this.listeners.close||[])fn({target:this});}
  addEventListener(type,fn){(this.listeners[type]??=[]).push(fn);}
  click(){for(const fn of this.listeners.click||[])fn({target:this});}
  remove(){if(!this.parentNode)return;const parent=this.parentNode;
@@ -66,9 +69,7 @@ function record(state='sent',kind='equipment'){
 }
 test('three visual document miniatures select actual request type and recipient',()=>{
  const f=fixture();
- assert.equal(cls(f.host,'svdf-journey').length,1);
- assert.equal(cls(f.host,'svdf-journey-step').length,4);
- assert.ok(cls(f.host,'svdf-journey-step').every(x=>x.dataset.phase==='sample'));
+ assert.equal(cls(f.host,'svdf-journey').length,0);
  const cards=cls(f.host,'svdf-template-card');
  assert.equal(cards.length,3);
  assert.equal(cls(f.host,'svdf-template-paper').length,3);
@@ -76,8 +77,7 @@ test('three visual document miniatures select actual request type and recipient'
  contract.click();
  assert.equal(contract.attributes['aria-pressed'],'true');
  assert.ok(cards.filter(x=>x!==contract).every(x=>x.attributes['aria-pressed']==='false'));
- assert.ok(cls(f.host,'svdf-recipient').length);
- action(f.host,'Передать на согласование · демо').click();
+ action(f.host,'На согласование').click();
  const records=f.window.SEYVEO_DOCUMENT_FLOW.getRecords();
  assert.equal(records.length,1);
  assert.equal(records[0].kind,'supplier');
@@ -89,8 +89,10 @@ test('three visual document miniatures select actual request type and recipient'
 });
 test('document preview uses actual fictional text on white paper; history preserved',()=>{
  const f=fixture({initial:[record('read')]});
- action(f.host,'Открыть документ').click();
+ cls(f.host,'svdf-record-toggle')[0].click();
  assert.equal(cls(f.host,'svdf-paper').length,1);
+ assert.equal(cls(f.host,'svdf-document-page')[0].open,true);
+ assert.equal(cls(cls(f.host,'svdf-list')[0],'svdf-paper').length,0);
  assert.equal(cls(f.host,'svdf-paper-brand')[0].textContent,'SEYVEO · УЧЕБНЫЙ ОБРАЗЕЦ');
  assert.match(cls(f.host,'svdf-document-body')[0].textContent,/Учебный документ/);
  assert.ok(cls(f.host,'svdf-paper-version').length);
@@ -100,7 +102,7 @@ test('document preview uses actual fictional text on white paper; history preser
 test('employee decision advances only demo state, without electronic signature',()=>{
  const f=fixture({employee:true,initial:[record()]});
  assert.equal(cls(f.host,'svdf-template-card').length,0);
- action(f.host,'Открыть документ').click();
+ cls(f.host,'svdf-record-toggle')[0].click();
  assert.equal(f.window.SEYVEO_DOCUMENT_FLOW.getRecords()[0].state,'read');
  assert.deepEqual(cls(f.host,'svdf-journey-step').map(x=>x.dataset.phase),
   ['done','done','active','pending']);
@@ -112,7 +114,7 @@ test('employee decision advances only demo state, without electronic signature',
 });
 test('return with remarks is displayed as a distinct illustrated decision state',()=>{
  const f=fixture({employee:true,initial:[record('read')]});
- action(f.host,'Открыть документ').click();
+ cls(f.host,'svdf-record-toggle')[0].click();
  action(f.host,'Вернуть с замечанием').click();
  const input=cls(f.host,'svdf-return-input')[0];
  assert.ok(input);
@@ -127,8 +129,17 @@ test('approval illustration remains scoped and explicitly discloses demo limitat
   'svdf-template-paper','svdf-paper','svdf-recipient'])
   assert.ok(css.includes('#sayviSurfacePage .'+name));
  assert.doesNotMatch(css,/#(?:navHome|navTasks|navManage)|footer\.dock/);
- assert.match(code,/Демо · не загружайте настоящие документы/);
- assert.match(code,/без шифрования, без серверной отправки, проверки ролей/);
+ assert.match(code,/Демо · без отправки/);
+ assert.match(code,/без шифрования, не отправляются на сервер/);
  assert.match(code,/КЭП пока не выполнена/);
  assert.doesNotMatch(code,/\bfetch\s*\(|XMLHttpRequest|sendBeacon/);
+});
+
+test('closing document sheet returns to queue and keeps record',()=>{
+ const f=fixture({initial:[record('read')]});
+ cls(f.host,'svdf-record-toggle')[0].click();
+ cls(f.host,'svdf-document-page')[0].close();
+ assert.equal(cls(f.host,'svdf-document-page').length,0);
+ assert.equal(cls(f.host,'svdf-record').length,1);
+ assert.equal(f.window.SEYVEO_DOCUMENT_FLOW.getRecords()[0].state,'read');
 });

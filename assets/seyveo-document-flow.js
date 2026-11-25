@@ -71,7 +71,7 @@ function journey(record){
   step.append(pictogram(icon),$('small','',label));
   line.append(step);
   if(index<steps.length-1){
-   const arrow=$('span','svdf-journey-connector','›');
+   const arrow=$('span','svdf-journey-connector');
    arrow.setAttribute('aria-hidden','true');line.append(arrow);
   }
  });
@@ -86,7 +86,7 @@ function journey(record){
  return wrap;
 }
 
-let host=null,role='manager',selected='',kind='schedule',info='',listFilter='active';
+let main=null,detailPage=null,host=null,role='manager',selected='',kind='schedule',info='',listFilter='active';
 const centralPreviewRole=()=>window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':'manager';
 let returnDraft={id:'',text:''},revisionDraft={id:'',body:'',note:''};
 const isActive=x=>x.state==='sent'||x.state==='read'||x.state==='signing'||(role==='manager'&&(x.state==='returned'||(x.state==='approved'&&TYPES[x.kind].type==='Согласование')));
@@ -218,7 +218,7 @@ function select(id){
  revisionDraft={id:'',body:'',note:''};draw();return true;
 }
 function openRecord(x){
- if(selected===x.id){selected='';draw();return;}
+ if(selected===x.id&&detailPage?.dialog.open)return;
  selected=x.id;
  // In the training flow, opening the document is one action. It records
  // "opened" but NEVER confirms consent, agreement, or a legal signature.
@@ -244,13 +244,11 @@ function syncRole(){
 }
 function renderRecord(node,x){
  const card=$('article','svdf-record');
- const expanded=x.id===selected;
- if(expanded)card.classList.add('is-current');
- // A single accessible title-row button handles both expand and collapse.
+ // The queue remains a list; document content belongs to its own page.
  const header=$('button','svdf-button svdf-record-heading svdf-record-toggle');
  header.type='button';
- header.setAttribute('aria-expanded',String(expanded));
- header.setAttribute('aria-label',(expanded?'Свернуть':'Открыть')+' '+TYPES[x.kind].title);
+ header.setAttribute('aria-haspopup','dialog');
+ header.setAttribute('aria-label','Открыть '+TYPES[x.kind].title);
  header.addEventListener('click',()=>openRecord(x));
  const symbol=$('span','svdf-record-icon');
  symbol.append(pictogram(x.kind));header.append(symbol);
@@ -265,8 +263,9 @@ function renderRecord(node,x){
  const chevron=$('span','svdf-record-chevron');
  chevron.setAttribute('aria-hidden','true');
  header.append(body,chevron);
- card.append(header);
- if(expanded){
+ card.append(header);node.append(card);
+}
+function renderDetail(x){
   const detail=$('div','svdf-detail');
   const paper=$('div','svdf-paper');
   paper.append($('span','svdf-paper-brand','SEYVEO · УЧЕБНЫЙ ОБРАЗЕЦ'),
@@ -287,13 +286,13 @@ function renderRecord(node,x){
     },'svdf-quiet'));
    }
   }else if(x.state==='sent'||x.state==='read'){
-   actions.append(button('Отозвать',()=>updateRecord(x.id,'revoked'),'svdf-quiet'));
+   actions.append(button('Отозвать',()=>updateRecord(x.id,'revoked'),'svdf-quiet svdf-revoke'));
   }else if(x.state==='approved'&&TYPES[x.kind].type==='Согласование'){
    actions.append(button('Подготовить к КЭП',()=>updateRecord(x.id,'signing'),'svdf-primary'));
   }else if(x.state==='signing'){
    detail.append($('p','svdf-signing-notice',
     'Документ согласован, но не подписан. Для реальной КЭП потребуется подключить сервис подписания, проверить сертификат и полномочия подписанта.'));
-   actions.append(button('Отозвать запрос',()=>updateRecord(x.id,'revoked'),'svdf-quiet'));
+   actions.append(button('Отозвать запрос',()=>updateRecord(x.id,'revoked'),'svdf-quiet svdf-revoke'));
   }else if(x.state==='returned'){
    actions.append(button('Исправить и отправить повторно',()=>{
     revisionDraft={id:x.id,body:latestRevision(x).body,note:''};draw();
@@ -354,22 +353,62 @@ function renderRecord(node,x){
   for(const item of x.log)timeline.append($('li','',stamp(item.at)+' · '+item.text));
   log.append(timeline);
   historyBody.append(versions,log);history.append(historyBody);
-  detail.append(history);card.append(detail);
+  detail.append(history);
+  const live=$('p','svdf-feedback',info);live.setAttribute('role','status');detail.append(live);
+  return detail;
+}
+function closeDetail(){
+ const page=detailPage;detailPage=null;selected='';
+ returnDraft={id:'',text:''};revisionDraft={id:'',body:'',note:''};
+ if(page?.dialog.open)page.dialog.close();
+ page?.dialog.remove();
+}
+function syncDetail(){
+ const x=get(selected);
+ if(!x){if(detailPage)closeDetail();return;}
+ if(!detailPage){
+  const dialog=$('dialog','sv-doc-archive-sheet svdf-document-page');
+  const head=$('header','sv-doc-scanner-head');
+  const grip=$('div','sv-doc-picker-grip');grip.setAttribute('aria-hidden','true');
+  const back=window.SEYVEO_DOCUMENT_PICKERS?.backButton(closeDetail)||button('‹',closeDetail,'sv-doc-picker-round');
+  back.classList.add('sv-doc-scanner-round');back.setAttribute('aria-label','Назад');
+  const title=$('strong','','Документ');head.append(grip,back,title);
+  const body=$('div','sv-doc-archive-body svdf-document-page-body');
+  dialog.append(head,body);host.append(dialog);
+  detailPage={dialog,body,title};
+  dialog.addEventListener('close',()=>{
+   if(detailPage?.dialog!==dialog)return;
+   detailPage=null;selected='';returnDraft={id:'',text:''};revisionDraft={id:'',body:'',note:''};dialog.remove();
+  });
+  window.SEYVEO_SHEET_NAVIGATION?.attach(head,null,closeDetail);
  }
- node.append(card);
+ const {dialog,body,title}=detailPage;
+ const scroll=body.scrollTop||0;
+ const opened=body.querySelector?.('.svdf-history')?.open;
+ title.textContent=TYPES[x.kind].title;dialog.setAttribute('aria-label',TYPES[x.kind].title);
+ const detail=renderDetail(x);body.replaceChildren(detail);
+ if(opened){const history=body.querySelector?.('.svdf-history');if(history)history.open=true;}
+ if(!dialog.open)dialog.showModal();
+ body.scrollTop=scroll;
 }
 function draw(){
- if(!host)return;
- host.replaceChildren();
- const lead=$('div','svdf-lead');
- lead.append($('span','svdf-kicker','SEYVEO BUSINESS · ДОКУМЕНТЫ'),
-  $('h2','','Согласования'),
-  $('p','',''));
- host.append(lead);
+ if(!host||!host.isConnected)return;
+ main.replaceChildren();
+ const lead=$('div','svdf-lead svdf-page-heading');
+ lead.append($('h2','','Согласования'));
+ const menu=$('div','svdf-heading-menu');
+ const moreButton=button('',()=>{
+  const open=menu.getAttribute('data-open')==='true';
+  menu.setAttribute('data-open',String(!open));moreButton.setAttribute('aria-expanded',String(!open));
+  moreActions.hidden=open;
+ },'svdf-heading-more');
+ moreButton.setAttribute('aria-label','Дополнительно');moreButton.setAttribute('aria-expanded','false');
+ const mark=$('span','svdf-more-mark');mark.setAttribute('aria-hidden','true');mark.innerHTML=window.SEYVEO_DOCUMENT_ICONS?.markup('more')||'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>';
+ moreButton.append(mark);menu.append(moreButton);lead.append(menu);main.append(lead);
  const safety=$('details','svdf-safety');
  safety.append($('summary','','Демо · без отправки'));
  safety.append($('p','','Согласования здесь учебные: данные хранятся в браузере без шифрования, не отправляются на сервер и не являются электронной подписью. Используйте только вымышленные документы.'));
- host.append(safety);
+ main.append(safety);
  
  // Progress lives only within an expanded document.
  if(role==='manager'){
@@ -401,13 +440,13 @@ function draw(){
   }
   // Recipient already appears above the templates.
   form.append(choices,submit);
-  host.append(form);
- }else host.append($('p','svdf-hint svdf-staff-instruction','Выберите входящий документ для решения.'));
+  main.append(form);
+ }else main.append($('p','svdf-hint svdf-staff-instruction','Выберите входящий документ для решения.'));
  const active=records.filter(isActive).length,completed=records.length-active;
  // Filter counters are the ONE queue scorecard. No duplicate thin bar.
  const title=$('div','svdf-list-header');
  title.append($('strong','',role==='employee'?'Мои входящие':'Отправленные документы'));
- host.append(title);
+ main.append(title);
  const filters=$('div','svdf-list-filters');
  filters.setAttribute('role','group');filters.setAttribute('aria-label','Фильтр учебных документов');
  for(const [value,label] of [['active','В работе · '+active],['completed','История · '+completed]]){
@@ -415,17 +454,15 @@ function draw(){
   tab.setAttribute('aria-pressed',String(listFilter===value));
   filters.append(tab);
  }
- host.append(filters);
+ main.append(filters);
  const list=$('div','svdf-list');
  const visible=records.filter(x=>listFilter==='all'||(listFilter==='active'?isActive(x):!isActive(x)));
  for(const x of visible.slice().reverse())renderRecord(list,x);
  if(!visible.length)list.append($('div','svdf-empty',
   records.length?'Здесь пока пусто.':role==='employee'?'Входящих пока нет.':'Создайте первый запрос.'));
- host.append(list);
- const live=$('p','svdf-feedback',info);live.setAttribute('role','status');host.append(live);
- const more=$('details','svdf-optional');
- more.append($('summary','','Дополнительно'));
- const moreActions=$('div','svdf-optional-actions');
+ main.append(list);
+ const live=$('p','svdf-feedback',info);live.setAttribute('role','status');main.append(live);
+ const moreActions=$('div','svdf-optional-actions sv-menu-surface');moreActions.hidden=true;
  const chat=button('Рабочий чат',()=>{
   const open=window.SEYVEO_UNIFIED_TASKS?.openChat;
   if(typeof open==='function')open('manage','docs',role==='employee'?'elena':'manager');
@@ -433,20 +470,23 @@ function draw(){
  },'svdf-chat-link');
  moreActions.append(chat);
  if(records.length)moreActions.append(button('Очистить учебную историю',reset,'svdf-reset'));
- more.append(moreActions);
- host.append(more);
+ menu.append(moreActions);
+ const dismiss=()=>{moreActions.hidden=true;menu.setAttribute('data-open','false');moreButton.setAttribute('aria-expanded','false');};
+ main.onpointerdown=e=>{if(!menu.contains(e.target))dismiss();};
+ menu.addEventListener('keydown',e=>{if(e.key==='Escape'){dismiss();moreButton.focus?.();}});
+ syncDetail();
  // The safety disclosure above is the single owner of demo/privacy warnings.
 }
 function mount(parent){
  if(!parent)return false;
- if(host&&host.parentNode)host.remove();
+ closeDetail();if(host&&host.parentNode)host.remove();
  // The current app preview determines the initial document inbox, not any
  // previous unverified role toggled inside this training screen.
  role=centralPreviewRole();
  selected='';listFilter='active';returnDraft={id:'',text:''};revisionDraft={id:'',body:'',note:''};info='';
- host=$('div','svdf-root');parent.append(host);draw();return true;
+ host=$('div','svdf-root');main=$('div','svdf-main');host.append(main);parent.append(host);draw();return true;
 }
-function unmount(){host=null;}
+function unmount(){closeDetail();host=null;main=null;}
 window.addEventListener('storage',e=>{if(e.key!==KEY)return;records=read();draw();});
 window.addEventListener('seyveo:preview-role-changed',syncRole);
 window.SEYVEO_DOCUMENT_FLOW=Object.freeze({mount,unmount,select,get:get,getRecords:()=>records.slice(),setRole,reset});

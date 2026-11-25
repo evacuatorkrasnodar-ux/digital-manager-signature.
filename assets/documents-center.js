@@ -174,6 +174,7 @@ function draw(){
   view='flow';showPreview=false;archiveExpanded=false;
  }
  window.SEYVEO_DOCUMENT_SHELF?.destroy?.();
+ window.SEYVEO_DOCUMENT_FLOW?.unmount?.();
  clearPreview();host.replaceChildren();
 
  const page=document.getElementById('sayviSurfacePage');
@@ -385,6 +386,7 @@ function draw(){
  if(archiveExpanded)openArchiveSheet();
 }
 function backFromNested(){
+ const approval=host?.querySelector('.svdf-document-page[open]');if(approval){approval.close();return true;}
  const folder=host?.querySelector('.sv-doc-folder-page[open]');if(folder){folder.close();return true;}
  const archive=host?.querySelector('.sv-doc-archive-sheet[open]');if(archive){archive.close();return true;}
  // Shared titlebar Back navigates within Documents first.
