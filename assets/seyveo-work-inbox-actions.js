@@ -366,7 +366,9 @@ function showAvatarEditor(){
   existing.src=draft.image;
  }
  views.append(categoryBar,gallery,photo);
- editor.append(hero,tabs,views,status);
+ const pinnedHead=node('div','sv-new-avatar-pinned-head');
+ pinnedHead.append(hero,tabs);
+ editor.append(pinnedHead,views,status);
  // Fresh floating actions: no footer strip, backing card, or inherited button styles.
  const actions=node('div','sv-avatar-floating-actions');
  const reset=node('button','sv-avatar-action-reset','Сбросить');reset.type='button';
@@ -431,6 +433,16 @@ function showAvatarEditor(){
  });
  paint();
  body.append(editor);
+ const measureAvatarHead=()=>editor.style.setProperty('--sv-avatar-head-height',pinnedHead.offsetHeight+'px');
+ measureAvatarHead();
+ if(typeof ResizeObserver==='function'){
+  const observer=new ResizeObserver(measureAvatarHead);
+  observer.observe(pinnedHead);
+  releaseAvatarHead=()=>observer.disconnect();
+ }else{
+  window.addEventListener('resize',measureAvatarHead);
+  releaseAvatarHead=()=>window.removeEventListener('resize',measureAvatarHead);
+ }
  // Fixed at the bottom of the sheet, outside the only scrollable content area.
  panel.append(actions);
 }
@@ -502,10 +514,12 @@ window.SEYVEO_SHEET_NAVIGATION?.attach(sheetGrip,null,()=>{
 });
 overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
-function closeSheet(){overlay.classList.remove('sv-avatar-under-scroll');panel.querySelector(':scope > .sv-avatar-floating-actions')?.remove();overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
+let releaseAvatarHead=()=>{};
+function closeSheet(){releaseAvatarHead();releaseAvatarHead=()=>{};overlay.classList.remove('sv-avatar-under-scroll');panel.querySelector(':scope > .sv-avatar-floating-actions')?.remove();overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
 function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
 function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники','team-structure':'Структура чатов',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления','muted-chats':'Чаты без звука',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
 function openSheet(type,id='',nested=false){
+ releaseAvatarHead();releaseAvatarHead=()=>{};
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
  title.textContent=type==='my-avatar'?'':viewTitle(type);body.replaceChildren();
