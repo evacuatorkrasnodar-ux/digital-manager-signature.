@@ -29,38 +29,47 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
  let editing=null;
  const input=el('input','sv-pdf-inline-text');input.type='text';input.maxLength=240;input.autocomplete='off';input.setAttribute('aria-label','Текст на странице');
  const rail=capsule.attach(shared.rail,'word');rail.replaceChildren();
- rail.setAttribute('aria-label','Инструменты документа');
- const side=el('div','svdv-ink-side');side.setAttribute('role','toolbar');side.setAttribute('aria-label','Рисование и подпись');
  const switchText=assistant=>{finishText();if(busy)return;if(dirty){status.textContent='Сначала сохраните пометки галочкой.';return;}closeMarkup();onText?.(assistant);};
  const textMode=capsule.button('text','Редактировать текст',undefined,()=>switchText(false));
- const sayvi=capsule.button('sayvi','Сэйви',undefined,()=>switchText(true));rail.append(textMode,sayvi);
+ const sayvi=capsule.button('sayvi','Сэйви',undefined,()=>switchText(true));
+ let expanded=true;
  const tools=[];
- function tool(label,id){const b=capsule.button(id,label,id==='text'?'<span class="svdv-add-text-symbol">T<sup>+</sup></span>':undefined,()=>setMode(id));b.setAttribute('aria-pressed','false');b.title=label+' · повторное нажатие выключает инструмент';tools.push([id,b]);side.append(b);}
- tool('Перо','pen');tool('Маркер','marker');tool('Ластик','eraser');
- const palette=el('div','sv-pdf-ink-palette');palette.hidden=true;
- const color=capsule.button('color','Цвет разметки',undefined,()=>{palette.hidden=!palette.hidden;color.setAttribute('aria-expanded',String(!palette.hidden));});
- color.setAttribute('aria-expanded','false');side.append(color);
+ const palette=el('div','sv-pdf-ink-palette svdv-ink-menu');palette.hidden=true;
+ const addMenu=el('div','svdv-ink-add-menu svdv-ink-menu');addMenu.hidden=true;
+ const hideMenus=()=>{palette.hidden=true;addMenu.hidden=true;color.setAttribute('aria-expanded','false');addButton.setAttribute('aria-expanded','false');};
+ const tool=(label,id)=>{const b=capsule.button(id,label,undefined,()=>setMode(id));b.setAttribute('aria-pressed','false');b.title=label+' · повторное нажатие выключает инструмент';tools.push([id,b]);return b;};
+ const pen=tool('Перо','pen'),marker=tool('Маркер','marker'),eraser=tool('Ластик','eraser');
+ const color=capsule.button('color','Цвет разметки',undefined,()=>{const show=palette.hidden;hideMenus();palette.hidden=!show;color.setAttribute('aria-expanded',String(show));});
+ color.setAttribute('aria-expanded','false');
  for(const [name,value] of [['Чёрный','#20262d'],['Синий','#176ab4'],['Красный','#c7353c'],['Зелёный','#21834a'],['Жёлтый','#f2c500']]){
-  const swatch=button('',()=>{ink=value;side.style.setProperty('--sv-editor-ink',value);for(const b of palette.children)b.setAttribute('aria-pressed',String(b.dataset.color===ink));palette.hidden=true;color.setAttribute('aria-expanded','false');});
+  const swatch=button('',()=>{ink=value;rail.style.setProperty('--sv-editor-ink',value);for(const b of palette.children)b.setAttribute('aria-pressed',String(b.dataset.color===ink));hideMenus();});
   swatch.dataset.color=value;swatch.style.setProperty('--swatch',value);swatch.setAttribute('aria-label',name);swatch.setAttribute('aria-pressed',String(value===ink));palette.append(swatch);
  }
- tool('Рукописная подпись','signature');tool('Добавить надпись','text');
+ const addButton=capsule.button('add','Добавить',capsule.icon('<path d="M12 5v14M5 12h14"/>'),()=>{const show=addMenu.hidden;hideMenus();addMenu.hidden=!show;addButton.setAttribute('aria-expanded',String(show));});
+ addButton.setAttribute('aria-expanded','false');
+ for(const [label,id,art] of [['Надпись','text','<span class="svdv-add-text-symbol">T<sup>+</sup></span>'],['Подпись','signature',capsule.artwork('signature')]]){
+  const item=capsule.button(id,label,art,()=>setMode(id));item.append(el('span','svdv-ink-menu-label',label));item.setAttribute('aria-pressed','false');tools.push([id,item]);addMenu.append(item);
+ }
  function remember(p){p.undo.push(p.ops.slice());if(p.undo.length>60)p.undo.shift();p.redo.length=0;}
  const history=(direction)=>{finishText();const p=pages[index];if(!p||drawing||busy)return;const from=direction==='undo'?p.undo:p.redo,to=direction==='undo'?p.redo:p.undo;if(!from.length)return;to.push(p.ops.slice());p.ops=from.pop();dirty=pages.some(x=>x.ops.length);paint(p);sync();};
  const undo=capsule.button('undo','Отменить действие',undefined,()=>history('undo'));
- const redo=capsule.button('redo','Повторить действие',undefined,()=>history('redo'));rail.append(undo,redo);
- const sideWrap=el('div','svdv-ink-side-wrap');sideWrap.append(side,palette);
- const sideToggle=capsule.button('pen','Показать или скрыть инструменты рисования',undefined,()=>{sideWrap.hidden=!sideWrap.hidden;sideToggle.setAttribute('aria-pressed',String(!sideWrap.hidden));palette.hidden=true;color.setAttribute('aria-expanded','false');if(sideWrap.hidden&&mode!=='view')setMode('view');});
- sideToggle.setAttribute('aria-pressed','true');rail.insertBefore(sideToggle,undo);
- d.append(viewport,pager,sideWrap);shared.stage.append(d);
+ const redo=capsule.button('redo','Повторить действие',undefined,()=>history('redo'));
+ const toggle=capsule.button('pen','Показать инструменты рисования',undefined,()=>{expanded=true;renderRail();sync();});
+ const collapse=capsule.button('collapse','Скрыть инструменты рисования',capsule.icon('<path d="m6 9 6 6 6-6"/>'),()=>{finishText();expanded=false;mode='view';hideMenus();renderRail();sync();});
+ function renderRail(){rail.replaceChildren(...(expanded?[pen,marker,eraser,color,addButton,collapse,undo,redo]:[textMode,sayvi,toggle,undo,redo]));rail.scrollLeft=0;rail.setAttribute('aria-label',expanded?'Рисование и подпись':'Инструменты документа');}
+ const dismiss=e=>{if(!shared.controls.contains(e.target))hideMenus();};
+ shared.controls.insertBefore(palette,rail);shared.controls.insertBefore(addMenu,rail);
+ document.addEventListener('pointerdown',dismiss,true);
+ renderRail();d.append(viewport,pager);shared.stage.append(d);
  const releaseViewport=capsule.viewport(shared.viewport);
  function sync(){
   prev.disabled=busy||index===0;next.disabled=busy||index>=pages.length-1;count.textContent=pages.length?(index+1)+' из '+pages.length:'';
-  pager.hidden=pages.length<=1;save.disabled=busy;textMode.disabled=busy;sideToggle.disabled=busy;undo.disabled=busy||!pages[index]?.undo.length;redo.disabled=busy||!pages[index]?.redo.length;color.disabled=busy;if(sayvi)sayvi.disabled=busy;
+  pager.hidden=pages.length<=1;save.disabled=busy;textMode.disabled=busy;toggle.disabled=busy;collapse.disabled=busy;undo.disabled=busy||!pages[index]?.undo.length;redo.disabled=busy||!pages[index]?.redo.length;color.disabled=busy;addButton.disabled=busy;sayvi.disabled=busy;
   for(const [id,b] of tools){b.disabled=busy;b.setAttribute('aria-pressed',String(mode===id));}
+  addButton.setAttribute('aria-pressed',String(mode==='signature'||mode==='text'));
   paper.dataset.mode=mode;
  }
- function setMode(value){if(busy)return;finishText();mode=mode===value&&value!=='view'?'view':value;value=mode;palette.hidden=true;color.setAttribute('aria-expanded','false');sync();status.textContent=value==='text'?'Коснитесь места на листе, чтобы написать или изменить пометку.':value==='pen'?'Рисуйте пальцем или мышью.':value==='marker'?'Проведите по месту, которое нужно выделить.':value==='eraser'?'Ластик удаляет только ваши пометки.':value==='signature'?'Распишитесь на листе пальцем или мышью. Это не электронная подпись.':'Можно прокручивать документ.';}
+ function setMode(value){if(busy)return;finishText();mode=mode===value&&value!=='view'?'view':value;value=mode;hideMenus();sync();status.textContent=value==='text'?'Коснитесь места для надписи.':value==='signature'?'Распишитесь на листе. Это не электронная подпись.':'';}
  function paint(p){
   const c=p.overlay,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
   for(const op of p.ops){
@@ -144,7 +153,7 @@ function open(file,{parent,loadPdf,onSave,shared=null,onClose,onSaved,onText}={}
   const finish=e=>{if(drawing?.id===e.pointerId){drawing=null;d.classList.remove('svdv-ink-stroking');sync();}};
   c.addEventListener('pointerup',finish);c.addEventListener('pointercancel',finish);c.addEventListener('lostpointercapture',finish);
  }
- function closeMarkup(){if(closed)return;closed=true;releaseViewport();shared.viewport.classList.remove('sv-editor-keyboard-open');try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}d.remove();rail.replaceChildren();save.onclick=null;save.disabled=false;shared.notice?.('');onClose?.();}
+ function closeMarkup(){if(closed)return;closed=true;document.removeEventListener('pointerdown',dismiss,true);palette.remove();addMenu.remove();rail.style.removeProperty('--sv-editor-ink');releaseViewport();shared.viewport.classList.remove('sv-editor-keyboard-open');try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}d.remove();rail.replaceChildren();save.onclick=null;save.disabled=false;shared.notice?.('');onClose?.();}
  function requestClose(){finishText();if(busy&&dirty)return;if(dirty&&!window.confirm('Выйти без сохранения пометок? Исходный PDF не изменится.'))return;closeMarkup();}
  async function exportCopy(){
   finishText();if(busy||!dirty||drawing)return;
