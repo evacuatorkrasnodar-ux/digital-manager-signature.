@@ -15,7 +15,7 @@
   mail:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4.5 7.5 7.5 6 7.5-6"/>',
   pulse:'<path d="M3 17h4l3-7 4 9 3-5h4"/><path d="M3 5h18"/>',
   music:'<path d="M8 18V6l12-3v12"/><ellipse cx="5.5" cy="18.5" rx="2.5" ry="2"/><ellipse cx="17.5" cy="15.5" rx="2.5" ry="2"/>',
-  documents:'<path d="M7 3h8l4 4v14H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M15 3v5h4"/><path d="M9 12h6M9 16h5"/>'
+  documents:'<path d="M12.5 3.5H6.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2H14M12.5 3.5 17 8v3M12.5 3.5V8H17M8 11h4.5M8 14h3" /><path d="M15 16l1.7-1.7a2.5 2.5 0 0 1 3.5 3.5l-1.7 1.7a2.5 2.5 0 0 1-3.5 0" opacity=".85"/><path d="m17.6 16.4-2.1 2.1a2.5 2.5 0 0 1-3.5-3.5l1.6-1.6a2.5 2.5 0 0 1 3.5 0" opacity=".65"/>'
  });
  const COPY=Object.freeze({
   mail:{

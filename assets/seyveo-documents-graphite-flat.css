@@ -1418,10 +1418,10 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
  color:#17191C!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody :is(.sv-doc-flow-card > .sv-doc-symbol,.sv-doc-connections-entry > .sv-doc-symbol,.sv-doc-connections-entry .sv-connect-prompt-icon,.sv-doc-connections-entry .sv-doc-connections-icon,.sv-doc-vault-summary > .sv-doc-symbol) svg{
- width:20px!important;height:20px!important;stroke:currentColor!important;stroke-width:1.55!important;
+ width:26px!important;height:26px!important;stroke:currentColor!important;stroke-width:1.15!important;stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-assistant-summary .sv-doc-symbol.sv-sayvi-symbol{
- width:22px!important;height:22px!important;flex:0 0 22px!important;
+ width:32px!important;height:32px!important;flex:0 0 32px!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-vault-summary{
  grid-template-columns:34px minmax(0,1fr) 17px!important;

@@ -59,6 +59,8 @@ function makeIcon(kind){
  if(kind==='sayvi'){wrap.classList.add('sv-sayvi-symbol');return wrap;}
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
  svg.setAttribute('viewBox','0 0 24 24');
+ const rowGlyphs={"approval":"<path d=\"M13.5 3.5H7a2 2 0 0 0-2 2V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9Z\"/><path d=\"M13.5 3.5V8a1 1 0 0 0 1 1H19M8 10.5h3.5\" opacity=\".65\"/><circle cx=\"13.8\" cy=\"15.6\" r=\"3.7\" fill=\"currentColor\" fill-opacity=\".08\" stroke-opacity=\".65\"/><path d=\"m11.9 15.6 1.3 1.3 2.5-2.8\"/>","connection":"<path d=\"M12.5 3.5H6.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2H14M12.5 3.5 17 8v3M12.5 3.5V8H17M8 11h4.5M8 14h3\" /><path d=\"M15 16l1.7-1.7a2.5 2.5 0 0 1 3.5 3.5l-1.7 1.7a2.5 2.5 0 0 1-3.5 0\" opacity=\".85\"/><path d=\"m17.6 16.4-2.1 2.1a2.5 2.5 0 0 1-3.5-3.5l1.6-1.6a2.5 2.5 0 0 1 3.5 0\" opacity=\".65\"/>","lock":"<path d=\"M7.5 10V7.5a4.5 4.5 0 0 1 9 0V10\"/><rect x=\"4.5\" y=\"10\" width=\"15\" height=\"11\" rx=\"2.8\" fill=\"currentColor\" fill-opacity=\".04\"/><circle cx=\"12\" cy=\"14.5\" r=\"1.5\" fill=\"currentColor\" fill-opacity=\".14\"/><path d=\"M12 16v2\" opacity=\".8\"/>"};
+ if(Object.prototype.hasOwnProperty.call(rowGlyphs,kind)){svg.innerHTML=rowGlyphs[kind];wrap.append(svg);return wrap;}
  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
  p.setAttribute('d',kind==='lock'
   ? 'M5.5 10V7.5a6.5 6.5 0 0 1 13 0V10M5 10h14v11H5zM12 14v3'
