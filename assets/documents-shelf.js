@@ -151,20 +151,21 @@ function openDocumentDetails(state,item){
  const api=localFiles(),area=state.options.area;
  const dlg=el('dialog','sv-doc-my-templates sv-doc-professional-details');
  const head=el('header','sv-doc-my-template-head');
- const back=el('button','sv-doc-my-template-back','‹');back.type='button';back.setAttribute('aria-label','Назад');back.addEventListener('click',()=>dlg.close());
+ const pickers=window.SEYVEO_DOCUMENT_PICKERS;
+ const back=pickers.backButton(()=>dlg.close());back.classList.add('sv-doc-my-template-back');
  head.append(back,el('strong','','Сведения о документе'));
  const content=el('div','sv-doc-my-template-content');
  const feedback=el('small','sv-doc-my-template-note');feedback.setAttribute('role','status');
  const form=el('form','sv-doc-document-fields');
- const field=(label,control)=>{const node=el('label','sv-doc-document-field');node.append(el('span','',label),control);form.append(node);return control;};
- const select=(values,initial)=>{const n=el('select','');for(const [value,title] of values){const o=el('option','',title);o.value=value;n.append(o);}n.value=initial;return n;};
+ const field=(label,control)=>{const node=el(control.tagName==='BUTTON'?'div':'label','sv-doc-document-field');node.append(el('span','',label),control);form.append(node);return control;};
+ const select=(label,values,initial)=>pickers.choice(label,values,initial);
  const input=(value,max,type='text')=>{const n=el('input','');n.type=type;n.value=value||'';if(max)n.maxLength=max;return n;};
- const type=field('Тип документа',select(Object.entries(api.docTypes),docType(item)));
+ const type=field('Тип документа',select('Тип документа',Object.entries(api.docTypes),docType(item)));
  const counterparty=field('Контрагент',input(item.counterparty,120));
  const ref=field('Номер / связанный договор',input(item.reference,100));
- const due=field('Контрольная дата',input(item.dueDate,0,'date'));
- const status=field('Статус (вручную)',select([['','Не указан'],['draft','Черновик'],['ready','Готов'],['sent','Отправлен'],['signed','Подписан'],['paid','Оплачен'],['closed','Закрыт']],item.status||''));
- const folder=field('Папка',select([['','Без папки'],...ownFolders(state).map(x=>[x.id,x.name])],item.folder||''));
+ const due=field('Контрольная дата',pickers.date('Контрольная дата',item.dueDate));
+ const status=field('Статус (вручную)',select('Статус',[['','Не указан'],['draft','Черновик'],['ready','Готов'],['sent','Отправлен'],['signed','Подписан'],['paid','Оплачен'],['closed','Закрыт']],item.status||''));
+ const folder=field('Папка',select('Папка',[['','Без папки'],...ownFolders(state).map(x=>[x.id,x.name])],item.folder||''));
  if(type.value==='other'||item.typeOrigin!=='user')form.append(el('small','sv-doc-my-template-note','Тип предложен по названию. Проверьте его. Статусы не подтверждают подпись или оплату.'));
  const action=(name,fn,cls='sv-doc-my-template-option')=>{const n=el('button',cls,name);n.type='button';n.addEventListener('click',fn);return n;};
  form.append(action('Сохранить сведения',async()=>{try{
