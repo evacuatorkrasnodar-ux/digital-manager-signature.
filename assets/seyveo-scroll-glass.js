@@ -61,7 +61,7 @@ init();
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
 })();
 
-/* SEYVEO · shared 30px content fade, based on the actual floating dock.
+/* SEYVEO · shared soft content fade, ending before the actual floating dock.
    Explicitly audited scrollports only; never mask the dock, editors or a dialog
    that owns the dock. No changes to dimensions, padding, scrolling or input. */
 (()=>{
@@ -77,12 +77,34 @@ const targets=[
  '#calendarPage:not([hidden]) #calendarView[data-mode="week"]:not([hidden]) #calendarWeekTimelineScroll'
 ].join(',');
 let active=new Set(),watched=new Set(),pending=false;
+const reserves=new WeakMap();
+function reserve(el,needed){
+ const old=reserves.get(el);
+ const current=el.style.getPropertyValue('padding-bottom');
+ if(old&&current!==old.applied){reserves.delete(el);}
+ const previous=reserves.get(el);
+ const base=previous?previous.base:(parseFloat(getComputedStyle(el).paddingBottom)||0);
+ const value=Math.ceil(Math.max(base,needed))+'px';
+ if(!previous&&base>=needed)return;
+ const record=previous||{base,value:current,priority:el.style.getPropertyPriority('padding-bottom')};
+ if(current!==value||el.style.getPropertyPriority('padding-bottom')!=='important')el.style.setProperty('padding-bottom',value,'important');
+ record.applied=value;reserves.set(el,record);
+}
+function releaseReserve(el){
+ const old=reserves.get(el);if(!old)return;
+ if(el.style.getPropertyValue('padding-bottom')===old.applied){
+  if(old.value)el.style.setProperty('padding-bottom',old.value,old.priority);
+  else el.style.removeProperty('padding-bottom');
+ }
+ reserves.delete(el);
+}
 const root=document.documentElement;
 const resize=typeof ResizeObserver==='function'?new ResizeObserver(schedule):null;
 function schedule(){
  if(pending)return;pending=true;requestAnimationFrame(measure);
 }
 function clear(el){
+ releaseReserve(el);
  el.removeAttribute('data-sv-dock-fade');
  el.style.removeProperty('--sv-fade-start');
  el.style.removeProperty('--sv-fade-mid');
@@ -110,10 +132,11 @@ function measure(){
    const overlap=box.bottom-d.top;
    if(box.height<110||box.width<1||d.right<=box.left||d.left>=box.right||overlap<12||overlap>150||!['auto','scroll','overlay'].includes(style.overflowY))continue;
    if(el.scrollHeight<=el.clientHeight+2)continue;
-   // Respect existing special masks and only fade where the final row has its own scroll reserve.
+   // Preserve bespoke masks. Fade the content to zero above the dock,
+   // with enough actual scroll reserve for the last row to stay fully readable.
    if(!active.has(el)&&[style.maskImage,style.webkitMaskImage].some(v=>v&&v!=='none'))continue;
-   if((parseFloat(style.paddingBottom)||0)<overlap+4)continue;
-   const start=Math.max(30,overlap+5),mid=start-22,end=start-30;
+   const end=Math.max(0,overlap+3),mid=end+13,start=end+36;
+   reserve(el,start+8);
    for(const [name,value] of [['--sv-fade-start',start],['--sv-fade-mid',mid],['--sv-fade-end',end]]){
     const px=value+'px';
     if(el.style.getPropertyValue(name)!==px)el.style.setProperty(name,px);
