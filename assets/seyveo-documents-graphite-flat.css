@@ -2091,7 +2091,7 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-template
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-my-template-content{display:block!important;flex:1 1 auto!important;min-height:0!important;overflow:auto!important;overscroll-behavior:contain; padding:0 0 max(8px,env(safe-area-inset-bottom))!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-save{grid-column:3;grid-row:1;justify-self:end;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;padding:0!important;display:grid!important;place-items:center!important;border-radius:50%!important;color:#176ab4!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-save svg{width:22px;height:22px;}
-html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-identity{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 4px 16px;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-identity{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 9px;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-identity .sv-doc-file-art{width:48px!important;height:54px!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-identity small{font-size:12px;color:#697583;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-document-fields{display:block!important;gap:0!important;}
@@ -2110,3 +2110,17 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-template
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-extra > .sv-doc-my-template-note{display:block;padding:7px 0 0 30px;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-my-template-delete{width:100%!important;margin-top:10px;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-my-template-note[role="status"]:not(:empty){display:block;padding:8px 0;color:#c7353c;}
+
+/* Final document details: one White Pearl header material and one calendar glyph. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-my-template-head > :is(.sv-doc-my-template-back,.sv-doc-detail-save){
+ background:var(--sv-header-circle,var(--sv-white-pearl-surface,#f7f7f8))!important;
+ border:var(--sv-header-circle-border,var(--sv-white-pearl-edge,1px solid #e6e8eb))!important;
+ box-shadow:var(--sv-header-circle-shadow,var(--sv-white-pearl-circle-shadow,none))!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter,var(--sv-white-pearl-blur,none))!important;
+ backdrop-filter:var(--sv-header-circle-filter,var(--sv-white-pearl-blur,none))!important;
+ box-sizing:border-box!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-my-template-head > .sv-doc-detail-save{color:#176ab4!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-date > .sv-doc-picker-icon svg{display:none!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-date > .sv-doc-picker-icon{display:grid!important;place-items:center;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-detail-date > .sv-doc-picker-icon::after{content:"";width:7px;height:7px;box-sizing:border-box;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(-45deg);}
