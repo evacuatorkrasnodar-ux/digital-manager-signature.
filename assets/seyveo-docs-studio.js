@@ -495,7 +495,7 @@ function mount(target,{
   panel.append(status(''));
  }
  function renderCreate(){
-  panel.append(heading(fromScan?'Редактор Word':'Создать документ',fromScan?'Распознанный текст · редактирование в SEYVEO':'Начните с шаблона или чистого листа'));
+  panel.append(heading(fromScan?'Редактор Word':'Создать документ',fromScan?'Распознанный текст · редактирование в SEYVEO':''));
 
   const templates=[
    {
@@ -554,16 +554,16 @@ function mount(target,{
     'sv-doc-template-card sv-doc-template-'+item.id);
    card.setAttribute('aria-label','Выбрать шаблон: '+item.name);
    card.setAttribute('aria-pressed',String(documentTemplate===item.id));
-   const paper=$('span','sv-doc-template-paper');
+   const paper=$('span','sv-doc-template-glyph');
    paper.setAttribute('aria-hidden','true');
-   paper.append($('span','sv-doc-template-paper-title',item.name));
-   const lines=$('span','sv-doc-template-paper-lines');
-   for(const key of ['wide','wide','medium','short']){
-    lines.append($('i','sv-doc-template-line sv-doc-template-line-'+key));
-   }
-   paper.append(lines,$('span','sv-doc-template-paper-sign'));
-   card.append(paper,$('strong','sv-doc-template-name',item.name),
-    $('small','sv-doc-template-subtitle',item.label));
+   const motifs={
+    statement:'<path d="M8 10h8M8 13h8M8 16h5" opacity=".72"/>',
+    contract:'<path d="M8 10h8M8 13h8" opacity=".7"/><path d="M8 17c2-3 3 2 5 0l3-1"/>',
+    act:'<path d="M8 10h8M8 13h5" opacity=".7"/><circle cx="15" cy="17" r="3" fill="currentColor" fill-opacity=".08"/><path d="m13.5 17 1 1 2-2"/>',
+    receipt:'<path d="M8 10h8M8 13h5" opacity=".7"/><path d="M8 17h8M10 15.5v3" opacity=".8"/>'
+   };
+   paper.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h6l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M13 3v4a1 1 0 0 0 1 1h4" opacity=".65"/>'+motifs[item.id]+'</svg>';
+   card.append(paper,$('strong','sv-doc-template-name',item.name));
    cards.push({id:item.id,button:card});
    examples.append(card);
   }
@@ -672,7 +672,9 @@ function mount(target,{
   footer.hidden=!initialDraft;
   panel.dataset.createStage=initialDraft?'editing':'choose';
   const sayvi=button('',()=>onSayvi('create'),'sv-doc-create-sayvi');
-  sayvi.append(art('create',true),$('span','','Создать с Сэйви'));
+  const sayviMark=$('span','sv-doc-create-sayvi-mark sv-sayvi-symbol');
+  sayviMark.setAttribute('aria-hidden','true');
+  sayvi.append(sayviMark,$('span','','Создать с Сэйви'));
   if(!fromScan)panel.append(sectionTitle,examples);
   panel.append(editing,formatLabel,formatSwitch,footer,sayvi);
   const info=$('details','sv-doc-tool-help');
