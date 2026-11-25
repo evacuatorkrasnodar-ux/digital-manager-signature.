@@ -16,7 +16,7 @@ function register(screen){
  material.setAttribute('aria-hidden','true');
  header.prepend(material);
  header.classList.add('sv-scroll-glass-head');
- let pending=false,measureFrame=0;
+ let paintFrame=0,measureFrame=0;
  const scheduleMeasure=()=>{
   if(measureFrame)return;
   measureFrame=requestAnimationFrame(()=>{measureFrame=0;measure()});
@@ -40,13 +40,14 @@ function register(screen){
   paint();
  };
  const paint=()=>{
-  pending=false;
+  if(paintFrame){cancelAnimationFrame(paintFrame);paintFrame=0;}
   if(!isActive())return;
-  const progress=Math.max(0,Math.min(1,body.scrollTop/12));
-  screen.style.setProperty('--sv-scroll-glass-opacity',String(progress));
+  const progress=String(Math.max(0,Math.min(1,body.scrollTop/12)));
+  if(screen.style.getPropertyValue('--sv-scroll-glass-opacity')!==progress)
+   screen.style.setProperty('--sv-scroll-glass-opacity',progress);
  };
  body.addEventListener('scroll',()=>{
-  if(!pending){pending=true;requestAnimationFrame(paint)}
+  if(!paintFrame)paintFrame=requestAnimationFrame(()=>{paintFrame=0;paint()});
  },{passive:true});
  new MutationObserver(()=>{if(isActive())scheduleMeasure()})
   .observe(screen,{attributes:true,attributeFilter:['open','hidden','data-sv-company-mode','data-sv-company-filled']});

@@ -3,6 +3,11 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const checks=[
+  ['assets/seyveo-work-shell.js','if(el.hidden!==hidden)el.hidden=hidden;'],
+  ['assets/seyveo-work-shell.js',"setData(shell,'agendaScroll',String(innerScroll));"],
+  ['assets/seyveo-work-shell.js',"setData(shell,'active',active);"],
+  ['assets/seyveo-scroll-glass.js',"if(screen.style.getPropertyValue('--sv-scroll-glass-opacity')!==progress)"],
+  ['assets/seyveo-scroll-glass.js','if(paintFrame){cancelAnimationFrame(paintFrame);paintFrame=0;}'],
   [
     "assets/seyveo-work-shell.js",
     "if(syncFrame)return;"

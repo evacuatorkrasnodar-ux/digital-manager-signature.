@@ -529,6 +529,9 @@
   return tasks.dataset.workView==='business'?'business':tasks.dataset.workView==='employee'?'employee':'personal';
  }
  let svAgendaWasVisible=null;
+ // Avoid redundant hidden-attribute mutations: the shared dock fade observes them.
+ function setHidden(el,hidden){if(el.hidden!==hidden)el.hidden=hidden;}
+ function setData(el,key,value){if(el.dataset[key]!==value)el.dataset[key]=value;}
  let syncFrame=0;
  function scheduleSync(){
   if(syncFrame)return;
@@ -554,10 +557,10 @@
   // or wallet must never expose Work on top of Home or another route.
   const workRoute=location.hash==='#tasks'||location.hash==='#calendar';
   const visible=workRoute&&(!!walletDialog?.open||!!notesPage?.open||!tasks.hidden||!calendar.hidden);
-  shell.hidden=!visible;
+  setHidden(shell,!visible);
   if(visible)shell.style.removeProperty('display');
   else shell.style.setProperty('display','none','important');
-  if(notebookChoices)notebookChoices.hidden=!visible||active!=='notes';
+  if(notebookChoices)setHidden(notebookChoices,!visible||active!=='notes');
   const history=visible&&!walletDialog?.open&&!notesPage?.open&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
   parkCalendarMenu(visible&&!history&&active==='calendar');
   if(active!=='business'||!managerPreview||history)closeBusinessCreate();
@@ -571,12 +574,12 @@
   // duplicate card-review shortcut above the month grid. Back, Add and
   // the permanent dock remain available; other Work views are unchanged.
   const calendarOnly=active==='calendar';
-  nav.hidden=!visible||history||calendarOnly;
+  setHidden(nav,!visible||history||calendarOnly);
   heading.dataset.workTabs=String(!nav.hidden);
   heading.dataset.history=String(history);
   // Notebook is a top-level tab: its Back and card-review shortcuts repeat
   // controls that belong to the tabs/dock or to My Tasks, respectively.
-  reviewCards.hidden=history||calendarOnly||active==='notes'||active==='wallet';
+  setHidden(reviewCards,history||calendarOnly||active==='notes'||active==='wallet');
   nav.dataset.employee=String(employeeMode);
   nav.dataset.one=String(!managerMode&&!employeeMode);
   nav.dataset.business=String(managerMode&&!employeeMode);
@@ -591,7 +594,7 @@
     : managerMode
       ? !['personal','notes','wallet','business'].includes(name)
       : !['personal','notes','wallet'].includes(name));
-   tab.hidden=hide;
+   setHidden(tab,hide);
    // Older CSS has display:flex!important. Preserve hidden semantics even
    // if a previously cached stylesheet arrives after this component.
    tab.style.setProperty('display',hide?'none':'flex','important');
@@ -603,7 +606,7 @@
   // Keep the exact same header footprint as Tasks/Notebook/Cabinet so
   // Wallet's shared capsule starts at the identical vertical coordinate.
   // Hide the header visually, but never collapse its layout height.
-  heading.hidden=!visible;
+  setHidden(heading,!visible);
   heading.style.visibility=active==='wallet'?'hidden':'';
   heading.style.pointerEvents=active==='wallet'?'none':'';
   heading.setAttribute('aria-hidden',String(active==='wallet'));
@@ -614,7 +617,7 @@
   // Cabinet is a top-level Work tab. Its existing Review and Plus controls
   // share one right capsule, matching the Tasks capsule's 44px button axis.
   heading.dataset.businessTools=String(active==='business'&&!history);
-  if(company)company.hidden=!visible||active!=='business'||history;
+  if(company)setHidden(company,!visible||active!=='business'||history);
   if(toolMode&&(!visible||active!=='personal'||history)){setMode('');return;}
   const nextSearchIcon=nested?'search':'history';
   if(searchTasks.dataset.svHeaderIcon!==nextSearchIcon){
@@ -632,16 +635,16 @@
   // Every top-level Work section is already named inside the permanent
   // segmented capsule. Never display a duplicate page title above it.
   // Keep titles for nested All Tasks/History and the standalone Calendar.
-  title.hidden=!history&&!nested&&!nav.hidden;
+  setHidden(title,!history&&!nested&&!nav.hidden);
   heading.dataset.calendarPeriod=String(active==='calendar'&&!history&&!nested);
   if(active==='calendar'&&!history&&!nested)syncCalendarPeriod();
   const showMonth=active==='personal'&&!history&&!nested&&visible;
-  month.hidden=!showMonth;
+  setHidden(month,!showMonth);
   heading.dataset.agenda=String(showMonth);
   // Both the agenda and «Все дела» use a fixed shell with a native inner
   // scroll area. Only the agenda has the month and seven-day strip.
   const innerScroll=showMonth||nested;
-  shell.dataset.agendaScroll=String(innerScroll);
+  setData(shell,'agendaScroll',String(innerScroll));
   document.documentElement.classList.toggle('sv-agenda-scroll-active',innerScroll);
   // A dock hidden by a prior agenda flick must reappear in «Все дела».
   if((nested||!visible)&&document.documentElement.classList.contains('sv-agenda-dock-minimized'))
@@ -668,7 +671,7 @@
   // Every nested view (including History) retains the real Back arrow.
   // Root Work destinations have no fake Back. Keep real Back for nested
   // Tasks/History and Calendar, but never in Cabinet or employee root.
-  back.hidden=(active==='personal'&&!history&&!nested)||active==='notes'||active==='wallet'||active==='business'||active==='employee';
+  setHidden(back,(active==='personal'&&!history&&!nested)||active==='notes'||active==='wallet'||active==='business'||active==='employee');
   if(back.dataset.svHeaderIcon!=='back'){back.innerHTML=backIcon;back.dataset.svHeaderIcon='back'}
   back.setAttribute('aria-label',history||nested?'Вернуться к моим делам':'Вернуться назад');
   back.title='';
@@ -677,7 +680,7 @@
   // including History. Do not write inline visual overrides here.
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
-  add.hidden=active==='employee'||active==='notes'||active==='wallet';
+  setHidden(add,active==='employee'||active==='notes'||active==='wallet');
   const nextIcon=history?'search':'add';
   if(add.dataset.svHeaderIcon!==nextIcon){
    add.innerHTML=history?searchIcon:plusIcon;
@@ -688,7 +691,7 @@
   add.setAttribute('aria-haspopup',String(!history&&(active==='calendar'||active==='business')));
   add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
   add.setAttribute('aria-expanded',history?String(document.getElementById('sahHistorySearch')?.hidden===false):active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
-  shell.dataset.active=active;
+  setData(shell,'active',active);
   // Wallet is a full Work section, not a modal overlay.
   const selectedWorkTab=active;
   for(const button of nav.querySelectorAll('[data-sv-work-tab]')){
