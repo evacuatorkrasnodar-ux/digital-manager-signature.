@@ -110,47 +110,10 @@ function renderDateCalendar(forMonth,input,heading,grid,options={}){
 window.SEYVEO_SHARED_DATE_CALENDAR=Object.freeze({render:renderDateCalendar});
 
 function renderMonth(){renderDateCalendar(month,date,monthLabel,days)}
-function renderWheel(wheel,total,kind){
- const fragment=document.createDocumentFragment();
- for(let i=0;i<total;i++){
-  const b=document.createElement('button');b.type='button';
-  b.className='cal-pick-wheel-option';b.textContent=pad(i);
-  b.dataset.wheelIndex=String(i);b.dataset.wheelKind=kind;
-  b.setAttribute('aria-label',(kind==='hour'?'Час ':'Минута ')+pad(i));
-  fragment.append(b);
- }
- wheel.replaceChildren(fragment);
-}
-renderWheel(hourWheel,24,'hour');renderWheel(minuteWheel,60,'minute');
-function wheelPaint(wheel,index){
- for(const b of wheel.children){
-  const active=Number(b.dataset.wheelIndex)===index;
-  b.classList.toggle('is-selected',active);
-  b.setAttribute('aria-pressed',String(active));
- }
-}
-function wheelMove(wheel,index){
- const n=Math.max(0,Math.min(wheel.children.length-1,index));
- wheel.scrollTop=n*44;wheelPaint(wheel,n);
-}
-for(const [wheel,kind] of [[hourWheel,'hour'],[minuteWheel,'minute']]){
- let timer;
- wheel.addEventListener('scroll',()=>{
-  clearTimeout(timer);
-  timer=setTimeout(()=>{
-   if(!isOpen()||panel.dataset.mode!=='time')return;
-   const n=Math.max(0,Math.min(wheel.children.length-1,Math.round(wheel.scrollTop/44)));
-   if(kind==='hour')hour=n;else minute=n;
-   wheelPaint(wheel,n);
-  },90);
- },{passive:true});
- wheel.addEventListener('click',event=>{
-  const b=event.target.closest('[data-wheel-index]');if(!b)return;
-  const n=Number(b.dataset.wheelIndex);
-  if(kind==='hour')hour=n;else minute=n;
-  wheelMove(wheel,n);
- });
-}
+const timeChoices=count=>Array.from({length:count},(_,value)=>({value,label:pad(value)}));
+const hoursWheel=window.SEYVEO_WHEEL.mount(hourWheel,timeChoices(24),hour,value=>{hour=value;});
+const minutesWheel=window.SEYVEO_WHEEL.mount(minuteWheel,timeChoices(60),minute,value=>{minute=value;});
+function wheelMove(wheel,index){(wheel===hourWheel?hoursWheel:minutesWheel).set(index);}
 function open(which){
  if(!dialog.open)return;
  if(isOpen()&&panel.dataset.mode===which){close();return}
@@ -194,6 +157,7 @@ days.addEventListener('click',event=>{
  if(d)commitDate(d);
 });
 $('seyveoPickDone').addEventListener('click',()=>{
+ hour=hoursWheel.value;minute=minutesWheel.value;
  time.value=pad(hour)+':'+pad(minute);
  time.dispatchEvent(new Event('input',{bubbles:true}));
  time.dispatchEvent(new Event('change',{bubbles:true}));
@@ -496,33 +460,11 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
   const hh=make('div','sv-standard-time-wheel'),mm=make('div','sv-standard-time-wheel');
   let ready=false;
   function setupWheel(wheel,count,axis,label){
-   wheel.setAttribute('aria-label',label);wheel.setAttribute('role','group');
-   const choices=[];
+   wheel.setAttribute('aria-label',label);
    const read=()=>axis==='hour'?hour:minute;
    const write=n=>{if(axis==='hour')hour=n;else minute=n;};
-   const pitch=()=>choices[0]?.getBoundingClientRect().height||42;
-   const nearest=()=>Math.max(0,Math.min(count-1,Math.round(wheel.scrollTop/pitch())));
-   const center=n=>{wheel.scrollTop=n*pitch()};
-   function choose(n){
-    write(n);center(n);paintTime();
-   }
-   for(let n=0;n<count;n++){
-    const b=button(pad(n),'sv-standard-time-option',()=>choose(n));
-    if(axis==='hour')b.dataset.svPickerHour=String(n);else b.dataset.svPickerMinute=String(n);
-    b.setAttribute('aria-label',pad(n)+(axis==='hour'?' ч':' мин'));
-    choices.push(b);wheel.append(b);
-   }
-   wheel.addEventListener('scroll',()=>{
-    if(!ready||!sheet.open||kind!=='time'||!wheel.isConnected)return;
-    const n=nearest();if(n!==read()){write(n);paintTime();}
-   },{passive:true});
-   wheel.addEventListener('keydown',event=>{
-    if(!['ArrowUp','ArrowDown','Home','End'].includes(event.key))return;
-    event.preventDefault();
-    const n=event.key==='Home'?0:event.key==='End'?count-1:Math.max(0,Math.min(count-1,read()+(event.key==='ArrowUp'?-1:1)));
-    choose(n);choices[n].focus({preventScroll:true});
-   });
-   return {center:()=>center(read()),sync:()=>write(nearest())};
+   const controller=window.SEYVEO_WHEEL.mount(wheel,Array.from({length:count},(_,value)=>({value,label:pad(value)})),read(),n=>{write(n);paintTime();});
+   return {center:()=>controller.set(read()),sync:()=>write(controller.value)};
   }
   const hours=setupWheel(hh,24,'hour','Часы'),minutes=setupWheel(mm,60,'minute','Минуты');
   const hCol=make('section','sv-standard-time-column'),mCol=make('section','sv-standard-time-column');
