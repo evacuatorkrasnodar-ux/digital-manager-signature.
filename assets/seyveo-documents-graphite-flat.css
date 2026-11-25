@@ -1889,3 +1889,9 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .
  min-height:48px!important;padding-block:5px!important;
 }
 html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-connections-entry[data-sv-document-connected="true"] .sv-connect-prompt-caption{display:none!important;}
+
+/* Template library: one swipe row, with space for two-line names. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] .sv-doc-tool-templates{touch-action:pan-x pan-y;}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] .sv-doc-template-card{justify-content:flex-start!important;padding-top:4px!important;}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="create"] .sv-doc-template-name{min-height:2.4em;display:flex;align-items:center;justify-content:center;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-template-note{display:block;padding:2px 3px 4px;font-size:10px;line-height:1.4;color:var(--secondary,#626A73);}
