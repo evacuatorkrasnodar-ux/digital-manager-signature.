@@ -81,7 +81,7 @@ html[data-theme="dark"] #seyveoPayDialog .syp-view-switch > button[aria-pressed=
  border-color:rgba(222,235,247,.19);box-shadow:none;
 }
 
-.syp-top > .syp-x.sv-nav-arrow{order:-1;flex:0 0 44px!important;align-self:flex-start;margin-left:-6px!important}
+.syp-top > .syp-x.sv-nav-arrow{order:-1;flex:0 0 var(--sv-nav-single-size,44px)!important;align-self:flex-start;margin-left:-6px!important}
 .syp-top > div{flex:1;min-width:0}
 .syp-top>div{min-width:0}
 .syp-kicker{margin:1px 0 8px;font-size:10px;letter-spacing:.20em;color:var(--text);font-weight:600}

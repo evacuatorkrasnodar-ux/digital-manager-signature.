@@ -543,8 +543,8 @@ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-mo
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] #seyveoCompanyEditTop.is-header-action,
 html:root[data-theme="light"] body dialog#seyveoQrCardDialog.sv-qr-dialog[open] #seyveoQrClose.sv-nav-back{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
- width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
- max-width:44px!important;max-height:44px!important;
+ width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;min-width:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;
+ max-width:var(--sv-nav-single-size,44px)!important;max-height:var(--sv-nav-single-size,44px)!important;
  position:static!important;inset:auto!important;grid-row:1!important;
  border-radius:50%!important;margin:0!important;padding:0!important;
  background:var(--sv-white-pearl-surface,#f5f6f7)!important;

@@ -27,17 +27,10 @@ html[data-theme="dark"] #seyveoPayDialog{
  border:1px solid var(--sw-line);border-radius:20px;background:var(--sw-panel);
 }
 #seyveoPayDialog .sw-month{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;color:var(--sw-ink);text-transform:capitalize}
-#seyveoPayDialog .sw-month button{
- display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;
- padding:0;border-radius:50%;border:var(--sw-pearl-edge);
- background:var(--sw-pearl);color:var(--sw-ink);
- box-shadow:var(--sw-pearl-shadow);font:400 27px/1 -apple-system,BlinkMacSystemFont,sans-serif;cursor:pointer;
- -webkit-backdrop-filter:blur(4px) saturate(104%);backdrop-filter:blur(4px) saturate(104%);
-}
-#seyveoPayDialog .sw-month button:active,
+/* Month navigation inherits the canonical sv-month-nav geometry and material. */
 #seyveoPayDialog .sw-secondary:active,
 #seyveoPayDialog .sw-row-tools button:active{background:var(--sw-press);box-shadow:inset 0 2px 4px rgba(40,50,70,.12)}
-#seyveoPayDialog .sw-month strong{font-size:15px;font-weight:630;letter-spacing:-.02em;text-align:center}
+#seyveoPayDialog .sw-month strong{font-size:15px;font-weight:630;letter-spacing:-.02em;text-align:left}
 #seyveoPayDialog .sw-overline{display:block;font-size:12px;color:var(--sw-muted);margin-bottom:5px}
 #seyveoPayDialog .sw-balance{display:block;font-size:clamp(30px,8vw,38px);font-weight:640;letter-spacing:-1.4px;line-height:1.14;color:var(--sw-ink)}
 #seyveoPayDialog .sw-balance-note{font-size:11px;color:var(--sw-muted);line-height:1.45;margin:8px 0 16px}

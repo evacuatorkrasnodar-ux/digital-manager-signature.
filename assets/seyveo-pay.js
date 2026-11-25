@@ -28,10 +28,10 @@ if(workShell?.contains(dialog))workShell.append(tabs);
 else home.before(tabs);
 const financeCss=document.createElement('link');
 financeCss.rel='stylesheet';
-financeCss.href='assets/seyveo-personal-wallet.css?v=4';
+financeCss.href='assets/seyveo-personal-wallet.css?v=20261125-canonical-nav-v3';
 document.head.append(financeCss);
 const ready=new Promise(resolve=>{
- const script=document.createElement('script');script.src='assets/seyveo-personal-wallet.js?v=5';
+ const script=document.createElement('script');script.src='assets/seyveo-personal-wallet.js?v=20261125-canonical-nav-v3';
  script.onload=()=>resolve(!!q('[data-syp-screen="budget"]'));
  script.onerror=()=>resolve(false);
  document.body.append(script);

@@ -51,7 +51,7 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-back{
  position:absolute!important;grid-column:1!important;z-index:7!important;
  top:calc(10px + env(safe-area-inset-top,0px))!important;left:12px!important;
- width:44px!important;height:44px!important;min-height:44px!important;
+ width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;
  border:0!important;border-radius:50%!important;
  box-shadow:0 3px 12px rgba(31,48,67,.10)!important;
  transform:none!important;translate:none!important;

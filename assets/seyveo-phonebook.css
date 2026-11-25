@@ -22,8 +22,8 @@ html body #seyveoContactsDialog[open] > button#seyveoContactsClose{
   left:max(16px,env(safe-area-inset-left,0px))!important;
   z-index:5!important;
   display:grid!important;place-items:center!important;
-  width:44px!important;height:44px!important;
-  min-width:44px!important;min-height:44px!important;
+  width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;
+  min-width:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;
   margin:0!important;padding:0!important;
   border:0!important;border-radius:50%!important;
   background:#38383A!important;background-image:none!important;

@@ -7,7 +7,7 @@ const CATS=['Кофе','Продукты','Кафе','Транспорт','Бе�
 const icons={'Кофе':'☕','Продукты':'🛒','Кафе':'🍽','Транспорт':'🚕','Бензин':'⛽','Дом':'⌂','Здоровье':'♡','Покупки':'◈','Другое':'•'};
 const screen=document.createElement('section');screen.className='syp-screen sw-screen';screen.dataset.sypScreen='budget';screen.hidden=true;
 screen.innerHTML=`<div class="sw-summary">
- <div class="sw-month"><button type="button" data-sw="previous" aria-label="Предыдущий месяц">‹</button><strong id="swMonth"></strong><button type="button" data-sw="next" aria-label="Следующий месяц">›</button></div>
+ <div class="sw-month sv-month-nav"><strong id="swMonth" class="sv-month-name"></strong><div class="sv-month-controls" role="group" aria-label="Переключение месяца"><button type="button" data-sw="previous" aria-label="Предыдущий месяц"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button><button type="button" data-sw="next" aria-label="Следующий месяц"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9.5 5 7 7-7 7"/></svg></button></div></div>
  <span class="sw-overline">Остаток по записям</span><strong class="sw-balance" id="swBalance">0 ₽</strong><p class="sw-balance-note" id="swBalanceNote"></p>
  <div class="sw-totals"><div><span>Доходы</span><strong class="sw-income" id="swIncome">0 ₽</strong></div><div><span>Расходы</span><strong id="swExpense">0 ₽</strong></div></div>
  </div>
