@@ -751,7 +751,7 @@ function mount(target,{
    const card=button('',()=>{if(item.url){window.open(item.url,'_blank','noopener,noreferrer');return;}selectTemplate(item.id,item.content);},
     'sv-doc-template-card sv-doc-template-'+item.id);
    card.setAttribute('aria-label',(item.url?'Открыть официальный источник: ':'Выбрать шаблон: ')+item.name);
-   if(item.url)card.title='Официальный сайт · откроется в новой вкладке';
+   if(item.url){card.title='Официальный сайт · откроется в новой вкладке';card.classList.add('sv-doc-template-official');}
    card.setAttribute('aria-pressed',String(documentTemplate===item.id));
    const paper=$('span','sv-doc-template-glyph');
    paper.setAttribute('aria-hidden','true');
@@ -1033,7 +1033,7 @@ function mount(target,{
   sayvi.append(sayviMark,$('span','','Создать с Сэйви'));
   panel.dataset.createStage='choose';
   if(!fromScan){
-   const templateNote=$('small','sv-doc-template-note','Образцы для редактирования · проверьте требования вашей страны');
+   const templateNote=$('small','sv-doc-template-note','Образцы для редактирования. Официальные бланки — по ссылкам на сайты ведомств.');
    panel.append(sectionTitle,templateSearch,examples,templateEmpty,templateNote);
   }
   panel.append(resume,sayvi,status(''),sheet);
