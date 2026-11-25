@@ -8,6 +8,14 @@
 
 @import url("seyveo-white-pearl-tokens.css?v=2");
 
+/* Floating docks only: a little more translucency than stationary buttons. */
+:root[data-theme="light"]{
+ --sv-white-pearl-floating-dock:rgba(247,247,248,.76);
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"]{--sv-white-pearl-floating-dock:var(--sv-white-pearl-solid,#f7f7f8);}
+}
+
 /* MAIN DOCK — only the two pre-existing capsule shapes. Not the
    transparent full-width footer grid, icons, or selected date counters. */
 html:root[data-theme="light"] body > footer.dock.sv-shared-dock::before,
@@ -16,7 +24,7 @@ html:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space
 html:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::after{
  border:var(--sv-white-pearl-edge)!important;
  border-radius:var(--sv-white-pearl-radius-capsule)!important;
- background:var(--sv-white-pearl-surface)!important;
+ background:var(--sv-white-pearl-floating-dock)!important;
  background-image:none!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
  backdrop-filter:var(--sv-white-pearl-blur)!important;
@@ -33,7 +41,7 @@ html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-lig
  .sv-paper-top #svPaperNewDock{
  border:var(--sv-white-pearl-edge)!important;
  border-radius:var(--sv-white-pearl-radius-capsule)!important;
- background:var(--sv-white-pearl-surface)!important;
+ background:var(--sv-white-pearl-floating-dock)!important;
  background-image:none!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
  backdrop-filter:var(--sv-white-pearl-blur)!important;
@@ -45,7 +53,7 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[op
  .sv-note-bottom .sv-note-tool-row.sv-note-home-dock-row
  > .sv-note-home-new-dock::before{
  border:var(--sv-white-pearl-edge)!important;
- background:var(--sv-white-pearl-surface)!important;
+ background:var(--sv-white-pearl-floating-dock)!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
  backdrop-filter:var(--sv-white-pearl-blur)!important;
  box-shadow:var(--sv-white-pearl-circle-shadow)!important;
@@ -56,7 +64,7 @@ html:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[o
  > footer.dock.sv-shared-dock > :is(.sv-health-dock-actions,#navManage){
  border:var(--sv-white-pearl-edge)!important;
  border-radius:var(--sv-white-pearl-radius-capsule)!important;
- background:var(--sv-white-pearl-surface)!important;
+ background:var(--sv-white-pearl-floating-dock)!important;
  background-image:none!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
  backdrop-filter:var(--sv-white-pearl-blur)!important;
@@ -187,7 +195,7 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
  border-radius:var(--sv-white-pearl-radius-capsule)!important;
  outline:0!important;
  /* Ultra-clear frost: text beneath remains visible, not a solid white rail. */
- background:var(--sv-white-pearl-surface)!important;
+ background:var(--sv-white-pearl-floating-dock)!important;
  background-image:none!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
  backdrop-filter:var(--sv-white-pearl-blur)!important;
