@@ -285,10 +285,7 @@ function draw(){
   getSelected:()=>stored[area]?null:files[area],
   onPick:type=>openPicker(type),
   onArchive(){
-   const details=host?.querySelector('.sv-doc-vault-shell');
-   if(!details)return;
-   details.open=true;
-   details.scrollIntoView?.({block:'nearest',behavior:'smooth'});
+   openArchiveSheet();
   },
   onOpenFile(file,fromVault){
    if(!(file instanceof File))return;
@@ -299,21 +296,22 @@ function draw(){
  // Document folders precede connection settings on both areas.
  host.append(connectionsEntry());
 
- const archive=el('details','sv-doc-vault-shell');
- if(shelfReady)archive.classList.add('sv-doc-vault-folder-entry');
- const summary=el('summary','sv-doc-vault-summary');
- const archiveTitle=el('span','sv-doc-vault-copy');
- archiveTitle.append(el('span','sv-doc-vault-title',area==='personal'?'Архив':'Архив компании'),
-  el('small','','Локальное шифрование · пароль'));
- summary.append(makeIcon('lock'),archiveTitle);
- const contents=el('div','sv-doc-vault');
- archive.append(summary,contents);
- archive.addEventListener('toggle',()=>{
-  if(!archive.isConnected)return;
-  archiveExpanded=archive.open;
-  if(!archive.open)return;
+ const archive=el('dialog','sv-doc-archive-sheet');
+ const archiveLabel=area==='personal'?'Архив':'Архив компании';
+ archive.setAttribute('aria-label',archiveLabel);
+ const archiveHead=el('header','sv-doc-scanner-head');
+ const grip=el('div','sv-doc-picker-grip');grip.setAttribute('aria-hidden','true');
+ const back=window.SEYVEO_DOCUMENT_PICKERS?.backButton(()=>archive.close())||button('‹',()=>archive.close());
+ back.classList.add('sv-doc-scanner-round');back.setAttribute('aria-label','Назад');
+ archiveHead.append(grip,back,el('strong','',archiveLabel));
+ const archiveBody=el('div','sv-doc-archive-body');
+ const contents=el('div','sv-doc-vault');archiveBody.append(contents);archive.append(archiveHead,archiveBody);
+ const scopeArchive=area;
+ function openArchiveSheet(){
+  if(!archive.isConnected||archive.open||area!==scopeArchive)return;
+  archiveExpanded=true;archive.showModal();
   window.SEYVEO_DOCUMENT_VAULT_UI?.mount?.(contents,{
-   area,currentArea:()=>area,
+   area:scopeArchive,currentArea:()=>area,
    selectedFile:()=>stored[area]?null:files[area],
    savedFile(file){if(files[area]===file)stored[area]=true;},
    toSayvi:intent=>goSayvi(intent),
@@ -326,8 +324,9 @@ function draw(){
    },
    clearSession(){reset();draw();}
   });
- });
- archive.open=archiveExpanded;
+ }
+ archive.addEventListener('close',()=>{if(archive.isConnected&&area===scopeArchive){archiveExpanded=false;contents.replaceChildren();}});
+ window.SEYVEO_SHEET_NAVIGATION?.attach(archiveHead,null,()=>archive.close());
  if(selected&&showPreview){
   const selectedFile=selected,scope=area;
   requestAnimationFrame(()=>{
@@ -362,15 +361,18 @@ function draw(){
   button('Создать с Сэйви',()=>goSayvi('create'),'sv-doc-assistant-action'),
   button('Проверить с Сэйви',()=>goSayvi('review'),'sv-doc-assistant-action'));
  hero.append(intro,actions);assistant.append(hero);host.append(assistant);
+ if(!shelfReady){const entry=button(archiveLabel,openArchiveSheet,'sv-doc-archive-fallback');host.append(entry);}
  host.append(archive);
  const safety=el('details','sv-doc-safety');
  safety.append(el('summary','','О защите данных'),
   note('Архив защищён отдельным паролем, который нельзя восстановить. Черновики и локальные копии файлов шифруются ключом браузера без отдельного пароля. Это не резервная копия и не парольный архив. Очистка данных браузера может удалить документы и черновики. Сохраните важные файлы отдельно. Учебные согласования не шифруются — не используйте в них реальные данные.'));
  // Keep the legal/storage explanation accessible when the vault opens,
  // without a second visual section under the collapsed archive card.
- archive.append(safety);
+ archiveBody.append(safety);
+ if(archiveExpanded)openArchiveSheet();
 }
 function backFromNested(){
+ const archive=host?.querySelector('.sv-doc-archive-sheet[open]');if(archive){archive.close();return true;}
  // Shared titlebar Back navigates within Documents first.
  // An employee has no business vault, so their Back exits normally.
  if(area!=='business'||view!=='flow'||employeePreview())return false;
