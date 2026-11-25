@@ -1401,6 +1401,9 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
  border:0!important;background:var(--sv-white-pearl-selected,#fff)!important;
  box-shadow:0 1px 4px rgba(30,40,55,.08)!important;border-radius:13px!important;
 }
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders > .sv-doc-shelf-heading{
+ min-height:25px!important;margin-bottom:1px!important;
+}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid{
  background:transparent!important;background-image:none!important;border:0!important;
  box-shadow:none!important;overflow:visible!important;
