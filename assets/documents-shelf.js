@@ -15,7 +15,6 @@ const localFiles=()=>window.SEYVEO_DOCUMENT_FILES;
 const categories=[
  {id:'device',title:'На устройстве'},
  {id:'scan',title:'Сканы'},
- {id:'new',title:'Новая папка'},
  {id:'contracts',title:'Договоры'},
  {id:'projects',title:'Проекты'},
  {id:'clients',title:'Клиенты'},
@@ -103,7 +102,7 @@ const smartFolders=state=>{
  if(files.some(x=>x.dueDate&&!['paid','closed'].includes(x.status)))output.push({id:'smart-due',title:'Со сроком',smart:true});
  return output;
 };
-const folderEntries=state=>[...categories.filter(x=>['device','scan','new','archive'].includes(x.id)),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true,defaultFolder:x.defaultFolder===true})),...smartFolders(state)];
+const folderEntries=state=>[...categories.filter(x=>['device','scan','archive'].includes(x.id)),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true,defaultFolder:x.defaultFolder===true})),...smartFolders(state)];
 const updateFolder=(state,category,patch)=>category.defaultFolder?localFiles().setDefaultFolder(state.options.area,category.id,patch):localFiles().update(state.options.area,category.id,patch);
 function notice(state,text){state.folderCaption.textContent=text;}
 function closeFolderMenu(state){state.folderMenu.hidden=true;state.folderMenu.replaceChildren();}
@@ -356,15 +355,13 @@ function paint(state){
   entry.type='button';entry.setAttribute('aria-pressed',String(state.filter===category.id));
   entry.setAttribute('aria-label','Подборка '+category.title+(state.unlocked?', '+count+' файлов':''));
   const folderName=el('strong','',category.title);folderName.title=category.title;
-  entry.append(folderArt(category.id==='new'),folderName);
+  entry.append(folderArt(),folderName);
   if(category.smart){entry.classList.add('sv-doc-smart-folder');entry.title='Умная подборка · '+count;}
-  if(category.id==='new')entry.setAttribute('aria-label','Создать новую пустую папку');
   if(state.unlocked)entry.title=count+' '+(count===1?'файл':count>=2&&count<=4?'файла':'файлов');
   let suppressClick=0;
   entry.addEventListener('click',()=>{
    if(state!==active||Date.now()<suppressClick)return;
    closeFolderMenu(state);
-   if(category.id==='new'){void makeFolder(state);return;}
    if(category.id==='device'){state.options.onPick?.('all');return;}
    if(category.id==='archive'){openArchive(state);return;}
    state.filter=category.id;state.expanded=true;paint(state);
@@ -442,7 +439,8 @@ function mount(parent,options={}){
  const folderHeader=el('div','sv-doc-shelf-heading');
  folderHeader.append(el('h2','','Папки'));
  const folderCaption=el('small','sv-doc-folder-caption','');
- folderHeader.append(folderCaption);
+ const addFolder=el('button','sv-doc-folder-add');addFolder.type='button';addFolder.setAttribute('aria-label','Создать новую папку');addFolder.title='Новая папка';addFolder.append(svg('<path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round"/>','0 0 24 24'));addFolder.addEventListener('click',()=>{if(state===active)void makeFolder(state);});
+ folderHeader.append(folderCaption,addFolder);
  const foldersGrid=el('div','sv-doc-folders-grid');
  foldersGrid.setAttribute('role','region');
  foldersGrid.setAttribute('aria-label','Папки документов, листайте горизонтально');
