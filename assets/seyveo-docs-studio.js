@@ -750,34 +750,32 @@ function mount(target,{
   for(let i=templates.length-1;i>=0;i--)if(templates[i].url)templates.splice(i,1);
   templates.push(...official.sort((a,b)=>Number(b.country===preferredCountry())-Number(a.country===preferredCountry())).map(x=>({...x,icon:'receipt',name:x.name+' · '+(x.country==='RU'?'РФ':'РА')})));
   function openOfficial(selected){
+   const pickers=window.SEYVEO_DOCUMENT_PICKERS;
    const dlg=$('dialog','sv-doc-official-dialog');
    const header=$('div','sv-doc-official-header');
-   const close=button('‹',()=>dlg.close(),'sv-doc-official-back');close.setAttribute('aria-label','Назад');
+   const close=pickers.backButton(()=>dlg.close());close.classList.add('sv-doc-official-back');
    header.append(close,$('strong','','Официальная форма'));
-   const country=$('select','');country.setAttribute('aria-label','Страна документа');
-   for(const c of [...new Set(official.map(x=>x.country))]){const o=$('option','',countryNames[c]);o.value=c;country.append(o);}
-   // A named country-specific form is an explicit choice, even if a different
-   // jurisdiction is remembered. Never infer tax residency from device region.
-   country.value=selected.country;
-   const form=$('select','');form.setAttribute('aria-label','Вид документа');
-   const period=$('input','');period.type='text';period.maxLength=60;period.required=true;period.setAttribute('aria-label','Отчётный период или дата');
-   const info=$('small','sv-doc-official-note','Сэйви поможет подготовить сведения. Актуальный бланк и порядок подачи проверяйте на сайте ведомства.');
+   const country=pickers.choice('Страна документа',[...new Set(official.map(x=>x.country))].map(c=>[c,countryNames[c]]),selected.country);
+   const form=pickers.choice('Вид документа',[]);
+   const periodSlot=$('div','sv-doc-official-period-slot');
+   let period=null;
+   const info=$('small','sv-doc-official-note','Актуальность бланка проверяйте на сайте ведомства.');
    const source=$('a','sv-doc-official-source','Официальный источник');source.target='_blank';source.rel='noopener noreferrer';
-   const label=(name,node)=>{const l=$('label','sv-doc-official-field');l.append($('span','',name),node);return l;};
+   const label=(name,node)=>{const l=$('div','sv-doc-official-field');l.append($('span','',name),node);return l;};
    function current(){return official.find(x=>x.id===form.value);}
-   function syncPeriod(){const item=current();if(!item)return;period.value='';period.placeholder=item.period==='date'?'Дата пересечения границы':item.period==='quarter'?'Например, 3 квартал 2026':item.period==='report'?'Год, квартал или месяц':'Например, 2025';source.href=item.url;}
-   function syncForms(preferred){form.replaceChildren();for(const x of official.filter(x=>x.country===country.value)){const o=$('option','',x.name);o.value=x.id;form.append(o);}if([...form.options].some(o=>o.value===preferred))form.value=preferred;syncPeriod();}
+   function syncPeriod(){const item=current();if(!item)return;period=pickers.period(item.period==='date'?'Дата пересечения границы':'Отчётный период',item.period);periodSlot.replaceChildren(period);source.href=item.url;info.textContent='Актуальность бланка проверяйте на сайте ведомства.';}
+   function syncForms(preferred){form.setChoices(official.filter(x=>x.country===country.value).map(x=>[x.id,x.name]),preferred);syncPeriod();}
    country.addEventListener('change',()=>{try{localStorage.setItem(countryKey,country.value)}catch{}syncForms('');});form.addEventListener('change',syncPeriod);syncForms(selected.id);
-   const help=button('Заполнить с Сэйви',async()=>{
-    const item=current();if(!item||!period.value.trim()){period.reportValidity();return;}
+   const help=button('',async()=>{
+    const item=current();if(!item||!period?.value.trim()){info.textContent='Выберите период документа.';period?.focus();return;}
     try{localStorage.setItem(countryKey,item.country)}catch{}
     help.disabled=true;
     const ok=await onSayvi('official-form',{name:item.name,country:countryNames[item.country],period:period.value.trim(),url:item.url});
     if(ok===false){info.textContent='Не удалось открыть Сэйви. Официальный источник остаётся доступен.';help.disabled=false;}
    },'sv-doc-official-help');
-   dlg.append(header,label('Страна',country),label('Документ',form),label('Период',period),source,help,info);
-   dlg.addEventListener('close',()=>dlg.remove(),{once:true});panel.append(dlg);
-   if(typeof dlg.showModal==='function')dlg.showModal();else dlg.setAttribute('open','');
+   const mark=$('span','sv-doc-official-ai-mark sv-sayvi-symbol');mark.setAttribute('aria-hidden','true');help.append(mark,$('span','','Заполнить с Сэйви'));
+   dlg.append(header,label('Страна',country),label('Документ',form),label('Период',periodSlot),source,help,info);
+   dlg.addEventListener('close',()=>dlg.remove(),{once:true});panel.append(dlg);dlg.showModal();
   }
   const blank=button('Чистый лист',()=>beginNew(),'sv-doc-create-blank');
   sectionTitle.append($('strong','','Шаблоны'),blank);
