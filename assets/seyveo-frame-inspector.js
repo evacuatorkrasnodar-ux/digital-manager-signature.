@@ -1,7 +1,15 @@
 /* SEYVEO temporary frame inspector.
-   Enabled only with ?frame-debug=1. No personal content or storage is read. */
+   Query flag or deliberate long press on Home brand in installed iOS PWA.
+   No personal content or storage is read. No new visible controls by default. */
 (()=>{'use strict';
- if(new URLSearchParams(location.search).get('frame-debug')!=='1')return;
+ const queryEnabled=new URLSearchParams(location.search).get('frame-debug')==='1';
+ const ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||
+  (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ const installed=navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
+ let mounted=false;
+ function enable(){
+ if(mounted)return;
+ mounted=true;
  const css='position:fixed!important;z-index:2147483646!important;box-sizing:border-box!important';
  const tag=e=>{
   if(!e)return 'none';
@@ -130,4 +138,33 @@
   }
  });
  attach();
+ }
+ if(queryEnabled){enable();return}
+ if(!ios||!installed)return;
+ const brand=document.getElementById('homeBrandTrigger');
+ if(!brand)return;
+ let timer=0,startX=0,startY=0,pointer=null,suppressUntil=0;
+ const cancel=()=>{clearTimeout(timer);timer=0;pointer=null};
+ brand.addEventListener('pointerdown',event=>{
+  if(!event.isPrimary||event.button!==0)return;
+  cancel();
+  pointer=event.pointerId;startX=event.clientX;startY=event.clientY;
+  timer=setTimeout(()=>{
+   timer=0;
+   suppressUntil=Date.now()+1800;
+   enable();
+  },1000);
+ },{passive:true});
+ document.addEventListener('pointermove',event=>{
+  if(event.pointerId===pointer&&Math.hypot(event.clientX-startX,event.clientY-startY)>12)cancel();
+ },{passive:true});
+ for(const type of ['pointerup','pointercancel'])document.addEventListener(type,event=>{
+  if(event.pointerId===pointer)cancel();
+ },{passive:true});
+ brand.addEventListener('contextmenu',event=>{if(timer||Date.now()<suppressUntil)event.preventDefault()});
+ document.addEventListener('click',event=>{
+  if(Date.now()<suppressUntil&&brand.contains(event.target)){
+   event.preventDefault();event.stopImmediatePropagation();suppressUntil=0;
+  }
+ },true);
 })();
