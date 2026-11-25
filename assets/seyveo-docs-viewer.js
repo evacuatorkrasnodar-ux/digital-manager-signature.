@@ -293,6 +293,10 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
     }else{
      if(!window.confirm('Открыть редактируемую текстовую копию PDF? Оригинал сохранится, оформление может отличаться.'))return;
      say('Подготавливаем текст…');
+     const sourceText=window.SEYVEO_DOCUMENT_FILES?.sourceText?.(file)||'';
+     if(sourceText.trim()){
+      payload={kind:'word',text:sourceText,title:file.name.replace(/\.[^.]+$/,'')};
+     }else{
      let scanned=null;
      try{scanned=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);}catch{}
      if(!active)return;
@@ -304,6 +308,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
       if(!active)return;
       if(!value.trim())throw Error('Текст не найден.');
       payload={kind:'word',text:value,title:file.name.replace(/\.[^.]+$/,'')};
+     }
      }
     }
     const ok=await onEdit(payload);
