@@ -276,7 +276,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  save.append(icon('download'),el('span','','Сохранить'));
  toolbar.append(save);
  let editAction=null;
- const openMarkup=()=>{if(!window.SEYVEO_PDF_MARKUP?.open(file,{parent:root,loadPdf,onSave:onSaveCopy}))say('Разметка PDF недоступна.');};
+ const openMarkup=()=>{if(!window.SEYVEO_PDF_MARKUP?.open(file,{parent:root,loadPdf,onSave:onSaveCopy,onSayvi}))say('Разметка PDF недоступна.');};
  if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf')){
   const edit=action(info.kind==='image'?'Обработка изображения':info.kind==='pdf'?'Текстовая копия (Word)':'Редактировать текст','edit',async()=>{
    if(edit.disabled)return;
