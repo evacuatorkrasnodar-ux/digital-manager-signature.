@@ -1418,6 +1418,15 @@ function mount(target,{
  activeStudio=openSignImage;
  activeHandoff=async payload=>{
   if(!payload||!panel.isConnected)return false;
+  if(payload.kind==='sayvi-result'){
+   const value=String(payload.text||'');if(!value.trim()||value.length>12000)return false;
+   await persistDraft();if(saveFailed||!panel.isConnected)return false;
+   newDraft();draftEdited=true;documentDraft=value;documentName=String(payload.title||'').slice(0,100);
+   documentFormat=payload.format==='docx'?'docx':'pdf';documentTemplate='';
+   operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();
+   panel.querySelector('.sv-doc-edit-resume')?.click();
+   await persistDraft();return !saveFailed;
+  }
   if(payload.kind==='word'){
    const value=String(payload.text||'').slice(0,12000);
    if(!value.trim())return false;
