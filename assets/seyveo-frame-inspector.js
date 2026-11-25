@@ -1,11 +1,8 @@
 /* SEYVEO temporary frame inspector.
-   Query flag or temporary visible diagnostic button in installed iOS PWA.
+   Enabled only by explicit ?frame-debug=1 query flag.
    No personal content or storage is read. */
 (()=>{'use strict';
  const queryEnabled=new URLSearchParams(location.search).get('frame-debug')==='1';
- const ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||
-  (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
- const installed=navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
  let mounted=false;
  function enable(){
  if(mounted)return;
@@ -145,7 +142,6 @@
  });
  attach();
  }
- // Temporary diagnostic button is visible only in the installed iOS PWA
- // or when explicitly requested by the browser query flag.
- if(queryEnabled||(ios&&installed))enable();
+ // Keep diagnostics available only when explicitly requested.
+ if(queryEnabled)enable();
 })();
