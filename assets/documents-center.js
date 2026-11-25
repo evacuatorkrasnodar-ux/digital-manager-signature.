@@ -327,20 +327,21 @@ function draw(){
   });
  });
  archive.open=archiveExpanded;
- if(selected){
-  const preview=el('details','sv-doc-file-review');
-  preview.open=showPreview;
-  const sum=el('summary','','Просмотр документа');
-  preview.append(sum);
-  const holder=el('div','sv-doc-file-review-body');
-  preview.append(holder);
-  if(showPreview)renderPreview(holder,selected);
-  preview.addEventListener('toggle',()=>{
-   showPreview=preview.open;
-   if(preview.open){holder.replaceChildren();renderPreview(holder,selected);}
-   else{holder.replaceChildren();clearPreview();}
+ if(selected&&showPreview){
+  const selectedFile=selected;
+  requestAnimationFrame(()=>{
+   if(!host?.isConnected||files[area]!==selectedFile||!showPreview||viewerSession)return;
+   const opened=window.SEYVEO_DOCS_VIEWER?.open?.(selectedFile,{
+    onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
+    onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
+    onSayvi:intent=>goSayvi(intent),
+    onClose(){showPreview=false;viewerSession=null;}
+   });
+   if(opened)viewerSession=opened;
+   else{
+    const holder=el('div','sv-doc-file-review-body');host.append(holder);renderPreview(holder,selectedFile);
+   }
   });
-  host.append(preview);
  }
  const assistant=el('section','sv-doc-assistant');
  // The compact assistant row already names Sayvi. No extra heading.
