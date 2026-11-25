@@ -157,9 +157,12 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
   el('span','svdv-meta',info.label+' · '+(Math.max(1,Math.ceil(file.size/1024)))+' КБ'));
  header.append(glyph,copy);root.append(header);
  const stage=el('div','svdv-stage');
+ let previewNeedsOriginal=info.kind==='original';
+ let originalAction=null;
+ const requireOriginal=()=>{previewNeedsOriginal=true;if(originalAction)originalAction.hidden=false;};
  if(info.kind==='image'){
   const img=el('img','svdv-picture');
-  img.src=objectUrl;img.alt='Изображение документа '+file.name;
+  img.src=objectUrl;img.alt='Изображение документа '+file.name;img.addEventListener('error',requireOriginal,{once:true});
   stage.append(img);
  }else if(info.kind==='pdf'){
   stage.classList.add('svdv-pdf-stage');
@@ -237,7 +240,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
    if(active&&pre.isConnected)pre.textContent=text.slice(0,120000)||
     'Документ пуст.';
   }).catch(()=>{
-   if(active&&pre.isConnected)pre.textContent='Не удалось открыть текст.';
+   if(active&&pre.isConnected){pre.textContent='Не удалось открыть текст.';requireOriginal();}
   });
  }else if(info.ext==='docx'){
   stage.classList.add('svdv-stage-document');
@@ -353,12 +356,15 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=fa
  if(editAction)moreBody.append(editAction);
  const openLink=el('a','svdv-link');
  openLink.href=objectUrl;openLink.target='_blank';openLink.rel='noopener noreferrer';
- openLink.append(icon('file'),el('span','','Открыть оригинал'));
+ openLink.append(icon('file'),el('span','','Открыть вне SEYVEO'));
+ openLink.hidden=!previewNeedsOriginal;
+ originalAction=openLink;
  moreBody.append(openLink);
  if(supportsPrint){
   moreBody.append(action('Печать','print',()=>{
    const tab=window.open(objectUrl,'_blank','noopener,noreferrer');
-   say(tab?'В открытом документе выбери системную печать.':'Открой оригинал и выбери системную печать.');
+   if(!tab)requireOriginal();
+   say(tab?'В открытом документе выбери системную печать.':'Разреши открытие новой вкладки или открой файл вне SEYVEO для печати.');
   }));
  }
  if(info.kind==='image'&&onSignImage){
