@@ -1129,7 +1129,9 @@ function mount(target,{
    typography.hidden=false;
    for(const control of [sizeControl,alignControl,formatTrigger])control.hidden=!isWord;
    if(!isWord)setFormatMenu(false);
-   rail.scrollLeft=0;
+   // The common toolbar stays visible in both formats. Reset only horizontal position.
+   rail.setAttribute('aria-label',isWord?'Инструменты Word, листайте горизонтально':'Инструменты документа PDF');
+   if(rail.scrollLeft)rail.scrollLeft=0;
    body.style.fontSize=documentFormat==='docx'?wordStyle.size+'pt':'';
    body.style.textAlign=documentFormat==='docx'?(wordStyle.alignment==='both'?'justify':wordStyle.alignment):'';
   }
