@@ -129,7 +129,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    const controls=target.controls.filter(el=>visible(el)&&root.contains(el));
    if(!controls.length)return;
    const rect=root.getBoundingClientRect(),scroll=port.getBoundingClientRect();
-   const overlap=Math.max(0,Math.round(scroll.top-rect.top));
+   // Work lives inside an app with a real top/safe-area inset. Extend the
+   // material AND the existing scrollport through that strip, without
+   // moving controls or deleting the safe-area spacing.
+   const app=root.id==='svWorkShell'&&root.parentElement?.classList.contains('app')?root.parentElement:null;
+   const topGap=app?Math.max(0,Math.min(Math.round(rect.top-app.getBoundingClientRect().top),Math.ceil(number(getComputedStyle(app).paddingTop)))):0;
+   const overlap=Math.max(0,Math.round(scroll.top-rect.top))+topGap;
+   root.style.setProperty('--sv-full-glass-top-gap',topGap+'px');
    const pinnedTop=sticky?number(getComputedStyle(sticky).top):0;
    const bottom=Math.max(scroll.top,...controls.map(el=>el.getBoundingClientRect().bottom),sticky?scroll.top+pinnedTop+sticky.offsetHeight:0);
    if(bottom<=rect.top||overlap>rect.height*.8||bottom-rect.top>rect.height*.8)return;

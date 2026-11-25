@@ -543,3 +543,14 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[
  background:transparent!important;background-image:none!important;
  isolation:auto!important;z-index:auto!important;
 }
+
+/* Cover the real Work app top inset with the SAME continuous glass layer.
+   The outer app remains the clipping boundary; the original control safe
+   area and all in-flow spacing remain unchanged. */
+@media not (prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready:is([data-active="notes"],[data-active="wallet"],[data-active="business"]){overflow:visible!important}
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready > .sv-full-header-material{
+  top:calc(0px - var(--sv-full-glass-top-gap,0px))!important;
+  height:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 24px)!important;
+ }
+}
