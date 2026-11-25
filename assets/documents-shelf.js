@@ -191,28 +191,47 @@ function openDocumentDetails(state,item){
  const head=el('header','sv-doc-my-template-head');
  const pickers=window.SEYVEO_DOCUMENT_PICKERS;
  const back=pickers.backButton(()=>dlg.close());back.classList.add('sv-doc-my-template-back');
- head.append(back,el('strong','','Сведения о документе'));
+ head.append(back,el('strong','','О документе'));
  const content=el('div','sv-doc-my-template-content');
  const feedback=el('small','sv-doc-my-template-note');feedback.setAttribute('role','status');
  const form=el('form','sv-doc-document-fields');
- const field=(label,control)=>{const node=el(control.tagName==='BUTTON'?'div':'label','sv-doc-document-field');node.append(el('span','',label),control);form.append(node);return control;};
+ const field=(label,control,kind,parent=form)=>{
+  const node=el(control.tagName==='BUTTON'?'div':'label','sv-doc-document-field');
+  const title=el('span','sv-doc-detail-label');
+  const glyphs={
+   building:'<rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 8h.1M15 8h.1M9 12h.1M15 12h.1M10 20v-4h4v4"/>',
+   hash:'<path d="M10 4 6 20M18 4l-4 16M4 9h16M3 15h16"/>',
+   calendar:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4m8-4v4M4 10h16M8 14h1m3 0h1m3 0h1"/>',
+   history:'<path d="M3.5 11a8.5 8.5 0 1 1 3 7.5M3.5 5v6h6M12 7v5l3 2"/>'
+  };
+  const mark=glyphs[kind]?el('span','sv-doc-detail-icon'):actionIcon(kind);
+  if(glyphs[kind]){mark.setAttribute('aria-hidden','true');mark.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round">'+glyphs[kind]+'</svg>';}
+  mark.classList.add('sv-doc-detail-icon');
+  title.append(mark,el('span','',label));node.append(title,control);parent.append(node);return control;
+ };
  const select=(label,values,initial)=>pickers.choice(label,values,initial);
- const input=(value,max,type='text')=>{const n=el('input','');n.type=type;n.value=value||'';if(max)n.maxLength=max;return n;};
- const type=field('Тип документа',select('Тип документа',Object.entries(api.docTypes),docType(item)));
- const counterparty=field('Контрагент',input(item.counterparty,120));
- const ref=field('Номер / связанный договор',input(item.reference,100));
- const due=field('Контрольная дата',pickers.date('Контрольная дата',item.dueDate,'Выбрать дату',area));
- const status=field('Статус (вручную)',select('Статус',[['','Не указан'],['draft','Черновик'],['ready','Готов'],['sent','Отправлен'],['signed','Подписан'],['paid','Оплачен'],['closed','Закрыт']],item.status||''));
- const folder=field('Папка',select('Папка',[['','Без папки'],...ownFolders(state).map(x=>[x.id,x.name])],item.folder||''));
- if(type.value==='other'||item.typeOrigin!=='user')form.append(el('small','sv-doc-my-template-note','Тип предложен по названию. Проверьте его. Статусы не подтверждают подпись или оплату.'));
+ const input=(value,max,type='text')=>{const n=el('input','');n.type=type;n.value=value||'';n.placeholder='Указать';if(max)n.maxLength=max;return n;};
+ const type=field('Тип',select('Тип документа',Object.entries(api.docTypes),docType(item)),'original');
+ const folder=field('Папка',select('Папка',[['','Все файлы'],...ownFolders(state).map(x=>[x.id,x.name])],item.folder||''),'archive');
+ const counterparty=field('Контрагент',input(item.counterparty,120),'building');
+ const ref=field('Номер договора',input(item.reference,100),'hash');
+ const due=field('Важная дата',pickers.date('Важная дата',item.dueDate,'Не задана',area),'calendar');
+ const extra=el('details','sv-doc-version-history sv-doc-detail-extra');
+ extra.append(el('summary','','Дополнительные сведения'));
+ const status=field('Статус',select('Статус',[['','Не указан'],['draft','Черновик'],['ready','Готов'],['sent','Отправлен'],['signed','Подписан'],['paid','Оплачен'],['closed','Закрыт']],item.status||''),'check',extra);
+ extra.append(el('small','sv-doc-my-template-note','Ручная отметка не подтверждает подпись или оплату.'));
+ if(item.typeOrigin!=='user')extra.append(el('small','sv-doc-my-template-note','Тип предложен по названию файла.'));
+ form.append(extra);
  const action=(name,fn,cls='sv-doc-my-template-option')=>{const n=el('button',cls,name);n.type='button';n.addEventListener('click',fn);return n;};
- form.append(action('Сохранить сведения',async()=>{try{
+ const save=action('',async()=>{if(save.disabled)return;save.disabled=true;back.disabled=true;feedback.textContent='';try{
   await api.updateDocument(area,item.id,{docType:type.value,counterparty:counterparty.value,reference:ref.value,dueDate:due.value,status:status.value});
-  if(folder.value!==item.folder)await api.update(area,item.id,{folder:folder.value});
+  if(folder.value!==(item.folder||''))await api.update(area,item.id,{folder:folder.value});
   dlg.close();
- }catch(e){feedback.textContent=e.message;}},'sv-doc-my-template-primary'));
+ }catch(e){feedback.textContent=e.message||'Не удалось сохранить сведения.';feedback.scrollIntoView({block:'nearest'});}finally{save.disabled=false;back.disabled=false;}
+ },'sv-doc-picker-round sv-doc-detail-save');
+ save.setAttribute('aria-label','Сохранить сведения');save.title='Сохранить сведения';save.append(actionIcon('check'));head.append(save);
  form.addEventListener('submit',e=>e.preventDefault());
- const history=el('details','sv-doc-version-history');history.append(el('summary','','История версий · '+(item.version||1)));
+ const history=el('details','sv-doc-version-history');const historyTitle=el('summary','');historyTitle.append(actionIcon('copy'),el('span','','История версий'));history.append(historyTitle);
  const versions=el('div','sv-doc-my-template-list');
  for(const v of [...(item.versions||[])].reverse()){
   versions.append(action('Версия '+v.version+' · '+dateOf(v.at),async()=>{try{const f=await api.getVersion(area,item.id,v.version);const url=URL.createObjectURL(f);const a=el('a','');a.href=url;a.download=f.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}catch(e){feedback.textContent=e.message;}}));
@@ -221,7 +240,8 @@ function openDocumentDetails(state,item){
  const picker=el('input','');picker.type='file';picker.accept='.pdf,.docx,.xlsx,.pptx,.txt,.md,.png,.jpg,.jpeg,.webp';picker.hidden=true;
  picker.addEventListener('change',async()=>{const f=picker.files?.[0];if(!f)return;try{if(!/\.(pdf|docx|xlsx|pptx|txt|md|png|jpe?g|webp)$/i.test(f.name))throw Error('Неподдерживаемый формат.');if(!window.confirm('Добавить новую версию? Предыдущая версия останется в истории.'))return;await api.addVersion(area,item.id,f);dlg.close();}catch(e){feedback.textContent=e.message;}finally{picker.value='';}});
  versions.append(action('Добавить новую версию',()=>picker.click()),picker);history.append(versions);
- content.append(el('strong','sv-doc-document-name',item.name),form,history,action('Удалить локальный документ',async()=>{if(!window.confirm('Удалить локальный документ и его версии?'))return;try{await api.remove(area,item.id);dlg.close();}catch(e){feedback.textContent=e.message;}},'sv-doc-my-template-delete'),feedback);
+ const identity=el('div','sv-doc-detail-identity');identity.append(documentArt(classify(item.name),formatOf(item.name)),el('strong','sv-doc-document-name',item.name),el('small','',formatOf(item.name)+' · '+dateOf(item.createdAt)));
+ content.append(identity,feedback,form,history,action('Удалить документ',async()=>{if(!window.confirm('Удалить локальный документ и его версии?'))return;try{await api.remove(area,item.id);dlg.close();}catch(e){feedback.textContent=e.message;}},'sv-doc-my-template-delete'));
  dlg.append(head,content);state.recent.append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
 }
 function paint(state){
