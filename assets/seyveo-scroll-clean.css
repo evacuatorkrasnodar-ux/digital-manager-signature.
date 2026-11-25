@@ -186,12 +186,12 @@ html:root body #svWorkShell[data-shared-work="true"][data-active="wallet"] > dia
 }
 
 /* Let the real dock glass blur the unmasked page below it.
-   Only a four-pixel soft edge on the pinned Documents switch; static,
+   Only an eight-pixel trailing edge on the pinned Documents switch; static,
    no scroll listeners, backdrop layer, or change to layout. */
 html:root body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch::after{
- content:"";position:absolute;left:0;right:0;top:100%;height:4px;
- pointer-events:none;background:linear-gradient(to bottom,var(--bg,#151b20),transparent);
- opacity:.35;
+ content:"";position:absolute;left:0;right:0;top:calc(100% - 1px);height:9px;
+ pointer-events:none;background:linear-gradient(to bottom,var(--bg,#151b20) 0%,transparent 100%);
+ opacity:1;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch::after{
  background:linear-gradient(to bottom,#fff,rgba(255,255,255,0));
