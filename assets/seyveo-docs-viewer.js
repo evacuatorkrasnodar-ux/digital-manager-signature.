@@ -1,8 +1,8 @@
 /* SEYVEO Docs · one beautiful local file viewer.
  * Plain Files are deliberately user-selected or decrypted by the existing
  * password vault. Nothing is silently sent to chat, mail, API or printers.
- * The PDF stage previews the actual PDF via browser native iframe; we do
- * not claim a PDF.js renderer or certified signature.
+ * Local SEYVEO image-page PDFs use the existing strict page decoder.
+ * Other PDFs retain an explicit original-file action, without embedded browser chrome.
  */
 (()=>{
 'use strict';
@@ -134,6 +134,7 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{},onEdit=()=>false}=
  let objectUrl;
  try{objectUrl=URL.createObjectURL(file);}catch{return false;}
  let active=true;
+ const pageUrls=[];let readerDialog=null;
  const root=el('section','svdv-viewer');
  root.setAttribute('aria-label','Просмотр документа '+file.name);
  const header=el('div','svdv-header');
@@ -148,10 +149,41 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{},onEdit=()=>false}=
   img.src=objectUrl;img.alt='Изображение документа '+file.name;
   stage.append(img);
  }else if(info.kind==='pdf'){
-  const frame=el('iframe','svdv-frame');
-  frame.src=objectUrl;frame.title='Просмотр PDF '+file.name;
-  frame.setAttribute('loading','lazy');
-  stage.append(frame);
+  stage.classList.add('svdv-pdf-stage');
+  const loading=el('p','svdv-preview-note','Открываем PDF…');stage.append(loading);
+  const openOriginal=()=>{
+   const link=el('a','svdv-original-link','Открыть PDF');link.href=objectUrl;link.target='_blank';link.rel='noopener noreferrer';return link;
+  };
+  function openReader(){
+   if(!active||readerDialog||!pageUrls.length)return;
+   const d=el('dialog','svdv-reader');readerDialog=d;d.setAttribute('aria-label','Просмотр PDF');
+   const top=el('header','svdv-reader-head');
+   const close=window.SEYVEO_DOCUMENT_PICKERS?.backButton(()=>d.close())||el('button','svdv-reader-back','‹');
+   close.type='button';close.onclick=()=>d.close();close.setAttribute('aria-label','Назад');
+   const title=el('strong','',file.name),zoom=el('button','svdv-reader-zoom','+');zoom.type='button';zoom.setAttribute('aria-label','Увеличить страницу');
+   top.append(close,title,zoom);
+   const pages=el('div','svdv-reader-pages');
+   for(const [i,url] of pageUrls.entries()){const img=el('img','svdv-reader-page');img.src=url;img.alt='Страница '+(i+1);if(i>0)img.loading='lazy';pages.append(img);}
+   zoom.addEventListener('click',()=>{const bigger=d.classList.toggle('is-zoomed');zoom.textContent=bigger?'−':'+';zoom.setAttribute('aria-label',bigger?'Уменьшить страницу':'Увеличить страницу');if(!bigger)pages.scrollLeft=0;});
+   const footer=el('footer','svdv-reader-footer'),save=el('a','svdv-reader-save');save.href=objectUrl;save.download=file.name;save.append(icon('download'),el('span','','Сохранить'));
+   footer.append(save,openOriginal());d.append(top,pages,footer);root.append(d);
+   d.addEventListener('close',()=>{d.remove();if(readerDialog===d)readerDialog=null;stage.querySelector('button')?.focus({preventScroll:true});},{once:true});d.showModal();
+  }
+  void (async()=>{
+   try{
+    const pages=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);
+    if(!active)return;
+    if(!pages?.length)throw Error('unsupported');
+    for(const page of pages)pageUrls.push(URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'})));
+    const preview=el('button','svdv-pdf-preview');preview.type='button';preview.setAttribute('aria-label','Открыть PDF на весь экран');
+    const img=el('img','svdv-pdf-page');img.src=pageUrls[0];img.alt='Первая страница документа';
+    const caption=el('span','svdv-pdf-caption',pages.length+' '+(pages.length===1?'страница':pages.length<5?'страницы':'страниц')+' · Открыть');preview.append(img,caption);preview.addEventListener('click',openReader);
+    stage.replaceChildren(preview);
+   }catch{
+    if(!active)return;
+    stage.replaceChildren(el('p','svdv-preview-note','Для этого PDF доступен просмотр оригинала.'),openOriginal());
+   }
+  })();
  }else if(info.kind==='text'){
   stage.classList.add('svdv-stage-document');
   const pre=el('pre','svdv-text','Открываем текст…');
@@ -273,7 +305,7 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{},onEdit=()=>false}=
  return Object.freeze({
   destroy(){
    if(!active)return;
-   active=false;target.replaceChildren();
+   active=false;if(readerDialog?.open)readerDialog.close();readerDialog=null;for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
    document.removeEventListener('pointerdown',dismissMore);
    document.removeEventListener('keydown',closeMoreOnEscape);
    URL.revokeObjectURL(objectUrl);
