@@ -1018,6 +1018,23 @@ html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="edit
 html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-copy-toggle[aria-expanded="true"] svg{
  transform:rotate(90deg);
 }
+
+/* Expanded copy fields: the same disclosure becomes a bare trailing chevron. */
+html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor #svMailCcField{
+ grid-template-columns:108px minmax(0,1fr) 44px!important;column-gap:8px!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor #svMailCcField > .sv-mail-copy-toggle{
+ display:grid!important;place-items:center!important;justify-self:end!important;
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor #svMailCcField > .sv-mail-copy-toggle > .sv-mail-copy-caption{
+ display:none!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor #svMailCcField > .sv-mail-copy-toggle:focus-visible{
+ outline:2px solid #007AFF!important;outline-offset:-4px!important;border-radius:10px!important;
+}
+
 html:root body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-body-field > .sv-mail-field-label{
  display:none!important;
 }
