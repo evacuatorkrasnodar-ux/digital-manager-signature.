@@ -127,14 +127,14 @@ async function readDocxText(file){
  }
  return output.trim().slice(0,110000);
 }
-function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{},onEdit=()=>false}={}){
+function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,asSheet=false,onClose=()=>{}}={}){
  if(!target||!file||typeof file.name!=='string'||typeof file.size!=='number'||
     file.size<1||file.size>MAX||typeof file.text!=='function')return false;
  const info=format(file.name,file.type);
  let objectUrl;
  try{objectUrl=URL.createObjectURL(file);}catch{return false;}
  let active=true;
- const pageUrls=[];let readerDialog=null;
+ const pageUrls=[];let readerDialog=null,pdfDocument=null,pdfTask=null,sheet=null;
  const root=el('section','svdv-viewer');
  root.setAttribute('aria-label','Просмотр документа '+file.name);
  const header=el('div','svdv-header');
@@ -227,7 +227,7 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{},onEdit=()=>false}=
  save.setAttribute('aria-label','Сохранить оригинал '+file.name);
  save.append(icon('download'),el('span','','Сохранить'));
  toolbar.append(save);
- if(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf'){
+ if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf')){
   const edit=action('Редактировать','file',async()=>{
    if(edit.disabled)return;
    edit.disabled=true;
@@ -246,6 +246,7 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{},onEdit=()=>false}=
     }
     const ok=await onEdit(payload);
     if(!ok&&active)say('Этот формат пока нельзя редактировать здесь. Оригинал не изменён.');
+    else if(ok&&sheet?.open)sheet.close();
    }catch(e){if(active)say(e?.message||'Не удалось открыть редактор.');}
    finally{edit.disabled=false;}
   });
@@ -282,7 +283,7 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{},onEdit=()=>false}=
    say(tab?'В открытом документе выбери системную печать.':'Открой оригинал и выбери системную печать.');
   }));
  }
- if(info.kind==='image'){
+ if(info.kind==='image'&&onSignImage){
   moreBody.append(action('Подписать скан','signature',()=>{
    try{
     const result=onSignImage(file);
@@ -293,7 +294,7 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{},onEdit=()=>false}=
    }catch{say('Не удалось открыть подпись.');}
   }));
  }
- moreBody.append(action('Сэйви поможет','sayvi',()=>onSayvi('review')));
+ if(onSayvi)moreBody.append(action('Сэйви поможет','sayvi',()=>onSayvi('review')));
  moreBody.addEventListener('click',event=>{if(event.target.closest('button,a'))more.open=false;});
  more.append(moreBody);toolbar.append(more);
  const dismissMore=event=>{if(!more.contains(event.target))more.open=false;};
@@ -301,16 +302,41 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{},onEdit=()=>false}=
  document.addEventListener('pointerdown',dismissMore,{passive:true});
  document.addEventListener('keydown',closeMoreOnEscape);
  root.append(toolbar,notice);
- target.replaceChildren(root);
- return Object.freeze({
+ if(asSheet){
+  sheet=el('dialog','svdv-bottom-sheet');
+  sheet.setAttribute('aria-label','Просмотр '+file.name);
+  const grip=el('div','svdv-sheet-grip');grip.setAttribute('aria-hidden','true');
+  const close=el('button','svdv-sheet-close');close.type='button';close.setAttribute('aria-label','Закрыть');close.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>';
+  const expand=el('button','svdv-sheet-expand');expand.type='button';expand.setAttribute('aria-label','Развернуть');expand.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m7 13 5-5 5 5"/></svg>';
+  const top=el('div','svdv-sheet-top');top.append(close,copy,expand);header.replaceChildren(grip,top);
+  close.addEventListener('click',()=>sheet.close());
+  expand.addEventListener('click',()=>{const full=sheet.classList.toggle('is-expanded');expand.setAttribute('aria-label',full?'Свернуть':'Развернуть');expand.style.transform=full?'rotate(180deg)':'';});
+  let start=null;
+  header.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;start={id:e.pointerId,x:e.clientX,y:e.clientY};header.setPointerCapture?.(e.pointerId);});
+  header.addEventListener('pointerup',e=>{if(!start||start.id!==e.pointerId)return;const dy=e.clientY-start.y,dx=e.clientX-start.x;start=null;if(Math.abs(dx)>Math.abs(dy))return;if(dy<-42){if(!sheet.classList.contains('is-expanded'))expand.click();}else if(dy>48){if(sheet.classList.contains('is-expanded'))expand.click();else sheet.close();}});
+  header.addEventListener('pointercancel',()=>{start=null;});
+  sheet.append(root);target.replaceChildren(sheet);
+  sheet.addEventListener('close',()=>{if(active){session.destroy();onClose();}},{once:true});
+  sheet.addEventListener('click',e=>{if(e.target===sheet){const r=sheet.getBoundingClientRect();if(e.clientY<r.top||e.clientX<r.left||e.clientX>r.right)sheet.close();}});
+ }else target.replaceChildren(root);
+ const session=Object.freeze({
   destroy(){
    if(!active)return;
-   active=false;if(readerDialog?.open)readerDialog.close();readerDialog=null;for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
+   active=false;if(sheet?.open)sheet.close();try{pdfTask?.destroy();}catch{}if(readerDialog?.open)readerDialog.close();readerDialog=null;for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
    document.removeEventListener('pointerdown',dismissMore);
    document.removeEventListener('keydown',closeMoreOnEscape);
    URL.revokeObjectURL(objectUrl);
   }
  });
+ if(sheet){if(!sheet.isConnected){session.destroy();return false;}sheet.showModal();}
+ return session;
 }
-window.SEYVEO_DOCS_VIEWER=Object.freeze({mount});
+function open(file,options={}){
+ const target=el('div','svdv-sheet-host');document.body.append(target);
+ const focus=document.activeElement;
+ const session=mount(target,file,{...options,asSheet:true,onClose(){target.remove();options.onClose?.();if(focus?.isConnected)focus.focus({preventScroll:true});}});
+ if(!session){target.remove();return false;}
+ return Object.freeze({destroy(){session.destroy();target.remove();}});
+}
+window.SEYVEO_DOCS_VIEWER=Object.freeze({mount,open});
 })();
