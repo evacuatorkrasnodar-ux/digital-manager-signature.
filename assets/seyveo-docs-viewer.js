@@ -438,5 +438,22 @@ function open(file,options={}){
  if(!session){target.remove();return false;}
  return Object.freeze({destroy(){session.destroy();target.remove();}});
 }
-window.SEYVEO_DOCS_VIEWER=Object.freeze({mount,open});
+// First-page preview for the Documents shelf. The file stays local.
+async function thumbnail(file,isActive=()=>true){
+ if(!file||!file.size||file.size>12*1024*1024||!isActive())return null;
+ const lib=await loadPdf();if(!isActive())return null;
+ const data=new Uint8Array(await file.arrayBuffer());if(!isActive())return null;
+ const task=lib.getDocument({data,useSystemFonts:true,isEvalSupported:false,disableAutoFetch:true,disableStream:true});
+ try{
+  const doc=await task.promise;if(!isActive())return null;
+  const page=await doc.getPage(1);if(!isActive())return null;
+  const base=page.getViewport({scale:1});
+  const viewport=page.getViewport({scale:Math.min(160/base.width,200/base.height)});
+  const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.ceil(viewport.width));canvas.height=Math.max(1,Math.ceil(viewport.height));
+  const context=canvas.getContext('2d',{alpha:false});if(!context)return null;
+  await page.render({canvasContext:context,viewport,background:'#fff'}).promise;
+  page.cleanup();return isActive()?canvas:null;
+ }finally{try{await task.destroy();}catch{}}
+}
+window.SEYVEO_DOCS_VIEWER=Object.freeze({mount,open,thumbnail});
 })();

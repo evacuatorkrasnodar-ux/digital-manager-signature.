@@ -82,6 +82,25 @@ function folderArt(plus=false){
  return art;
 }
 let active=null;
+// One small in-memory preview at a time; never decrypt the protected archive for thumbnails.
+let previewQueue=Promise.resolve();
+function schedulePdfPreview(state,item,card,art){
+ if(item.saved||(!item.local&&!item.file))return;
+ previewQueue=previewQueue.catch(()=>{}).then(async()=>{
+  const current=()=>state===active&&card.isConnected;
+  if(!current())return;
+  const viewer=window.SEYVEO_DOCS_VIEWER;
+  if(typeof viewer?.thumbnail!=='function')return;
+  try{
+   const file=item.local?await localFiles().get(state.options.area,item.id):item.file;
+   if(!current())return;
+   const canvas=await viewer.thumbnail(file,current);
+   if(!canvas||!current())return;
+   canvas.className='sv-doc-pdf-thumbnail';canvas.setAttribute('aria-hidden','true');
+   art.classList.add('sv-doc-file-art-preview');art.querySelector('svg')?.remove();art.prepend(canvas);
+  }catch{/* Keep the real format icon if preview is unavailable. */}
+ });
+}
 const defaultIds=['contracts','projects','clients'];
 const ownFolders=state=>{
  // No pre-created sample folders. Keep only legacy folders the user actually used.
@@ -319,7 +338,8 @@ function paint(state){
    const card=el('button','sv-doc-recent-card');
    card.type='button';
    card.setAttribute('aria-label','Открыть '+item.name);
-   card.append(documentArt(type,formatOf(item.name)));
+   const art=documentArt(type,formatOf(item.name));card.append(art);
+   if(type==='pdf')schedulePdfPreview(state,item,card,art);
    const fileName=el('strong','sv-doc-recent-name',item.name);
    fileName.title=item.name;
    const detail=el('small','sv-doc-recent-date',item.saved||item.local?dateOf(item.createdAt):'Не сохранён');
@@ -383,10 +403,10 @@ function paint(state){
    entry.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;cancel();start={x:e.clientX,y:e.clientY};timer=setTimeout(()=>{timer=0;menu();},550);});
    entry.addEventListener('pointermove',e=>{if(start&&Math.hypot(e.clientX-start.x,e.clientY-start.y)>10)cancel();});
    for(const event of ['pointerup','pointercancel','pointerleave'])entry.addEventListener(event,cancel);
-   const wrap=el('div','sv-doc-custom-folder-wrap');
-   const more=el('button','sv-doc-custom-folder-more');more.append(actionIcon('more'));more.type='button';more.setAttribute('aria-label','Действия с папкой '+category.title);more.addEventListener('click',menu);
-   wrap.append(entry,more);state.foldersGrid.append(wrap);
-  }else state.foldersGrid.append(entry);
+   entry.setAttribute('aria-description','Долгое нажатие или Shift+F10: действия с папкой');
+   entry.style.webkitTouchCallout='none';
+  }
+  state.foldersGrid.append(entry);
  }
  state.foldersGrid.scrollLeft=folderScroll;
  if(state.pendingFolder&&ownFolders(state).some(x=>x.id===state.pendingFolder)){

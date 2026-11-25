@@ -86,8 +86,20 @@
   if(item.service==='documents')button.dataset.svDocumentConnected=String(showStatus);
   if(button.hidden)return;
   const content=showStatus
-   ?{heading:scope==='business'?'Документы подключены':'Хранилище подключено',caption:'Управление подключениями'}
+   ?{heading:scope==='business'?'Документы подключены':'Хранилище подключено',caption:'Подключение подтверждено'}
    :displayCopy(item.service,scope);
+  // Provider names are only shown when an actual verified adapter supplies one.
+  if(showStatus){
+   const adapter=window.SEYVEO_VERIFIED_CONNECTIONS;
+   try{
+    const info=adapter?.getConnectionInfo?.('documents',scope);
+    if(info?.verified===true&&typeof info.providerName==='string'&&info.providerName.trim()){
+     content.heading=info.providerName.trim().slice(0,80);
+     const statuses={syncing:'Синхронизация…',synced:'Синхронизировано',error:'Ошибка синхронизации',paused:'Синхронизация приостановлена'};
+     if(Object.prototype.hasOwnProperty.call(statuses,info.syncStatus))content.caption=statuses[info.syncStatus];
+    }
+   }catch{/* Verified generic status remains the fallback. */}
+  }
   if(!content)return;
   item.heading.textContent=content.heading;
   item.caption.textContent=content.caption;
