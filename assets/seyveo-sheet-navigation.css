@@ -10,14 +10,14 @@
 @keyframes svSharedSheetEnter{from{translate:0 100%}to{translate:0 0}}
 @keyframes svSharedSheetShade{from{opacity:0}to{opacity:1}}
 /* Secondary document forms. Keep their existing save, cancel and scroll behavior. */
-html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog:is(.sv-doc-official-dialog,.sv-doc-professional-details,.sv-doc-library-sheet)[open]{
+html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog:is(.sv-doc-official-dialog,.sv-doc-professional-details,.sv-doc-my-templates,.sv-doc-library-sheet)[open]{
  position:fixed!important;inset:auto 0 0!important;margin:0 auto!important;width:100%!important;max-width:var(--sv-sheet-max-width)!important;
  height:auto!important;max-height:90vh!important;max-height:90dvh!important;
  border-radius:var(--sv-sheet-radius) var(--sv-sheet-radius) 0 0!important;padding:16px 16px max(16px,env(safe-area-inset-bottom,0px))!important;
  animation:svSharedSheetEnter var(--sv-sheet-enter-duration) var(--sv-sheet-enter-ease)!important;
  overflow-y:auto!important;overscroll-behavior:contain!important;
 }
-html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog:is(.sv-doc-official-dialog,.sv-doc-professional-details,.sv-doc-library-sheet)[open]::backdrop{animation:svSharedSheetShade .2s ease-out;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog:is(.sv-doc-official-dialog,.sv-doc-professional-details,.sv-doc-my-templates,.sv-doc-library-sheet)[open]::backdrop{animation:svSharedSheetShade .2s ease-out;}
 /* Reading a note is an overlay, not a separate navigation destination. */
 html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open]{
  inset:auto 0 0!important;margin:0 auto!important;width:100%!important;max-width:var(--sv-sheet-max-width)!important;
@@ -58,7 +58,7 @@ html:root body .svcp-doc-overlay.sv-shared-work-sheet{z-index:2147483001!importa
 html:root body .svcp-doc-overlay.sv-shared-work-sheet .svcp-doc-top{touch-action:none;}
 @media(prefers-reduced-motion:reduce){
  html:root body dialog[open]:is(#noteReadDialog,#seyveoOfflineDialog,#personalTaskDialog,#calendarEventDialog,#noteReviewDialog,#notePaperDialog,#noteScanDialog,#svStaffInvitePage,#svRecruitDetail,#svHrInterview,#seyveoAvatarDialog,#seyveoQrCardDialog,#assistantChatHistoryDialog,#homeWidgetDetails,#pictureBreakdownDialog),
- html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog:is(.sv-doc-official-dialog,.sv-doc-professional-details,.sv-doc-library-sheet,.sv-doc-edit-sheet)[open],
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog:is(.sv-doc-official-dialog,.sv-doc-professional-details,.sv-doc-my-templates,.sv-doc-library-sheet,.sv-doc-edit-sheet)[open],
  html:root body .svcp-doc-overlay.sv-shared-work-sheet,.sv-work-sheet-shade{animation:none!important;}
 }
 
@@ -79,3 +79,22 @@ html:root body #svStandardPickerDialog .sv-standard-picker-head > :is(.sv-standa
 .sv-standard-picker-grip{grid-row:1;grid-column:1/-1;justify-self:center;align-self:start;width:var(--sv-sheet-grip-width);height:var(--sv-sheet-grip-height);border-radius:999px;background:var(--sv-sheet-grip-color)}
 html:root body #svStandardPickerDialog .sv-standard-picker-body{max-height:calc(90vh - 90px)!important;max-height:calc(var(--sv-sheet-form-max-height) - 90px - env(safe-area-inset-bottom,0px))!important;overscroll-behavior:contain}
 @media(prefers-reduced-motion:reduce){html:root body dialog#svStandardPickerDialog.sv-standard-picker-sheet[open]{animation:none!important}}
+
+/* Template library has a fixed header and one scrolling body.
+   Name-editing and save dialogs deliberately have no swipe handler. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog.sv-doc-my-templates.sv-doc-library-sheet[open]{
+ overflow:hidden!important;max-height:90vh!important;max-height:var(--sv-sheet-form-max-height)!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-library-sheet > .sv-doc-my-template-head{
+ flex:0 0 auto!important;grid-template-rows:8px var(--sv-nav-single-size,44px)!important;
+ row-gap:6px!important;touch-action:none!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-library-sheet > .sv-doc-my-template-head > :is(strong,.sv-doc-my-template-back){grid-row:2!important}
+.sv-doc-library-grip{grid-column:1/-1;grid-row:1;justify-self:center;align-self:start;width:var(--sv-sheet-grip-width);height:var(--sv-sheet-grip-height);border-radius:999px;background:var(--sv-sheet-grip-color)}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-library-sheet > .sv-doc-my-template-content{
+ flex:0 1 auto!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain!important;
+}
+/* Information-only offline sheet: swipe the grip, never its buttons or text. */
+html:root body #seyveoOfflineDialog .seyveo-offline-shell{box-sizing:border-box;max-height:90vh;max-height:90dvh;overscroll-behavior:contain;padding-bottom:max(20px,env(safe-area-inset-bottom,0px))}
+.sv-offline-sheet-grip{display:grid;place-items:center;height:24px;margin:-12px auto 4px;touch-action:none}
+.sv-offline-sheet-grip::after{content:"";display:block;width:var(--sv-sheet-grip-width);height:var(--sv-sheet-grip-height);border-radius:999px;background:var(--sv-sheet-grip-color)}

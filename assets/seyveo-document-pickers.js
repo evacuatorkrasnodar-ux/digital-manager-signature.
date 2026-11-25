@@ -7,7 +7,7 @@ const arrow='<path d="m9 5 7 7-7 7"/>';
 const cal='<rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 10h16M8 14h1m3 0h1m3 0h1M8 17h1m3 0h1"/>';
 function btn(text,cls,fn){const n=el('button',cls,text);n.type='button';n.addEventListener('click',fn);return n;}
 function backButton(fn){const n=btn('','sv-doc-picker-round',fn);n.setAttribute('aria-label','Назад');n.append(glyph('<path d="m14 5-7 7 7 7"/>'));return n;}
-function sheet(trigger,title,{bottom=false}={}){
+function sheet(trigger,title,{bottom=true}={}){
  const d=el('dialog','sv-doc-picker-sheet'),h=el('header','sv-doc-picker-head'),body=el('div','sv-doc-picker-body');
  h.append(backButton(()=>d.close()),el('strong','',title));
  if(bottom){

@@ -806,11 +806,16 @@ function mount(target,{
     button.setAttribute('aria-pressed',String(documentTemplate===id)));
   }
   const library=()=>window.SEYVEO_DOCUMENT_FILES;
-  function templateDialog(title){
+  function templateDialog(title,{librarySheet=false}={}){
    const dlg=$('dialog','sv-doc-my-templates');
    const head=$('header','sv-doc-my-template-head');
    const close=button('',()=>dlg.close(),'sv-doc-my-template-back');close.setAttribute('aria-label','Назад');close.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m14 5-7 7 7 7"/></svg>';
    head.append(close,$('strong','',title));dlg.append(head);
+   if(librarySheet){
+    dlg.classList.add('sv-doc-library-sheet');
+    const grip=$('div','sv-doc-library-grip');grip.setAttribute('aria-hidden','true');head.prepend(grip);
+    window.SEYVEO_SHEET_NAVIGATION?.attach(head,null,()=>close.click());
+   }
    const content=$('div','sv-doc-my-template-content');dlg.append(content);
    const parent=panel.querySelector('dialog.sv-doc-edit-sheet[open]')||panel;
    parent.append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
@@ -845,8 +850,7 @@ function mount(target,{
    card.addEventListener('click',e=>{if(suppress){e.preventDefault();e.stopImmediatePropagation();suppress=false;}},true);
   }
   async function openMyTemplates(){
-   const {dlg,content}=templateDialog('Мои шаблоны');
-   dlg.classList.add('sv-doc-library-sheet');
+   const {dlg,content}=templateDialog('Мои шаблоны',{librarySheet:true});
    const list=$('div','sv-doc-my-template-list'),feedback=$('small','sv-doc-my-template-note','Загрузка…');
    async function paint(){
     try{

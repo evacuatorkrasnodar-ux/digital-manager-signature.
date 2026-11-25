@@ -37,6 +37,11 @@ open.addEventListener('click',()=>{
 });
 const close=()=>{if(typeof dialog.close==='function')dialog.close();else dialog.removeAttribute('open')};
 document.getElementById('seyveoOfflineClose')?.addEventListener('click',close);
+const shell=dialog.querySelector('.seyveo-offline-shell');
+if(shell&&window.SEYVEO_SHEET_NAVIGATION){
+ const grip=document.createElement('div');grip.className='sv-offline-sheet-grip';grip.setAttribute('aria-hidden','true');shell.prepend(grip);
+ window.SEYVEO_SHEET_NAVIGATION.attach(grip,null,close);
+}
 button?.addEventListener('click',close);
 dialog.addEventListener('click',event=>{if(event.target===dialog)close()});
 })();

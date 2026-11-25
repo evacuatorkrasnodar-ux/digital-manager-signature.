@@ -24,6 +24,8 @@ jobs:
         run: node tools/test-seyveo-ui-contract.cjs
       - name: Protect canonical Cabinet navigation tokens
         run: node tools/test-canonical-nav.cjs
+      - name: Verify shared sheet gesture safety
+        run: node tools/test-sheet-navigation.cjs
       - name: Verify restored original Tasks page header
         run: node tools/test-compact-tasks-header.cjs
       - name: Check black vinyl, white star and one role-safe searchable business chat
