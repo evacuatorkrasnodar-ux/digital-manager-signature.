@@ -173,9 +173,9 @@ html body #seyveoBusinessCommandPage #svcpRoomInfo #svcpRoomProfileClose,
 html body #unifiedTasksChatHost #svcpRoomInfo #svcpRoomProfileClose,
 html body #svcpRoomInfo #svcpRoomProfileClose{
   box-sizing:border-box!important;
-  flex:0 0 44px!important;
-  width:44px!important;min-width:44px!important;max-width:44px!important;
-  height:44px!important;min-height:44px!important;max-height:44px!important;
+  flex:0 0 var(--sv-nav-single-size,44px)!important;
+  width:var(--sv-nav-single-size,44px)!important;min-width:var(--sv-nav-single-size,44px)!important;max-width:var(--sv-nav-single-size,44px)!important;
+  height:var(--sv-nav-single-size,44px)!important;min-height:var(--sv-nav-single-size,44px)!important;max-height:var(--sv-nav-single-size,44px)!important;
   display:grid!important;place-items:center!important;
   padding:0!important;margin:0!important;
   border:var(--sv-header-circle-border,var(--sv-white-pearl-edge))!important;

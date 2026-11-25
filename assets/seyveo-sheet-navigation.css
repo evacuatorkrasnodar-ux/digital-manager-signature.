@@ -27,7 +27,7 @@ html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open]{
 html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open].sv-note-expanded{height:100vh!important;height:100dvh!important;border-radius:0!important;}
 html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open]::backdrop{background:rgba(25,31,41,.24)!important;backdrop-filter:blur(3px)!important;}
 html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open] .sv-note-reader-header{
- padding:8px 16px 12px!important;grid-template-rows:8px 44px!important;row-gap:6px!important;touch-action:none;
+ padding:8px 16px 12px!important;grid-template-rows:8px var(--sv-nav-single-size,44px)!important;row-gap:6px!important;touch-action:none;
 }
 html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open].sv-note-expanded .sv-note-reader-header{padding-top:max(8px,env(safe-area-inset-top,0px))!important;}
 .sv-note-reader-grip{grid-column:1/-1;grid-row:1;justify-self:center;width:var(--sv-sheet-grip-width);height:var(--sv-sheet-grip-height);border-radius:999px;background:var(--sv-sheet-grip-color);}
@@ -74,7 +74,7 @@ html:root body dialog#svStandardPickerDialog.sv-standard-picker-sheet[open]{
  border-radius:var(--sv-sheet-radius) var(--sv-sheet-radius) 0 0!important;
  animation:svSharedSheetEnter var(--sv-sheet-enter-duration) var(--sv-sheet-enter-ease)!important;
 }
-html:root body #svStandardPickerDialog .sv-standard-picker-head{grid-template-rows:8px 44px!important;row-gap:6px!important;touch-action:none!important}
+html:root body #svStandardPickerDialog .sv-standard-picker-head{grid-template-rows:8px var(--sv-nav-single-size,44px)!important;row-gap:6px!important;touch-action:none!important}
 html:root body #svStandardPickerDialog .sv-standard-picker-head > :is(.sv-standard-picker-back,h2){grid-row:2!important}
 .sv-standard-picker-grip{grid-row:1;grid-column:1/-1;justify-self:center;align-self:start;width:var(--sv-sheet-grip-width);height:var(--sv-sheet-grip-height);border-radius:999px;background:var(--sv-sheet-grip-color)}
 html:root body #svStandardPickerDialog .sv-standard-picker-body{max-height:calc(90vh - 90px)!important;max-height:calc(var(--sv-sheet-form-max-height) - 90px - env(safe-area-inset-bottom,0px))!important;overscroll-behavior:contain}

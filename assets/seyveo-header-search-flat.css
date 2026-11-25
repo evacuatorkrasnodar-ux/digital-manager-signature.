@@ -18,12 +18,12 @@ html body #svWorkShell[data-history="true"] #svWorkAdd[data-sv-header-icon="sear
  box-sizing:border-box!important;
  display:grid!important;
  place-items:center!important;
- width:44px!important;
- height:44px!important;
- min-width:44px!important;
- max-width:44px!important;
- min-height:44px!important;
- max-height:44px!important;
+ width:var(--sv-nav-single-size,44px)!important;
+ height:var(--sv-nav-single-size,44px)!important;
+ min-width:var(--sv-nav-single-size,44px)!important;
+ max-width:var(--sv-nav-single-size,44px)!important;
+ min-height:var(--sv-nav-single-size,44px)!important;
+ max-height:var(--sv-nav-single-size,44px)!important;
  margin:0!important;
  padding:0!important;
  border:0!important;
@@ -88,8 +88,8 @@ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top {
  display:block!important;
  position:relative!important;
  width:100%!important;
- min-height:50px!important;
- height:50px!important;
+ min-height:var(--sv-apple-nav-row,44px)!important;
+ height:var(--sv-apple-nav-row,44px)!important;
  margin:0 2px 10px!important;
  padding:0!important;
  border:0!important;
@@ -99,13 +99,13 @@ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top {
 html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top .sv-continuity-titlebar {
  box-sizing:border-box!important;
  display:grid!important;
- grid-template-columns:44px minmax(0,1fr) 44px!important;
- grid-template-rows:50px!important;
+ grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;
+ grid-template-rows:var(--sv-apple-nav-row,44px)!important;
  align-items:center!important;
  column-gap:4px!important;
  width:100%!important;
- height:50px!important;
- min-height:50px!important;
+ height:var(--sv-apple-nav-row,44px)!important;
+ min-height:var(--sv-apple-nav-row,44px)!important;
  margin:0!important;
  padding:0!important;
  position:relative!important;
@@ -142,8 +142,8 @@ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top #sayviSurfa
  position:static!important;
  top:auto!important;
  left:auto!important;
- width:44px!important;
- height:44px!important;
+ width:var(--sv-nav-single-size,44px)!important;
+ height:var(--sv-nav-single-size,44px)!important;
  margin:0!important;
  padding:0!important;
  transform:none!important;
@@ -155,17 +155,17 @@ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top #sayviSurfa
 html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top .sv-continuity-space{
  grid-column:3!important;
  grid-row:1!important;
- width:44px!important;
- height:44px!important;
+ width:var(--sv-nav-single-size,44px)!important;
+ height:var(--sv-nav-single-size,44px)!important;
 }
 html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top .sv-doc-head-tools{
  position:absolute!important;
- top:3px!important;
+ top:var(--sv-header-action-top,0px)!important;
  right:0!important;
  bottom:auto!important;
  left:auto!important;
- width:44px!important;
- height:44px!important;
+ width:var(--sv-nav-single-size,44px)!important;
+ height:var(--sv-nav-single-size,44px)!important;
  margin:0!important;
  padding:0!important;
  z-index:8!important;

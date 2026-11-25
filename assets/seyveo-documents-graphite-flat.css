@@ -56,9 +56,9 @@ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top .sv-continu
  visibility:hidden!important;
 }
 html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools{
- position:absolute!important;top:3px!important;right:0!important;left:auto!important;
+ position:absolute!important;top:var(--sv-header-action-top,0px)!important;right:0!important;left:auto!important;
  z-index:8!important;display:grid!important;place-items:center!important;
- width:44px!important;height:44px!important;padding:0!important;margin:0!important;
+ width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;padding:0!important;margin:0!important;
 }
 html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-doc-search-toggle{
  display:grid!important;place-items:center!important;box-sizing:border-box!important;
