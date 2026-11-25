@@ -462,7 +462,7 @@ html:root[data-theme="light"] body :is(#calendarEventDialog,#personalTaskDialog,
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-month-nav.sv-month-nav > .sv-month-controls > button,
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar > .sv-month-controls > button{
  background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;color:var(--sv-header-icon-ink)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;color:#007aff!important;
 }
 /* Independent round back and close controls, identical material to the app header. */
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-head > .sv-doc-picker-round,
