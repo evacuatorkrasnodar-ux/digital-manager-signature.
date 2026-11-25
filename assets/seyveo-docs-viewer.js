@@ -536,7 +536,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    }
    // iOS requires share() directly in the user's click handler.
    void navigator.share(data).catch(error=>{
-    if(error?.name!=='AbortError')say('Не удалось открыть меню отправки. Можно скачать файл.');moreBody.append(save);more.hidden=false;
+    if(error?.name!=='AbortError'){say('Не удалось открыть меню отправки. Можно скачать файл.');moreBody.append(save);more.hidden=false;more.open=true;}
    });
   }catch{say('Не удалось открыть системное меню.');}
  };
@@ -558,8 +558,8 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  summary.append(icon('more'),el('span','','Ещё'));
  more.append(summary);
  const moreBody=el('div','svdv-more-options');
- // Drawing on the original PDF is also accessible from the editor capsule.
- if(info.kind==='pdf')moreBody.append(action('Подписать','signature',()=>openMarkup('signature')));
+ // Signing is a direct everyday action, not a one-item submenu.
+ if(info.kind==='pdf')toolbar.prepend(action('Подписать','signature',()=>openMarkup('signature')));
  if(!hasFileCard())moreBody.append(save);
  const openLink=el('a','svdv-link');
  openLink.href=objectUrl;openLink.target='_blank';openLink.rel='noopener noreferrer';
