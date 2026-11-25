@@ -560,3 +560,15 @@ html:root body .svdv-bottom-sheet.svdv-edit-fullscreen.sv-editor-keyboard-open{
 @media(max-width:680px){
  html:root body .svdv-bottom-sheet.svdv-edit-fullscreen{width:100%!important;max-width:100%!important;}
 }
+
+/* The floating notebook-style side palette no longer consumes paper width. */
+html:root body .sv-pdf-markup-body{padding-right:0!important;}
+html:root body .sv-pdf-markup-body .sv-pdf-markup-viewport{overflow:auto!important;touch-action:pan-x pan-y;overscroll-behavior:contain;scrollbar-width:none;}
+html:root body .sv-pdf-markup-body .sv-pdf-markup-paper{max-width:none!important;flex:none;transform:none;touch-action:pan-x pan-y;}
+html:root body .sv-pdf-markup-body .svdv-ink-side-wrap{right:4px;transition:opacity .16s ease;}
+html:root body .sv-pdf-markup-body .svdv-ink-side-wrap[hidden]{display:none!important;}
+html:root body .sv-pdf-markup-body:is(.svdv-pinching,.svdv-ink-stroking) .svdv-ink-side-wrap{opacity:0;pointer-events:none;}
+html:root body .svdv-inline-rail>button[aria-pressed="true"]{background:#0a84ff12;color:#176ab4;}
+html:root body .svdv-add-text-symbol{display:block;font:600 17px/1 system-ui;letter-spacing:-.5px;}
+html:root body .svdv-add-text-symbol sup{font-size:11px;vertical-align:super;margin-left:1px;}
+@media(prefers-reduced-motion:reduce){html:root body .sv-pdf-markup-body .svdv-ink-side-wrap{transition:none;}}
