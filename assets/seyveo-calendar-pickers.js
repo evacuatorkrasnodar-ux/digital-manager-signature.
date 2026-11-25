@@ -74,7 +74,7 @@ function commitDate(d){
 /* One calendar renderer for all SEYVEO task/event date inputs. */
 function renderDateCalendar(forMonth,input,heading,grid,options={}){
  const y=forMonth.getFullYear(),m=forMonth.getMonth();
- const label=monthFormatter.format(forMonth);
+ const label=monthFormatter.format(forMonth).replace(/\s*г\.?\s*$/iu,'');
  heading.textContent=label.charAt(0).toUpperCase()+label.slice(1);
  const start=(new Date(y,m,1).getDay()+6)%7;
  const monthDays=new Date(y,m+1,0).getDate();
