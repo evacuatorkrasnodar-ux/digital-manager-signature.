@@ -984,22 +984,48 @@ function mount(target,{
   const formatMenu=$('div','sv-doc-word-menu sv-menu-surface');
   formatMenu.id='svDocWordFormatMenu';formatMenu.hidden=true;
   formatMenu.setAttribute('role','group');formatMenu.setAttribute('aria-label','Оформление текста');
-  const formatTrigger=button('Aa',()=>setFormatMenu(formatMenu.hidden),'sv-doc-word-trigger');
+  let activeWordMenu='';
+  const formatTrigger=button('Aa',()=>toggleWordMenu('format'),'sv-doc-word-trigger');
   formatTrigger.setAttribute('aria-label','Оформление текста');
   formatTrigger.setAttribute('aria-controls',formatMenu.id);
   formatTrigger.setAttribute('aria-expanded','false');
-  function setFormatMenu(open){
-   formatMenu.hidden=!open;formatTrigger.setAttribute('aria-expanded',String(open));
+  function setFormatMenu(open,kind='format'){
+   activeWordMenu=open?kind:'';
+   formatMenu.hidden=!open;
+   for(const [key,trigger] of [['format',formatTrigger],['size',sizeControl],['align',alignControl]])trigger.setAttribute('aria-expanded',String(open&&kind===key));
+   if(!open)return;
+   formatMenu.setAttribute('aria-label',kind==='size'?'Размер шрифта':kind==='align'?'Выравнивание текста':'Оформление текста');
+   formatMenu.replaceChildren();
+   if(kind==='format'){formatMenu.append(firstLine);return;}
+   const source=kind==='size'?size:alignment;
+   for(const option of source.options){
+    const row=button('',()=>{
+     source.value=option.value;changeStyle();setFormatMenu(false);
+    },'sv-doc-word-menu-row sv-doc-word-choice-row');
+    row.setAttribute('aria-pressed',String(source.value===option.value));
+    const marker=icon(kind==='align'?alignKinds[option.value]:'');
+    if(kind==='size'){marker.textContent='А';marker.classList.add('sv-doc-word-size-glyph');}
+    const check=icon('check');check.classList.add('sv-doc-word-menu-check');check.hidden=source.value!==option.value;
+    row.append(marker,$('span','',option.textContent),check);formatMenu.append(row);
+   }
+  }
+  function toggleWordMenu(kind){setFormatMenu(formatMenu.hidden||activeWordMenu!==kind,kind);}
+  function closeWordMenuWithFocus(){
+   const trigger=activeWordMenu==='size'?sizeControl:activeWordMenu==='align'?alignControl:formatTrigger;
+   setFormatMenu(false);trigger.focus({preventScroll:true});
   }
   const icon=(kind)=>{const el=$('span','sv-doc-word-menu-icon');el.setAttribute('aria-hidden','true');el.innerHTML=typographyIcon(kind);return el;};
   const rail=$('div','sv-doc-word-rail');
   rail.setAttribute('role','group');rail.setAttribute('aria-label','Инструменты Word, листайте горизонтально');
   const chevron=()=>{const node=icon('down');node.classList.add('sv-doc-word-rail-chevron');return node;};
-  const sizeControl=$('label','sv-doc-word-rail-choice');
+  const sizeControl=button('',()=>toggleWordMenu('size'),'sv-doc-word-rail-choice');
   const sizeFace=$('span','sv-doc-word-rail-size');sizeFace.setAttribute('aria-hidden','true');
-  sizeControl.append(sizeFace,chevron(),size);
-  const alignControl=$('label','sv-doc-word-rail-choice');
-  const alignIcon=icon('');alignControl.append(alignIcon,chevron(),alignment);
+  sizeControl.append(sizeFace,chevron());
+  const alignControl=button('',()=>toggleWordMenu('align'),'sv-doc-word-rail-choice');
+  const alignIcon=icon('');alignControl.append(alignIcon,chevron());
+  for(const control of [sizeControl,alignControl]){
+   control.setAttribute('aria-controls',formatMenu.id);control.setAttribute('aria-expanded','false');control.setAttribute('aria-haspopup','true');
+  }
   const firstLine=button('',()=>{
    draftEdited=true;wordStyle.heading=!wordStyle.heading;
    firstLine.setAttribute('aria-pressed',String(wordStyle.heading));
@@ -1016,7 +1042,8 @@ function mount(target,{
    wordStyle.size=Number(size.value);wordStyle.alignment=alignment.value;
    body.style.fontSize=wordStyle.size+'pt';body.style.textAlign=wordStyle.alignment==='both'?'justify':wordStyle.alignment;
    sizeFace.textContent=wordStyle.size+' пт';
-   alignment.title='Выравнивание: '+alignNames[wordStyle.alignment];
+   sizeControl.setAttribute('aria-label','Размер шрифта: '+wordStyle.size+' пт');
+   alignControl.setAttribute('aria-label','Выравнивание: '+alignNames[wordStyle.alignment]);
    sizeControl.classList.toggle('sv-doc-word-rail-active',wordStyle.size!==12);
    alignControl.classList.toggle('sv-doc-word-rail-active',wordStyle.alignment!=='left');
    alignIcon.innerHTML=typographyIcon(alignKinds[wordStyle.alignment]||alignKinds.left);
@@ -1050,8 +1077,9 @@ function mount(target,{
   rail.append(sizeControl,alignControl,formatTrigger,sayviTool,undoTool,copyTool,clearTool);
   rail.addEventListener('mousedown',event=>{if(event.target.closest('button'))event.preventDefault();});
   typography.append(rail,formatMenu);
+  formatMenu.addEventListener('mousedown',event=>{if(event.target.closest('button'))event.preventDefault();});
   typography.addEventListener('keydown',event=>{
-   if(event.key==='Escape'&&!formatMenu.hidden){event.preventDefault();event.stopPropagation();setFormatMenu(false);formatTrigger.focus();}
+   if(event.key==='Escape'&&!formatMenu.hidden){event.preventDefault();event.stopPropagation();closeWordMenuWithFocus();}
   });
   editing.append(filename,body);
 
@@ -1163,7 +1191,7 @@ function mount(target,{
   footer.append(typography,formatSwitch,actions,status(''),draftIndicator);
   sheet.append(top,editing,footer);
   sheet.addEventListener('pointerdown',event=>{if(!typography.contains(event.target))setFormatMenu(false);});
-  sheet.addEventListener('cancel',event=>{event.preventDefault();if(!formatMenu.hidden){setFormatMenu(false);formatTrigger.focus();}else back.click();});
+  sheet.addEventListener('cancel',event=>{event.preventDefault();if(!formatMenu.hidden){closeWordMenuWithFocus();}else back.click();});
   let restingHeight=0,viewportFrame=0,viewportTimers=[],keyboardWasOpen=false;
   function syncEditorViewport(){
    viewportFrame=0;if(!sheet.open)return;
