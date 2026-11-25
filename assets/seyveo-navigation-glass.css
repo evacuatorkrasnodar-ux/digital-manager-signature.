@@ -406,3 +406,18 @@ html:root body #svcpWorkChatScreen > #svcpInboxSheet.sv-inbox-overlay[data-sv-in
  margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
  outline:0!important;box-shadow:none!important;clip-path:none!important;transform:none!important;
 }
+
+/* Match mail's 65% white header backing and 24px feather, but fade
+   the moving gallery itself. The existing dock glass remains unchanged.
+   This prevents saturated portraits from tinting the mode capsule.
+   The scrollport begins exactly at the 38px capsule's upper edge. */
+html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"].sv-avatar-under-scroll .sv-new-avatar-views{
+ -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.35) 0,rgba(0,0,0,.35) 38px,rgba(0,0,0,.70) 49px,#000 62px,#000 100%)!important;
+ mask-image:linear-gradient(to bottom,rgba(0,0,0,.35) 0,rgba(0,0,0,.35) 38px,rgba(0,0,0,.70) 49px,#000 62px,#000 100%)!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"].sv-avatar-under-scroll .sv-new-avatar-tabs::after{
+ content:none!important;display:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"].sv-avatar-under-scroll .sv-new-avatar-views{-webkit-mask-image:none!important;mask-image:none!important}
+}
