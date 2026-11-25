@@ -399,6 +399,7 @@ function mailIcon(name){
 const MAIL_GATE_KEY='seyveo-mail-gate-v1';
 const MAIL_GATE_MODES=Object.freeze({
  smart:{title:'Умная защита',hint:'Подозрительные примеры — на проверку, рассылки — отдельно.'},
+ basic:{title:'Обычная защита',hint:'Спам и подозрительные письма по-прежнему отделяются.'},
  contacts:{title:'Только свои',hint:'Во входящих — знакомые и разрешённые адреса. Остальные ждут решения.'},
  strict:{title:'Строгий допуск',hint:'Во входящих только явно разрешённые адреса.'}
 });
@@ -458,9 +459,9 @@ function gateCategory(item){
  if(item.spam||sampleBlocked(item))return 'spam';
  const trusted=gateTrusted(item.account,sampleMailAddress(item));
  if(MAIL_SAMPLE_SUSPICIOUS.has(item.id)&&!trusted)return 'review';
- if(MAIL_SAMPLE_PROMOTIONS.has(item.id)&&!trusted)return 'promotions';
  const settings=mailGate[item.account];
- if(!settings||settings.mode==='smart')return 'inbox';
+ if(MAIL_SAMPLE_PROMOTIONS.has(item.id)&&!trusted&&settings?.mode!=='basic')return 'promotions';
+ if(!settings||settings.mode==='smart'||settings.mode==='basic')return 'inbox';
  if(gateTrusted(item.account,sampleMailAddress(item)))return 'inbox';
  if(settings.mode==='contacts'&&MAIL_SAMPLE_CONTACTS.has(item.id))return 'inbox';
  return 'review';
@@ -586,7 +587,7 @@ function mailView(){
  let guardOpen=false,guardAccount='personal',guardView='main';
  let contactsReturnToGuard=false;
  const closeGate=()=>{if(!guardOpen)return;guardOpen=false;guardView='main';renderGate()};
- const backGate=()=>{if(guardView==='documents'){guardView='main';renderGate();guardPanel.scrollTop=0;return;}closeGate();};
+ const backGate=()=>{if(guardView!=='main'){guardView='main';renderGate();guardPanel.scrollTop=0;return;}closeGate();};
  mailGuardExitHandler=()=>{if(!guardOpen)return false;backGate();return true};
  guardTrigger.addEventListener('click',event=>{
   event.stopPropagation();
@@ -609,10 +610,11 @@ function mailView(){
   guardPanel.replaceChildren();
   if(!guardOpen)return;
   const title=create('div','sv-mail-gate-menu-heading');
-  if(guardView==='documents'){
+  if(guardView!=='main'){
    const prev=create('button','sv-mail-gate-sub-back');prev.type='button';prev.setAttribute('aria-label','Назад к настройкам почты');prev.append(mailIcon('back'));prev.addEventListener('click',backGate);title.append(prev);
   }
-  title.append(create('strong','',guardView==='documents'?'Документы из почты':'Настройки почты'));
+  const titles={main:'Настройки почты',documents:'Документы из почты',contacts:'Контакты',advanced:'Дополнительно'};
+  title.append(create('strong','',titles[guardView]||titles.main));
   guardPanel.append(title);
   const chooser=create('div','sv-mail-gate-accounts');
   for(const [key,label] of [['personal','Личная'],['business','Рабочая']]){
@@ -666,9 +668,36 @@ function mailView(){
   }
    return;
   }
+  if(guardView==='main'){
+   const group=create('div','sv-mail-settings-group');
+   const mode=mailGate[account].mode;
+   const active=mode!=='basic';
+   const labels={smart:'Включена',basic:'Обычная защита',contacts:'Только свои',strict:'Строгий допуск'};
+   const toggle=create('button','sv-mail-settings-row sv-mail-protection-switch');
+   toggle.type='button';toggle.setAttribute('role','switch');toggle.setAttribute('aria-checked',String(active));toggle.setAttribute('aria-label','Умная защита');
+   const copy=create('span','sv-mail-settings-copy');copy.append(create('strong','','Умная защита'),create('small','',labels[mode]));
+   const track=create('span','sv-mail-settings-switch');track.append(create('span','sv-mail-settings-thumb'));
+   toggle.append(mailIcon('shield'),copy,track);
+   toggle.addEventListener('click',()=>{mailGate[account].mode=active?'basic':'smart';saveMailGate();renderGate();refreshMailGateView();});
+   group.append(toggle);
+   function entry(icon,label,view,hint=''){
+    const b=create('button','sv-mail-settings-row');b.type='button';
+    const text=create('span','sv-mail-settings-copy');text.append(create('strong','',label));if(hint)text.append(create('small','',hint));
+    const arrow=mailIcon('back');arrow.classList.add('sv-mail-settings-chevron');
+    b.append(mailIcon(icon),text,arrow);
+    b.addEventListener('click',()=>{guardView=view;renderGate();guardPanel.scrollTop=0;});
+    group.append(b);
+   }
+   entry('contacts','Контакты','contacts');
+   const routing=window.SEYVEO_ATTACHMENT_ROUTING;
+   if(routing)entry('drafts','Документы из почты','documents',({ask:'Спрашивать',auto:'Автоматически',manual:'Вручную'})[routing.settings(account).mode]);
+   entry('settings','Дополнительно','advanced');
+   guardPanel.append(group);return;
+  }
+  if(guardView==='advanced'){
   const modes=create('div','sv-mail-gate-modes');modes.setAttribute('role','group');
   modes.setAttribute('aria-label','Режим защиты '+(account==='business'?'рабочей':'личной')+' почты');
-  const hints={smart:'Сэйви сортирует письма',contacts:'Контакты и доверенные',strict:'Только разрешённые'};
+  const hints={smart:'Сэйви сортирует письма',basic:'Спам и подозрительные — отдельно',contacts:'Контакты и доверенные',strict:'Только разрешённые'};
   for(const [key,entry] of Object.entries(MAIL_GATE_MODES)){
    const button=create('button','sv-mail-gate-mode');button.type='button';
    button.setAttribute('aria-pressed',String(mailGate[account].mode===key));
@@ -685,6 +714,10 @@ function mailView(){
    modes.append(button);
   }
   guardPanel.append(modes);
+  guardPanel.append(create('small','sv-mail-settings-note','Режимы пока работают на примерах. Реальная защита — после подключения почты.'));
+  return;
+  }
+  if(guardView==='contacts'){
   const trustedDetails=create('details','sv-mail-gate-trusted-details');
   const trustedSummary=create('summary','sv-mail-gate-trusted-summary');
   const trustedLabel=create('span','sv-mail-gate-trusted-label','Доверенные адреса · '+mailGate[account].trusted.length);
@@ -734,22 +767,9 @@ function mailView(){
    paint();
   });
   guardPanel.append(contactsEntry);
-  if(window.SEYVEO_ATTACHMENT_ROUTING){
-   const docsEntry=create('button','sv-mail-gate-menu-contacts sv-mail-doc-routing-entry');
-   docsEntry.type='button';
-   docsEntry.append(mailIcon('drafts'),create('span','','Документы из почты'),mailIcon('back'));
-   docsEntry.lastChild.style.transform='rotate(180deg)';
-   docsEntry.addEventListener('click',()=>{guardView='documents';renderGate();guardPanel.scrollTop=0;});
-   guardPanel.append(docsEntry);
+  return;
   }
-  const pending=folderCount('review');
-  if(pending&&mailShowExamples){
-   const review=create('button','sv-mail-gate-menu-review');
-   review.type='button';review.append(mailIcon('shield'),create('span','','На проверке · '+pending));
-   review.addEventListener('click',()=>selectFolder('review'));
-   guardPanel.append(review);
-  }
-  guardPanel.append(create('small','sv-mail-gate-caution','Пока на примерах. Реальная защита — после подключения почты.'));
+
  }
  function refreshMailGateView(){
   if(mailEditorOpen||mailCurrent)return;
@@ -760,6 +780,9 @@ function mailView(){
    if(old)old.remove();
    if(count)control.append(create('small','sv-mail-folder-count',String(count)));
   }
+  const review=extraNav.querySelector('[data-mail-review]');
+  const pending=folderCount('review');
+  if(review){review.hidden=!pending&&mailFolder!=='review';const n=review.querySelector('small');if(n)n.textContent=pending?String(pending):'';}
   paintList();
  }
  top.append(guardPanel);
@@ -1820,12 +1843,11 @@ function mailView(){
   }
   // A single Back in the stable titlebar replaces the extra folder arrow.
   for(const [key,label] of tabs.slice(4)){
-   // The pending review badge already opens this folder. Do not repeat it in the overflow row.
-   if(key==='review')continue;
    const button=intent(label,()=>selectFolder(key));button.classList.add('sv-mail-extra-link');
+   if(key==='review'){button.dataset.mailReview='true';button.hidden=!folderCount('review')&&mailFolder!=='review';}
    if(mailFolder===key)button.setAttribute('aria-current','page');
-   if(key==='spam'){
-    const total=folderCount('spam');if(total)button.append(create('small','sv-mail-spam-count',String(total)));
+   if(key==='spam'||key==='review'){
+    const total=folderCount(key);if(total||key==='review')button.append(create('small','sv-mail-spam-count',total?String(total):''));
    }
    extraNav.append(button);
   }
