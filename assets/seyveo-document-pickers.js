@@ -35,6 +35,14 @@ function choice(label,values,initial='',placeholder='Выбрать'){
  let options=values.map(([v,t])=>[String(v),String(t)]);
  const b=control(label,placeholder,arrow,trigger=>{
   const {d,body}=sheet(trigger,label);
+  if(window.SEYVEO_WHEEL&&/^(Год|Месяц|Квартал)$/i.test(label)&&options.length){
+   d.classList.add('sv-wheel-sheet');
+   const node=el('div','');node.setAttribute('aria-label',label);body.append(node);
+   const wheel=window.SEYVEO_WHEEL.mount(node,options.map(([value,label])=>({value,label})),trigger.value);
+   const done=btn('','sv-doc-picker-round sv-wheel-done',()=>{const entry=options.find(x=>x[0]===wheel.value);if(entry)trigger.setValue(entry[0],entry[1],true);d.close();});
+   done.setAttribute('aria-label','Готово');done.append(glyph('<path d="m5 12 4 4 10-10"/>'));d.querySelector('header').append(done);
+   body.append(window.SEYVEO_WHEEL.feedbackButton());return;
+  }
   for(const [v,t] of options){
    const item=btn('','sv-doc-picker-option',()=>{trigger.setValue(v,t,true);d.close();});
    item.append(el('span','',t));
@@ -88,6 +96,25 @@ function period(label,kind,scope='personal'){
  if(kind==='date')return date(label,'','Выбрать дату',scope);
  const b=control(label,'Выбрать период',arrow,trigger=>{
   const {d,body}=sheet(trigger,label),y=new Date().getFullYear(),years=Array.from({length:31},(_,i)=>[String(y+5-i),String(y+5-i)]);
+  if(window.SEYVEO_WHEEL){
+   d.classList.add('sv-wheel-sheet');
+   const old=trigger.value,initialYear=old.match(/\b\d{4}\b/)?.[0]||String(kind==='year'?y-1:y);
+   const names=Array.from({length:12},(_,i)=>new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(2026,i,1)));
+   const initialType=/квартал/.test(old)?'quarter':names.some(n=>old.startsWith(n+' '))?'month':'year';
+   const mode=kind==='report'?choice('Вид периода',[['year','Год'],['quarter','Квартал'],['month','Месяц']],initialType):null;
+   if(mode)body.append(mode);
+   const group=el('div','sv-wheel-group'),yearNode=el('div',''),quarterNode=el('div',''),monthNode=el('div','');
+   yearNode.setAttribute('aria-label','Год');quarterNode.setAttribute('aria-label','Квартал');monthNode.setAttribute('aria-label','Месяц');
+   group.append(quarterNode,monthNode,yearNode);body.append(group);
+   const year=window.SEYVEO_WHEEL.mount(yearNode,years.slice().reverse().map(([value,label])=>({value,label})),initialYear);
+   const quarter=window.SEYVEO_WHEEL.mount(quarterNode,[1,2,3,4].map(value=>({value,label:value+' квартал'})),Number(old.match(/^(\d) квартал/)?.[1]||1));
+   const month=window.SEYVEO_WHEEL.mount(monthNode,names.map((label,value)=>({value,label})),Math.max(0,names.findIndex(n=>old.startsWith(n+' '))));
+   const sync=()=>{const type=mode?.value||kind;quarterNode.hidden=type!=='quarter';monthNode.hidden=type!=='month';requestAnimationFrame(()=>{if(d.open){year.center();quarter.center();month.center();}});};
+   mode?.addEventListener('change',sync);sync();
+   const done=btn('','sv-doc-picker-round sv-wheel-done',()=>{const type=mode?.value||kind,v=type==='quarter'?quarter.value+' квартал '+year.value:type==='month'?names[month.value]+' '+year.value:year.value;trigger.setValue(v,v,true);d.close();});
+   done.setAttribute('aria-label','Готово');done.append(glyph('<path d="m5 12 4 4 10-10"/>'));d.querySelector('header').append(done);
+   body.append(window.SEYVEO_WHEEL.feedbackButton());return;
+  }
   const old=trigger.value.match(/\b\d{4}\b/)?.[0]||String(kind==='year'?y-1:y);
   const year=choice('Год',years,old),mode=kind==='report'?choice('Вид периода',[['year','Год'],['quarter','Квартал'],['month','Месяц']],'year'):null;
   const q=choice('Квартал',[1,2,3,4].map(n=>[String(n),n+' квартал']),'1');
