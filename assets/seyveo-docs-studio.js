@@ -683,9 +683,12 @@ function mount(target,{
     button.setAttribute('aria-pressed',String(id===documentFormat)));
    saveButton.setAttribute('aria-label',documentFormat==='pdf'?'Сохранить PDF':'Сохранить Word');
 
-   typography.hidden=documentFormat!=='docx';
-   if(typography.hidden)setFormatMenu(false);
-   else rail.scrollLeft=0;
+   const isWord=documentFormat==='docx';
+   typography.dataset.word=String(isWord);
+   typography.hidden=false;
+   for(const control of [sizeControl,alignControl,formatTrigger])control.hidden=!isWord;
+   if(!isWord)setFormatMenu(false);
+   rail.scrollLeft=0;
    body.style.fontSize=documentFormat==='docx'?wordStyle.size+'pt':'';
    body.style.textAlign=documentFormat==='docx'?(wordStyle.alignment==='both'?'justify':wordStyle.alignment):'';
   }
@@ -750,22 +753,55 @@ function mount(target,{
   sheet.append(top,editing,footer);
   sheet.addEventListener('pointerdown',event=>{if(!typography.contains(event.target))setFormatMenu(false);});
   sheet.addEventListener('cancel',event=>{if(!formatMenu.hidden){event.preventDefault();setFormatMenu(false);formatTrigger.focus();}});
-  let restingHeight=0,viewportFrame=0;
+  let restingHeight=0,viewportFrame=0,viewportTimers=[],keyboardWasOpen=false;
   function syncEditorViewport(){
    viewportFrame=0;if(!sheet.open)return;
-   const v=window.visualViewport,height=Math.round(v?.height||window.innerHeight);
-   const focused=sheet.contains(document.activeElement)&&document.activeElement.matches('textarea,input,select');
-   if(!restingHeight)restingHeight=Math.max(height,window.innerHeight);
-   if(!focused&&height>restingHeight-25)restingHeight=Math.max(height,restingHeight);
-   const keyboard=restingHeight-height>=120;
+   const v=window.visualViewport;
+   const height=Math.round(v?.height||window.innerHeight);
+   const top=Math.max(0,Math.round(v?.offsetTop||0));
+   const active=document.activeElement;
+   const focused=sheet.contains(active)&&active.matches('textarea,input,select,[contenteditable="true"]');
+   const layoutHeight=Math.round(Math.max(window.innerHeight,document.documentElement.clientHeight));
+   if(!restingHeight)restingHeight=Math.max(height,layoutHeight);
+   if(!focused&&!keyboardWasOpen)restingHeight=Math.max(height,layoutHeight);
+   const shrink=Math.max(restingHeight,layoutHeight)-height;
+   const scale=v?.scale||1;
+   const keyboard=scale<1.15&&shrink>=80&&(focused||keyboardWasOpen);
+   keyboardWasOpen=keyboard;
    sheet.classList.toggle('sv-doc-keyboard-open',keyboard);
-   if(keyboard){sheet.style.setProperty('--sv-doc-editor-height',height+'px');sheet.style.setProperty('--sv-doc-editor-top',Math.round(v?.offsetTop||0)+'px');}
-   else{sheet.style.removeProperty('--sv-doc-editor-height');sheet.style.removeProperty('--sv-doc-editor-top');}
+   if(keyboard){
+    sheet.style.setProperty('--sv-doc-editor-height',height+'px');
+    sheet.style.setProperty('--sv-doc-editor-top',top+'px');
+   }else{
+    sheet.style.removeProperty('--sv-doc-editor-height');sheet.style.removeProperty('--sv-doc-editor-top');
+   }
   }
   function queueEditorViewport(){if(!viewportFrame)viewportFrame=requestAnimationFrame(syncEditorViewport);}
-  function startEditorViewport(){restingHeight=Math.max(window.innerHeight,window.visualViewport?.height||0);window.visualViewport?.addEventListener('resize',queueEditorViewport);window.visualViewport?.addEventListener('scroll',queueEditorViewport);window.addEventListener('resize',queueEditorViewport);queueEditorViewport();}
-  sheet.addEventListener('focusin',queueEditorViewport);sheet.addEventListener('focusout',queueEditorViewport);
-  sheet.addEventListener('close',()=>{setFormatMenu(false);window.visualViewport?.removeEventListener('resize',queueEditorViewport);window.visualViewport?.removeEventListener('scroll',queueEditorViewport);window.removeEventListener('resize',queueEditorViewport);if(viewportFrame)cancelAnimationFrame(viewportFrame);viewportFrame=0;restingHeight=0;sheet.classList.remove('sv-doc-keyboard-open');sheet.style.removeProperty('--sv-doc-editor-height');sheet.style.removeProperty('--sv-doc-editor-top');});
+  function settleEditorViewport(){
+   queueEditorViewport();
+   viewportTimers.forEach(clearTimeout);
+   viewportTimers=[80,180,350,600].map(ms=>setTimeout(queueEditorViewport,ms));
+  }
+  function startEditorViewport(){
+   restingHeight=Math.max(window.innerHeight,document.documentElement.clientHeight,window.visualViewport?.height||0);
+   keyboardWasOpen=false;
+   window.visualViewport?.addEventListener('resize',queueEditorViewport);
+   window.visualViewport?.addEventListener('scroll',queueEditorViewport);
+   window.addEventListener('resize',queueEditorViewport);
+   settleEditorViewport();
+  }
+  sheet.addEventListener('focusin',settleEditorViewport);sheet.addEventListener('focusout',settleEditorViewport);
+  sheet.addEventListener('close',()=>{
+   setFormatMenu(false);
+   window.visualViewport?.removeEventListener('resize',queueEditorViewport);
+   window.visualViewport?.removeEventListener('scroll',queueEditorViewport);
+   window.removeEventListener('resize',queueEditorViewport);
+   if(viewportFrame)cancelAnimationFrame(viewportFrame);
+   viewportTimers.forEach(clearTimeout);viewportTimers=[];
+   viewportFrame=0;restingHeight=0;keyboardWasOpen=false;
+   sheet.classList.remove('sv-doc-keyboard-open');
+   sheet.style.removeProperty('--sv-doc-editor-height');sheet.style.removeProperty('--sv-doc-editor-top');
+  });
   const resume=button('Продолжить документ',()=>revealEditor(),'sv-doc-edit-resume');
   resume.hidden=!documentDraft.trim();
   function revealEditor(){
