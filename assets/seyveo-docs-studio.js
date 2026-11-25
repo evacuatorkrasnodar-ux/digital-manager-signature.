@@ -580,6 +580,7 @@ function mount(target,{
   const filename=$('input','sv-doc-edit-name');filename.type='text';filename.value=documentName;filename.maxLength=100;filename.setAttribute('aria-label','Название документа');filename.placeholder='Название документа';
   filename.addEventListener('input',()=>{documentName=filename.value;});
   const typography=$('div','sv-doc-edit-typography');
+  typography.setAttribute('role','group');typography.setAttribute('aria-label','Форматирование Word');
   const size=$('select','sv-doc-tool-page-select');size.setAttribute('aria-label','Размер шрифта');
   for(const n of [10,11,12,14,16,18]){const item=$('option','',n+' пт');item.value=String(n);size.append(item);}
   size.value=String(wordStyle.size);
@@ -588,13 +589,32 @@ function mount(target,{
    const item=$('option','',label);item.value=id;alignment.append(item);
   }
   alignment.value=wordStyle.alignment;
-  const firstLine=button('Заголовок',()=>{wordStyle.heading=!wordStyle.heading;firstLine.setAttribute('aria-pressed',String(wordStyle.heading));},'sv-doc-word-heading');
+  const firstLine=button('Aa',()=>{wordStyle.heading=!wordStyle.heading;firstLine.setAttribute('aria-pressed',String(wordStyle.heading));},'sv-doc-word-heading');
   firstLine.setAttribute('aria-label','Первую строку оформить жирным заголовком');
   firstLine.setAttribute('aria-pressed',String(wordStyle.heading));
+  const typographyIcon=paths=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';
+  const chevron=()=>{const node=$('span','sv-doc-word-chevron');node.innerHTML=typographyIcon('<path d="m7 10 5 5 5-5"/>');node.setAttribute('aria-hidden','true');return node;};
+  const sizeControl=$('div','sv-doc-word-control');
+  const sizeFace=$('span','sv-doc-word-size-face');sizeFace.setAttribute('aria-hidden','true');
+  sizeControl.append(sizeFace,chevron(),size);
+  const alignControl=$('div','sv-doc-word-control');
+  const alignFace=$('span','sv-doc-word-align-face');alignFace.setAttribute('aria-hidden','true');
+  alignControl.append(alignFace,chevron(),alignment);
+  const alignPaths={
+   left:'M4 5h16M4 10h10M4 15h16M4 20h10',
+   center:'M4 5h16M7 10h10M4 15h16M7 20h10',
+   right:'M4 5h16M10 10h10M4 15h16M10 20h10',
+   both:'M4 5h16M4 10h16M4 15h16M4 20h16'
+  };
   const refreshStyle=()=>{wordStyle.size=Number(size.value);wordStyle.alignment=alignment.value;
-   body.style.fontSize=wordStyle.size+'pt';body.style.textAlign=wordStyle.alignment==='both'?'justify':wordStyle.alignment;};
+   body.style.fontSize=wordStyle.size+'pt';body.style.textAlign=wordStyle.alignment==='both'?'justify':wordStyle.alignment;
+   sizeFace.textContent=wordStyle.size+' пт';
+   alignFace.innerHTML=typographyIcon('<path d="'+(alignPaths[wordStyle.alignment]||alignPaths.left)+'"/>');
+   sizeControl.classList.toggle('sv-doc-word-modified',wordStyle.size!==12);
+   alignControl.classList.toggle('sv-doc-word-modified',wordStyle.alignment!=='left');
+  };
   size.addEventListener('change',refreshStyle);alignment.addEventListener('change',refreshStyle);refreshStyle();
-  typography.append(size,alignment,firstLine);
+  typography.append(sizeControl,alignControl,firstLine);
   editing.append(filename,typography,body);
 
   const formatSwitch=$('div','sv-doc-edit-formats');
