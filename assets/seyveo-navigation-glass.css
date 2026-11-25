@@ -199,10 +199,52 @@ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-ac
 }
 
 
-/* Wallet selected segment only: a lighter white face, same rim and typography. */
-html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="wallet"] > #svWorkTabs:not([hidden]) > button[data-sv-work-tab="wallet"][aria-pressed="true"]:not([hidden]){
- background:rgba(255,255,255,.65)!important;
+
+
+/* Staff: one stationary capsule inside the existing native scrollport.
+   All three tabs share this wrapper and the existing scroll progress hook.
+   At rest, 8px + 40px + 15px retains the previous spacing. */
+.sv-staff-pinned-tabs{display:contents}
+html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpManagerPeopleScroll > .sv-staff-pinned-tabs{
+ display:block;position:sticky;top:var(--sv-scroll-underlap,0px);z-index:3;
+ padding:8px 0 15px;box-sizing:border-box;isolation:auto;
+ background:linear-gradient(to bottom,var(--sv-nav-glass-backing) 0%,var(--sv-nav-glass-backing) calc(100% - 15px),transparent calc(100% - 15px));
+}
+html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffTabs.svstaff-tabs{
+ box-sizing:border-box!important;margin:0!important;
+ height:40px!important;min-height:40px!important;
+ border-radius:999px!important;border:var(--sv-white-pearl-edge)!important;
+ background:var(--sv-nav-glass-face)!important;background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-nav-glass-filter)!important;backdrop-filter:var(--sv-nav-glass-filter)!important;
+ box-shadow:var(--sv-nav-glass-shadow)!important;
+}
+html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffTabs.svstaff-tabs > button{
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
+ border-radius:999px!important;
+}
+html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffTabs.svstaff-tabs > button[aria-pressed="true"]{
+ background:var(--sv-nav-glass-selected)!important;
+ box-shadow:var(--sv-white-pearl-selected-shadow)!important;
+}
+html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffTabs.svstaff-tabs::before,
+html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpStaffTabs.svstaff-tabs > button::before{
+ content:none!important;display:none!important;
+}
+html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpManagerPeopleScroll > .sv-staff-pinned-tabs::after{
+ content:"";position:absolute;top:calc(100% - 15px);left:-8px;right:-8px;
+ height:var(--sv-nav-glass-feather-height,24px);pointer-events:none;
+ background:var(--sv-nav-glass-feather);
+ opacity:var(--sv-scroll-glass-opacity,0);
+}
+/* Do not fade the title or stack its old gradient onto the capsule. */
+html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open].sv-scroll-glass-ready > .sv-staff-head > .sv-scroll-glass-material{
+ background:#fff;bottom:-8px;-webkit-backdrop-filter:none;backdrop-filter:none;
+ -webkit-mask-image:none;mask-image:none;
+}
+html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open].sv-scroll-glass-ready > #svcpManagerPeopleScroll{
+ scroll-padding-top:calc(var(--sv-scroll-underlap,0px) + 63px);
 }
 @media(prefers-reduced-transparency:reduce){
- html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="wallet"] > #svWorkTabs:not([hidden]) > button[data-sv-work-tab="wallet"][aria-pressed="true"]:not([hidden]){background:#fff!important}
+ html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpManagerPeopleScroll > .sv-staff-pinned-tabs{background:#fff}
+ html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open] #svcpManagerPeopleScroll > .sv-staff-pinned-tabs::after{content:none}
 }
