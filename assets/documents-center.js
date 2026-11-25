@@ -59,7 +59,7 @@ async function goSayvi(intent,context){
  if(intent==='edit-current'){
   if(!context||typeof context.text!=='string'||!context.text.trim()||context.text.length>12000)return false;
   try{
-   const payload={text:context.text,title:String(context.title||'').slice(0,100),format:context.format==='docx'?'docx':'pdf',template:String(context.template||''),area};
+   const payload={text:context.text,title:String(context.title||'').slice(0,100),format:context.format==='docx'?'docx':'pdf',template:String(context.template||''),purpose:context.purpose==='format'?'format':'edit',area};
    const file=new File([JSON.stringify(payload)],'seyveo-editor-handoff.json',{type:'application/json'});
    const refs=await window.SEYVEO_CHAT_FILES?.remember([file]);
    const ref=refs?.[file.name];if(!ref)return false;
@@ -137,7 +137,7 @@ function renderPreview(parent,file){
   onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
   onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
   onSaveCopy:copy=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,'device'),
-  onSayvi:intent=>goSayvi(intent)
+  onSayvi:(intent,context)=>goSayvi(intent,context)
  });
  if(opened&&typeof opened.destroy==='function'){
   viewerSession=opened;return;
@@ -297,7 +297,7 @@ function draw(){
      onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
      onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
      onSaveCopy:copy=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,'device'),
-     onSayvi:intent=>goSayvi(intent),
+     onSayvi:(intent,context)=>goSayvi(intent,context),
      onClose(){viewerSession=null;}
     });
     if(opened){viewerSession=opened;return;}
@@ -349,7 +349,7 @@ function draw(){
     onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
     onEdit:payload=>window.SEYVEO_DOCS_STUDIO?.openScanWork?.(payload),
     onSaveCopy:copy=>window.SEYVEO_DOCUMENT_FILES.save(scope,copy,'device'),
-    onSayvi:intent=>goSayvi(intent),
+    onSayvi:(intent,context)=>goSayvi(intent,context),
     onClose(){showPreview=false;viewerSession=null;}
    });
    if(opened)viewerSession=opened;

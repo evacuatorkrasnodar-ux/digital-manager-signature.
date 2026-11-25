@@ -1053,7 +1053,7 @@ function mount(target,{
    if(!body.value.trim()){sheet.close();onSayvi('create');return;}
    await persistDraft();
    if(saveFailed){message('Не удалось сохранить изменения. Повторите попытку.');return;}
-   const ok=await onSayvi('edit-current',{text:body.value,title:filename.value.trim(),format:documentFormat,template:documentTemplate});
+   const ok=await onSayvi('edit-current',{text:body.value,title:filename.value.trim(),format:documentFormat,template:documentTemplate,purpose:'format'});
    if(ok===false)message('Не удалось передать документ Сэйви. Текст остался в редакторе.');
   }
   const sayviTool=button('',helpWithCurrentDocument,'sv-doc-word-extra');
@@ -1599,7 +1599,7 @@ function mount(target,{
   if(payload.kind==='word'){
    const value=String(payload.text||'').slice(0,12000);
    if(!value.trim())return false;
-   await persistDraft();if(saveFailed||!panel.isConnected)return false;newDraft();draftEdited=true;documentDraft=value;documentFormat='docx';documentTemplate='';fromScan=true;wordStyle={size:12,alignment:'left',heading:false};
+   await persistDraft();if(saveFailed||!panel.isConnected)return false;newDraft();draftEdited=true;documentDraft=value;documentFormat=payload.format==='pdf'?'pdf':'docx';documentTemplate='';fromScan=true;wordStyle={size:12,alignment:'left',heading:false};
    documentName=String(payload.title||'Документ').slice(0,100);
    operationEpoch++;mode='create';panel.dataset.mode=mode;panel.hidden=false;render();syncToolSelection();void persistDraft();
    panel.scrollIntoView?.({block:'nearest'});return true;

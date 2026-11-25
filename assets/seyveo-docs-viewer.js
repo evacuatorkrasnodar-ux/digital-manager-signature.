@@ -278,7 +278,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
  let editAction=null;
  const openMarkup=()=>{if(!window.SEYVEO_PDF_MARKUP?.open(file,{parent:root,loadPdf,onSave:onSaveCopy,onSayvi}))say('Разметка PDF недоступна.');};
  if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf')){
-  const edit=action(info.kind==='image'?'Обработка изображения':info.kind==='pdf'?'Текстовая копия (Word)':'Редактировать текст','edit',async()=>{
+  const edit=action(info.kind==='image'?'Обработка изображения':info.kind==='pdf'?'Редактировать текст PDF':'Редактировать текст','edit',async()=>{
    if(edit.disabled)return;
    edit.disabled=true;
    try{
@@ -296,7 +296,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
      say('Подготавливаем текст…');
      const sourceText=window.SEYVEO_DOCUMENT_FILES?.sourceText?.(file)||'';
      if(sourceText.trim()){
-      payload={kind:'word',text:sourceText,title:file.name.replace(/\.[^.]+$/,'')};
+      payload={kind:'word',text:sourceText,title:file.name.replace(/\.[^.]+$/,''),format:'pdf'};
      }else{
      let scanned=null;
      try{scanned=await window.SEYVEO_DOCS_EXPORT?.readScanPdf(file);}catch{}
@@ -308,7 +308,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
       const value=await readPdfText(file,()=>active);
       if(!active)return;
       if(!value.trim())throw Error('Текст не найден.');
-      payload={kind:'word',text:value,title:file.name.replace(/\.[^.]+$/,'')};
+      payload={kind:'word',text:value,title:file.name.replace(/\.[^.]+$/,''),format:'pdf'};
      }
      }
     }
@@ -334,7 +334,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
     if(event.target.closest('button,a,input,textarea,select,summary,[contenteditable]'))return;
     if(!event.target.closest('.svdv-reader-page,.svdv-text'))return;
     if(window.getSelection?.()?.toString().trim())return;
-    if(info.kind==='pdf'){openMarkup();return;}
+    if(info.kind==='pdf'&&!window.SEYVEO_DOCUMENT_FILES?.sourceText?.(file)?.trim()){openMarkup();return;}
     if(!edit.disabled)edit.click();
    });
   }

@@ -27,9 +27,9 @@ function open(file,{parent,loadPdf,onSave,onSayvi}={}){
  const viewport=el('div','sv-pdf-markup-viewport'),paper=el('div','sv-pdf-markup-paper');viewport.append(paper);
  const pager=el('div','sv-pdf-markup-pager'),count=el('span','','');
  const prev=round('Предыдущая страница','back',()=>go(-1)),next=round('Следующая страница','back',()=>go(1));next.classList.add('sv-pdf-markup-next');pager.append(prev,count,next);
- const inputRow=el('div','sv-pdf-markup-input-row');inputRow.hidden=true;
- const input=el('input','sv-pdf-markup-input');input.type='text';input.maxLength=240;input.placeholder='Введите текст, затем коснитесь листа';input.setAttribute('aria-label','Текст для добавления');
- inputRow.append(input);
+ let editing=null;
+ const input=el('input','sv-pdf-inline-text');input.type='text';input.maxLength=240;input.autocomplete='off';input.setAttribute('aria-label','Текст на странице');
+ const originalSource=window.SEYVEO_DOCUMENT_FILES?.sourceText?.(file)||'';
  const rail=capsule.attach(el('div','sv-pdf-tool-track'),'pdf');
  rail.setAttribute('aria-label','Инструменты PDF · листайте вправо для остальных');
  const tools=[];
@@ -43,25 +43,32 @@ function open(file,{parent,loadPdf,onSave,onSayvi}={}){
   swatch.dataset.color=value;swatch.style.setProperty('--swatch',value);swatch.setAttribute('aria-label',name);swatch.setAttribute('aria-pressed',String(value===ink));palette.append(swatch);
  }
  tool('Рукописная подпись','signature');tool('Прокрутка страницы','view');
- const history=(direction)=>{const p=pages[index];if(!p||drawing||busy)return;const from=direction==='undo'?p.ops:p.redo,to=direction==='undo'?p.redo:p.ops;if(!from.length)return;to.push(from.pop());dirty=pages.some(x=>x.ops.length);paint(p);sync();};
+ function remember(p){p.undo.push(p.ops.slice());if(p.undo.length>60)p.undo.shift();p.redo.length=0;}
+ const history=(direction)=>{finishText();const p=pages[index];if(!p||drawing||busy)return;const from=direction==='undo'?p.undo:p.redo,to=direction==='undo'?p.redo:p.undo;if(!from.length)return;to.push(p.ops.slice());p.ops=from.pop();dirty=pages.some(x=>x.ops.length);paint(p);sync();};
  const undo=capsule.button('undo','Отменить действие',undefined,()=>history('undo'));
  const redo=capsule.button('redo','Повторить действие',undefined,()=>history('redo'));rail.append(undo,redo);
- const sayvi=onSayvi?capsule.button('sayvi','Сэйви поможет с исходным PDF',undefined,()=>{if(busy)return;if(dirty){status.textContent='Сначала сохраните разметку или вернитесь к оригиналу.';return;}d.close();onSayvi('review');}):null;
+ const sayvi=onSayvi?capsule.button('sayvi','Сэйви · привести документ в порядок',undefined,async()=>{
+  finishText();if(busy)return;
+  if(dirty){status.textContent='Сначала сохраните копию с пометками. Для оформления всего текста откройте текстовую копию документа.';return;}
+  if(!originalSource.trim()){status.textContent='Для оформления всего PDF откройте текстовую копию с распознаванием текста.';return;}
+  try{if(await onSayvi('edit-current',{text:originalSource,title:file.name.replace(/\.pdf$/i,''),format:'pdf',purpose:'format'})===false)status.textContent='Не удалось передать текст Сэйви.';}catch{status.textContent='Не удалось передать текст Сэйви.';}
+ }):null;
  if(sayvi)rail.append(sayvi);
  capsule.prioritize(rail,'pdf');
- d.append(head,status,viewport,pager,inputRow,palette,rail);parent.append(d);
+ d.append(head,status,viewport,pager,palette,rail);parent.append(d);
  const releaseViewport=capsule.viewport(d);
  function sync(){
   prev.disabled=busy||index===0;next.disabled=busy||index>=pages.length-1;count.textContent=pages.length?(index+1)+' из '+pages.length:'';
-  save.disabled=busy||!dirty;undo.disabled=busy||!pages[index]?.ops.length;redo.disabled=busy||!pages[index]?.redo.length;color.disabled=busy;if(sayvi)sayvi.disabled=busy;
+  pager.hidden=pages.length<=1;save.disabled=busy||(!dirty&&!editing);undo.disabled=busy||!pages[index]?.undo.length;redo.disabled=busy||!pages[index]?.redo.length;color.disabled=busy;if(sayvi)sayvi.disabled=busy;
   for(const [id,b] of tools){b.disabled=busy;b.setAttribute('aria-pressed',String(mode===id));}
-  inputRow.hidden=mode!=='text'||busy;paper.dataset.mode=mode;
+  paper.dataset.mode=mode;
  }
- function setMode(value){if(busy)return;mode=value;palette.hidden=true;color.setAttribute('aria-expanded','false');sync();status.textContent=value==='text'?'Введите текст и коснитесь места на листе.':value==='pen'?'Рисуйте пальцем или мышью.':value==='marker'?'Проведите по месту, которое нужно выделить.':value==='eraser'?'Ластик удаляет только ваши пометки.':value==='signature'?'Распишитесь на листе пальцем или мышью. Это не электронная подпись.':'Прокручивайте лист.';}
+ function setMode(value){if(busy)return;finishText();mode=value;palette.hidden=true;color.setAttribute('aria-expanded','false');sync();status.textContent=value==='text'?'Коснитесь места на листе, чтобы написать или изменить пометку.':value==='pen'?'Рисуйте пальцем или мышью.':value==='marker'?'Проведите по месту, которое нужно выделить.':value==='eraser'?'Ластик удаляет только ваши пометки.':value==='signature'?'Распишитесь на листе пальцем или мышью. Это не электронная подпись.':'Прокручивайте лист.';}
  function paint(p){
   const c=p.overlay,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
   for(const op of p.ops){
    if(op.kind==='text'){
+    if(editing?.p===p&&editing.original===op)continue;
     ctx.fillStyle=op.color||'#20262d';ctx.font=op.font+'px Arial, sans-serif';ctx.textBaseline='top';
     ctx.fillText(op.text,op.x,op.y,Math.max(1,c.width-op.x-3));continue;
    }
@@ -71,29 +78,62 @@ function open(file,{parent,loadPdf,onSave,onSayvi}={}){
   }
  }
  function show(){const p=pages[index];if(!p)return;paper.replaceChildren(p.base,p.overlay);paint(p);viewport.scrollTop=0;sync();}
- function go(delta){if(busy||drawing)return;index=Math.max(0,Math.min(pages.length-1,index+delta));show();}
+ function go(delta){if(busy||drawing)return;finishText();index=Math.max(0,Math.min(pages.length-1,index+delta));show();}
  function point(event,c){const r=c.getBoundingClientRect();return {x:Math.max(0,Math.min(c.width-1,(event.clientX-r.left)*c.width/r.width)),y:Math.max(0,Math.min(c.height-1,(event.clientY-r.top)*c.height/r.height))};}
+ function finishText(cancel=false){
+  if(!editing)return;
+  const {p,original,op}=editing;const value=input.value.trim();editing=null;input.remove();
+  if(!cancel&&(value!==String(original?.text||''))){
+   remember(p);
+   if(original){const i=p.ops.indexOf(original);if(i>=0){if(value)p.ops[i]={...op,text:value};else p.ops.splice(i,1);}}
+   else if(value)p.ops.push({...op,text:value});
+   dirty=pages.some(x=>x.ops.length);
+  }
+  paint(p);sync();
+ }
+ function textAt(p,pt){
+  const ctx=p.overlay.getContext('2d');
+  return [...p.ops].reverse().find(op=>{
+   if(op.kind!=='text')return false;
+   ctx.font=op.font+'px Arial, sans-serif';
+   const w=Math.min(ctx.measureText(op.text).width,p.overlay.width-op.x-3);
+   return pt.x>=op.x-8&&pt.x<=op.x+w+8&&pt.y>=op.y-8&&pt.y<=op.y+op.font+8;
+  });
+ }
+ function startText(p,pt){
+  finishText();
+  const c=p.overlay,r=c.getBoundingClientRect(),scale=r.width/c.width;
+  const original=textAt(p,pt);
+  const font=original?.font||Math.max(12*c.width/595,16/Math.max(scale,.01));
+  const op=original?{...original}:{kind:'text',font,color:ink,x:Math.min(pt.x,c.width-Math.min(c.width*.4,100/Math.max(scale,.01))),y:Math.min(pt.y,Math.max(0,c.height-font-4))};
+  editing={p,original,op};input.value=original?.text||'';
+  input.style.left=(op.x/c.width*100)+'%';input.style.top=(op.y/c.height*100)+'%';
+  input.style.width=Math.max(1,100-op.x/c.width*100-1)+'%';
+  input.style.fontSize=Math.max(16,op.font*scale)+'px';input.style.color=op.color;
+  paper.append(input);paint(p);sync();input.focus({preventScroll:true});input.setSelectionRange(input.value.length,input.value.length);
+ }
+ input.addEventListener('blur',()=>finishText());
+ input.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key==='Escape'){e.preventDefault();e.stopPropagation();finishText(e.key==='Escape');}});
  function connect(p){
   const c=p.overlay;
   c.addEventListener('pointerdown',e=>{
    if(busy||mode==='view'||e.button!==0||!e.isPrimary)return;
    e.preventDefault();const pt=point(e,c),factor=c.width/595;
    if(mode==='text'){
-    const text=input.value.trim();if(!text){input.focus();return;}
-    const font=Math.max(12,12*factor);pt.y=Math.min(pt.y,Math.max(0,c.height-font-2));p.redo.length=0;p.ops.push({kind:'text',text,...pt,font,color:ink});dirty=true;paint(p);input.value='';sync();return;
+    startText(p,pt);return;
    }
-   const op={kind:mode,width:(mode==='eraser'?16:mode==='marker'?12:1.8)*factor,color:mode==='marker'&&ink==='#20262d'?'#f2c500':ink,points:[pt]};p.redo.length=0;
+   const op={kind:mode,width:(mode==='eraser'?16:mode==='marker'?12:1.8)*factor,color:mode==='marker'&&ink==='#20262d'?'#f2c500':ink,points:[pt]};remember(p);
    drawing={id:e.pointerId,p,op};p.ops.push(op);c.setPointerCapture?.(e.pointerId);dirty=true;paint(p);sync();
   });
   c.addEventListener('pointermove',e=>{if(drawing?.id!==e.pointerId||drawing.p!==p)return;drawing.op.points.push(point(e,c));paint(p);});
   const finish=e=>{if(drawing?.id===e.pointerId){drawing=null;sync();}};
   c.addEventListener('pointerup',finish);c.addEventListener('pointercancel',finish);c.addEventListener('lostpointercapture',finish);
  }
- function requestClose(){if(busy&&dirty)return;if(dirty&&!window.confirm('Выйти без сохранения разметки? Исходный PDF не изменится.'))return;d.close();}
+ function requestClose(){finishText();if(busy&&dirty)return;if(dirty&&!window.confirm('Выйти без сохранения разметки? Исходный PDF не изменится.'))return;d.close();}
  d.addEventListener('cancel',e=>{if(e.target!==d)return;e.preventDefault();requestClose();});
  d.addEventListener('close',()=>{closed=true;releaseViewport();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}d.remove();},{once:true});
  async function exportCopy(){
-  if(busy||!dirty||drawing)return;
+  finishText();if(busy||!dirty||drawing)return;
   if(!window.confirm('Сохранить отдельную копию PDF? Все страницы станут изображениями: поиск текста, ссылки и интерактивные поля в копии могут исчезнуть. Оригинал останется без изменений.'))return;
   busy=true;sync();status.textContent='Сохраняем копию…';
   try{
@@ -123,7 +163,7 @@ function open(file,{parent,loadPdf,onSave,onSayvi}={}){
    busy=false;show();setMode('view');
   }catch(e){if(!closed){status.textContent=e?.message||'Не удалось открыть страницы.';busy=false;sync();for(const [,b] of tools)b.disabled=true;}}
  }
- function add(base){base.className='sv-pdf-markup-base';const overlay=canvas(base.width,base.height);overlay.className='sv-pdf-markup-overlay';overlay.setAttribute('aria-label','Слой разметки страницы');const p={base,overlay,ops:[],redo:[]};connect(p);pages.push(p);}
+ function add(base){base.className='sv-pdf-markup-base';const overlay=canvas(base.width,base.height);overlay.className='sv-pdf-markup-overlay';overlay.setAttribute('aria-label','Слой разметки страницы');const p={base,overlay,ops:[],undo:[],redo:[]};connect(p);pages.push(p);}
  sync();d.showModal();void prepare();return true;
 }
 window.SEYVEO_PDF_MARKUP=Object.freeze({open});

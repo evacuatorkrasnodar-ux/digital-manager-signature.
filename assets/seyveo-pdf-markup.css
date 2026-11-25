@@ -19,6 +19,7 @@ html:root body .sv-pdf-markup-head .sv-pdf-markup-round:last-child{color:#176ab4
 .sv-pdf-markup-pager{display:flex;justify-content:center;align-items:center;gap:12px;flex:none;font:500 13px system-ui;}
 .sv-pdf-markup-next svg{transform:rotate(180deg);}
 .sv-pdf-markup button:disabled{opacity:.35;}
-.sv-pdf-markup-input-row[hidden]{display:none!important;}
-.sv-pdf-markup-input{box-sizing:border-box;width:100%;min-height:44px;font-size:16px;padding:8px 12px;border:1px solid #e6e8eb;border-radius:12px;background:var(--card2,#f5f5f7);color:inherit;}
 @media(prefers-reduced-motion:reduce){html:root body .sv-pdf-markup[open]{animation:none;}}
+
+html:root body .sv-pdf-markup .sv-pdf-markup-pager[hidden]{display:none!important;}
+html:root body .sv-pdf-markup .sv-pdf-inline-text{box-sizing:border-box!important;position:absolute!important;z-index:3;display:block!important;min-height:0!important;height:auto!important;max-width:100%!important;margin:0!important;padding:0 1px!important;border:0!important;border-bottom:1px solid #176ab4!important;border-radius:0!important;background:rgba(255,255,255,.96)!important;box-shadow:none!important;outline:0!important;line-height:1.15!important;font-family:Arial,sans-serif;caret-color:#176ab4;}

@@ -5157,7 +5157,7 @@ html:root[data-theme="light"] body :is(#sayviTopActions .sv-top-action,#sayviHis
      if(!pendingAttachments.some(item=>item.file===file))throw Error('Не удалось прикрепить документ. Проверьте список вложений.');
      workingDocument={conversation:currentId,text:payload.text};
      editorOrigin={conversation:currentId,area:payload.area==='business'?'business':'personal',title,format:payload.format==='docx'?'docx':'pdf'};
-     const question='Сэйви, помоги заполнить и доработать этот документ. Сначала уточни недостающие данные и не выдумывай их. Сохрани структуру и затем подготовь полный текст для проверки.';
+     const question=payload.purpose==='format'?'Сэйви, приведи документ в порядок: аккуратные заголовки, абзацы, списки и единый деловой стиль. Сохрани все факты, реквизиты, суммы и смысл. Не добавляй вымышленные данные. Подготовь полный текст для проверки перед сохранением PDF.':'Сэйви, помоги заполнить и доработать этот документ. Сначала уточни недостающие данные и не выдумывай их. Сохрани структуру и затем подготовь полный текст для проверки.';
      if(!input.value.trim())input.value=question;
      updateControls();
      status.textContent='Документ «'+title+'» прикреплён. Нажмите стрелку, чтобы Сэйви помогла именно с ним.';
