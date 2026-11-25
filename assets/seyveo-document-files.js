@@ -59,5 +59,23 @@ async function setDefaultFolder(a,target,patch){
  const sealed=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');
  await run('files','readwrite',s=>s.put({id:i,area:a,meta:sealed}));changed(a);
 }
-window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,get,createFolder,update,remove,removeFolder,setDefaultFolder});
+// Provider attachment intake: local encrypted copy, exact-content deduplication
+// within each workspace, no archive writes and no cross-workspace moves.
+async function saveAttachment(a,file,source,folder=''){
+ check(a);
+ if(!['mail','work-chat','family-chat'].includes(source))throw Error('Неизвестный источник');
+ if(!(file instanceof File)||!file.size||file.size>limit)throw Error('Размер файла должен быть до 20 МБ.');
+ if((source==='work-chat'&&a!=='business')||(source==='family-chat'&&a!=='personal'))throw Error('Неверное пространство');
+ if(folder){const target=await row(a,folder);if((await meta(target,await key(a))).kind!=='folder')throw Error('Папка не найдена');}
+ const bytes=await file.arrayBuffer();
+ const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
+ const i='attachment-'+a+'-'+hash,k=await key(a),tag=prefix(a,i);
+ const existing=await run('files','readonly',s=>s.get(i));if(existing)return {id:i,duplicate:true};
+ const m={name:String(file.name||'Документ').slice(0,180),type:file.type,createdAt:Date.now(),source,folder,size:file.size,kind:'file'};
+ const [metadata,content]=await Promise.all([seal(k,enc.encode(JSON.stringify(m)),tag+':meta'),seal(k,bytes,tag+':data')]);
+ try{await run('files','readwrite',s=>s.add({id:i,area:a,meta:metadata,content}));}
+ catch(e){if(await run('files','readonly',s=>s.get(i)))return {id:i,duplicate:true};throw e;}
+ changed(a);return {id:i,duplicate:false};
+}
+window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,get,createFolder,update,remove,removeFolder,setDefaultFolder,saveAttachment});
 })();
