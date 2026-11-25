@@ -1048,7 +1048,7 @@ function mount(target,{
   async function saveSelected(){
    const ready=preparedFile();if(!ready)return;
    try{
-    await window.SEYVEO_DOCUMENT_FILES.save(area,asFile(ready.blob,ready.name),'created');
+    await window.SEYVEO_DOCUMENT_FILES.save(area,asFile(ready.blob,ready.name),'created',{text:body.value,status:'ready'});
     message('Документ сохранён в разделе «Все файлы».');
    }catch(e){message(e.message||'Не удалось сохранить документ.');}
   }
