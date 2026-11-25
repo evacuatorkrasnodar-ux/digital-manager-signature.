@@ -433,8 +433,7 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-text > .sv-m
 html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-text > .sv-mail-detail-paragraph + .sv-mail-detail-paragraph{margin-top:12px!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-bar{margin:0 0 10px!important;border:0!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools{gap:4px!important}
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-bar > .sv-mail-icon-button,
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > .sv-mail-icon-button{
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-bar > .sv-mail-icon-button{
  box-shadow:var(--sv-white-pearl-circle-shadow)!important;transform:none!important;transition:none!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-title{
@@ -881,4 +880,16 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 @media(max-width:360px){
  html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-bulk-toolbar.is-selecting{gap:1px!important;padding:0!important}
  html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-bulk-toolbar.is-selecting > :is(.sv-mail-bulk-all,.sv-mail-bulk-select,.sv-mail-bulk-clean){padding:0 3px!important;font-size:11px!important}
+}
+
+/* Only the shared shell is painted. Grouped controls never inherit the
+   standalone circle material, including hover/focus and legacy pseudos. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > button.sv-mail-icon-button:not([hidden]):not(:active){
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > button.sv-mail-icon-button::before,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-tools > button.sv-mail-icon-button::after{
+ content:none!important;display:none!important;
 }
