@@ -5,6 +5,9 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const checks=[
+ ["assets/seyveo-mail-white-pearl.css","background:#FAFAFB!important;color:var(--sv-white-pearl-ink)!important;"],
+ ["assets/seyveo-mail-white-pearl.css","background:#176AB4!important;border-color:#176AB4!important;color:#FFFFFF!important;"],
+ ["assets/seyveo-mail-white-pearl.css","background:#FAEEEE!important;background-image:none!important;color:#A82F32!important;"],
   ["assets/seyveo-documents-graphite-flat.css","--sv-doc-graphite:#FAFAFB;"],
   ["assets/seyveo-documents-graphite-flat.css","--sv-doc-graphite-deep:#F5F6F8;"],
   ["assets/seyveo-documents-graphite-flat.css","background:#EDF5FF!important;color:#176AB4!important;"],

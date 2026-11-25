@@ -79,8 +79,8 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-accounts[hidden]{display:none!important}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt{
  min-height:54px!important;height:auto!important;margin:5px 0 7px!important;padding:6px 11px!important;
- border:var(--sv-white-pearl-edge)!important;border-radius:16px!important;
- background:var(--sv-white-pearl-surface)!important;color:var(--sv-white-pearl-ink)!important;
+ border:1px solid rgba(35,45,55,.065)!important;border-radius:16px!important;
+ background:#FAFAFB!important;color:var(--sv-white-pearl-ink)!important;
  box-shadow:none!important;transform:none!important;transition:none!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt[hidden]{display:none!important}
@@ -722,3 +722,28 @@ html:root body #sayviSurfacePage[data-sv-subject="mail"] > #sayviSurfaceBody{
  scrollbar-width:none;
 }
 html:root body #sayviSurfacePage[data-sv-subject="mail"] > #sayviSurfaceBody::-webkit-scrollbar{display:none}
+
+/* Mail paper surfaces: white list, blue selection, quiet destructive actions.
+   Only the light theme and existing selection controls are affected. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting > .sv-mail-letter .sv-mail-bulk-avatar,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-draft-select-mark{
+ border-color:#AAB4BF!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting > .sv-mail-letter.is-selected .sv-mail-bulk-avatar,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-draft-select-mark.is-checked{
+ background:#176AB4!important;border-color:#176AB4!important;color:#FFFFFF!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting > .sv-mail-letter.is-selected .sv-mail-bulk-avatar::after,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-draft-select-mark.is-checked::after{
+ border-color:#FFFFFF!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting > .sv-mail-letter.is-selected,
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row.is-selected{
+ background:#EDF5FF!important;border-radius:10px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-bulk-toolbar .sv-mail-bulk-clean,.sv-mail-bulk-actions .sv-mail-bulk-clean,.sv-mail-drafts-remove-selected){
+ background:#FAEEEE!important;background-image:none!important;color:#A82F32!important;box-shadow:none!important;border:0!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-bulk-select,.sv-mail-bulk-all,.sv-mail-drafts-select,.sv-mail-drafts-all):active{
+ background:#EDF5FF!important;color:#176AB4!important;
+}
