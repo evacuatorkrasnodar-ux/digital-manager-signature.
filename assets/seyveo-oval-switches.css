@@ -304,18 +304,30 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  color:var(--sv-white-pearl-segment-ink,#444B56)!important;
 }
 
-/* 25 Nov · Compact two-way Documents switch. Geometry only; White Pearl
-   above remains the material owner. Keep other screens and themes intact. */
+/* 25 Nov · Documents: slim White Pearl switch and tighter title spacing.
+   Only this white workspace; do not alter global navigation geometry. */
+html:root[data-theme="light"].sv-space-active body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top{
+ margin-bottom:12px!important;
+}
+@media(max-width:430px){
+ html:root[data-theme="light"].sv-space-active body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top{
+  margin-bottom:4px!important;
+ }
+}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch{
  box-sizing:border-box!important;
  width:85%!important;max-width:340px!important;
- height:42px!important;min-height:42px!important;max-height:42px!important;
- margin:0 auto 11px!important;padding:3px!important;
+ height:40px!important;min-height:40px!important;max-height:40px!important;
+ margin:0 auto 11px!important;padding:2px!important;
+ box-shadow:0 2px 5px rgba(35,45,60,.045)!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab{
  box-sizing:border-box!important;
  height:34px!important;min-height:34px!important;max-height:34px!important;
  padding:0 6px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab[aria-pressed="true"]{
+ box-shadow:0 1px 3px rgba(35,45,60,.035)!important;
 }
 
 /* 24 Nov · Approved light-theme material for the REAL 44px navigation and Add
