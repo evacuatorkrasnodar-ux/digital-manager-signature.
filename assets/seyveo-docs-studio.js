@@ -851,7 +851,14 @@ function mount(target,{
   const clearTool=wordTool('Очистить текст','<path d="m4.5 14.5 9-9a2 2 0 0 1 2.8 0l3 3a2 2 0 0 1 0 2.8L11.1 20H8L4.5 16.5a1.5 1.5 0 0 1 0-2Z"/><path d="M11.1 20h9"/>',()=>{
    if(body.value&&window.confirm('Очистить текст документа?')){wordHistory.push(body.value);replaceWordText('');body.focus({preventScroll:true});}
   });
-  const sayviTool=button('',()=>{sheet.close();onSayvi('create');},'sv-doc-word-extra');
+  async function helpWithCurrentDocument(){
+   if(!body.value.trim()){sheet.close();onSayvi('create');return;}
+   await persistDraft();
+   if(saveFailed){message('Не удалось сохранить изменения. Повторите попытку.');return;}
+   const ok=await onSayvi('edit-current',{text:body.value,title:filename.value.trim(),format:documentFormat,template:documentTemplate});
+   if(ok===false)message('Не удалось передать документ Сэйви. Текст остался в редакторе.');
+  }
+  const sayviTool=button('',helpWithCurrentDocument,'sv-doc-word-extra');
   sayviTool.setAttribute('aria-label','Сэйви');sayviTool.append($('span','sv-doc-word-ai sv-sayvi-symbol'));
   rail.append(sizeControl,alignControl,formatTrigger,sayviTool,undoTool,copyTool,clearTool);
   rail.addEventListener('mousedown',event=>{if(event.target.closest('button'))event.preventDefault();});
@@ -944,7 +951,7 @@ function mount(target,{
   },'sv-doc-edit-back');
   back.setAttribute('aria-label','Назад к документам');
   back.append(actionIcon('<path d="m14 5-7 7 7 7"/>'));
-  const sayviEditor=button('',()=>{sheet.close();onSayvi('create');},'sv-doc-edit-ai');
+  const sayviEditor=button('',helpWithCurrentDocument,'sv-doc-edit-ai');
   sayviEditor.setAttribute('aria-label','Создать с Сэйви');
   const aiMark=$('span','sv-doc-edit-ai-mark sv-sayvi-symbol');aiMark.setAttribute('aria-hidden','true');sayviEditor.append(aiMark);
   top.append(back,$('strong','',fromScan?'Редактор Word':'Документ'),sayviEditor);
