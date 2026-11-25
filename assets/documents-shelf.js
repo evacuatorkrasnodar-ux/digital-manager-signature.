@@ -79,13 +79,16 @@ function folderArt(plus=false){
 let active=null;
 const defaultIds=['contracts','projects','clients'];
 const ownFolders=state=>{
+ // No pre-created sample folders. Keep only legacy folders the user actually used.
  const defaults=categories.filter(x=>defaultIds.includes(x.id)).map((x,i)=>{
   const prefs=state.local.find(p=>p.kind==='folder-pref'&&p.target===x.id);
+  const assigned=state.local.some(p=>p.kind==='file'&&p.folder===x.id);
+  if(!assigned&&!prefs?.name&&!Number.isFinite(prefs?.order))return null;
   return {id:x.id,name:prefs?.name||x.title,createdAt:i,order:prefs?.order??i,hidden:prefs?.hidden===true,defaultFolder:true};
- });
+ }).filter(Boolean);
  return [...defaults,...state.local.filter(x=>x.kind==='folder')].filter(x=>!x.hidden).sort((a,b)=>(a.order??a.createdAt)-(b.order??b.createdAt)||a.id.localeCompare(b.id));
 };
-const folderEntries=state=>[...categories.filter(x=>['device','scan','new'].includes(x.id)),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true,defaultFolder:x.defaultFolder===true})),categories[categories.length-1]];
+const folderEntries=state=>[...categories.filter(x=>['device','scan','new','archive'].includes(x.id)),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true,defaultFolder:x.defaultFolder===true}))];
 const updateFolder=(state,category,patch)=>category.defaultFolder?localFiles().setDefaultFolder(state.options.area,category.id,patch):localFiles().update(state.options.area,category.id,patch);
 function notice(state,text){state.folderCaption.textContent=text;}
 function closeFolderMenu(state){state.folderMenu.hidden=true;state.folderMenu.replaceChildren();}
