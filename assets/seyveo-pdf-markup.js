@@ -11,12 +11,12 @@ async function imageFrom(page){
 function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
 function size(w,h){const k=Math.min(1,1600/w,2200/h);return [Math.max(1,Math.round(w*k)),Math.max(1,Math.round(h*k))];}
 async function jpeg(c){const b=await new Promise(resolve=>c.toBlob(resolve,'image/jpeg',.9));if(!b)throw Error('Не удалось собрать страницу.');return {width:c.width,height:c.height,jpegBytes:new Uint8Array(await b.arrayBuffer())};}
-function open(file,{parent,loadPdf,onSave,onSayvi}={}){
+function open(file,{parent,loadPdf,onSave,onSayvi,embedded=false,onClose,onSaved}={}){
  if(!parent?.isConnected||!window.SEYVEO_DOCS_EXPORT||!window.SEYVEO_EDITOR_CAPSULE)return false;
  const capsule=window.SEYVEO_EDITOR_CAPSULE;
  if(parent.querySelector('.sv-pdf-markup[open]'))return true;
  const d=el('dialog','sv-pdf-markup');d.setAttribute('aria-label','Разметка PDF');
- const head=el('header','sv-pdf-markup-head'),title=el('strong','','Разметка PDF');
+ const head=el('header','sv-pdf-markup-head'),title=el('strong','',embedded?file.name:'Разметка PDF');
  const glyph=(name)=>{const n=el('span','sv-pdf-markup-icon');n.innerHTML=window.SEYVEO_DOCUMENT_ICONS?.markup(name)||'';return n;};
  const round=(label,kind,fn)=>{const b=button('',fn,'sv-pdf-markup-round');b.setAttribute('aria-label',label);b.title=label;b.append(glyph(kind));return b;};
  let closed=false,busy=true,dirty=false,mode='view',index=0,pdfTask=null,pages=[],drawing=null,ink='#20262d';
@@ -55,7 +55,7 @@ function open(file,{parent,loadPdf,onSave,onSayvi}={}){
  }):null;
  if(sayvi)rail.append(sayvi);
  capsule.prioritize(rail,'pdf');
- d.append(head,status,viewport,pager,palette,rail);parent.append(d);
+ d.append(head,status,viewport,pager,palette,rail);parent.append(d);if(embedded){d.classList.add('sv-pdf-markup-embedded');parent.classList.add('svdv-markup-active');}
  const releaseViewport=capsule.viewport(d);
  function sync(){
   prev.disabled=busy||index===0;next.disabled=busy||index>=pages.length-1;count.textContent=pages.length?(index+1)+' из '+pages.length:'';
@@ -131,7 +131,7 @@ function open(file,{parent,loadPdf,onSave,onSayvi}={}){
  }
  function requestClose(){finishText();if(busy&&dirty)return;if(dirty&&!window.confirm('Выйти без сохранения разметки? Исходный PDF не изменится.'))return;d.close();}
  d.addEventListener('cancel',e=>{if(e.target!==d)return;e.preventDefault();requestClose();});
- d.addEventListener('close',()=>{closed=true;releaseViewport();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}d.remove();},{once:true});
+ d.addEventListener('close',()=>{closed=true;releaseViewport();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}d.remove();if(embedded)parent.classList.remove('svdv-markup-active');onClose?.();},{once:true});
  async function exportCopy(){
   finishText();if(busy||!dirty||drawing)return;
   if(!window.confirm('Сохранить отдельную копию PDF? Все страницы станут изображениями: поиск текста, ссылки и интерактивные поля в копии могут исчезнуть. Оригинал останется без изменений.'))return;
@@ -143,7 +143,7 @@ function open(file,{parent,loadPdf,onSave,onSayvi}={}){
    const copy=new File([blob],file.name.replace(/\.pdf$/i,'')+' — с пометками.pdf',{type:'application/pdf'});
    if(closed)return;
    if(onSave){await onSave(copy);}else{const url=URL.createObjectURL(copy);const a=el('a');a.href=url;a.download=copy.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
-   dirty=false;status.textContent=onSave?'Копия сохранена в документах.':'Копия подготовлена для скачивания.';d.close();
+   dirty=false;status.textContent=onSave?'Копия сохранена в документах.':'Копия подготовлена для скачивания.';d.close();queueMicrotask(()=>onSaved?.());
   }catch(e){if(!closed)status.textContent=e?.message||'Не удалось сохранить копию.';}finally{busy=false;if(!closed)sync();}
  }
  async function prepare(){
@@ -164,7 +164,7 @@ function open(file,{parent,loadPdf,onSave,onSayvi}={}){
   }catch(e){if(!closed){status.textContent=e?.message||'Не удалось открыть страницы.';busy=false;sync();for(const [,b] of tools)b.disabled=true;}}
  }
  function add(base){base.className='sv-pdf-markup-base';const overlay=canvas(base.width,base.height);overlay.className='sv-pdf-markup-overlay';overlay.setAttribute('aria-label','Слой разметки страницы');const p={base,overlay,ops:[],undo:[],redo:[]};connect(p);pages.push(p);}
- sync();d.showModal();void prepare();return true;
+ sync();if(embedded)d.show();else d.showModal();void prepare();return true;
 }
 window.SEYVEO_PDF_MARKUP=Object.freeze({open});
 })();
