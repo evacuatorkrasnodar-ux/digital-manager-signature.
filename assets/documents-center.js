@@ -185,7 +185,7 @@ function draw(){
   const b=button(names[key],()=>setArea(key),'sv-doc-tab');
   b.setAttribute('aria-pressed',String(area===key));switcher.append(b);
  }
- host.append(switcher);
+ const pinned=el('div','sv-doc-pinned-switch');pinned.append(switcher);host.append(pinned);
 
  if(area==='business'&&!employeePreview()&&view!=='flow'){
   // Show approvals entry in the archive, not again inside approvals.

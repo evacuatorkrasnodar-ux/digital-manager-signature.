@@ -70,6 +70,7 @@ const targets=[
  '#svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage:not([hidden]) #personalTaskList.personal-tasks-list',
  '#svWorkShell[data-active="notes"] #notesDialog:not(.sv-nb-selecting) > #notesList.sv-note-clean-list:not(.is-empty)',
  '#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"]:not([hidden]):not(:has(.sv-mail-bulk-active)) > #sayviSurfaceBody',
+ '#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"]:not([hidden]):not(:has(dialog[open])) > #sayviSurfaceBody',
  '#svWorkShell[data-shared-work="true"][data-active="business"] > #tasksPage:not([hidden]) > #unifiedBusinessTasksView:not([hidden])',
  'dialog:is(#svcpManagerPeople,#svStaffProfile,#svRecruitDetail,#svHrInterview).seyveo-dock-host[open] > .sv-page-scroll',
  'dialog#calendarSpaceDialog[data-space="health"].seyveo-dock-host[open] > #svCareScroll',
@@ -125,7 +126,7 @@ function measure(){
  active=next;
 }
 const observer=new MutationObserver(schedule);
-observer.observe(root,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','open','class','data-active','data-mode','data-month-layout','data-agenda-scroll','data-task-tool-mode','data-sv-subject','data-sv-mail-mode','data-space']});
+observer.observe(root,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','open','class','data-active','data-mode','data-month-layout','data-agenda-scroll','data-task-tool-mode','data-sv-subject','data-sv-mail-mode','data-sv-doc-view','data-space']});
 window.addEventListener('resize',schedule,{passive:true});
 window.visualViewport?.addEventListener('resize',schedule,{passive:true});
 document.addEventListener('focusin',schedule);
