@@ -2420,3 +2420,35 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-simple-file
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-simple-file-action:active{background:var(--sv-white-pearl-surface,#f5f5f7)!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-simple-file-action.is-danger{color:#c13c37!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-simple-file-input{box-sizing:border-box;width:100%;min-height:48px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:14px;font-size:16px;color:var(--text,#20262d);background:var(--card,#fff);}
+
+/* File card actions are an anchored pearl popover, not a second page. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog.sv-doc-file-popover[open]{
+ position:fixed!important;inset:var(--sv-file-menu-top,12px) auto auto var(--sv-file-menu-left,12px)!important;
+ box-sizing:border-box!important;margin:0!important;width:var(--sv-file-menu-width,260px)!important;
+ min-width:0!important;max-width:calc(100vw - 20px)!important;height:auto!important;min-height:0!important;
+ max-height:var(--sv-file-menu-height,75dvh)!important;padding:6px!important;
+ display:block!important;border-radius:19px!important;overflow:auto!important;overscroll-behavior:contain;
+ background:var(--sv-menu-bg,#fcfcfd)!important;border:var(--sv-menu-border,1px solid #e6e8eb)!important;
+ color:var(--sv-menu-text,#20262d)!important;box-shadow:var(--sv-menu-shadow,0 8px 28px #0002)!important;
+ animation:none!important;transform:none!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog.sv-doc-file-popover::backdrop{
+ background:rgba(30,39,49,.12)!important;backdrop-filter:none!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-file-popover-content{
+ display:flex!important;flex-direction:column!important;gap:0!important;padding:0!important;margin:0!important;min-width:0!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-file-popover .sv-doc-simple-file-name{
+ padding:9px 10px 10px!important;text-align:left!important;font:500 12px/1.35 system-ui!important;
+ border-bottom:1px solid rgba(128,128,128,.16);margin-bottom:3px;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-file-popover .sv-doc-my-template-note:empty{display:none!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-file-popover .sv-doc-simple-file-list{display:grid!important;gap:0!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-file-popover .sv-doc-simple-file-action{
+ box-sizing:border-box!important;width:100%!important;min-height:44px!important;padding:5px 9px!important;gap:10px!important;
+ border-radius:11px!important;font:500 14px/1.3 system-ui!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-file-popover .sv-doc-simple-file-action .sv-doc-menu-icon{
+ display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-file-popover .sv-doc-menu-icon svg{width:20px!important;height:20px!important;}
