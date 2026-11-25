@@ -683,6 +683,48 @@ function mailView(){
    paint();
   });
   guardPanel.append(contactsEntry);
+  const routing=window.SEYVEO_ATTACHMENT_ROUTING;
+  if(routing){
+   const docs=create('details','sv-mail-gate-trusted-details sv-mail-document-routing');
+   docs.append(create('summary','','Документы из почты'));
+   const form=create('div','sv-mail-gate-modes');
+   const config=routing.settings(account);
+   const labels={ask:['Спрашивать','Предлагать сохранение'],auto:['Автоматически','Только доверенные письма и выбранные папки'],manual:['Вручную','Сохранять по запросу']};
+   const status=create('small','sv-mail-gate-status','Настройки применятся после подключения почты и проверки вложений.');
+   status.setAttribute('role','status');
+   const rules=create('div','sv-mail-doc-routing-rules');
+   const buttons=[];
+   function persist(){
+    try{routing.setSettings(account,config);status.textContent='Настройки сохранены. Для приёма файлов требуется подключение почты.';}
+    catch{status.textContent='Не удалось сохранить настройки.';}
+   }
+   function syncModes(){
+    for(const [key,b] of buttons)b.setAttribute('aria-pressed',String(config.mode===key));
+    rules.hidden=config.mode==='manual';
+   }
+   for(const [key,[label,hint]] of Object.entries(labels)){
+    const b=create('button','sv-mail-gate-mode');b.type='button';
+    const copy=create('span','sv-mail-gate-mode-body');
+    copy.append(create('strong','',label),create('small','',hint));
+    b.append(create('span','sv-mail-gate-radio'),copy);
+    b.addEventListener('click',()=>{config.mode=key;persist();syncModes()});
+    buttons.push([key,b]);form.append(b);
+   }
+   rules.append(create('small','sv-mail-gate-status','Выберите существующие папки. Если папки нет, Сэйви спросит.'));
+   void routing.folders(account).then(folders=>{
+    if(!docs.isConnected)return;
+    for(const [category,label] of Object.entries(routing.categories)){
+     const row=create('label','sv-mail-doc-routing-rule');
+     const select=create('select','');select.setAttribute('aria-label','Папка для: '+label);
+     const none=create('option','','Спрашивать');none.value='';select.append(none);
+     for(const folder of folders){const option=create('option','',folder.name);option.value=folder.id;select.append(option);}
+     select.value=folders.some(f=>f.id===config.rules[category])?config.rules[category]:'';
+     select.addEventListener('change',()=>{config.rules[category]=select.value;persist();});
+     row.append(create('span','',label),select);rules.append(row);
+    }
+   }).catch(()=>{if(docs.isConnected)status.textContent='Не удалось прочитать папки документов.';});
+   docs.append(form,rules,status);syncModes();guardPanel.append(docs);
+  }
   const pending=folderCount('review');
   if(pending&&mailShowExamples){
    const review=create('button','sv-mail-gate-menu-review');
