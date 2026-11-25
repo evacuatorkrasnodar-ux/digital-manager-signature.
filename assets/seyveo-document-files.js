@@ -34,10 +34,55 @@ const prefix=(a,i)=>'seyveo-file-v1:'+a+':'+i;
 async function meta(row,k){return JSON.parse(dec.decode(await unseal(k,row.meta,prefix(row.area,row.id)+':meta')));}
 async function rows(a){check(a);return (await run('files','readonly',s=>s.getAll())).filter(r=>r.area===a);}
 function changed(a){document.dispatchEvent(new CustomEvent('seyveo:document-files-changed',{detail:{area:a}}));}
-async function save(a,file,source='device'){
+// Local document metadata and immutable previous file versions.
+const docTypes=Object.freeze({contract:'Договоры',invoice:'Счета',act:'Акты и УПД',delivery:'Накладные',tax:'Налоги',bank:'Банк',staff:'Кадры',other:'Другие документы'});
+function inferDocumentType(name){
+ const n=String(name||'').toLocaleLowerCase('ru-RU');
+ for(const [type,re] of [['tax',/деклараци|3[- ]?ндфл|налог|отч[её]тност/],['bank',/выписка|плат[её]жн|bank.statement/],['staff',/трудов|кадров|отпуск|увольнен|приказ/],['delivery',/накладн|товарно.транспорт/],['act',/акт(?:[\s_.-]|$)|упд/],['invoice',/сч[её]т|invoice/],['contract',/договор|контракт|соглашен|contract|agreement/]])if(re.test(n))return type;
+ return 'other';
+}
+const clean=(value,n)=>String(value||'').trim().slice(0,n);
+function documentMeta(file,options={}){
+ const type=Object.prototype.hasOwnProperty.call(docTypes,options.type)?options.type:inferDocumentType(file.name);
+ return {docType:type,typeOrigin:options.type?'user':'filename',counterparty:clean(options.counterparty,120),reference:clean(options.reference,100),dueDate:/^\d{4}-\d{2}-\d{2}$/.test(options.dueDate||'')?options.dueDate:'',status:['draft','ready','sent','signed','paid','closed'].includes(options.status)?options.status:'',searchText:clean(options.text,12000),version:1,versions:[]};
+}
+async function updateDocument(a,i,patch){
+ const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='file')throw Error('Документ не найден');
+ if(Object.prototype.hasOwnProperty.call(docTypes,patch.docType)){m.docType=patch.docType;m.typeOrigin='user';}
+ for(const [field,max] of [['counterparty',120],['reference',100]])if(typeof patch[field]==='string')m[field]=clean(patch[field],max);
+ if(typeof patch.dueDate==='string'){if(patch.dueDate&&!/^\d{4}-\d{2}-\d{2}$/.test(patch.dueDate))throw Error('Проверьте дату');m.dueDate=patch.dueDate;}
+ if(['','draft','ready','sent','signed','paid','closed'].includes(patch.status))m.status=patch.status;
+ r.meta=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');
+ await run('files','readwrite',s=>s.put(r));changed(a);
+}
+async function addVersion(a,i,file,options={}){
+ const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='file')throw Error('Документ не найден');
+ if(!(file instanceof File)||!file.size||file.size>limit)throw Error('Размер файла должен быть до 20 МБ.');
+ const history=Array.isArray(m.versions)?m.versions:[];
+ if(history.length>=10)throw Error('Достигнут предел локальной истории: 10 предыдущих версий.');
+ const number=Number(m.version)||1,tag=prefix(a,i);
+ const old={version:number,name:m.name,type:m.type,size:m.size,at:m.updatedAt||m.createdAt};
+ const [previous,current]=await Promise.all([unseal(k,r.content,tag+':data'),file.arrayBuffer()]);
+ const archived=await seal(k,previous,tag+':version:'+number);
+ const content=await seal(k,current,tag+':data');
+ const text=typeof options.text==='string'?clean(options.text,12000):file.type==='text/plain'?clean(await file.text(),12000):'';
+ const next={...m,name:clean(file.name,180),type:file.type,size:file.size,updatedAt:Date.now(),version:number+1,versions:[...history,old],searchText:text};
+ const sealed=await seal(k,enc.encode(JSON.stringify(next)),tag+':meta');
+ const versions={...(r.history||{}),[number]:archived};
+ // All previous bytes and the replacement commit in the same IDB record.
+ await run('files','readwrite',s=>s.put({...r,meta:sealed,content,history:versions}));changed(a);return number+1;
+}
+async function getVersion(a,i,number){
+ const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='file')throw Error('Документ не найден');
+ if(number===(m.version||1))return get(a,i);
+ const entry=(m.versions||[]).find(x=>x.version===number);
+ if(!entry||!r.history?.[number])throw Error('Версия недоступна');
+ return new File([await unseal(k,r.history[number],prefix(a,i)+':version:'+number)],entry.name,{type:entry.type,lastModified:entry.at});
+}
+async function save(a,file,source='device',options={}){
  check(a);if(!(file instanceof Blob)||!file.size||file.size>limit)throw Error('Размер файла должен быть до 20 МБ.');
  const i=id(),k=await key(a),tag=prefix(a,i);
- const m={name:String(file.name||'Документ').slice(0,180),type:file.type,createdAt:Date.now(),source:['scan','created','device'].includes(source)?source:'device',folder:'',size:file.size,kind:'file'};
+ const m={name:String(file.name||'Документ').slice(0,180),type:file.type,createdAt:Date.now(),source:['scan','created','device'].includes(source)?source:'device',folder:'',size:file.size,kind:'file',...documentMeta(file,{...options,text:typeof options.text==='string'?options.text:file.type==='text/plain'?await file.slice(0,48000).text():''})};
  const [metadata,content]=await Promise.all([seal(k,enc.encode(JSON.stringify(m)),tag+':meta'),seal(k,await file.arrayBuffer(),tag+':data')]);
  await run('files','readwrite',s=>s.add({id:i,area:a,meta:metadata,content}));changed(a);return i;
 }
@@ -71,7 +116,7 @@ async function saveAttachment(a,file,source,folder=''){
  const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
  const i='attachment-'+a+'-'+hash,k=await key(a),tag=prefix(a,i);
  const existing=await run('files','readonly',s=>s.get(i));if(existing)return {id:i,duplicate:true};
- const m={name:String(file.name||'Документ').slice(0,180),type:file.type,createdAt:Date.now(),source,folder,size:file.size,kind:'file'};
+ const m={name:String(file.name||'Документ').slice(0,180),type:file.type,createdAt:Date.now(),source,folder,size:file.size,kind:'file',...documentMeta(file)};
  const [metadata,content]=await Promise.all([seal(k,enc.encode(JSON.stringify(m)),tag+':meta'),seal(k,bytes,tag+':data')]);
  try{await run('files','readwrite',s=>s.add({id:i,area:a,meta:metadata,content}));}
  catch(e){if(await run('files','readonly',s=>s.get(i)))return {id:i,duplicate:true};throw e;}
@@ -96,5 +141,5 @@ async function listTemplates(a){return (await list(a)).filter(x=>x.kind==='templ
 async function getTemplate(a,i){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='template')throw Error('Шаблон не найден');return {...m,...JSON.parse(dec.decode(await unseal(k,r.content,prefix(a,i)+':data')))};}
 async function renameTemplate(a,i,name){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='template')throw Error('Шаблон не найден');name=String(name||'').trim().slice(0,100);if(!name)throw Error('Введите название');m.name=name;r.meta=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');await run('files','readwrite',s=>s.put(r));changed(a);}
 async function removeTemplate(a,i){const r=await row(a,i),k=await key(a);if((await meta(r,k)).kind!=='template')throw Error('Шаблон не найден');await run('files','readwrite',s=>s.delete(i));changed(a);}
-window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,get,createFolder,update,remove,removeFolder,setDefaultFolder,saveAttachment,saveTemplate,listTemplates,getTemplate,renameTemplate,removeTemplate});
+window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,get,createFolder,update,remove,removeFolder,setDefaultFolder,saveAttachment,saveTemplate,listTemplates,getTemplate,renameTemplate,removeTemplate,docTypes,inferDocumentType,updateDocument,addVersion,getVersion});
 })();
