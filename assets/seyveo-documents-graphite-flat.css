@@ -1999,3 +1999,8 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-official-so
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-official-help{display:flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;min-height:44px!important;border-radius:999px!important;background:#f5f5f7!important;color:#20262d!important;font:600 15px/1.2 system-ui!important;}
 .sv-doc-official-ai-mark{display:inline-block!important;width:25px!important;height:25px!important;flex:none!important;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-professional-details .sv-doc-document-field input{border:0!important;border-radius:16px!important;min-height:44px!important;}
+
+/* Keep document detail navigation visible and remove unnecessary row strokes. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-picker-option{border-bottom:0!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-professional-details .sv-doc-my-template-head{position:sticky!important;top:-12px!important;z-index:3!important;background:#fff!important;padding:8px 0!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-professional-details .sv-doc-my-template-delete{background:transparent!important;}
