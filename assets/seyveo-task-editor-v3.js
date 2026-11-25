@@ -292,51 +292,11 @@
   title.style.height=Math.max(minimum,Math.min(128,measured))+'px';
   title.style.overflowY=measured>128?'auto':'hidden';
  }
- const wheelRowHeight=40;
  const wheelMonths=Array.from({length:12},(_,i)=>new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(2020,i,1)));
  const padWheel=n=>String(n).padStart(2,'0');
  function makeWheelColumn(label,choices,value,change){
-  const column=document.createElement('div');column.className='sv-task-wheel-column';
-  column.tabIndex=0;column.setAttribute('role','listbox');column.setAttribute('aria-label',label);
-  const buttons=[];
-  let active=Math.max(0,choices.findIndex(item=>item.value===value));
-  let scrollTimer=0;
-  function select(index,commit=false,force=false){
-   const next=Math.min(choices.length-1,Math.max(0,index));
-   const changed=next!==active;
-   if(changed){
-    buttons[active]?.classList.remove('is-selected');buttons[active]?.setAttribute('aria-selected','false');
-    active=next;buttons[active]?.classList.add('is-selected');buttons[active]?.setAttribute('aria-selected','true');
-   }
-   if(commit&&(changed||force))change(choices[active].value);
-  }
-  choices.forEach((item,index)=>{
-   const button=document.createElement('button');button.type='button';button.className='sv-task-wheel-option';
-   button.textContent=item.label;button.tabIndex=-1;button.setAttribute('role','option');
-   button.setAttribute('aria-selected',String(index===active));
-   if(index===active)button.classList.add('is-selected');
-   button.addEventListener('click',()=>{
-    column.scrollTo({top:index*wheelRowHeight,behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
-    select(index,true,true);
-   });
-   buttons.push(button);column.append(button);
-  });
-  column.addEventListener('scroll',()=>{
-   clearTimeout(scrollTimer);
-   scrollTimer=setTimeout(()=>{
-    if(!column.isConnected)return;
-    select(Math.round(column.scrollTop/wheelRowHeight),true);
-   },75);
-  },{passive:true});
-  column.addEventListener('keydown',event=>{
-   const direction=event.key==='ArrowUp'?-1:event.key==='ArrowDown'?1:0;
-   if(!direction&&event.key!=='Home'&&event.key!=='End')return;
-   event.preventDefault();
-   const next=event.key==='Home'?0:event.key==='End'?choices.length-1:Math.min(choices.length-1,Math.max(0,active+direction));
-   column.scrollTop=next*wheelRowHeight;select(next,true,true);
-  });
-  requestAnimationFrame(()=>{if(column.isConnected)column.scrollTop=active*wheelRowHeight});
-  return {node:column,set(value){const index=choices.findIndex(item=>item.value===value);if(index<0)return;column.scrollTop=index*wheelRowHeight;select(index)}};
+  const column=document.createElement('div');column.className='sv-task-wheel-column';column.setAttribute('aria-label',label);
+  return window.SEYVEO_WHEEL.mount(column,choices,value,change);
  }
  function makeWheelEditor(whenDate,whenTime){
   const editor=document.createElement('div');editor.className='sv-task-smart-wheel-edit';
