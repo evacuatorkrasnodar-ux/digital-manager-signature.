@@ -514,7 +514,7 @@ html:root body .svdv-viewer>.svdv-notice:not(:empty){position:absolute!important
 
 /* Read mode has simple named actions. Drawing uses the same open viewer. */
 html:root body .svdv-toolbar>.svdv-more[hidden]{display:none!important;}
-html:root body .svdv-bottom-sheet .svdv-toolbar>.svdv-action:first-child{color:#176ab4!important;}
+html:root body .svdv-bottom-sheet .svdv-toolbar>.svdv-action:first-child{color:var(--text,#20262d)!important;}
 html:root body .svdv-bottom-sheet .svdv-toolbar>.svdv-action:first-child .svdv-icon{width:22px;height:22px;}
 html:root body .svdv-bottom-sheet .svdv-toolbar>.svdv-action,html:root body .svdv-bottom-sheet .svdv-more-button{font-size:12px!important;min-height:52px!important;}
 html:root body .svdv-viewer.svdv-markup-active>:not(.sv-pdf-markup){display:none!important;}
@@ -591,3 +591,7 @@ html:root body .svdv-inline-rail.svdv-ink-rail>button{
 }
 html:root body .svdv-inline-rail.svdv-ink-rail::-webkit-scrollbar{display:none;}
 html:root body .svdv-inline-rail.svdv-ink-rail>button:focus-visible{outline:2px solid #176ab4;outline-offset:-2px;}
+
+/* Direct editing: no duplicate action in the viewer toolbar. */
+html:root body .svdv-tap-edit:not(.svdv-inline-editing):not(.svdv-ink-stage) :is(.svdv-reader-page,.svdv-text){cursor:text;}
+html:root body .svdv-tap-edit:focus-visible{outline:2px solid #176ab4;outline-offset:-2px;}
