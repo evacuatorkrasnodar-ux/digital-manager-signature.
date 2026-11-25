@@ -2167,6 +2167,7 @@ html:root[data-theme="light"] body #sayviTopActions .sv-top-action{
  let recentDocument=null;
  // Latest finished draft for the active chat only. Nothing stored remotely.
  let workingDocument=null;
+ let editorOrigin=null;
  // Guided fill is a local, explicit Q&A: no guessed private values.
  let documentFill=null;
  function fillQuestion(label,index,total){
@@ -3160,6 +3161,23 @@ html:root[data-theme="light"] body #sayviTopActions .sv-top-action{
    shareAction.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0-4.5 4.5M12 3l4.5 4.5M5 13v7h14v-7"/></svg><span>Поделиться</span>';
    shareAction.setAttribute('aria-label','Поделиться документом');
    actions.append(wordAction,pdfAction,printAction,shareAction,edit);
+   if(editorOrigin?.conversation===currentId){
+    const returnAction=button('В редактор',async()=>{
+     const value=currentDraft();
+     if(!value.trim()||value.length>12000){window.alert('Редактор принимает до 12 000 символов. Текст не изменён.');return;}
+     if(!window.confirm('Открыть результат в редакторе как новый черновик? Исходный документ сохранится без изменений.'))return;
+     returnAction.disabled=true;
+     try{
+      const origin=editorOrigin;
+      const title=origin.official?'Сведения для '+origin.title:origin.title;
+      const file=new File([JSON.stringify({kind:'sayvi-result',text:value,title,area:origin.area,format:origin.format})],'seyveo-editor-return.json',{type:'application/json'});
+      const refs=await window.SEYVEO_CHAT_FILES?.remember([file]);const ref=refs?.[file.name];if(!ref)throw Error('Не удалось сохранить результат для редактора.');
+      sessionStorage.setItem('seyveo.document-editor-return.v1',JSON.stringify({ref,at:Date.now()}));
+      location.assign('./index.html#sayvi-documents');
+     }catch(error){returnAction.disabled=false;window.alert(error.message||'Не удалось открыть редактор.');}
+    });
+    returnAction.innerHTML=editIcon+'<span>В редактор</span>';actions.append(returnAction);
+   }
   const dismiss=()=>{
    if(editing&&editor.value!==draft&&!window.confirm('Закрыть без сохранения изменений?'))return;
    document.removeEventListener('keydown',onKey);
@@ -5100,11 +5118,22 @@ html:root[data-theme="light"] body #sayviTopActions .sv-top-action{
      addAttachments([file]);
      if(!pendingAttachments.some(item=>item.file===file))throw Error('Не удалось прикрепить документ. Проверьте список вложений.');
      workingDocument={conversation:currentId,text:payload.text};
+     editorOrigin={conversation:currentId,area:payload.area==='business'?'business':'personal',title,format:payload.format==='docx'?'docx':'pdf'};
      const question='Сэйви, помоги заполнить и доработать этот документ. Сначала уточни недостающие данные и не выдумывай их. Сохрани структуру и затем подготовь полный текст для проверки.';
      if(!input.value.trim())input.value=question;
      updateControls();
      status.textContent='Документ «'+title+'» прикреплён. Нажмите стрелку, чтобы Сэйви помогла именно с ним.';
     })().catch(error=>{status.textContent=error.message||'Не удалось передать документ.';});
+   }
+   if(valid&&message.intent==='official-form'){
+    const country=String(message.country||'').slice(0,50),name=String(message.name||'').slice(0,100),period=String(message.period||'').slice(0,60);
+    const url=new URL(message.url);
+    if(url.protocol==='https:'&&/(^|\.)(nalog\.gov\.ru|src\.am|customs\.gov\.ru)$/.test(url.hostname)){
+     editorOrigin={conversation:currentId,area:message.area==='business'?'business':'personal',title:name,format:'pdf',official:true};
+     const question='Помоги подготовить сведения для официальной формы: '+name+'. Страна: '+country+'. Период: '+period+'. Официальный источник: '+url.href+'. Уточни только недостающие данные. Если актуальный бланк не прочитан, скажи об этом и предложи приложить его. Не выдумывай требования, поля или суммы. Не выдавай подготовленные сведения за заполненный официальный бланк. Для готового перечня сведений используй отдельный блок между строками --- и ---.';
+     if(!input.value.trim())input.value=question;
+     status.textContent='Форма и период выбраны. Отправьте запрос Сэйви.';
+    }
    }
    // Home card handoff: never auto-send, keep draft inside sessionStorage
    // (never put document wording in a navigation URL).
