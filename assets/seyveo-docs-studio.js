@@ -412,6 +412,7 @@ function mount(target,{
   const separate=['scan','sign','print','create'].includes(mode);
   if(separate){
    scannerSheet.classList.toggle('sv-doc-create-sheet',mode==='create');
+   scannerSheet.classList.toggle('sv-doc-scan-fullscreen',mode==='scan');
    scannerTitle.textContent=mode==='create'?'Создать документ':mode==='sign'?'Подпись':mode==='print'?'Печать':'Сканер';
    scannerSheet.insertBefore(panel,exitSheet);
   }else{
@@ -481,6 +482,7 @@ function mount(target,{
   }
  }
  function movePage(index,offset){
+  if(activeScanViewer?.isPhotoBusy?.())return;
   const next=index+offset;
   if(index<0||next<0||next>=scans.length)return;
   const [page]=scans.splice(index,1);
@@ -508,7 +510,11 @@ function mount(target,{
      const image=await imageOf(file);
      if(!valid())throw Error('Страница изменилась.');
      // Changes remain in this scan session until the explicit PDF/JPG Save.
-     scans[index]=jpegOf(canvasOf(image,Math.max(image.naturalWidth,image.naturalHeight)));
+     const bytes=new Uint8Array(await file.arrayBuffer());
+     if(!valid())throw Error('Страница изменилась.');
+     scans[index]={width:image.naturalWidth,height:image.naturalHeight,jpegBytes:bytes};
+     const thumb=panel.querySelectorAll('.sv-doc-scan-compact-thumbs img')[index];
+     if(thumb){const url=URL.createObjectURL(file);temporaryUrls.push(url);thumb.src=url;}
     }
    });
    if(viewer){
@@ -612,7 +618,7 @@ function mount(target,{
     scans.forEach((page,i)=>{
      const url=URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'}));temporaryUrls.push(url);
      const img=$('img');img.src=url;img.alt='Страница '+(i+1);
-     const select=button('',()=>{selectedScan=i;renderScan();},'sv-doc-tool-thumb-select');
+     const select=button('',()=>{if(activeScanViewer?.isPhotoBusy?.())return;selectedScan=i;renderScan();},'sv-doc-tool-thumb-select');
      select.setAttribute('aria-label','Просмотреть страницу '+(i+1));select.setAttribute('aria-pressed',String(i===index));
      select.append(img);thumbs.append(select);
     });
@@ -633,7 +639,7 @@ function mount(target,{
    if(!activeScanViewer)pageActions.append(pageAction('Удалить страницу','delete',deletePage));
    if(pageActions.childNodes.length)counter.append(pageActions);
    const saveScan=async format=>{
-    if(saveButton.disabled||scanSaving||importBusy||!scans.length||(format==='jpg'&&scans.length!==1))return;saveButton.disabled=true;scanSaving=true;
+    if(saveButton.disabled||scanSaving||importBusy||activeScanViewer?.isPhotoBusy?.()||!scans.length||(format==='jpg'&&scans.length!==1))return;saveButton.disabled=true;scanSaving=true;
     const at=generation,epoch=operationEpoch,pages=scans.slice();panel.inert=true;scannerBack.disabled=true;scannerDone.disabled=true;
     try{
      const stamp=new Date(),name='Скан '+stamp.toLocaleDateString('ru-RU')+' '+stamp.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}).replace(':','-')+'.'+format;
@@ -645,7 +651,7 @@ function mount(target,{
     finally{scanSaving=false;panel.inert=false;scannerBack.disabled=false;scannerDone.disabled=false;saveButton.disabled=false;}
    };
    const saveButton=button('Сохранить',()=>{
-    if(scanSaving||importBusy||!scans.length||panel.querySelector('.sv-doc-scan-format[open]'))return;
+    if(scanSaving||importBusy||activeScanViewer?.isPhotoBusy?.()||!scans.length||panel.querySelector('.sv-doc-scan-format[open]'))return;
     const dlg=$('dialog','sv-doc-scan-format');dlg.setAttribute('aria-label','Формат файла');
     dlg.append($('strong','sv-doc-scan-format-title','Сохранить как'));
     const options=[

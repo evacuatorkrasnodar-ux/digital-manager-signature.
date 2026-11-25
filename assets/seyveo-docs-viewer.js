@@ -552,7 +552,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   more.hidden=!!onApplyPhoto||!Array.from(moreBody.children).some(n=>!n.hidden);
   onPhotoMode?.('');say('');
  }
- function photoCancel(){return action('Отмена','back',()=>endPhoto());}
+ function photoCancel(){return action('Отмена','back',()=>{if(!photoBusy||photoMode==='text')endPhoto();});}
  async function savePhotoFile(next,options={}){
   if(onSaveCopy)await onSaveCopy(next,options);
   else{
@@ -683,7 +683,38 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   });
   return saveImage;
  }
+ async function rotateScanDirect(){
+  if(!active||photoMode||photoBusy)return;
+  const img=stage.querySelector('.svdv-picture');
+  if(!img?.naturalWidth||!img.naturalHeight){say('Дождитесь загрузки фотографии.');return;}
+  photoBusy=true;
+  const epoch=++photoEpoch;
+  let nextUrl=null;
+  for(const control of normalPhotoActions)control.disabled=true;
+  try{
+   const canvas=drawPhoto(img,{x:0,y:0,w:img.naturalWidth,h:img.naturalHeight},true);
+   const type=file.type==='image/jpeg'?'image/jpeg':'image/png';
+   const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Не удалось повернуть страницу.')),type,.96));
+   if(!active||photoEpoch!==epoch)return;
+   const next=new File([blob],file.name,{type});
+   nextUrl=URL.createObjectURL(next);
+   const preview=el('img','svdv-picture');preview.alt=img.alt;
+   await new Promise((resolve,reject)=>{preview.onload=resolve;preview.onerror=()=>reject(Error('Не удалось открыть повёрнутую страницу.'));preview.src=nextUrl;});
+   if(!active||photoEpoch!==epoch)return;
+   await onApplyPhoto(next);
+   if(!active||photoEpoch!==epoch)return;
+   const old=objectUrl;objectUrl=nextUrl;nextUrl=null;file=next;
+   stage.replaceChildren(preview);save.href=objectUrl;originalAction.href=objectUrl;
+   URL.revokeObjectURL(old);
+   say('');
+  }catch(e){if(active&&photoEpoch===epoch)say(e?.message||'Не удалось повернуть страницу.');}
+  finally{
+   if(nextUrl)URL.revokeObjectURL(nextUrl);
+   if(photoEpoch===epoch){photoBusy=false;for(const control of normalPhotoActions)control.disabled=false;}
+  }
+ }
  function rotatePhoto(){
+  if(onApplyPhoto){void rotateScanDirect();return;}
   if(!beginPhoto('rotate'))return;
   try{
    const img=photoSource();
@@ -896,7 +927,8 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   sheet.addEventListener('click',e=>{if(e.target===sheet){const r=sheet.getBoundingClientRect();if(e.clientY<r.top||e.clientX<r.left||e.clientX>r.right)void requestClose();}});
  }else target.replaceChildren(root);
  const session=Object.freeze({
-  backPhoto(){if(!photoMode)return false;if(!photoBusy||photoMode==='text')endPhoto();return true;},
+  isPhotoBusy(){return photoBusy;},
+  backPhoto(){if(!photoMode)return photoBusy;if(!photoBusy||photoMode==='text')endPhoto();return true;},
   destroy(){
    if(!active)return;
    clearTimeout(noticeTimer);inline?.closeMenu?.();if(inline?.dismiss)document.removeEventListener('pointerdown',inline.dismiss);stopViewport?.();stopViewport=null;active=false;markupSession?.destroy?.();markupSession=null;if(sheet?.open)sheet.close();try{void pdfTask?.destroy()?.catch?.(()=>{});}catch{}for(const url of pageUrls)URL.revokeObjectURL(url);target.replaceChildren();
