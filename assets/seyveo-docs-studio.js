@@ -523,7 +523,7 @@ function mount(target,{
   if(ocrEnginePromise)return ocrEnginePromise;
   ocrEnginePromise=new Promise((resolve,reject)=>{
    const script=document.createElement('script');
-   script.src='https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.min.js';
+   script.src='https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/7.0.0/tesseract.min.js';
    script.async=true;script.crossOrigin='anonymous';
    const timer=setTimeout(()=>reject(Error('Не удалось загрузить распознавание вовремя.')),25000);
    script.onload=()=>{clearTimeout(timer);window.Tesseract?.createWorker?resolve(window.Tesseract):reject(Error('OCR недоступен.'));};
@@ -531,6 +531,16 @@ function mount(target,{
    document.head.append(script);
   }).catch(error=>{ocrEnginePromise=null;throw error;});
   return ocrEnginePromise;
+ }
+ // Keep the API and worker on the already permitted, version-pinned CDN.
+ async function createOcrWorker(engine){
+  let timer,expired=false;
+  const pending=engine.createWorker(['rus','eng'],1,{
+   workerPath:'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/7.0.0/worker.min.js'
+  });
+  const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>{expired=true;reject(Error('Распознавание не запустилось. Проверьте доступ к библиотеке и языковым моделям. Оригинал сохранён.'));},90000);});
+  pending.then(w=>{if(expired)void w.terminate().catch(()=>{});},()=>{});
+  try{return await Promise.race([pending,timeout]);}finally{clearTimeout(timer);}
  }
  async function recognizeScanText(page,output,action){
   if(!page||action.disabled)return;
@@ -542,7 +552,7 @@ function mount(target,{
   try{
    const tesseract=await getOcrEngine();
    if(startEpoch!==operationEpoch||startGeneration!==generation||!scans.includes(page))return;
-   worker=await tesseract.createWorker(['rus','eng'],1);
+   worker=await createOcrWorker(tesseract);
    if(startEpoch!==operationEpoch||startGeneration!==generation||!scans.includes(page))return;
    const image=new Blob([page.jpegBytes],{type:'image/jpeg'});
    const result=await worker.recognize(image);
@@ -1622,7 +1632,7 @@ function mount(target,{
     const pages=await window.SEYVEO_DOCS_EXPORT.readScanPdf(payload.file);
     if(!valid())return false;
     const engine=await getOcrEngine();if(!valid())return false;
-    worker=await engine.createWorker(['rus','eng'],1);if(!valid())return false;
+    worker=await createOcrWorker(engine);if(!valid())return false;
     const texts=[];
     for(const page of pages){
      const result=await worker.recognize(new Blob([page.jpegBytes],{type:'image/jpeg'}));
