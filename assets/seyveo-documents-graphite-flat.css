@@ -2452,3 +2452,10 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-file-popove
  display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;
 }
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-file-popover .sv-doc-menu-icon svg{width:20px!important;height:20px!important;}
+
+/* Scanner only acquires and arranges pages. The saved PDF uses the common viewer. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"] .sv-doc-scan-finish{display:flex!important;justify-content:center!important;width:100%!important;gap:0!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"] .sv-doc-scan-save{box-sizing:border-box!important;width:min(100%,404px)!important;min-height:44px!important;height:44px!important;max-height:44px!important;margin:0 auto!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"][data-has-scans="true"] .sv-doc-scan-board{box-sizing:border-box!important;min-height:0!important;max-height:none!important;height:auto!important;overflow:visible!important;padding:6px 0!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"][data-has-scans="true"] .sv-doc-scan-guide{box-sizing:border-box!important;width:min(78%,250px)!important;height:clamp(150px,36dvh,290px)!important;max-height:none!important;flex:none!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-tool-panel[data-mode="scan"][data-has-scans="true"] .sv-doc-scan-sheet-image{object-fit:contain!important;width:100%!important;height:100%!important;}
