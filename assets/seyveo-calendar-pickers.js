@@ -55,6 +55,7 @@ panel.innerHTML=[
 row.insertAdjacentElement('afterend',panel);
 const datePanel=$('seyveoPickDate'),timePanel=$('seyveoPickTime'),days=$('seyveoPickDays');
 const hourWheel=$('seyveoPickHours'),minuteWheel=$('seyveoPickMinutes');
+timePanel.append(window.SEYVEO_WHEEL.feedbackButton());
 const monthLabel=$('seyveoPickMonth');
 const monthFormatter=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'});
 const dayFormatter=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'});
@@ -475,7 +476,7 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
    if(ready){hours.sync();minutes.sync();}
    commit(pad(hour)+':'+pad(minute));
   });
-  body.append(done);
+  body.append(done,window.SEYVEO_WHEEL.feedbackButton());
   requestAnimationFrame(()=>{
    if(!sheet.open||kind!=='time'||!hh.isConnected)return;
    hours.center();minutes.center();ready=true;paintTime();
