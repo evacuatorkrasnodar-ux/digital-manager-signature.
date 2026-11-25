@@ -242,8 +242,8 @@ function openDocumentDetails(state,item){
  picker.addEventListener('change',async()=>{const f=picker.files?.[0];if(!f)return;try{if(!/\.(pdf|docx|xlsx|pptx|txt|md|png|jpe?g|webp)$/i.test(f.name))throw Error('Неподдерживаемый формат.');if(!window.confirm('Добавить новую версию? Предыдущая версия останется в истории.'))return;await api.addVersion(area,item.id,f);dlg.close();}catch(e){feedback.textContent=e.message;}finally{picker.value='';}});
  versions.append(action('Добавить новую версию',()=>picker.click()),picker);history.append(versions);
  const identity=el('div','sv-doc-detail-identity');identity.append(documentArt(classify(item.name),formatOf(item.name)),el('strong','sv-doc-document-name',item.name),el('small','',formatOf(item.name)+' · '+dateOf(item.createdAt)));
- content.append(identity,feedback,form,history,action('Удалить документ',async()=>{if(!window.confirm('Удалить локальный документ и его версии?'))return;try{await api.remove(area,item.id);dlg.close();}catch(e){feedback.textContent=e.message;}},'sv-doc-my-template-delete'));
- dlg.append(head,content);state.recent.append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
+ content.append(feedback,form,history,action('Удалить документ',async()=>{if(!window.confirm('Удалить локальный документ и его версии?'))return;try{await api.remove(area,item.id);dlg.close();}catch(e){feedback.textContent=e.message;}},'sv-doc-my-template-delete'));
+ dlg.append(head,identity,content);state.recent.append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
 }
 function paint(state){
  if(state!==active)return;
