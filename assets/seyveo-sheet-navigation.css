@@ -1,0 +1,58 @@
+/* SEYVEO: deliberate, opt-in bottom-sheet destinations.
+   Read-only previews and secondary forms rise from the bottom.
+   Long-lived workspaces retain their approved full-screen geometry.
+   Never target all dialogs, main routes, consent, passwords, calls or menus. */
+@keyframes svSharedSheetEnter{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes svSharedSheetShade{from{opacity:0}to{opacity:1}}
+/* Secondary document forms. Keep their existing save, cancel and scroll behavior. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog:is(.sv-doc-official-dialog,.sv-doc-professional-details,.sv-doc-library-sheet)[open]{
+ position:fixed!important;inset:auto 0 0!important;margin:0 auto!important;width:100%!important;max-width:680px!important;
+ height:auto!important;max-height:90vh!important;max-height:90dvh!important;
+ border-radius:28px 28px 0 0!important;padding:16px 16px max(16px,env(safe-area-inset-bottom,0px))!important;
+ animation:svSharedSheetEnter .28s cubic-bezier(.22,.7,.25,1)!important;
+ overflow-y:auto!important;overscroll-behavior:contain!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog:is(.sv-doc-official-dialog,.sv-doc-professional-details,.sv-doc-library-sheet)[open]::backdrop{animation:svSharedSheetShade .2s ease-out;}
+/* Reading a note is an overlay, not a separate navigation destination. */
+html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open]{
+ inset:auto 0 0!important;margin:0 auto!important;width:100%!important;max-width:680px!important;
+ height:88vh!important;height:88dvh!important;min-height:0!important;max-height:100%!important;
+ border-radius:28px 28px 0 0!important;animation:svSharedSheetEnter .28s cubic-bezier(.22,.7,.25,1)!important;
+}
+html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open].sv-note-expanded{height:100vh!important;height:100dvh!important;border-radius:0!important;}
+html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open]::backdrop{background:rgba(25,31,41,.24)!important;backdrop-filter:blur(3px)!important;}
+html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open] .sv-note-reader-header{
+ padding:8px 16px 12px!important;grid-template-rows:8px 44px!important;row-gap:6px!important;touch-action:none;
+}
+html:root body dialog#noteReadDialog.notes-dialog.note-read-dialog[open].sv-note-expanded .sv-note-reader-header{padding-top:max(8px,env(safe-area-inset-top,0px))!important;}
+.sv-note-reader-grip{grid-column:1/-1;grid-row:1;justify-self:center;width:34px;height:4px;border-radius:999px;background:#cbd0d5;}
+/* Compact informational panels: no change to their existing content or close actions. */
+html:root body dialog#seyveoOfflineDialog.seyveo-offline-dialog[open]{
+ position:fixed!important;inset:auto 0 0!important;margin:0 auto!important;width:100%!important;max-width:540px!important;
+ max-height:90vh!important;max-height:90dvh!important;border-radius:28px 28px 0 0!important;
+ animation:svSharedSheetEnter .28s cubic-bezier(.22,.7,.25,1)!important;overflow-y:auto!important;
+}
+/* Full-size editors and nested workspaces: motion only, never shrink the
+   keyboard/drawing canvas, scroll panes or the original dock. */
+html:root body dialog:is(#personalTaskDialog,#calendarEventDialog,#noteReviewDialog,#notePaperDialog,#noteScanDialog,#svStaffInvitePage,#svRecruitDetail,#svHrInterview,#seyveoAvatarDialog,#seyveoQrCardDialog,#assistantChatHistoryDialog,#homeWidgetDetails,#pictureBreakdownDialog)[open],
+html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog.sv-doc-edit-sheet[open]{
+ animation:svSharedSheetEnter .28s cubic-bezier(.22,.7,.25,1)!important;
+}
+/* Existing business viewer owns its PDF engine and document-specific Sayvi
+   actions. Give it the same entrance and rounded sheet, don't replace logic. */
+html:root body .svcp-doc-overlay.sv-shared-work-sheet{
+ position:fixed!important;inset:auto 0 0!important;margin:0 auto!important;width:100%!important;max-width:680px!important;
+ height:88vh!important;height:88dvh!important;min-height:0!important;max-height:100%!important;
+ border-radius:28px 28px 0 0!important;animation:svSharedSheetEnter .28s cubic-bezier(.22,.7,.25,1)!important;
+ box-shadow:0 -12px 42px rgba(24,30,40,.20)!important;overflow:hidden!important;
+}
+html:root body .svcp-doc-overlay.sv-shared-work-sheet.is-expanded{height:100vh!important;height:100dvh!important;border-radius:0!important;}
+.sv-work-sheet-shade{position:fixed;inset:0;z-index:2147483000;background:rgba(25,31,41,.25);backdrop-filter:blur(3px);animation:svSharedSheetShade .2s ease-out;}
+html:root body .svcp-doc-overlay.sv-shared-work-sheet{z-index:2147483001!important;}
+.sv-work-sheet-grip{flex:0 0 auto;width:34px;height:4px;border-radius:999px;background:#cbd0d5;margin:8px auto 0;touch-action:none;}
+html:root body .svcp-doc-overlay.sv-shared-work-sheet .svcp-doc-top{touch-action:none;}
+@media(prefers-reduced-motion:reduce){
+ html:root body dialog[open]:is(#noteReadDialog,#seyveoOfflineDialog,#personalTaskDialog,#calendarEventDialog,#noteReviewDialog,#notePaperDialog,#noteScanDialog,#svStaffInvitePage,#svRecruitDetail,#svHrInterview,#seyveoAvatarDialog,#seyveoQrCardDialog,#assistantChatHistoryDialog,#homeWidgetDetails,#pictureBreakdownDialog),
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog:is(.sv-doc-official-dialog,.sv-doc-professional-details,.sv-doc-library-sheet,.sv-doc-edit-sheet)[open],
+ html:root body .svcp-doc-overlay.sv-shared-work-sheet,.sv-work-sheet-shade{animation:none!important;}
+}
