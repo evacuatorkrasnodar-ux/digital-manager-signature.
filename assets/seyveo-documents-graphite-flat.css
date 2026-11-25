@@ -2134,3 +2134,12 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-template
  html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-detail-identity .sv-doc-file-art{grid-row:1 / span 2;width:32px!important;height:36px!important;}
  html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details > .sv-doc-detail-identity .sv-doc-document-name{text-align:left;}
 }
+
+/* Lightweight version action: preserve the full 44px tap target. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-my-template-list > .sv-doc-detail-add-version{
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;
+ min-height:44px!important;width:100%!important;padding:6px 0!important;background:transparent!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;color:#176ab4!important;text-align:left!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-my-template-list > .sv-doc-detail-add-version:active{opacity:.65;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-my-templates.sv-doc-professional-details .sv-doc-my-template-list > .sv-doc-detail-add-version:focus-visible{outline:2px solid currentColor!important;outline-offset:-2px!important;}
