@@ -2411,3 +2411,12 @@ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-draft-renam
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-draft-selection{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;border:1px solid #8b949e;border-radius:50%;color:white;margin:0 6px;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-draft-open[aria-pressed="true"] .sv-doc-draft-selection{background:#176ab4;border-color:#176ab4;}
 html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-draft-selection svg{width:15px;height:15px;}
+
+/* Five readable file actions, advanced fields remain behind "О документе". */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-simple-file-actions[open]{box-sizing:border-box!important;width:min(360px,calc(100vw - 24px))!important;max-height:calc(100dvh - 24px)!important;height:auto!important;overflow:auto!important;border-radius:24px!important;padding:12px!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-simple-file-name{display:block;text-align:center;overflow-wrap:anywhere;font:500 13px/1.4 system-ui;color:var(--secondary,#697583);padding:6px 4px 12px;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-simple-file-list{display:grid;gap:2px;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-simple-file-action{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;min-height:48px!important;padding:8px 12px!important;border:0!important;border-radius:12px!important;background:transparent!important;color:var(--text,#20262d)!important;box-shadow:none!important;font:500 15px/1.3 system-ui!important;text-align:left;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-simple-file-action:active{background:var(--sv-white-pearl-surface,#f5f5f7)!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-simple-file-action.is-danger{color:#c13c37!important;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-simple-file-input{box-sizing:border-box;width:100%;min-height:48px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:14px;font-size:16px;color:var(--text,#20262d);background:var(--card,#fff);}
