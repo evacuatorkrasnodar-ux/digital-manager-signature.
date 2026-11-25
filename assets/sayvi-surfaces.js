@@ -835,7 +835,7 @@ function mailView(){
  window.addEventListener('seyveo:verified-connection-changed',()=>{
   smartContacts?.refresh();paint();
  },{signal:mailGuardListenerAbort.signal});
- const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['review','На проверке'],['promotions','Рассылки'],['spam','Спам'],['trash','Корзина']];
+ const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['promotions','Рассылки'],['spam','Спам'],['trash','Корзина'],['review','На проверке']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
   if(key==='inbox'&&mailShowExamples)return mailExamples.filter(m=>
@@ -1845,11 +1845,12 @@ function mailView(){
   // A single Back in the stable titlebar replaces the extra folder arrow.
   for(const [key,label] of tabs.slice(4)){
    const button=intent(label,()=>selectFolder(key));button.classList.add('sv-mail-extra-link');
-   if(key==='review'){button.dataset.mailReview='true';button.hidden=!folderCount('review')&&mailFolder!=='review';}
+   if(key==='review'){button.dataset.mailReview='true';button.hidden=!folderCount('review')&&mailFolder!=='review';button.replaceChildren(mailIcon('shield'),create('span','sv-mail-review-label',label));}
    if(mailFolder===key)button.setAttribute('aria-current','page');
    if(key==='spam'||key==='review'){
     const total=folderCount(key);if(total||key==='review')button.append(create('small','sv-mail-spam-count',total?String(total):''));
    }
+   if(key==='review'){const arrow=mailIcon('back');arrow.classList.add('sv-mail-review-chevron');button.append(arrow);}
    extraNav.append(button);
   }
   extraNav.hidden=mailEditorOpen||!!mailCurrent||contactsActive;
