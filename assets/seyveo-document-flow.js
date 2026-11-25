@@ -468,8 +468,13 @@ function draw(){
   if(typeof open==='function')open('manage','docs',role==='employee'?'elena':'manager');
   else{info='Рабочий чат пока недоступен.';draw();}
  },'svdf-chat-link');
- moreActions.append(chat);
- if(records.length)moreActions.append(button('Очистить учебную историю',reset,'svdf-reset'));
+ function menuIcon(control,label,markup){
+  const icon=$('span','svdf-menu-icon');icon.setAttribute('aria-hidden','true');icon.innerHTML=markup;
+  control.replaceChildren(icon,$('span','svdf-menu-label',label));control.setAttribute('aria-label',label);
+  return control;
+ }
+ moreActions.append(menuIcon(chat,'Рабочий чат','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H10l-5 4v-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M7 9h10M7 12h7"/></svg>'));
+ if(records.length)moreActions.append(menuIcon(button('Очистить учебную историю',reset,'svdf-reset'),'Очистить учебную историю',window.SEYVEO_DOCUMENT_ICONS?.markup('delete')||'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round"><path d="M4 6h16M9 6V3h6v3M6 6l1 14h10l1-14M10 10v6M14 10v6"/></svg>'));
  menu.append(moreActions);
  const dismiss=()=>{moreActions.hidden=true;menu.setAttribute('data-open','false');moreButton.setAttribute('aria-expanded','false');};
  main.onpointerdown=e=>{if(!menu.contains(e.target))dismiss();};
