@@ -537,7 +537,9 @@ function mount(target,{
    const pageAction=(label,kind,fn)=>{
     const n=button('',fn);n.setAttribute('aria-label',label);n.title=label;n.append(toolArt(kind));return n;
    };
-   pageActions.append(pageAction('Повернуть страницу','undo',()=>{void rotatePage(index);}));
+   const rotate=pageAction('Повернуть страницу','undo',()=>{void rotatePage(index);});
+   rotate.querySelector('.sv-doc-tool-icon').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 4v6h-6M20 10a8 8 0 1 0-1.5 7.5"/></svg>';
+   pageActions.append(rotate);
    if(scans.length>1){
     const before=pageAction('Переместить страницу назад','back',()=>movePage(index,-1));before.disabled=index===0;
     const after=pageAction('Переместить страницу вперёд','back',()=>movePage(index,1));after.classList.add('sv-doc-scan-forward');after.disabled=index===scans.length-1;
@@ -1378,9 +1380,7 @@ function mount(target,{
   filePicker.setAttribute('aria-label','Выбрать документ для печати');
   filePicker.hidden=true;
   const picked=getCurrentFile();
-  if(picked&&/\.(?:pdf|jpe?g|png|webp)$/i.test(picked.name||'')){
-   currentPrint=picked;
-  }else if(scans.length){
+  if(scans.length){
    // A scanned PDF can be printed without first adding it to the vault.
    // This is a private browser preview, never a print-success signal.
    try{
@@ -1388,6 +1388,8 @@ function mount(target,{
      window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf'
     );
    }catch{currentPrint=null;}
+  }else if(picked&&/\.(?:pdf|jpe?g|png|webp)$/i.test(picked.name||'')){
+   currentPrint=picked;
   }else currentPrint=null;
 
   const stage=$('div','sv-doc-print-stage');
