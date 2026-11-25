@@ -148,9 +148,9 @@ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top #sayviSurfa
  padding:0!important;
  transform:none!important;
  border-radius:50%!important;
- background:#38383A!important;
- color:#F5F5F6!important;
- box-shadow:none!important;
+ 
+ 
+ 
 }
 html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top .sv-continuity-space{
  grid-column:3!important;
@@ -200,4 +200,19 @@ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-t
 html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab:focus-visible{
  outline:2px solid #F2F3F5!important;
  outline-offset:-2px!important;
+}
+
+/* The header layout owns geometry only. White navigation uses the shared
+   pearl tokens; keep graphite styling confined to non-light palettes. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top #sayviSurfaceBack{
+ background:var(--sv-white-pearl-surface,#F6F6F7)!important;
+ background-image:none!important;
+ border:var(--sv-white-pearl-edge,1px solid #E8E9EC)!important;
+ color:var(--sv-white-pearl-ink,#17191C)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 3px 12px rgba(31,48,67,.09))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(8px))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(8px))!important;
+}
+html:root:not([data-theme="light"]) body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top #sayviSurfaceBack{
+ background:#38383A!important;color:#F5F5F6!important;box-shadow:none!important;
 }
