@@ -411,6 +411,7 @@ const mailIcons=Object.freeze({
  restore:'<path d="M9 4 4 9l5 5"/><path d="M4 9h10a6 6 0 1 1-5.5 8.3"/>',
  more:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>',
  archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v12h14V9M10 14h4"/>',
+ filter:'<circle cx="12" cy="12" r="9"/><path d="M7 9h10m-8 3h6m-4 3h2"/>',
  search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
  pencil:'<path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M17.4 2.6a2.1 2.1 0 0 1 3 3L12 14l-4 1 1-4Z"/>',
  back:'<path d="m14.5 5-7 7 7 7"/>',
@@ -931,7 +932,9 @@ function mailView(){
   if(!item||!mailExamples.includes(item))return;
   const sender=sampleSenderKey(item);
   if(action!=='trash')clearTrashUndo();
-  if(action==='spam'){
+  if(action==='archive'){
+   item.archived=!item.archived;mailNotice='';
+  }else if(action==='spam'){
    item.spam=true;item.trashed=false;item.archived=false;
    mailNotice='Письмо перемещено в спам · только учебный список.';
   }else if(action==='notspam'){
@@ -1318,6 +1321,9 @@ function mailView(){
   if(item.trashed){
    addMenuAction('restore','Восстановить письмо',()=>updateSampleMail(item,'restore'));
   }else{
+   addMenuAction('inbox',item.unread?'Отметить прочитанным':'Отметить непрочитанным',()=>{
+    item.unread=!item.unread;saveSampleActions();mailCurrent=null;paint();
+   });
    addMenuAction('starred',item.starred?'Убрать из важных':'Добавить в важные',()=>{
     item.starred=!item.starred;saveSampleActions();paintList();
     content.querySelector('.sv-mail-detail-more')?.focus();
@@ -1479,7 +1485,7 @@ function mailView(){
  }
 
  // Multi-select is scoped to the displayed folder, current mailbox and active search.
- let mailBulkSelecting=false;
+ let mailBulkSelecting=false,mailUnreadOnly=false;
  const selectedMailIds=new Set();
  function visibleSampleMail(){
   if(!mailShowExamples)return [];
@@ -1497,7 +1503,7 @@ function mailView(){
    return !m.archived;
   });
   const q=mailSearch.trim();
-  return inFolder.filter(m=>!q||[m.from,m.subject,m.preview,m.body].join(' ').toLocaleLowerCase('ru').includes(q));
+  return inFolder.filter(m=>(mailFolder!=='inbox'||!mailUnreadOnly||m.unread)&&(!q||[m.from,m.subject,m.preview,m.body].join(' ').toLocaleLowerCase('ru').includes(q)));
  }
  function cleanSelectedSampleMail(){
   const allowed=visibleSampleMail().filter(m=>selectedMailIds.has(m.id));
@@ -1530,7 +1536,7 @@ function mailView(){
   paint();return true;
  }
  function renderMailBulkBar(visible){
-  if(mailFolder==='overview'||!visible.length)return;
+  if(mailFolder==='overview'||(!visible.length&&mailFolder!=='inbox'))return;
   const chosen=visible.filter(m=>selectedMailIds.has(m.id)).length;
   const bar=create('div','sv-mail-bulk-toolbar');
   bar.classList.toggle('is-selecting',mailBulkSelecting);
@@ -1538,6 +1544,12 @@ function mailView(){
    ?chosen+' из '+visible.length
    :mailSearch.trim()?'Найдено: '+visible.length:'Писем: '+visible.length);
   bar.append(counter);
+  if(mailFolder==='inbox'&&!mailBulkSelecting){
+   const filter=create('button','sv-mail-unread-filter');filter.type='button';
+   filter.append(mailIcon('filter'),create('span','',mailUnreadOnly?'Непрочитанные':'Все письма'));
+   filter.setAttribute('aria-pressed',String(mailUnreadOnly));filter.setAttribute('aria-label',mailUnreadOnly?'Показать все входящие':'Только непрочитанные');
+   filter.addEventListener('click',()=>{mailUnreadOnly=!mailUnreadOnly;paintList();});bar.append(filter);
+  }
   if(mailBulkSelecting){
    // "Отмена" already clears selection: never offer a duplicate "Снять всё".
    if(visible.length>1&&chosen<visible.length){
@@ -1565,7 +1577,7 @@ function mailView(){
    mailBulkSelecting=!mailBulkSelecting;
    selectedMailIds.clear();paintList();
   });
-  bar.append(select);
+  if(visible.length||mailBulkSelecting)bar.append(select);
   // Keep selection actions in the existing sticky header; normal counts stay in the list.
   if(mailBulkSelecting&&pinnedMailHead.isConnected)pinnedMailHead.append(bar);
   else content.append(bar);
@@ -1578,7 +1590,8 @@ function mailView(){
   const matched=visibleSampleMail();
   if(!matched.length){
    mailBulkSelecting=false;selectedMailIds.clear();
-   content.append(create('p','sv-mail-empty',q?'По этому запросу примеров нет.':'Здесь пока нет писем.'));
+   if(mailFolder==='inbox')renderMailBulkBar(matched);
+   content.append(create('p','sv-mail-empty',q?'По этому запросу примеров нет.':mailFolder==='inbox'&&mailUnreadOnly?'Непрочитанных писем нет.':'Здесь пока нет писем.'));
    return;
   }
   renderMailBulkBar(matched);
@@ -1616,7 +1629,7 @@ function mailView(){
    row.append(avatar,detail,meta);
    row.setAttribute('aria-label',mailBulkSelecting
     ?(selectedMailIds.has(item.id)?'Снять выбор: ':'Выбрать письмо: ')+item.from+', '+item.subject
-    :item.from+', '+item.subject+', учебное письмо. Свайп влево — действия.');
+    :item.from+', '+item.subject+', учебное письмо. Свайп влево — действия, вправо — статус прочтения.');
    const choices=(mailFolder==='review'||mailFolder==='promotions')
     ?[['shield','Доверять',()=>updateSampleMail(item,'trust')],['trash','Удалить',()=>updateSampleMail(item,'trash')]]
     :mailFolder==='spam'
@@ -1629,7 +1642,7 @@ function mailView(){
        const yes=window.confirm('Окончательно удалить это учебное письмо из списка?');
        if(yes)updateSampleMail(item,'remove');
       }]]
-     :[['spam','Спам',()=>updateSampleMail(item,'spam')],['trash','Удалить',()=>updateSampleMail(item,'trash')]];
+     :[['archive',item.archived?'Вернуть':'В архив',()=>updateSampleMail(item,'archive')],['trash','Удалить',()=>updateSampleMail(item,'trash')]];
    function setActionsOpen(open){
     if(open){
      for(const other of group.querySelectorAll('.sv-mail-swipe-shell.is-actions-open')){
@@ -1655,7 +1668,7 @@ function mailView(){
    setActionsOpen(false);
    let touchStart=null;
    shell.addEventListener('touchstart',e=>{
-    if(mailBulkSelecting)return;
+    if(mailBulkSelecting||e.touches.length!==1){touchStart=null;return;}
     const touch=e.touches[0];if(!touch)return;
     touchStart={x:touch.clientX,y:touch.clientY};
    },{passive:true});
@@ -1666,7 +1679,9 @@ function mailView(){
     const dx=end.clientX-touchStart.x,dy=end.clientY-touchStart.y;touchStart=null;
     if(Math.abs(dx)<45||Math.abs(dx)<Math.abs(dy)*1.25)return;
     if(e.cancelable)e.preventDefault();
-    setActionsOpen(dx<0);
+    if(dx<0){setActionsOpen(true);return;}
+    if(shell.classList.contains('is-actions-open')){setActionsOpen(false);return;}
+    if(mailFolder!=='trash'){item.unread=!item.unread;saveSampleActions();paint();}
    },{passive:false});
    shell.addEventListener('touchcancel',()=>{touchStart=null},{passive:true});
    row.addEventListener('click',()=>{
@@ -1722,9 +1737,10 @@ function mailView(){
  }
  function drawDrafts(){
   const list=mailDrafts.filter(d=>mailVisible(d.account)&&(!mailSearch||
-   [d.to,d.subject,d.body].join(' ').toLocaleLowerCase('ru').includes(mailSearch)));
+   [d.to,d.cc,d.bcc,d.subject,d.body].join(' ').toLocaleLowerCase('ru').includes(mailSearch)));
   // A single selection control replaces repetitive trash cans on every line.
   const toolbar=create('div','sv-mail-drafts-bar');
+  toolbar.classList.toggle('is-selecting',mailDraftSelecting);
   const chosenVisible=list.filter(d=>selectedDraftIds.has(d.id)).length;
   const countLabel=create('strong','sv-mail-drafts-count',mailDraftSelecting
    ?chosenVisible+' из '+list.length
@@ -1757,7 +1773,8 @@ function mailView(){
    }
   }
   if(list.length)toolbar.append(change);
-  content.append(toolbar);
+  if(mailDraftSelecting&&list.length&&pinnedMailHead.isConnected)pinnedMailHead.append(toolbar);
+  else content.append(toolbar);
   if(!list.length){
    mailDraftSelecting=false;selectedDraftIds.clear();
    content.append(create('p','sv-mail-empty',mailSearch?'Черновики не найдены.':'Черновиков пока нет. Нажмите карандаш, чтобы написать письмо.'));
@@ -1873,6 +1890,7 @@ function mailView(){
  function paintList(){
   if(mailEditorViewportCleanup){mailGuardListenerAbort.signal.removeEventListener('abort',mailEditorViewportCleanup);mailEditorViewportCleanup();mailEditorViewportCleanup=null;}
   pinnedMailHead.querySelector(':scope > .sv-mail-bulk-toolbar')?.remove();
+  pinnedMailHead.querySelector(':scope > .sv-mail-drafts-bar')?.remove();
   section.classList.toggle('sv-mail-bulk-active',mailBulkSelecting&&mailFolder!=='overview'&&!mailEditorOpen&&!mailCurrent);
   content.replaceChildren();
   if(mailEditorOpen){drawEditor();return}
