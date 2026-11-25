@@ -848,3 +848,37 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
  padding-bottom:calc(144px + env(safe-area-inset-bottom,0px))!important;
  scroll-padding-bottom:calc(144px + env(safe-area-inset-bottom,0px));
 }
+
+/* Selection mode: light text actions in the existing pinned Mail header.
+   No new scroll container, translucent footer or animated layout. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-bulk-toolbar.is-selecting{
+ display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ flex-wrap:nowrap!important;box-sizing:border-box!important;gap:4px!important;
+ width:100%!important;min-height:44px!important;margin:0!important;padding:0 2px!important;
+ border:0!important;border-bottom:1px solid rgba(35,45,60,.07)!important;
+ border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-bulk-toolbar.is-selecting > .sv-mail-bulk-counter{
+ flex:1 1 auto!important;min-width:0!important;margin:0!important;
+ font-size:12px!important;font-weight:550!important;white-space:nowrap!important;
+ color:#58616B!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-bulk-toolbar.is-selecting > :is(.sv-mail-bulk-all,.sv-mail-bulk-select,.sv-mail-bulk-clean){
+ flex:0 0 auto!important;box-sizing:border-box!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ min-width:44px!important;width:auto!important;min-height:44px!important;height:44px!important;
+ padding:0 6px!important;margin:0!important;border:0!important;border-radius:10px!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
+ color:#007AFF!important;font-size:12px!important;font-weight:550!important;
+ white-space:nowrap!important;transform:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-bulk-toolbar.is-selecting > .sv-mail-bulk-clean{
+ color:#D63236!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-bulk-toolbar.is-selecting > button:active{
+ background:rgba(120,132,147,.08)!important;
+}
+@media(max-width:360px){
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-bulk-toolbar.is-selecting{gap:1px!important;padding:0!important}
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-pinned-head > .sv-mail-bulk-toolbar.is-selecting > :is(.sv-mail-bulk-all,.sv-mail-bulk-select,.sv-mail-bulk-clean){padding:0 3px!important;font-size:11px!important}
+}
