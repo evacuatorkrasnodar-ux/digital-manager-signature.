@@ -5086,6 +5086,26 @@ html:root[data-theme="light"] body #sayviTopActions .sv-top-action{
     edit:'Сэйви, помоги отредактировать документ, который я прикреплю через плюс. Сначала уточни, что нужно изменить, затем подготовь новую редакцию. Если файла не будет, попроси его приложить.',
     export:'Сэйви, помоги подготовить документ для скачивания в PDF или Word. Я приложу исходный файл через плюс. Уточни формат и необходимые изменения, покажи результат для проверки. Пока файл не приложен, не утверждай, что прочитала его.'
    };
+   if(valid&&message.intent==='edit-current'&&typeof message.ref==='string'){
+    // The user opened Sayvi from the editor. Recover the exact chosen document
+    // from the encrypted session cache, not from the archive or URL.
+    void (async()=>{
+     const cached=await window.SEYVEO_CHAT_FILES?.restore(message.ref);
+     if(!cached)throw Error('Не удалось восстановить документ. Вернитесь в редактор и повторите.');
+     const payload=JSON.parse(await cached.text());
+     if(typeof payload.text!=='string'||!payload.text.trim()||payload.text.length>12000)throw Error('Текст документа недоступен.');
+     const title=String(payload.title||payload.text.split('\n').find(line=>line.trim())||'Документ').trim().slice(0,100);
+     const name=(title.replace(/[\\/:*?"<>|]/g,'-').trim()||'Документ')+'.txt';
+     const file=new File([payload.text],name,{type:'text/plain'});
+     addAttachments([file]);
+     if(!pendingAttachments.some(item=>item.file===file))throw Error('Не удалось прикрепить документ. Проверьте список вложений.');
+     workingDocument={conversation:currentId,text:payload.text};
+     const question='Сэйви, помоги заполнить и доработать этот документ. Сначала уточни недостающие данные и не выдумывай их. Сохрани структуру и затем подготовь полный текст для проверки.';
+     if(!input.value.trim())input.value=question;
+     updateControls();
+     status.textContent='Документ «'+title+'» прикреплён. Нажмите стрелку, чтобы Сэйви помогла именно с ним.';
+    })().catch(error=>{status.textContent=error.message||'Не удалось передать документ.';});
+   }
    // Home card handoff: never auto-send, keep draft inside sessionStorage
    // (never put document wording in a navigation URL).
    const cardReview=valid&&message.intent==='card-review';
