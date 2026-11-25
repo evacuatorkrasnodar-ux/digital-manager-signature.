@@ -464,7 +464,7 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
   markupSession=result;
  };
  if(onEdit&&(info.kind==='text'||info.ext==='docx'||info.kind==='image'||info.kind==='pdf')){
-  const edit=action('Изменить','edit',async()=>{
+  const edit=action(info.kind==='image'?'Обработать':'Изменить','edit',async()=>{
    if(edit.disabled)return;
    edit.disabled=true;
    try{
@@ -498,11 +498,18 @@ function mount(target,file,{onSignImage=null,onSayvi=null,onEdit=null,onSaveCopy
    }catch(e){if(active)say(e?.message||'Не удалось открыть редактор.');}
    finally{edit.disabled=false;sayviAfterEdit=false;}
   });
-  editAction=edit;toolbar.append(edit);
+  editAction=edit;
+  // Text documents already support direct editing. Only images need a separate processing action.
+  if(info.kind==='image')toolbar.append(edit);
   // Text and full-page previews open a confirmed editable copy.
   // Keep native selection, scrolling, zoom and inline PDF preview buttons intact.
   if(info.kind!=='image'){
    stage.classList.add('svdv-tap-edit');
+   stage.tabIndex=0;stage.setAttribute('aria-label','Документ. Нажмите на текст для редактирования.');
+   stage.addEventListener('keydown',event=>{
+    if(event.target!==stage||inline||markupSession||edit.disabled||!stage.querySelector('.svdv-reader-page,.svdv-text'))return;
+    if(event.key==='Enter'||event.key===' '){event.preventDefault();edit.click();}
+   });
    let tapStart=null;
    stage.addEventListener('pointerdown',event=>{
     tapStart=event.isPrimary!==false&&event.button===0?{x:event.clientX,y:event.clientY,at:Date.now()}:null;
