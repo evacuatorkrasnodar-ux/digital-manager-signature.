@@ -1059,38 +1059,45 @@ function mount(target,{
   });
   editing.append(filename,body);
 
-  const formatSwitch=$('div','sv-doc-edit-formats');
-  formatSwitch.setAttribute('role','group');
-  formatSwitch.setAttribute('aria-label','Выбор формата документа');
-  const saveButton=button('',()=>{
-   const {dlg,content}=templateDialog('Сохранить');
-   content.append(button('Сохранить документ',()=>{dlg.close();void saveSelected();},'sv-doc-my-template-primary'),button('Сохранить как шаблон',()=>{dlg.close();if(!body.value.trim()){message('Напишите текст документа.');return;}saveTemplateDialog({name:filename.value.trim()||body.value.split('\n').find(x=>x.trim())?.trim().slice(0,100)||'Шаблон',text:body.value,format:documentFormat});},'sv-doc-my-template-option'));
-  },'sv-doc-edit-action');
-  const saveLabel=$('span','','Сохранить');
-  const shareButton=button('',shareSelected,'sv-doc-edit-action');
-  const selectedFormat=[];
-  for(const option of [
-   {id:'pdf',label:'PDF',caption:'Для просмотра',art:'pdf'},
-   {id:'docx',label:'Word',caption:'Для правок',art:'file'}
-  ]){
-   const optionButton=button('',()=>{
-    if(documentFormat===option.id)return;draftEdited=true;documentFormat=option.id;syncFormat();void persistDraft();
-   },'sv-doc-edit-format');
-   optionButton.append($('span','',option.label));
-   optionButton.setAttribute('aria-pressed',String(documentFormat===option.id));
-   const formatDescription=option.id==='pdf'?'PDF · изображение текста':'Word · редактируемый DOCX';
-   optionButton.setAttribute('aria-label',formatDescription);
-   optionButton.title=formatDescription;
-   selectedFormat.push({id:option.id,button:optionButton});
-   formatSwitch.append(optionButton);
+  // One editor. Choose the output format only when performing an export.
+  function chooseExportFormat(action,perform,{allowTemplate=false}={}){
+   if(!body.value.trim()){message('Напишите текст документа.');return;}
+   if(body.value.length>12000){message('Введите текст до 12 000 знаков.');return;}
+   if(sheet.querySelector('.sv-doc-export-choice[open]'))return;
+   const {dlg,content}=templateDialog('Формат документа');
+   dlg.classList.add('sv-doc-export-choice');
+   dlg.setAttribute('aria-label',action+' · Формат документа');
+   for(const option of [
+    {id:'pdf',label:'PDF',caption:'Для просмотра и печати',mark:'PDF'},
+    {id:'docx',label:'Word',caption:'Для дальнейшего редактирования',mark:'W'}
+   ]){
+    const choice=button('',()=>{
+     // Keep the export inside the original tap, including native Share.
+     if(!dlg.open)return;
+     documentFormat=option.id;dlg.close();
+     perform(option.id);
+     void persistDraft();
+    },'sv-doc-export-option');
+    choice.dataset.format=option.id;choice.setAttribute('aria-label',option.label+' · '+option.caption);
+    const art=$('span','sv-doc-export-art');art.setAttribute('aria-hidden','true');
+    art.append(actionIcon('original'),$('span','sv-doc-export-art-label',option.mark));
+    const copy=$('span','sv-doc-export-copy');copy.append($('strong','',option.label),$('small','',option.caption));
+    const next=$('span','sv-doc-export-chevron');next.setAttribute('aria-hidden','true');
+    choice.append(art,copy,next);content.append(choice);
+   }
+   if(allowTemplate){
+    const template=button('',()=>{
+     if(!dlg.open)return;dlg.close();
+     saveTemplateDialog({name:filename.value.trim()||body.value.split('\n').find(x=>x.trim())?.trim().slice(0,100)||'Шаблон',text:body.value,format:documentFormat});
+    },'sv-doc-export-template');
+    template.append(actionIcon('copy'),$('span','','Сохранить как шаблон'));content.append(template);
+   }
   }
+  const saveButton=button('',()=>chooseExportFormat('Сохранить',saveSelected,{allowTemplate:true}),'sv-doc-edit-action');
+  const saveLabel=$('span','','Сохранить');saveButton.setAttribute('aria-label','Сохранить');
+  const shareButton=button('',()=>chooseExportFormat('Поделиться',shareSelected),'sv-doc-edit-action');
+  shareButton.setAttribute('aria-label','Поделиться');
   function syncFormat(){
-   selectedFormat.forEach(({id,button})=>
-    button.setAttribute('aria-pressed',String(id===documentFormat)));
-   saveButton.setAttribute('aria-label',documentFormat==='pdf'?'Сохранить PDF':'Сохранить Word');
-
-   // Export format is not an editor mode. Never change toolbar geometry,
-   // text styling, focus, selection or scroll position on PDF/DOCX toggle.
    typography.hidden=false;
    rail.setAttribute('aria-label','Инструменты документа, листайте горизонтально');
   }
@@ -1099,12 +1106,12 @@ function mount(target,{
    const title=documentName.trim()||first.slice(0,80);
    return title.replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').trim()||'Документ';
   }
-  function preparedFile(){
+  function preparedFile(format){
    if(!body.value.trim()||body.value.length>12000){
     message('Напишите текст документа.');return null;
    }
    try{
-    if(documentFormat==='pdf'){
+    if(format==='pdf'){
      return {blob:textPdf(body.value,wordStyle),name:safeDocumentName()+'.pdf',label:'PDF'};
     }
     return {blob:window.SEYVEO_DOCS_EXPORT.docxFromText(body.value,wordStyle),
@@ -1114,15 +1121,15 @@ function mount(target,{
     return null;
    }
   }
-  async function saveSelected(){
-   const ready=preparedFile();if(!ready)return;
+  async function saveSelected(format){
+   const ready=preparedFile(format);if(!ready)return;
    try{
     await window.SEYVEO_DOCUMENT_FILES.save(area,asFile(ready.blob,ready.name),'created',{text:body.value,status:'ready'});
     message('Документ сохранён в разделе «Все файлы».');
    }catch(e){message(e.message||'Не удалось сохранить документ.');}
   }
-  function shareSelected(){
-   const ready=preparedFile();if(!ready)return;
+  function shareSelected(format){
+   const ready=preparedFile(format);if(!ready)return;
    void shareExport(ready.blob,ready.name).then(
     result=>message(shareMessage(result,ready.label)),
     ()=>message('Не удалось открыть системное меню.')
@@ -1130,7 +1137,7 @@ function mount(target,{
   }
   syncFormat();
   const sheet=$('dialog','sv-doc-edit-sheet');
-  sheet.setAttribute('aria-label',fromScan?'Редактор Word':'Редактор документа');
+  sheet.setAttribute('aria-label','Редактор документа');
   const top=$('header','sv-doc-edit-top');
   const actionIcon=(kind)=>{
    const mark=$('span','sv-doc-edit-icon');
@@ -1148,19 +1155,20 @@ function mount(target,{
   const sayviEditor=button('',helpWithCurrentDocument,'sv-doc-edit-ai');
   sayviEditor.setAttribute('aria-label','Создать с Сэйви');
   const aiMark=$('span','sv-doc-edit-ai-mark sv-sayvi-symbol');aiMark.setAttribute('aria-hidden','true');sayviEditor.append(aiMark);
-  top.append(back,$('strong','',fromScan?'Редактор Word':'Документ'),sayviEditor);
+  top.append(back,$('strong','','Документ'),sayviEditor);
   saveButton.append(actionIcon('download'),saveLabel);
   shareButton.append(actionIcon('share'),$('span','','Поделиться'));
-  const archive=button('',()=>{
-   const ready=preparedFile();if(!ready)return;
+  const archive=button('',()=>chooseExportFormat('В архив',format=>{
+   const ready=preparedFile(format);if(!ready)return;
    try{onImport(asFile(ready.blob,ready.name));if(sheet.open)sheet.close();}
    catch(error){message(error?.message||'Не удалось подготовить файл для архива.');}
-  },'sv-doc-edit-action');
+  }),'sv-doc-edit-action');
+  archive.setAttribute('aria-label','В архив');
   archive.append(actionIcon('archive'),$('span','','В архив'));
   const footer=$('footer','sv-doc-edit-footer');
   const actions=$('div','sv-doc-edit-actions');actions.append(saveButton,shareButton,archive);
   const draftIndicator=$('small','sv-doc-draft-indicator');draftIndicator.setAttribute('role','status');draftIndicator.textContent=draftFeedback.textContent;
-  footer.append(typography,formatSwitch,actions,status(''),draftIndicator);
+  footer.append(typography,actions,status(''),draftIndicator);
   sheet.append(top,editing,footer);
   sheet.addEventListener('pointerdown',event=>{if(!typography.contains(event.target))setFormatMenu(false);});
   sheet.addEventListener('cancel',event=>{event.preventDefault();if(!formatMenu.hidden){closeWordMenuWithFocus();}else back.click();});
