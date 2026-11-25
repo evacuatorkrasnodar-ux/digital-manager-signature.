@@ -1,0 +1,127 @@
+/* SEYVEO landscape contract. CSS reflow only: no remount, orientation lock,
+   sensor permission or change to document bytes. Typing stays above keyboard. */
+@media (orientation:landscape) and (max-height:540px) and (max-width:1100px){
+ :root{
+  --sv-landscape-left:max(10px,env(safe-area-inset-left,0px));
+  --sv-landscape-right:max(10px,env(safe-area-inset-right,0px));
+  --sv-landscape-top:max(6px,env(safe-area-inset-top,0px));
+  --sv-landscape-bottom:max(6px,env(safe-area-inset-bottom,0px));
+  --sv-landscape-tools:64px;
+ }
+ /* Main pages use the existing safe-area-aware app and native scroll;
+    navigation docks retain their measured horizontal active indicator. */
+ html body .app{
+  max-width:100%!important;
+  padding-left:var(--sv-landscape-left)!important;
+  padding-right:var(--sv-landscape-right)!important;
+  box-sizing:border-box;
+ }
+ html body :is(#svcpWorkChatScreen,#sayviSurfacePage){
+  box-sizing:border-box;min-width:0;
+ }
+ /* Scanner and standalone photo viewer: one image workspace and side rail. */
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scanner-sheet.sv-doc-scan-fullscreen{
+  width:100%!important;max-width:100%!important;
+  padding:var(--sv-landscape-top) var(--sv-landscape-right) var(--sv-landscape-bottom) var(--sv-landscape-left)!important;
+ }
+ html:root body .svdv-bottom-sheet:has(.svdv-photo-toolbar):not(.sv-editor-keyboard-open){
+  inset:0!important;width:100%!important;max-width:100%!important;
+  height:100vh!important;height:100dvh!important;max-height:100%!important;
+  border-radius:0!important;padding:var(--sv-landscape-top) var(--sv-landscape-right) var(--sv-landscape-bottom) var(--sv-landscape-left)!important;
+ }
+ html:root body .svdv-bottom-sheet:has(.svdv-photo-toolbar):not(.sv-editor-keyboard-open) .svdv-sheet-grip{display:none!important;}
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-scan-editor-host>.svdv-scan-embedded,
+ html:root body .svdv-bottom-sheet:not(.sv-editor-keyboard-open) .svdv-viewer:has(>.svdv-photo-toolbar:not([hidden])){
+  display:grid!important;grid-template-columns:minmax(0,1fr) var(--sv-landscape-tools)!important;
+  grid-template-rows:auto minmax(0,1fr)!important;gap:4px 8px!important;min-height:0!important;
+ }
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-scan-editor-host>.svdv-scan-embedded{grid-template-rows:minmax(0,1fr)!important;}
+ html:root body .svdv-bottom-sheet:not(.sv-editor-keyboard-open) .svdv-viewer:has(>.svdv-photo-toolbar:not([hidden]))>.svdv-header{grid-column:1/-1;grid-row:1;}
+ html:root body .svdv-bottom-sheet:not(.sv-editor-keyboard-open) .svdv-viewer:has(>.svdv-photo-toolbar:not([hidden]))>.svdv-stage{grid-column:1;grid-row:2;display:flex!important;align-items:center;justify-content:center;min-height:0!important;}
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] .svdv-scan-embedded>.svdv-stage{grid-column:1;grid-row:1;min-height:0!important;}
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] .svdv-scan-embedded>.svdv-toolbar.svdv-photo-toolbar:not([hidden]),
+ html:root body .svdv-bottom-sheet:not(.sv-editor-keyboard-open) .svdv-viewer>.svdv-toolbar.svdv-photo-toolbar:not([hidden]){
+  grid-column:2;grid-row:2;align-self:stretch!important;display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:flex-start!important;box-sizing:border-box!important;
+  width:var(--sv-landscape-tools)!important;min-width:0!important;max-width:var(--sv-landscape-tools)!important;
+  height:100%!important;min-height:0!important;max-height:100%!important;margin:0!important;padding:3px!important;border-radius:26px!important;
+ }
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] .svdv-scan-embedded>.svdv-toolbar.svdv-photo-toolbar:not([hidden]){grid-row:1;}
+ html:root body :is(.svdv-scan-embedded,.svdv-bottom-sheet:not(.sv-editor-keyboard-open)) .svdv-toolbar.svdv-photo-toolbar>.svdv-photo-rail{
+  display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:center!important;gap:2px!important;
+  width:100%!important;min-height:0!important;max-height:100%!important;flex:1 1 0!important;
+  padding:0!important;overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important;overscroll-behavior-y:contain;
+ }
+ html:root body :is(.svdv-scan-embedded,.svdv-bottom-sheet:not(.sv-editor-keyboard-open)) .svdv-toolbar.svdv-photo-toolbar .svdv-photo-rail>.svdv-action{
+  flex:0 0 44px!important;width:100%!important;min-width:0!important;max-width:100%!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;flex-direction:column!important;gap:2px!important;
+  padding:1px!important;font-size:9px!important;white-space:nowrap!important;
+ }
+ html:root body .svdv-bottom-sheet:not(.sv-editor-keyboard-open) .svdv-photo-toolbar>.svdv-more{width:100%!important;min-width:0!important;flex:0 0 44px!important;}
+ html:root body .svdv-bottom-sheet:not(.sv-editor-keyboard-open) .svdv-photo-toolbar>.svdv-more>.svdv-more-options{bottom:0;right:calc(100% + 8px);max-height:calc(100dvh - 24px);overflow:auto;}
+ html:root body :is(.svdv-scan-embedded,.svdv-bottom-sheet:not(.sv-editor-keyboard-open)) .svdv-photo-adjust{
+  flex-direction:row!important;align-items:center!important;justify-content:center!important;min-height:0;overflow:auto;
+ }
+ html:root body :is(.svdv-scan-embedded,.svdv-bottom-sheet:not(.sv-editor-keyboard-open)) .svdv-photo-adjust>.svdv-photo-canvas{
+  flex:0 1 auto;max-width:48%!important;max-height:100%!important;
+ }
+ html:root body :is(.svdv-scan-embedded,.svdv-bottom-sheet:not(.sv-editor-keyboard-open)) .svdv-photo-adjust-controls{
+  flex:1 1 0!important;min-width:0;max-width:280px;
+ }
+ html:root body :is(.svdv-scan-embedded,.svdv-bottom-sheet:not(.sv-editor-keyboard-open)) .svdv-adjust-row{
+  grid-template-columns:84px minmax(0,1fr) 26px;min-height:44px;
+ }
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-scan-shared-tools .sv-doc-scan-compact-thumbs>button{
+  width:42px!important;height:46px!important;min-height:46px!important;flex-basis:42px!important;
+ }
+ /* PDF ink uses its existing controls; text-entry/keyboard controls remain horizontal. */
+ html:root body .svdv-bottom-sheet.svdv-edit-fullscreen:not(.sv-editor-keyboard-open):has(.svdv-ink-rail){
+  width:100%!important;max-width:100%!important;padding-left:var(--sv-landscape-left)!important;padding-right:var(--sv-landscape-right)!important;
+ }
+ html:root body .svdv-bottom-sheet.svdv-edit-fullscreen:not(.sv-editor-keyboard-open) .svdv-viewer:has(>.svdv-inline-controls:not([hidden]) .svdv-ink-rail){
+  display:grid!important;grid-template-columns:minmax(0,1fr) 54px!important;grid-template-rows:auto minmax(0,1fr)!important;gap:4px 8px!important;
+ }
+ html:root body .svdv-bottom-sheet:not(.sv-editor-keyboard-open) .svdv-viewer:has(.svdv-ink-rail)>.svdv-header{grid-column:1/-1;}
+ html:root body .svdv-bottom-sheet:not(.sv-editor-keyboard-open) .svdv-viewer:has(.svdv-ink-rail)>.svdv-stage{grid-column:1;grid-row:2;}
+ html:root body .svdv-bottom-sheet:not(.sv-editor-keyboard-open) .svdv-inline-controls:has(>.svdv-ink-rail):not([hidden]){
+  grid-column:2;grid-row:2;width:54px!important;max-width:54px!important;height:100%;min-height:0;align-self:stretch;
+ }
+ html:root body .svdv-bottom-sheet:not(.sv-editor-keyboard-open) .svdv-inline-rail.svdv-ink-rail{
+  flex-direction:column!important;justify-content:flex-start!important;width:54px!important;height:100%!important;min-height:0!important;
+  overflow-y:auto!important;overflow-x:hidden!important;touch-action:pan-y!important;padding:3px!important;border-radius:26px!important;
+ }
+ html:root body .svdv-bottom-sheet:not(.sv-editor-keyboard-open) .svdv-inline-controls:has(>.svdv-ink-rail) .svdv-ink-menu:not([hidden]){
+  left:auto!important;right:calc(100% + 6px)!important;bottom:0!important;transform:none!important;max-width:min(280px,55vw)!important;max-height:100%;overflow:auto;
+ }
+ /* Drawing retains the same canvas and resize observer. Reserve a side gutter
+    for the actual tool dock, without changing stroke coordinates in JS. */
+ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
+  left:var(--sv-landscape-left)!important;right:var(--sv-landscape-right)!important;width:auto!important;
+  max-width:none!important;transform:none!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
+ }
+ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock{
+  position:absolute!important;top:calc(51px + var(--sv-landscape-top))!important;right:0!important;left:auto!important;
+  flex-direction:column!important;justify-content:flex-start!important;align-items:center!important;
+  width:50px!important;min-width:50px!important;max-width:50px!important;
+  height:auto!important;min-height:0!important;max-height:calc(100dvh - 116px - var(--sv-landscape-top) - var(--sv-landscape-bottom))!important;
+  margin:0!important;padding:3px!important;border-radius:25px!important;overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important;
+ }
+ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock>button.sv-newdock-button{
+  flex:0 0 44px!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;max-width:44px!important;max-height:44px!important;
+ }
+ html body #notePaperDialog.sv-paper-studio[open] > #notePaperStage.sv-paper-stage{
+  width:calc(100% - 56px - var(--sv-landscape-right) - var(--sv-landscape-left))!important;
+  max-width:none!important;margin-left:var(--sv-landscape-left)!important;margin-right:auto!important;
+ }
+ /* Note scanner and text entry can scroll at short viewport heights.
+    The keyboard-sensitive layout and chat composer remain native. */
+ html:root body dialog#noteScanDialog.paper-scan-dialog[open]{
+  padding-left:var(--sv-landscape-left)!important;padding-right:var(--sv-landscape-right)!important;
+ }
+ html:root body dialog#noteScanDialog.paper-scan-dialog[open] .sv-scan-document-stage{
+  max-height:calc(100dvh - 100px);min-height:0;overflow:auto;
+ }
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-bottom{
+  max-width:calc(100% - var(--sv-landscape-left) - var(--sv-landscape-right));
+ }
+}
