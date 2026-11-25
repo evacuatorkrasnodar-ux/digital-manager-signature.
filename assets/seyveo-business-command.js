@@ -560,7 +560,9 @@ function svcpOpenDocument(file,sourceMessage=null){
  let pdfLoadingTask=null,pdfDoc=null,pdfObserver=null;
  let sayviController=null,sayviTextCache=null,sayviTextPromise=null;
  const sayviHistory=[];
- const sheet=el('section','svcp-doc-overlay');
+ const sheet=el('section','svcp-doc-overlay sv-shared-work-sheet');
+ const shade=el('div','sv-work-sheet-shade');shade.setAttribute('aria-hidden','true');
+ const grip=el('div','sv-work-sheet-grip');grip.setAttribute('aria-hidden','true');
  if(kind==='word'||kind==='text')sheet.classList.add('svcp-doc-overlay--paper');
  if(['word','pdf','text'].includes(kind))sheet.classList.add('svcp-doc-overlay--document');
  sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');
@@ -809,7 +811,7 @@ function svcpOpenDocument(file,sourceMessage=null){
  sayviSubmit.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>';
  sayviForm.append(sayviInput,sayviSubmit);
  sayviPanel.append(sayviHead,sayviFeed,sayviForm);
- sheet.append(top,body,bottom,sayviPanel);
+ sheet.append(grip,top,body,bottom,sayviPanel);
 
  function hideSayvi(){
   sayviPanel.hidden=true;sayviTrigger.setAttribute('aria-expanded','false');
@@ -970,13 +972,18 @@ function svcpOpenDocument(file,sourceMessage=null){
   document.removeEventListener('keydown',onKey);
   pdfObserver?.disconnect();pdfObserver=null;
   try{pdfLoadingTask?.destroy()?.catch?.(()=>{})}catch{}
-  sheet.remove();URL.revokeObjectURL(url);
+  sheet.remove();shade.remove();URL.revokeObjectURL(url);
   svcpCurrentDocClose=null;
   if(last?.isConnected)last.focus({preventScroll:true});
  }
  back.addEventListener('click',close);
  document.addEventListener('keydown',onKey);
- document.body.append(sheet);
+ document.body.append(shade,sheet);
+ shade.addEventListener('click',close);
+ const expand=()=>sheet.classList.add('is-expanded');
+ const dismiss=()=>{if(sheet.classList.contains('is-expanded'))sheet.classList.remove('is-expanded');else close();};
+ window.SEYVEO_SHEET_NAVIGATION?.attach(grip,expand,dismiss);
+ window.SEYVEO_SHEET_NAVIGATION?.attach(top,expand,dismiss);
  svcpCurrentDocClose=close;back.focus({preventScroll:true});
  if(kind==='pdf')requestAnimationFrame(()=>{if(live)void renderPdfPages()});
 }
