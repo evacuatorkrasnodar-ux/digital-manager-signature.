@@ -461,3 +461,8 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  > :is(#svcpConversationStandaloneBack,.svcp-call-actions) button::after{
  transform:none!important;animation:none!important;
 }
+
+/* Sky identity: separate the two shapes with a small optical gap. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2{
+ --svcp-header-overlap:3px;
+}

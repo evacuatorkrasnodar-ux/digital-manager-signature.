@@ -2112,3 +2112,9 @@ html:root body #svcpWorkChatScreen[data-view="inbox"] #svcpConversationList > :i
  flex-shrink:0!important;
 }
 html:root body #svcpWorkChatScreen[data-view="inbox"] #svcpConversationList::-webkit-scrollbar{display:none}
+
+/* Empty sky conversation only: solid readable blue-black text. */
+html:root body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages > p.svcp-note:only-child{
+ color:#18384D!important;-webkit-text-fill-color:#18384D!important;
+ opacity:1!important;
+}

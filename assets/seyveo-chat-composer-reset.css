@@ -377,3 +377,11 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  background:rgba(225,229,234,.60)!important;
  color:#252A31!important;-webkit-text-fill-color:#252A31!important;
 }
+
+/* Installed iPhone: keep the blue composer clear of the Home indicator.
+   Same compact/expanded bottom anchor; no extra painted footer or keyboard handler. */
+@media (max-width:720px){
+ html.seyveo-standalone body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset{
+  bottom:calc(6px + min(12px,env(safe-area-inset-bottom,0px)))!important;
+ }
+}
