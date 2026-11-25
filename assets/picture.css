@@ -1250,3 +1250,11 @@ html:root body #picturePage .picture-kpi strong{font-size:20px!important;font-we
 html:root[data-theme="light"] body #picturePage .picture-bin-bar{background:#78A9D5!important;opacity:1!important}
 html:root[data-theme="light"] body #picturePage #pictureSources .picture-split-fill{background:#81A9D0!important}
 html:root[data-theme="light"] body #picturePage #pictureExpenses .picture-split-fill{background:#D7A172!important}
+
+/* Mobile Pulse: the shared app already owns the native top safe area.
+   Do not count it again inside the analytics page. Desktop stays unchanged. */
+@media (max-width:720px), (orientation:landscape) and (max-height:540px){
+ html:root body .app > #picturePage.picture-main:not([hidden]){
+  padding-top:0!important;
+ }
+}
