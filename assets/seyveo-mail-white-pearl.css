@@ -10,8 +10,8 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
  transform:translateY(-50%)!important;text-align:center!important;pointer-events:none!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-introduction-title{
- margin:0!important;padding:0!important;font:640 17px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
- letter-spacing:-.025em!important;color:var(--sv-white-pearl-ink)!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ margin:0!important;padding:0!important;font:var(--sv-header-title-weight,590) var(--sv-header-title-size,20px)/var(--sv-header-title-leading,1.2) -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:var(--sv-header-title-tracking,-.02em)!important;color:var(--sv-header-ink,#1c1c1e)!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons{
  box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
@@ -418,7 +418,7 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv
 }
 @media(max-width:390px){
  html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-introduction-title{
-  font-size:15px!important;letter-spacing:-.025em!important;
+  font-size:var(--sv-header-title-size,20px)!important;letter-spacing:var(--sv-header-title-tracking,-.02em)!important;
  }
 }
 
@@ -746,4 +746,25 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is
 }
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-bulk-select,.sv-mail-bulk-all,.sv-mail-drafts-select,.sv-mail-drafts-all):active{
  background:#EDF5FF!important;color:#176AB4!important;
+}
+
+/* Mail overview: same 44px header axis and glyph contract as Documents.
+   Keep the real pinned header, all account controls and scrollport intact. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head > .sv-mail-top-actions:not([hidden]){
+ height:var(--sv-apple-nav-row,44px)!important;
+ min-height:var(--sv-apple-nav-row,44px)!important;
+ max-height:var(--sv-apple-nav-row,44px)!important;
+ padding:0!important;margin:0 0 10px!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-top-actions > #sayviSurfaceBack > svg{
+ width:var(--sv-header-back-icon,22px)!important;height:var(--sv-header-back-icon,22px)!important;
+ min-width:var(--sv-header-back-icon,22px)!important;min-height:var(--sv-header-back-icon,22px)!important;
+ max-width:var(--sv-header-back-icon,22px)!important;max-height:var(--sv-header-back-icon,22px)!important;
+ stroke-width:var(--sv-header-back-weight,1.45)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-top-buttons > .sv-mail-icon-button > svg{
+ width:var(--sv-header-action-icon,20px)!important;height:var(--sv-header-action-icon,20px)!important;
+ min-width:var(--sv-header-action-icon,20px)!important;min-height:var(--sv-header-action-icon,20px)!important;
+ max-width:var(--sv-header-action-icon,20px)!important;max-height:var(--sv-header-action-icon,20px)!important;
+ stroke-width:var(--sv-nav-glyph-stroke,1.7)!important;
 }
