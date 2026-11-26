@@ -2157,10 +2157,10 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack svg,
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack svg path{
- stroke-width:2.05!important;
+ stroke-width:1.9!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack svg{
- width:28px!important;height:28px!important;
+ width:29px!important;height:29px!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > :is(#svcpAudioCall,#svcpVideoCall).svcp-call-button:not([hidden]) svg :is(path,rect){
  stroke-width:1.55!important;
