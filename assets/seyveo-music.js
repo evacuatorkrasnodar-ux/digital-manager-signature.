@@ -112,6 +112,8 @@ let miniDismissed=false;
 // A selected local file is not a playing session. Show the small remote only
 // after the audio element has actually started playback at least once.
 let hasPlayed=false;
+// Home session begins on actual playback and ends only by explicit Stop.
+let homeMusicSession=false;
 // Discovery counts actual playback only after 30 uninterrupted seconds.
 // This timer is independent of the approved mini-player and MediaSession.
 let discoveryListenTimer=0,discoveryCountedVersion=-1;
@@ -507,6 +509,7 @@ const stopAndHide=$('sayviMusicStopAndHide');
 stopAndHide?.addEventListener('click',()=>{
  stopDiscoveryListen();
  miniDismissed=true;
+ homeMusicSession=false;
  audio.pause();
  updatePlay();
  minimizeMusic();
@@ -633,7 +636,7 @@ options.addEventListener('click',event=>{
 audio.addEventListener('timeupdate',updateTime);
 audio.addEventListener('durationchange',updateTime);
 audio.addEventListener('loadedmetadata',updateTime);
-audio.addEventListener('playing',()=>{const file=tracks[index];if(file)recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);updatePlay();sayviMessage('');qualifyDiscoveryListen()});
+audio.addEventListener('playing',()=>{homeMusicSession=true;const file=tracks[index];if(file)recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);updatePlay();sayviMessage('');qualifyDiscoveryListen()});
 audio.addEventListener('pause',()=>{stopDiscoveryListen();updatePlay()});
 audio.addEventListener('ended',()=>{stopDiscoveryListen();if(tracks.length>1)switchTrack(index+1,true);else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
 audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
@@ -708,6 +711,7 @@ window.SEYVEO_MUSIC=Object.freeze({
  recentTracks:()=>recentFiles.filter(file=>tracks.includes(file)).map(file=>({index:tracks.indexOf(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка'})),
  state:()=>Object.freeze({
   loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
+  homeSession:homeMusicSession,
   source:'local-file',connectedServices:0
  })
 });
