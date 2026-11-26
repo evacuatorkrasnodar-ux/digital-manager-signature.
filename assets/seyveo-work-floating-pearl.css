@@ -6,7 +6,8 @@
 }
 /* One geometry owner for the Work landing and its nested All Tasks page.
    Independent controls share exactly the same outer rectangle and face axis. */
-html body #svWorkShell#svWorkShell[data-shared-work="true"] > :is(#svWorkTabs,#svAllTasksTabs):not([hidden]){
+html body #svWorkShell#svWorkShell[data-shared-work="true"] > :is(#svWorkTabs,#svAllTasksTabs):not([hidden]),
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #svDocArchiveScope > .sv-doc-switch{
  box-sizing:border-box!important;order:1!important;position:relative!important;
  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
  grid-template-rows:30px!important;grid-auto-rows:30px!important;
@@ -21,11 +22,13 @@ html body #svWorkShell#svWorkShell[data-shared-work="true"] > :is(#svWorkTabs,#s
 html body #svWorkShell#svWorkShell[data-shared-work="true"] > :is(#svWorkTabs[data-one="true"],#svAllTasksTabs):not([hidden]){
  grid-template-columns:repeat(3,minmax(0,1fr))!important;
 }
-html body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs[data-employee="true"]:not([hidden]){
+html body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs[data-employee="true"]:not([hidden]),
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #svDocArchiveScope > .sv-doc-switch{
  grid-template-columns:repeat(2,minmax(0,1fr))!important;
 }
 @media(max-width:720px),(orientation:landscape) and (max-height:540px){
- html body #svWorkShell#svWorkShell[data-shared-work="true"] > :is(#svWorkTabs,#svAllTasksTabs):not([hidden]){
+ html body #svWorkShell#svWorkShell[data-shared-work="true"] > :is(#svWorkTabs,#svAllTasksTabs):not([hidden]),
+ html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #svDocArchiveScope > .sv-doc-switch{
   margin-top:2px!important;
  }
 }
