@@ -784,23 +784,11 @@ html.sv-agenda-scroll-active .app{
 }
 
 /* The long-press menu floats above the list and does not change row heights. */
+/* V153: placement only; menu paint and rows are shared. */
 .sv-task-context-menu{
- box-sizing:border-box;position:fixed;z-index:2147481200;
+ position:fixed;z-index:2147481200;
  display:grid;gap:0;min-width:188px;max-width:min(260px,calc(100vw - 24px));
- padding:5px;border:var(--sv-white-pearl-edge,1px solid rgba(75,76,84,.13));border-radius:15px;
- background:var(--sv-white-pearl-surface,rgba(250,250,252,.97));color:#1C1C1E;
- box-shadow:var(--sv-white-pearl-dock-shadow,0 13px 40px rgba(17,22,33,.16),0 2px 7px rgba(17,22,33,.06));
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(20px));backdrop-filter:var(--sv-white-pearl-blur,blur(20px));
-}
-.sv-task-context-menu button{
- min-height:44px;padding:9px 13px;text-align:left;
- border:0;border-radius:10px;background:transparent;color:inherit;
- font:520 15px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
-}
-.sv-task-context-menu button:active{background:rgba(110,115,125,.12)}
-.sv-task-context-menu .sv-task-context-delete{color:#E3322A}
-:root[data-theme="dark"] .sv-task-context-menu{
- background:rgba(49,49,52,.97);color:#F4F4F5;border-color:rgba(255,255,255,.1);
+ padding:5px;
 }
 
 .sv-task-undo-toast{
