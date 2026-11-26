@@ -7,13 +7,17 @@
 #svWorkShell[data-task-tool-mode="all"] #tasksContextFocus{display:none!important}
 #svWorkShell[data-task-tool-mode="all"] #tasksPage #svTasksDateNav{display:none!important}
 
-#svWorkShell[data-task-tool-mode="all"] #tasksPage #svAllTasksView{
+/* The previous agenda is not rendered beneath the dedicated All Tasks view. */
+#svWorkShell[data-task-tool-mode="all"][data-agenda-scroll="true"] #tasksPage #unifiedPersonalTasksView{
+ display:none!important;
+}
+#svWorkShell[data-task-tool-mode="all"] > #svAllTasksView:not([hidden]){
  box-sizing:border-box!important;
- display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+ display:flex!important;order:2!important;flex:1 1 auto!important;flex-direction:column!important;
  width:100%!important;min-width:0!important;min-height:0!important;
  padding:8px 0 0!important;margin:0!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
- overflow:hidden!important;color:#17191E;
+ overflow:visible!important;color:#17191E;
  font-family:-apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
 }
 
@@ -62,8 +66,8 @@ html:root body #svWorkShell[data-task-tool-mode="all"] #svAllTasksView .sv-tool-
  flex:1 1 0!important;min-height:0!important;margin-bottom:0!important;
  padding:16px 0 calc(max(12px,env(safe-area-inset-bottom,0px)) + 60px)!important;
  scroll-padding:16px 0 calc(max(12px,env(safe-area-inset-bottom,0px)) + 60px)!important;
- -webkit-mask-image:linear-gradient(to bottom,transparent,#000 16px,#000 calc(100% - 16px),transparent);
- mask-image:linear-gradient(to bottom,transparent,#000 16px,#000 calc(100% - 16px),transparent);
+ -webkit-mask-image:none!important;mask-image:none!important;
+ -webkit-clip-path:none!important;clip-path:none!important;
 }
 html:root.sv-task-search-focus body #svWorkShell[data-task-tool-mode="all"] #svAllTasksView .sv-tool-results{padding-bottom:16px!important;scroll-padding-bottom:16px!important;}
 
@@ -229,15 +233,4 @@ html:root[data-theme="light"] body #svTaskActionCapsule[data-has-selection="true
 }
 html:root[data-theme="dark"] body #svTaskActionCapsule[data-has-selection="true"]{
  background:rgba(47,49,54,.97)!important;
-}
-
-/* The reading edge follows the actual floating capsule, even with zero selected.
-   While the capsule hides during scrolling, the full list surface is revealed.
-   Only compositing changes: no footer, no height or scroll offset change. */
-html:root:not(.sv-task-search-focus):has(body > #svTaskActionCapsule:not([hidden]):not(.sv-bulk-scrolling)) body #svWorkShell[data-task-tool-mode="all"] #svAllTasksView .sv-tool-results{
- --sv-bulk-clearance:calc(max(12px,env(safe-area-inset-bottom,0px)) + 50px);
- -webkit-mask-image:linear-gradient(to bottom,transparent,#000 16px,#000 calc(100% - var(--sv-bulk-clearance) - 16px),transparent calc(100% - var(--sv-bulk-clearance)),transparent 100%);
- mask-image:linear-gradient(to bottom,transparent,#000 16px,#000 calc(100% - var(--sv-bulk-clearance) - 16px),transparent calc(100% - var(--sv-bulk-clearance)),transparent 100%);
- -webkit-clip-path:inset(0 0 var(--sv-bulk-clearance) 0);
- clip-path:inset(0 0 var(--sv-bulk-clearance) 0);
 }
