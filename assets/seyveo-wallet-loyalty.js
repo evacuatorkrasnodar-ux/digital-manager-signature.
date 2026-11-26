@@ -33,19 +33,25 @@ function passButton(x,i,demo=false){
  const head=document.createElement('span');head.className='syp-pass-head';
  const title=document.createElement('strong');title.textContent=x.name;head.append(title);
  const tag=document.createElement('span');tag.className='syp-pass-tag';
- if(demo)tag.textContent='Образец';
- else {tag.setAttribute('aria-hidden','true');tag.innerHTML='<svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M7 9v6m3-6v6m3-6v6m4-6v6"/></svg>';}
+ tag.setAttribute('aria-hidden','true');
+ const marks={
+  magnit:'<path d="M4 18V6l8 7 8-7v12"/>',
+  five:'<path d="M16 5H8l-1 7h5a4 4 0 1 1-4 4"/><path d="M13 5c1-2 4-3 7-2-1 3-3 4-7 4"/>',
+  leroy:'<path d="m3 18 9-12 9 12H3Z"/><path d="m7 18 5-7 5 7"/>',
+  bau:'<path d="m3 11 9-7 9 7M6 10v10h12V10M10 20v-6h4v6"/>'
+ };
+ tag.innerHTML='<svg viewBox="0 0 24 24">'+(marks[brand]||'<rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M7 9v6m3-6v6m3-6v6m4-6v6"/>')+'</svg>';
  head.append(tag);
- const sub=document.createElement('small');sub.textContent=demo?'Добавьте свою карту':'Скидочная карта · '+x.value.slice(-4);
+ const sub=document.createElement('small');sub.textContent=demo?'Скидочная карта':'Скидочная карта · '+x.value.slice(-4);
  b.append(head,sub);return b;
 }
 function render(){
  const stack=$('sypLoyaltyStack'),list=$('sypLoyaltyList'),demo=!entries.length;
  stack.replaceChildren(...(demo?samples:entries).map((x,i)=>passButton(x,i,demo)));
  list.replaceChildren(...entries.map((x,i)=>passButton(x,i)));
- $('sypLoyaltyCount').textContent=demo?'4 образца':String(entries.length);
+ const n=entries.length,tail=n%100,word=tail>=11&&tail<=14?'карт':n%10===1?'карта':n%10>=2&&n%10<=4?'карты':'карт';
+ $('sypLoyaltyCount').textContent=demo?'Демо':n+' '+word;
  $('sypLoyaltyExamplesNote').hidden=!demo;
- $('sypLoyaltyEmpty').hidden=false;
 }
 function go(n){window.SEYVEO_PAY.showLoyalty(n);}
 function edit(x){returnScreen=x?'loyalty-detail':($('sypLoyaltyEditor').open?'home':dialog.querySelector('[data-syp-screen="add"]:not([hidden])')?'add':'home');editing=x?.id||null;name.value=x?.name||'';value.value=x?.value||'';format.value=x?.format||'code_128';$('sypLoyaltyEditTitle').textContent=x?'Изменить карту':'Новая карта';status.textContent='';setFormatMenu(false);updatePreview();go('loyalty-edit');}

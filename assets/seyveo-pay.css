@@ -670,7 +670,7 @@ html[data-theme="dark"] body #sypLoyaltyEditor #sypLoyaltyStatus{color:#9bd6b5}
 #sypLoyaltyEditor .syp-le-preview:is([data-brand="magnit"],[data-brand="five"],[data-brand="bau"]) .syp-le-preview-empty{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(0,0,0,.10);}
 #seyveoPayDialog .syp-loyalty-examples-note{font:450 12px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:var(--secondary);margin:10px 2px 0;}
 #seyveoPayDialog .syp-loyalty-examples-note[hidden]{display:none!important;}
-#seyveoPayDialog #sypLoyaltyEmpty{margin-top:12px;}
+
 
 /* V211 · extensible horizontal wallet tools; shared capsule axis stays fixed. */
 html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch{
@@ -708,3 +708,46 @@ html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch > button{
 #seyveoPayDialog .syp-fx-row span:last-child{text-align:right;color:#287a58;font-weight:580;overflow-wrap:anywhere}
 #seyveoPayDialog .syp-fx-note{margin:12px 0}
 html[data-theme="dark"] #seyveoPayDialog :is(#sypFxResult,.syp-fx-row span:last-child){color:#92d3ae}
+
+/* V212 · Wallet home polish, iPhone-first. Only loyalty and assistant surfaces.
+   48 CSS px of each card remains touchable; one tap always opens the card. */
+#seyveoPayDialog #sypCardHome .syp-loyalty{margin:22px 0 15px}
+#seyveoPayDialog #sypCardHome .syp-loyalty-head{margin:0 0 11px;align-items:center}
+#seyveoPayDialog #sypCardHome .syp-loyalty-head h3{font-size:19px;font-weight:640;letter-spacing:-.035em}
+#seyveoPayDialog #sypLoyaltyCount{font-size:12px;font-weight:500;white-space:nowrap}
+#seyveoPayDialog #sypLoyaltyStack{--sl-height:clamp(130px,40vw,180px);--sl-peek:48px;padding:1px 0 3px;min-width:0}
+#seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass{
+ height:var(--sl-height);min-height:var(--sl-height);flex:none;
+ padding:12px 15px 15px;isolation:isolate;
+ border-radius:17px;box-shadow:inset 0 1px 0 rgba(255,255,255,.23),0 3px 9px rgba(30,37,45,.10);
+ transition:transform .16s ease,filter .16s ease;
+ -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+#seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass+.syp-loyalty-pass{margin-top:calc(var(--sl-peek) - var(--sl-height))}
+#seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass:last-child{height:var(--sl-height);box-shadow:inset 0 1px 0 rgba(255,255,255,.23),0 6px 16px rgba(30,37,45,.11)}
+#seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass:active{transform:translateY(-2px) scale(.985);filter:brightness(1.035)}
+#seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass:focus-visible{z-index:1;outline:2px solid #007aff;outline-offset:-3px}
+#seyveoPayDialog .syp-pass-head{gap:10px}
+#seyveoPayDialog .syp-pass-head strong{font-size:17px;line-height:1.25;font-weight:650;letter-spacing:-.025em}
+#seyveoPayDialog .syp-pass-tag{display:grid;place-items:center;flex:0 0 27px;width:27px;height:25px;opacity:.95}
+#seyveoPayDialog .syp-pass-tag svg{width:23px;height:23px;stroke-width:1.8}
+#seyveoPayDialog .syp-loyalty-pass small{font-size:12px;line-height:1.35;font-weight:500;opacity:.95}
+#seyveoPayDialog .syp-loyalty-pass[data-brand="magnit"],#sypLoyaltyEditor .syp-le-preview[data-brand="magnit"]{background:radial-gradient(ellipse at 92% 0%,rgba(255,150,157,.32),transparent 70%),linear-gradient(125deg,#b60e30,#df3049);border-color:#ce2540;color:#fff}
+#seyveoPayDialog .syp-loyalty-pass[data-brand="five"],#sypLoyaltyEditor .syp-le-preview[data-brand="five"]{background:radial-gradient(ellipse at 94% 0%,rgba(170,239,123,.21),transparent 70%),linear-gradient(125deg,#136a3a,#32864a);border-color:#2f8249;color:#fff}
+#seyveoPayDialog .syp-loyalty-pass[data-brand="leroy"],#sypLoyaltyEditor .syp-le-preview[data-brand="leroy"]{background:linear-gradient(135deg,#f8fcf5 10%,#dcefd1);border-color:#cbdcc3;color:#214831}
+#seyveoPayDialog .syp-loyalty-pass[data-brand="bau"],#sypLoyaltyEditor .syp-le-preview[data-brand="bau"]{background:linear-gradient(118deg,#176f47 0%,#248354 47%,#d85d19 100%);border-color:rgba(29,93,58,.30);color:#fff}
+#seyveoPayDialog .syp-loyalty-pass[data-brand="bau"]::before{left:46%;top:1%;width:105%;height:180%;background:rgba(255,198,113,.19)}
+#seyveoPayDialog .syp-loyalty-pass[data-brand="leroy"]::before{border-radius:20px;width:82%;height:115%;left:59%;top:20%;transform:rotate(-42deg);background:rgba(68,141,53,.12);border-color:rgba(68,141,53,.10)}
+#seyveoPayDialog .syp-loyalty-examples-note{margin:8px 2px 0;font-size:12px;line-height:1.45}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] #sypCardHome > .syp-panel{margin-top:14px!important;padding:0!important}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] #sypCardHome > .syp-panel h3{font-size:13px!important;font-weight:600!important}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] #sypCardHome > .syp-panel p{color:var(--secondary)!important;font-size:12px!important;line-height:1.45!important}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] #sypCardHome > .syp-note{margin-top:14px!important;font-size:11px!important;color:var(--secondary)!important}
+html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="loyalty-detail"]:not([hidden]){animation:syp-pass-open .20s cubic-bezier(.22,1,.36,1) both!important}
+@keyframes syp-pass-open{from{opacity:.55;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:360px){#seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass{padding-inline:12px}#seyveoPayDialog .syp-pass-head strong{font-size:16px}}
+@media(prefers-reduced-motion:reduce){
+ #seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass{transition:none}
+ #seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass:active{transform:none;filter:none}
+ html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="loyalty-detail"]:not([hidden]){animation:none!important}
+}
