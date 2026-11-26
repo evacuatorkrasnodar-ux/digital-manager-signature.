@@ -491,9 +491,8 @@ html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-
  margin:10px 0 0!important;opacity:1!important;
 }
 
-/* V206 · Wallet card sits directly below the shared navigation.
-   Keep its native 5px separation; remove only the redundant home inset.
-   Finance, scanner, shared header and dock keep their existing geometry. */
+/* Wallet home: a little breathing room below the unchanged Work tabs.
+   Move the complete card section in normal flow, not the shared navigation. */
 html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="home"]{
- padding-top:0!important;
+ padding-top:7px!important;
 }
