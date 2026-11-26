@@ -665,9 +665,10 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
    its measured position, opening animation and all selection handlers. */
 @layer seyveo-home-chooser-standard{
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{
-  background:#fff!important;background-image:none!important;
-  border:0!important;outline:0!important;box-shadow:none!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  background:var(--sv-white-pearl-floating-dock,rgba(235,237,240,.62))!important;background-image:none!important;
+  border:0!important;border-bottom:1px solid rgba(155,168,186,.36)!important;outline:0!important;
+  border-radius:0 0 30px 30px!important;box-shadow:0 4px 14px rgba(43,55,73,.085)!important;
+  -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor > .sv-home-favorites-editor-shell{
   background:transparent!important;background-image:none!important;
@@ -700,11 +701,11 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
   background:transparent!important;box-shadow:none!important;border:0!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{
-  background:#fff!important;background-image:none!important;
-  border:1px solid #e5e8ed!important;box-shadow:none!important;
+  background:rgba(255,255,255,.64)!important;background-image:none!important;
+  border:1px solid rgba(192,201,212,.48)!important;box-shadow:none!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"]{
-  background:#edf5fd!important;border-color:#c6ddf3!important;
+  background:rgba(224,239,252,.72)!important;border-color:rgba(155,194,229,.58)!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"] small{
   background:#e0effc!important;color:#075ca8!important;
@@ -776,5 +777,18 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-pinned{
   html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
    --sv-home-tile-height:58px;gap:5px!important;
   }
+ }
+}
+
+/* V166: a distinct translucent Home curtain, using the approved Pearl
+   material; keep the sphere visible through the quiet tile faces.
+   No extra shell fill, side frame, or change to approved compact controls. */
+@layer seyveo-home-chooser-standard{
+ @media(prefers-reduced-transparency:reduce){
+  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{
+   background:#fff!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{background:#fff!important}
+  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"]{background:#edf5fd!important}
  }
 }
