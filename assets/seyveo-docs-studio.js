@@ -281,15 +281,20 @@ function mount(target,{
   summary.append(toolArt('create'),$('strong','','Черновики'),$('span','sv-doc-draft-count',String(items.length)));details.append(summary);
   if(selectedDrafts){
    const available=new Set(items.map(x=>x.id));for(const id of selectedDrafts)if(!available.has(id))selectedDrafts.delete(id);
-   const bar=$('div','sv-doc-draft-bulk');
-   const count=$('span','','Выбрано: '+selectedDrafts.size);
-   const cancel=button('Отмена',()=>{selectedDrafts=null;void refreshDrafts();},'sv-doc-draft-bulk-cancel');
+   const bar=$('div','sv-doc-draft-bulk sv-bulk-selection-capsule sv-doc-draft-selection-footer');
+   bar.setAttribute('role','group');bar.setAttribute('aria-label','Действия с выбранными черновиками');
+   const count=$('span','','Выбрано: '+selectedDrafts.size);count.dataset.svBulkRole='count';count.setAttribute('aria-live','polite');
+   const head=$('div','sv-bulk-selection-head sv-doc-draft-selection-head');
+   const fully=selectedDrafts.size===items.length;
+   const all=button(fully?'Снять все':'Выбрать все',()=>{if(fully)selectedDrafts.clear();else for(const item of items)selectedDrafts.add(item.id);void refreshDrafts();});
+   const cancel=button('Готово',()=>{selectedDrafts=null;void refreshDrafts();},'sv-doc-draft-bulk-cancel');
+   head.append(all,cancel);details.append(head);
    const remove=button('Удалить',async()=>{
     const ids=[...selectedDrafts];if(!ids.length||!window.confirm('Удалить выбранные черновики ('+ids.length+')?'))return;
     try{for(const id of ids){await drafts.remove(area,id);if(draftId===id){newDraft();if(mode==='create')render();}}selectedDrafts=null;await refreshDrafts();}
     catch{setDraftFeedback('Не удалось удалить все выбранные черновики.');void refreshDrafts();}
-   },'sv-doc-draft-bulk-delete');remove.disabled=!selectedDrafts.size;
-   bar.append(cancel,count,remove);details.append(bar);
+   },'sv-doc-draft-bulk-delete');remove.disabled=!selectedDrafts.size;remove.dataset.svBulkRole='delete';remove.setAttribute('aria-label','Удалить выбранные черновики');remove.innerHTML=window.SEYVEO_DOCUMENT_ICONS?.markup('delete')||'';
+   bar.append(count,remove);details.append(bar);
   }
   for(const item of items){
    const row=$('div','sv-doc-draft-row');
