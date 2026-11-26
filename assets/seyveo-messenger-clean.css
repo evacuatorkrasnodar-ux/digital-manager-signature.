@@ -2178,11 +2178,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 
 /* PEARL chat · 26 Nov · match the approved reference without changing
    the Sky palette, composer, contact identity or interaction geometry. */
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2::before{
- background:linear-gradient(180deg,rgba(255,255,255,.80) 0%,rgba(255,255,255,.69) 58%,rgba(255,255,255,.30) 84%,transparent 100%)!important;
- -webkit-backdrop-filter:blur(7px) saturate(100%)!important;
- backdrop-filter:blur(7px) saturate(100%)!important;
-}
+/* White chat header optical material is owned by the shared Avatar standard. */
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="pearl"]) > #svcpWorkChatBack,html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="pearl"]) > #svcpWorkChatBack:is(:active,:hover,:focus),
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > :is(#svcpAudioCall,#svcpVideoCall).svcp-call-button:not([hidden]),html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > :is(#svcpAudioCall,#svcpVideoCall).svcp-call-button:not([hidden]):is(:active,:hover,:focus){
  background:rgba(248,248,249,.83)!important;
