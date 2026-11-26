@@ -1,0 +1,90 @@
+/* SEYVEO V157 — one search-field standard. Geometry and behavior of surrounding
+   headers, result lists, global dock and native cancel buttons are not modified. */
+:root{
+ --sv-search-height:44px;
+ --sv-search-radius:999px;
+ --sv-search-ink:#f4f4f6;
+ --sv-search-muted:#b3b9c2;
+ --sv-search-face:rgba(57,60,66,.90);
+ --sv-search-edge:1px solid rgba(255,255,255,.16);
+ --sv-search-shadow:none;
+ --sv-search-frost:blur(10px) saturate(108%);
+ --sv-search-lens:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b3b9c2' stroke-width='1.65' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10.8' cy='10.8' r='6.6'/%3E%3Cpath d='M15.7 15.7 L21 21'/%3E%3C/svg%3E");
+}
+:root[data-theme="light"]{
+ --sv-search-ink:var(--sv-white-pearl-ink,#0b0b0d);
+ --sv-search-muted:#626d7b;
+ --sv-search-face:var(--sv-white-pearl-surface,rgba(235,237,240,.62));
+ --sv-search-edge:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.94));
+ --sv-search-shadow:var(--sv-white-pearl-circle-shadow,0 2px 8px rgba(38,48,60,.055));
+ --sv-search-frost:var(--sv-white-pearl-blur,blur(10px) saturate(108%));
+ --sv-search-lens:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23626d7b' stroke-width='1.65' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10.8' cy='10.8' r='6.6'/%3E%3Cpath d='M15.7 15.7 L21 21'/%3E%3C/svg%3E");
+}
+@layer seyveo-search-standard{
+ html:root body :is( .sv-search-input-shell,#svcpDirectorySearchBar,.svcp-room-scoped-search-field,
+ #svcpWorkHistorySearchBar,.sv-cabinet-search,#seyveoContactSearchWrap,
+ .sv-inbox-muted-search-wrap,#sayviHistory .history-search,.sv-search-capsule,#seyveoCallSearch,#manageRoadmapSearch,.sv-doc-template-search){
+  box-sizing:border-box!important;
+  min-height:var(--sv-search-height)!important;
+  height:var(--sv-search-height)!important;
+  border:var(--sv-search-edge)!important;border-radius:var(--sv-search-radius)!important;
+  background-color:var(--sv-search-face)!important;
+  box-shadow:var(--sv-search-shadow)!important;
+  -webkit-backdrop-filter:var(--sv-search-frost)!important;backdrop-filter:var(--sv-search-frost)!important;
+  color:var(--sv-search-ink)!important;
+ }
+ html:root body :is( .sv-search-input-shell,#svcpDirectorySearchBar,.svcp-room-scoped-search-field,
+ #svcpWorkHistorySearchBar,.sv-cabinet-search,#seyveoContactSearchWrap,
+ .sv-inbox-muted-search-wrap,#sayviHistory .history-search,.sv-search-capsule){
+  align-items:center!important;gap:9px!important;
+  padding-inline:12px!important;background-image:none!important;
+ }
+ html:root body :is( .sv-search-input-shell,#svcpDirectorySearchBar,.svcp-room-scoped-search-field,
+ #svcpWorkHistorySearchBar,.sv-cabinet-search,#seyveoContactSearchWrap,
+ .sv-inbox-muted-search-wrap,#sayviHistory .history-search,.sv-search-capsule) > input{
+  box-sizing:border-box!important;flex:1 1 0!important;min-width:0!important;
+  width:100%!important;height:100%!important;min-height:0!important;
+  padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;outline:none!important;
+  color:var(--sv-search-ink)!important;
+  font:400 16px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ }
+ html:root body :is( .sv-search-input-shell,#svcpDirectorySearchBar,.svcp-room-scoped-search-field,
+ #svcpWorkHistorySearchBar,.sv-cabinet-search,#seyveoContactSearchWrap,
+ .sv-inbox-muted-search-wrap,#sayviHistory .history-search,.sv-search-capsule) > input::placeholder,
+ html:root body :is(#seyveoCallSearch,#manageRoadmapSearch,.sv-doc-template-search)::placeholder{
+  color:var(--sv-search-muted)!important;opacity:1!important;
+ }
+ html:root body :is( .sv-search-input-shell,#svcpDirectorySearchBar,.svcp-room-scoped-search-field,
+ #svcpWorkHistorySearchBar,.sv-cabinet-search,#seyveoContactSearchWrap,
+ .sv-inbox-muted-search-wrap,#sayviHistory .history-search,.sv-search-capsule) > svg:first-child,
+ html:root body .sv-inbox-muted-search-wrap > .sv-inbox-muted-search-icon > svg{
+  display:block!important;flex:0 0 20px!important;width:20px!important;height:20px!important;
+  color:var(--sv-search-muted)!important;fill:none!important;stroke:currentColor!important;
+  stroke-width:1.65!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+  filter:none!important;
+ }
+ html:root body .sv-inbox-muted-search-wrap > .sv-inbox-muted-search-icon{
+  flex:0 0 20px!important;width:20px!important;height:20px!important;
+  color:var(--sv-search-muted)!important;
+ }
+ html:root body :is(#seyveoCallSearch,#manageRoadmapSearch,.sv-doc-template-search){
+  padding-inline-start:39px!important;
+  background-image:var(--sv-search-lens)!important;
+  background-repeat:no-repeat!important;background-position:12px center!important;background-size:20px 20px!important;
+  font:400 16px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ }
+ html:root body :is( .sv-search-input-shell,#svcpDirectorySearchBar,.svcp-room-scoped-search-field,
+ #svcpWorkHistorySearchBar,.sv-cabinet-search,#seyveoContactSearchWrap,
+ .sv-inbox-muted-search-wrap,#sayviHistory .history-search,.sv-search-capsule):focus-within,
+ html:root body :is(#seyveoCallSearch,#manageRoadmapSearch,.sv-doc-template-search):focus-visible{
+  outline:2px solid rgba(10,132,255,.40)!important;outline-offset:1px!important;
+ }
+ html:root body :is( .sv-search-input-shell,#svcpDirectorySearchBar,.svcp-room-scoped-search-field,
+ #svcpWorkHistorySearchBar,.sv-cabinet-search,#seyveoContactSearchWrap,
+ .sv-inbox-muted-search-wrap,#sayviHistory .history-search,.sv-search-capsule)[hidden]{display:none!important}
+}
+@media(prefers-reduced-transparency:reduce){
+ :root{--sv-search-face:#393c42;--sv-search-frost:none}
+ :root[data-theme="light"]{--sv-search-face:#eceef1;--sv-search-frost:none}
+}
