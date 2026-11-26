@@ -641,9 +641,9 @@ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.pictur
 :root[data-theme="light"]{
  --sv-segment-track:var(--sv-white-pearl-surface);
  --sv-segment-edge:var(--sv-white-pearl-rim-color);
- --sv-segment-selected:rgba(255,255,255,.78);
+ --sv-segment-selected:var(--sv-white-pearl-selected);
  --sv-segment-track-shadow:var(--sv-white-pearl-dock-shadow);
- --sv-segment-selected-shadow:0 1px 2px rgba(38,48,60,.035),inset 0 1px 0 rgba(255,255,255,.92),inset 0 -1px 0 rgba(214,222,231,.16);
+ --sv-segment-selected-shadow:var(--sv-white-pearl-selected-shadow);
  --sv-avatar-segment-height:38px;
  --sv-avatar-segment-face-height:30px;
  --sv-avatar-segment-inset:3px;
@@ -705,12 +705,9 @@ html:root[data-theme="light"] body dialog#svcpManagerPeople#svcpManagerPeople.sv
 html:root[data-theme="light"] body #seyveoFamilyDialog#seyveoFamilyDialog:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) .svf-tabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]),
 html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkShell #seyveoPayDialog) .syp-view-switch > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]),
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svAllTasksTabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]){
- /* V132: paint the pearl inside the existing full-size hit target.
-    Transparent border establishes a 3px visual inset without moving text. */
  background:var(--sv-segment-selected)!important;background-image:none!important;
- background-clip:padding-box!important;
- color:#14171C!important;border:3px solid transparent!important;
- box-shadow:none!important;
+ color:#14171C!important;border-color:transparent!important;
+ box-shadow:var(--sv-segment-selected-shadow)!important;
 }
 /* V130: no independent mobile gray skin. Use the exact white chat glass
    tokens on every viewport; preserve existing geometry and hit targets. */
