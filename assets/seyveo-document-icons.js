@@ -36,6 +36,18 @@ const paths=Object.freeze({
  clear:'<path d="m4.5 14.5 9-9a2 2 0 0 1 2.8 0l3 3a2 2 0 0 1 0 2.8L11.1 20H8L4.5 16.5a1.5 1.5 0 0 1 0-2Z"/><path d="m9 10 6.5 6.5M11.1 20H21"/>',
  heading:'<path d="m4 19 6-14 6 14M6 15h8M19 6v13"/>',
  check:'<path d="m5 12 4 4 10-10"/>',
+ select:'<circle cx="7" cy="7" r="3"/><path d="m5.5 7 1 1 2-2M13 7h8M13 17h8"/><circle cx="7" cy="17" r="3"/>',
+ search:'<circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 5 5"/>',
+ move:'<path d="M3.5 7V5.5h6l2 2H19a1.5 1.5 0 0 1 1.5 1.5v10H3.5Z"/><path d="M8 13h8m-3-3 3 3-3 3"/>',
+ restore:'<path d="M8 7 3.5 12 8 17M3.5 12H15a5 5 0 0 1 5 5v2"/>',
+ sort:'<path d="M8 4v16m-4-4 4 4 4-4M15 5h6M15 10h4M15 15h2"/>',
+ lock:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/>',
+ star:'<path d="m12 3 2.8 5.8 6.4.9-4.6 4.5 1.1 6.4-5.7-3-5.7 3 1.1-6.4L2.8 9.7l6.4-.9Z"/>',
+ reply:'<path d="m9 5-6 6 6 6M3 11h10a7 7 0 0 1 7 7"/>',
+ forward:'<path d="m15 5 6 6-6 6M21 11H11a7 7 0 0 0-7 7"/>',
+ pin:'<path d="m9 3 12 12-4 1-4 4-3-3-6 4 4-6-3-3 4-4Z"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ chat:'<path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM7 9h10M7 13h6"/>' ,
  info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5m0-8h.01"/>',
  history:'<path d="M3.5 11a8.5 8.5 0 1 1 3 7.5M3.5 5v6h6M12 7.5V12l3 2"/>',
  down:'<path d="m7 10 5 5 5-5"/>',
@@ -51,4 +63,69 @@ function markup(key){
  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true" data-sv-document-icon="'+name+'">'+paths[name]+'</svg>';
 }
 root.SEYVEO_DOCUMENT_ICONS=Object.freeze({markup});
+
+/* V120 — one icon vocabulary for text actions in compact menus.
+   Keep authored art, existing handlers and data pickers untouched.
+   Unknown labels are deliberately not assigned a misleading icon. */
+const menuSelector='[role="menu"],.sv-menu-surface,.sv-nb4-actions,.svdf-optional-actions,#sahHistoryPopup,#svNotebookListMenu,.sv-doc-simple-file-list,[class*="-menu"],[class*="-popover"],[id$="Menu"],[id$="Popover"]';
+const rules=[
+ [/^(переименовать|изменить название)(?:\s|$)/,'rename'],
+ [/^(выбрать|выбор записей|снять выбор|снять всё)(?:\s|$)/,'select'],
+ [/^(удалить|очистить)(?:\s|$)/,'delete'],
+ [/^(переместить|перенести)(?:\s|$)/,'move'],
+ [/^(найти|поиск)(?:\s|$)/,'search'],
+ [/^(поделиться|отправить копию)(?:\s|$)/,'share'],
+ [/^(распечатать|печать)(?:\s|$)/,'print'],
+ [/^(копировать|скопировать|создать копию|дублировать)(?:\s|$)/,'copy'],
+ [/^(редактировать|изменить)(?:\s|$)/,'edit'],
+ [/^(восстановить|вернуть)(?:\s|$)/,'restore'],
+ [/^(скачать|экспортировать)(?:\s|$)/,'download'],
+ [/^(архивировать|в архив)(?:\s|$)/,'archive'],
+ [/^(сортировка|сортировать)(?:\s|$)/,'sort'],
+ [/^(история|недавно удалённые|недавно удаленные)(?:\s|$)/,'history'],
+ [/^(ответить)(?:\s|$)/,'reply'],
+ [/^(переслать)(?:\s|$)/,'forward'],
+ [/^(закрепить|открепить)(?:\s|$)/,'pin'],
+ [/^(в избранное|убрать из избранного)(?:\s|$)/,'star'],
+ [/^(заблокировать)(?:\s|$)/,'lock'],
+ [/^(новая папка|создать папку|добавить)(?:\s|$)/,'plus'],
+ [/^(о документе|информация|сведения)(?:\s|$)/,'info'],
+ [/^(рабочий чат)(?:\s|$)/,'chat'],
+ [/^(отмена|назад)$/,'back'],
+ [/^(готово|сохранить)$/,'check']
+];
+const actionSelector='button,[role="menuitem"]';
+function decorate(button){
+ if(!button||!button.matches(actionSelector)||button.matches('[role="tab"],[aria-pressed],[role="option"],[data-sv-retired="true"]'))return;
+ const menu=button.parentElement?.closest(menuSelector);
+ if(!menu||menu.closest('[role="listbox"]')||menu.matches('.sv-form-picker-menu,.svcp-reaction-picker,#svNoteTopMenu,.sv-paper-brush-picker'))return;
+ if(button.querySelector('svg,img,canvas,[data-sv-menu-action-glyph]'))return;
+ const label=button.textContent.trim().toLocaleLowerCase('ru-RU').replace(/\s+/g,' ');
+ const kind=rules.find(([re])=>re.test(label))?.[1];if(!kind)return;
+ const html=markup(kind);if(!html)return;
+ const template=document.createElement('template');template.innerHTML=html;
+ const glyph=template.content.firstElementChild;glyph.setAttribute('data-sv-menu-action-glyph',kind);
+ const slot=Array.from(button.children).find(e=>e.matches('.sv-doc-menu-icon,.svdf-menu-icon,.sv-menu-icon,.menu-icon')&&!e.textContent.trim()&&!e.children.length);
+ if(slot)slot.append(glyph);else button.prepend(glyph);
+ button.classList.add('sv-menu-with-action-glyph');
+}
+function inspect(node){
+ if(node.nodeType!==1)return;
+ if(node.matches(actionSelector))decorate(node);
+ if(node.closest(menuSelector)||node.querySelector(menuSelector)){
+  node.querySelectorAll(actionSelector).forEach(decorate);
+ }
+}
+function start(){
+ inspect(document.body);
+ const observer=new MutationObserver(records=>{
+  for(const record of records){
+   if(record.type==='characterData'){decorate(record.target.parentElement?.closest(actionSelector));continue;}
+   decorate(record.target.closest?.(actionSelector));
+   for(const node of record.addedNodes)inspect(node);
+  }
+ });
+ observer.observe(document.body,{childList:true,subtree:true,characterData:true});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })(window);
