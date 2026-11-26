@@ -107,24 +107,7 @@ html:not([data-theme]) #calendarEventDialog #seyveoPickDate .cal-pick-day.is-tod
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-popover{
  border:1px solid #E5E8EE!important;border-radius:24px!important;background:#FFF!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button{
- border:0!important;border-radius:50%!important;background:transparent!important;
- color:#17191D!important;font:550 14px/1 system-ui!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-selected:not(.is-today){
- border-radius:50%!important;background:var(--sv-date-selected-bg,#EEF0F3)!important;color:var(--sv-date-selected-ink,#252A33)!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-today{
- color:#FFF!important;
- background:#109BDD!important;color:#FFF!important;box-shadow:none!important;
-}
-html body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-selected:not(.is-today){
- border-radius:50%!important;background:var(--sv-date-selected-bg,#EEF0F3)!important;color:var(--sv-date-selected-ink,#252A33)!important;box-shadow:none!important;
-}
-html body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-today{
- color:#FFF!important;
- background:#109BDD!important;color:#FFF!important;box-shadow:none!important;
-}
+/* New Task paints the inner date number, not the entire cell. */
 /* Sayvi's context appears with the meeting preview, never in the month grid. */
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice[hidden]{display:none!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice{
@@ -1180,7 +1163,6 @@ html body #calendarPage #calendarView[data-mode="month"][data-month-layout="deta
 html:root body #calendarPage :is(.cal-month-grid,.cal-week-grid) .cal-day[data-selected="true"]:not([data-today="true"]) .cal-day-number,
 html:root body #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]:not([data-today="true"]) .sv-agenda-day-number,
 html:root body :is(#calendarEventDialog,#personalTaskDialog) .cal-pick-day.is-selected:not(.is-today),
-html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-selected:not(.is-today),
 html:root body #calendarSpaceDialog .cal-velvet-days button[aria-pressed="true"]:not(.is-today),
 html:root body #svStandardPickerDialog .sv-standard-picker-day.is-selected:not(.is-today){
  background:var(--sv-date-selected-bg)!important;color:var(--sv-date-selected-ink)!important;
@@ -1189,7 +1171,6 @@ html:root body #svStandardPickerDialog .sv-standard-picker-day.is-selected:not(.
 html:root body #calendarPage :is(.cal-month-grid,.cal-week-grid) .cal-day[data-today="true"] .cal-day-number,
 html:root body #tasksPage #svTasksDateNav .sv-agenda-day[data-today="true"] .sv-agenda-day-number,
 html:root body :is(#calendarEventDialog,#personalTaskDialog) .cal-pick-day.is-today,
-html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-today,
 html:root body #calendarSpaceDialog .cal-velvet-days button.is-today,
 html:root body #svStandardPickerDialog .sv-standard-picker-day.is-today{
  background:var(--sv-date-today-bg)!important;color:#FFF!important;
