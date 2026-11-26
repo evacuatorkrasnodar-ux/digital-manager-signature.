@@ -84,7 +84,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    }
    if(!['notes','wallet','business'].includes(mode))return null;
    const port=mode==='notes'?root.querySelector('#notesDialog[open] > #notesList.sv-note-clean-list:not(.is-empty)'):mode==='wallet'?root.querySelector('#seyveoPayDialog[open]'):root.querySelector('#unifiedBusinessTasksView:not([hidden])');
-   const controls=[root.querySelector('seyveo-work-head'),$('svWorkTabs'),mode==='notes'?$('svNotebookCreateTiles'):mode==='wallet'?root.querySelector('.syp-view-switch'):null,mode==='notes'?$('svNotebookListTools'):null];
+   const controls=[root.querySelector('seyveo-work-head'),$('svWorkTabs'),mode==='notes'?$('svNotebookCreateTiles'):mode==='wallet'?root.querySelector('.syp-view-switch'):null,mode==='notes'?$('svNotebookCategories'):null,mode==='notes'?$('svNotebookListTools'):null];
    return {port,controls};
   }],
   ['svcpWorkChatScreen',root=>{
