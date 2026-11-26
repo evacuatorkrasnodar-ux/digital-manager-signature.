@@ -1739,8 +1739,10 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[o
 }
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header > #personalTaskSave:disabled{color:#9DA6B1!important;cursor:default!important}
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header > #personalTaskSave:not(:disabled){
- background:rgba(68,166,250,.34)!important;color:#075CA8!important;
- border:1px solid rgba(56,146,230,.38)!important;
+ /* Flat blue confirmation: no pearl rim or raised/inset shadow. */
+ background:rgba(68,166,250,.28)!important;color:#075CA8!important;
+ border:1px solid rgba(56,146,230,.18)!important;
+ box-shadow:none!important;filter:none!important;
 }
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header > :is(#personalTaskCancel,#personalTaskSave) svg{
  width:20px!important;height:20px!important;stroke:currentColor!important;stroke-width:1.8!important;
