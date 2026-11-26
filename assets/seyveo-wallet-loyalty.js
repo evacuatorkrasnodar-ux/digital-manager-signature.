@@ -7,6 +7,8 @@ const form=$('sypLoyaltyForm');if(!form)return;
 const name=$('sypLoyaltyName'),value=$('sypLoyaltyValue'),format=$('sypLoyaltyFormat'),status=$('sypLoyaltyStatus'),preview=$('sypLoyaltyPreview');
 const formats=['code_128','ean_13','ean_8','upc_a','qr_code','number'];
 const colors=['#dceae3','#e5e6f2','#f4e5cb','#e4eaf4','#efdfe2','#e4ebd8'];
+const samples=[{name:'Магнит',brand:'magnit'},{name:'Пятёрочка',brand:'five'},{name:'Леруа Мерлен',brand:'leroy'},{name:'Бауцентр',brand:'bau'}];
+function brandFor(n){const s=String(n||'').toLowerCase().replace(/ё/g,'е').trim();if(s==='магнит')return 'magnit';if(s==='пятерочка')return 'five';if(['леруа мерлен','лемана про','лемана','леруа'].includes(s))return 'leroy';if(s==='бауцентр')return 'bau';return '';}
 const L=['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
 const G=['0100111','0110011','0011011','0100001','0011101','0111001','0000101','0010001','0001001','0010111'];
 const R=L.map(x=>x.replace(/[01]/g,y=>y==='1'?'0':'1'));
@@ -21,7 +23,30 @@ function draw(host,s,t){host.replaceChildren();const bits=validate(s,t);if(t==='
 let entries=[];try{const a=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(a))entries=a.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&typeof x.value==='string'&&formats.includes(x.format)).slice(0,100);}catch{}
 let selected=null,editing=null,scanToken=0,returnScreen='home';
 function save(next){try{localStorage.setItem(key,JSON.stringify(next));entries=next;return true;}catch{return false;}}
-function render(){const stack=$('sypLoyaltyStack'),list=$('sypLoyaltyList');for(const host of [stack,list]){host.replaceChildren();entries.forEach((x,i)=>{const b=document.createElement('button');b.type='button';b.className='syp-loyalty-pass';b.dataset.loyalty='open';b.dataset.id=x.id;b.style.setProperty('--sl-color',colors[(x.color??i)%colors.length]);const title=document.createElement('strong');title.textContent=x.name;const sub=document.createElement('small');sub.textContent='Скидочная карта · '+x.value.slice(-4);b.append(title,sub);host.append(b);});}$('sypLoyaltyCount').textContent=entries.length?String(entries.length):'';$('sypLoyaltyEmpty').hidden=entries.length>0;}
+function passButton(x,i,demo=false){
+ const b=document.createElement('button');b.type='button';b.className='syp-loyalty-pass';b.dataset.loyalty=demo?'example':'open';
+ if(demo){b.dataset.example=String(i);b.setAttribute('aria-label',x.name+' — образец, добавить свою карту');}
+ else b.dataset.id=x.id;
+ const brand=demo?x.brand:brandFor(x.name);
+ if(brand)b.dataset.brand=brand;
+ b.style.setProperty('--sl-color',colors[(x.color??i)%colors.length]);
+ const head=document.createElement('span');head.className='syp-pass-head';
+ const title=document.createElement('strong');title.textContent=x.name;head.append(title);
+ const tag=document.createElement('span');tag.className='syp-pass-tag';
+ if(demo)tag.textContent='Образец';
+ else {tag.setAttribute('aria-hidden','true');tag.innerHTML='<svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M7 9v6m3-6v6m3-6v6m4-6v6"/></svg>';}
+ head.append(tag);
+ const sub=document.createElement('small');sub.textContent=demo?'Добавьте свою карту':'Скидочная карта · '+x.value.slice(-4);
+ b.append(head,sub);return b;
+}
+function render(){
+ const stack=$('sypLoyaltyStack'),list=$('sypLoyaltyList'),demo=!entries.length;
+ stack.replaceChildren(...(demo?samples:entries).map((x,i)=>passButton(x,i,demo)));
+ list.replaceChildren(...entries.map((x,i)=>passButton(x,i)));
+ $('sypLoyaltyCount').textContent=demo?'4 образца':String(entries.length);
+ $('sypLoyaltyExamplesNote').hidden=!demo;
+ $('sypLoyaltyEmpty').hidden=false;
+}
 function go(n){window.SEYVEO_PAY.showLoyalty(n);}
 function edit(x){returnScreen=x?'loyalty-detail':($('sypLoyaltyEditor').open?'home':dialog.querySelector('[data-syp-screen="add"]:not([hidden])')?'add':'home');editing=x?.id||null;name.value=x?.name||'';value.value=x?.value||'';format.value=x?.format||'code_128';$('sypLoyaltyEditTitle').textContent=x?'Изменить карту':'Новая карта';status.textContent='';setFormatMenu(false);updatePreview();go('loyalty-edit');}
 function detail(x){if(!x)return;selected=x.id;$('sypLoyaltyDetailName').textContent=x.name;$('sypLoyaltyDetailValue').textContent=x.value;$('sypLoyaltyDetailStatus').textContent='';const host=$('sypLoyaltyDetailCode');try{draw(host,x.value,x.format);}catch(e){host.textContent=e.message;}go('loyalty-detail');}
@@ -33,10 +58,10 @@ formatMenu.addEventListener('click',e=>{const b=e.target.closest('[data-format-v
 editor.addEventListener('click',e=>{if(!formatMenu.hidden&&!e.target.closest('.syp-le-format'))setFormatMenu(false);});
 function cancelEdit(){setFormatMenu(false);go(returnScreen);}
 editor.addEventListener('cancel',e=>{e.preventDefault();if(!formatMenu.hidden){setFormatMenu(false);formatToggle.focus({preventScroll:true});}else cancelEdit();});
-function updatePreview(){ $('sypLoyaltyPreviewName').textContent=name.value.trim()||'Название магазина';$('sypLoyaltyFormatLabel').textContent=format.options[format.selectedIndex]?.textContent||'Code 128';for(const b of formatMenu.children)b.setAttribute('aria-pressed',String(b.dataset.formatValue===format.value));preview.hidden=true;preview.replaceChildren();if(value.value.trim()){try{draw(preview,value.value.trim(),format.value);preview.hidden=false;}catch{}}$('sypLoyaltyPreviewEmpty').hidden=!preview.hidden;}
+function updatePreview(){ $('sypLoyaltyPreviewName').textContent=name.value.trim()||'Название магазина';$('sypLoyaltyPreviewName').closest('.syp-le-preview').dataset.brand=brandFor(name.value);$('sypLoyaltyFormatLabel').textContent=format.options[format.selectedIndex]?.textContent||'Code 128';for(const b of formatMenu.children)b.setAttribute('aria-pressed',String(b.dataset.formatValue===format.value));preview.hidden=true;preview.replaceChildren();if(value.value.trim()){try{draw(preview,value.value.trim(),format.value);preview.hidden=false;}catch{}}$('sypLoyaltyPreviewEmpty').hidden=!preview.hidden;}
 form.addEventListener('input',updatePreview);
 form.addEventListener('submit',e=>{e.preventDefault();const n=name.value.trim(),v=value.value.trim(),t=format.value;try{if(!n)throw Error('Введите название магазина.');validate(v,t);if(!editing&&entries.length>=100)throw Error('Достигнут лимит 100 карт.');if(entries.some(x=>x.id!==editing&&x.name===n&&x.value===v&&x.format===t))throw Error('Такая карта уже есть.');const prior=entries.find(x=>x.id===editing);const x={id:editing||(crypto.randomUUID?.()||String(Date.now())+Math.random()),name:n,value:v,format:t,color:prior?.color??entries.length%colors.length};const next=editing?entries.map(y=>y.id===editing?x:y):[...entries,x];if(!save(next))throw Error('Не удалось сохранить карту. Проверьте свободное место.');render();detail(x);}catch(err){status.textContent=err.message;}});
-dialog.addEventListener('click',e=>{const b=e.target.closest('[data-loyalty]');if(!b)return;const x=entries.find(y=>y.id===selected);switch(b.dataset.loyalty){case 'new':edit();break;case 'cancel':cancelEdit();break;case 'open':detail(entries.find(y=>y.id===b.dataset.id));break;case 'edit':if(x)edit(x);break;case 'delete':if(x&&confirm('Удалить скидочную карту «'+x.name+'»?')){if(save(entries.filter(y=>y.id!==x.id))){render();go('home');}else $('sypLoyaltyDetailStatus').textContent='Не удалось удалить карту.';}break;case 'camera':$('sypLoyaltyCamera').click();break;case 'photo':$('sypLoyaltyPhoto').click();break;}});
+dialog.addEventListener('click',e=>{const b=e.target.closest('[data-loyalty]');if(!b)return;const x=entries.find(y=>y.id===selected);switch(b.dataset.loyalty){case 'new':edit();break;case 'example':{const sample=samples[Number(b.dataset.example)];if(sample){edit();name.value=sample.name;updatePreview();}break;}case 'cancel':cancelEdit();break;case 'open':detail(entries.find(y=>y.id===b.dataset.id));break;case 'edit':if(x)edit(x);break;case 'delete':if(x&&confirm('Удалить скидочную карту «'+x.name+'»?')){if(save(entries.filter(y=>y.id!==x.id))){render();go('home');}else $('sypLoyaltyDetailStatus').textContent='Не удалось удалить карту.';}break;case 'camera':$('sypLoyaltyCamera').click();break;case 'photo':$('sypLoyaltyPhoto').click();break;}});
 dialog.addEventListener('seyveo:wallet-screen',()=>{scanToken++;setFormatMenu(false);render();});
 dialog.addEventListener('close',()=>{scanToken++;});
 function decodeBits(b){if(!b.startsWith('101')||!b.endsWith('101'))return null;const is13=b.length===95,mid=is13?45:31;if(b.slice(mid,mid+5)!=='01010')return null;let left='',p='',right='';for(let i=3;i<mid;i+=7){const z=b.slice(i,i+7),l=L.indexOf(z),g=G.indexOf(z);if(l<0&&g<0)return null;if(!is13&&l<0)return null;left+=l>=0?l:g;p+=l>=0?'L':'G';}for(let i=mid+5;i<b.length-3;i+=7){const n=R.indexOf(b.slice(i,i+7));if(n<0)return null;right+=n;}let s=left+right;if(is13){const n=parity.indexOf(p);if(n<0)return null;s=n+s;}return validEAN(s)?{rawValue:s,format:is13?'ean_13':'ean_8'}:null;}

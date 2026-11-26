@@ -651,3 +651,23 @@ html[data-theme="dark"] body #sypLoyaltyEditor #sypLoyaltyForm .syp-le-fields>la
 html[data-theme="dark"] body #sypLoyaltyEditor #sypLoyaltyStatus{color:#9bd6b5}
 @media(min-width:650px){html body #seyveoPayDialog #sypLoyaltyEditor{height:min(760px,calc(100% - 24px))!important;max-height:calc(100% - 24px)!important}}
 @media(prefers-reduced-motion:reduce){html body #seyveoPayDialog #sypLoyaltyEditor[open]{animation:none!important}}
+
+/* V210 · Example passes have no numbers, codes or stored membership data.
+   Real passes replace the examples as soon as the first card is saved. */
+#seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass{height:128px;padding:13px 16px 14px;overflow:hidden;isolation:isolate;border-radius:18px;}
+#seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass+.syp-loyalty-pass{margin-top:-74px;}
+#seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass:last-child{height:clamp(132px,37vw,190px);}
+#seyveoPayDialog .syp-pass-head{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-width:0;}
+#seyveoPayDialog .syp-pass-head strong{flex:1;min-width:0;font-size:17px;letter-spacing:-.025em;}
+#seyveoPayDialog .syp-pass-tag{flex:none;font-size:10px;line-height:1.2;opacity:.92;}
+#seyveoPayDialog .syp-pass-tag svg{display:block;width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+#seyveoPayDialog .syp-loyalty-pass[data-brand]::before{content:"";position:absolute;z-index:-1;pointer-events:none;width:115%;height:190%;left:34%;top:24%;border-radius:50%;transform:rotate(-25deg);background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.20);}
+#seyveoPayDialog .syp-loyalty-pass[data-brand="magnit"],#sypLoyaltyEditor .syp-le-preview[data-brand="magnit"]{background:linear-gradient(125deg,#b90f2a,#e84b56);color:#fff;border-color:#c82436;}
+#seyveoPayDialog .syp-loyalty-pass[data-brand="five"],#sypLoyaltyEditor .syp-le-preview[data-brand="five"]{background:linear-gradient(125deg,#176c3b,#448f43);color:#fff;border-color:#347c40;}
+#seyveoPayDialog .syp-loyalty-pass[data-brand="leroy"],#sypLoyaltyEditor .syp-le-preview[data-brand="leroy"]{background:linear-gradient(125deg,#fafcf9,#d6e9cc);color:#214c30;border-color:#cadcc2;}
+#seyveoPayDialog .syp-loyalty-pass[data-brand="bau"],#sypLoyaltyEditor .syp-le-preview[data-brand="bau"]{background:linear-gradient(125deg,#35753d,#8a861f 53%,#bf6218);color:#fff;border-color:#987b38;}
+#sypLoyaltyEditor .syp-le-preview:is([data-brand="magnit"],[data-brand="five"],[data-brand="bau"]) .syp-le-preview-top :is(small,svg){color:#fff;stroke:currentColor;}
+#sypLoyaltyEditor .syp-le-preview:is([data-brand="magnit"],[data-brand="five"],[data-brand="bau"]) .syp-le-preview-empty{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(0,0,0,.10);}
+#seyveoPayDialog .syp-loyalty-examples-note{font:450 12px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:var(--secondary);margin:10px 2px 0;}
+#seyveoPayDialog .syp-loyalty-examples-note[hidden]{display:none!important;}
+#seyveoPayDialog #sypLoyaltyEmpty{margin-top:12px;}
