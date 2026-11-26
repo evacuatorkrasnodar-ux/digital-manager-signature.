@@ -706,6 +706,13 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  color:#14171C!important;border-color:transparent!important;
  box-shadow:var(--sv-segment-selected-shadow)!important;
 }
+/* All Tasks: slightly clearer grey track only; preserve the reference
+   selected segment, rim, blur, other screens and reduced-transparency mode. */
+@media not (prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svWorkShell[data-task-tool-mode="all"] > #svAllTasksTabs{
+  --sv-segment-track:rgba(226,229,235,.62);
+ }
+}
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"]{--sv-segment-track:#E5E5EA;--sv-segment-selected:#fff}
  html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]),
