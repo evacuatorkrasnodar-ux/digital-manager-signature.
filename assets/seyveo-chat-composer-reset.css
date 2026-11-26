@@ -3,12 +3,12 @@
    duplicate pseudo-buttons, top/left coordinates or animated icon positions.
    JS retains all handlers and only supplies text/attachment heights. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
- /* Sky reference: a slightly deeper translucent cyan tint, with the
-    approved White Pearl blur. Both heights and Plus share one material. */
- --svcp-conversation-blue-glass:rgba(0,116,191,.55);
+ /* Sky reference: clear cyan glass adapted to the lighter lower wallpaper.
+    The compact/expanded surface and Plus use a single physical material. */
+ --svcp-conversation-blue-glass:rgba(0,114,164,.46);
  --svcp-conversation-blue-glass-expanded:var(--svcp-conversation-blue-glass);
- --svcp-conversation-blue-rim:rgba(64,214,247,.86);
- --svcp-conversation-blue-blur:var(--sv-white-pearl-floating-blur,blur(8px) saturate(108%));
+ --svcp-conversation-blue-rim:rgba(85,220,247,.68);
+ --svcp-conversation-blue-blur:blur(10px) saturate(115%);
   --sv-chat-outgoing:#008FFF;
 }
 /* PEARL wallpaper — original white iMessage-like composer.
@@ -417,10 +417,36 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  }
 }
 
-/* Sky · subtle cyan glass edge, without an extra surface or glow layer.
-   The same edge belongs to the compact/expanded capsule and compact Plus. */
+
+/* Sky composer reference: same existing surface, no added layers.
+   Preserve text entry, 44px actions, Sayvi artwork and both grid heights. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > .svcp-clean-surface,
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile{
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile:is(:hover,:active,:focus,[aria-expanded="true"]){
  border:1px solid var(--svcp-conversation-blue-rim)!important;
- box-shadow:inset 0 1px 0 rgba(155,239,255,.20)!important;
+ box-shadow:inset 0 1px 1px rgba(173,241,255,.18)!important;
+ background:var(--svcp-conversation-blue-glass)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--svcp-conversation-blue-blur)!important;
+ backdrop-filter:var(--svcp-conversation-blue-blur)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpAttachFile > svg{
+ stroke:#F6FDFF!important;stroke-width:1.8!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpVoiceRecord{
+ color:#A1DEF5!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpVoiceRecord > svg,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpVoiceRecord > svg :is(path,rect,line,polyline,circle){
+ stroke:currentColor!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset #svcpChatInput::placeholder{
+ color:#ABE2F3!important;-webkit-text-fill-color:#ABE2F3!important;
+ opacity:1!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset{
+  --svcp-conversation-blue-glass:#167EAD;
+  --svcp-conversation-blue-blur:none;
+ }
 }
