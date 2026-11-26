@@ -512,9 +512,9 @@ function openFolderPage(state,category,trigger){
  };
  const menuAction=(label,kind,fn,danger=false)=>{const b=el('button','sv-doc-list-menu-action'+(danger?' is-danger':''));b.type='button';b.append(actionIcon(kind),el('span','',label));b.addEventListener('click',fn);return b;};
  const showMenu=(...items)=>{menu.replaceChildren(...items);menu.hidden=false;more.setAttribute('aria-expanded','true');};
- const move=make('Переместить','archive',()=>showMenu(...[['','Все файлы'],...ownFolders(state).map(x=>[x.id,x.name])].map(([id,label])=>menuAction(label,'archive',()=>void run('move',[...folder.selected],id)))));
+ const move=make('Переместить','move',()=>showMenu(...[['','Все файлы'],...ownFolders(state).map(x=>[x.id,x.name])].map(([id,label])=>menuAction(label,'archive',()=>void run('move',[...folder.selected],id)))));
  const remove=make('Удалить выбранные','delete',()=>void run('remove',[...folder.selected]),'is-danger');
- const restore=make('Восстановить','undo',()=>void run('restore',[...folder.selected]));
+ const restore=make('Восстановить','restore',()=>void run('restore',[...folder.selected]));
  move.dataset.svBulkRole='action';move.append(el('span','','Переместить'));restore.dataset.svBulkRole='action';restore.append(el('span','','Вернуть'));remove.dataset.svBulkRole='delete';
  const done=make('Готово','',()=>{if(!folder.busy){hideMenu();folder.selecting=false;folder.selected.clear();paintFolder(state)}});selectionHead.append(all,done);bar.append(move,restore,count,remove);
  body.append(list,status);dialog.append(head,menu,selectionHead,body,bar);state.recent.parentElement.append(dialog);
@@ -523,13 +523,13 @@ function openFolderPage(state,category,trigger){
   if(folder.busy)return;
   if(folder.selecting){hideMenu();folder.selecting=false;folder.selected.clear();paintFolder(state);return;}
   if(!menu.hidden){hideMenu();return;}
-  const choices=[menuAction('Выбрать','check',()=>{hideMenu();folder.selecting=true;paintFolder(state);}),menuAction('Сортировка','down',()=>showMenu(...[['new','Сначала новые'],['old','Сначала старые'],['name','По имени']].map(([id,label])=>menuAction(label,folder.sort===id?'check':'down',()=>{folder.sort=id;hideMenu();paintFolder(state);}))))];
+  const choices=[menuAction('Выбрать','select',()=>{hideMenu();folder.selecting=true;paintFolder(state);}),menuAction('Сортировка','sort',()=>showMenu(...[['new','Сначала новые'],['old','Сначала старые'],['name','По имени']].map(([id,label])=>menuAction(label,folder.sort===id?'check':'down',()=>{folder.sort=id;hideMenu();paintFolder(state);}))))];
   if(!folder.trash){
    choices.push(menuAction('Недавно удалённые','history',()=>{hideMenu();folder.trash=true;paintFolder(state);void refresh();}));
    const ids=folderItems(state,folder).filter(x=>x.local).map(x=>x.id);
    if(ids.length)choices.push(menuAction('Удалить все локальные','delete',()=>void run('remove',ids),true));
   }else{
-   choices.push(menuAction('Восстановить все','undo',()=>void run('restore',folderItems(state,folder).map(x=>x.id))));
+   choices.push(menuAction('Восстановить все','restore',()=>void run('restore',folderItems(state,folder).map(x=>x.id))));
   }
   showMenu(...choices);
  });
