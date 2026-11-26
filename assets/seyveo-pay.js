@@ -58,7 +58,16 @@ function setWalletMenu(open,restoreFocus=false){
 function screen(name){
  setWalletMenu(false);
  if(name!=='scan')stopCamera();
- for(const node of dialog.querySelectorAll('.syp-screen'))node.hidden=node.dataset.sypScreen!==name;
+ const editor=q('#sypLoyaltyEditor');
+ if(name!=='loyalty-edit'&&editor?.open)editor.close();
+ for(const node of dialog.querySelectorAll('.syp-screen')){
+  if(name==='loyalty-edit'&&node.dataset.sypScreen!=='loyalty-edit')continue;
+  node.hidden=node.dataset.sypScreen!==name;
+ }
+ if(name==='loyalty-edit'&&editor&&!editor.open){
+  try{editor.showModal();}catch{editor.setAttribute('open','');}
+  editor.querySelector('.syp-le-scroll').scrollTop=0;
+ }
  dialog.dispatchEvent(new CustomEvent('seyveo:wallet-screen',{detail:{name}}));
 }
 function setTab(tab){
@@ -127,6 +136,7 @@ function open(tab='card'){
  return select(tab==='finances'?'finances':'card');
 }
 function close(switchingSection=false){
+ const editor=q('#sypLoyaltyEditor');if(editor?.open)editor.close();
  setWalletMenu(false);
  ++viewToken;
  stopCamera();
@@ -177,6 +187,7 @@ document.addEventListener('keydown',event=>{
 },true);
 // No backdrop dismissal: this is an inline page with the shared navigation.
 dialog.addEventListener('close',()=>{
+ const editor=q('#sypLoyaltyEditor');if(editor?.open)editor.close();
  setWalletMenu(false);
  ++viewToken;
  stopCamera();
@@ -241,5 +252,5 @@ async function startCamera(){
    :'Не удалось открыть камеру на этом устройстве.');
  }
 }
-window.SEYVEO_PAY=Object.freeze({open,close,select,showLoyalty(name){if(dialog.open&&['loyalty-edit','loyalty-detail','home'].includes(name)){screen(name);dialog.scrollTop=0;}}});
+window.SEYVEO_PAY=Object.freeze({open,close,select,showLoyalty(name){if(dialog.open&&['loyalty-edit','loyalty-detail','home','add'].includes(name)){screen(name);dialog.scrollTop=0;}}});
 })();
