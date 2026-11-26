@@ -706,13 +706,13 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  color:#14171C!important;border-color:transparent!important;
  box-shadow:var(--sv-segment-selected-shadow)!important;
 }
-/* V99: restore the translucent floating glass face in All Tasks.
-   The moving selection remains legible but no longer paints solid white.
-   The same variables feed the static and V95 animated selection. */
+/* V100: retain a visible cool-grey tint on the translucent track.
+   The moving selection stays translucent, with the existing blur, rim,
+   shadow, motion and layout unchanged. */
 @media not (prefers-reduced-transparency:reduce){
  html:root[data-theme="light"] body #svWorkShell[data-task-tool-mode="all"] > #svAllTasksTabs{
-  --sv-segment-track:var(--sv-white-pearl-floating-dock,rgba(247,247,248,.46));
-  --sv-segment-selected:rgba(255,255,255,.78);
+  --sv-segment-track:rgba(210,216,225,.46);
+  --sv-segment-selected:rgba(250,251,252,.72);
  }
 }
 @media(prefers-reduced-transparency:reduce){
