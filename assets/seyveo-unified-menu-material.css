@@ -718,3 +718,17 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] #svPaperBrushPicker.
  html:root body .sv-menu-with-action-glyph:has([data-sv-menu-action-glyph="delete"]){color:#c13c37!important}
  html:root[data-theme="dark"] body .sv-menu-with-action-glyph:has([data-sv-menu-action-glyph="delete"]){color:#ff898b!important}
 }
+
+
+/* V123: Draft actions must use visible canonical SVGs, not toolbar wrappers. */
+@layer seyveo-menu-action-glyphs {
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-actions > button.sv-menu-with-action-glyph{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;min-height:44px!important;
+ }
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-actions > button > svg.sv-doc-draft-menu-glyph{
+  position:static!important;display:block!important;visibility:visible!important;opacity:1!important;flex:0 0 20px!important;width:20px!important;height:20px!important;min-width:20px!important;max-width:20px!important;margin:0!important;transform:none!important;fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ }
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-actions > button > .sv-doc-draft-menu-label{display:block!important;min-width:0!important;text-align:left!important}
+ html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-actions > button.sv-doc-draft-delete{color:#c13c37!important}
+ html:root[data-theme="dark"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-actions > button.sv-doc-draft-delete{color:#ff898b!important}
+}
