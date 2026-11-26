@@ -7,6 +7,7 @@
   '#svWorkTabs','#svAllTasksTabs','#unifiedTasksTabs','#managerCalendarTabs',
   '#calendarViewModes','.cal-scope','.sv-pulse-periods','.pulse-periods',
   '#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch',
+  '#sayviSurfacePage[data-sv-subject="contract"] .svdf-list-filters',
   '#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-edit-formats',
   '#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-accounts',
   '#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-options',
