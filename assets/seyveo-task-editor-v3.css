@@ -1500,19 +1500,6 @@ html:root[data-theme="light"] body #personalTaskDialog #personalTaskForm > .sv-t
 html:root body #personalTaskDialog #personalTaskForm > .sv-task-example-launch[hidden]{display:none!important}
 
 /* New Task · approved blue confirmation and a single clean reading surface. */
-html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header > #personalTaskSave:not(:disabled){
- background:#287fda!important;background-image:none!important;
- color:#fff!important;border:0!important;box-shadow:0 2px 5px rgba(40,127,218,.15)!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header > #personalTaskSave:not(:disabled) svg{
- stroke:#fff!important;width:21px!important;height:21px!important;stroke-width:1.8!important;
-}
-html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header > #personalTaskSave:disabled{
- background:var(--sv-white-pearl-surface,#f6f7f9)!important;
- border:var(--sv-white-pearl-edge)!important;color:#9da6b1!important;
-}
-html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header > #personalTaskSave:disabled svg{stroke:#9da6b1!important;}
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm:not(:disabled){
  min-height:44px!important;color:#fff!important;background:#287fda!important;
  border:0!important;box-shadow:none!important;
@@ -1535,8 +1522,7 @@ html:root body dialog#personalTaskDialog.sv-task-editor-v3 .personal-task-sheet:
  margin-bottom:0!important;
  padding-bottom:calc(var(--sv-task-float-bottom) + 60px)!important;
  scroll-padding-bottom:calc(var(--sv-task-float-bottom) + 60px)!important;
- -webkit-mask-image:linear-gradient(to bottom,transparent,#000 8px,#000 calc(100% - 24px),transparent);
- mask-image:linear-gradient(to bottom,transparent,#000 8px,#000 calc(100% - 24px),transparent);
+ /* The shared header owns the upper fade. No mask on the scrollport. */
 }
 
 /* New Task · restrained reading cards, shared across every smart task. */
@@ -1708,4 +1694,67 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .
  html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice{
   margin-top:8px!important;
  }
+}
+
+/* New Task · canonical Avatar / Review pinned header. One optical surface
+   and one native form scrollport, including with the keyboard visible. */
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open]{
+ --sv-task-top-inset:calc(12px + env(safe-area-inset-top,0px));
+ --sv-task-header-height:calc(var(--sv-task-top-inset) + 56px);
+ background:#fff!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
+ border:0!important;border-radius:0!important;box-shadow:none!important;background:#fff!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet::before{
+ content:"";display:block;position:absolute;inset:0 0 auto;
+ height:var(--sv-task-header-height);z-index:5;
+ --sv-header-glass-mask:linear-gradient(to bottom,#000 0,#000 calc(100% - 5px),transparent 100%);
+ pointer-events:none;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header{
+ position:absolute!important;inset:0 0 auto!important;z-index:8!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-rows:44px!important;gap:8px!important;
+ width:100%!important;height:var(--sv-task-header-height)!important;
+ min-height:var(--sv-task-header-height)!important;max-height:var(--sv-task-header-height)!important;
+ padding:var(--sv-task-top-inset) max(12px,env(safe-area-inset-right,0px)) 12px max(12px,env(safe-area-inset-left,0px))!important;
+ margin:0!important;background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ pointer-events:none;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header h2{
+ font:590 var(--sv-header-title-size,20px)/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:var(--sv-header-title-tracking,-.02em)!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header > :is(#personalTaskCancel,#personalTaskSave){
+ pointer-events:auto;justify-self:center!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ border:var(--sv-white-pearl-edge)!important;border-radius:50%!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+ color:#181B21!important;transform:none!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header > #personalTaskSave:disabled{color:#9DA6B1!important;cursor:default!important}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header > #personalTaskSave:not(:disabled){
+ background:rgba(68,166,250,.34)!important;color:#075CA8!important;
+ border:1px solid rgba(56,146,230,.38)!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header > :is(#personalTaskCancel,#personalTaskSave) svg{
+ width:20px!important;height:20px!important;stroke:currentColor!important;stroke-width:1.8!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .personal-task-sheet #personalTaskForm{
+ position:relative!important;z-index:1!important;flex:1 1 0!important;
+ min-height:0!important;padding-top:var(--sv-task-header-height)!important;
+ scroll-padding-top:calc(var(--sv-task-header-height) + 8px)!important;
+ background:transparent!important;
+ -webkit-mask-image:none!important;mask-image:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header > :is(#personalTaskCancel,#personalTaskSave){
+  background:#F6F7F9!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header > #personalTaskSave:not(:disabled){background:#B9DFFF!important}
 }
