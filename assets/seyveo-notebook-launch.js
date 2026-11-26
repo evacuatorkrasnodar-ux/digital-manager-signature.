@@ -24,15 +24,12 @@
  const scanTile=document.getElementById('noteModeScan');
  scanTile?.querySelector('.paper-choice-copy strong')?.replaceChildren(document.createTextNode('Сканировать'));
  scanTile?.querySelector('.paper-choice-copy small')?.replaceChildren(document.createTextNode('Фото → текст'));
- // Three creation tools share one 24px vector grid and stroke weight.
- const icons={
-  noteModeText:'<path d="M7 3.5h6.5L18 8v10.5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2Z"/><path d="M13.5 3.5V7a1 1 0 0 0 1 1H18" opacity=".7"/><path d="M8 10.5h7M8 13.5h7M8 16.5h4.5" opacity=".75"/><path d="M8 5.5h2.5" opacity=".45"/>',
-  noteModeScan:'<path d="M8 3.5H6A2.5 2.5 0 0 0 3.5 6v2M16 3.5h2A2.5 2.5 0 0 1 20.5 6v2M20.5 16v2a2.5 2.5 0 0 1-2.5 2.5h-2M8 20.5H6A2.5 2.5 0 0 1 3.5 18v-2"/><rect x="8" y="6.5" width="8" height="11" rx="1.3" opacity=".55"/><path d="M6 12h12"/>',
-  noteModeDraw:'<path d="M12 3.5H6.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2H18a2 2 0 0 0 2-2V15" opacity=".8"/><path d="m10 16.8 1.2-4 7-7a1.7 1.7 0 0 1 2.4 2.4l-7 7Z" fill="currentColor" fill-opacity=".08"/><path d="m17 7 2.4 2.4" opacity=".65"/><path d="M7.5 17.5c-1.8-2.4-.3-5.3 1.7-4.5" opacity=".55"/>'
- };
- for(const [id,paths] of Object.entries(icons)){
+ // Reuse shared artwork. Keep the original launch buttons and handlers.
+ const icons={noteModeText:'note-create',noteModeScan:'note-scan',noteModeDraw:'note-draw',noteModePaper:'notebook'};
+ for(const [id,key] of Object.entries(icons)){
   const host=document.getElementById(id)?.querySelector('.paper-choice-icon');
-  if(host)host.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
+  const library=window.SEYVEO_APP_ICONS;
+  if(host&&library?.has(key))host.replaceChildren(library.svg(key));
  }
  if(legacyInkTile)legacyInkTile.hidden=true;
  const destinations={

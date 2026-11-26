@@ -7,7 +7,6 @@ const STORAGE='seyveo.home.favorites.v1',USAGE='seyveo.home.favorite-usage.v1';
 /* SEYVEO Atelier: bespoke, gentle ink drawings, made for 24x24 Retina marks.
    A little illustrated detail makes each symbol memorable without adding noise.
    All glyphs are pure vector and share the Notebook's fine graphite stroke. */
-const favoriteGlyphs=window.SEYVEO_APP_ICONS.glyphs;
 const apps=[
  {id:'music',name:'Музыка',selector:'[data-calendar-space="music"]'},
  {id:'documents',name:'Документы',selector:'[data-calendar-space="documents"]'},
@@ -108,7 +107,7 @@ const smartTile=document.createElement('div');smartTile.className='sv-home-favor
 const card=document.createElement('button');card.type='button';card.className='sv-home-favorite sv-home-review-entry';
 card.setAttribute('aria-label','Открыть дела Сэйви');card.setAttribute('title','Дела для разбора');card.dataset.icon='cards';
 const symbol=document.createElement('span');symbol.className='sv-home-favorite-icon';
-symbol.innerHTML='<svg viewBox="0 0 64 64" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>';
+symbol.innerHTML=icon('cards');
 const badge=document.createElement('span');badge.className='sv-home-review-badge';badge.hidden=true;badge.setAttribute('aria-hidden','true');
 const caption=document.createElement('span');caption.className='sv-home-favorite-label';caption.textContent='Дела';
 symbol.append(badge);card.append(symbol,caption);smartTile.append(card);personalRow.append(smartTile);
@@ -126,7 +125,7 @@ card.addEventListener('click',e=>{
  if(cardCount>0)window.dispatchEvent(new Event('seyveo:open-card-review'));
  else launch(fallbackId);
 });
-function icon(id){return '<svg viewBox="0 0 64 64" aria-hidden="true">'+(favoriteGlyphs[id]||favoriteGlyphs.generic)+'</svg>'}
+function icon(id){const lib=window.SEYVEO_APP_ICONS;return lib.svg(lib.has(id)?id:'generic').outerHTML;}
 function launch(id){
  const item=byId[id];if(!item||(id.startsWith('business-')&&!businessEnabled()))return;
  const result=item.action?.();
@@ -320,7 +319,7 @@ function openCustomize(){
    const b=document.createElement('button');b.type='button';
    const chosen=app.id==='smart'?smart:picked.includes(app.id);
    b.setAttribute('aria-pressed',String(chosen));
-   b.innerHTML=app.id==='smart'?'<svg viewBox="0 0 64 64" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>':icon(app.id);
+   b.innerHTML=app.id==='smart'?icon('cards'):icon(app.id);
    const t=document.createElement('span');
    t.textContent=app.id==='business-documents'?'Документы':app.id==='business-people'?'Сотрудники':app.name;
    b.setAttribute('aria-label',app.name);b.title=app.name;
@@ -520,7 +519,7 @@ function updateCount(){
  card.classList.toggle('sv-home-review-entry',pending);
  if(pending){
   if(card.dataset.icon!=='cards'){
-   symbol.innerHTML='<svg viewBox="0 0 64 64" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>';
+   symbol.innerHTML=icon('cards');
    symbol.append(badge);card.dataset.icon='cards';
   }
   caption.textContent='Дела';

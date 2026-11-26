@@ -884,3 +884,22 @@ html:root[data-theme="dark"] #seyveoPayDialog{
 html:root[data-theme="dark"] body #svWorkShell[data-active="wallet"] > .syp-view-switch .syp-view-icon svg.sv-app-source-icon,
 html:root[data-theme="dark"] #seyveoPayDialog .syp-view-switch .syp-view-icon svg.sv-app-source-icon,
 html:root[data-theme="dark"] #seyveoPayDialog .syp-module-empty>svg.sv-app-source-icon{color:#e7ebef!important}
+
+/* V218: shared restrained app icon palette. Applies only to registered glyphs. */
+svg.sv-app-source-icon{
+ --sv-icon-blue:#6488a4;--sv-icon-green:#528477;--sv-icon-gold:#a58a61;
+ --sv-icon-blue-wash:#e5edf3;--sv-icon-green-wash:#e4eee8;--sv-icon-gold-wash:#f1e9dc;
+ --sv-icon-rose-wash:#f2e5e5;--sv-icon-paper:#fafbfc;
+ color:#272c32;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;
+ shape-rendering:geometricPrecision;
+}
+html[data-theme="dark"] svg.sv-app-source-icon{
+ --sv-icon-blue:#a2bfd5;--sv-icon-green:#91b8a6;--sv-icon-gold:#c5ae88;
+ --sv-icon-blue-wash:#344957;--sv-icon-green-wash:#344940;--sv-icon-gold-wash:#4e4537;
+ --sv-icon-rose-wash:#513e44;--sv-icon-paper:#292d33;color:#e7ebef;
+}
+html:root body #svNotebookCreateTiles .paper-choice-icon svg.sv-app-source-icon{
+ width:32px!important;height:32px!important;fill:none!important;stroke:currentColor!important;
+ color:#272c32!important;filter:none!important;
+}
+html:root[data-theme="dark"] body #svNotebookCreateTiles .paper-choice-icon svg.sv-app-source-icon{color:#e7ebef!important}
