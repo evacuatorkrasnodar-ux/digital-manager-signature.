@@ -582,3 +582,25 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
  -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
 }
 @media(prefers-reduced-transparency:reduce){html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]){background:#167ebd!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
+
+/* Work tabs · iPhone contrast trial. Preserve all geometry and scrolling.
+   Neutral translucent track, clear white selected face, no extra layers. */
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]){
+ background:rgba(226,229,235,.73)!important;background-image:none!important;
+ border:1px solid rgba(209,214,223,.80)!important;
+ box-shadow:0 2px 7px rgba(38,48,60,.055),inset 0 1px 0 rgba(255,255,255,.55)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+}
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]) > button:not([hidden]):not([aria-pressed="true"]){
+ color:#454B55!important;
+}
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]) > button:not([hidden])[aria-pressed="true"]{
+ background:rgba(255,255,255,.96)!important;background-image:none!important;
+ color:#14171C!important;
+ box-shadow:0 1px 4px rgba(38,48,60,.12),inset 0 0 0 .75px rgba(203,208,218,.76)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]){background:#E9EBEF!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]) > button:not([hidden])[aria-pressed="true"]{background:#fff!important}
+}
