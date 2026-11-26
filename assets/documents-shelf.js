@@ -411,13 +411,13 @@ function paintFolder(state){
  const items=folderItems(state,folder),selectable=items.filter(item=>eligible(folder,item));
  const valid=new Set(selectable.map(item=>item.id));
  for(const id of folder.selected)if(!valid.has(id))folder.selected.delete(id);
- folder.title.textContent=folder.trash?'Недавно удалённые':folder.selecting?'Выбрано: '+folder.selected.size:category.title;
+ folder.title.textContent=folder.trash?'Недавно удалённые':category.title;
  folder.more.setAttribute('aria-label',folder.selecting?'Завершить выбор':'Действия со списком');
  folder.more.replaceChildren(actionIcon(folder.selecting?'check':'more'));
- folder.bar.hidden=!folder.selecting;
+ folder.bar.hidden=!folder.selecting;folder.selectionHead.hidden=!folder.selecting;
  folder.all.textContent=selectable.length&&folder.selected.size===selectable.length?'Снять выбор':'Выбрать все';
  folder.all.disabled=!selectable.length||folder.busy;
- folder.count.textContent=String(folder.selected.size);
+ folder.count.textContent='Выбрано: '+folder.selected.size;
  folder.move.hidden=folder.trash;folder.remove.hidden=folder.trash;folder.restore.hidden=!folder.trash;
  for(const b of [folder.move,folder.remove,folder.restore])b.disabled=!folder.selected.size||folder.busy;
  folder.dialog.classList.toggle('sv-doc-selecting',folder.selecting);
@@ -487,13 +487,13 @@ function openFolderPage(state,category,trigger){
  const body=el('div','sv-doc-archive-body sv-doc-folder-page-body');
  const list=el('div','sv-doc-folder-page-list');
  const status=el('p','sv-doc-folder-page-status');status.setAttribute('role','status');
- const bar=el('div','sv-doc-list-selection');bar.hidden=true;
+ const bar=el('div','sv-doc-list-selection sv-bulk-selection-capsule');bar.hidden=true;const selectionHead=el('div','sv-bulk-selection-head');selectionHead.hidden=true;
  const make=(label,kind,fn,cls='')=>{const b=el('button',cls);b.type='button';if(kind)b.append(actionIcon(kind));else b.textContent=label;b.setAttribute('aria-label',label);b.addEventListener('click',fn);return b;};
  const all=make('Выбрать все','',()=>{
   const ids=folderItems(state,folder).filter(item=>eligible(folder,item)).map(x=>x.id);
   if(ids.length===folder.selected.size)folder.selected.clear();else folder.selected=new Set(ids);paintFolder(state);
  });
- const count=el('span','sv-doc-list-count','0');
+ const count=el('span','sv-doc-list-count','Выбрано: 0');count.dataset.svBulkRole='count';count.setAttribute('aria-live','polite');
  const run=async(operation,ids,destination='')=>{
   if(folder.busy||!ids.length)return;
   hideMenu();
@@ -515,9 +515,10 @@ function openFolderPage(state,category,trigger){
  const move=make('Переместить','archive',()=>showMenu(...[['','Все файлы'],...ownFolders(state).map(x=>[x.id,x.name])].map(([id,label])=>menuAction(label,'archive',()=>void run('move',[...folder.selected],id)))));
  const remove=make('Удалить выбранные','delete',()=>void run('remove',[...folder.selected]),'is-danger');
  const restore=make('Восстановить','undo',()=>void run('restore',[...folder.selected]));
- bar.append(all,count,move,restore,remove);
- body.append(list,status);dialog.append(head,menu,body,bar);state.recent.parentElement.append(dialog);
- folder={dialog,category,title,body,list,status,busy:false,selecting:false,selected:new Set(),sort:'new',trash:false,more,menu,bar,all,count,move,remove,restore};state.folderPage=folder;
+ move.dataset.svBulkRole='action';move.append(el('span','','Переместить'));restore.dataset.svBulkRole='action';restore.append(el('span','','Вернуть'));remove.dataset.svBulkRole='delete';
+ const done=make('Готово','',()=>{if(!folder.busy){hideMenu();folder.selecting=false;folder.selected.clear();paintFolder(state)}});selectionHead.append(all,done);bar.append(move,restore,count,remove);
+ body.append(list,status);dialog.append(head,menu,selectionHead,body,bar);state.recent.parentElement.append(dialog);
+ folder={dialog,category,title,body,list,status,busy:false,selecting:false,selected:new Set(),sort:'new',trash:false,more,menu,bar,selectionHead,all,count,move,remove,restore};state.folderPage=folder;
  more.addEventListener('click',()=>{
   if(folder.busy)return;
   if(folder.selecting){hideMenu();folder.selecting=false;folder.selected.clear();paintFolder(state);return;}
