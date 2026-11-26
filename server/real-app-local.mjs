@@ -91,7 +91,9 @@ function isApprovedSayviPaperFrame(req){
 function mapHomeHeaders(){
  const sdk='https://api-maps.yandex.ru https://*.api-maps.yandex.ru https://yastatic.net';
  const data=sdk+' https://*.maps.yandex.net';
- const extra={'script-src':sdk+" 'unsafe-eval'",'connect-src':data,
+ // Wallet rates are public reference data. Permit only the JSON endpoint on Home.
+ const walletRates='https://www.cbr-xml-daily.ru/daily_json.js';
+ const extra={'script-src':sdk+" 'unsafe-eval'",'connect-src':data+' '+walletRates,
   'style-src':sdk,'img-src':data,'worker-src':'data: '+sdk};
  const policy=HEADERS['content-security-policy'].split(';').map(part=>{
   const directive=part.trim().split(/\s+/)[0];
