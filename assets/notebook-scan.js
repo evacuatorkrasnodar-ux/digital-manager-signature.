@@ -1,6 +1,6 @@
 /* SEYVEO · photo-to-text scanner (opt-in OCR; user must review and Save).
-   Photo is processed in the browser; OCR JS/WASM and RU/EN models download from
-   a third-party CDN only after the user presses "Распознать текст". */
+   Photo is processed in the browser; local OCR assets are preferred.
+   Only public language models may use the fallback after OCR is requested. */
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -583,16 +583,11 @@ async function recognize(){
   message('Подключаю распознавание… Это может занять время на iPhone.');
   const lib=await loadEngine();
   if(token!==session)return;
-  worker=await lib.createWorker(['rus','eng'],1,{
-   workerPath:new URL('assets/seyveo-ocr-worker.min.js',document.baseURI).href,
-   corePath:new URL('assets/seyveo-ocr-core-lstm.wasm.js',document.baseURI).href,
-   langPath:new URL('assets/',document.baseURI).href,
-   gzip:false,
-   logger:info=>{
+  worker=await window.SEYVEO_OCR_WORKER.create(lib,info=>{
    if(token!==session||!dialog.open)return;
    if(info.status==='recognizing text'&&Number.isFinite(info.progress))
     message('Распознавание: '+Math.round(info.progress*100)+'%');
-  }});
+  });
   if(token!==session)return;
   if(typeof worker.setParameters==='function'){
    await worker.setParameters({
