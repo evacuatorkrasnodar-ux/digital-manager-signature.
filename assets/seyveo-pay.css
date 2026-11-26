@@ -969,3 +969,20 @@ html:root body #seyveoPayDialog .syp-private-jade::after{content:none!important;
  #seyveoPayDialog .syp-private-jade .syp-cardbrand small{margin-top:3px!important;}
  #seyveoPayDialog .syp-private-jade .syp-private-expiry{gap:2px!important;}
 }
+
+/* V220: one clean silhouette, optically matched to the original metal rim.
+   High-resolution AVIF restores the fine sphere and chip details.
+   Old Safari retains the WebP fallback instead of a missing background. */
+html:root body #seyveoPayDialog .syp-card.syp-private-jade,
+html:root[data-theme="light"] body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-card.syp-private-jade{
+ aspect-ratio:890 / 479!important;
+ border-radius:4.7% / 8.73%!important;
+ background-color:transparent!important;
+ background-image:url("seyveo-private-jade-card.webp")!important;
+ background-image:image-set(url("seyveo-private-jade-card-hd.avif") type("image/avif"),url("seyveo-private-jade-card.webp") type("image/webp"))!important;
+ background-size:100% 100%!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+ box-shadow:0 6px 17px rgba(13,47,45,.15)!important;
+ -webkit-mask-image:-webkit-radial-gradient(white,black);
+}
