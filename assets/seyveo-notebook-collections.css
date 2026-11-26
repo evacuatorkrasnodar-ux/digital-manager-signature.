@@ -66,3 +66,5 @@ html[data-theme="dark"] .sv-nb-folder-sheet .sv-nb-folder-row{color:#fff;border-
 dialog.sv-nb-folder-sheet .sv-nb-folder-rename{font-size:13px;padding-inline:4px;flex-shrink:0}
 dialog.sv-nb-folder-sheet button[hidden]{display:none!important}
 dialog.sv-nb-folder-sheet .sv-nb-folder-form{flex-wrap:wrap}
+
+#svWorkShell[data-active="notes"] #svNotebookCategories[data-nb-view][hidden]{display:none!important}
