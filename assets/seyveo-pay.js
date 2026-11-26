@@ -29,6 +29,19 @@ tabs.innerHTML='<button type="button" data-syp-tab="card" aria-pressed="true" ar
  '<button type="button" data-syp-tab="calculator" aria-pressed="false" aria-controls="sypCalculatorScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="3"/><path d="M8 6h8v3H8zm0 7h1m6 0h1m-8 4h1m6 0h1"/></svg></span><span>Расчёты</span></button>'+
  '<button type="button" data-syp-tab="analytics" aria-pressed="false" aria-controls="sypAnalyticsScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3a9 9 0 1 0 10 10H11V3Z"/><path d="M14 2v8h8a8 8 0 0 0-8-8Z"/></svg></span><span>Аналитика</span></button>';
 const moduleNames={"receipts":{"name":"Чеки","desc":"Покупки, чеки и гарантии"},"payments":{"name":"Платежи","desc":"Подписки и регулярные платежи"},"family":{"name":"Семья","desc":"Семейный бюджет"},"debts":{"name":"Долги","desc":"Долги и возвраты"},"calculator":{"name":"Расчёты","desc":"Финансовые калькуляторы"},"analytics":{"name":"Аналитика","desc":"Анализ личных финансов"}};
+// Use the shared application icon registry; legacy markup remains a safe fallback.
+const walletIconKeys=Object.freeze({"card":"wallet-card","finances":"wallet-finances","currency":"wallet-currency","goals":"wallet-goals","receipts":"wallet-receipts","payments":"wallet-payments","family":"wallet-family","debts":"wallet-debts","calculator":"wallet-calculator","analytics":"wallet-analytics"});
+const iconRegistry=window.SEYVEO_APP_ICONS;
+if(iconRegistry?.svg){
+ for(const button of tabs.querySelectorAll('[data-syp-tab]')){
+  const key=walletIconKeys[button.dataset.sypTab];
+  if(key&&iconRegistry.has(key))button.querySelector('.syp-view-icon').replaceChildren(iconRegistry.svg(key));
+ }
+ for(const section of dialog.querySelectorAll('.syp-module')){
+  const key=walletIconKeys[section.dataset.sypScreen],old=section.querySelector('.syp-module-empty > svg');
+  if(old&&key&&iconRegistry.has(key))old.replaceWith(iconRegistry.svg(key));
+ }
+}
 home.id='sypCardHome';
 // Reuse Notebook's free header area above the permanent Work capsule.
 // Move the real controls, not a nonfunctional copy. The delegated click

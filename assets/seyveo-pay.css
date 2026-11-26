@@ -861,3 +861,26 @@ html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch > button:fo
 #seyveoPayDialog .syp-module-empty h4{font:620 19px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;margin:0}
 #seyveoPayDialog .syp-module-empty p{font-size:14px;line-height:1.5;color:var(--secondary);margin:0;max-width:290px}
 #seyveoPayDialog .syp-module-link{min-height:44px;padding:8px 16px;margin-top:8px;border:var(--sv-header-circle-border,1px solid var(--line));background:var(--sv-header-circle,var(--card2));box-shadow:var(--sv-header-circle-shadow,none);border-radius:999px;color:var(--text);font:550 14px/1.3 system-ui;cursor:pointer}
+
+/* V217 · Shared vector app glyphs. No button backgrounds or optical shadows. */
+html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch,
+#seyveoPayDialog{
+ --sv-icon-blue:#6488a4;--sv-icon-green:#528477;--sv-icon-gold:#a58a61;
+ --sv-icon-blue-wash:#e5edf3;--sv-icon-green-wash:#e4eee8;
+ --sv-icon-gold-wash:#f1e9dc;--sv-icon-paper:#fafbfc;
+}
+html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch .syp-view-icon svg.sv-app-source-icon,
+#seyveoPayDialog .syp-view-switch .syp-view-icon svg.sv-app-source-icon{
+ width:32px!important;height:32px!important;fill:none!important;
+ color:#272c32!important;stroke:currentColor!important;filter:none!important;
+}
+#seyveoPayDialog .syp-module-empty>svg.sv-app-source-icon{color:#272c32}
+html:root[data-theme="dark"] body #svWorkShell[data-active="wallet"] > .syp-view-switch,
+html:root[data-theme="dark"] #seyveoPayDialog{
+ --sv-icon-blue:#a2bfd5;--sv-icon-green:#91b8a6;--sv-icon-gold:#c5ae88;
+ --sv-icon-blue-wash:#344957;--sv-icon-green-wash:#344940;
+ --sv-icon-gold-wash:#4e4537;--sv-icon-paper:#292d33;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-active="wallet"] > .syp-view-switch .syp-view-icon svg.sv-app-source-icon,
+html:root[data-theme="dark"] #seyveoPayDialog .syp-view-switch .syp-view-icon svg.sv-app-source-icon,
+html:root[data-theme="dark"] #seyveoPayDialog .syp-module-empty>svg.sv-app-source-icon{color:#e7ebef!important}
