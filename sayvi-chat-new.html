@@ -1461,13 +1461,14 @@ html body > #sayviHistoryActions button#sayviHistoryDelete:active{
 html body main::before{
  content:"";position:absolute;inset:0 0 auto 0;z-index:6;pointer-events:none;
  --sv-sayvi-header-edge:calc(env(safe-area-inset-top,0px) + 7px + var(--sv-nav-single-size,44px));
- height:calc(var(--sv-sayvi-header-edge) + 32px);
+ height:calc(var(--sv-sayvi-header-edge) + 24px);
  background:var(--sayvi-bg);
  background:color-mix(in srgb,var(--sayvi-bg) 82%,transparent);
- -webkit-backdrop-filter:blur(22px) saturate(105%);backdrop-filter:blur(22px) saturate(105%);
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%));backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%));
  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 var(--sv-sayvi-header-edge),transparent 100%);
  mask-image:linear-gradient(to bottom,#000 0,#000 var(--sv-sayvi-header-edge),transparent 100%);
 }
+:root[data-theme="light"] body main::before{background:var(--sv-white-pearl-header-face,rgba(247,247,248,.46))}
 @media(prefers-reduced-transparency:reduce){
  html body main::before{background:var(--sayvi-bg);-webkit-backdrop-filter:none;backdrop-filter:none}
 }
