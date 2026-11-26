@@ -5,6 +5,7 @@
  'use strict';
  const selectors=[
   '#svWorkTabs','#svAllTasksTabs','#unifiedTasksTabs','#managerCalendarTabs',
+  '#svHomeFavoritesEditor .sv-home-favorites-tabs',
   '#calendarViewModes','.cal-scope','.sv-pulse-periods','.pulse-periods',
   '#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch',
   '#sayviSurfacePage[data-sv-subject="contract"] .svdf-list-filters',
