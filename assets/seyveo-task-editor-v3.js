@@ -71,7 +71,7 @@
  title.addEventListener('compositionstart',()=>{composing=true;phraseMirror.hidden=true;titleCapsule?.classList.remove('sv-task-phrase-colored')});
  title.addEventListener('compositionend',()=>{composing=false;refreshPhraseChrome()});
  clearPhrase.addEventListener('click',()=>{
-  title.value='';manualDate=false;manualTime=false;manualPriority=false;manualRepeat=false;quickDateOpen=false;
+  title.value='';manualDate=false;manualTime=false;manualPriority=false;manualRepeat=false;closeQuickWheel(false);
   window.SEYVEO_TASK_PLACE_EDITOR?.reset?.();
   title.dispatchEvent(new Event('input',{bubbles:true}));title.focus({preventScroll:true});
  });
@@ -311,6 +311,32 @@
  let manualDate=false,manualTime=false,manualPriority=false,manualRepeat=false;
  let quickDateOpen=false;
  let quickWheelMode='date';
+ let wheelDraft=null;
+ const wheelShade=document.createElement('div');wheelShade.className='sv-task-calendar-shade sv-task-wheel-shade';wheelShade.hidden=true;
+ const wheelHost=document.createElement('div');wheelHost.className='sv-task-wheel-sheet-host';wheelHost.hidden=true;
+ sheet.append(wheelShade,wheelHost);
+ wheelShade.addEventListener('click',()=>closeQuickWheel());
+ function closeQuickWheel(refresh=true){
+  quickDateOpen=false;wheelDraft=null;wheelShade.hidden=true;wheelHost.hidden=true;wheelHost.replaceChildren();
+  if(refresh)updateSmartPreview();
+ }
+ function openQuickWheel(mode='date'){
+  if(quickDateOpen){closeQuickWheel();return}
+  setCalendarOpen(false);title.blur();quickDateOpen=true;quickWheelMode=mode;
+  wheelDraft={date:date.value,time:timeInput?.value||''};
+  wheelShade.hidden=false;wheelHost.hidden=false;renderQuickWheel();updateSmartPreview();
+ }
+ function renderQuickWheel(){if(quickDateOpen&&wheelDraft)wheelHost.replaceChildren(makeWheelEditor());}
+ function acceptQuickWheel(){
+  if(!wheelDraft)return;
+  const next={...wheelDraft};const changedDate=next.date!==date.value,changedTime=next.time!==(timeInput?.value||'');
+  closeQuickWheel(false);
+  if(changedDate){manualDate=true;date.value=next.date;}
+  if(changedTime&&timeInput){manualTime=true;timeInput.value=next.time;}
+  if(changedDate)date.dispatchEvent(new Event('change',{bubbles:true}));
+  if(changedTime)timeInput?.dispatchEvent(new Event('change',{bubbles:true}));
+  updateSmartPreview();
+ }
  /* The native keyboard belongs to the phone. Follow its visual viewport so
     the small controls stay immediately above it, without moving the editor. */
  let keyboardFrame=0,lastKeyboardInset=-1;
@@ -418,28 +444,31 @@
   const column=document.createElement('div');column.className='sv-task-wheel-column';column.setAttribute('aria-label',label);
   return window.SEYVEO_WHEEL.mount(column,choices,value,change);
  }
- function makeWheelEditor(whenDate,whenTime){
+ function makeWheelEditor(){
   const editor=document.createElement('div');editor.className='sv-task-smart-wheel-edit';
+  const head=document.createElement('header');head.className='sv-task-wheel-sheet-head';
+  const grip=document.createElement('span');grip.className='sv-task-calendar-grip';grip.setAttribute('aria-hidden','true');
+  const heading=document.createElement('strong');heading.textContent='Дата и время';
+  head.append(grip,heading);editor.append(head);
   const tabs=document.createElement('div');tabs.className='sv-task-wheel-tabs';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Что исправить');
   for(const [mode,label] of [['date','Дата'],['time','Время']]){
    const button=document.createElement('button');button.type='button';button.textContent=label;
    button.classList.toggle('is-active',quickWheelMode===mode);button.setAttribute('aria-pressed',String(quickWheelMode===mode));
-   button.addEventListener('click',()=>{quickWheelMode=mode;updateSmartPreview()});
+   button.addEventListener('click',()=>{if(quickWheelMode!==mode){quickWheelMode=mode;renderQuickWheel()}});
    tabs.append(button);
   }
   editor.append(tabs);
   const body=document.createElement('div');body.className='sv-task-wheel-body';
   body.classList.toggle('is-time',quickWheelMode==='time');
   if(quickWheelMode==='date'){
-   const chosen=/^\d{4}-\d{2}-\d{2}$/.test(date.value)?date.value:today();
+   const chosen=/^\d{4}-\d{2}-\d{2}$/.test(wheelDraft.date)?wheelDraft.date:today();
    const [year,month,day]=chosen.split('-').map(Number);
    const picked={year,month,day};
    let dayWheel=null;
    const dayHost=document.createElement('div');dayHost.className='sv-task-wheel-host';
    function commitDate(){
     picked.day=Math.min(picked.day,new Date(picked.year,picked.month,0).getDate());
-    manualDate=true;date.value=[picked.year,padWheel(picked.month),padWheel(picked.day)].join('-');
-    whenDate.textContent=new Intl.DateTimeFormat('ru-RU',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).format(new Date(picked.year,picked.month-1,picked.day));
+    if(wheelDraft)wheelDraft.date=[picked.year,padWheel(picked.month),padWheel(picked.day)].join('-');
    }
    function drawDayWheel(){
     const daysInMonth=new Date(picked.year,picked.month,0).getDate();
@@ -451,11 +480,10 @@
    const years=makeWheelColumn('Год',Array.from({length:201},(_,index)=>({value:1900+index,label:String(1900+index)})),picked.year,value=>{picked.year=value;drawDayWheel();commitDate()});
    drawDayWheel();body.append(months.node,dayHost,years.node);
   }else{
-   const [hour,minute]=(timeInput?.value||'09:00').split(':').map(Number);
+   const [hour,minute]=(wheelDraft.time||'09:00').split(':').map(Number);
    const picked={hour,minute};
    function commitTime(){
-    manualTime=true;if(timeInput)timeInput.value=padWheel(picked.hour)+':'+padWheel(picked.minute);
-    whenTime.textContent=padWheel(picked.hour)+':'+padWheel(picked.minute);
+    if(wheelDraft)wheelDraft.time=padWheel(picked.hour)+':'+padWheel(picked.minute);
    }
    body.append(
     makeWheelColumn('Часы',Array.from({length:24},(_,value)=>({value,label:padWheel(value)})),picked.hour,value=>{picked.hour=value;commitTime()}).node,
@@ -467,16 +495,16 @@
   const clear=document.createElement('button');clear.type='button';clear.className='sv-task-wheel-clear';
   clear.textContent=quickWheelMode==='date'?'Без даты':'Без времени';
   clear.addEventListener('click',()=>{
-   if(quickWheelMode==='date'){manualDate=true;date.value='';whenDate.textContent='Без даты'}
-   else{manualTime=true;if(timeInput){timeInput.value='';syncTimePhrase('');timeInput.dispatchEvent(new Event('change',{bubbles:true}));}whenTime.textContent='Время не выбрано'}
-   updateSmartPreview();
+   if(!wheelDraft)return;
+   if(quickWheelMode==='date'){wheelDraft.date='';wheelDraft.time='';}
+   else wheelDraft.time='';
+   acceptQuickWheel();
   });
   const done=document.createElement('button');done.type='button';done.className='sv-task-smart-quick-done';done.textContent='Готово';
   done.addEventListener('click',()=>{
-   quickDateOpen=false;date.dispatchEvent(new Event('change',{bubbles:true}));
-   timeInput?.dispatchEvent(new Event('change',{bubbles:true}));updateSmartPreview();
+   acceptQuickWheel();
   });
-  actions.append(clear,done);editor.append(actions,window.SEYVEO_WHEEL.feedbackButton());
+  actions.append(clear,done);editor.append(actions);
   return editor;
  }
  function updateSmartPreview(){
@@ -541,10 +569,10 @@
   if(!differingDates)whenTime.textContent=timeInput?.value||'Время';
   const arrow=document.createElement('span');arrow.className='sv-task-smart-when-arrow';arrow.textContent='›';arrow.setAttribute('aria-hidden','true');
   when.append(whenDate,whenTime,arrow);
-  when.addEventListener('click',()=>{quickDateOpen=!quickDateOpen;if(quickDateOpen)quickWheelMode='date';updateSmartPreview()});
+  when.addEventListener('click',event=>openQuickWheel(event.target.closest('.sv-task-smart-when-time')?'time':'date'));
   summaryGroup.append(when);
    renderTimeConflict(smartDetails);
-  if(quickDateOpen)smartDetails.append(makeWheelEditor(whenDate,whenTime));
+
   }
   const meta=document.createElement('div');meta.className='sv-task-smart-meta';
   if(!multi&&!empty){
@@ -585,12 +613,13 @@
  title.addEventListener('input',event=>{if(event.isTrusted&&manualTime){const typed=readPhrase?.(title.value)?.time;if(typed&&typed!==timeInput?.value)manualTime=false;}sizePhrase();applyPhrase()});
  dialog.addEventListener('sv-task-ai-updated',()=>{applyPhrase();sizePhrase()});
  calendarButton?.addEventListener('click',()=>{
-  title.blur();setCalendarOpen(Boolean(calendarPopover?.hidden));
+  title.blur();if(quickDateOpen)closeQuickWheel();setCalendarOpen(Boolean(calendarPopover?.hidden));
  });
  dialog.addEventListener('pointerdown',event=>{
   if(!calendarPopover?.hidden&&!calendarPopover.contains(event.target)&&!calendarButton?.contains(event.target)&&event.target!==calendarShade)setCalendarOpen(false);
  },true);
  dialog.addEventListener('cancel',event=>{
+  if(quickDateOpen){event.preventDefault();closeQuickWheel();return}
   if(!calendarPopover?.hidden){event.preventDefault();setCalendarOpen(false)}
  });
  date.addEventListener('change',event=>{if(event.isTrusted)manualDate=true;updateSmartPreview();});
@@ -669,7 +698,7 @@
  const observer=new MutationObserver(()=>{
   if(!dialog.open)return;
   manualDate=false;manualTime=false;manualPriority=false;manualRepeat=false;quickDateOpen=false;
-  setCalendarOpen(false);
+  setCalendarOpen(false);closeQuickWheel(false);
   queueKeyboardPosition();
   date.dispatchEvent(new Event('change',{bubbles:true}));
   sizePhrase();
@@ -685,7 +714,7 @@
   lastKeyboardInset=-1;
   sheet?.style.removeProperty('--sv-task-keyboard-inset');
   sheet?.classList.remove('sv-task-keyboard-visible');
-  quickDateOpen=false;
+  closeQuickWheel(false);
   title.style.height='';title.style.overflowY='';
   if(mirrorFrame){cancelAnimationFrame(mirrorFrame);mirrorFrame=0}
   phraseMirror.hidden=true;clearPhrase.hidden=true;composing=false;
@@ -694,5 +723,5 @@
   categoryOverrides.clear();categorySource='';
   form.scrollTop=0;
  });
- window.SEYVEO_TASK_SCREEN=Object.freeze({version:10,sync,titleForSave:()=>window.SEYVEO_TASK_PLACE_EDITOR?.compactTitle?.(effectiveTitle(),true)||effectiveTitle(),draftsForSave,needsReview:batchNeedsReview});
+ window.SEYVEO_TASK_SCREEN=Object.freeze({version:11,sync,titleForSave:()=>window.SEYVEO_TASK_PLACE_EDITOR?.compactTitle?.(effectiveTitle(),true)||effectiveTitle(),draftsForSave,needsReview:batchNeedsReview});
 })();
