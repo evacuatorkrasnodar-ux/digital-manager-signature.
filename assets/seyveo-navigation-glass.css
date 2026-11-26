@@ -734,6 +734,8 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
    paint declarations without touching layout, visibility, focus or handlers. */
 @layer seyveo-semantic-actions{
  :root[data-theme="light"] button[data-sv-action-glass="neutral"],
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action[data-mail-swipe-action="archive"],
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick .sv-inbox-quick-more,
  :root[data-theme="light"] #svWorkShell[data-active="notes"] #notesList .sv-nb4-more,
  :root[data-theme="light"] label[data-sv-action-glass="neutral"],
  :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action:is([data-card-role="secondary"],[data-card-role="navigation"]),
@@ -745,6 +747,8 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   --sv-action-pressed:rgba(209,215,225,.76);
  }
  :root[data-theme="light"] button[data-sv-action-glass="primary"],
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action:is([data-mail-swipe-action="shield"],[data-mail-swipe-action="restore"]),
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick .sv-inbox-quick-archive,
  :root[data-theme="light"] label[data-sv-action-glass="primary"],
  :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action[data-card-role="primary"],
  #seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button.sv-card-action[data-card-role="primary"],
@@ -755,6 +759,10 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   --sv-action-pressed:rgba(68,166,250,.46);
  }
  :root[data-theme="light"] button[data-sv-action-glass="danger"],
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action[data-mail-swipe-action="trash"],
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-draft-swipe-delete,
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete,
+ :root[data-theme="light"] #tasksPage #personalTaskList .sv-task-swipe-delete,
  :root[data-theme="light"] #svWorkShell[data-active="notes"] #notesList .sv-nb4-remove{
   --sv-action-face:rgba(246,99,104,.17);
   --sv-action-edge:rgba(220,76,85,.30);
@@ -762,6 +770,10 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   --sv-action-pressed:rgba(246,99,104,.28);
  }
  :root[data-theme="light"] button[data-sv-action-glass],
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-swipe-action,.sv-mail-draft-swipe-delete),
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick button,
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete,
+ :root[data-theme="light"] #tasksPage #personalTaskList .sv-task-swipe-delete,
  :root[data-theme="light"] #svWorkShell[data-active="notes"] #notesList :is(.sv-nb4-more,.sv-nb4-remove),
  :root[data-theme="light"] label[data-sv-action-glass],
  :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action,
@@ -775,6 +787,10 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;
  }
  :root[data-theme="light"] button[data-sv-action-glass]:active:not(:disabled),
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-swipe-action,.sv-mail-draft-swipe-delete):active:not(:disabled),
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick button:active:not(:disabled),
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete:active:not(:disabled),
+ :root[data-theme="light"] #tasksPage #personalTaskList .sv-task-swipe-delete:active:not(:disabled),
  :root[data-theme="light"] #svWorkShell[data-active="notes"] #notesList :is(.sv-nb4-more,.sv-nb4-remove):active:not(:disabled),
  :root[data-theme="light"] label[data-sv-action-glass]:active,
  :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action:active:not(:disabled),
@@ -788,17 +804,29 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
  }
  @media(prefers-reduced-transparency:reduce){
   :root[data-theme="light"] button[data-sv-action-glass="neutral"],
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action[data-mail-swipe-action="archive"],
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick .sv-inbox-quick-more,
  :root[data-theme="light"] #svWorkShell[data-active="notes"] #notesList .sv-nb4-more,
  :root[data-theme="light"] label[data-sv-action-glass="neutral"],
  :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action:is([data-card-role="secondary"],[data-card-role="navigation"]),
  #seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button.sv-card-action:is([data-card-role="secondary"],[data-card-role="navigation"]),html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){--sv-action-face:#EAECF0}
   :root[data-theme="light"] button[data-sv-action-glass="primary"],
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action:is([data-mail-swipe-action="shield"],[data-mail-swipe-action="restore"]),
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick .sv-inbox-quick-archive,
  :root[data-theme="light"] label[data-sv-action-glass="primary"],
  :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action[data-card-role="primary"],
  #seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button.sv-card-action[data-card-role="primary"],html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){--sv-action-face:#B9DFFF}
   :root[data-theme="light"] button[data-sv-action-glass="danger"],
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action[data-mail-swipe-action="trash"],
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-draft-swipe-delete,
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete,
+ :root[data-theme="light"] #tasksPage #personalTaskList .sv-task-swipe-delete,
  :root[data-theme="light"] #svWorkShell[data-active="notes"] #notesList .sv-nb4-remove{--sv-action-face:#FCE0E1}
   :root[data-theme="light"] button[data-sv-action-glass],
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-swipe-action,.sv-mail-draft-swipe-delete),
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick button,
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete,
+ :root[data-theme="light"] #tasksPage #personalTaskList .sv-task-swipe-delete,
  :root[data-theme="light"] #svWorkShell[data-active="notes"] #notesList :is(.sv-nb4-more,.sv-nb4-remove),
  :root[data-theme="light"] label[data-sv-action-glass],
  :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action,
@@ -1154,5 +1182,76 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
   html:root[data-theme="light"] body #svNoteUndoToast > button[data-sv-action-glass="neutral"]{
    --sv-action-face:#fff;--sv-action-pressed:#e9ebef;
   }
+ }
+}
+
+/* V195 · Context Action Pair — Notebook is the approved visual reference.
+   Reuse the semantic glass layer above; only real swipe controls are mapped.
+   Do not add actions, change authorization, or touch navigation/dark themes. */
+@layer seyveo-semantic-actions{
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-swipe-action,.sv-mail-draft-swipe-delete),
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick button,
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete,
+ :root[data-theme="light"] #tasksPage #personalTaskList .sv-task-swipe-delete{
+  box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;gap:3px!important;
+  border:1px solid transparent!important;border-radius:16px!important;
+  padding:3px 2px!important;min-height:44px!important;
+  font:550 11px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+  text-align:center!important;white-space:nowrap!important;
+ }
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-swipe-action,.sv-mail-draft-swipe-delete) > svg,
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick button > svg,
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete > svg,
+ :root[data-theme="light"] #tasksPage #personalTaskList .sv-task-swipe-delete > svg{
+  display:block!important;width:20px!important;height:20px!important;flex:0 0 20px!important;
+  fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+ }
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-swipe-action,.sv-mail-draft-swipe-delete):focus-visible,
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick button:focus-visible,
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete:focus-visible,
+ :root[data-theme="light"] #tasksPage #personalTaskList .sv-task-swipe-delete:focus-visible{
+  outline:2px solid currentColor!important;outline-offset:-3px!important;
+ }
+ /* The two actions fit the exact 168px Notebook reveal: 76 + 6 + 76 + 10. */
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-actions,
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-shell > .sv-inbox-row-quick{
+  width:168px!important;max-width:168px!important;
+  gap:6px!important;padding:0 6px 0 4px!important;
+  align-items:center!important;justify-content:flex-end!important;
+  background:transparent!important;box-shadow:none!important;
+ }
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-action,
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick button{
+  flex:0 0 76px!important;width:76px!important;min-width:76px!important;max-width:76px!important;
+  height:min(56px,calc(100% - 6px))!important;
+ }
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-actions-open > .sv-mail-letter{
+  transform:translate3d(-168px,0,0)!important;
+ }
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-shell.is-swiped > button.svcp-directory-item{
+  transform:translateX(-168px)!important;
+ }
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-draft-swipe-delete{
+  top:50%!important;bottom:auto!important;right:6px!important;
+  transform:translateY(-50%)!important;width:76px!important;min-width:76px!important;
+  height:min(56px,calc(100% - 8px))!important;
+ }
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-group .sv-mail-draft-row.is-actions-open .sv-mail-draft-content{
+  transform:translateX(-88px)!important;
+ }
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete:not([hidden]){
+  flex:0 0 76px!important;width:76px!important;align-self:center!important;height:56px!important;
+  margin:4px 6px 4px 0!important;
+ }
+ :root[data-theme="light"] #tasksPage #personalTaskList .sv-task-swipe-delete{
+  height:clamp(44px,calc(100% - 6px),56px)!important;
+ }
+ :root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-swipe-delete > svg{display:none!important}
+ @media(prefers-reduced-transparency:reduce){
+  :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-swipe-action,.sv-mail-draft-swipe-delete):active:not(:disabled),
+ :root[data-theme="light"] #svcpWorkChatScreen .sv-inbox-row-quick button:active:not(:disabled),
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete:active:not(:disabled),
+ :root[data-theme="light"] #tasksPage #personalTaskList .sv-task-swipe-delete:active:not(:disabled){background:var(--sv-action-face)!important}
  }
 }

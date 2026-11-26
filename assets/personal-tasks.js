@@ -1349,7 +1349,8 @@ function row(item,compact=false,deferred=false){
   const surface=element('div','sv-task-swipe-foreground');
   surface.append(art,label,sayvi,checkbox);
   if(item.sourceStore!=='calendar'){
-   const swipeDelete=element('button','sv-task-swipe-delete','Удалить');
+   const swipeDelete=element('button','sv-task-swipe-delete');
+   swipeDelete.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M4.5 7h15M9 7V5.5h6V7m-9 0 .7 12h10.6L18 7M10 10.5v5.5m4-5.5v5.5"/></svg><span>Удалить</span>';
    swipeDelete.type='button';swipeDelete.dataset.taskSwipeDelete=item.id;
    swipeDelete.setAttribute('aria-label','Удалить дело: '+item.title);
    swipeDelete.setAttribute('aria-hidden','true');
