@@ -17,13 +17,24 @@ function init(){
  const music=()=>window.SEYVEO_MUSIC;
  function renderTracks(){
   if(!active)return;
-  const lists=[['svMusicRecent',music()?.recentTracks?.()||[],true],['svMusicLibraryTracks',music()?.browseTracks?.()||[],false]];
+  const recentRadio=window.SEYVEO_RADIO?.recent?.()||[];
+  const recentLocal=music()?.recentTracks?.()||[];
+  const lists=[['svMusicRecent',[...recentLocal,...recentRadio].slice(0,6),true],['svMusicLibraryTracks',music()?.browseTracks?.()||[],false]];
   for(const [id,items,recent] of lists){
    const el=get(id);if(!el)continue;el.replaceChildren();
-   if(!items.length){const empty=document.createElement('p');empty.className='sv-music-browse-caption';empty.textContent=recent?'Здесь появятся треки, которые вы действительно слушали.':'Добавьте аудиофайлы с устройства.';el.append(empty);continue}
-   for(const item of items){const button=document.createElement('button');button.type='button';button.className=recent?'sv-music-recent-card':'sv-music-library-track';const art=document.createElement('span');art.className='sv-music-track-tile';art.textContent='♪';art.setAttribute('aria-hidden','true');const title=document.createElement('strong');title.textContent=item.title;const artist=document.createElement('small');artist.textContent=item.artist;const text=document.createElement('span');text.className='sv-music-track-tile-copy';text.append(title,artist);button.append(art,text);button.addEventListener('click',()=>{music()?.playIndexFromSearch?.(item.index);show('player')});el.append(button)}
+   if(!items.length){const empty=document.createElement('p');empty.className=recent?'sv-music-recent-empty':'sv-music-browse-caption';empty.textContent=recent?'Включите любимую станцию или добавьте музыку. Здесь появится история прослушивания.':'Добавьте аудиофайлы с устройства.';el.append(empty);continue}
+   for(const item of items){
+    const button=document.createElement('button');button.type='button';button.className=recent?'sv-music-recent-card':'sv-music-library-track';
+    const art=document.createElement('span');art.className='sv-music-track-tile';art.setAttribute('aria-hidden','true');
+    if(item.artwork){art.style.backgroundImage='url("'+item.artwork+'")';art.style.backgroundSize='cover'}else{art.innerHTML='<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l11-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.2"/><ellipse cx="17" cy="16" rx="3" ry="2.2"/></svg>'}
+    const title=document.createElement('strong');title.textContent=item.title;const artist=document.createElement('small');artist.textContent=item.artist;
+    const copy=document.createElement('span');copy.className='sv-music-track-tile-copy';copy.append(title,artist);button.append(art,copy);
+    if(recent){const icon=document.createElement('span');icon.className='sv-music-recent-play';icon.setAttribute('aria-hidden','true');icon.innerHTML='<svg viewBox="0 0 24 24"><path d="M8 5.5v13L19 12z"/></svg>';button.append(icon)}
+    button.addEventListener('click',()=>{if(item.radio){if(window.SEYVEO_RADIO?.play?.(item.id))show('player')}else if(music()?.playIndexFromSearch?.(item.index))show('player')});el.append(button);
+   }
   }
  }
+ document.addEventListener('seyveo:radio-history',renderTracks);
  function show(key){
   if(!active||(!Object.hasOwn(panels,key)&&key!=='player'))return false;
   music()?.closePanels?.();
@@ -75,6 +86,12 @@ function initRadio(){
  const list=document.getElementById('svMusicRadioStations'),status=document.getElementById('svMusicRadioStatus');
  if(!list||!status)return;
  const buttons=new Map();
+ const historyKey='seyveo-radio-recent-v1';let history=[];
+ try{const saved=JSON.parse(localStorage.getItem(historyKey)||'[]');if(Array.isArray(saved))history=saved.filter(id=>typeof id==='string'&&stations.some(station=>station.id===id&&station.stream)).slice(0,6)}catch{}
+ const recent=()=>history.map(id=>stations.find(x=>x.id===id)).filter(Boolean).map(station=>({radio:true,id:station.id,title:station.name,artist:station.country+' · '+station.quality,artwork:station.artwork}));
+ window.SEYVEO_RADIO=Object.freeze({recent,play:id=>window.SEYVEO_MUSIC?.playRadio?.(stations,id)});
+ audio.addEventListener('playing',()=>{const state=window.SEYVEO_MUSIC?.state?.();if(state?.source!=='radio'||!stations.some(x=>x.id===state.stationId))return;history=[state.stationId,...history.filter(id=>id!==state.stationId)].slice(0,6);try{localStorage.setItem(historyKey,JSON.stringify(history))}catch{}document.dispatchEvent(new Event('seyveo:radio-history'))});
+ document.dispatchEvent(new Event('seyveo:radio-history'));
  function drawRadio(){
   const state=window.SEYVEO_MUSIC?.state?.();
   for(const [id,btn] of buttons){const selected=state?.stationId===id&&state.playing;btn.setAttribute('aria-pressed',String(!!selected));btn.textContent=selected?'Ⅱ':'▶';btn.setAttribute('aria-label',(selected?'Пауза: ':'Слушать: ')+stations.find(x=>x.id===id).name);}
