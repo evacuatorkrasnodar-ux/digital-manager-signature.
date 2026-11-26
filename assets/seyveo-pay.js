@@ -59,6 +59,7 @@ function screen(name){
  setWalletMenu(false);
  if(name!=='scan')stopCamera();
  for(const node of dialog.querySelectorAll('.syp-screen'))node.hidden=node.dataset.sypScreen!==name;
+ dialog.dispatchEvent(new CustomEvent('seyveo:wallet-screen',{detail:{name}}));
 }
 function setTab(tab){
  dialog.dataset.walletTab=tab;
@@ -240,5 +241,5 @@ async function startCamera(){
    :'Не удалось открыть камеру на этом устройстве.');
  }
 }
-window.SEYVEO_PAY=Object.freeze({open,close,select});
+window.SEYVEO_PAY=Object.freeze({open,close,select,showLoyalty(name){if(dialog.open&&['loyalty-edit','loyalty-detail','home'].includes(name)){screen(name);dialog.scrollTop=0;}}});
 })();

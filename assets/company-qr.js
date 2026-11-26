@@ -2292,6 +2292,8 @@ var qrcode = function() {
 
 
 qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8'];
+// Shared local encoder; text stays on-device. No network or company data access.
+window.SEYVEO_LOCAL_QR=(text)=>{const qr=qrcode(0,'M');qr.addData(String(text),'Byte');qr.make();return qr;};
 const $=id=>document.getElementById(id);
 const open=$('seyveoCompanyQrOpen'),dialog=$('seyveoQrCardDialog'),host=$('seyveoQrImage'),form=$('seyveoCompanyForm');
 if(!open||!dialog||!host||!form)return;

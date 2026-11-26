@@ -553,3 +553,35 @@ html body #seyveoPayDialog .syp-wallet-tools button:focus-visible{
  html body #seyveoPayDialog .syp-wallet-tools{gap:6px}
  html body #seyveoPayDialog .syp-wallet-tools > .syp-wallet-qr{padding:0 10px}
 }
+
+/* V208 · Loyalty passes: stacked, full-width, no changes to the shared header. */
+#seyveoPayDialog .syp-loyalty{margin:24px 0 10px}
+#seyveoPayDialog .syp-loyalty-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 0 10px}
+#seyveoPayDialog .syp-loyalty-head h3,#seyveoPayDialog .syp-loyalty-page>h3{margin:0;font:630 20px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:-.025em;color:var(--text)}
+#seyveoPayDialog #sypLoyaltyCount{font-size:12px;color:var(--secondary)}
+#seyveoPayDialog .syp-loyalty-empty{display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;min-height:52px;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:transparent;color:var(--text);font:550 14px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;text-align:left;cursor:pointer}
+#seyveoPayDialog .syp-loyalty-empty svg{width:23px;height:23px;flex:none;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
+#seyveoPayDialog .syp-loyalty-empty[hidden],#seyveoPayDialog .syp-loyalty-code[hidden]{display:none!important}
+#seyveoPayDialog #sypLoyaltyStack{display:flex;flex-direction:column;isolation:isolate}
+#seyveoPayDialog .syp-loyalty-pass{appearance:none;position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;width:100%;height:112px;box-sizing:border-box;padding:14px 16px;border:1px solid rgba(0,0,0,.09);border-radius:17px;color:#172c2b;background:var(--sl-color,#dce9e4);box-shadow:0 3px 9px rgba(35,48,54,.08);text-align:left;cursor:pointer}
+#seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass+.syp-loyalty-pass{margin-top:-58px}
+#seyveoPayDialog .syp-loyalty-pass strong{font:650 16px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#seyveoPayDialog .syp-loyalty-pass small{font-size:12px;opacity:.8}
+#seyveoPayDialog .syp-loyalty-pass:focus-visible{outline:2px solid #007aff;outline-offset:-3px}
+#seyveoPayDialog #sypLoyaltyList{display:grid;gap:8px}
+#seyveoPayDialog #sypLoyaltyList:empty{display:none}
+#seyveoPayDialog #sypLoyaltyList .syp-loyalty-pass{height:74px}
+#seyveoPayDialog .syp-loyalty-page{padding-top:8px}
+#seyveoPayDialog .syp-loyalty-page>h3{margin-bottom:16px}
+#seyveoPayDialog #sypLoyaltyForm{display:grid;gap:12px}
+#seyveoPayDialog #sypLoyaltyForm label{display:grid;gap:6px;font-size:13px;color:var(--secondary)}
+#seyveoPayDialog #sypLoyaltyForm :is(input:not([type="file"]),select){box-sizing:border-box;width:100%;min-height:46px;padding:10px 12px;background:var(--card,#f7f8fa);border:1px solid var(--line);border-radius:12px;color:var(--text);font:16px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+#seyveoPayDialog .syp-loyalty-scan-actions{display:flex;flex-wrap:wrap;gap:8px}
+#seyveoPayDialog .syp-loyalty-page .syp-btn{min-height:44px;margin:0}
+#seyveoPayDialog .syp-loyalty-hint,#seyveoPayDialog :is(#sypLoyaltyStatus,#sypLoyaltyDetailStatus){font-size:12px;line-height:1.5;color:var(--secondary);margin:0}
+#seyveoPayDialog :is(#sypLoyaltyStatus,#sypLoyaltyDetailStatus):empty{display:none}
+#seyveoPayDialog .syp-loyalty-code{display:grid;place-items:center;box-sizing:border-box;width:100%;padding:16px;background:#fff;color:#111;border:1px solid #e3e5e8;border-radius:16px;overflow:hidden}
+#seyveoPayDialog .syp-loyalty-code canvas{display:block;max-width:100%;height:auto;object-fit:contain;image-rendering:pixelated}
+#seyveoPayDialog .syp-loyalty-number{font-size:17px;line-height:1.4;letter-spacing:.04em;text-align:center;overflow-wrap:anywhere;color:var(--text)}
+#seyveoPayDialog [data-syp-screen="loyalty-detail"]{display:grid;gap:14px}
+#seyveoPayDialog .syp-loyalty-page .syp-loyalty-empty{margin:0 0 10px}
