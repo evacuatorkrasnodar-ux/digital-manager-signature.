@@ -362,3 +362,26 @@ html:not(.seyveo-conversation) #sayviMusicMini{
     backdrop-filter:none!important;
   }
 }
+
+/* Music navigation v36 — same physical dock, four rounded slots, original search. */
+#svMusicLibraryTab[hidden]{display:none!important}
+html:root body footer.dock.sv-shared-dock.seyveo-music-dock > #assistantButton{display:none!important}
+html:root body footer.dock.sv-shared-dock.seyveo-music-dock > #svMusicLibraryTab:not([hidden]){
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ position:relative!important;grid-column:4!important;grid-row:1!important;align-self:center!important;justify-self:center!important;
+ width:100%!important;min-width:0!important;height:58px!important;min-height:44px!important;margin:0!important;padding:0!important;gap:3px!important;
+ border:0!important;border-radius:999px!important;color:var(--text)!important;background:transparent!important;z-index:2!important;
+}
+html:root body footer.dock.sv-shared-dock.seyveo-music-dock > .sv-dock-active-indicator{display:none!important}
+html:root body footer.dock.sv-shared-dock.seyveo-music-dock > button[data-sv-music-action]{
+ color:var(--text)!important;isolation:isolate;position:relative!important;
+}
+html:root body footer.dock.sv-shared-dock.seyveo-music-dock > button[data-sv-music-action] > svg.seyveo-music-dock-svg,
+html:root body footer.dock.sv-shared-dock.seyveo-music-dock > button[data-sv-music-action] > svg.seyveo-music-dock-svg *{color:inherit!important;stroke:currentColor!important;fill:none!important}
+html:root body footer.dock.sv-shared-dock.seyveo-music-dock > button[data-sv-music-action].sv-music-tab-selected{color:#26755e!important;font-weight:650!important}
+html:root body footer.dock.sv-shared-dock.seyveo-music-dock > button[data-sv-music-action].sv-music-tab-selected::before{
+ content:""!important;display:block!important;position:absolute!important;z-index:-1!important;inset:5px 2px!important;
+ border-radius:999px!important;background:rgba(55,138,111,.12)!important;pointer-events:none!important;
+}
+html:root[data-theme="dark"] body footer.dock.sv-shared-dock.seyveo-music-dock > button[data-sv-music-action].sv-music-tab-selected{color:#a1dbbf!important}
+html:root body footer.dock.sv-shared-dock.seyveo-music-dock > button[data-sv-music-action] > span{font-size:clamp(8px,2.4vw,11px)!important;letter-spacing:-.03em!important;white-space:nowrap!important}

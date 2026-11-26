@@ -553,3 +553,41 @@ html.sv-music-screen[data-theme=dark][data-palette=plum] .app{
  #sayviMusicPage .sv-music-awake-control{gap:6px;padding-inline:5px}
  #sayviMusicPage .sv-music-awake-control small{font-size:10px}
 }
+
+/* Music v79: player controls belong to the screen, never the navigation dock. */
+#sayviMusicPage{--sv-music-jade:#28775f;overflow-y:auto!important;overscroll-behavior:contain}
+#sayviMusicPage .sv-music-controls:not([hidden]){
+ display:flex!important;align-items:center;justify-content:center;gap:22px;flex:0 0 auto;
+ margin:7px auto 10px;width:100%;max-width:390px;
+}
+#sayviMusicPage .sv-music-control{
+ display:grid;place-items:center;min-width:44px;width:48px;height:48px;border-radius:50%;
+ border:0;background:transparent;color:var(--text);padding:0;
+}
+#sayviMusicPage .sv-music-control svg{width:24px;height:24px;fill:currentColor;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+#sayviMusicPage .sv-music-control--main{width:58px;height:58px;background:var(--sv-music-jade);color:#fff}
+#sayviMusicPage .sv-music-control:disabled{opacity:.3}
+#sayviMusicPage .sv-music-artwork{border-radius:20px!important}
+#sayviMusicPage .sv-music-favorite[aria-pressed=true]{color:var(--sv-music-jade)!important}
+#sayviMusicPage[data-music-section]:not([data-music-section="home"]) > :is(.sv-music-cover,.sv-music-track-bar,.sv-music-times,.sv-music-seek,.sv-music-controls,.sv-music-phrases,.sv-music-awake-control,.sv-music-stop-hide,.sv-music-lyrics,.sv-music-record){display:none!important}
+#sayviMusicPage .sv-music-tab-panel[hidden]{display:none!important}
+#sayviMusicPage .sv-music-tab-panel{width:100%;max-width:640px;margin:12px auto 0;padding:0 0 18px;flex:0 0 auto}
+#sayviMusicPage .sv-music-tab-panel h2{margin:0 0 4px;font:650 30px/1.16 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:-.04em}
+#sayviMusicPage .sv-music-section-caption{font-size:12px;line-height:1.45;color:var(--secondary);margin:7px 0 13px}
+#sayviMusicPage .sv-music-radio-list,#sayviMusicPage .sv-music-library-actions{display:grid;gap:10px}
+#sayviMusicPage .sv-radio-station{
+ display:flex;align-items:center;gap:12px;min-height:84px;padding:10px;box-sizing:border-box;
+ border-radius:19px;background:var(--card2,var(--card));border:1px solid var(--soft-line,transparent);
+}
+#sayviMusicPage .sv-radio-art{width:60px;height:60px;flex:0 0 60px;display:grid;place-items:center;border-radius:15px;color:#f7f9f8;font-size:30px}
+#sayviMusicPage .sv-radio-copy{min-width:0;flex:1;display:grid;gap:4px}
+#sayviMusicPage .sv-radio-copy strong{font-size:15px;font-weight:620;line-height:1.2}
+#sayviMusicPage .sv-radio-copy small{color:var(--secondary);font-size:11px;line-height:1.25}
+#sayviMusicPage .sv-radio-copy a{font-size:11px;color:var(--sv-music-jade);text-decoration:none;padding:4px 0}
+#sayviMusicPage .sv-radio-play{display:grid;place-items:center;width:44px;height:44px;min-width:44px;border:0;border-radius:50%;background:var(--sv-music-jade);color:#fff;font-size:17px}
+#sayviMusicPage .sv-music-library-actions button{display:flex;align-items:center;justify-content:space-between;text-align:left;min-height:54px;padding:10px 15px;border:0;border-radius:17px;background:var(--card2,var(--card));color:var(--text);font-size:16px}
+#sayviMusicPage .sv-music-library-actions button span{color:var(--sv-music-jade);font-size:21px}
+#sayviMusicPage[data-music-section="new"] #sayviDiscoveryPanel{border:0;padding:10px 0;margin-top:12px}
+#sayviMusicPage[data-music-section="new"] .sv-discovery-title{font-size:25px;font-weight:650}
+#sayviMusicPage .sv-discovery-actions button{border-radius:999px!important;padding:9px 13px!important;color:var(--sv-music-jade)!important}
+:root[data-theme=dark] #sayviMusicPage .sv-radio-copy a{color:#a1dbbf}
