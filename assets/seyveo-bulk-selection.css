@@ -62,3 +62,15 @@ html:root body #sayviSurfacePage[data-sv-subject="mail"] #sayviSurfaceBody:has(.
 html:root body #sayviSurfacePage .sv-doc-folder-page .sv-bulk-selection-capsule{margin:6px auto max(10px,env(safe-area-inset-bottom,0px))!important;flex:0 0 52px!important}
 html:root body #sayviSurfacePage .sv-doc-folder-page .sv-bulk-selection-head{padding:0 12px!important}
 html:root body #sayviSurfacePage .sv-doc-folder-page .sv-bulk-selection-head[hidden]{display:none!important}
+
+/* The permanent Work header already owns the title, so the local selection
+   line only supplies Select All and Done; the history's existing handler
+   stays attached to its real buttons. */
+html:root body #svcpWorkChatScreen #svcpWorkHistory #svcpWorkHistorySelection.sv-bulk-selection-capsule:not([hidden]){
+ position:fixed!important;left:50%!important;right:auto!important;bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+ transform:translateX(-50%)!important;z-index:42!important;margin:0!important;
+}
+html:root body #svcpWorkChatScreen #svcpWorkHistory:has(#svcpWorkHistorySelection:not([hidden])) .svcp-work-history-list{
+ padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+}
+html:root body #svAllTasksView > #svTaskSelectionHead > #svTaskSelectionTitle{font:600 15px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
