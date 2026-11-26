@@ -5,9 +5,9 @@
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
  /* Same optical density and blur as the approved White Pearl composer,
     with blue pigment rather than white. Both heights and Plus share it. */
- --svcp-conversation-blue-glass:rgba(28,144,198,.46);
+ --svcp-conversation-blue-glass:rgba(9,128,181,.46);
  --svcp-conversation-blue-glass-expanded:var(--svcp-conversation-blue-glass);
- --svcp-conversation-blue-rim:rgba(129,212,246,.42);
+ --svcp-conversation-blue-rim:rgba(101,226,244,.72);
  --svcp-conversation-blue-blur:var(--sv-white-pearl-floating-blur,blur(8px) saturate(108%));
   --sv-chat-outgoing:#008FFF;
 }
@@ -415,4 +415,12 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  html.seyveo-standalone body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset{
   bottom:calc(6px + min(12px,env(safe-area-inset-bottom,0px)))!important;
  }
+}
+
+/* Sky · subtle cyan glass edge, without an extra surface or glow layer.
+   The same edge belongs to the compact/expanded capsule and compact Plus. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > .svcp-clean-surface,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile{
+ border:1px solid var(--svcp-conversation-blue-rim)!important;
+ box-shadow:inset 0 1px 0 rgba(190,248,255,.16)!important;
 }
