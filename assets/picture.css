@@ -1258,3 +1258,35 @@ html:root[data-theme="light"] body #picturePage #pictureExpenses .picture-split-
   padding-top:0!important;
  }
 }
+
+/* V199 · Pulse analytics: quiet editorial grid, canonical semantic actions.
+   No new cards or data transforms; keep the original analytics and scroll. */
+html:root[data-theme="light"] body #picturePage .picture-kpis > .picture-kpi{
+ border:0!important;
+}
+html:root[data-theme="light"] body #picturePage .picture-kpis > .picture-kpi strong{
+ color:#17191c!important;font-variant-numeric:tabular-nums!important;
+}
+html:root[data-theme="light"] body #picturePage .picture-bin-track{
+ background:repeating-linear-gradient(to top,transparent 0,transparent calc(33.333% - 1px),rgba(100,116,139,.11) calc(33.333% - 1px),rgba(100,116,139,.11) 33.333%)!important;
+}
+html:root[data-theme="light"] body #picturePage .picture-bin-bar,
+html:root[data-theme="light"] body #picturePage #pictureSources .picture-split-fill{
+ background:#3185D7!important;opacity:1!important;
+}
+html:root[data-theme="light"] body #picturePage #pictureExpenses .picture-split-fill{
+ background:#E39750!important;opacity:1!important;
+}
+html:root body #picturePage :is(#pictureSayviDiscuss,#pictureConnectSources){
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:6px!important;white-space:nowrap!important;
+}
+html:root body #picturePage :is(#pictureSayviDiscuss,#pictureConnectSources) > .picture-action-mark{
+ display:block!important;flex:0 0 18px!important;width:18px!important;height:18px!important;
+}
+html:root[data-theme="light"] body #picturePage #pictureSayviWhy{
+ background:transparent!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #picturePage #pictureSayviWhy:active{
+ background:rgba(10,132,255,.08)!important;
+}
