@@ -877,3 +877,11 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
   overflow-wrap:anywhere!important;
  }
 }
+
+/* V219: categorized complete shortcut catalog; keep the original three-column tiles and pinned glass header. */
+html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > .sv-home-favorites-group-label{
+ grid-column:1 / -1!important;min-width:0;margin:13px 2px 2px!important;padding:0!important;
+ color:var(--text,#252931);font:600 13px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:-.01em;align-self:end;
+}
+html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > .sv-home-favorites-group-label:nth-child(2){margin-top:3px!important}

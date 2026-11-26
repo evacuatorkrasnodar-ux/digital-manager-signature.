@@ -7,7 +7,7 @@ const STORAGE='seyveo.home.favorites.v1',USAGE='seyveo.home.favorite-usage.v1';
 /* SEYVEO Atelier: bespoke, gentle ink drawings, made for 24x24 Retina marks.
    A little illustrated detail makes each symbol memorable without adding noise.
    All glyphs are pure vector and share the Notebook's fine graphite stroke. */
-const apps=[
+const primaryApps=[
  {id:'music',name:'Музыка',selector:'[data-calendar-space="music"]'},
  {id:'documents',name:'Документы',selector:'[data-calendar-space="documents"]'},
  {id:'notebook',name:'Блокнот',action:()=>window.SEYVEO_NOTES_API?.openNotes?.()},
@@ -22,6 +22,26 @@ const apps=[
  {id:'smart-home',name:'Умный дом',selector:'[data-calendar-space="smart-home"]'},
  {id:'management',name:'Управление',action:()=>{location.hash='#manage'}}
 ];
+// Sub-applications are direct shortcuts, not extra default Home slots.
+const walletTools=[
+ ['card','Карты'],['finances','Финансы'],['currency','Валюты'],['goals','Копилка'],
+ ['receipts','Чеки',true],['payments','Платежи',true],['family','Семейный бюджет',true],
+ ['debts','Долги',true],['calculator','Расчёты',true],['analytics','Аналитика',true]
+].map(([tab,name,planned=false])=>({id:'wallet-'+tab,name,shortName:tab==='family'?'Бюджет':name,planned,action:()=>{
+ const api=window.SEYVEO_PAY;if(!api?.open)return false;void api.open(tab);return true;
+}}));
+const noteTools=[
+ ['note-create','Заметка','noteModeText','noteReviewDialog'],
+ ['note-scan','Сканировать','noteModeScan','noteScanDialog'],
+ ['note-draw','Рисовать','noteModeDraw','notePaperDialog']
+].map(([id,name,mode,destination])=>({id,name,action:()=>{
+ const api=window.SEYVEO_NOTE_LAUNCH;if(!api?.launch)return false;api.launch(mode);return !!document.getElementById(destination)?.open;
+}}));
+const taskApp={id:'tasks',name:'Мои дела',action:()=>{
+ const api=window.SEYVEO_UNIFIED_TASKS;if(!api?.openPersonal)return false;api.openPersonal();return true;
+}};
+const apps=[...primaryApps,taskApp,...noteTools,...walletTools];
+const automaticApps=apps.filter(a=>!a.planned);
 const businessApps=[
  {id:'business-pulse',name:'Пульс бизнеса',shortName:'Пульс',hub:'pulse'},
  {id:'business-chats',name:'Чаты команды',shortName:'Чаты',hub:'chats'},
@@ -71,7 +91,7 @@ function normalize(ids){
 preference.items=normalize(preference.items);
 let usage=stored(USAGE)||{},cardCount=Number(window.SEYVEO_REVIEW_CARDS?.count?.())||0;
 if(!preference.custom){
- const candidates=apps.slice().sort((a,b)=>(usage[b.id]||0)-(usage[a.id]||0));
+ const candidates=automaticApps.slice().sort((a,b)=>(usage[b.id]||0)-(usage[a.id]||0));
  if(candidates.filter(a=>(usage[a.id]||0)>0).length>=AUTO_COUNT&&
   candidates[AUTO_COUNT-1]&&((usage[candidates[AUTO_COUNT-1].id]||0)>=3)){
   preference.items=normalize(candidates.slice(0,AUTO_COUNT).map(a=>a.id));
@@ -79,10 +99,10 @@ if(!preference.custom){
  }
 }
 function autoFavorites(smartEnabled=preference.showSmart,businessCount=businessEnabled()?preference.businessItems.length:0){
- const ranked=apps.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
+ const ranked=automaticApps.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
  const existing=preference.items.length+(smartEnabled?1:0);
  const target=Math.min(MAX_TOTAL,Math.max(existing,Math.min(MAX_COUNT,MAX_TOTAL-businessCount)));
- return uniqueIds([...ranked.map(a=>a.id),...preference.items,...defaultIds,...apps.map(a=>a.id)],id=>!!byId[id]&&!isBusiness(id)).slice(0,Math.max(0,target-(smartEnabled?1:0)));
+ return uniqueIds([...ranked.map(a=>a.id),...preference.items,...defaultIds,...automaticApps.map(a=>a.id)],id=>!!byId[id]&&!isBusiness(id)).slice(0,Math.max(0,target-(smartEnabled?1:0)));
 }
 function autoBusinessFavorites(personalCount=preference.items.length+(preference.showSmart?1:0)){
  const ranked=businessApps.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
@@ -96,9 +116,9 @@ save(STORAGE,preference);
 const fallbackOrder=['browser','music','notebook','calendar','health','mail','documents','wallet','contacts','family','smart-home','care'];
 function chooseFallback(){
  const pinned=new Set(preference.items);
- return apps.filter(a=>!pinned.has(a.id))
+ return automaticApps.filter(a=>!pinned.has(a.id))
   .sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0)||
-    fallbackOrder.indexOf(a.id)-fallbackOrder.indexOf(b.id))[0]?.id||'browser';
+    (fallbackOrder.includes(a.id)?fallbackOrder.indexOf(a.id):999)-(fallbackOrder.includes(b.id)?fallbackOrder.indexOf(b.id):999))[0]?.id||'browser';
 }
 let fallbackId=chooseFallback();
 const rail=document.createElement('nav');rail.id='svHomeFavorites';rail.className='sv-home-favorites';rail.setAttribute('aria-label','Быстрый доступ SEYVEO');rail.hidden=true;
@@ -276,7 +296,7 @@ function openCustomize(){
  const personalTab=document.createElement('button'),cabinetTab=document.createElement('button');
  for(const [button,name,mode] of [[personalTab,'Личное','personal'],[cabinetTab,'Кабинет','business']]){
   button.type='button';button.textContent=name;button.setAttribute('role','tab');
-  button.addEventListener('click',()=>{activeTab=mode;redraw();});tabbar.append(button);
+  button.addEventListener('click',()=>{activeTab=mode;redraw();views.scrollTop=0;});tabbar.append(button);
  }
  let curtainBottom=null;
  const positionCurtain=(force=false)=>{
@@ -314,15 +334,22 @@ function openCustomize(){
   autoButton.title=autoActive?'Автовыбор включён':'Автовыбор: Сэйви подбирает частые кнопки';
   grid.dataset.section=activeTab;
   grid.replaceChildren(help);
-  const options=cabinet?businessApps:[{id:'smart',name:'Умная кнопка'},...apps];
-  for(const app of options){
+  const groups=cabinet?[[null,businessApps]]:[
+   ['Приложения',[{id:'smart',name:'Умная кнопка'},...primaryApps,taskApp]],
+   ['Блокнот',noteTools],
+   ['Кошелёк',walletTools.filter(a=>!a.planned)],
+   ['Кошелёк · в разработке',walletTools.filter(a=>a.planned)]
+  ];
+  for(const [heading,options] of groups){
+   if(heading){const label=document.createElement('h3');label.className='sv-home-favorites-group-label';label.textContent=heading;grid.append(label);}
+   for(const app of options){
    const b=document.createElement('button');b.type='button';
    const chosen=app.id==='smart'?smart:picked.includes(app.id);
    b.setAttribute('aria-pressed',String(chosen));
    b.innerHTML=app.id==='smart'?icon('cards'):icon(app.id);
    const t=document.createElement('span');
    t.textContent=app.id==='business-documents'?'Документы':app.id==='business-people'?'Сотрудники':app.name;
-   b.setAttribute('aria-label',app.name);b.title=app.name;
+   b.setAttribute('aria-label',app.name+(app.planned?' — в разработке':''));b.title=app.name+(app.planned?' · в разработке':'');
    const mark=document.createElement('small');mark.textContent=chosen?'✓':'';
    b.append(t,mark);
    b.addEventListener('click',()=>{
@@ -340,6 +367,7 @@ function openCustomize(){
     redraw();preview();
    });
    grid.append(b);
+   }
   }
  };
  const autoButton=document.createElement('button');
@@ -549,8 +577,9 @@ if(weather){new ResizeObserver(show).observe(weather);new MutationObserver(show)
 new MutationObserver(show).observe(root,{attributes:true,attributeFilter:['class']});
 new MutationObserver(show).observe(home,{attributes:true,attributeFilter:['hidden']});
 document.addEventListener('click',e=>{
- const target=e.target.closest?.('[data-world-space],[data-calendar-space]');if(!target)return;
- const key=target.getAttribute('data-world-space')||target.getAttribute('data-calendar-space');
+ const target=e.target.closest?.('[data-world-space],[data-calendar-space],[data-syp-tab],#noteModeText,#noteModeScan,#noteModeDraw');if(!target)return;
+ const noteKey={noteModeText:'note-create',noteModeScan:'note-scan',noteModeDraw:'note-draw'}[target.id];
+ const key=target.dataset.sypTab?'wallet-'+target.dataset.sypTab:noteKey||target.getAttribute('data-world-space')||target.getAttribute('data-calendar-space');
  const entry=byId[key]?key:null;
  if(entry){usage[entry]=Math.min(10000,(Number(usage[entry])||0)+1);save(USAGE,usage);
   refreshAutomaticFavorites();
