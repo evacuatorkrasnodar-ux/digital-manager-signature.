@@ -1,13 +1,13 @@
-/* SEYVEO: canonical round affirmative action. V88, approved light-blue flat face.
+/* SEYVEO: canonical round affirmative action. V154, shared blue White Pearl glass.
    Explicit circular save/commit controls only. Navigation, text actions,
    colored status controls, send buttons and dock retain their own materials. */
 :root{
  --sv-confirm-size:var(--sv-nav-single-size,44px);
- --sv-confirm-face:#c3e2fa;
- --sv-confirm-edge:#acd4f9;
+ --sv-confirm-face:rgba(179,220,248,.78);
+ --sv-confirm-edge:var(--sv-white-pearl-rim-color,rgba(255,255,255,.94));
  --sv-confirm-ink:#075ca8;
- --sv-confirm-pressed:#a9d5f7;
- --sv-confirm-pressed-edge:#96c7ee;
+ --sv-confirm-pressed:rgba(159,208,243,.84);
+ --sv-confirm-pressed-edge:var(--sv-confirm-edge);
  --sv-confirm-disabled-face:#f0f1f3;
  --sv-confirm-disabled-edge:#e2e5e9;
  --sv-confirm-disabled-ink:#a5adb8;
@@ -27,8 +27,8 @@
   padding:0!important;border-radius:50%!important;
   border:1px solid var(--sv-confirm-edge)!important;background:var(--sv-confirm-face)!important;
   background-image:none!important;color:var(--sv-confirm-ink)!important;
-  box-shadow:none!important;text-shadow:none!important;filter:none!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  box-shadow:var(--sv-white-pearl-circle-shadow,0 2px 8px rgba(38,48,60,.055))!important;text-shadow:none!important;filter:none!important;
+  -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(10px) saturate(108%))!important;backdrop-filter:var(--sv-white-pearl-blur,blur(10px) saturate(108%))!important;
   opacity:1!important;transform:none!important;scale:1!important;
   transition:none!important;-webkit-tap-highlight-color:transparent!important;
  }
@@ -72,4 +72,8 @@
    #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
   .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle
  ):focus-visible{outline:2px solid var(--sv-confirm-ink)!important;outline-offset:3px!important}
+}
+
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"]{--sv-confirm-face:#c3e2fa;--sv-confirm-pressed:#a9d5f7}
 }
