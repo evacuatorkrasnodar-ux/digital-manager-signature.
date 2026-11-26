@@ -706,15 +706,11 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  color:#14171C!important;border-color:transparent!important;
  box-shadow:var(--sv-segment-selected-shadow)!important;
 }
-/* V107: mobile white-on-white separation must not rely on a blurred
-   exterior shadow alone. A fine inset optical edge stays visible even
-   inside clipped/composited Safari capsules; the V102 light outer rim
-   still conceals the underlying grey track outline. */
+/* V108: preserve the mobile glass tint; use the shared original soft
+   shadows and visible track perimeter rather than experimental edges. */
 @media (hover:none) and (pointer:coarse), (max-width:720px){
  :root[data-theme="light"]{
   --sv-segment-track:rgba(210,216,225,.48);
-  --sv-segment-track-shadow:0 2px 7px rgba(38,48,60,.08),inset 0 1px 0 rgba(255,255,255,.55);
-  --sv-segment-selected-shadow:inset 0 0 0 .8px rgba(100,114,134,.29),0 2px 5px rgba(38,48,60,.20),0 1px 2px rgba(38,48,60,.12);
  }
 }
 @media(prefers-reduced-transparency:reduce){
