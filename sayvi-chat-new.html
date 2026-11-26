@@ -1457,7 +1457,21 @@ html body > #sayviHistoryActions button#sayviHistoryDelete:active{
  background:#4A4A4C;
 }
 :root[data-theme="light"] body #sayviHistory .history-item-title{color:var(--sayvi-text)}
-/* Header is transparent; do not mask or conceal chat text during scroll. */
+/* V146: the same matte top row as every conversation; fade begins under Back. */
+html body main::before{
+ content:"";position:absolute;inset:0 0 auto 0;z-index:6;pointer-events:none;
+ --sv-sayvi-header-edge:calc(env(safe-area-inset-top,0px) + 7px + var(--sv-nav-single-size,44px));
+ height:calc(var(--sv-sayvi-header-edge) + 32px);
+ background:var(--sayvi-bg);
+ background:color-mix(in srgb,var(--sayvi-bg) 82%,transparent);
+ -webkit-backdrop-filter:blur(22px) saturate(105%);backdrop-filter:blur(22px) saturate(105%);
+ -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 var(--sv-sayvi-header-edge),transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0,#000 var(--sv-sayvi-header-edge),transparent 100%);
+}
+@media(prefers-reduced-transparency:reduce){
+ html body main::before{background:var(--sayvi-bg);-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+/* Keep actual navigation buttons clear above the single frost layer. */
 html body main #sayviTopActions{
  background:transparent!important;
  background-image:none!important;
