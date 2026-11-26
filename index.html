@@ -6476,9 +6476,10 @@ html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv
  box-shadow:none!important;filter:none!important;outline:0!important;
 }
 
-/* Music navigation uses the SAME coordinate system as Home / Tasks.
-   Keep the shared tokens, not the legacy 50px transport-dock geometry. */
-html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only{
+
+/* Music-only single five-slot capsule, matching the approved reference.
+   Preserve the original Search button and its global handler. */
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only{
  position:fixed!important;box-sizing:border-box!important;
  left:max(var(--sv-feng-side,clamp(14px,5vw,22px)),env(safe-area-inset-left,0px))!important;
  right:max(var(--sv-feng-side,clamp(14px,5vw,22px)),env(safe-area-inset-right,0px))!important;
@@ -6486,41 +6487,67 @@ html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv
  width:auto!important;max-width:none!important;
  height:60px!important;min-height:60px!important;max-height:60px!important;
  transform:none!important;padding:0!important;margin:0!important;
- grid-template-columns:repeat(4,minmax(0,calc(var(--sv-feng-capsule) / 4))) minmax(0,1fr) 60px!important;
+ grid-template-columns:repeat(5,minmax(0,1fr))!important;
  grid-template-rows:minmax(0,1fr)!important;gap:0!important;align-items:center!important;
 }
-html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::before,
-html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::after{
- top:0!important;bottom:0!important;height:60px!important;min-height:60px!important;
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::before{
+ content:""!important;display:block!important;
+ top:0!important;bottom:0!important;left:0!important;right:0!important;
+ width:100%!important;max-width:100%!important;height:60px!important;min-height:60px!important;
  margin:0!important;transform:none!important;box-sizing:border-box!important;
+ border-radius:999px!important;animation:none!important;
+}
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::after{
+ content:none!important;display:none!important;
 }
 html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::before{
- left:0!important;right:auto!important;width:var(--sv-feng-capsule)!important;max-width:var(--sv-feng-capsule)!important;
+ background:var(--sv-white-pearl-floating-dock,rgba(235,237,240,.62))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;
+ border:0!important;box-shadow:none!important;
 }
-html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::after{
- left:auto!important;right:0!important;width:60px!important;max-width:60px!important;
-}
-html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]){
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]){
  left:0!important;right:auto!important;top:0!important;bottom:0!important;
- width:var(--sv-feng-capsule)!important;height:60px!important;
+ width:80%!important;height:60px!important;
  padding:0!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;align-items:center!important;
 }
-html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button{
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button,
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage{
  box-sizing:border-box!important;justify-self:center!important;align-self:center!important;
- width:100%!important;height:52px!important;min-height:44px!important;max-height:52px!important;
+ height:52px!important;min-height:44px!important;max-height:52px!important;
  margin:0!important;padding:2px 0!important;transform:none!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
 }
-html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage{
- position:relative!important;grid-column:6!important;grid-row:1!important;justify-self:end!important;align-self:center!important;
- left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;margin:0!important;
- width:60px!important;min-width:60px!important;max-width:60px!important;
- height:60px!important;min-height:60px!important;max-height:60px!important;
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button{
+ width:100%!important;min-width:0!important;
 }
-html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage > svg{
- width:28px!important;height:28px!important;min-width:28px!important;max-width:28px!important;
- min-height:28px!important;max-height:28px!important;stroke-width:1.8!important;stroke:currentColor!important;
- color:#0B0B0D!important;opacity:1!important;filter:none!important;
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage{
+ position:absolute!important;grid-column:auto!important;grid-row:auto!important;
+ left:80%!important;right:0!important;top:4px!important;bottom:auto!important;
+ width:20%!important;min-width:0!important;max-width:none!important;z-index:7!important;
+ color:var(--text)!important;opacity:1!important;isolation:isolate;
 }
-html:root[data-theme="light"].sv-music-screen.sv-global-search-open body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage > svg{color:#087DF1!important}
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage > svg,
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button > svg{
+ display:block!important;width:24px!important;height:24px!important;min-width:24px!important;max-width:24px!important;
+ min-height:24px!important;max-height:24px!important;flex:none!important;
+ stroke-width:1.55!important;stroke:currentColor!important;opacity:1!important;filter:none!important;
+}
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage > span,
+html:root.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button > span{
+ display:block!important;position:static!important;
+ font-size:clamp(9px,2.65vw,11px)!important;font-weight:550!important;letter-spacing:-.025em!important;
+ line-height:1.15!important;white-space:nowrap!important;color:inherit!important;
+ margin:0!important;padding:0!important;max-width:100%!important;overflow:visible!important;
+}
+html:root[data-theme="light"].sv-music-screen.sv-global-search-open body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage{color:#2463a5!important}
+html:root.sv-music-screen.sv-global-search-open body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage::before{
+ content:""!important;display:block!important;position:absolute!important;
+ left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+ width:clamp(40px,calc(100% - 8px),52px)!important;height:auto!important;aspect-ratio:1 / 1!important;
+ transform:translate(-50%,-50%)!important;border-radius:50%!important;
+ background:rgba(94,117,149,.14)!important;border:0!important;box-shadow:none!important;z-index:-1!important;pointer-events:none!important;
+}
 </style>
 </body></html>
