@@ -854,7 +854,7 @@ html:root[data-theme="light"]:has(#svWorkShell[data-shared-work="true"][data-tas
 html:root[data-theme="light"] body .app:has(> #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"]){
  background:#fff!important;background-image:none!important;
  border:0!important;outline:0!important;border-radius:0!important;box-shadow:none!important;
- padding-top:0!important;padding-inline:0!important;
+ /* Keep the same app insets as My Tasks; the capsule must not jump. */
 }
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"]{
  border:0!important;outline:0!important;border-radius:0!important;box-shadow:none!important;
@@ -864,7 +864,7 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode=
  /* Match the Avatar reference circle's observed inset: +4px on each axis. */
  --work-left:max(10px,env(safe-area-inset-left,0px));
  --work-right:max(10px,env(safe-area-inset-right,0px));
- --work-top:calc(12px + env(safe-area-inset-top,0px));
+ --work-top:var(--sv-apple-top-gap,14px);
  --sv-header-circle:var(--sv-white-pearl-surface);
  --sv-header-circle-border:var(--sv-white-pearl-edge);
  --sv-header-circle-shadow:var(--sv-white-pearl-circle-shadow);
@@ -874,7 +874,7 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode=
    reference glass as separate paint siblings, with no nested masks. */
 @media not (prefers-reduced-transparency:reduce){
  html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"]{
-  position:relative!important;overflow:hidden!important;
+  position:relative!important;overflow:visible!important;
  }
  html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] > #svAllTasksView{
   position:static!important;overflow:visible!important;
@@ -885,11 +885,11 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode=
   -webkit-clip-path:none!important;clip-path:none!important;
  }
  html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] > #svAllTasksView#svAllTasksView > .sv-tool-results[data-sv-full-glass-port]{
-  position:absolute!important;inset:0!important;z-index:1!important;
-  box-sizing:border-box!important;width:100%!important;height:100%!important;
+  position:absolute!important;inset:calc(0px - var(--sv-full-glass-top-gap,0px)) 0 0!important;z-index:1!important;
+  box-sizing:border-box!important;width:100%!important;height:auto!important;
   max-height:none!important;margin:0!important;
-  padding-top:calc(var(--sv-full-glass-height,0px) + 16px)!important;
-  scroll-padding-top:calc(var(--sv-full-glass-height,0px) + 16px)!important;
+  padding-top:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 16px)!important;
+  scroll-padding-top:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 16px)!important;
   overflow-x:hidden!important;overflow-y:auto!important;
   -webkit-mask-image:none!important;mask-image:none!important;
   -webkit-clip-path:none!important;clip-path:none!important;
@@ -897,10 +897,10 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode=
  }
  html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] > .sv-full-header-material{
   display:block!important;position:absolute!important;
-  top:0!important;left:0!important;right:0!important;bottom:auto!important;
-  /* The fade ends within the capsule edge, never underneath it. */
+  top:calc(0px - var(--sv-full-glass-top-gap,0px))!important;left:0!important;right:0!important;bottom:auto!important;
+  /* Glass crosses the shared safe-area inset but ends at the capsule rim. */
   --sv-header-glass-mask:linear-gradient(to bottom,#000 0,#000 calc(100% - 5px),transparent 100%);
-  height:var(--sv-all-tasks-glass-edge,var(--sv-full-glass-height,0px))!important;
+  height:calc(var(--sv-all-tasks-glass-edge,var(--sv-full-glass-height,0px)) + var(--sv-full-glass-top-gap,0px))!important;
   background:var(--sv-header-glass-face)!important;background-image:none!important;
   -webkit-backdrop-filter:var(--sv-header-glass-filter)!important;
   backdrop-filter:var(--sv-header-glass-filter)!important;
