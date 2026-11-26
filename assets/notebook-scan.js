@@ -5,6 +5,8 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const dialog=$('noteScanDialog');if(!dialog)return;
+ const scanDemo=new URLSearchParams(location.search).get('scan-demo')==='1';
+ if(scanDemo)document.documentElement.dataset.svScanDemo='on';
 const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanText'),
  button=$('noteScanRecognize');
 let selected=null,localURL='',running=false,session=0,loading=null,consented=false,intoOpenNote=false;
@@ -669,7 +671,7 @@ function toPaper(mode){
 }
 // Test a real OCR input without needing the camera or gallery.
 $('svNoteScanExample')?.addEventListener('click',()=>{
- if(running||!dialog.open)return;
+ if(!(scanDemo||window.SEYVEO_DEMO_MODE?.isEnabled?.())||running||!dialog.open)return;
  const canvas=document.createElement('canvas');canvas.width=1000;canvas.height=600;
  const ctx=canvas.getContext('2d');if(!ctx)return;
  ctx.fillStyle='#fff';ctx.fillRect(0,0,1000,1200);
