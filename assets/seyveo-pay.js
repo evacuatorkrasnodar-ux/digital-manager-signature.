@@ -7,6 +7,14 @@ if(!dialog)return;
 const shell=dialog.querySelector('.syp-shell');
 const home=dialog.querySelector('[data-syp-screen="home"]');
 if(!shell||!home)return;
+ // Approved static concept face; switch only after the actual source is loaded.
+ const approvedArt=home.querySelector('.syp-jade-approved-art');
+ if(approvedArt){
+  const showApproved=()=>{if(!approvedArt.naturalWidth)return;approvedArt.hidden=false;approvedArt.closest('.syp-private-jade')?.classList.add('syp-jade-approved');};
+  approvedArt.addEventListener('load',showApproved,{once:true});
+  if(approvedArt.complete)showApproved();
+ }
+
 const q=selector=>dialog.querySelector(selector);
 const intro=q('.syp-top .syp-desc'),kicker=q('.syp-top .syp-kicker'),title=q('.syp-top .syp-title');
 let launchButton=null,stream=null,frame=0,detector=null,scanActive=false,cameraToken=0,viewToken=0,skipCloseFocus=false;
