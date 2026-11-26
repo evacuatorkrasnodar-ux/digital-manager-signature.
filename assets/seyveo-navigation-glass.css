@@ -942,21 +942,21 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode=
    of the title and scrollport. Only the scrollport extends under the glass;
    neither header control receives a sticky top offset. */
 html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top{
- flex:0 0 auto!important;margin-bottom:2px!important;
+ flex:0 0 auto!important;margin:var(--sv-apple-top-gap,14px) 0 0!important;padding-inline:max(10px,env(safe-area-inset-left,0px))!important;
 }
 html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #svDocArchiveScope{
  box-sizing:border-box!important;display:flow-root!important;position:relative!important;
  flex:0 0 auto!important;top:auto!important;min-width:0!important;min-height:0!important;
- width:100%!important;margin:0 0 8px!important;padding:2px 0 0!important;
+ width:100%!important;margin:0!important;padding:0!important;
  background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;z-index:8!important;
 }
 html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #svDocArchiveScope > .sv-doc-switch{
  box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
- grid-template-rows:30px!important;grid-auto-rows:30px!important;align-items:center!important;align-content:center!important;
+ grid-template-rows:var(--sv-avatar-segment-face-height,30px)!important;grid-auto-rows:var(--sv-avatar-segment-face-height,30px)!important;align-items:center!important;align-content:center!important;
  width:calc(100% - 24px)!important;max-width:404px!important;min-width:0!important;
- height:38px!important;min-height:38px!important;max-height:38px!important;
- margin:0 auto!important;padding:3px!important;gap:3px!important;border-radius:999px!important;
+ height:var(--sv-avatar-segment-height,38px)!important;min-height:var(--sv-avatar-segment-height,38px)!important;max-height:var(--sv-avatar-segment-height,38px)!important;
+ margin:4px auto 5px!important;padding:var(--sv-avatar-segment-inset,3px)!important;gap:3px!important;border-radius:999px!important;
 }
 html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #svDocArchiveScope > .sv-doc-switch > .sv-doc-tab{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
@@ -975,12 +975,12 @@ html:root body #svDocArchiveScope .sv-doc-tab::before,html:root body #svDocArchi
   --sv-segment-track:rgba(226,229,235,.62);
  }
  html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"][data-sv-doc-view="archive"]{
-  position:relative!important;
+  position:relative!important;overflow:visible!important;
  }
  html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"][data-sv-doc-view="archive"] > #sayviSurfaceBody#sayviSurfaceBody[data-sv-full-glass-port]{
-  position:relative!important;inset:auto!important;flex:1 1 0!important;width:100%!important;min-height:0!important;max-height:none!important;
-  margin-top:var(--sv-full-glass-margin,0px)!important;padding-top:var(--sv-full-glass-padding,0px)!important;
-  scroll-padding-top:var(--sv-full-glass-scroll-padding,0px)!important;
+  position:absolute!important;inset:calc(0px - var(--sv-full-glass-top-gap,0px)) 0 0!important;box-sizing:border-box!important;width:100%!important;min-height:0!important;max-height:none!important;
+  margin:0!important;padding-top:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 4px)!important;
+  scroll-padding-top:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 4px)!important;
   overflow-x:hidden!important;overflow-y:auto!important;
   background:transparent!important;background-image:none!important;z-index:1!important;
  }
@@ -990,7 +990,34 @@ html:root body #svDocArchiveScope .sv-doc-tab::before,html:root body #svDocArchi
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
  html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-full-header-material{
-  inset:0 0 auto!important;height:var(--sv-doc-glass-edge,var(--sv-full-glass-height,0px))!important;z-index:5!important;
+  inset:calc(0px - var(--sv-full-glass-top-gap,0px)) 0 auto!important;height:calc(var(--sv-doc-glass-edge,var(--sv-full-glass-height,0px)) + var(--sv-full-glass-top-gap,0px))!important;z-index:5!important;
   --sv-header-glass-mask:linear-gradient(to bottom,#000 0,#000 calc(100% - 5px),transparent 100%);
  }
+}
+
+/* V94: same edge-to-edge canvas and capsule geometry as All Tasks.
+   Move gutters to content; never paint white over the titlebar material. */
+html:root[data-theme="light"] body .app:has(> #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"]:not([hidden])){
+ padding-inline:0!important;background:#fff!important;background-image:none!important;border:0!important;outline:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"]:not([hidden]){
+ padding:0!important;background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #sayviSurfaceBody{
+ padding-inline:max(7px,env(safe-area-inset-left,0px)) max(7px,env(safe-area-inset-right,0px))!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top{
+ padding-left:max(10px,env(safe-area-inset-left,0px))!important;
+ padding-right:max(10px,env(safe-area-inset-right,0px))!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top > .sv-continuity-titlebar{
+ background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top::before,
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top::after,
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top > .sv-continuity-titlebar::before,
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top > .sv-continuity-titlebar::after{content:none!important;display:none!important}
+@media(max-width:720px),(orientation:landscape) and (max-height:540px){
+ html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #svDocArchiveScope > .sv-doc-switch{margin-top:2px!important}
 }
