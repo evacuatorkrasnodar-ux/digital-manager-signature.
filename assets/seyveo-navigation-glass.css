@@ -705,9 +705,12 @@ html:root[data-theme="light"] body dialog#svcpManagerPeople#svcpManagerPeople.sv
 html:root[data-theme="light"] body #seyveoFamilyDialog#seyveoFamilyDialog:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) .svf-tabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]),
 html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkShell #seyveoPayDialog) .syp-view-switch > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]),
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svAllTasksTabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]){
+ /* V132: paint the pearl inside the existing full-size hit target.
+    Transparent border establishes a 3px visual inset without moving text. */
  background:var(--sv-segment-selected)!important;background-image:none!important;
- color:#14171C!important;border-color:rgba(255,255,255,.72)!important;
- box-shadow:var(--sv-segment-selected-shadow)!important;
+ background-clip:padding-box!important;
+ color:#14171C!important;border:3px solid transparent!important;
+ box-shadow:none!important;
 }
 /* V130: no independent mobile gray skin. Use the exact white chat glass
    tokens on every viewport; preserve existing geometry and hit targets. */
