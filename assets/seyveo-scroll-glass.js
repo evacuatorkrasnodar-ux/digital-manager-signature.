@@ -76,7 +76,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const configs=[
   ['svWorkShell',root=>{
    const mode=root.dataset.active;
-   if(!['notes','wallet','business'].includes(mode)||root.dataset.sharedWork!=='true')return null;
+   if(root.dataset.sharedWork!=='true')return null;
+   // All Tasks uses the same approved Avatar pinned header. Keep the live
+   // search input above the glass and the existing results list underneath.
+   if(mode==='personal'&&root.dataset.taskToolMode==='all'){
+    return {port:root.querySelector('#svAllTasksView:not([hidden]) > .sv-tool-results'),controls:[root.querySelector('seyveo-work-head'),$('svWorkTabs'),root.querySelector('#svAllTasksView > .sv-tool-input:not([hidden])')]};
+   }
+   if(!['notes','wallet','business'].includes(mode))return null;
    const port=mode==='notes'?root.querySelector('#notesDialog[open] > #notesList.sv-note-clean-list:not(.is-empty)'):mode==='wallet'?root.querySelector('#seyveoPayDialog[open]'):root.querySelector('#unifiedBusinessTasksView:not([hidden])');
    const controls=[root.querySelector('seyveo-work-head'),$('svWorkTabs'),mode==='notes'?$('svNotebookCreateTiles'):mode==='wallet'?root.querySelector('.syp-view-switch'):null,mode==='notes'?$('svNotebookListTools'):null];
    return {port,controls};
@@ -154,7 +160,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    if(oldPort===port&&port.scrollTop!==oldTop)port.scrollTop=oldTop;
   }
   watch(root);
-  new MutationObserver(schedule).observe(root,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','open','data-active','data-shared-work','data-view','data-sv-subject','data-sv-doc-view']});
+  new MutationObserver(schedule).observe(root,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','open','data-active','data-shared-work','data-task-tool-mode','data-view','data-sv-subject','data-sv-doc-view']});
   new MutationObserver(schedule).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
   window.addEventListener('resize',schedule,{passive:true});
   const media=window.matchMedia('(prefers-reduced-transparency: reduce)');if(media.addEventListener)media.addEventListener('change',schedule);
