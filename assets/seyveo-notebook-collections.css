@@ -158,3 +158,46 @@ html:root body #svNbFolderSheet .sv-nb-folder-head{
 #svNbFolderSheet .sv-nb-folder-submit{border-radius:999px;background:#007aff;color:#fff;padding:0 16px;min-height:44px}
 #svNbFolderSheet .sv-nb-folder-status:empty{display:none}
 @media(prefers-reduced-motion:reduce){html:root body dialog#svNbFolderSheet.sv-nb-folder-sheet[open],html:root body #svNbFolderSheet::backdrop{animation:none!important}}
+
+/* Selection workspace: keep the same header axis, with one floating action pill. */
+html:root body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog.sv-nb-selecting > #svNotebookListTools:not([hidden]){
+ flex:0 0 54px!important;min-height:54px!important;padding:0 12px 10px!important;
+ background:transparent!important;
+}
+html:root body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog #svNotebookSelection:not([hidden]){
+ display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,1fr)!important;gap:4px!important;align-items:center!important;
+}
+#svNotebookSelection #svNotebookSelectAll{justify-self:start}
+#svNotebookSelection #svNotebookCancelSelection{justify-self:end}
+#svNotebookSelectionTitle{
+ text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ color:var(--text,#1c1c1e);font:600 15px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+html:root body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog.sv-nb-selecting > #svNotebookSelectionFooter:not([hidden]){
+ display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px!important;gap:4px!important;
+ align-items:center!important;justify-items:center!important;
+ flex:0 0 52px!important;min-height:52px!important;width:calc(100% - 32px)!important;max-width:420px!important;
+ align-self:center!important;padding:3px 8px!important;
+ margin:0 auto calc(80px + env(safe-area-inset-bottom,0px))!important;
+ border:var(--sv-white-pearl-edge,1px solid rgba(180,190,200,.3))!important;border-radius:999px!important;
+ background:var(--sv-white-pearl-floating-dock,rgba(245,246,248,.88))!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow,0 4px 18px #0001)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;
+}
+html:root body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog.sv-nb-selecting > #svNotebookSelectionFooter:not([hidden])::before{content:none!important;display:none!important}
+html:root body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog.sv-nb-selecting > #notesList.sv-note-clean-list:not(.is-empty){
+ margin-bottom:-52px!important;padding-bottom:68px!important;scroll-padding-bottom:68px!important;
+}
+html:root body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog #svNotebookSelectionFooter :is(#svNotebookMoveSelected,#svNotebookDeleteSelected){
+ appearance:none!important;-webkit-appearance:none!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ border:0!important;border-radius:999px!important;background:transparent!important;background-image:none!important;box-shadow:none!important;outline-offset:2px;
+ min-height:44px!important;height:44px!important;margin:0!important;padding:0 4px!important;
+ font:550 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog #svNotebookMoveSelected{color:#007aff!important;gap:5px!important}
+html:root body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog #svNotebookDeleteSelected{width:44px!important;color:#d93238!important}
+#svNotebookSelectionFooter button svg{width:20px;height:20px;flex:0 0 20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+html:root body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog #svNotebookSelectionFooter button:disabled{opacity:.36!important;cursor:default!important}
+#svNotebookSelectedCount{white-space:nowrap;font-variant-numeric:tabular-nums}
+html:root[data-theme="dark"] body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog #svNotebookSelectionFooter:not([hidden]){background:rgba(43,46,51,.88)!important}
+@media(max-width:350px){#svNotebookMoveSelected svg{display:none}#svNotebookSelectionTitle{font-size:13px}}
