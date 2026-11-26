@@ -112,7 +112,7 @@
  }
  groupedPreview.addEventListener('click',()=>title.focus({preventScroll:true}));
  title.addEventListener('focus',()=>{refreshOneField();sizePhrase()});
- title.addEventListener('blur',()=>queueMicrotask(refreshOneField));
+ title.addEventListener('blur',()=>queueMicrotask(()=>{refreshOneField();sizePhrase();queueKeyboardPosition()}));
  const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
  const iso=(y,m,d)=>[y,String(m+1).padStart(2,'0'),String(d).padStart(2,'0')].join('-');
  let shownYear=new Date().getFullYear(),shownMonth=new Date().getMonth();
@@ -267,11 +267,11 @@
   const viewportBottom=viewport?viewport.offsetTop+viewport.height:window.innerHeight;
   const sheetBottom=sheet.getBoundingClientRect().bottom;
   const remaining=Math.max(0,sheetBottom-viewportBottom);
-  const inset=remaining>110?Math.round(remaining):0;
+  const inset=remaining>2?Math.ceil(remaining):0;
   if(Math.abs(inset-lastKeyboardInset)<3)return;
   lastKeyboardInset=inset;
   sheet.style.setProperty('--sv-task-keyboard-inset',inset+'px');
-  sheet.classList.toggle('sv-task-keyboard-visible',inset>0);
+  sheet.classList.toggle('sv-task-keyboard-visible',inset>110);
  }
  function queueKeyboardPosition(){
   if(keyboardFrame)return;
@@ -282,6 +282,8 @@
  window.addEventListener('resize',queueKeyboardPosition);
  window.addEventListener('resize',sizePhrase);
  dialog.addEventListener('focusin',queueKeyboardPosition);
+ dialog.addEventListener('focusout',queueKeyboardPosition);
+ window.addEventListener('pageshow',queueKeyboardPosition);
  const isEditing=()=>document.getElementById('personalTaskDialogTitle')?.textContent?.startsWith('Изменить');
  function createText(kind,text){
   const node=document.createElement('span');node.className='sv-task-smart-'+kind;
@@ -339,11 +341,19 @@
   if(!dialog.open||!title.getClientRects().length||
    (titleCapsule?.classList.contains('is-grouped')&&!titleCapsule.classList.contains('is-editing')))return;
   const minimum=window.matchMedia('(max-width:649px)').matches?24:56;
-  // Measure the actual wrapped text, not the textarea's default row count.
+  // Reserve the clear button before measuring: it changes line wrapping.
+  refreshPhraseChrome();
+  const focused=document.activeElement===title;
+  const line=parseFloat(getComputedStyle(title).lineHeight)||24;
+  const limit=focused?Math.max(6*line,Math.min(220,window.innerHeight*.32)):Infinity;
+  const previousScroll=title.scrollTop;
+  title.style.overflowY='hidden';
   title.style.height='0px';
   const measured=title.scrollHeight;
-  title.style.height=Math.max(minimum,Math.min(128,measured))+'px';
-  title.style.overflowY=measured>128?'auto':'hidden';
+  const height=Math.ceil(Math.max(minimum,Math.min(limit,measured))+2);
+  title.style.height=height+'px';
+  title.style.overflowY=measured>limit?'auto':'hidden';
+  title.scrollTop=focused&&measured>limit?previousScroll:0;
   refreshPhraseChrome();
  }
  const wheelMonths=Array.from({length:12},(_,i)=>new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(2020,i,1)));
