@@ -912,8 +912,8 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode=
   position:absolute!important;inset:calc(0px - var(--sv-full-glass-top-gap,0px)) 0 0!important;z-index:1!important;
   box-sizing:border-box!important;width:100%!important;height:auto!important;
   max-height:none!important;margin:0!important;
-  padding-top:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 16px)!important;
-  scroll-padding-top:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 16px)!important;
+  padding-top:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 4px)!important;
+  scroll-padding-top:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 4px)!important;
   overflow-x:hidden!important;overflow-y:auto!important;
   -webkit-mask-image:none!important;mask-image:none!important;
   -webkit-clip-path:none!important;clip-path:none!important;
