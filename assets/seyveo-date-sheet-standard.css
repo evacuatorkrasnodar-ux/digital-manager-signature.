@@ -1,0 +1,91 @@
+/* SEYVEO · Date sheet standard V63. New Task V62 is the reference.
+   Month navigation is intentionally borderless; other application controls keep their material. */
+:root{
+ --sv-date-sheet-light:rgba(228,231,236,.65);
+ --sv-date-sheet-dark:rgba(36,38,44,.94);
+ --sv-date-sheet-filter:blur(20px) saturate(110%);
+ --sv-date-sheet-ink:#17191D;
+ --sv-date-sheet-blue:#007AFF;
+}
+:root[data-theme="dark"]{--sv-date-sheet-ink:#F1F2F4;--sv-date-sheet-blue:#64B5FF}
+html:root body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog,#sayviSurfacePage,#seyveoPayDialog) .sv-month-nav.sv-month-nav > .sv-month-controls.sv-month-controls,
+html:root body .sv-month-nav.sv-month-nav.sv-month-nav > .sv-month-controls.sv-month-controls{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 90px!important;width:90px!important;min-width:90px!important;max-width:90px!important;height:44px!important;min-height:44px!important;
+ padding:0!important;gap:0!important;margin:0!important;background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root body :is(#calendarEventDialog,#personalTaskDialog,#calendarSpaceDialog,#svStandardPickerDialog,#sayviSurfacePage,#seyveoPayDialog) .sv-month-nav.sv-month-nav > .sv-month-controls.sv-month-controls > button,
+html:root body .sv-month-nav.sv-month-nav.sv-month-nav > .sv-month-controls.sv-month-controls > button{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;max-width:44px!important;height:44px!important;min-height:44px!important;max-height:44px!important;
+ color:var(--sv-date-sheet-blue)!important;background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root body .sv-month-nav.sv-month-nav > .sv-month-controls > button:active{opacity:.65!important}
+html:root body .sv-month-nav.sv-month-nav > .sv-month-controls > button:focus-visible{outline:2px solid var(--sv-date-sheet-blue)!important;outline-offset:-3px!important}
+html:root body #calendarEventDialog #seyveoEventPicker.cal-premium-picker[data-mode="date"]:not([hidden]),
+html:root body #calendarSpaceDialog .cal-velvet-picker.sv-date-only-sheet:not([hidden]),
+html:root body dialog#svStandardPickerDialog.sv-standard-picker-sheet.sv-date-only-sheet[open],
+html:root body #sayviSurfacePage[data-sv-subject="contract"] dialog.sv-doc-picker-sheet.sv-date-only-sheet[open],
+html:root body dialog.sv-doc-picker-sheet.sv-doc-picker-bottom.sv-date-only-sheet[open]{
+ box-sizing:border-box!important;position:fixed!important;inset:auto 0 0!important;transform:none!important;
+ width:100%!important;min-width:0!important;max-width:var(--sv-sheet-max-width,680px)!important;
+ height:auto!important;max-height:90dvh!important;margin:0 auto!important;
+ padding:8px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))!important;
+ border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.5))!important;border-radius:26px 26px 0 0!important;
+ background:var(--sv-date-sheet-light)!important;background-image:none!important;color:var(--sv-date-sheet-ink)!important;
+ box-shadow:0 -5px 28px rgba(40,48,60,.12)!important;
+ -webkit-backdrop-filter:var(--sv-date-sheet-filter)!important;backdrop-filter:var(--sv-date-sheet-filter)!important;
+ overflow-x:hidden!important;overflow-y:auto!important;scrollbar-width:none!important;overscroll-behavior:contain!important;
+ animation:sv-date-sheet-enter .28s cubic-bezier(.2,.75,.2,1) backwards;
+}
+html:root[data-theme="dark"] body :is(#calendarEventDialog #seyveoEventPicker.cal-premium-picker[data-mode="date"],#calendarSpaceDialog .cal-velvet-picker.sv-date-only-sheet,dialog#svStandardPickerDialog.sv-date-only-sheet,dialog.sv-doc-picker-sheet.sv-date-only-sheet):not([hidden]){
+ background:var(--sv-date-sheet-dark)!important;color:var(--sv-date-sheet-ink)!important;
+}
+html:root body #calendarEventDialog #seyveoEventPicker.cal-premium-picker[data-mode="date"]:not([hidden]){z-index:302!important}
+html:root body #calendarSpaceDialog .cal-velvet-picker.sv-date-only-sheet:not([hidden]){z-index:300!important}
+@keyframes sv-date-sheet-enter{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sv-date-sheet-shade{position:fixed;inset:0;z-index:301;background:rgba(35,40,50,.08);touch-action:none}
+.sv-date-sheet-shade[hidden],.sv-date-sheet-head[hidden]{display:none!important}
+html:root body .sv-date-sheet-head{
+ position:relative;display:grid!important;grid-template-columns:76px minmax(0,1fr) 76px!important;align-items:center!important;
+ min-height:56px!important;box-sizing:border-box!important;padding:10px 0 0!important;margin:0 0 6px!important;
+}
+.sv-date-sheet-grip{position:absolute;top:1px;left:50%;transform:translateX(-50%);width:34px;height:4px;border-radius:4px;background:rgba(90,99,112,.32)}
+html:root body .sv-date-sheet-head > strong{grid-column:2;text-align:center;font:650 17px/1.25 system-ui!important;color:var(--sv-date-sheet-ink)!important}
+html:root body .sv-date-sheet-head > .sv-date-sheet-done{
+ grid-column:3;justify-self:end;min-width:64px!important;height:44px!important;min-height:44px!important;padding:0 10px!important;margin:0!important;
+ font:600 14px/1 system-ui!important;color:var(--sv-date-sheet-blue)!important;background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html:root body #calendarEventDialog #seyveoPickDate .cal-pick-date-close{display:none!important}
+html:root body #calendarEventDialog #seyveoPickDate.cal-pick-date{background:transparent!important;box-shadow:none!important;border:0!important;padding:0!important}
+html:root body :is(#calendarEventDialog #seyveoPickDate,#calendarSpaceDialog .cal-velvet-picker.sv-date-only-sheet,#svStandardPickerDialog.sv-date-only-sheet,.sv-doc-picker-sheet.sv-date-only-sheet) .sv-month-name{
+ color:var(--sv-date-sheet-ink)!important;
+}
+html:root body :is(#calendarEventDialog #seyveoPickDate,#calendarSpaceDialog .cal-velvet-picker.sv-date-only-sheet,#svStandardPickerDialog.sv-date-only-sheet,#personalTaskDialog #seyveoTaskDuePicker,dialog.sv-doc-picker-sheet.sv-date-only-sheet) :is(.cal-pick-today,.cal-velvet-picker-foot > button,.sv-standard-picker-secondary,.sv-task-date-quick > button,.sv-doc-picker-link,.sv-doc-picker-done,.sv-standard-picker-back,.sv-doc-picker-head > .sv-doc-picker-round,.sv-task-date-back){
+ background:transparent!important;background-image:none!important;box-shadow:none!important;border:0!important;
+ color:var(--sv-date-sheet-blue)!important;min-height:44px!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root body dialog.sv-doc-picker-sheet.sv-date-only-sheet .sv-doc-picker-date-footer{background:transparent!important}
+html:root body :is(#calendarEventDialog #seyveoPickDate,#calendarSpaceDialog .cal-velvet-picker.sv-date-only-sheet,#svStandardPickerDialog.sv-date-only-sheet,#personalTaskDialog #seyveoTaskDuePicker,dialog.sv-doc-picker-sheet.sv-date-only-sheet) :is(.cal-pick-day,.cal-velvet-day,.sv-standard-picker-day,.sv-doc-picker-day){
+ position:relative!important;display:grid!important;place-items:start center!important;width:100%!important;height:39px!important;min-height:39px!important;
+ padding:3px 0 0!important;border:0!important;border-top:1px solid rgba(60,60,67,.045)!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;outline:0!important;color:var(--sv-date-sheet-ink)!important;
+}
+html:root body :is(#calendarEventDialog #seyveoPickDate,#calendarSpaceDialog .cal-velvet-picker.sv-date-only-sheet,#svStandardPickerDialog.sv-date-only-sheet,#personalTaskDialog #seyveoTaskDuePicker,dialog.sv-doc-picker-sheet.sv-date-only-sheet) .sv-shared-calendar-number{
+ display:grid!important;place-items:center!important;width:27px!important;height:27px!important;border-radius:50%!important;
+ font:580 13.5px/1 system-ui!important;color:var(--sv-date-sheet-ink)!important;transform:none!important;
+}
+html:root body :is(#calendarEventDialog #seyveoPickDate,#calendarSpaceDialog .cal-velvet-picker.sv-date-only-sheet,#svStandardPickerDialog.sv-date-only-sheet,#personalTaskDialog #seyveoTaskDuePicker,dialog.sv-doc-picker-sheet.sv-date-only-sheet) :is(.is-selected,.is-current,[aria-pressed="true"]):not(.is-today) > .sv-shared-calendar-number{
+ background:#17191D!important;color:#FFF!important;
+}
+html:root body :is(#calendarEventDialog #seyveoPickDate,#calendarSpaceDialog .cal-velvet-picker.sv-date-only-sheet,#svStandardPickerDialog.sv-date-only-sheet,#personalTaskDialog #seyveoTaskDuePicker,dialog.sv-doc-picker-sheet.sv-date-only-sheet) .is-today > .sv-shared-calendar-number{
+ background:#109BDD!important;color:#FFF!important;
+}
+html:root body .cal-velvet-day .sv-shared-calendar-dots{bottom:3px}
+html:root body :is(.cal-pick-day,.cal-velvet-day,.sv-standard-picker-day,.sv-doc-picker-day):focus-visible{outline:2px solid var(--sv-date-sheet-blue)!important;outline-offset:-2px!important}
+html:root body .sv-date-sheet-done:focus-visible{outline:2px solid var(--sv-date-sheet-blue)!important;outline-offset:-2px}
+@media(prefers-reduced-motion:reduce){html:root body :is(#seyveoEventPicker[data-mode="date"],.sv-date-only-sheet){animation:none!important}}
+@media(prefers-reduced-transparency:reduce){:root{--sv-date-sheet-light:#E5E7EB;--sv-date-sheet-dark:#24262C;--sv-date-sheet-filter:none}}
