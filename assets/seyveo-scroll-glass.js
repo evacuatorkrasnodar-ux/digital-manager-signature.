@@ -150,6 +150,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    root.style.setProperty('--sv-full-glass-padding',(number(style.paddingTop)+overlap)+'px');
    root.style.setProperty('--sv-full-glass-scroll-padding',(number(style.scrollPaddingTop)+overlap)+'px');
    root.style.setProperty('--sv-full-glass-height',Math.ceil(bottom-rect.top)+'px');
+   // All Tasks: the optical edge is the real capsule's lower border,
+   // not the scrollport start, its padding or the optional search field.
+   const allTasksTabs=root.id==='svWorkShell'&&root.dataset.taskToolMode==='all'?controls.find(el=>el.id==='svWorkTabs'):null;
+   if(allTasksTabs)root.style.setProperty('--sv-all-tasks-glass-edge',Math.max(0,allTasksTabs.getBoundingClientRect().bottom-rect.top)+'px');
+   else root.style.removeProperty('--sv-all-tasks-glass-edge');
    root.style.setProperty('--sv-full-glass-sticky-top',(pinnedTop+overlap)+'px');
    if(getComputedStyle(root).position==='static')root.classList.add('sv-full-glass-static-root');
    port.setAttribute('data-sv-full-glass-port',sticky?'sticky':'plain');lastPort=port;
