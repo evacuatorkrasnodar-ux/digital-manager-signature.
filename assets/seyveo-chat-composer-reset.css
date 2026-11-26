@@ -423,7 +423,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > .svcp-clean-surface,
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile,
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile:is(:hover,:active,:focus,[aria-expanded="true"]){
- border:1px solid var(--svcp-conversation-blue-rim)!important;
+ border:1px solid rgba(85,220,247,.86)!important;
  box-shadow:inset 0 1px 1px rgba(173,241,255,.18)!important;
  background:var(--svcp-conversation-blue-glass)!important;
  background-image:none!important;
@@ -449,4 +449,16 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
   --svcp-conversation-blue-glass:#167EAD;
   --svcp-conversation-blue-blur:none;
  }
+}
+
+/* Optical refinement: only the separate compact Plus gets richer cyan.
+   The capsule fill, expanded Plus, glyphs and action geometry stay intact. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile:is(:hover,:active,:focus,[aria-expanded="true"]){
+ background:rgba(0,130,179,.62)!important;
+ background-image:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile,
+ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile:is(:hover,:active,:focus,[aria-expanded="true"]){background:#0786B5!important}
 }
