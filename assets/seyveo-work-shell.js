@@ -404,7 +404,7 @@
    const cancel=make('button','sv-task-cancel','Отмена');cancel.type='button';
    cancel.setAttribute('aria-label','Отменить выбор дел');
    cancel.addEventListener('click',()=>{selected.clear();paint()});
-   actionCapsule.append(selectAll,counter,deleteButton,cancel);
+   actionCapsule.append(selectAll,counter,cancel,deleteButton);
   }
   function paintResults(){
    results.replaceChildren();
@@ -467,7 +467,11 @@
     const hits=matches();
     selectAll.textContent=hits.length&&hits.every(t=>selected.has(t.id))?'Снять выбор':'Выбрать все';
    }
-   if(deleteButton)deleteButton.disabled=!selected.size;
+   if(deleteButton){
+    deleteButton.disabled=!selected.size;
+    deleteButton.textContent='Удалить ('+selected.size+')';
+    deleteButton.setAttribute('aria-label','Удалить выбранные дела: '+selected.size);
+   }
   }
   paintResults();
   results.scrollTop=previousResultScroll;
