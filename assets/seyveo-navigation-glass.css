@@ -945,13 +945,13 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode=
 /* V93 · Documents uses the All Tasks geometry. The scope is a real sibling
    of the title and scrollport. Only the scrollport extends under the glass;
    neither header control receives a sticky top offset. */
-html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top{
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top{
  /* V113: match the Work header's 74px tab row, including its 14px top axis. */
  box-sizing:border-box!important;display:block!important;flex:0 0 var(--sv-header-work-tabs-row,74px)!important;
  width:100%!important;height:var(--sv-header-work-tabs-row,74px)!important;min-height:var(--sv-header-work-tabs-row,74px)!important;
  margin:0!important;padding:var(--sv-apple-top-gap,14px) max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px))!important;
 }
-html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #svDocArchiveScope{
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope{
  box-sizing:border-box!important;display:flow-root!important;position:relative!important;
  flex:0 0 auto!important;top:auto!important;min-width:0!important;min-height:0!important;
  width:100%!important;margin:0!important;padding:0!important;
@@ -959,35 +959,35 @@ html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][da
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;z-index:8!important;
 }
 /* The outer switch geometry is owned by seyveo-work-floating-pearl.css. */
-html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #svDocArchiveScope > .sv-doc-switch > .sv-doc-tab{
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope > .sv-doc-switch > .sv-doc-tab{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
  width:100%!important;min-width:0!important;height:30px!important;min-height:30px!important;max-height:30px!important;
  margin:0!important;padding:0 4px!important;border-radius:999px!important;
  font:590 13px/1.2 -apple-system,system-ui,sans-serif!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #svDocArchiveScope > .sv-doc-switch{
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope > .sv-doc-switch{
  border:1px solid var(--sv-segment-edge)!important;
 }
 html:root body #svDocArchiveScope::before,html:root body #svDocArchiveScope::after,
 html:root body #svDocArchiveScope > .sv-doc-switch::before,html:root body #svDocArchiveScope > .sv-doc-switch::after,
 html:root body #svDocArchiveScope .sv-doc-tab::before,html:root body #svDocArchiveScope .sv-doc-tab::after{content:none!important;display:none!important}
 @media not (prefers-reduced-transparency:reduce){
- html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"][data-sv-doc-view="archive"]{
+ html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]){
   position:relative!important;overflow:visible!important;
  }
- html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"][data-sv-doc-view="archive"] > #sayviSurfaceBody#sayviSurfaceBody[data-sv-full-glass-port]{
+ html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #sayviSurfaceBody#sayviSurfaceBody[data-sv-full-glass-port]{
   position:absolute!important;inset:calc(0px - var(--sv-full-glass-top-gap,0px)) 0 0!important;box-sizing:border-box!important;width:100%!important;min-height:0!important;max-height:none!important;
   margin:0!important;padding-top:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 4px)!important;
   scroll-padding-top:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 4px)!important;
   overflow-x:hidden!important;overflow-y:auto!important;
   background:transparent!important;background-image:none!important;z-index:1!important;
  }
- html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top[data-sv-full-glass-control]{
+ html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top[data-sv-full-glass-control]{
   position:relative!important;z-index:8!important;
   background:transparent!important;background-image:none!important;box-shadow:none!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
- html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-full-header-material{
+ html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-full-header-material{
   /* V111: exactly the Avatar header optical edge, without local tint
      or shortened feather. Keep the measured document geometry. */
   inset:calc(0px - var(--sv-full-glass-top-gap,0px)) 0 auto!important;height:calc(var(--sv-doc-glass-edge,var(--sv-full-glass-height,0px)) + var(--sv-full-glass-top-gap,0px) + 24px)!important;z-index:5!important;
@@ -996,16 +996,16 @@ html:root body #svDocArchiveScope .sv-doc-tab::before,html:root body #svDocArchi
 
 /* V94: same edge-to-edge canvas and capsule geometry as All Tasks.
    Move gutters to content; never paint white over the titlebar material. */
-html:root[data-theme="light"] body .app:has(> #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"]:not([hidden])){
+html:root[data-theme="light"] body .app:has(> #sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]):not([hidden])){
  padding-inline:0!important;background:#fff!important;background-image:none!important;border:0!important;outline:0!important;box-shadow:none!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"]:not([hidden]){
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]):not([hidden]){
  padding:0!important;background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #sayviSurfaceBody{
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #sayviSurfaceBody{
  padding-inline:max(7px,env(safe-area-inset-left,0px)) max(7px,env(safe-area-inset-right,0px))!important;
 }
- html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top > .sv-continuity-titlebar{
+ html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top > .sv-continuity-titlebar{
  /* Reset the old Documents-only 8px inner inset and 50px row. */
  box-sizing:border-box!important;display:grid!important;grid-template-columns:var(--sv-header-symmetric-grid)!important;
  grid-template-rows:var(--sv-apple-nav-row,44px)!important;align-items:center!important;
@@ -1014,7 +1014,7 @@ html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-su
  background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top > .sv-continuity-titlebar > #sayviSurfaceBack{
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top > .sv-continuity-titlebar > #sayviSurfaceBack{
  position:static!important;grid-column:1!important;grid-row:1!important;justify-self:start!important;align-self:center!important;
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
  width:44px!important;min-width:44px!important;max-width:44px!important;height:44px!important;min-height:44px!important;max-height:44px!important;
@@ -1022,11 +1022,11 @@ html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-su
  background:var(--sv-header-circle)!important;background-image:none!important;color:var(--sv-header-icon-ink)!important;
  box-shadow:var(--sv-header-circle-shadow)!important;-webkit-backdrop-filter:var(--sv-header-circle-filter)!important;backdrop-filter:var(--sv-header-circle-filter)!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top > .sv-continuity-titlebar > #sayviSurfaceBack svg{
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top > .sv-continuity-titlebar > #sayviSurfaceBack svg{
  width:22px!important;height:22px!important;stroke-width:1.55!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top::before,
-html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top::after,
-html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top > .sv-continuity-titlebar::before,
-html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-deep-top > .sv-continuity-titlebar::after{content:none!important;display:none!important}
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top::before,
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top::after,
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top > .sv-continuity-titlebar::before,
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top > .sv-continuity-titlebar::after{content:none!important;display:none!important}
 /* Mobile segment spacing follows the shared Work rule too. */
