@@ -27,10 +27,9 @@
  --sv-white-pearl-selected-shadow:0 1px 3px rgba(38,48,60,.045);
  /* EXACT white-chat shadows: one fine readable rim and soft lift.
     No second outline pseudo element or heavy embossed gradient. */
- --sv-white-pearl-circle-shadow:
-   0 4px 13px rgba(38,48,60,.085),
-   inset 0 1px 0 rgba(255,255,255,.96),
-   inset 0 -1px 0 rgba(214,222,231,.23);
+ /* V142: flat frosted circles, with the existing pearl rim and no bevel.
+    The separately approved dock and segment shadows remain untouched. */
+ --sv-white-pearl-circle-shadow:0 2px 8px rgba(38,48,60,.055);
  --sv-white-pearl-dock-shadow:
    0 5px 15px rgba(38,48,60,.085),
    0 1px 3px rgba(38,48,60,.025),
