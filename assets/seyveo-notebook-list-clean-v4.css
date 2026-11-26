@@ -593,3 +593,37 @@ html:root body #svWorkShell[data-active="notes"] #notesDialog #svNotebookSelecti
 }
 html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog #svNotebookSelectedCount{color:#adb5c0!important}
 html:root[data-theme="dark"] body #svWorkShell[data-active="notes"] #notesDialog #svNotebookSelectionFooter button#svNotebookDeleteSelected{color:#ff777a!important}
+
+/* V192 · Notebook swipe and undo: same Pearl family, unchanged 168px gesture.
+   Two inset actions instead of edge-to-edge opaque slabs. */
+html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-slide > :is(.sv-nb4-more,.sv-nb4-remove){
+ top:6px!important;bottom:6px!important;height:56px!important;width:76px!important;
+ border:1px solid transparent!important;border-radius:16px!important;
+ gap:3px!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-slide > .sv-nb4-more{right:88px!important;}
+html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-slide > .sv-nb4-remove{right:6px!important;}
+html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-slide > :is(.sv-nb4-more,.sv-nb4-remove):focus-visible{
+ outline:2px solid currentColor!important;outline-offset:-3px!important;
+}
+/* Keep the measured header glass, but do not wash out active swipe controls. */
+html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-active="notes"]:has(#notesList .sv-nb4-slide:is(.is-open,.is-dragging)) > .sv-full-header-material{
+ height:var(--sv-full-glass-height,0px)!important;
+ -webkit-mask-image:none!important;mask-image:none!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-active="notes"] #notesDialog:has(#notesList .sv-nb4-slide:is(.is-open,.is-dragging)) > #svNotebookListTools::after{
+ opacity:0!important;
+}
+html:root[data-theme="light"] body #svNoteUndoToast:not([hidden]){
+ min-height:56px!important;gap:12px!important;padding:5px 6px 5px 15px!important;
+ border:var(--sv-white-pearl-edge)!important;border-radius:999px!important;
+ background:var(--sv-white-pearl-floating-dock)!important;background-image:none!important;
+ color:var(--sv-white-pearl-ink)!important;box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ white-space:normal!important;
+}
+html:root[data-theme="light"] body #svNoteUndoToast > span{min-width:0;line-height:1.3;}
+html:root[data-theme="light"] body #svNoteUndoToast > button{
+ flex:none;min-height:44px!important;border-radius:999px!important;white-space:nowrap!important;
+}
