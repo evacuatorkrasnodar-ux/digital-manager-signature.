@@ -21,9 +21,11 @@
  function icon(path,color){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');svg.style.color=color;const p=document.createElementNS(svg.namespaceURI,'path');p.setAttribute('d',path);svg.append(p);return svg}
  function choose(value){active=value;rerender();const list=document.getElementById('notesList');if(list)list.scrollTop=0}
  function picker(noteId=null,focusCreate=false){
+  const ids=new Set(Array.isArray(noteId)?noteId:noteId==null?[]:[noteId]);
+  const moving=ids.size>0;
   const old=document.getElementById('svNbFolderSheet');if(old){old.close();old.remove()}
   const dlg=el('dialog','sv-nb-folder-sheet');dlg.id='svNbFolderSheet';
-  const top=el('div','sv-nb-folder-head');const grip=el('div','sv-nb-sheet-grip');grip.setAttribute('aria-hidden','true');top.append(grip);const heading=el('strong','',noteId?'Переместить в папку':focusCreate?'Новая папка':'Мои папки');heading.id='svNbFolderTitle';dlg.setAttribute('aria-labelledby',heading.id);top.append(heading);
+  const top=el('div','sv-nb-folder-head');const grip=el('div','sv-nb-sheet-grip');grip.setAttribute('aria-hidden','true');top.append(grip);const heading=el('strong','',moving?(ids.size>1?'Переместить записи ('+ids.size+')':'Переместить в папку'):focusCreate?'Новая папка':'Мои папки');heading.id='svNbFolderTitle';dlg.setAttribute('aria-labelledby',heading.id);top.append(heading);
   const close=el('button','sv-nb-sheet-close');close.type='button';close.setAttribute('aria-label','Закрыть');close.append(icon('m6 12 4 4 8-8','currentColor'));close.onclick=()=>dlg.close();top.append(close);dlg.append(top);root.SEYVEO_SHEET_NAVIGATION?.attach(grip,null,()=>dlg.close());
   const list=el('div','sv-nb-folder-list');dlg.append(list);
   const form=el('form','sv-nb-folder-form');const input=el('input');input.placeholder='Название новой папки';input.maxLength=60;input.required=true;input.setAttribute('aria-label','Название новой папки');
@@ -32,31 +34,32 @@
   function resetForm(){editing=null;input.value='';input.placeholder='Название новой папки';add.textContent='Создать';cancelRename.hidden=true;status.textContent=''}
   const status=el('p','sv-nb-folder-status','');status.setAttribute('role','status');dlg.append(status);
   function assign(id){
-   const membership=state.membership.filter(m=>m.note!==noteId);if(id)membership.push({note:noteId,folder:id});
+   if(id&&!state.folders.some(f=>f.id===id)){status.textContent='Папка не найдена.';return}
+   const membership=state.membership.filter(m=>!ids.has(m.note));if(id)for(const note of ids)membership.push({note,folder:id});
    if(!save({...state,membership})){status.textContent='Не удалось сохранить папку.';return}
    dlg.close();rerender();
   }
   function draw(){
    list.replaceChildren();
-   if(noteId){const b=el('button','sv-nb-folder-row','Без папки');b.type='button';b.onclick=()=>assign(null);list.append(b)}
+   if(moving){const b=el('button','sv-nb-folder-row','Без папки');b.type='button';b.onclick=()=>assign(null);list.append(b)}
    for(const f of state.folders){
     const row=el('div','sv-nb-folder-line');const b=el('button','sv-nb-folder-row');b.type='button';
     b.append(icon(defs[5][3],defs[5][2]),el('span','',f.name),el('small','',String(lastNotes.filter(n=>folderOf(n.id)===f.id).length)));
-    if(noteId&&folderOf(noteId)===f.id)b.setAttribute('aria-current','true');
-    b.onclick=()=>{if(noteId)assign(f.id);else{dlg.close();choose('folder:'+f.id)}};row.append(b);
-    if(!noteId){const rename=el('button','sv-nb-folder-rename','Изменить');rename.type='button';rename.setAttribute('aria-label','Переименовать папку '+f.name);rename.onclick=()=>{editing=f.id;input.value=f.name;input.placeholder='Новое название папки';add.textContent='Сохранить';cancelRename.hidden=false;status.textContent='';input.focus();input.select()};row.append(rename);const remove=el('button','sv-nb-folder-remove','×');remove.type='button';remove.setAttribute('aria-label','Удалить папку '+f.name);
+    if(moving&&[...ids].every(id=>folderOf(id)===f.id))b.setAttribute('aria-current','true');
+    b.onclick=()=>{if(moving)assign(f.id);else{dlg.close();choose('folder:'+f.id)}};row.append(b);
+    if(!moving){const rename=el('button','sv-nb-folder-rename','Изменить');rename.type='button';rename.setAttribute('aria-label','Переименовать папку '+f.name);rename.onclick=()=>{editing=f.id;input.value=f.name;input.placeholder='Новое название папки';add.textContent='Сохранить';cancelRename.hidden=false;status.textContent='';input.focus();input.select()};row.append(rename);const remove=el('button','sv-nb-folder-remove','×');remove.type='button';remove.setAttribute('aria-label','Удалить папку '+f.name);
      remove.onclick=()=>{if(!root.confirm('Удалить папку «'+f.name+'»? Записи останутся в блокноте.'))return;
       if(!save({folders:state.folders.filter(x=>x.id!==f.id),membership:state.membership.filter(m=>m.folder!==f.id)})){status.textContent='Не удалось удалить папку.';return}
       if(active==='folder:'+f.id)active='home';if(editing===f.id)resetForm();rerender();draw()};row.append(remove)}
     list.append(row);
    }
-   if(!state.folders.length&&!noteId)list.append(el('p','sv-nb-folder-empty','Создай первую папку для своих записей.'));
+   if(!state.folders.length&&!moving)list.append(el('p','sv-nb-folder-empty','Создай первую папку для своих записей.'));
   }
   form.onsubmit=e=>{e.preventDefault();const name=input.value.trim();if(!name)return;if(state.folders.some(f=>f.id!==editing&&f.name.toLowerCase()===name.toLowerCase())){status.textContent='Такая папка уже есть.';return}
    if(editing){if(!save({...state,folders:state.folders.map(f=>f.id===editing?{...f,name}:f)})){status.textContent='Не удалось переименовать папку.';return}resetForm();draw();rerender();return}
    const id='f-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
    if(!save({...state,folders:[...state.folders,{id,name}]})){status.textContent='Не удалось создать папку.';return}
-   input.value='';status.textContent='';if(noteId)assign(id);else{draw();rerender()}
+   input.value='';status.textContent='';if(moving)assign(id);else{draw();rerender()}
   };
   draw();document.body.append(dlg);dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();if(focusCreate)input.focus();
  }
@@ -77,5 +80,5 @@
   if(state.folders.length>2){const more=el('button','sv-nb-home-folder-link','Все папки ('+state.folders.length+')');more.type='button';more.onclick=()=>picker();folders.append(more)}
   host.append(folders);
  }
- root.SEYVEO_NOTE_COLLECTIONS=Object.freeze({kind,visible,title,render,isAll:()=>active==='all',isHome:()=>active==='home',home:()=>choose('home'),move:note=>picker(note.id)});
+ root.SEYVEO_NOTE_COLLECTIONS=Object.freeze({kind,visible,title,render,isAll:()=>active==='all',isHome:()=>active==='home',home:()=>choose('home'),move:note=>picker(note.id),moveMany:ids=>{if(Array.isArray(ids)&&ids.length)picker([...new Set(ids)])}});
 })(window);
