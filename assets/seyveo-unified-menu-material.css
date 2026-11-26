@@ -719,7 +719,7 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] #svPaperBrushPicker.
  html:root body .sv-menu-with-action-glyph [data-sv-menu-action-glyph]{
   display:block!important;flex:0 0 20px!important;width:20px!important;height:20px!important;
   min-width:20px!important;max-width:20px!important;
-  color:inherit!important;fill:none;stroke:currentColor;stroke-width:1.55!important;
+  color:inherit!important;fill:none;stroke:currentColor;stroke-width:var(--sv-menu-icon-stroke,1.6)!important;
   stroke-linecap:round!important;stroke-linejoin:round!important;pointer-events:none!important;
  }
  html:root body .sv-menu-with-action-glyph:has([data-sv-menu-action-glyph="delete"]){color:#c13c37!important}
@@ -733,14 +733,14 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] #svPaperBrushPicker.
   display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;min-height:44px!important;
  }
  html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-actions > button > svg.sv-doc-draft-menu-glyph{
-  position:static!important;display:block!important;visibility:visible!important;opacity:1!important;flex:0 0 20px!important;width:20px!important;height:20px!important;min-width:20px!important;max-width:20px!important;margin:0!important;transform:none!important;fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+  position:static!important;display:block!important;visibility:visible!important;opacity:1!important;flex:0 0 20px!important;width:20px!important;height:20px!important;min-width:20px!important;max-width:20px!important;margin:0!important;transform:none!important;fill:none!important;stroke:currentColor!important;stroke-width:var(--sv-menu-icon-stroke,1.6)!important;
  }
  html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-actions > button > .sv-doc-draft-menu-label{display:block!important;min-width:0!important;text-align:left!important}
  html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-actions > button.sv-doc-draft-delete{color:#c13c37!important}
  html:root[data-theme="dark"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-actions > button.sv-doc-draft-delete{color:#ff898b!important}
 }
 
-/* V151 · canonical popup contract. One material for explicit menus.
+/* V152 · canonical popup contract. One material for explicit menus.
    The important layer wins over legacy unlayered local colors and rims.
    No layout changes to pickers, color grids, full-screen sheets or docks. */
 @keyframes sv-menu-reveal {
@@ -750,15 +750,15 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] #svPaperBrushPicker.
 @layer seyveo-menu-surface-standard {
  html:root body :is(
   .sv-menu-surface, #svcpInboxMenu, #svcpAttachMenu, #svcpReactionPicker,
-  #svcpWorkHistoryMenu, .svcp-work-history-row-menu, #svfAttachMenu,
+  #svcpWorkHistoryMenu, .svcp-work-history-row-menu, .svcp-message-menu, #svfAttachMenu,
   #svNewTaskCameraMenu, #svNewTaskCalendarPopover,
   #svSmartInkPicker, #svSmartVoiceMenu, #svSmartNotePaperPanel, #svSmartNoteSayviPanel,
   #svNoteTopMenu, #svNoteAttachmentMenu, #svNoteFormatMenu, #svNoteMarkerPalette,
   #notePaperSettingsMenu, #notePaperPatternMenu, #notePaperColorMenu, #svPaperBrushPicker,
   #svNotebookListMenu, .sv-mail-gate-panel, .sv-mail-message-menu, .sv-mail-reply-menu,
-  .sv-doc-file-popover, .sv-doc-list-menu, .sv-doc-word-menu, .sv-doc-scan-more-menu,
+  .sv-doc-file-popover, .sv-doc-list-menu, .sv-doc-folder-menu, .sv-doc-draft-actions, .sv-doc-word-menu, .sv-doc-scan-more-menu,
   .svdf-optional-actions, .svdv-more-options, .svdv-inline-menu, .svdv-ink-menu,
-  #sayviMenu, .sv-own-sheet:has(.sv-own-actions:not([hidden])) .sv-own-panel
+  #sayviMenu, #sayviHistoryMenu, .sv-reply-action-menu, .sv-own-sheet:has(.sv-own-actions:not([hidden])) .sv-own-panel
  ){
   box-sizing:border-box!important;
   background:var(--sv-menu-bg)!important;background-image:none!important;
@@ -771,9 +771,11 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] #svPaperBrushPicker.
  html:root body :is(#svcpInboxMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,
  #svNotebookListMenu,#svNoteTopMenu,#svNoteAttachmentMenu,#svSmartVoiceMenu,
  #svfAttachMenu,.sv-doc-list-menu,.sv-doc-scan-more-menu,.svdf-optional-actions,
- #sayviMenu,.sv-own-actions) > button,
+ #sayviMenu,#sayviHistoryMenu,.sv-own-actions,.sv-doc-folder-menu,.sv-doc-draft-actions) > button,
  html:root body :is(.sv-mail-message-menu,.sv-mail-reply-menu) .sv-mail-message-menu-item,
- html:root body .sv-doc-file-popover .sv-doc-simple-file-action{
+ html:root body .sv-doc-file-popover .sv-doc-simple-file-action,
+ html:root body .svcp-message-menu .svcp-message-menu-item,
+ html:root body .sv-reply-menu-options > .sv-reply-action{
   box-sizing:border-box!important;display:flex!important;align-items:center!important;
   justify-content:flex-start!important;gap:var(--sv-menu-row-gap)!important;
   min-height:var(--sv-menu-action-height)!important;height:auto!important;
@@ -786,29 +788,47 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] #svPaperBrushPicker.
  html:root body :is(#svcpInboxMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,
  #svNotebookListMenu,#svNoteTopMenu,#svNoteAttachmentMenu,#svSmartVoiceMenu,
  #svfAttachMenu,.sv-doc-list-menu,.sv-doc-scan-more-menu,.svdf-optional-actions,
- #sayviMenu,.sv-own-actions) > button[hidden]{display:none!important}
+ #sayviMenu,#sayviHistoryMenu,.sv-own-actions,.sv-doc-folder-menu,.sv-doc-draft-actions) > button[hidden]{display:none!important}
  html:root body :is(#svcpInboxMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,
  #svNotebookListMenu,#svNoteTopMenu,#svNoteAttachmentMenu,#svSmartVoiceMenu,
  #svfAttachMenu,.sv-doc-list-menu,.sv-doc-scan-more-menu,.svdf-optional-actions,
- #sayviMenu,.sv-own-actions) > button:not(:disabled):active,
+ #sayviMenu,#sayviHistoryMenu,.sv-own-actions,.sv-doc-folder-menu,.sv-doc-draft-actions) > button:not(:disabled):active,
  html:root body :is(.sv-mail-message-menu,.sv-mail-reply-menu) .sv-mail-message-menu-item:not(:disabled):active,
- html:root body .sv-doc-file-popover .sv-doc-simple-file-action:not(:disabled):active{
+ html:root body .sv-doc-file-popover .sv-doc-simple-file-action:not(:disabled):active,
+ html:root body .svcp-message-menu .svcp-message-menu-item:not(:disabled):active,
+ html:root body .sv-reply-menu-options > .sv-reply-action:not(:disabled):active{
   background:var(--sv-menu-item-selected)!important;
  }
  html:root body :is(#svcpInboxMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,
  #svNotebookListMenu,#svNoteTopMenu,#svNoteAttachmentMenu,#svSmartVoiceMenu,
  #svfAttachMenu,.sv-doc-list-menu,.sv-doc-scan-more-menu,.svdf-optional-actions,
- #sayviMenu,.sv-own-actions) > button > svg,
+ #sayviMenu,#sayviHistoryMenu,.sv-own-actions,.sv-doc-folder-menu,.sv-doc-draft-actions) > button > svg,
  html:root body :is(.sv-mail-message-menu,.sv-mail-reply-menu) .sv-mail-message-menu-item > svg,
- html:root body .sv-doc-file-popover .sv-doc-menu-icon svg{
+ html:root body .sv-doc-file-popover .sv-doc-menu-icon svg,
+ html:root body .sv-doc-folder-menu .sv-doc-menu-icon svg,
+ html:root body .svcp-message-menu-item > svg,
+ html:root body .sv-reply-menu-options > .sv-reply-action svg{
   width:var(--sv-menu-icon-size)!important;height:var(--sv-menu-icon-size)!important;
   flex:0 0 var(--sv-menu-icon-size)!important;stroke-width:var(--sv-menu-icon-stroke)!important;
   stroke-linecap:round!important;stroke-linejoin:round!important;opacity:1!important;
  }
  html:root body :is(.sv-mail-message-menu,.sv-mail-reply-menu) .sv-mail-menu-destructive,
  html:root body :is(.sv-doc-list-menu,.sv-doc-file-popover,.svdf-optional-actions,.sv-own-actions,#svNotebookListMenu,#svNoteTopMenu) :is(.is-danger,.is-destructive,.svdf-reset,[data-own="delete"],[data-action="delete"],[data-sv-menu-action-glyph="delete"]),
+ html:root body #sayviHistoryClear,
+ html:root body .sv-doc-folder-menu .sv-doc-folder-danger,
+ html:root body .sv-doc-draft-actions .sv-doc-draft-delete,
  html:root body .svcp-work-history-row-menu > button:last-child{
   color:var(--sv-menu-danger)!important;
+ }
+ /* Disable actions semantically; never let an old surface paint an enabled-looking button. */
+ html:root body :is(.svcp-message-menu,.sv-reply-action-menu,#svcpInboxMenu,#sayviHistoryMenu,.sv-doc-folder-menu,.sv-doc-draft-actions) button:disabled{
+  opacity:.45!important;cursor:default!important;
+ }
+ html:root body :is(.svcp-message-menu,.sv-reply-action-menu) button:is(.is-danger,.is-destructive,[data-action="delete"],[data-action="clear"],[data-own="delete"]){
+  color:var(--sv-menu-danger)!important;
+ }
+ html:root body :is(#svcpInboxMenu,#sayviHistoryMenu,.sv-doc-folder-menu,.sv-doc-draft-actions) > button:focus-visible{
+  outline:2px solid #397bc6!important;outline-offset:-2px!important;
  }
  html:root body #svcpInboxMenu{
   width:min(244px,calc(100vw - 24px))!important;padding:6px!important;
@@ -819,17 +839,17 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] #svPaperBrushPicker.
   border-radius:0!important;
  }
  html:root body :is(#svcpInboxMenu,#svNotebookListMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,
- .sv-mail-message-menu,.sv-mail-reply-menu,.sv-doc-file-popover,.sv-doc-list-menu,.svdf-optional-actions,#svNoteTopMenu,#svNoteAttachmentMenu,#svSmartVoiceMenu,#sayviMenu):not([hidden]){
+ .sv-mail-message-menu,.sv-mail-reply-menu,.sv-doc-file-popover[open],.sv-doc-list-menu,.sv-doc-folder-menu,.sv-doc-draft-actions,.svdf-optional-actions,#svNoteTopMenu,#svNoteAttachmentMenu,#svSmartVoiceMenu,#sayviMenu,#sayviHistoryMenu):not([hidden]){
   animation:sv-menu-reveal var(--sv-menu-open-duration) cubic-bezier(.2,.75,.25,1) both!important;
  }
- html:root body :is(#svcpWorkHistoryMenu,.sv-mail-message-menu,.sv-doc-list-menu,.svdf-optional-actions,#svNoteTopMenu){transform-origin:top right!important}
+ html:root body :is(#svcpWorkHistoryMenu,#sayviHistoryMenu,.sv-mail-message-menu,.sv-doc-list-menu,.sv-doc-folder-menu,.sv-doc-draft-actions,.svdf-optional-actions,#svNoteTopMenu){transform-origin:top right!important}
  html:root body :is(#sayviMenu,#svNoteAttachmentMenu,#svSmartVoiceMenu){transform-origin:bottom left!important}
  @media(prefers-reduced-motion:reduce){
   html:root body :is(#svcpInboxMenu,#svNotebookListMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,
- .sv-mail-message-menu,.sv-mail-reply-menu,.sv-doc-file-popover,.sv-doc-list-menu,.svdf-optional-actions,#svNoteTopMenu,#svNoteAttachmentMenu,#svSmartVoiceMenu,#sayviMenu){animation:none!important}
+ .sv-mail-message-menu,.sv-mail-reply-menu,.sv-doc-file-popover,.sv-doc-list-menu,.sv-doc-folder-menu,.sv-doc-draft-actions,.svdf-optional-actions,#svNoteTopMenu,#svNoteAttachmentMenu,#svSmartVoiceMenu,#sayviMenu,#sayviHistoryMenu){animation:none!important}
  }
 }
 @media(prefers-reduced-transparency:reduce){
- :root{--sv-menu-bg:#fcfcfd;--sv-menu-blur:none}
+ :root,:root[data-theme="light"]{--sv-menu-bg:#fcfcfd;--sv-menu-blur:none}
  :root[data-theme="dark"]{--sv-menu-bg:#292b30;--sv-menu-blur:none}
 }
