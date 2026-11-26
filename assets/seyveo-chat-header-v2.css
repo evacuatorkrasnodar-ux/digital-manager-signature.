@@ -114,9 +114,9 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  opacity:1!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill > svg{
- /* V143: compact blue disclosure glyph, identical to the avatar name. */
- display:block!important;flex:0 0 12px!important;width:12px!important;height:12px!important;
- fill:none!important;stroke:#64BFFF!important;stroke-width:2.15!important;
+ /* V145: Andre reference — tall narrow rounded disclosure, shared by every chat wallpaper. */
+ display:block!important;flex:0 0 12px!important;width:12px!important;height:14px!important;
+ fill:none!important;stroke:#64BFFF!important;stroke-width:3.4!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:none!important;
 }
