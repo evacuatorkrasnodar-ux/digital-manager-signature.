@@ -2196,19 +2196,19 @@ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .s
  min-height:48px!important;padding:10px 0 0!important;margin:0!important;
 }
 html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-head strong{
- font:650 17px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;color:inherit!important;
+ font:600 17px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;color:inherit!important;
 }
 html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-tabs{
  min-height:50px!important;padding:3px!important;gap:3px!important;
- background:var(--sv-task-action-fill)!important;border:var(--sv-task-action-rim)!important;
- box-shadow:none!important;
+ background:var(--sv-wheel-segment-fill,rgba(189,195,205,.34))!important;border:1px solid rgba(160,170,184,.20)!important;
+ box-shadow:none!important;-webkit-backdrop-filter:var(--sv-task-action-blur)!important;backdrop-filter:var(--sv-task-action-blur)!important;
 }
 html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-tabs button{
  min-height:44px!important;
 }
 html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-body::before{
  top:80px!important;height:40px!important;box-sizing:border-box!important;
- background:rgba(115,127,145,.08)!important;border-color:rgba(100,110,125,.13)!important;
+ background:var(--sv-wheel-selection-fill,rgba(115,127,145,.15))!important;border:0!important;border-radius:12px!important;
 }
 html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-unified-wheel{
  height:200px!important;min-height:200px!important;max-height:200px!important;padding:80px 0!important;
@@ -2224,4 +2224,13 @@ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .s
 }
 @media(prefers-reduced-motion:reduce){
  html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host:not([hidden]){animation:none!important}
+}
+
+/* V70 · selection is one soft band, not individual cells or rules. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-tabs button.is-active{
+ background:var(--sv-wheel-segment-selected,rgba(255,255,255,.78))!important;
+ color:var(--sv-date-sheet-ink,#17191D)!important;border:0!important;box-shadow:none!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-unified-wheel > .sv-unified-wheel-option.is-selected{
+ background:transparent!important;border:0!important;box-shadow:none!important;
 }
