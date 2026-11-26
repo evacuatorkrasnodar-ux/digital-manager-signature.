@@ -665,11 +665,11 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
    its measured position, opening animation and all selection handlers. */
 @layer seyveo-home-chooser-standard{
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{
-  background:var(--sv-white-pearl-floating-dock,rgba(235,237,240,.62))!important;background-image:none!important;
+  background:rgba(247,248,250,.36)!important;background-image:none!important;
   border:0!important;border-bottom:1px solid rgba(155,168,186,.36)!important;outline:0!important;
   border-radius:0 0 30px 30px!important;
   box-shadow:0 9px 17px -7px rgba(43,55,73,.24),0 3px 5px -2px rgba(43,55,73,.12)!important;
-  -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;
+  -webkit-backdrop-filter:blur(6px) saturate(108%)!important;backdrop-filter:blur(6px) saturate(108%)!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor > .sv-home-favorites-editor-shell{
   background:transparent!important;background-image:none!important;
@@ -702,11 +702,11 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
   background:transparent!important;box-shadow:none!important;border:0!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{
-  background:rgba(255,255,255,.64)!important;background-image:none!important;
+  background:rgba(255,255,255,.38)!important;background-image:none!important;
   border:1px solid rgba(192,201,212,.48)!important;box-shadow:none!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"]{
-  background:rgba(224,239,252,.72)!important;border-color:rgba(155,194,229,.58)!important;
+  background:rgba(224,239,252,.48)!important;border-color:rgba(155,194,229,.58)!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"] small{
   background:#e0effc!important;color:#075ca8!important;
