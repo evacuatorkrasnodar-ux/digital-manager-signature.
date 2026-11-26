@@ -986,3 +986,16 @@ html:root[data-theme="light"] body #svWorkShell[data-active="wallet"] > #seyveoP
  box-shadow:0 6px 17px rgba(13,47,45,.15)!important;
  -webkit-mask-image:-webkit-radial-gradient(white,black);
 }
+
+/* V221: source-resolution artwork, original metallic typography and chip.
+   No compressed small-source fallback, no filter or scaling between layers. */
+html:root body #seyveoPayDialog .syp-card.syp-private-jade,
+html:root[data-theme="light"] body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-card.syp-private-jade{
+ aspect-ratio:1625 / 882!important;
+ background:transparent url("seyveo-private-jade-original.webp") center / 100% 100% no-repeat!important;
+ border-radius:4.7% / 8.66%!important;
+ -webkit-mask-image:none!important;mask-image:none!important;
+ filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ image-rendering:auto!important;
+}
+#seyveoPayDialog .syp-private-jade .syp-cardhead{visibility:hidden!important;}
