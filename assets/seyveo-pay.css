@@ -494,7 +494,7 @@ html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-
 /* Wallet home: a little breathing room below the unchanged Work tabs.
    Move the complete card section in normal flow, not the shared navigation. */
 html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="home"]{
- padding-top:7px!important;
+ padding-top:19px!important;
 }
 
 /* V207 · Apple Wallet-inspired hierarchy. Card artwork and shared navigation
