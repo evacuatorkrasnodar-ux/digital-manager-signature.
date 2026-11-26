@@ -46,6 +46,7 @@ const fallbackInfo=file=>metadata?.filenameParts(file?.name)||{
  artist:'',display:String(file?.name||'Без названия')
 };
 let trackDescriptions=new WeakMap(),coverDataURL=null,coverReader=null;
+let recentFiles=[];
 const infoFor=file=>file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
 const safeName=file=>infoFor(file).display;
 const extensions=/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i;
@@ -159,7 +160,7 @@ function syncResume(){
  const playing=loaded&&!audio.paused&&!audio.ended;
  // One actual audio element. The mini is a small remote, not a second player.
  if(mini){
-  mini.hidden=!loaded||!hasPlayed||audio.ended||location.hash==='#sayvi-music'||miniDismissed;
+  mini.hidden=!loaded||!hasPlayed||audio.ended||(location.hash==='#sayvi-music'&&page.dataset.musicView!=='home'&&page.dataset.musicView!=='new'&&page.dataset.musicView!=='radio'&&page.dataset.musicView!=='library')||miniDismissed;
   mini.classList.toggle('is-playing',playing);
   if(loaded){
    const file=tracks[index];
@@ -243,6 +244,7 @@ function updateTime(){
 /* Data images are already permitted by the app's CSP; blob: images are not.
    Keep MP3 cover art local, capped, and do not expand the security policy. */
 function clearArtwork(){
+ page.classList.remove('sv-music-player-has-art');page.style.removeProperty('--sv-music-player-art');
  stage?.classList.remove('has-artwork','is-checking-artwork');
  mini?.classList.remove('has-artwork');
  for(const surface of [artwork,miniArtwork]){
@@ -258,6 +260,7 @@ function showArtwork(){
  const probe=new Image();
  probe.onload=()=>{
   if(coverDataURL!==candidate)return;
+  page.style.setProperty('--sv-music-player-art','url("'+candidate+'")');page.classList.add('sv-music-player-has-art');
   for(const [surface,holder] of [[artwork,stage],[miniArtwork,mini]]){
    if(!surface)continue;
    surface.style.backgroundImage='url("'+candidate+'")';
@@ -496,7 +499,7 @@ function minimizeMusic(){
  location.hash=MUSIC_RETURN_ROUTES.has(musicReturnRoute)?musicReturnRoute:'#home';
  return true;
 }
-minimize?.addEventListener('click',minimizeMusic);
+minimize?.addEventListener('click',()=>{if(!window.SEYVEO_MUSIC_DOCK?.closePlayer?.())minimizeMusic()});
 /* An explicit close lives in the full Music screen, not on Home.
    Pause the real audio session and hide the small remote; preserve
    the selected local tracks so the user can return to Music later. */
@@ -530,7 +533,7 @@ if(stage){
   const point=event.changedTouches[0];
   const dy=point.clientY-start.y,dx=Math.abs(point.clientX-start.x);
   start=null;
-  if(dy>72&&dx<40&&location.hash==='#sayvi-music')minimizeMusic();
+  if(dy>72&&dx<40&&location.hash==='#sayvi-music'){if(!window.SEYVEO_MUSIC_DOCK?.closePlayer?.())minimizeMusic()}
  },{passive:true});
 }
 
@@ -542,7 +545,7 @@ miniOpen?.addEventListener('click',event=>{
   event.preventDefault();
   return;
  }
- open();
+ if(window.SEYVEO_MUSIC_DOCK?.openPlayer)window.SEYVEO_MUSIC_DOCK.openPlayer();else open();
 });
 if(miniOpen){
  let miniTouchStart=null;
@@ -630,7 +633,7 @@ options.addEventListener('click',event=>{
 audio.addEventListener('timeupdate',updateTime);
 audio.addEventListener('durationchange',updateTime);
 audio.addEventListener('loadedmetadata',updateTime);
-audio.addEventListener('playing',()=>{updatePlay();sayviMessage('');qualifyDiscoveryListen()});
+audio.addEventListener('playing',()=>{const file=tracks[index];if(file)recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);updatePlay();sayviMessage('');qualifyDiscoveryListen()});
 audio.addEventListener('pause',()=>{stopDiscoveryListen();updatePlay()});
 audio.addEventListener('ended',()=>{stopDiscoveryListen();if(tracks.length>1)switchTrack(index+1,true);else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
 audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
@@ -700,7 +703,9 @@ function playFromSearch(query){
 }
 window.SEYVEO_MUSIC=Object.freeze({
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
- searchTracks,playFromSearch,playIndexFromSearch,
+ searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,
+ browseTracks:()=>tracks.map((file,i)=>({index:i,title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка'})),
+ recentTracks:()=>recentFiles.filter(file=>tracks.includes(file)).map(file=>({index:tracks.indexOf(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка'})),
  state:()=>Object.freeze({
   loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
   source:'local-file',connectedServices:0

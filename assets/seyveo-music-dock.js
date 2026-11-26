@@ -1,112 +1,67 @@
-/* SEYVEO MUSIC · existing dock becomes a compact player ONLY in Music.
-   No second dock. The original assistant button and global route handlers
-   are untouched; the four outer existing buttons temporarily control audio.
-   Navigating away restores all original four destinations and their labels. */
+/* Music-only navigation layer inside the existing dock shell.
+   Never change the common navigation buttons, SVGs, attributes or handlers.
+   Search stays the original standalone control; the main mini-player is reused. */
 (()=>{'use strict';
 function init(){
- const dock=document.querySelector('footer.dock');
- const audio=document.getElementById('sayviMusicAudio');
- const outer=['navHome','navTasks','navPicture','navManage'].map(id=>document.getElementById(id));
- if(!dock||!audio||outer.some(x=>!x)||window.SEYVEO_MUSIC_DOCK)return;
- const icon={
-  prev:'<path d="M6.5 6v12M17.5 6.5 9 12l8.5 5.5z"/>',
-  play:'<path d="m9 6 9 6-9 6z"/>',
-  pause:'<path d="M8.5 6v12M15.5 6v12"/>',
-  next:'<path d="M17.5 6v12M6.5 6.5 15 12l-8.5 5.5z"/>',
-  tracks:'<path d="M8.5 6.5h10.5M8.5 12h10.5M8.5 17.5h10.5M4.5 6.5h1M4.5 12h1M4.5 17.5h1"/>',
-  search:'<circle cx="10.5" cy="10.5" r="6.3"/><path d="m15 15 5.3 5.3"/>'
- };
- const glyph=d=>'<svg class="seyveo-music-dock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+icon[d]+'</svg>';
- let enabled=false,loaded=false,playing=false;
- let originalSearch=null;
- const restoreSearch=()=>{
-  if(!originalSearch)return;
-  outer[3].innerHTML=originalSearch.html;
-  for(const [attribute,value] of Object.entries(originalSearch.attrs)){
-   if(value===null)outer[3].removeAttribute(attribute);
-   else outer[3].setAttribute(attribute,value);
+ const dock=document.querySelector('footer.dock.sv-shared-dock'),page=document.getElementById('sayviMusicPage');
+ if(!dock||!page||window.SEYVEO_MUSIC_DOCK)return;
+ const root=document.documentElement;
+ const tabs=[['home','Главная','<path d="M3.5 10 12 3l8.5 7v9.5a1 1 0 0 1-1 1H15v-6h-6v6H4.5a1 1 0 0 1-1-1Z"/>'],['new','Новинки','<rect x="4" y="4" width="7" height="7" rx="1.7"/><rect x="13" y="4" width="7" height="7" rx="1.7"/><rect x="4" y="13" width="7" height="7" rx="1.7"/><rect x="13" y="13" width="7" height="7" rx="1.7"/>'],['radio','Радио','<circle cx="12" cy="12" r="1.7" fill="currentColor"/><path d="M8.2 8.2a5.4 5.4 0 0 0 0 7.6m7.6-7.6a5.4 5.4 0 0 1 0 7.6M5.2 5.2a9.6 9.6 0 0 0 0 13.6m13.6-13.6a9.6 9.6 0 0 1 0 13.6"/>'],['library','Медиатека','<rect x="5" y="6" width="14" height="15" rx="3"/><path d="M8 3h8m-6 14v-7l5-1v6"/><ellipse cx="8.5" cy="17" rx="1.5" ry="1.1"/><ellipse cx="13.5" cy="15" rx="1.5" ry="1.1"/>']];
+ const nav=document.createElement('nav');nav.className='sv-music-nav-only';nav.hidden=true;nav.setAttribute('aria-label','Разделы SEYVEO Music');
+ for(const [key,label,icon] of tabs){const btn=document.createElement('button');btn.type='button';btn.dataset.musicNav=key;btn.setAttribute('aria-label',label);btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icon+'</svg><span>'+label+'</span>';nav.append(btn)}
+ dock.append(nav);
+ const panels={home:'svMusicHome',new:'svMusicNew',radio:'svMusicRadio',library:'svMusicLibrary'};
+ const get=id=>document.getElementById(id);
+ let active=false,view='home',last='home',pending=false;
+ const inside=()=>location.hash==='#sayvi-music'&&!page.hidden;
+ const music=()=>window.SEYVEO_MUSIC;
+ function renderTracks(){
+  if(!active)return;
+  const lists=[['svMusicRecent',music()?.recentTracks?.()||[],true],['svMusicLibraryTracks',music()?.browseTracks?.()||[],false]];
+  for(const [id,items,recent] of lists){
+   const el=get(id);if(!el)continue;el.replaceChildren();
+   if(!items.length){const empty=document.createElement('p');empty.className='sv-music-browse-caption';empty.textContent=recent?'Здесь появятся треки, которые вы действительно слушали.':'Добавьте аудиофайлы с устройства.';el.append(empty);continue}
+   for(const item of items){const button=document.createElement('button');button.type='button';button.className=recent?'sv-music-recent-card':'sv-music-library-track';const art=document.createElement('span');art.className='sv-music-track-tile';art.textContent='♪';art.setAttribute('aria-hidden','true');const title=document.createElement('strong');title.textContent=item.title;const artist=document.createElement('small');artist.textContent=item.artist;const text=document.createElement('span');text.className='sv-music-track-tile-copy';text.append(title,artist);button.append(art,text);button.addEventListener('click',()=>{music()?.playIndexFromSearch?.(item.index);show('player')});el.append(button)}
   }
-  originalSearch=null;
- };
- const activate=()=>location.hash==='#sayvi-music'&&!document.getElementById('sayviMusicPage')?.hidden;
- const describe=(button,label,svg,action)=>{
-  button.innerHTML=glyph(svg)+'<span>'+label+'</span>';
-  button.dataset.svMusicAction=action;
-  button.removeAttribute('aria-current');
-  button.classList.remove('active','sv-nav-feedback');
-  button.setAttribute('aria-label',label==='Треки'?'Открыть список музыки':label==='Пред.'?'Предыдущий трек':label==='След.'?'Следующий трек':label);
-  button.title=label==='Пред.'?'Предыдущий трек':label==='След.'?'Следующий трек':label;
- };
- function draw(){
-  if(!enabled)return;
-  describe(outer[0],'Пред.','prev','prev');
-  describe(outer[1],playing?'Пауза':'Слушать',playing?'pause':'play','play');
-  describe(outer[2],'След.','next','next');
-  // Keep the original approved laser-drawn Search glyph exactly as it
-  // appeared outside Music. Do not redraw or resize this dock control.
-  // The global-search listener still receives clicks on navManage.
-  delete outer[3].dataset.svMusicAction;
-  outer[3].setAttribute('aria-label','Умный поиск SEYVEO');
-  outer[3].setAttribute('aria-controls','svGlobalSearch');
-  outer[0].setAttribute('aria-disabled',String(!loaded));
-  outer[2].setAttribute('aria-disabled',String(!loaded));
-  outer[1].setAttribute('aria-disabled','false');
-  dock.setAttribute('aria-label','SEYVEO MUSIC · предыдущий, воспроизведение, Сэйви, следующий, поиск');
+ }
+ function show(key){
+  if(!active||(!Object.hasOwn(panels,key)&&key!=='player'))return false;
+  music()?.closePanels?.();
+  view=key;if(key!=='player')last=key;
+  page.dataset.musicView=key;root.classList.toggle('sv-music-browse',key!=='player');root.classList.toggle('sv-music-player-open',key==='player');
+  for(const [name,id] of Object.entries(panels))get(id).hidden=name!==key;
+  const discovery=get('sayviDiscoveryPanel');if(discovery)discovery.hidden=key!=='new';
+  get('sayviMusicDiscoveryToggle')?.setAttribute('aria-expanded',String(key==='new'));
+  get('svMusicRadioToggle')?.setAttribute('aria-expanded',String(key==='radio'));
+  for(const btn of nav.querySelectorAll('button')){const selected=btn.dataset.musicNav===key;btn.setAttribute('aria-pressed',String(selected));if(selected)btn.setAttribute('aria-current','page');else btn.removeAttribute('aria-current')}
+  page.scrollTop=0;renderTracks();music()?.refreshMini?.();
+  document.dispatchEvent(new CustomEvent('seyveo:music-view',{detail:{view:key}}));
+  return true;
  }
  function enter(){
-  if(enabled){draw();return;}
-  // Return the approved laser-drawn Search control exactly as it was before
-  // Music borrowed the existing dock (no replacement dock and no drift).
-  const attrs=['aria-label','aria-controls','aria-expanded','title'];
-  originalSearch={html:outer[3].innerHTML,attrs:Object.fromEntries(attrs.map(a=>[a,outer[3].getAttribute(a)]))};
-  enabled=true;dock.classList.add('seyveo-music-dock');
-  draw();
+  if(active)return;active=true;nav.hidden=false;dock.classList.add('seyveo-music-dock','sv-music-navigation-only');
+  const key=pending?'player':'home';pending=false;last='home';show(key);
  }
  function leave(){
-  if(!enabled)return;
-  enabled=false;dock.classList.remove('seyveo-music-dock');
-  for(const button of outer){
-   delete button.dataset.svMusicAction;
-   delete button.dataset.svFixedAction;
-   button.removeAttribute('aria-disabled');
-  }
-  restoreSearch();
-  document.dispatchEvent(new Event('seyveo:music-dock-exit'));
-  // Paint is also needed when the music entry was opened via pushState.
-  window.SEYVEO_MAGNETIC_INK?.refresh?.();
+  if(!active)return;active=false;nav.hidden=true;dock.classList.remove('seyveo-music-dock','sv-music-navigation-only');
+  root.classList.remove('sv-music-browse','sv-music-player-open');delete page.dataset.musicView;
+  for(const id of Object.values(panels))get(id).hidden=true;
+  const discovery=get('sayviDiscoveryPanel');if(discovery)discovery.hidden=true;
+  document.dispatchEvent(new CustomEvent('seyveo:music-view',{detail:{view:null}}));
+  document.dispatchEvent(new Event('seyveo:music-dock-exit'));window.SEYVEO_MAGNETIC_INK?.refresh?.();music()?.refreshMini?.();
  }
- const refresh=()=>{
-  const isPlaying=!audio.paused&&!audio.ended&&!!audio.getAttribute('src');
-  playing=isPlaying;
-  loaded=window.SEYVEO_MUSIC?.state?.().loaded>0||!!audio.getAttribute('src');
-  if(activate())enter();else leave();
- };
- // Capture at the DOCK, before the original navigation listeners, so a
- // music action never accidentally switches to Tasks, Life or Management.
- dock.addEventListener('click',event=>{
-  if(!enabled)return;
-  const target=event.target.closest?.('button[data-sv-music-action]');
-  if(!target||!outer.includes(target))return;
-  event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
-  const action=target.dataset.svMusicAction;
-  if(action==='prev'&&loaded)document.getElementById('sayviMusicPrevious')?.click();
-  if(action==='play')document.getElementById('sayviMusicPlay')?.click();
-  if(action==='next'&&loaded)document.getElementById('sayviMusicNext')?.click();
-  if(action==='tracks')window.SEYVEO_MUSIC?.openQueue?.();
- },true);
- window.addEventListener('hashchange',refresh);
- window.addEventListener('seyveo:route-changed',refresh);
- document.addEventListener('seyveo:music-state',event=>{
-  loaded=!!event.detail?.loaded;
-  playing=!!event.detail?.playing;
-  if(activate())enter();else leave();
- });
- for(const name of ['play','playing','pause','ended','emptied'])audio.addEventListener(name,refresh);
- window.SEYVEO_MUSIC_DOCK=Object.freeze({setMode:refresh,isActive:()=>enabled});
+ function refresh(){if(inside())enter();else leave()}
+ function openPlayer(){if(active)return show('player');pending=true;return music()?.open?.()}
+ function closePlayer(){if(!active||view!=='player')return false;return show(last)}
+ nav.addEventListener('click',e=>{const btn=e.target.closest('button[data-music-nav]');if(!btn)return;e.preventDefault();e.stopPropagation();show(btn.dataset.musicNav)});
+ page.addEventListener('click',e=>{const btn=e.target.closest('[data-music-view-action]');if(!btn)return;const key=btn.dataset.musicViewAction;if(key==='import')get('sayviMusicImport')?.click();else if(key==='favorites')get('sayviMusicFavoritesToggle')?.click();else if(key==='sources')get('sayviMusicSourcesToggle')?.click();else show(key)});
+ window.addEventListener('hashchange',refresh);window.addEventListener('seyveo:route-changed',refresh);
+ new MutationObserver(refresh).observe(page,{attributes:true,attributeFilter:['hidden']});
+ document.addEventListener('seyveo:music-state',()=>{refresh();renderTracks()});
+ window.SEYVEO_MUSIC_DOCK=Object.freeze({setMode:refresh,isActive:()=>active,show,openPlayer,closePlayer});
  refresh();
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
-else init();
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 /* Radio stays on the Music screen; never modifies the shared dock. */
 (()=>{'use strict';
@@ -162,7 +117,8 @@ function initRadio(){
  drawRadio();
 
  function close(){panel.hidden=true;toggle.setAttribute('aria-expanded','false');stopRadio()}
- toggle.addEventListener('click',()=>{if(!panel.hidden){close();return}window.SEYVEO_MUSIC?.closePanels?.();panel.hidden=false;toggle.setAttribute('aria-expanded','true');panel.scrollIntoView({block:'nearest'});});
+ toggle.addEventListener('click',()=>{if(window.SEYVEO_MUSIC_DOCK?.show){window.SEYVEO_MUSIC_DOCK.show('radio');return}if(!panel.hidden){close();return}window.SEYVEO_MUSIC?.closePanels?.();panel.hidden=false;toggle.setAttribute('aria-expanded','true');panel.scrollIntoView({block:'nearest'});});
+ document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='radio'&&current)stopRadio()});
  const route=()=>{if(location.hash!=='#sayvi-music'||page.hidden)close()};
  window.addEventListener('hashchange',route);window.addEventListener('seyveo:route-changed',route);
 }
