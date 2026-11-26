@@ -174,12 +174,7 @@
   const lib=await loadTesseract();
   let worker;
   try{
-   worker=await lib.createWorker(['rus','eng'],1,{
-    workerPath:new URL('assets/seyveo-ocr-worker.min.js',document.baseURI).href,
-    corePath:new URL('assets/seyveo-ocr-core-lstm.wasm.js',document.baseURI).href,
-    langPath:new URL('assets/',document.baseURI).href,
-    gzip:false,
-    logger:info=>{
+   worker=await window.SEYVEO_OCR_WORKER.create(lib,info=>{
      if(!overlay.open)return;
      const stages={
       'loading tesseract core':'Загружаю движок',
@@ -190,7 +185,6 @@
      };
      const label=stages[info.status];
      if(label)message(label+(Number.isFinite(info.progress)?': '+Math.round(info.progress*100)+'%':'…'));
-    }
    });
    await worker.setParameters?.({tessedit_pageseg_mode:'6',preserve_interword_spaces:'1'});
    const first=ocrReading(await worker.recognize(image));
