@@ -723,3 +723,43 @@ html:root[data-theme="light"] body dialog#svcpManagerPeople#svcpManagerPeople.sv
 html:root[data-theme="light"] body #seyveoFamilyDialog#seyveoFamilyDialog:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) .svf-tabs,
 html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkShell #seyveoPayDialog) .syp-view-switch{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 }
+
+/* Semantic text-action glass. A scoped important layer wins older per-screen
+   paint declarations without touching layout, visibility, focus or handlers. */
+@layer seyveo-semantic-actions{
+ :root[data-theme="light"] button[data-sv-action-glass="neutral"]{
+  --sv-action-face:rgba(222,226,234,.60);
+  --sv-action-edge:rgba(185,195,209,.40);
+  --sv-action-ink:#252830;
+  --sv-action-pressed:rgba(209,215,225,.76);
+ }
+ :root[data-theme="light"] button[data-sv-action-glass="primary"]{
+  --sv-action-face:rgba(68,166,250,.34);
+  --sv-action-edge:rgba(56,146,230,.38);
+  --sv-action-ink:#075CA8;
+  --sv-action-pressed:rgba(68,166,250,.46);
+ }
+ :root[data-theme="light"] button[data-sv-action-glass="danger"]{
+  --sv-action-face:rgba(246,99,104,.17);
+  --sv-action-edge:rgba(220,76,85,.30);
+  --sv-action-ink:#B12535;
+  --sv-action-pressed:rgba(246,99,104,.28);
+ }
+ :root[data-theme="light"] button[data-sv-action-glass]{
+  background:var(--sv-action-face)!important;background-image:none!important;
+  color:var(--sv-action-ink)!important;
+  border-color:transparent!important;
+  box-shadow:inset 0 0 0 1px var(--sv-action-edge),inset 0 1px 0 rgba(255,255,255,.65),0 2px 6px rgba(38,48,60,.045)!important;
+  -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;
+  backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;
+ }
+ :root[data-theme="light"] button[data-sv-action-glass]:active:not(:disabled){
+  background:var(--sv-action-pressed)!important;
+ }
+ @media(prefers-reduced-transparency:reduce){
+  :root[data-theme="light"] button[data-sv-action-glass="neutral"]{--sv-action-face:#EAECF0}
+  :root[data-theme="light"] button[data-sv-action-glass="primary"]{--sv-action-face:#B9DFFF}
+  :root[data-theme="light"] button[data-sv-action-glass="danger"]{--sv-action-face:#FCE0E1}
+  :root[data-theme="light"] button[data-sv-action-glass]{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ }
+}
