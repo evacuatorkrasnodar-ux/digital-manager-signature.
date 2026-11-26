@@ -639,11 +639,11 @@ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.pictur
    capsules, not the dock, circular controls, icon-only wallet launcher,
    header backing, inputs or colored chat wallpapers. */
 :root[data-theme="light"]{
- --sv-segment-track:rgba(221,226,232,.36);
- --sv-segment-edge:rgba(211,217,224,.58);
- --sv-segment-selected:rgba(255,255,255,.87);
- --sv-segment-track-shadow:0 3px 10px rgba(38,48,60,.055),inset 0 1px 0 rgba(255,255,255,.92);
- --sv-segment-selected-shadow:0 1px 3px rgba(38,48,60,.045);
+ --sv-segment-track:var(--sv-white-pearl-surface);
+ --sv-segment-edge:var(--sv-white-pearl-rim-color);
+ --sv-segment-selected:var(--sv-white-pearl-selected);
+ --sv-segment-track-shadow:var(--sv-white-pearl-dock-shadow);
+ --sv-segment-selected-shadow:var(--sv-white-pearl-selected-shadow);
  --sv-avatar-segment-height:38px;
  --sv-avatar-segment-face-height:30px;
  --sv-avatar-segment-inset:3px;
@@ -709,13 +709,8 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  color:#14171C!important;border-color:transparent!important;
  box-shadow:var(--sv-segment-selected-shadow)!important;
 }
-/* V129: the same neutral chat-inspired glass, with a slightly stronger
-   mobile tint for legibility on iPhone. Geometry and switching unchanged. */
-@media (hover:none) and (pointer:coarse), (max-width:720px){
- :root[data-theme="light"]{
-  --sv-segment-track:rgba(221,226,232,.43);
- }
-}
+/* V130: no independent mobile gray skin. Use the exact white chat glass
+   tokens on every viewport; preserve existing geometry and hit targets. */
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"]{--sv-segment-track:#E5E5EA;--sv-segment-selected:#fff}
  html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]),
