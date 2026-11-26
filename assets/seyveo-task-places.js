@@ -31,6 +31,12 @@
    Object.freeze({name:'Корн-доги мини',price:'от 199 ₽'})
   ]),
   keywords:['красная площадь','дзержинского','100']
+ }),Object.freeze({
+  venue:'красная площадь',city:'Краснодар',name:'ТРЦ «Красная Площадь»',
+  address:'ул. Дзержинского, 100 · Краснодар',
+  lat:45.102210,lon:38.983892,precision:'building',source:'known-address',
+  photo:'2024-07-11. Краснодар DSC 2268.jpg',
+  keywords:['красная площадь','дзержинского','100']
  })];
  const meeting=/(?:^|[\s,.!?])(?:встреч[а-яё]*|встрет[а-яё]*|переговор[а-яё]*|пообед[а-яё]*|поужин[а-яё]*|позавтрак[а-яё]*|обед|ужин|завтрак|кофе|посид[а-яё]*)(?=$|[\s,.!?])/iu;
  function normalize(value){return String(value||'').replace(/[«»"“”]/g,'').replace(/\s+/g,' ').trim()}
@@ -98,6 +104,21 @@
   }
   const venue=phrase.match(/(?:^|[\s,.!?])(?:в|во|у)\s+(кафе|кофейне|ресторане|баре|пабе|пиццерии|бистро|пекарне|отеле|гостинице|коворкинге|музее|кинотеатре)\s+(«[^»]{2,70}»|"[^"]{2,70}"|[^,.!?\n]{2,100})/iu);
   if(!venue){
+   // Named shopping centres are explicit destinations, not cafe categories.
+   const mall=phrase.match(/(?:^|[\s,.!?])(?:в|во|на|у)\s+(?:трц|тц|торговом\s+центре|торгово-развлекательном\s+центре|мегацентре)\s+(«[^»]{2,70}»|"[^"]{2,70}"|[^,.!?\n]{2,90})/iu);
+   if(mall){
+    let name=normalize(mall[1]);
+    const after=phrase.slice(mall.index+mall[0].length);
+    const trailingCity=after.match(/^\s*,?\s*(краснодаре?|москв[ае]|сочи|казан[ьи]|новосибирск(?:е)?|екатеринбург(?:е)?|петербург(?:е)?)(?=$|[\s,.!?;])/iu);
+    const embeddedCity=name.match(/\s+(краснодаре?|москв[ае]|сочи|казан[ьи]|новосибирск(?:е)?|екатеринбург(?:е)?|петербург(?:е)?)$/iu);
+    if(embeddedCity)name=name.slice(0,embeddedCity.index).trim();
+    const explicit=trailingCity||embeddedCity;
+    city=city||(explicit?CITY_FORMS[explicit[1].toLocaleLowerCase('ru-RU')]:null)||validCity(options.city)||suggestedCity();
+    name=name.replace(/\s+(?:напомни(?:те)?|сегодня|завтра|послезавтра|в\s+\d{1,2}(?::\d{2})?).*$/iu,'').trim();
+    if(name.length>=2)return {label:'ТРЦ «'+name+'»',query:['ТРЦ '+name,addressDetail,city].filter(Boolean).join(', ').slice(0,140),
+     explicitAddress:false,city,explicitCity:Boolean(cityMatch||explicit),citySelected:Boolean(options.city),
+     venueName:name,kind:'трц',locationHint:addressDetail};
+   }
    if(addressDetail.length<6)return null;
    city=city||validCity(options.city)||suggestedCity();
    return {label:'Место встречи',query:[addressDetail,city].filter(Boolean).join(', '),
@@ -229,7 +250,7 @@
    бар:['bar','pub'],паб:['pub','bar'],пиццерия:['restaurant','fast_food'],
    бистро:['restaurant','cafe','fast_food'],пекарня:['bakery','cafe'],
    отель:['hotel','guest_house'],гостиница:['hotel','guest_house'],
-   коворкинг:['coworking_space','office'],музей:['museum'],кинотеатр:['cinema']
+   коворкинг:['coworking_space','office'],музей:['museum'],кинотеатр:['cinema'],трц:['mall','shopping_centre','shopping_center']
   };
   if(!accepted[proposal.kind]?.includes(type))return false;
   const requested=searchText(proposal.venueName);
@@ -258,6 +279,8 @@
   const tokens=addressTokens(proposal);
   return VERIFIED_VENUES.filter(row=>{
    if(request!==row.venue||city&&searchText(row.city)!==city)return false;
+   if(proposal.kind==='трц'&&!row.name.startsWith('ТРЦ'))return false;
+   if(proposal.kind!=='трц'&&row.name.startsWith('ТРЦ'))return false;
    return matchesTokens(row.address+' '+row.name,tokens);
   }).map(cleanPlace).filter(Boolean);
  }
@@ -283,14 +306,14 @@
  function cacheGet(key){
   const local=cache.get(key);if(local&&Date.now()-local.at<30*86400000)return local.value;
   try{
-   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v7:'+key)||'null');
+   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v8:'+key)||'null');
    if(stored&&Date.now()-stored.at<30*86400000){cache.set(key,stored);return stored.value;}
   }catch{}
   return undefined;
  }
  function cacheSet(key,value){
   const record={at:Date.now(),value};cache.set(key,record);
-  try{root.localStorage.setItem('seyveo-place:v7:'+key,JSON.stringify(record))}catch{}
+  try{root.localStorage.setItem('seyveo-place:v8:'+key,JSON.stringify(record))}catch{}
  }
  async function lookup(proposal){
   if(!proposal||!proposal.query||proposal.query.length>140)return null;
@@ -307,7 +330,8 @@
   // options, not permission to assign our one curated branch automatically.
   // When Yandex is available, search its wider city directory first; retain
   // the curated branch as a selectable fallback while the API is unavailable.
-  const needsChoice=Boolean(localMatches.length&&proposal.venueName&&!proposal.explicitAddress&&!addressTokens(proposal).length);
+  const needsChoice=Boolean(localMatches.length&&proposal.kind!=='трц'&&proposal.venueName&&!proposal.explicitAddress&&!addressTokens(proposal).length);
+  if(proposal.kind==='трц'&&localMatches.length===1&&proposal.city)return localMatches[0];
   // Prefer named, address-aware Yandex organizations when the owner has an
   // active business-search key. An exact curated location remains usable even
   // during key activation or a temporary API outage.
@@ -316,7 +340,7 @@
    if(yandex){
     const candidates=yandex.ambiguous?yandex.candidates:[yandex];
     const safe=candidates.map(cleanPlace).filter(Boolean);
-    if(safe.length)return orderByLocation(needsChoice||safe.length>1?{ambiguous:true,candidates:safe}:safe[0],await locationPromise);
+    if(safe.length&&proposal.kind!=='трц')return orderByLocation(needsChoice||safe.length>1?{ambiguous:true,candidates:safe}:safe[0],await locationPromise);
    }
   }
   const key=encodeURIComponent(proposal.query.toLocaleLowerCase('ru-RU'));
@@ -482,6 +506,7 @@
   const curated=place.source==='known-address'?VERIFIED_VENUES.find(row=>
    Math.abs(place.lat-row.lat)<.00001&&Math.abs(place.lon-row.lon)<.00001&&
    searchText(place.name).includes(row.venue)&&searchText(place.address).includes('дзержинского')):null;
+  if(curated?.name.startsWith('ТРЦ'))return null;
   const hours=curated?'10:00–22:00':place.openingHours||'';
   if(!hours&&!curated)return null;
   return {hours,hoursSourceURL:curated?'https://krasnodar.red-square.ru/visitors/kafe_i_restorany/vkusno_-_i_tochka_1_etazh-171408/':'',
