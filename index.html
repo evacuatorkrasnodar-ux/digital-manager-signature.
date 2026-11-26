@@ -976,7 +976,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <link rel="stylesheet" href="assets/seyveo-notebook-context-actions.css?v=20261124-note-header-rules">
 <link rel="stylesheet" href="assets/seyveo-paper-actions-compact.css?v=20261124-scan-minimal-actions">
 <link rel="stylesheet" href="assets/seyveo-paper-tool-picker.css?v=3">
-<link rel="stylesheet" href="assets/seyveo-unified-menu-material.css?v=20261126-menu-standard-v151">
+<link rel="stylesheet" href="assets/seyveo-unified-menu-material.css?v=20261126-menu-clean-v152">
 <link rel="stylesheet" href="assets/seyveo-depth-system.css?v=19">
 <link rel="stylesheet" href="assets/seyveo-notebook-home-new-dock.css?v=5">
 <link rel="stylesheet" href="assets/seyveo-white-pearl.css?v=20261126-flat-circle-v142">
@@ -985,7 +985,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <link rel="stylesheet" href="assets/seyveo-chat-polls.css?v=20261124-message-flow">
 <link rel="stylesheet" href="assets/seyveo-chat-semantic-colors.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-themes.css?v=20261126-sky-reference-v22">
-<link rel="stylesheet" href="assets/seyveo-work-inbox-actions.css?v=20261125-chat-axis-v1">
+<link rel="stylesheet" href="assets/seyveo-work-inbox-actions.css?v=20261126-menu-clean-v152">
 <link rel="stylesheet" href="assets/seyveo-sayvi-identity-standard.css?v=20">
 <link rel="stylesheet" href="assets/seyveo-sayvi-response-state.css?v=7">
 <link rel="stylesheet" href="assets/seyveo-chat-composer-reset.css?v=20261126-adaptive-glass-v128">
@@ -1813,7 +1813,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
     <div id="svfSuggestion" class="svf-suggestion" hidden></div>
     <div id="svfAttachment" class="svf-attachment" hidden></div>
     <form id="svfChatForm" class="svf-compose sv-input-surface">
-     <button type="button" id="svfAttachButton" class="svf-upload sv-input-action" aria-label="Добавить в семейный чат" aria-controls="svfAttachMenu" aria-expanded="false" title="Добавить"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><div id="svfAttachMenu" class="svf-attach-menu" role="group" aria-label="Добавить в семейный чат" hidden><button id="svfAttachChooseFile" type="button"><span aria-hidden="true">▤</span> Фото или файл</button><button id="svfAttachScan" type="button">Сканировать документ</button><button id="svfAttachChoosePoll" type="button"><span aria-hidden="true">◉</span> Опрос</button></div>
+     <button type="button" id="svfAttachButton" class="svf-upload sv-input-action" aria-label="Добавить в семейный чат" aria-controls="svfAttachMenu" aria-expanded="false" title="Добавить"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><div id="svfAttachMenu" class="svf-attach-menu" role="group" aria-label="Добавить в семейный чат" hidden><button id="svfAttachChooseFile" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8" cy="9" r="1.6"/><path d="m3 17 5-5 4 4 4-6 5 5"/></svg><span>Фото или файл</span></button><button id="svfAttachScan" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3M7 12h10M8 8h8M8 16h8"/></svg><span>Сканировать документ</span></button><button id="svfAttachChoosePoll" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V11m7 9V4m7 16v-6"/></svg><span>Опрос</span></button></div>
      <input type="file" id="svfFile" hidden accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,.pdf,.doc,.docx,.xls,.xlsx,.txt">
      <textarea id="svfMessageInput" class="sv-input-field" rows="1" maxlength="1000" aria-label="Пробное семейное сообщение" placeholder="Написать близким…" spellcheck="true"></textarea>
      <button type="submit" class="svf-send sv-input-action" aria-label="Сохранить сообщение только в локальном демо" title="Сохранить в локальном семейном чате"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button>
