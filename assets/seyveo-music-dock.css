@@ -383,3 +383,18 @@ html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > 
 html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:#2463a5;background:rgba(94,117,149,.14)}
 html.sv-music-screen[data-theme="dark"] body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:#b6cce9;background:rgba(174,194,225,.15)}
 html.sv-music-screen.sv-music-player-open body footer.dock.sv-shared-dock.sv-music-navigation-only{display:none!important}
+
+/* Same physical mini-player, placed in the Listen page instead of its old CTA.
+   Scope the geometry change to this slot only; other routes retain the dock remote. */
+#svMusicHomeMiniSlot{width:100%;margin:12px 0 0;min-height:56px}
+html.sv-music-screen #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline{
+ position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+ transform:none!important;z-index:auto!important;
+ width:100%!important;max-width:100%!important;margin:0!important;
+ height:56px!important;min-height:56px!important;max-height:56px!important;
+}
+html.sv-music-screen #svMusicHomeMiniSlot #sayviMusicMini .sv-music-mini-title{font-size:14px!important}
+html.sv-music-screen #svMusicHomeMiniSlot #sayviMusicMini .sv-music-mini-artist{font-size:12px!important}
+html.sv-music-screen #svMusicHomeMiniSlot #sayviMusicMini .sv-music-mini-skip:disabled{opacity:.35!important}
+html.sv-music-screen #svMusicHomeMiniSlot #sayviMusicMini .sv-music-mini-skip:disabled svg{opacity:.4!important}
+html.sv-music-screen #svMusicHomeMiniSlot #sayviMusicMini:not(.is-playing) .sv-music-mini-progress{opacity:.35!important}
