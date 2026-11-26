@@ -623,6 +623,12 @@
     return true;
   };
   window.SEYVEO_WEATHER_BRIEF=Object.freeze({
+    // The existing validated forecast, for Sayvi's occasional Home thought.
+    musicHomeText:()=>{
+      const brief=getBrief(),day=brief?.days[0];
+      if(!day)return null;
+      return brief.city+' · сегодня '+temperature(day.min)+'…'+temperature(day.max)+', '+condition(day.code)+'.';
+    },
     openStation,openDiscussion,startHomeWeek:()=>startHomeWeek(),stopHomeWeek:()=>stopHomeWeek(),
     isMessage:message=>typeof message==='string'&&message.startsWith(PREFIX),
     render:draw,

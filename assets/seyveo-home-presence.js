@@ -74,7 +74,7 @@
   // “СЭЙВИ · НА СВЯЗИ” and the visible glass, not against the sphere's edge.
   // Bias the thought up by 7px for extra air above the painted sphere.
   let top=Math.max(minimumTop,(minimumTop+above)/2-7),placement='above';
-  if(above<minimumTop){
+  if(above<minimumTop&&line.dataset.svMusicWeather!=='true'){
    // Only truly short phones use the lower gap; do not jump there because
    // the safe top margin was a few pixels too conservative.
    // A short phone has less space above the orb. Use the gap beneath it
@@ -86,6 +86,7 @@
    if(weatherTop-host.top-below-height>=12){top=below;placement='below';}
    else{top=minimumTop;placement='no-room';}
   }
+  if(above<minimumTop&&line.dataset.svMusicWeather==='true')placement='no-room';
   line.dataset.svSpace=placement;
   const value=Math.round(top)+'px';
   if(line.style.getPropertyValue('--sv-thought-top')!==value)
@@ -181,6 +182,8 @@
  const typed=document.createElement('span');
  typed.className='sv-home-living-copy-typed';
  let idleSince=Date.now(),idleHint='',idleTyped='',idleTyping=false,idleAction=null;
+ let idleMusicWeather=false,lastMusicWeatherAt=0;
+ const MUSIC_WEATHER_GAP=5*60*1000;
  let miniReply='',miniTyped='',miniTyping=false,miniTimer=0,miniHideTimer=0,miniSequence=0;
  let celebrationTimer=0,celebrationPending=false,celebrationIndex=0;
  let idleRevealTimer=0,idleTypeTimer=0,idleHideTimer=0;
@@ -296,6 +299,7 @@
     }
     actionIcon.hidden=!idleAction.icon;
    }else actionRow.hidden=true;
+   line.dataset.svMusicWeather=String(!replyVisible&&idleMusicWeather);
    line.dataset.svPresence=replyVisible?'reply':'idle';
    line.dataset.svTyping=typing?'true':'false';
    line.setAttribute('aria-label',phrase);
@@ -305,6 +309,7 @@
    if(line.hidden)line.hidden=false;
    return;
   }
+  delete line.dataset.svMusicWeather;
   if(idleMarkupMounted){content.replaceChildren();idleMarkupMounted=false;}
   actionRow.hidden=true;
   heading.hidden=true;
@@ -338,7 +343,7 @@
   if(resetClock&&!introDone)introStep=0;
   line.classList.remove('sv-home-idle-fading');
   if(!idleHint&&!idleMarkupMounted)return;
-  idleHint='';idleTyped='';idleTyping=false;idleAction=null;update();
+  idleHint='';idleTyped='';idleTyping=false;idleAction=null;idleMusicWeather=false;update();
  }
  function noteActivity(event){
   if(!homeVisible())return;
@@ -374,8 +379,9 @@
   idleHideTimer=setTimeout(()=>finishIdle(sequence),idleAction?HINT_HOLD_MS+6500:HINT_HOLD_MS);
  }
  function beginSuggestion(suggestion){
+  idleMusicWeather=typeof suggestion==='object'&&suggestion.musicWeather===true;
   idleHint=typeof suggestion==='string'?suggestion:suggestion.text;
-  idleAction=typeof suggestion==='string'?null:suggestion.action;
+  idleAction=typeof suggestion==='string'?null:(suggestion.action||null);
   // The pictogram belongs on the action button, not twice in one thought.
   if(idleAction?.icon&&idleHint.startsWith(idleAction.icon))
    idleHint=idleHint.slice(idleAction.icon.length).trimStart();
@@ -392,6 +398,13 @@
   if(!quietHome()||(!continuation&&now-idleSince<delay))return;
   if(root.classList.contains('sv-home-greeting-fading')&&
      !root.classList.contains('sv-home-greeting-expired'))return;
+  // Use the ordinary quiet-text slot only: never replace transport, pause
+  // audio, interrupt a reply or overlap an ongoing gesture.
+  const playing=window.SEYVEO_MUSIC?.state?.().playing===true;
+  if(introDone&&!continuation&&playing&&now-lastMusicWeatherAt>=MUSIC_WEATHER_GAP){
+   const text=window.SEYVEO_WEATHER_BRIEF?.musicHomeText?.();
+   if(text){lastMusicWeatherAt=now;beginSuggestion({text,musicWeather:true});return;}
+  }
   const position=introDone?idleIdeaIndex++:idleIdeaIndex;
   const personalized=introDone&&position%4===0?
    window.SEYVEO_BROADCAST?.nextSuggestion?.():null;
@@ -483,6 +496,7 @@
   update();
  }
  document.addEventListener('seyveo:assistant-presence',onPresence);
+ document.addEventListener('seyveo:music-state',()=>{if(idleMusicWeather&&!window.SEYVEO_MUSIC?.state?.().playing)dropIdle()});
  for(const name of ['seyveo:life-events-changed','seyveo:tasks-changed',
   'seyveo:home-recommendation-changed','seyveo:fan-workshop-changed']){
   window.addEventListener(name,update);

@@ -300,3 +300,14 @@
   transition:none!important;
  }
 }
+
+/* Music forecast is a short Sayvi thought ABOVE the glass sphere.
+   If a short viewport cannot fit it, omit it instead of overlapping controls. */
+html:root.sv-home-empty-sphere.sv-home-greeting-expired body #homePage #svHomeLivingLine[data-sv-presence="idle"][data-sv-music-weather="true"]{
+ top:var(--sv-thought-top,0px)!important;
+ color:var(--text,#20272b)!important;
+ text-align:center!important;
+ pointer-events:none!important;
+}
+html:root.sv-home-empty-sphere body #homePage #svHomeLivingLine[data-sv-music-weather="true"] .sv-home-living-copy{text-align:center!important}
+html:root.sv-home-empty-sphere body #homePage #svHomeLivingLine[data-sv-music-weather="true"][data-sv-space="no-room"]{visibility:hidden!important}
