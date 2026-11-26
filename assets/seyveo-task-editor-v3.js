@@ -186,12 +186,12 @@
    if(!match)return;
    const notice=document.createElement('section');notice.className='sv-task-time-conflict';
    notice.setAttribute('aria-label','Проверка времени');
-   const label=document.createElement('strong');label.textContent=match.time===timeInput.value?'Это время уже занято':'Возможное пересечение';
-   const description=document.createElement('p');description.textContent=match.time+' · '+match.title;
+   const label=document.createElement('strong');label.textContent=match.time===timeInput.value?match.time+' · Время занято':'Возможное пересечение · '+match.time;
+   const description=document.createElement('p');description.className='sv-task-conflict-name';description.textContent=match.title;description.title=match.title;
    notice.append(label,description);
    const suggestions=planner?.suggestions(all,date.value,timeInput.value,null,new Date(),options)||[];
    if(suggestions.length){
-    const hint=document.createElement('p');hint.textContent='Другие варианты по календарю · проверь длительность встречи';
+    const hint=document.createElement('p');hint.textContent='Варианты · уточни длительность';
     const actions=document.createElement('div');actions.className='sv-task-time-options';
     for(const value of suggestions){
      const button=document.createElement('button');button.type='button';button.textContent=value;
@@ -675,5 +675,5 @@
   categoryOverrides.clear();categorySource='';
   form.scrollTop=0;
  });
- window.SEYVEO_TASK_SCREEN=Object.freeze({version:8,sync,titleForSave:()=>window.SEYVEO_TASK_PLACE_EDITOR?.compactTitle?.(effectiveTitle(),true)||effectiveTitle(),draftsForSave,needsReview:batchNeedsReview});
+ window.SEYVEO_TASK_SCREEN=Object.freeze({version:9,sync,titleForSave:()=>window.SEYVEO_TASK_PLACE_EDITOR?.compactTitle?.(effectiveTitle(),true)||effectiveTitle(),draftsForSave,needsReview:batchNeedsReview});
 })();
