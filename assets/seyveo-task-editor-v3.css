@@ -2055,3 +2055,13 @@ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #s
 html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarPopover :is(.sv-task-calendar-done,.sv-month-controls > button):focus-visible{
  outline:2px solid #007AFF!important;outline-offset:-3px!important;border-radius:8px!important;
 }
+
+/* V64 · venue details are collapsed by default, including against legacy display rules. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-info-content[hidden],
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-hours-status[hidden]{display:none!important}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-hours-status{
+ margin:7px 12px 3px!important;padding:0!important;font:500 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;color:#38714D!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-hours-status.is-closed{color:#A35E20!important}
+html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-hours-status{color:#83CCA0!important}
+html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-hours-status.is-closed{color:#F4B675!important}
