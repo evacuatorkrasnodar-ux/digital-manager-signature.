@@ -5,7 +5,9 @@
  const base=new URL('sayvi-holidays/',document.currentScript.src);
  const url=id=>new URL(id+'.webp',base).href;
  const key='seyveo-sayvi-holiday-mode-v1';
- let mode='auto',ready=false;try{mode=localStorage.getItem(key)||'auto'}catch{}
+ const mode='auto';let ready=false;
+ // Retire any manual choice saved by older versions.
+ try{localStorage.removeItem(key)}catch{}
  function auto(date){
   const m=date.getMonth()+1,d=date.getDate(),y=date.getFullYear();
   if(m===10&&d===31)return 'halloween';
@@ -21,7 +23,7 @@
   return '';
  }
  function apply(){
-  const id=ready?(mode==='auto'?auto(new Date()):mode==='off'?'':mode):'';
+  const id=ready?auto(new Date()):'';
   const root=document.documentElement;
   if(variants.some(x=>x[0]===id)){
    root.dataset.svSayviHoliday=id;
@@ -29,8 +31,8 @@
   }else{delete root.dataset.svSayviHoliday;root.style.removeProperty('--sv-sayvi-holiday-art')}
  }
  function setMode(value){
-  if(!['auto','off',...variants.map(x=>x[0])].includes(value))return;
-  mode=value;try{localStorage.setItem(key,value)}catch{}apply();
+  // Compatibility for older callers: holiday mode is always automatic.
+  apply();
  }
  function paint(el,index){
   if(index<76||index>=84||!Number.isInteger(index))return false;
