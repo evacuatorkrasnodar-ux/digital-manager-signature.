@@ -872,12 +872,52 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
  html:root[data-theme="light"] body .app:has(> #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"]:not([hidden])){--sv-mail-head-top:var(--sv-apple-top-inset,calc(8px + env(safe-area-inset-top,0px)))}
 }
 
-/* All Tasks: use the Avatar full-width measured header and remove the old
-   upper list mask; keep the independently floating lower action capsule. */
+/* All Tasks · approved Avatar / Photo reference.
+   Match its edge-to-edge header: no legacy app frame or double inset.
+   The content list itself must be visible to the single backdrop layer. */
+html:root[data-theme="light"]:has(#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"]) body,
+html:root[data-theme="light"]:has(#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"]){
+ background:#fff!important;background-image:none!important;
+}
+html:root[data-theme="light"] body .app:has(> #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"]){
+ background:#fff!important;background-image:none!important;
+ border:0!important;outline:0!important;border-radius:0!important;box-shadow:none!important;
+ padding-top:0!important;padding-inline:0!important;
+}
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"]{
+ border:0!important;outline:0!important;border-radius:0!important;box-shadow:none!important;
+ background:transparent!important;background-image:none!important;
+}
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode="all"] > seyveo-work-head{
+ --work-left:max(6px,env(safe-area-inset-left,0px));
+ --work-right:max(6px,env(safe-area-inset-right,0px));
+ --work-top:calc(8px + env(safe-area-inset-top,0px));
+ --sv-header-circle:var(--sv-white-pearl-surface);
+ --sv-header-circle-border:var(--sv-white-pearl-edge);
+ --sv-header-circle-shadow:var(--sv-white-pearl-circle-shadow);
+}
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]:not([hidden]){
+ width:calc(100% - 20px)!important;max-width:none!important;
+ margin-inline:auto!important;
+}
 @media not (prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] [data-sv-full-glass-pass]{
+  background:transparent!important;background-image:none!important;
+  border:0!important;box-shadow:none!important;
+  isolation:auto!important;z-index:auto!important;
+  overflow:visible!important;contain:none!important;
+  transform:none!important;filter:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  -webkit-mask-image:none!important;mask-image:none!important;
+ }
  html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] #svAllTasksView > .sv-tool-results[data-sv-full-glass-port]{
-  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 16px),transparent 100%)!important;
-  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 16px),transparent 100%)!important;
+  /* A masked scrolling surface is a separate compositing group in Safari.
+     Let the real Avatar header, not a second list mask, own the top fade. */
+  -webkit-mask-image:none!important;mask-image:none!important;
+  background:transparent!important;background-image:none!important;
+ }
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] > .sv-full-header-material{
+  visibility:visible!important;opacity:1!important;
  }
  html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] #svAllTasksView > .sv-tool-input[data-sv-full-glass-control]{position:relative!important}
 }
