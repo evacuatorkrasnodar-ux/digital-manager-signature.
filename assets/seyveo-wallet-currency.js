@@ -53,11 +53,12 @@ async function load(force=false){
  if(loading)return;if(!force&&data&&Date.now()-data.fetchedAt<6*3600000){render();return;}
  loading=true;refresh.disabled=true;status.textContent='Обновляю курсы…';const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),9000);
  try{
- const response=await fetch('https://www.cbr-xml-daily.ru/daily_json.js',{signal:controller.signal,cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer'});
- if(!response.ok)throw Error('network');const raw=await response.json(),rates={RUB:1};
- for(const x of Object.values(raw.Valute||{})){const v=Number(x.Value)/Number(x.Nominal);if(typeof x.CharCode==='string'&&Number.isFinite(v)&&v>0)rates[x.CharCode]=v;}
- const date=String(raw.Date||'').slice(0,10);const next={date,rates,fetchedAt:Date.now()};if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!valid(next)||!rates.TRY||!rates.USD)throw Error('data');
- data=next;try{localStorage.setItem(key,JSON.stringify(data));}catch{}status.textContent='Курсы обновлены.';
+ const response=await fetch('assets/seyveo-fx-rates.json',{signal:controller.signal,cache:'no-store',credentials:'same-origin'});
+ if(!response.ok)throw Error('network');const raw=await response.json();
+ const next={date:raw.date,rates:raw.rates,fetchedAt:Date.now()};if(!/^\d{4}-\d{2}-\d{2}$/.test(next.date)||!valid(next)||!next.rates.TRY||!next.rates.USD)throw Error('data');
+ if(!data||next.date>=data.date){data=next;try{localStorage.setItem(key,JSON.stringify(data));}catch{}}
+ const age=(Date.now()-Date.parse(data.date+'T00:00:00Z'))/86400000;
+ status.textContent=age>4?'Доступен последний опубликованный файл. Проверьте дату курса.':'Курсы загружены.';
  }catch{status.textContent=data?'Нет связи. Использую сохранённые курсы на указанную дату.':'Не удалось загрузить курсы. Подключитесь к интернету и нажмите обновление.';}
  finally{clearTimeout(timer);loading=false;refresh.disabled=false;render();}
 }
