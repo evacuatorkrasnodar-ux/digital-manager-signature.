@@ -207,3 +207,37 @@ html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.s
 @media(min-width:650px){
  html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-sheet{border-radius:26px!important}
 }
+
+/* V73 · isolate the viewer from the editor's floating actions. The glass
+   has a real backdrop filter and a legible translucent fallback on iOS. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open > .personal-task-sheet :is(.sv-new-task-camera,.sv-new-task-camera-menu,.sv-new-task-intro){
+ visibility:hidden!important;pointer-events:none!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open .sv-place-map-overlay{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ box-sizing:border-box!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+ background:rgba(35,40,50,.08)!important;
+ -webkit-backdrop-filter:blur(4px) saturate(100%)!important;
+ backdrop-filter:blur(4px) saturate(100%)!important;
+ animation:none!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open .sv-place-map-sheet{
+ background:rgba(225,228,233,.92)!important;background-clip:padding-box!important;
+ -webkit-backdrop-filter:blur(20px) saturate(110%)!important;
+ backdrop-filter:blur(20px) saturate(110%)!important;
+ border:0!important;border-top:1px solid rgba(255,255,255,.65)!important;
+ box-shadow:0 -5px 24px rgba(40,48,60,.10)!important;
+ animation-fill-mode:backwards!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open .sv-place-map-footer{
+ background:rgba(225,228,233,.32)!important;
+}
+html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open .sv-place-map-sheet{
+ background:rgba(36,38,44,.96)!important;
+}
+html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open .sv-place-map-footer{background:transparent!important}
+@media(max-width:649px){
+ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open .sv-place-map-sheet{
+  max-width:none!important;width:100%!important;margin:0!important;border-radius:26px 26px 0 0!important;
+ }
+}
