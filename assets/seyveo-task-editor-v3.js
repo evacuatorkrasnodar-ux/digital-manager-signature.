@@ -24,6 +24,58 @@
  const mainSection=title.closest('.sv-new-task-main');
  const extraFields=()=>[...form.querySelectorAll('.sv-task-extra-field')];
  const titleCapsule=title.closest('.sv-task-title-capsule');
+ // The real textarea remains the input, including iOS keyboard, selection,
+ // dictation and undo. A noninteractive mirror paints only recognized ranges.
+ const phraseMirror=document.createElement('div');
+ phraseMirror.className='sv-task-phrase-mirror';phraseMirror.setAttribute('aria-hidden','true');phraseMirror.hidden=true;
+ titleCapsule?.prepend(phraseMirror);
+ const clearPhrase=document.createElement('button');clearPhrase.type='button';clearPhrase.className='sv-task-phrase-clear';
+ clearPhrase.setAttribute('aria-label','Очистить текст дела');clearPhrase.hidden=true;
+ clearPhrase.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="currentColor" stroke="none"/><path d="m9 9 6 6m0-6-6 6" stroke="white" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>';
+ titleCapsule?.after(clearPhrase);
+ let mirrorFrame=0,composing=false;
+ function refreshPhraseChrome(){
+  if(!titleCapsule||!dialog.open)return;
+  const active=Boolean(title.value)&&!(titleCapsule.classList.contains('is-grouped')&&!titleCapsule.classList.contains('is-editing'));
+  clearPhrase.hidden=!active;
+  titleCapsule.classList.toggle('sv-task-has-clear',active);
+  if(mirrorFrame)return;
+  mirrorFrame=requestAnimationFrame(()=>{
+   mirrorFrame=0;
+   const value=title.value;
+   const grouped=titleCapsule.classList.contains('is-grouped')&&!titleCapsule.classList.contains('is-editing');
+   const ranges=!grouped&&!composing&&value?window.SEYVEO_TASK_SMART_RANGES?.(value,new Date(),window.SEYVEO_TASK_PLACES?.extract?.(value))||[]:[];
+   phraseMirror.hidden=!ranges.length;
+   titleCapsule.classList.toggle('sv-task-phrase-colored',Boolean(ranges.length));
+   if(!ranges.length)return;
+   const rect=title.getBoundingClientRect(),parent=titleCapsule.getBoundingClientRect(),style=getComputedStyle(title);
+   if(rect.width<2||rect.height<2){phraseMirror.hidden=true;titleCapsule.classList.remove('sv-task-phrase-colored');return}
+   Object.assign(phraseMirror.style,{
+    left:(rect.left-parent.left-titleCapsule.clientLeft)+'px',top:(rect.top-parent.top-titleCapsule.clientTop)+'px',
+    width:title.clientWidth+'px',height:title.clientHeight+'px',
+    font:style.font,letterSpacing:style.letterSpacing,lineHeight:style.lineHeight,
+    textAlign:style.textAlign,padding:style.padding,wordSpacing:style.wordSpacing,
+    textIndent:style.textIndent,direction:style.direction
+   });
+   const fragment=document.createDocumentFragment();let cursor=0;
+   for(const range of ranges){
+    fragment.append(document.createTextNode(value.slice(cursor,range.start)));
+    const mark=document.createElement('span');mark.dataset.kind=range.kind;mark.textContent=value.slice(range.start,range.end);fragment.append(mark);
+    cursor=range.end;
+   }
+   fragment.append(document.createTextNode(value.slice(cursor)+'\u200b'));
+   phraseMirror.replaceChildren(fragment);phraseMirror.scrollTop=title.scrollTop;phraseMirror.scrollLeft=title.scrollLeft;
+  });
+ }
+ title.addEventListener('scroll',()=>{phraseMirror.scrollTop=title.scrollTop;phraseMirror.scrollLeft=title.scrollLeft},{passive:true});
+ title.addEventListener('compositionstart',()=>{composing=true;phraseMirror.hidden=true;titleCapsule?.classList.remove('sv-task-phrase-colored')});
+ title.addEventListener('compositionend',()=>{composing=false;refreshPhraseChrome()});
+ clearPhrase.addEventListener('click',()=>{
+  title.value='';manualDate=false;manualTime=false;manualPriority=false;manualRepeat=false;quickDateOpen=false;
+  window.SEYVEO_TASK_PLACE_EDITOR?.reset?.();
+  title.dispatchEvent(new Event('input',{bubbles:true}));title.focus({preventScroll:true});
+ });
+ if(typeof ResizeObserver==='function')new ResizeObserver(refreshPhraseChrome).observe(title);
  const groupedPreview=document.createElement('div');
  groupedPreview.className='sv-task-one-field-summary';
  groupedPreview.hidden=true;
@@ -43,6 +95,7 @@
   titleCapsule?.classList.toggle('is-editing',focused);
   groupedHint.hidden=!multiple||!focused;
   groupedPreview.hidden=!multiple||focused;
+  refreshPhraseChrome();
   if(!multiple){groupedPreview.replaceChildren();groupedHint.replaceChildren();return}
   groupedHint.replaceChildren();
   const badge=document.createElement('span');badge.className='sv-task-one-field-hint-dot';
@@ -291,6 +344,7 @@
   const measured=title.scrollHeight;
   title.style.height=Math.max(minimum,Math.min(128,measured))+'px';
   title.style.overflowY=measured>128?'auto':'hidden';
+  refreshPhraseChrome();
  }
  const wheelMonths=Array.from({length:12},(_,i)=>new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(2020,i,1)));
  const padWheel=n=>String(n).padStart(2,'0');
@@ -378,6 +432,8 @@
   const category=displayed[0].category,kind=displayed[0].entryType;
   smartPreview.classList.toggle('is-work',category==='work');
   smartPreview.classList.toggle('is-multi',multi);
+  const summaryGroup=document.createElement('div');summaryGroup.className='sv-task-smart-summary';
+  if(!multi)smartDetails.append(summaryGroup);
   for(const [index,item] of displayed.entries()){
    const main=document.createElement('button');main.type='button';main.className='sv-task-smart-main';
    main.setAttribute('aria-label',empty?'Ввести название дела':'Изменить название дела');
@@ -388,7 +444,7 @@
     const whenText=item.date?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(new Date(item.date+'T12:00:00')):'';
     if(whenText||item.time)copy.append(createText('item-detail',[whenText,item.time].filter(Boolean).join(' · ')));
    }
-   if(!empty){
+   if(!empty&&multi){
     const dot=document.createElement('span');dot.className='sv-task-smart-dot is-'+item.category;
 
     dot.setAttribute('aria-hidden','true');main.append(dot);
@@ -401,7 +457,7 @@
     badge.textContent=item.category==='work'?'Работа':'Личное';
     badge.setAttribute('aria-label','Тип дела: '+badge.textContent);
     row.append(main,badge);smartDetails.append(row);
-   }else smartDetails.append(main);
+   }else summaryGroup.append(main);
   }
   if(!multi){
   const when=document.createElement('button');when.type='button';when.className='sv-task-smart-when';
@@ -420,7 +476,7 @@
   const arrow=document.createElement('span');arrow.className='sv-task-smart-when-arrow';arrow.textContent='›';arrow.setAttribute('aria-hidden','true');
   when.append(whenDate,whenTime,arrow);
   when.addEventListener('click',()=>{quickDateOpen=!quickDateOpen;if(quickDateOpen)quickWheelMode='date';updateSmartPreview()});
-  smartDetails.append(when);
+  summaryGroup.append(when);
   if(quickDateOpen)smartDetails.append(makeWheelEditor(whenDate,whenTime));
   }
   const meta=document.createElement('div');meta.className='sv-task-smart-meta';
@@ -564,6 +620,9 @@
   sheet?.classList.remove('sv-task-keyboard-visible');
   quickDateOpen=false;
   title.style.height='';title.style.overflowY='';
+  if(mirrorFrame){cancelAnimationFrame(mirrorFrame);mirrorFrame=0}
+  phraseMirror.hidden=true;clearPhrase.hidden=true;composing=false;
+  titleCapsule?.classList.remove('sv-task-phrase-colored','sv-task-has-clear');
   mainSection?.querySelectorAll('.sv-task-manual-extra-row').forEach(row=>row.remove());
   categoryOverrides.clear();categorySource='';
   form.scrollTop=0;
