@@ -525,14 +525,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
  html:root[data-theme="light"] body dialog#svcpManagerPeople#svcpManagerPeople.sv-full-glass-ready[open] > .sv-staff-head{
   background:transparent!important;z-index:8!important;
  }
- html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2::before{
-  /* End the clear glass at the name capsule, not at the role or the
-     full conversation header. Keep identity and message geometry intact. */
-  bottom:auto!important;
-  height:calc(2px + env(safe-area-inset-top,0px) + var(--svcp-header-avatar,56px) + var(--svcp-header-overlap,-5px) + var(--svcp-header-label,32px) + 24px)!important;
-  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)!important;
-  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)!important;
- }
+ /* V147: chat header geometry is owned by seyveo-chat-header-v2.css only. */
 }
 
 /* Full-header glass: remove only the opaque Work chrome above the native
@@ -795,6 +788,13 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
  }
 }
 
+/* V147: ordinary native scroll-under headers have the same 24px optical
+   extension as Avatar. The measured content overlap is not changed. */
+@media not (prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body :is(dialog[open],#picturePage:not([hidden])).sv-scroll-glass-ready > .sv-scroll-glass-head > .sv-scroll-glass-material{
+  bottom:-24px!important;
+ }
+}
 /* Canonical Avatar optical material. One paint rule for every audited
    white scroll-under header. Only the route-specific geometry stays local.
    Important cascade layer prevents legacy per-screen tint/blur overrides. */
