@@ -28,10 +28,10 @@
 /* Light reading menus use the dense companion of White Pearl. Text stays fully opaque
    and choices keep their existing semantics/size; dark menus remain dark. */
 :root[data-theme="light"]{
- --sv-menu-bg:var(--sv-white-pearl-menu-face,rgba(249,250,251,.985));
+ --sv-menu-bg:rgba(249,250,251,.985);
  --sv-menu-border:var(--sv-white-pearl-edge,1px solid rgba(226,229,234,.65));
  --sv-menu-shadow:var(--sv-depth-menu,0 9px 24px rgba(38,48,60,.10));
- --sv-menu-blur:var(--sv-white-pearl-menu-blur,none);
+ --sv-menu-blur:blur(20px) saturate(108%);
  --sv-menu-item:var(--sv-white-pearl-solid,#F7F7F8);
  --sv-menu-item-border:rgba(226,229,234,.55);
  --sv-menu-item-selected:#EDEEF0;
