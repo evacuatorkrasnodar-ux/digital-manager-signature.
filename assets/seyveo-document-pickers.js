@@ -59,7 +59,7 @@ const today=()=>{const n=new Date();return iso(n.getFullYear(),n.getMonth(),n.ge
 function dateLabel(v){return /^\d{4}-\d{2}-\d{2}$/.test(v)?v.split('-').reverse().join('.'):'';}
 function date(label,initial='',placeholder='Выбрать дату',scope='personal'){
  const b=control(label,placeholder,cal,trigger=>{
-  const {d,body}=sheet(trigger,label,{bottom:true});
+  const {d,body}=sheet(trigger,label,{bottom:true});d.classList.add('sv-date-only-sheet');
   const now=new Date(),chosen=trigger.value||today(),parts=chosen.split('-').map(Number);
   let year=parts[0],month=parts[1]-1,selection=trigger.value||'',agendaDate=chosen;
   const nav=el('div','sv-doc-picker-cal-nav sv-month-nav'),grid=el('div','sv-doc-picker-cal-grid'),title=el('button','sv-doc-picker-month sv-month-name');title.type='button';
@@ -88,7 +88,7 @@ function date(label,initial='',placeholder='Выбрать дату',scope='pers
    const pane=el('div','sv-doc-picker-period');pane.append(years,months,btn('Выбрать месяц','sv-doc-picker-option',()=>{year=Number(years.value);month=Number(months.value);pane.remove();nav.hidden=false;grid.hidden=false;week.hidden=false;agenda.hidden=false;d.querySelector('.sv-doc-picker-date-footer').hidden=false;paint();}));nav.hidden=true;grid.hidden=true;week.hidden=true;agenda.hidden=true;d.querySelector('.sv-doc-picker-date-footer').hidden=true;body.prepend(pane);
   });
   const actions=el('div','sv-doc-picker-date-actions');actions.append(btn('Сегодня','sv-doc-picker-link',()=>{selection=today();agendaDate=selection;const n=new Date();year=n.getFullYear();month=n.getMonth();paint();}),btn('Очистить','sv-doc-picker-link',()=>{trigger.setValue('','',true);d.close();}));
-  const footer=el('footer','sv-doc-picker-date-footer');footer.append(actions,btn('Выбрать дату','sv-doc-picker-option sv-doc-picker-done',()=>{const value=selection||agendaDate;trigger.setValue(value,dateLabel(value),true);d.close();}));d.append(footer);paint();
+  const footer=el('footer','sv-doc-picker-date-footer');footer.append(actions,btn('Готово','sv-doc-picker-option sv-doc-picker-done',()=>{const value=selection||agendaDate;trigger.setValue(value,dateLabel(value),true);d.close();}));d.append(footer);paint();
  });
  b.setValue(initial,dateLabel(initial));return b;
 }
