@@ -1,37 +1,42 @@
-/* SEYVEO / Work tabs — FLAT, pixel-aligned segmented control.
-   Single capsule / four equal slots. The selected segment IS the button,
-   not a separate moving layer, so Safari has nothing to misalign.
-   White theme: quiet porcelain / clear graphite text; no bevel or shadow.
-   38px outer height, 28px faces, exact 5px rim-to-face clearance (1px border + 4px padding). */
+/* SEYVEO Work tabs · one stationary 38px capsule geometry with 30px faces. */
 @media(max-width:699px){
  html body .app.sv-dock-width-workspace:has(> #svWorkShell[data-shared-work="true"]){
   padding-left:0!important;padding-right:0!important;
  }
 }
+/* One geometry owner for the Work landing and its nested All Tasks page.
+   Independent controls share exactly the same outer rectangle and face axis. */
+html body #svWorkShell#svWorkShell[data-shared-work="true"] > :is(#svWorkTabs,#svAllTasksTabs):not([hidden]){
+ box-sizing:border-box!important;order:1!important;position:relative!important;
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ grid-template-rows:30px!important;grid-auto-rows:30px!important;
+ align-items:center!important;align-content:center!important;justify-items:stretch!important;
+ align-self:center!important;justify-content:stretch!important;flex:0 0 auto!important;
+ width:calc(100% - 24px)!important;max-width:404px!important;min-width:0!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;
+ margin:4px auto 5px!important;padding:3px!important;gap:3px!important;
+ border:1px solid rgba(170,186,199,.26)!important;
+ border-radius:999px!important;transform:none!important;overflow:visible!important;
+}
+html body #svWorkShell#svWorkShell[data-shared-work="true"] > :is(#svWorkTabs[data-one="true"],#svAllTasksTabs):not([hidden]){
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+html body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs[data-employee="true"]:not([hidden]){
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+@media(max-width:720px),(orientation:landscape) and (max-height:540px){
+ html body #svWorkShell#svWorkShell[data-shared-work="true"] > :is(#svWorkTabs,#svAllTasksTabs):not([hidden]){
+  margin-top:2px!important;
+ }
+}
+/* Preserve the ordinary Work optical material; All Tasks retains its own
+   approved clearer track from the shared Avatar material layer. */
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]),
 html:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]),
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]){
- box-sizing:border-box!important;
- order:1!important;position:relative!important;isolation:isolate!important;
- display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
- grid-template-rows:28px!important;grid-auto-rows:28px!important;align-items:center!important;
- align-content:center!important;justify-items:center!important;
- align-self:center!important;justify-content:stretch!important;
- width:calc(100% - 24px)!important;max-width:404px!important;min-width:0!important;
- height:38px!important;min-height:38px!important;max-height:38px!important;
- margin:4px auto 5px!important;padding:4px!important;gap:0!important;
- border:1px solid rgba(170,186,199,.26)!important;
- border-radius:999px!important;
- background:rgba(238,242,246,.52)!important;background-image:none!important;
+ isolation:isolate!important;background:rgba(238,242,246,.52)!important;background-image:none!important;
  box-shadow:none!important;filter:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- transform:none!important;overflow:visible!important;
-}
-html body #svWorkShell[data-shared-work="true"] #svWorkTabs[data-one="true"]{
- grid-template-columns:repeat(3,minmax(0,1fr))!important;max-width:380px!important;
-}
-html body #svWorkShell[data-shared-work="true"] #svWorkTabs[data-employee="true"]{
- grid-template-columns:repeat(2,minmax(0,1fr))!important;max-width:300px!important;
 }
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs[hidden],
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][hidden]{
@@ -48,13 +53,13 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-wor
  display:flex!important;position:relative!important;
  align-items:center!important;justify-content:center!important;align-self:center!important;
  /* All four faces use identical box metrics and the same grid center. */
- /* Optical correction measured on the actual rendered capsule: 1px up. */
- inset:auto!important;top:-1px!important;translate:none!important;scale:none!important;
+ /* Same centered 30px face as the independent All Tasks capsule. */
+ inset:auto!important;top:auto!important;translate:none!important;scale:none!important;
  grid-row:1!important;justify-self:stretch!important;
  flex:none!important;width:100%!important;min-width:0!important;
- height:28px!important;min-height:28px!important;max-height:28px!important;
+ height:30px!important;min-height:30px!important;max-height:30px!important;
  margin:0!important;padding:0 2px!important;
- border:1px solid transparent!important;border-radius:999px!important;
+ border:0!important;border-radius:999px!important;
  background:transparent!important;background-image:none!important;
  box-shadow:none!important;filter:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
@@ -74,13 +79,13 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-wor
  border:1px solid transparent!important;box-shadow:none!important;filter:none!important;
  transform:none!important;
 }
-/* Invisible extra touch reach: 28px painted + 8px top/bottom = 44px. */
+/* Invisible extra touch reach: 30px painted + 7px top/bottom = 44px. */
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]::before{
  content:none!important;display:none!important;
 }
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]::after{
  content:""!important;display:block!important;position:absolute!important;
- inset:-8px 0!important;border:0!important;border-radius:0!important;
+ inset:-7px 0!important;border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
  box-shadow:none!important;pointer-events:auto!important;transform:none!important;
 }
