@@ -900,24 +900,35 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode=
  width:calc(100% - 20px)!important;max-width:none!important;
  margin-inline:auto!important;
 }
+/* All Tasks has a direct shell child now. Keep the list and the single
+   reference glass as separate paint siblings, with no nested masks. */
 @media not (prefers-reduced-transparency:reduce){
- html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] [data-sv-full-glass-pass]{
-  background:transparent!important;background-image:none!important;
-  border:0!important;box-shadow:none!important;
-  isolation:auto!important;z-index:auto!important;
-  overflow:visible!important;contain:none!important;
-  transform:none!important;filter:none!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-  -webkit-mask-image:none!important;mask-image:none!important;
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"]{
+  position:relative!important;overflow:hidden!important;
  }
- html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] #svAllTasksView > .sv-tool-results[data-sv-full-glass-port]{
-  /* A masked scrolling surface is a separate compositing group in Safari.
-     Let the real Avatar header, not a second list mask, own the top fade. */
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] > #svAllTasksView{
+  position:static!important;overflow:visible!important;
+  background:transparent!important;background-image:none!important;
+  border:0!important;box-shadow:none!important;isolation:auto!important;
+  z-index:auto!important;contain:none!important;transform:none!important;filter:none!important;
   -webkit-mask-image:none!important;mask-image:none!important;
+  -webkit-clip-path:none!important;clip-path:none!important;
+ }
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] > #svAllTasksView#svAllTasksView > .sv-tool-results[data-sv-full-glass-port]{
+  position:absolute!important;inset:0!important;z-index:1!important;
+  box-sizing:border-box!important;width:100%!important;height:100%!important;
+  max-height:none!important;margin:0!important;
+  padding-top:calc(var(--sv-full-glass-height,0px) + 16px)!important;
+  scroll-padding-top:calc(var(--sv-full-glass-height,0px) + 16px)!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  -webkit-mask-image:none!important;mask-image:none!important;
+  -webkit-clip-path:none!important;clip-path:none!important;
   background:transparent!important;background-image:none!important;
  }
  html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] > .sv-full-header-material{
-  visibility:visible!important;opacity:1!important;
+  visibility:visible!important;opacity:1!important;z-index:5!important;
  }
- html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] #svAllTasksView > .sv-tool-input[data-sv-full-glass-control]{position:relative!important}
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] > #svAllTasksView > .sv-tool-input[data-sv-full-glass-control]{
+  position:relative!important;z-index:8!important;
+ }
 }
