@@ -19,20 +19,22 @@ function mount(node,choices,value,change=()=>{}){
  const uid='sv-wheel-'+(++serial);
  const options=items.map((item,i)=>{const b=document.createElement('button');b.id=uid+'-'+i;b.type='button';b.className='sv-unified-wheel-option';b.tabIndex=-1;b.setAttribute('role','option');b.textContent=item.label;b.addEventListener('click',()=>{arm();gesture=true;select(i,true);center();});node.append(b);return b;});
  const clamp=n=>Math.max(0,Math.min(items.length-1,n));
- const nearest=()=>clamp(Math.round(node.scrollTop/pitch));
+ const step=()=>items.length>1?(options[1].offsetTop-options[0].offsetTop||pitch):pitch;
+ const base=()=>options[0].offsetTop-(node.clientHeight-options[0].offsetHeight)/2;
+ const nearest=()=>clamp(Math.round((node.scrollTop-base())/step()));
  function paint(){node.setAttribute('aria-activedescendant',options[index].id);for(let i=0;i<options.length;i++){const b=options[i],distance=Math.abs(i-index);b.dataset.distance=String(Math.min(3,distance));b.classList.toggle('is-selected',!distance);b.setAttribute('aria-selected',String(!distance));}}
  function select(n,notify){n=clamp(n);if(index===n)return;index=n;paint();if(notify){if(gesture)tick();change(items[index].value);}}
- function center(){node.scrollTo({top:index*pitch,behavior:'instant'});}
+ function center(){if(node.clientHeight)node.scrollTo({top:Math.max(0,base()+index*step()),behavior:'instant'});}
  function set(v){const n=items.findIndex(x=>String(x.value)===String(v));if(n<0)return;clearTimeout(settle);gesture=false;ready=false;index=n;paint();center();}
  function init(){if(!node.isConnected||!node.clientHeight)return;clearTimeout(settle);gesture=false;center();ready=true;}
  function start(){clearTimeout(settle);if(!ready)init();arm();gesture=true;}
  node.addEventListener('pointerdown',start,{passive:true});
  node.addEventListener('touchstart',start,{passive:true});
  node.addEventListener('wheel',start,{passive:true});
- node.addEventListener('scroll',()=>{if(!ready||!node.isConnected||!node.clientHeight)return;select(nearest(),true);clearTimeout(settle);settle=setTimeout(()=>{if(node.isConnected&&node.clientHeight){select(nearest(),true);center();}gesture=false;},110);},{passive:true});
+ node.addEventListener('scroll',()=>{if(!ready||!gesture||!node.isConnected||!node.clientHeight)return;select(nearest(),true);clearTimeout(settle);settle=setTimeout(()=>{if(node.isConnected&&node.clientHeight){select(nearest(),true);center();}gesture=false;},110);},{passive:true});
  node.addEventListener('keydown',e=>{if(!['ArrowUp','ArrowDown','Home','End','PageUp','PageDown'].includes(e.key))return;e.preventDefault();start();select(e.key==='Home'?0:e.key==='End'?items.length-1:index+({ArrowUp:-1,ArrowDown:1,PageUp:-5,PageDown:5}[e.key]||0),true);center();});
  paint();requestAnimationFrame(init);
- return {node,set(v){set(v);if(node.clientHeight)ready=true;else requestAnimationFrame(init);},get value(){if(ready&&node.clientHeight)select(nearest(),true);return items[index].value;},center:init};
+ return {node,set(v){set(v);if(node.clientHeight)ready=true;else requestAnimationFrame(init);},get value(){if(ready&&gesture&&node.clientHeight)select(nearest(),true);return items[index].value;},center:init};
 }
 function feedbackButton(){
  const b=document.createElement('button');b.type='button';b.className='sv-wheel-feedback';
