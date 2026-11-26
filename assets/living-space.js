@@ -176,7 +176,12 @@ function after(next){
   animateOrb(beforeRect);
   beforeRect=null;
  }
- if(next!=='home')cascade(next);
+ // Work Shell already has its own short, composited agenda fade.
+ // Never stack the legacy 680ms cascade on My Tasks, or fade it from zero.
+ if(next==='tasks'){
+  cancelAnimationFrame(frame);
+  screens.tasks?.classList.remove('sv-cascade');
+ }else if(next!=='home')cascade(next);
  scheduleDirector();
 }
 function initialize(){

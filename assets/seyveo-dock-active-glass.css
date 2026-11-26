@@ -24,9 +24,9 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
  backdrop-filter:blur(7px) saturate(110%)!important;
  opacity:0!important;
  transform:translate3d(var(--sv-indicator-x,0px),var(--sv-indicator-depth,0px),0) scale(var(--sv-indicator-scale,1))!important;
- transition:transform 360ms cubic-bezier(.22,1,.36,1),
-   width 360ms cubic-bezier(.22,1,.36,1),height 360ms cubic-bezier(.22,1,.36,1),
-   top 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease!important;
+ transition:transform 180ms cubic-bezier(.22,1,.36,1),
+   width 180ms cubic-bezier(.22,1,.36,1),height 180ms cubic-bezier(.22,1,.36,1),
+   top 180ms cubic-bezier(.22,1,.36,1),opacity 120ms ease!important;
 }
 :root[data-theme="light"] footer.dock.sv-shared-dock.sv-dock-selection-ready > .sv-dock-active-indicator{
  opacity:1!important;
@@ -60,7 +60,7 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
  > #navPicture#navPicture:is(.active,.sv-dock-nav-press) > svg *{color:#675CC7!important;stroke:#675CC7!important}
 :root[data-theme="light"] footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture) > svg,
 :root[data-theme="light"] footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture) > svg *{
- transition:stroke 230ms ease,color 230ms ease!important;
+ transition:stroke 120ms ease,color 120ms ease!important;
 }
 @media(prefers-reduced-motion:reduce){
  :root[data-theme="light"] footer.dock.sv-shared-dock > .sv-dock-active-indicator,
@@ -80,9 +80,9 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
  box-shadow:inset 0 1.8px 2.8px rgba(31,42,58,.135),
             inset 0 -1px 1px rgba(255,255,255,.78),
             inset 0 0 0 .45px rgba(31,42,58,.035)!important;
- transition:transform 360ms cubic-bezier(.22,1,.36,1),
-   width 360ms cubic-bezier(.22,1,.36,1),height 360ms cubic-bezier(.22,1,.36,1),
-   top 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease,
+ transition:transform 180ms cubic-bezier(.22,1,.36,1),
+   width 180ms cubic-bezier(.22,1,.36,1),height 180ms cubic-bezier(.22,1,.36,1),
+   top 180ms cubic-bezier(.22,1,.36,1),opacity 120ms ease,
    box-shadow 180ms ease!important;
 }
 :root[data-theme="light"] footer.dock.sv-shared-dock.sv-dock-indicator-pressing > .sv-dock-active-indicator{
@@ -91,9 +91,9 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
  box-shadow:inset 0 2.1px 3px rgba(31,42,58,.155),
             inset 0 -1px 1px rgba(255,255,255,.78),
             inset 0 0 0 .45px rgba(31,42,58,.04)!important;
- transition:transform 135ms ease-out,width 360ms cubic-bezier(.22,1,.36,1),
-   height 360ms cubic-bezier(.22,1,.36,1),top 360ms cubic-bezier(.22,1,.36,1),
-   opacity 200ms ease,box-shadow 135ms ease-out!important;
+ transition:transform 135ms ease-out,width 180ms cubic-bezier(.22,1,.36,1),
+   height 180ms cubic-bezier(.22,1,.36,1),top 180ms cubic-bezier(.22,1,.36,1),
+   opacity 120ms ease,box-shadow 135ms ease-out!important;
 }
 :root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
  > :is(#navHome,#navTasks,#navPicture).sv-dock-nav-press > svg{

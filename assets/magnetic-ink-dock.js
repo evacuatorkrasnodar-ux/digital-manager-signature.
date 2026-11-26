@@ -52,7 +52,7 @@ function init(){
   const active=activeDestination();
   items.forEach((item,index)=>{
    const button=buttons[index];
-   button.hidden=false;
+   if(button.hidden)button.hidden=false;
    // Only restore the original markup when a contextual dock replaced it.
    // Normal route changes leave the icons alone: no re-paint or SVG clashes.
    const hasOriginalIcon=index===0||index===1
@@ -62,13 +62,14 @@ function init(){
       : !!button.querySelector(':scope > svg:not(.seyveo-music-dock-svg):not(.seyveo-browser-dock-svg)');
    if(button.dataset.svFixedAction!==item.id||!hasOriginalIcon)
     button.innerHTML=originalMarkup[index];
-   button.dataset.svFixedAction=item.id;
-   button.setAttribute('aria-label',item.description);
-   button.title=item.title;
+   if(button.dataset.svFixedAction!==item.id)button.dataset.svFixedAction=item.id;
+   // The live review-count owner adds the count to Tasks' accessible name.
+   if(!button.hasAttribute('data-sv-review-count')&&button.getAttribute('aria-label')!==item.description)button.setAttribute('aria-label',item.description);
+   if(button.title!==item.title)button.title=item.title;
    const selected=item.id===active;
    button.classList.toggle('active',selected);
-   if(selected)button.setAttribute('aria-current','page');
-   else button.removeAttribute('aria-current');
+   if(selected){if(button.getAttribute('aria-current')!=='page')button.setAttribute('aria-current','page');}
+   else if(button.hasAttribute('aria-current'))button.removeAttribute('aria-current');
   });
   dock.setAttribute('aria-label','Разделы SEYVEO. Центр — Сэйви: общение и голос.');
  }
@@ -82,8 +83,14 @@ function init(){
    showSelectionFeedback(button);
   },{capture:true});
  });
- window.addEventListener('hashchange',paint);
- window.addEventListener('seyveo:route-changed',paint);
+ let paintQueued=false;
+ function queuePaint(){
+  if(paintQueued)return;
+  paintQueued=true;
+  requestAnimationFrame(()=>{paintQueued=false;paint();});
+ }
+ window.addEventListener('hashchange',queuePaint);
+ window.addEventListener('seyveo:route-changed',queuePaint);
  document.addEventListener('seyveo:browser-dock-exit',()=>{buttons.forEach(b=>delete b.dataset.svFixedAction);paint()});
  document.addEventListener('seyveo:music-dock-exit',()=>{
   // The music controls restore the same buttons, never create a second dock.

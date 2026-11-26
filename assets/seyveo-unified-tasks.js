@@ -865,6 +865,7 @@
     pending.prepared=true;
    }
    location.hash='#tasks';
+   if(kind==='personal'&&pending?.prepared)window.SEYVEO_COMMIT_PERSONAL_ROUTE?.();
   }else routePending();
  }
  function openBusiness(source='manage'){

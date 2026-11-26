@@ -487,13 +487,19 @@
   'seyveo:home-recommendation-changed','seyveo:fan-workshop-changed']){
   window.addEventListener(name,update);
  }
- window.addEventListener('hashchange',update);
+ // Route changes are handled once by the coalesced handler below.
  // A presence idea is never an alert: emergencies require a separately
  // verified regional source, timestamp and expiry before anything is shown.
  for(const name of ['pointerdown','keydown','touchstart','scroll'])
   document.addEventListener(name,noteActivity,{capture:true,passive:true});
- window.addEventListener('hashchange',()=>{dropIdle();update();});
- window.addEventListener('seyveo:route-changed',()=>{dropIdle();update();});
+ let presenceRoute=location.hash||'#home';
+ function onPresenceRoute(){
+  const next=location.hash||'#home';
+  if(next===presenceRoute)return;
+  presenceRoute=next;dropIdle();update();
+ }
+ window.addEventListener('hashchange',onPresenceRoute);
+ window.addEventListener('seyveo:route-changed',onPresenceRoute);
  window.addEventListener('seyveo:home-sayvi-arrived',event=>{
   dropIdle();
   if(event.detail?.firstLaunch)idleSince=Date.now()+3500;
