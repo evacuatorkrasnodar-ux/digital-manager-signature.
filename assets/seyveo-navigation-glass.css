@@ -583,25 +583,43 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
 }
 @media(prefers-reduced-transparency:reduce){html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]){background:#167ebd!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
 
-/* Pulse route: one full-bleed glass header, including the existing top inset.
-   Move the spacer into the measured header so its scrollport reaches the
-   viewport edge. Keep header controls on the original axis and preserve
-   the original dock, native scrolling and iPhone safe area. */
+/* Pulse: glass is a sibling of the scrollport, rather than a negative
+   z-index descendant of the header. The scrollport paints beneath the
+   optical face, while the actual title and Back remain above it.
+   Keep the measured inset and at-rest content position. */
 html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])){
  --sv-pulse-top-inset:calc(8px + env(safe-area-inset-top,0px));
  padding-top:0!important;
  border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;
 }
-html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]){padding-top:0!important;border:0!important;border-radius:0!important}
+html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]){
+ position:relative!important;padding-top:0!important;border:0!important;border-radius:0!important;
+}
 html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]) > .picture-head{
  padding-top:var(--sv-pulse-top-inset)!important;
 }
-html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]).sv-scroll-glass-ready > .picture-head.sv-scroll-glass-head > .sv-scroll-glass-material{
+html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]).sv-scroll-glass-ready > #picturePageScroll{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;max-height:none!important;
+ margin:0!important;padding-top:var(--sv-scroll-underlap,56px)!important;
+ z-index:1!important;overflow-y:auto!important;
+ background:transparent!important;
+}
+html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]).sv-scroll-glass-ready > .picture-head{
+ position:relative!important;z-index:4!important;
+ background:transparent!important;background-image:none!important;
+}
+html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]).sv-scroll-glass-ready > .picture-head > .sv-scroll-glass-material{
+ display:none!important;
+}
+html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]).sv-scroll-glass-ready::before{
+ content:""!important;display:block!important;position:absolute!important;
+ z-index:3!important;pointer-events:none!important;
  top:0!important;left:0!important;right:0!important;
- opacity:1!important;
- background:var(--sv-white-pearl-floating-dock)!important;background-image:none!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
- backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ height:calc(var(--sv-scroll-underlap,56px) + 24px)!important;
+ background:var(--sv-white-pearl-floating-dock,rgba(247,247,248,.46))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px) saturate(108%))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px) saturate(108%))!important;
  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
  border:0!important;border-radius:0!important;box-shadow:none!important;
@@ -609,9 +627,12 @@ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.pictur
 @media(max-width:720px), (orientation:landscape) and (max-height:540px){
  html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])){--sv-pulse-top-inset:var(--sv-apple-top-inset,calc(8px + env(safe-area-inset-top,0px)))}
 }
-
 @media(prefers-reduced-transparency:reduce){
- html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]).sv-scroll-glass-ready > .picture-head.sv-scroll-glass-head > .sv-scroll-glass-material{background:#fff!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;-webkit-mask-image:none!important;mask-image:none!important}
+ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]).sv-scroll-glass-ready::before{
+  height:var(--sv-scroll-underlap,56px)!important;
+  background:#fff!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  -webkit-mask-image:none!important;mask-image:none!important;
+ }
 }
 
 /* SEYVEO Grey Segments · shared optical standard for actual segmented
