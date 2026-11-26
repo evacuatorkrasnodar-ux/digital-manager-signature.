@@ -2,7 +2,7 @@
    Shared geometry and action semantics. Each route owns its position and handlers. */
 @layer seyveo-bulk-standard{
  html:root body .sv-bulk-selection-capsule:not([hidden]){
-  box-sizing:border-box!important;display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px!important;
+  box-sizing:border-box!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
   align-items:center!important;justify-items:center!important;gap:4px!important;
   width:min(420px,calc(100% - 32px))!important;max-width:420px!important;
   height:52px!important;min-height:52px!important;padding:3px 8px!important;
@@ -21,7 +21,7 @@
   font:550 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;white-space:nowrap!important;
  }
  html:root body .sv-bulk-selection-capsule > button:disabled{opacity:.36!important;cursor:default!important}
- html:root body .sv-bulk-selection-capsule > [data-sv-bulk-role="action"]{grid-column:1!important;grid-row:1!important}
+ html:root body .sv-bulk-selection-capsule > [data-sv-bulk-role="action"]{grid-column:1!important;grid-row:1!important;justify-self:start!important}
  html:root body .sv-bulk-selection-capsule > [data-sv-bulk-role="count"]{
   grid-column:2!important;grid-row:1!important;position:static!important;clip-path:none!important;overflow:visible!important;
   width:auto!important;height:auto!important;min-width:0!important;padding:0!important;margin:0!important;
@@ -29,7 +29,7 @@
   white-space:nowrap!important;font-variant-numeric:tabular-nums!important;text-align:center!important;
  }
  html:root body .sv-bulk-selection-capsule > [data-sv-bulk-role="delete"]:not([hidden]){
-  grid-column:3!important;grid-row:1!important;width:44px!important;color:#d93238!important;font-size:0!important;
+  grid-column:3!important;grid-row:1!important;justify-self:end!important;width:44px!important;color:#d93238!important;font-size:0!important;
  }
  html:root body .sv-bulk-selection-capsule > [data-sv-bulk-role="delete"]::before{
   content:""!important;display:block!important;width:20px!important;height:20px!important;flex:0 0 20px!important;
@@ -79,3 +79,41 @@ html:root.sv-task-selection-active:not(.sv-task-search-focus) body #svWorkShell[
  padding-bottom:calc(148px + env(safe-area-inset-bottom,0px))!important;
  scroll-padding-bottom:calc(148px + env(safe-area-inset-bottom,0px))!important;
 }
+
+/* V89: a centered counter, bare trash glyph and one shared calendar sheet. */
+html:root body #svTaskActionCapsule.sv-bulk-selection-capsule > button.sv-task-delete{
+ background:none!important;background-image:none!important;border:0!important;box-shadow:none!important;outline-offset:2px;
+}
+html:root body #svTaskActionCapsule.sv-bulk-selection-capsule > button.sv-task-delete::after{content:none!important;display:none!important}
+html:root body #svTaskActionCapsule.sv-bulk-selection-capsule > .sv-task-reschedule{padding:0 4px!important}
+html:root body #svTaskActionCapsule.sv-bulk-selection-capsule > .sv-task-reschedule svg{stroke-linecap:round;stroke-linejoin:round}
+html:root body #svTaskBulkDateSheet[open]{
+ position:fixed;inset:auto 0 0;margin:0 auto;box-sizing:border-box;width:min(100%,480px);max-width:100%;
+ max-height:85vh;max-height:85dvh;overflow:auto;overscroll-behavior:contain;
+ padding:8px 16px max(16px,env(safe-area-inset-bottom,0px));border:var(--sv-white-pearl-edge,1px solid #e2e5e9);
+ border-radius:28px 28px 0 0;background:var(--sv-menu-bg,#fcfcfd);color:var(--sv-menu-text,#181b21);
+ box-shadow:0 -12px 42px #18202a20;animation:svSharedSheetEnter var(--sv-sheet-enter-duration,.28s) ease-out;
+}
+#svTaskBulkDateSheet::backdrop{background:rgba(25,31,41,.24);backdrop-filter:blur(3px)}
+#svTaskBulkDateSheet .sv-task-bulk-date-head{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;grid-template-rows:8px 44px;gap:6px;align-items:center}
+#svTaskBulkDateSheet .sv-nb-sheet-grip{grid-column:1/-1;grid-row:1;justify-self:center;width:34px;height:4px;background:#cbd0d5;border-radius:99px;touch-action:none}
+#svTaskBulkDateSheet .sv-task-bulk-date-head strong{text-align:center;font:600 17px/1.2 system-ui}
+#svTaskBulkDateSheet .sv-task-bulk-date-head button{display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;grid-row:2}
+#svTaskBulkDateSheet .sv-task-bulk-date-back{grid-column:1;border:var(--sv-header-circle-border);background:var(--sv-header-circle);box-shadow:var(--sv-header-circle-shadow);color:var(--text,#17191e)}
+#svTaskBulkDateSheet .sv-confirm-circle{grid-column:3}
+#svTaskBulkDateSheet .sv-task-bulk-date-head strong{grid-column:2;grid-row:2}
+#svTaskBulkDateSheet .sv-task-bulk-date-head svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#svTaskBulkDateSheet .sv-task-bulk-date-note{font:400 13px/1.4 system-ui;color:var(--secondary,#68717d);margin:10px 0;text-align:center}
+#svTaskBulkDateSheet .sv-task-bulk-date-note:empty{display:none}
+#svTaskBulkDateSheet .sv-task-bulk-month{display:flex;align-items:center;justify-content:space-between;margin:4px 0}
+#svTaskBulkDateSheet .sv-task-bulk-month button{width:44px;height:44px;border:0;background:transparent;color:#007aff;font:400 26px/1 system-ui}
+#svTaskBulkDateSheet :is(.sv-task-bulk-days,.sv-task-bulk-weekdays){display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;text-align:center}
+#svTaskBulkDateSheet .sv-task-bulk-weekdays{font:500 12px/1.5 system-ui;color:var(--secondary,#68717d)}
+#svTaskBulkDateSheet .sv-task-bulk-day{position:relative;min-height:44px;border:0;border-radius:12px;background:transparent;color:inherit;font:500 15px/1 system-ui;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;padding:3px}
+#svTaskBulkDateSheet .sv-task-bulk-day .sv-shared-calendar-number{display:grid;place-items:center;width:30px;height:30px;border-radius:50%}
+#svTaskBulkDateSheet .sv-task-bulk-day.is-today .sv-shared-calendar-number{background:#c3e2fa;color:#075ca8}
+#svTaskBulkDateSheet .sv-task-bulk-day.is-selected .sv-shared-calendar-number{background:#17191e;color:#fff}
+#svTaskBulkDateSheet .sv-shared-calendar-dots{display:flex;gap:3px;height:4px}
+#svTaskBulkDateSheet .sv-shared-calendar-dots i{width:4px;height:4px;border-radius:50%}
+#svTaskBulkDateSheet .sv-task-bulk-native-date{display:block;width:100%;font-size:16px;min-height:44px}
+@media(prefers-reduced-motion:reduce){#svTaskBulkDateSheet[open]{animation:none}}
