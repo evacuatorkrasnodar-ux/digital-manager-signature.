@@ -530,7 +530,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
   /* End the clear glass at the name capsule, not at the role or the
      full conversation header. Keep identity and message geometry intact. */
   bottom:auto!important;
-  height:calc(2px + env(safe-area-inset-top,0px) + var(--svcp-header-avatar,56px) + var(--svcp-header-overlap,-5px) + var(--svcp-header-label,28px) + 12px)!important;
+  height:calc(2px + env(safe-area-inset-top,0px) + var(--svcp-header-avatar,56px) + var(--svcp-header-overlap,-5px) + var(--svcp-header-label,32px) + 24px)!important;
   -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)!important;
   mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)!important;
  }
@@ -761,5 +761,40 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   :root[data-theme="light"] button[data-sv-action-glass="primary"]{--sv-action-face:#B9DFFF}
   :root[data-theme="light"] button[data-sv-action-glass="danger"]{--sv-action-face:#FCE0E1}
   :root[data-theme="light"] button[data-sv-action-glass]{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ }
+}
+
+/* Canonical Avatar optical material. One paint rule for every audited
+   white scroll-under header. Only the route-specific geometry stays local.
+   Important cascade layer prevents legacy per-screen tint/blur overrides. */
+@layer seyveo-avatar-header-material{
+ :root[data-theme="light"]{
+  --sv-header-glass-face:var(--sv-white-pearl-floating-dock);
+  --sv-header-glass-filter:var(--sv-white-pearl-floating-blur);
+  --sv-header-glass-mask:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%);
+ }
+ html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-pinned-head::before,
+ html:root[data-theme="light"] body :is(dialog[open],#picturePage:not([hidden])).sv-scroll-glass-ready > .sv-scroll-glass-head > .sv-scroll-glass-material,
+ html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open].sv-scroll-glass-ready > .sv-staff-head > .sv-scroll-glass-material,
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after,
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll::after,
+ html:root[data-theme="light"] body :is(#svWorkShell,#svcpWorkChatScreen,#sayviSurfacePage,#svcpManagerPeople).sv-full-glass-ready > .sv-full-header-material,
+ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2::before,
+ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]).sv-scroll-glass-ready::before{
+  background:var(--sv-header-glass-face)!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:var(--sv-header-glass-filter)!important;
+  backdrop-filter:var(--sv-header-glass-filter)!important;
+  -webkit-mask-image:var(--sv-header-glass-mask)!important;
+  mask-image:var(--sv-header-glass-mask)!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  pointer-events:none!important;
+ }
+ @media(prefers-reduced-transparency:reduce){
+  :root[data-theme="light"]{
+   --sv-header-glass-face:#fff;
+   --sv-header-glass-filter:none;
+   --sv-header-glass-mask:none;
+  }
  }
 }
