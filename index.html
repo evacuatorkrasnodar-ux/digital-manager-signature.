@@ -6551,5 +6551,41 @@ html:root[data-theme="light"].sv-music-screen.sv-global-search-open body footer.
 #sayviMusicPage .sv-replay-row strong{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #sayviMusicPage .sv-replay-row small,#sayviMusicPage .sv-replay-time{font-size:12px;color:var(--secondary)}
 #sayviMusicPage .sv-replay-rank{font-size:19px;font-weight:650;color:#5275a9;width:24px;text-align:center;flex:none}
+
+/* Paint the glass on the real four-tab navigation element, not a second
+   independently sized pseudo-element. The hit grid and its surface now
+   have exactly the same bounds even if a legacy dock rule is active. */
+html:root[data-theme][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only{
+ --sv-music-dock-gap:clamp(8px,2.4vw,14px);
+ --sv-music-capsule-width:calc(100% - 60px - var(--sv-music-dock-gap));
+}
+html:root[data-theme][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only::before{content:none!important;display:none!important}
+html:root[data-theme][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]){
+ display:grid!important;position:absolute!important;box-sizing:border-box!important;
+ left:0!important;right:auto!important;top:0!important;bottom:0!important;
+ width:var(--sv-music-capsule-width)!important;max-width:var(--sv-music-capsule-width)!important;
+ min-width:0!important;height:60px!important;
+ padding:0 3px!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ border-radius:999px!important;isolation:isolate;
+}
+html:root[data-theme][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]) > button{
+ width:100%!important;min-width:0!important;max-width:100%!important;
+}
+html:root[data-theme][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]) > button > span{
+ font-size:clamp(9px,2.5vw,10px)!important;
+ letter-spacing:-.03em!important;white-space:nowrap!important;
+ max-width:100%!important;
+}
+html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]){
+ background:var(--sv-white-pearl-floating-dock,rgba(235,237,240,.62))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;
+ border:0!important;box-shadow:none!important;
+}
+html:root[data-theme="dark"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]){
+ background:var(--sv-air-dock,var(--card2))!important;
+ -webkit-backdrop-filter:blur(10px)!important;backdrop-filter:blur(10px)!important;
+ border:0!important;box-shadow:none!important;
+}
 </style>
 </body></html>
