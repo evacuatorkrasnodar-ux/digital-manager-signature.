@@ -661,7 +661,7 @@ function toNote(){
   }
   return;
  }
- window.SEYVEO_NOTES_API?.reviewText(value.slice(0,8000),{preserveLines:keepLines?.checked!==false});
+ window.SEYVEO_NOTES_API?.reviewText(value.slice(0,8000),{preserveLines:keepLines?.checked!==false,scanOrigin:true});
 }
 function toPaper(mode){
  if(running||exportBusy)return;
