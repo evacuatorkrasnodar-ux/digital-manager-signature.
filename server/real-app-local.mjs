@@ -85,8 +85,22 @@ function isApprovedSayviPaperFrame(req){
  const params=new URL(req.url,ORIGIN).searchParams;
  return params.get('seyveo-draw')==='chat'&&params.get('embed')==='1';
 }
+// Yandex JS API v3 requires its own resource origins and eval for the map
+// runtime. Limit the exception to the main map-capable HTML, not API,
+// document, chat, or other static responses. Paper embeds retain strict CSP.
+function mapHomeHeaders(){
+ const sdk='https://api-maps.yandex.ru https://*.api-maps.yandex.ru https://yastatic.net';
+ const data=sdk+' https://*.maps.yandex.net';
+ const extra={'script-src':sdk+" 'unsafe-eval'",'connect-src':data,
+  'style-src':sdk,'img-src':data,'worker-src':'data: '+sdk};
+ const policy=HEADERS['content-security-policy'].split(';').map(part=>{
+  const directive=part.trim().split(/\s+/)[0];
+  return extra[directive]?part+' '+extra[directive]:part;
+ }).join(';');
+ return {...HEADERS,'referrer-policy':'strict-origin-when-cross-origin','content-security-policy':policy};
+}
 function homePageHeaders(req){
- if(!isApprovedSayviPaperFrame(req))return HEADERS;
+ if(!isApprovedSayviPaperFrame(req))return mapHomeHeaders();
  // Preserve the complete CSP except for the one explicit same-origin frame.
  return {...HEADERS,
   'x-frame-options':'SAMEORIGIN',
