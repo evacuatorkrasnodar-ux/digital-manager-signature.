@@ -1856,3 +1856,23 @@ html body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv
 html body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-unmute{
  min-height:40px!important;white-space:nowrap!important;
 }
+
+/* V156: notification exception rows reuse directory identity artwork.
+   Keep the existing compact 34px slot and mute controls. */
+html:root body #svcpWorkChatScreen #svcpInboxSheet[data-sv-inbox-screen="muted-chats"] .sv-inbox-ios-avatar.sv-inbox-muted-native-avatar{
+ background:transparent!important;color:inherit!important;overflow:hidden!important;
+}
+html:root body #svcpWorkChatScreen #svcpInboxSheet[data-sv-inbox-screen="muted-chats"] .sv-inbox-muted-native-avatar > :is(img,span){
+ display:grid!important;place-items:center!important;width:100%!important;height:100%!important;
+ border-radius:50%!important;object-fit:cover!important;overflow:hidden!important;
+}
+html:root body #svcpWorkChatScreen #svcpInboxSheet[data-sv-inbox-screen="muted-chats"] .sv-inbox-muted-native-avatar > .svcp-native-initial{
+ background:var(--sv-avatar-auto-bg,#E8EEF2)!important;color:#566878!important;
+}
+html:root body #svcpWorkChatScreen #svcpInboxSheet[data-sv-inbox-screen="muted-chats"] .sv-inbox-muted-group-avatar{
+ background:#E8EEF2!important;color:#566878!important;
+}
+html:root body #svcpWorkChatScreen #svcpInboxSheet[data-sv-inbox-screen="muted-chats"] .sv-inbox-muted-group-avatar svg{
+ width:20px!important;height:20px!important;stroke:currentColor!important;fill:none!important;stroke-width:1.6!important;
+}
+html:root body #svcpWorkChatScreen #svcpInboxSheet[data-sv-inbox-screen="muted-chats"] .sv-inbox-ios-avatar.is-sayvi{background-color:transparent!important}
