@@ -2762,3 +2762,37 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
 @media(orientation:landscape) and (max-height:540px){
  html:root body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"]>#sayviSurfaceBody{scroll-padding-top:48px;}
 }
+
+/* V90: Documents archive owns one native sticky switch, never a second
+   full-height glass overlay. Preserve the common switch face and dock. */
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #sayviSurfaceBody{
+ margin-top:0!important;padding-top:0!important;scroll-padding-top:50px!important;
+}
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch{
+ top:0!important;margin:0!important;padding:4px 0 10px!important;min-height:0!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch{
+ background:#fff!important;background-image:none!important;isolation:auto!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll{
+ background:rgba(255,255,255,.9)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;
+}
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch::after{content:none!important;display:none!important}
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-draft-list{
+ background:#fff!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding-inline:8px!important;
+}
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-draft-selection-head{
+ padding:0 4px!important;border:0!important;background:transparent!important;
+}
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-draft-list[open] .sv-doc-draft-selection-footer{
+ position:fixed!important;left:50%!important;right:auto!important;bottom:calc(82px + env(safe-area-inset-bottom,0px))!important;
+ transform:translateX(-50%)!important;z-index:48!important;margin:0!important;
+}
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-draft-list:not([open]) .sv-doc-draft-selection-footer{display:none!important}
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody:has(.sv-doc-draft-list[open] .sv-doc-draft-selection-footer){
+ padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important;
+ scroll-padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important;
+}
