@@ -705,9 +705,10 @@ html:root[data-theme="light"] body dialog#svcpManagerPeople#svcpManagerPeople.sv
 html:root[data-theme="light"] body #seyveoFamilyDialog#seyveoFamilyDialog:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) .svf-tabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]),
 html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkShell #seyveoPayDialog) .syp-view-switch > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]),
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svAllTasksTabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]){
- background:var(--sv-segment-selected)!important;background-image:none!important;
+ background:transparent!important;background-image:none!important;
  color:#14171C!important;border-color:transparent!important;
- box-shadow:var(--sv-segment-selected-shadow)!important;
+ box-shadow:none!important;
+ position:relative!important;isolation:isolate!important;
 }
 /* V134: approved gray track / white inset reference. Identical contrast
    across viewports. Keep existing geometry, safe areas and hit targets. */
@@ -1037,4 +1038,32 @@ html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is
 }
 html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope#svDocArchiveScope > .sv-doc-switch > .sv-doc-tab{
  height:30px!important;min-height:30px!important;max-height:30px!important;
+}
+
+/* V138: inset only the painted white face; original full button stays the hit target.
+   Keep the dock rim, gray track, text and all tab geometry untouched. */
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]) > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #tasksPage#tasksPage #unifiedTasksTabs:not([hidden]) > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #calendarPage#calendarPage :is(.cal-scope,#managerCalendarTabs):not([hidden]) > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #picturePage#picturePage #pictureBusiness > .sv-pulse-periods > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #seyveoPulseDialog#seyveoPulseDialog[open] .pulse-periods > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch > .sv-doc-switch > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head > .sv-mail-accounts:not([hidden]) > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-sender-switch > .sv-mail-sender-options > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #svcpWorkChatScreen#svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > #svcpChatFilters:not([hidden]) > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #svcpWorkChatScreen#svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #svcpWorkChatScreen#svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body dialog#svcpManagerPeople#svcpManagerPeople.sv-staff-page[open] #svcpStaffTabs.svstaff-tabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #seyveoFamilyDialog#seyveoFamilyDialog:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) .svf-tabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkShell #seyveoPayDialog) .syp-view-switch > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before,
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svAllTasksTabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"])::before{
+ content:""!important;display:block!important;position:absolute!important;
+ inset:3px!important;width:auto!important;height:auto!important;
+ min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:999px!important;
+ background:var(--sv-segment-selected)!important;background-image:none!important;
+ box-shadow:var(--sv-segment-selected-shadow)!important;
+ opacity:1!important;visibility:visible!important;z-index:-1!important;pointer-events:none!important;
+ transform:none!important;translate:none!important;scale:none!important;filter:none!important;
 }
