@@ -148,7 +148,7 @@ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-ac
  position:relative!important;z-index:20!important;overflow:visible!important;
 }
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="business"] > #tasksPage:not([hidden]) > #unifiedBusinessTasksView:not([hidden]){
- padding-top:calc(var(--sv-cabinet-tab-height,32px) + 9px)!important;
+ padding-top:calc(var(--sv-cabinet-tab-height,32px))!important;
  scroll-padding-top:calc(var(--sv-cabinet-tab-height,32px) + 24px)!important;
 }
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="business"].sv-cabinet-under-scroll > #svWorkTabs:not([hidden])::after{
