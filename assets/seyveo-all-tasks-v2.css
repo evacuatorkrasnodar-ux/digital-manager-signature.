@@ -234,3 +234,36 @@ html:root[data-theme="light"] body #svTaskActionCapsule[data-has-selection="true
 html:root[data-theme="dark"] body #svTaskActionCapsule[data-has-selection="true"]{
  background:rgba(47,49,54,.97)!important;
 }
+
+/* All Tasks v40: standalone capsule. The light-mode optical face comes
+   from the SAME seyveo-avatar-segment-material rule as Avatar / Photo. */
+html body #svWorkShell > #svAllTasksTabs[hidden]{display:none!important}
+html body #svWorkShell[data-task-tool-mode="all"] > #svAllTasksTabs:not([hidden]){
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ align-items:center!important;align-content:center!important;
+ position:relative!important;order:1!important;flex:0 0 auto!important;
+ align-self:center!important;width:calc(100% - 28px)!important;max-width:none!important;
+ height:var(--sv-avatar-segment-height,38px)!important;min-height:38px!important;max-height:38px!important;
+ margin:4px auto 5px!important;padding:var(--sv-avatar-segment-inset,3px)!important;
+ gap:3px!important;border:var(--sv-white-pearl-edge,1px solid rgba(209,214,223,.8))!important;
+ border-radius:999px!important;background-image:none!important;
+}
+html body #svWorkShell[data-task-tool-mode="all"] > #svAllTasksTabs > button{
+ appearance:none!important;-webkit-appearance:none!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:100%!important;min-width:0!important;height:30px!important;min-height:30px!important;max-height:30px!important;
+ margin:0!important;padding:0 4px!important;border:0!important;border-radius:999px!important;
+ background:transparent!important;box-shadow:none!important;white-space:nowrap!important;
+ font:590 13px/1.2 -apple-system,system-ui,sans-serif!important;
+ color:#454B55!important;transform:none!important;transition:none!important;
+ -webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important;
+}
+html body #svWorkShell > #svAllTasksTabs::before,
+html body #svWorkShell > #svAllTasksTabs::after,
+html body #svWorkShell > #svAllTasksTabs > button::before,
+html body #svWorkShell > #svAllTasksTabs > button::after{content:none!important;display:none!important}
+html body #svWorkShell > #svAllTasksTabs > button:focus-visible{outline:2px solid #0A84FF!important;outline-offset:0!important}
+html:root[data-theme="dark"] body #svWorkShell > #svAllTasksTabs:not([hidden]){background:rgba(223,234,245,.085)!important;border-color:rgba(214,230,241,.15)!important}
+html:root[data-theme="dark"] body #svWorkShell > #svAllTasksTabs > button{color:#BDC4CD!important}
+html:root[data-theme="dark"] body #svWorkShell > #svAllTasksTabs > button[aria-pressed="true"]{background:rgba(213,227,240,.16)!important;color:#F8FAFC!important}
