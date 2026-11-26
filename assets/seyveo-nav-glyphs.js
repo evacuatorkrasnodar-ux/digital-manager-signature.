@@ -6,7 +6,7 @@
  if(window.SEYVEO_NAV_GLYPHS)return;
  const spec=Object.freeze({
   back:Object.freeze({d:'M14.5 5.5 8 12l6.5 6.5',size:22,stroke:1.55}),
-  plus:Object.freeze({d:'M12 5.5v13M5.5 12h13',size:28,stroke:1.65}),
+  plus:Object.freeze({d:'M12 5.5v13M5.5 12h13',size:24,stroke:1.4}),
   search:Object.freeze({d:'M15.7 15.7 L21 21',size:25,stroke:1.65}),
   history:Object.freeze({d:'M3.8 11.4a8.2 8.2 0 1 1 2.4 6M3.8 6.6v4.8h4.8M12 7.3V12l3.2 2',size:24,stroke:1.65})
  });
@@ -46,7 +46,18 @@
  function normalize(svg){
   if(svg.getAttribute('viewBox')!=='0 0 24 24')return;
   const button=svg.closest('button,a.sv-top-action');
-  if(!button||button.closest(excluded))return;
+  if(!button)return;
+  // V140: pure plus artwork is safe to normalize even in compact menus and editors.
+  // Preserve those controls' own glyph size and hit area.
+  const purePlus=svg.children.length===1&&svg.firstElementChild?.tagName.toLowerCase()==='path'&&plusPaths.has(compact(svg.firstElementChild.getAttribute('d')));
+  if(purePlus){
+   const p=svg.firstElementChild;
+   if(p.getAttribute('d')!==spec.plus.d)p.setAttribute('d',spec.plus.d);
+   for(const n of [svg,p])for(const [k,v] of Object.entries({'stroke-width':String(spec.plus.stroke),'stroke-linecap':'round','stroke-linejoin':'round'}))n.style.setProperty(k,v,'important');
+   if(!button.closest(excluded)&&!button.textContent.trim()){styleSvg(svg,'plus');}
+   return;
+  }
+  if(button.closest(excluded))return;
   const named=button.matches(navClasses)||button.closest(headerArea)||
    /(?:back|close|plus|add|search|history|attachfile|attachbutton|new)$/i.test(button.id)||
    /(?:^|[\s-])(?:back|plus|add|search|history)(?:[\s-]|$)/i.test(button.className||'');
