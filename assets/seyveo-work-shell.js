@@ -135,6 +135,14 @@
  const searchTasks=document.createElement('button');searchTasks.type='button';searchTasks.className='control sv-history-search';
  searchTasks.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4.5v5h5"/><path d="M3.7 9.5a8.5 8.5 0 1 1-.2 4"/><path d="M12 7.5V12l3 2"/></svg>';
  searchTasks.setAttribute('aria-label','История и все дела');
+ // Dedicated All Tasks search control, never inside the history capsule.
+ const allTasksSearch=document.createElement('button');
+ allTasksSearch.type='button';allTasksSearch.className='control sv-all-tasks-search';
+ allTasksSearch.hidden=true;allTasksSearch.innerHTML=searchIcon;
+ allTasksSearch.setAttribute('aria-label','Поиск по делам');
+ allTasksSearch.setAttribute('aria-expanded','false');
+ allTasksSearch.addEventListener('click',event=>{event.stopPropagation();toggleSearch()});
+ historyBar?.append(allTasksSearch);
  const reviewCards=document.createElement('button');
  reviewCards.type='button';reviewCards.className='control sv-review-cards-control';reviewCards.setAttribute('aria-label','Разобрать карточки');
  reviewCards.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7" width="14" height="13" rx="2"/><path d="M8 4h11a2 2 0 0 1 2 2v10"/><path d="M8 11h8M8 15h5"/></svg>';
@@ -159,8 +167,7 @@
  });
  searchTasks.addEventListener('click',event=>{
   event.stopPropagation();
-  if(window.SEYVEO_TASK_INLINE?.current?.())window.SEYVEO_TASK_INLINE.toggleSearch();
-  else window.SEYVEO_TASK_INLINE?.open();
+  window.SEYVEO_TASK_INLINE?.open();
  });
  // Personal landing uses History in the left circle. Reuse the single
  // existing Action History panel; keep the original back chevron for subviews.
@@ -283,6 +290,11 @@
  // All Tasks is its own direct Work-shell surface. The old agenda wrappers
  // are not ancestors of its native scrollport and cannot clip its glass.
  shell.append(toolPanel);
+ // A dedicated filter capsule, outside the ordinary Work navigation.
+ const allTasksTabs=document.createElement('nav');
+ allTasksTabs.id='svAllTasksTabs';allTasksTabs.hidden=true;
+ allTasksTabs.setAttribute('aria-label','Фильтры дел');
+ shell.insertBefore(allTasksTabs,toolPanel);
  // Rebuilt actions: just one floating capsule, with no footer or backdrop.
  const actionCapsule=document.createElement('nav');
  actionCapsule.id='svTaskActionCapsule';
@@ -361,17 +373,14 @@
   input.addEventListener('input',()=>{query=input.value;paintResults()});
   toolPanel.append(input);
   let results=make('div','sv-tool-results');
-  const tabs=make('div','sv-tool-filters');
+  allTasksTabs.replaceChildren();
   for(const [key,label] of [['all','Все'],['active','Активные'],['done','Выполненные']]){
    const button=make('button','',label);button.type='button';
    button.setAttribute('aria-pressed',String(filter===key));
    button.addEventListener('click',()=>{filter=key;paint()});
-   tabs.append(button);
+   allTasksTabs.append(button);
   }
-  // The active-status filter is the only capsule on the nested All Tasks page.
-  // Move the live control into the existing work-tabs slot without cloning it.
-  nav.querySelector('.sv-tool-filters')?.remove();
-  nav.append(tabs);
+  // The independent filter capsule owns its own buttons.
   toolPanel.append(results);
   let counter=null,deleteButton=null,selectAll=null;
   actionCapsule.replaceChildren();
@@ -477,7 +486,8 @@
   selectHistory.setAttribute('aria-label',selectionActive?'Закончить выбор дел':'Выбрать дела');
   selectHistory.removeAttribute('aria-haspopup');
   selectHistory.removeAttribute('aria-expanded');
-  searchTasks.setAttribute('aria-expanded',String(nested&&searchOpen));
+  allTasksSearch.hidden=!nested;
+  allTasksSearch.setAttribute('aria-expanded',String(nested&&searchOpen));
   if(inPersonal){
    back.hidden=!nested;
    back.setAttribute('aria-label',nested?'Вернуться к моим делам':'Вернуться назад');
@@ -493,9 +503,10 @@
   selectionActive=!!toolMode;
   shell.dataset.taskToolMode=toolMode;
   toolPanel.hidden=!toolMode;
+  allTasksTabs.hidden=!toolMode;
   if(!toolMode){
    document.documentElement.classList.remove('sv-task-search-focus');
-   nav.querySelector('.sv-tool-filters')?.remove();
+   allTasksTabs.replaceChildren();
   }
   syncToolHeader();
   if(toolMode)paint();
@@ -597,8 +608,11 @@
   // duplicate card-review shortcut above the month grid. Back, Add and
   // the permanent dock remain available; other Work views are unchanged.
   const calendarOnly=active==='calendar';
-  setHidden(nav,!visible||history||calendarOnly);
-  heading.dataset.workTabs=String(!nav.hidden);
+  const nested=visible&&active==='personal'&&!history&&!!toolMode;
+  setHidden(nav,!visible||history||calendarOnly||nested);
+  setHidden(allTasksTabs,!nested);
+  setHidden(allTasksSearch,!nested);
+  heading.dataset.workTabs=String(!nav.hidden||nested);
   heading.dataset.history=String(history);
   // Notebook is a top-level tab: its Back and card-review shortcuts repeat
   // controls that belong to the tabs/dock or to My Tasks, respectively.
@@ -607,7 +621,6 @@
   nav.dataset.one=String(!managerMode&&!employeeMode);
   nav.dataset.business=String(managerMode&&!employeeMode);
   nav.dataset.wallet='true';
-  const nested=visible&&active==='personal'&&!history&&!!toolMode;
   for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
    const name=tab.dataset.svWorkTab;
    // Manager (Business): 4; personal (ONE): 3; employee view: 2.
@@ -642,15 +655,8 @@
   heading.dataset.businessTools=String(active==='business'&&!history);
   if(company)setHidden(company,!visible||active!=='business'||history);
   if(toolMode&&(!visible||active!=='personal'||history)){setMode('');return;}
-  const nextSearchIcon=nested?'search':'history';
-  if(searchTasks.dataset.svHeaderIcon!==nextSearchIcon){
-   searchTasks.innerHTML=nested?searchIcon:historyIcon;
-   searchTasks.dataset.svHeaderIcon=nextSearchIcon;
-  }
-  searchTasks.setAttribute('aria-label',nested?'Поиск по делам':'История и все дела');
-  searchTasks.setAttribute('aria-expanded',String(nested&&searchOpen));
-  nav.dataset.taskFilters=String(nested);
-  nav.setAttribute('aria-label',nested?'Фильтры дел':managerMode?'Мои дела, Блокнот, Кошелёк и Кабинет':employeeMode?'Мои дела и Моя работа':'Мои дела, Блокнот и Кошелёк');
+  allTasksSearch.setAttribute('aria-expanded',String(nested&&searchOpen));
+  nav.setAttribute('aria-label',managerMode?'Мои дела, Блокнот, Кошелёк и Кабинет':employeeMode?'Мои дела и Моя работа':'Мои дела, Блокнот и Кошелёк');
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
   const nextTitle=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
