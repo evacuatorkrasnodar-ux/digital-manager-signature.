@@ -158,9 +158,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
  mask-image:linear-gradient(to bottom,#000 0%,#000 58%,rgba(0,0,0,.64) 76%,rgba(0,0,0,.18) 92%,transparent 100%)!important;
  -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
 }
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2::before{
- background:linear-gradient(180deg,rgba(255,255,255,.79) 0%,rgba(255,255,255,.68) 51%,rgba(255,255,255,.35) 79%,rgba(255,255,255,0) 100%)!important;
-}
+/* Pearl header material is provided by the common Avatar optical standard. */
 /* WHITE PEARL · exact same specificity and ancestry as the shared title.
    Previously the weaker pearl text selector lost to the default white-on-blue
    rule: the name became invisible on a white capsule. No geometry changes. */
