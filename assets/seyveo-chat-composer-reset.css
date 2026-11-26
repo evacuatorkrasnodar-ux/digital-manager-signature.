@@ -5,10 +5,10 @@
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
  /* Sky reference: clear cyan glass adapted to the lighter lower wallpaper.
     The compact/expanded surface and Plus use a single physical material. */
- --svcp-conversation-blue-glass:rgba(0,114,164,.46);
+ --svcp-conversation-blue-glass:var(--sv-glass-sky-lower,rgba(0,114,164,.46));
  --svcp-conversation-blue-glass-expanded:var(--svcp-conversation-blue-glass);
- --svcp-conversation-blue-rim:rgba(85,220,247,.68);
- --svcp-conversation-blue-blur:blur(10px) saturate(115%);
+ --svcp-conversation-blue-rim:var(--sv-glass-sky-lower-rim,rgba(85,220,247,.68));
+ --svcp-conversation-blue-blur:var(--sv-glass-sky-blur,blur(10px) saturate(108%));
   --sv-chat-outgoing:#008FFF;
 }
 /* PEARL wallpaper — original white iMessage-like composer.
@@ -16,10 +16,10 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wall
    This preset reuses the SAME existing layout, grid and click handlers. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]{
- --svcp-pearl-control-face:rgba(235,237,240,.62);
+ --svcp-pearl-control-face:var(--sv-white-pearl-surface,rgba(235,237,240,.62));
  --svcp-conversation-blue-glass:var(--svcp-pearl-control-face);
  --svcp-conversation-blue-glass-expanded:var(--svcp-pearl-control-face);
- --svcp-conversation-blue-rim:rgba(255,255,255,.94);
+ --svcp-conversation-blue-rim:var(--sv-white-pearl-rim-color,rgba(255,255,255,.94));
  --svcp-conversation-blue-blur:var(--sv-white-pearl-floating-blur,blur(8px) saturate(108%));
   --sv-chat-outgoing:#3DAEFE;
 }
