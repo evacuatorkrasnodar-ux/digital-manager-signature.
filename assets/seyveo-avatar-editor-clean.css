@@ -119,7 +119,7 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-identity-chevron svg{
  display:block!important;width:12px!important;height:12px!important;
- stroke:currentColor!important;stroke-width:1.7!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:2.15!important;fill:none!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tabs{
  box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
@@ -435,3 +435,6 @@ html:root body #svcpWorkChatScreen #svcpInboxSheet[data-sv-inbox-screen="my-avat
 html:root body #svcpWorkChatScreen #svcpInboxSheet[data-sv-inbox-screen="my-avatar"] :is(.sv-inbox-sheet-panel,.sv-inbox-sheet-body)::after{
  content:none!important;display:none!important;
 }
+
+/* V143: light identity uses the same blue disclosure as the chat. */
+html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-identity-chevron{color:#007AFF!important}
