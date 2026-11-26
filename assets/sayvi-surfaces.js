@@ -1646,6 +1646,13 @@ function mailView(){
    '';
   paint();return true;
  }
+ function mailSelectionFooter(bar,counter,chosen){
+  bar.classList.add('sv-bulk-selection-head');
+  const footer=create('div','sv-bulk-selection-capsule sv-bulk-mail-footer');
+  footer.setAttribute('role','group');footer.setAttribute('aria-label','Действия с выбранными письмами');
+  counter.dataset.svBulkRole='count';counter.textContent='Выбрано: '+chosen;counter.setAttribute('aria-live','polite');
+  footer.append(counter);content.append(footer);return footer;
+ }
  function renderMailBulkBar(visible){
   if(mailFolder==='overview'||(!visible.length&&mailFolder!=='inbox'))return;
   const chosen=visible.filter(m=>selectedMailIds.has(m.id)).length;
@@ -1654,7 +1661,8 @@ function mailView(){
   const counter=create('span','sv-mail-bulk-counter',mailBulkSelecting
    ?chosen+' из '+visible.length
    :mailSearch.trim()?'Найдено: '+visible.length:'Писем: '+visible.length);
-  bar.append(counter);
+  const footer=mailBulkSelecting?mailSelectionFooter(bar,counter,chosen):null;
+  if(!footer)bar.append(counter);
   if(mailFolder==='inbox'&&!mailBulkSelecting){
    const filter=create('button','sv-mail-unread-filter');filter.type='button';
    filter.append(mailIcon('filter'),create('span','',mailUnreadOnly?'Непрочитанные':'Все письма'));
@@ -1662,27 +1670,27 @@ function mailView(){
    filter.addEventListener('click',()=>{mailUnreadOnly=!mailUnreadOnly;paintList();});bar.append(filter);
   }
   if(mailBulkSelecting){
-   // "Отмена" already clears selection: never offer a duplicate "Снять всё".
-   if(visible.length>1&&chosen<visible.length){
-    const all=create('button','sv-mail-bulk-all','Выбрать все');all.type='button';
+   if(visible.length){
+    const fully=chosen===visible.length;
+    const all=create('button','sv-mail-bulk-all',fully?'Снять все':'Выбрать все');all.type='button';
     all.addEventListener('click',()=>{
-     for(const item of visible)selectedMailIds.add(item.id);
+     for(const item of visible)fully?selectedMailIds.delete(item.id):selectedMailIds.add(item.id);
      paintList();
     });
     bar.append(all);
    }
-   if(chosen){
+   {
     const permanent=mailFolder==='trash';
     const clean=create('button','sv-mail-bulk-clean','Удалить');
-    clean.type='button';
+    clean.type='button';clean.dataset.svBulkRole='delete';clean.disabled=!chosen;
     clean.setAttribute('aria-label',permanent
      ?'Удалить навсегда '+chosen+' выбранных писем после подтверждения'
      :'Переместить '+chosen+' выбранных писем в Корзину после подтверждения');
     clean.addEventListener('click',cleanSelectedSampleMail);
-    bar.append(clean);
+    footer.append(clean);
    }
   }
-  const select=create('button','sv-mail-bulk-select',mailBulkSelecting?'Отмена':'Выбрать');
+  const select=create('button','sv-mail-bulk-select',mailBulkSelecting?'Готово':'Выбрать');
   select.type='button';select.setAttribute('aria-pressed',String(mailBulkSelecting));
   select.addEventListener('click',()=>{
    mailBulkSelecting=!mailBulkSelecting;
@@ -1856,31 +1864,32 @@ function mailView(){
   const countLabel=create('strong','sv-mail-drafts-count',mailDraftSelecting
    ?chosenVisible+' из '+list.length
    :mailSearch?'Найдено: '+list.length:'Черновиков: '+list.length);
-  const change=create('button','sv-mail-drafts-select',mailDraftSelecting?'Отмена':'Выбрать');
+  const change=create('button','sv-mail-drafts-select',mailDraftSelecting?'Готово':'Выбрать');
   change.type='button';change.setAttribute('aria-pressed',String(mailDraftSelecting));
   change.addEventListener('click',()=>{
    mailDraftSelecting=!mailDraftSelecting;
    if(!mailDraftSelecting)selectedDraftIds.clear();
    paintList();
   });
-  toolbar.append(countLabel);
+  const footer=mailDraftSelecting&&list.length?mailSelectionFooter(toolbar,countLabel,chosenVisible):null;
+  if(!footer)toolbar.append(countLabel);
   if(mailDraftSelecting&&list.length){
-   // All is shown only while there are unselected drafts.
-   if(list.length>1&&chosenVisible<list.length){
-    const all=create('button','sv-mail-drafts-all','Выбрать все');
+   {
+    const fully=chosenVisible===list.length;
+    const all=create('button','sv-mail-drafts-all',fully?'Снять все':'Выбрать все');
     all.type='button';
     all.addEventListener('click',()=>{
-     for(const item of list)selectedDraftIds.add(item.id);
+     for(const item of list)fully?selectedDraftIds.delete(item.id):selectedDraftIds.add(item.id);
      paintList();
     });
     toolbar.append(all);
    }
-   if(chosenVisible){
+   {
     const remove=create('button','sv-mail-drafts-remove-selected','Удалить');
-    remove.type='button';
+    remove.type='button';remove.dataset.svBulkRole='delete';remove.disabled=!chosenVisible;
     remove.setAttribute('aria-label','Окончательно удалить '+chosenVisible+' выбранных черновиков и их вложения после подтверждения');
     remove.addEventListener('click',()=>removeSelectedDrafts([...selectedDraftIds]));
-    toolbar.append(remove);
+    footer.append(remove);
    }
   }
   if(list.length)toolbar.append(change);
