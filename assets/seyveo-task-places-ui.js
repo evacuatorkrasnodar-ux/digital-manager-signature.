@@ -278,7 +278,8 @@
   const result=meetingDate?.value?hoursAtTime(hours,meetingTime?.value):null;
   status.hidden=result===null;
   status.classList.toggle('is-closed',result===false);
-  status.textContent=result===null?'':result?'По указанным часам в '+meetingTime.value+' открыто':'По указанным часам в '+meetingTime.value+' закрыто · проверь график';
+  status.textContent=result===null?'':result?'В '+meetingTime.value+' открыто':'В '+meetingTime.value+' закрыто';
+  status.title=result===null?'':'По опубликованному графику; возможны изменения.';
  }
  function render(){
   if(!dialog.open)return;
@@ -384,17 +385,23 @@
    const details=places.venueInfo?.(place);
    if(details){
     const strip=node('div','sv-place-venue-details');
-    const addRow=(label,value,body)=>{
+    const addRow=(label,value,body,showHours=false)=>{
      const row=node('div','sv-place-info-row');
      const toggle=node('button','sv-place-info-toggle');toggle.type='button';
      const id='sv-place-info-'+strip.children.length;
      toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls',id);
      const chevron=node('span','sv-place-info-chevron');chevron.setAttribute('aria-hidden','true');chevron.append(viewerIcon('down'));
-     toggle.append(node('span','sv-place-info-label',label),node('strong','sv-place-info-value',value),chevron);
-     const content=node('div','sv-place-info-content');content.id=id;content.hidden=true;
-     toggle.addEventListener('click',()=>{
-      content.hidden=!content.hidden;toggle.setAttribute('aria-expanded',String(!content.hidden));
-     });
+     const labels=node('span','sv-place-info-label-stack');
+     labels.append(node('span','sv-place-info-label',label));
+     if(showHours){const status=node('span','sv-place-hours-status');status.hidden=true;labels.append(status);}
+     toggle.append(labels,node('strong','sv-place-info-value',value),chevron);
+     const content=node('div','sv-place-info-content');content.id=id;
+     const setExpanded=open=>{
+      content.hidden=!open;toggle.setAttribute('aria-expanded',String(open));
+      if(open)content.style.removeProperty('display');else content.style.setProperty('display','none','important');
+     };
+     setExpanded(false);
+     toggle.addEventListener('click',()=>setExpanded(toggle.getAttribute('aria-expanded')!=='true'));
      body(content);row.append(toggle,content);strip.append(row);
     };
     if(details.hours)addRow('Часы работы',details.hours,content=>{
@@ -403,7 +410,7 @@
       const source=node('a','sv-place-info-source','Источник графика ↗');
       source.href=details.hoursSourceURL;source.target='_blank';source.rel='noopener noreferrer';content.append(source);
      }
-    });
+    },true);
     if(details.menuURL){
      addRow('Меню и цены','Посмотреть',content=>{
       for(const item of details.menuPreview||[]){
@@ -418,7 +425,7 @@
      });
     }
     panel.append(strip);
-    if(details.hours){const status=node('p','sv-place-hours-status');status.hidden=true;strip.after(status);refreshHoursStatus();}
+    if(details.hours)refreshHoursStatus();
    }
    if(!details?.hours){
     const unknown=node('p','sv-place-hours-unknown','Часы работы не уточнены');
