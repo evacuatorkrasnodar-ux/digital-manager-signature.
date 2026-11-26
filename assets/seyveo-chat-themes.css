@@ -755,11 +755,12 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"]{
  background:
-  radial-gradient(ellipse 72% 13% at 80% 89%,rgba(255,255,255,.25) 0%,rgba(237,250,255,.14) 47%,transparent 100%),
-  radial-gradient(ellipse 65% 17% at 20% 70%,rgba(246,252,255,.36) 0%,rgba(230,247,255,.17) 55%,transparent 100%),
-  radial-gradient(ellipse 70% 16% at 82% 53%,rgba(250,253,255,.17) 0%,transparent 100%),
-  radial-gradient(ellipse 60% 13% at 17% 33%,rgba(230,248,255,.12) 0%,transparent 100%),
-  linear-gradient(164deg,#0F75D2 0%,#238FDF 43%,#59B4E8 71%,#A4D9ED 100%)
+  radial-gradient(ellipse 36% 8% at 85% 66%,rgba(231,247,255,.39),rgba(210,240,255,.13) 53%,transparent 100%),
+  radial-gradient(ellipse 30% 10% at 68% 72%,rgba(222,246,255,.29),transparent 100%),
+  radial-gradient(ellipse 56% 5% at 15% 29%,rgba(183,230,255,.38),rgba(180,228,255,.09) 55%,transparent 100%),
+  radial-gradient(ellipse 37% 4% at 73% 37%,rgba(190,232,255,.22),transparent 100%),
+  radial-gradient(ellipse 62% 11% at 94% 82%,rgba(210,241,255,.31),transparent 100%),
+  linear-gradient(160deg,#1D64DA 0%,#278DE7 35%,#359DEB 54%,#50B5F3 78%,#74CEFA 100%)
  !important;
  background-size:cover!important;
  background-attachment:local!important;
@@ -928,12 +929,12 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
    media/voice, standalone emoji, Sayvi helper and actionable message menus. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-kind="personal"][data-chat-wallpaper="sky"] #svcpMessages{
- gap:6px!important;
+ gap:4px!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-kind="personal"][data-chat-wallpaper="sky"] #svcpMessages
  > .svcp-bubble.is-other:not(.is-sayvi):not(.is-task):not(.is-poll):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)):not(:has(.svcp-voice-wave)){
- background:rgba(39,115,185,.91)!important;background-image:none!important;
+ background:rgba(17,86,150,.57)!important;background-image:none!important;
  color:#FFFFFF!important;border:0!important;box-shadow:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
@@ -1002,4 +1003,10 @@ html:root:not([data-theme="dark"]) body #seyveoFamilyDialog[data-chat-wallpaper=
 html:root:not([data-theme="dark"]) body #seyveoFamilyDialog[data-chat-wallpaper="sky"]
  .svf-thread > .svf-msg{
  box-shadow:none!important;
+}
+
+/* SKY reference: retain the orange poll semantics, but give metadata
+   sufficient contrast on the blue background. No data or actions changed. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages > .svcp-bubble.is-poll :is(.sv-poll-finished,.svcp-message-stamp,.svcp-time,.svcp-message-local-check){
+ color:#173C65!important;-webkit-text-fill-color:#173C65!important;opacity:1!important;text-shadow:none!important;
 }

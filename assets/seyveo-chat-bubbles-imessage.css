@@ -7,7 +7,7 @@
 /* Geometry shared; Sky keeps original tints, Pearl keeps semantic colors. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"]{
- --svcp-imsg-in-bg:rgba(39,115,185,.91);
+ --svcp-imsg-in-bg:rgba(17,86,150,.57);
  --svcp-imsg-out-bg:#008FFF;
  --svcp-imsg-in-ink:#FFFFFF;
 }
@@ -249,7 +249,7 @@ html body #svcpWorkChatScreen #svcpMessages .svcp-manager-message-avatar > .svcp
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
  > article.svcp-bubble.svcp-imessage-text.is-other:not(.is-task):not(.is-poll):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only){
- background:rgba(39,115,185,.91)!important;color:#FFF!important;
+ background:var(--svcp-imsg-in-bg)!important;color:#FFF!important;
 }
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
@@ -275,4 +275,16 @@ html body #svcpWorkChatScreen #svcpMessages .svcp-manager-message-avatar > .svcp
  > .svcp-message-stamp > .svcp-time{
  color:rgba(255,255,255,.9)!important;-webkit-text-fill-color:rgba(255,255,255,.9)!important;
  opacity:1!important;filter:none!important;text-shadow:none!important;
+}
+
+/* SKY: closer conversational rhythm; all time and author metadata remain. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"][data-room-kind="personal"] #svcpMessages > article.svcp-bubble.svcp-imessage-text{margin-top:3px!important}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"][data-room-kind="personal"] #svcpMessages > article.svcp-bubble.svcp-imessage-text.svcp-imessage-follow{margin-top:1px!important}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi) > .svcp-bubble-meta > .svcp-sender,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi).svcp-bottom-stamp > .svcp-message-stamp,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi).svcp-bottom-stamp > .svcp-message-stamp > .svcp-time{
+ color:rgba(255,255,255,.93)!important;-webkit-text-fill-color:rgba(255,255,255,.93)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi):not(.is-task):not(.is-poll):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only){background:#2569A8!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 }
