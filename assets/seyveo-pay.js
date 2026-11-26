@@ -15,8 +15,9 @@ tabs.className='syp-view-switch';
 tabs.setAttribute('role','group');
 tabs.setAttribute('aria-label','Раздел кошелька');
 // Small notebook-style icon choices, not another thick segmented capsule.
-const cardIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 10h17M7 15h4"/></svg>';
-const financesIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V11M10 20V6M16 20V14M22 20V3"/><path d="M2.5 20.5h20"/></svg>';
+// Matched optical bounds and rounded 1.55px strokes: card/chip and financial trend.
+const cardIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2.5" y="5.25" width="19" height="13.5" rx="3"/><rect x="6" y="8.5" width="4.75" height="4" rx="1"/><path d="M8.375 8.5v4M14.25 10h3.75M6 15.75h2.75m3 0h2.75"/></svg>';
+const financesIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 20.25h18M4.75 20.25v-5.5a1 1 0 0 1 1-1H7a1 1 0 0 1 1 1v5.5m2.5 0v-7.5a1 1 0 0 1 1-1h1.25a1 1 0 0 1 1 1v7.5m2.5 0V9.75a1 1 0 0 1 1-1h1.25a1 1 0 0 1 1 1v10.5"/><path d="m3.5 10 5-4.5 4.75 2 6.5-4.25m-3.75 0h3.75V7"/></svg>';
 tabs.innerHTML='<button type="button" data-syp-tab="card" aria-pressed="true" aria-controls="sypCardHome"><span class="syp-view-icon">'+cardIcon+'</span><span>Карта</span></button>'+
  '<button type="button" data-syp-tab="finances" aria-pressed="false" aria-controls="sypBudgetScreen"><span class="syp-view-icon">'+financesIcon+'</span><span>Финансы</span></button>';
 home.id='sypCardHome';
