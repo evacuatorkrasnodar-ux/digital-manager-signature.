@@ -706,8 +706,16 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  color:#14171C!important;border-color:transparent!important;
  box-shadow:var(--sv-segment-selected-shadow)!important;
 }
-/* V105: All Tasks V104 is the single shared optical standard.
-   No route-local tint, selection opacity or shadow overrides. */
+/* V106: preserve the approved desktop material. Touch displays need
+   slightly more optical separation on a white canvas. This is a shared
+   device-level adjustment, never a page-specific override. */
+@media (hover:none) and (pointer:coarse){
+ :root[data-theme="light"]{
+  --sv-segment-track:rgba(210,216,225,.48);
+  --sv-segment-track-shadow:0 2px 7px rgba(38,48,60,.08),inset 0 1px 0 rgba(255,255,255,.55);
+  --sv-segment-selected-shadow:0 2px 5px rgba(38,48,60,.16),0 0 1px rgba(38,48,60,.14);
+ }
+}
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"]{--sv-segment-track:#E5E5EA;--sv-segment-selected:#fff}
  html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]),
