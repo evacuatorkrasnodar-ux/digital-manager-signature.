@@ -267,15 +267,18 @@ function mount(target,{
  }
  const draftTitle=item=>{const name=String(item.name||'').trim();return name&&!/^документ(?: · копия)?(?:\.(?:pdf|docx|txt))?$/i.test(name)?name:String(item.text||'').trim().split('\n')[0].trim().slice(0,70)||'Документ';};
  let selectedDrafts=null;
+ const draftPage=editor.closest('#sayviSurfacePage');
+ const clearDraftFooter=()=>draftPage?.querySelector(':scope > .sv-doc-draft-selection-footer')?.remove();
  async function refreshDrafts(){
   const seq=++draftRefresh;
   if(!drafts)return;
   let items;
-  try{items=await drafts.list(area);}catch{if(seq===draftRefresh){draftSection.hidden=false;draftSection.replaceChildren($('p','sv-doc-draft-feedback','Не удалось открыть черновики.'));}return;}
+  try{items=await drafts.list(area);}catch{if(seq===draftRefresh){clearDraftFooter();draftSection.hidden=false;draftSection.replaceChildren($('p','sv-doc-draft-feedback','Не удалось открыть черновики.'));}return;}
   if(seq!==draftRefresh||!editor.isConnected)return;
   const wasOpen=Boolean(draftSection.querySelector('details[open]'));
+  clearDraftFooter();
   draftSection.hidden=!items.length;draftSection.replaceChildren();
-  if(!items.length)return;
+  if(!items.length){selectedDrafts=null;return;}
   const details=$('details','sv-doc-draft-list');details.open=wasOpen||!!selectedDrafts;
   const summary=$('summary','sv-doc-draft-summary');
   summary.append(toolArt('create'),$('strong','','Черновики'),$('span','sv-doc-draft-count',String(items.length)));details.append(summary);
@@ -294,7 +297,9 @@ function mount(target,{
     try{for(const id of ids){await drafts.remove(area,id);if(draftId===id){newDraft();if(mode==='create')render();}}selectedDrafts=null;await refreshDrafts();}
     catch{setDraftFeedback('Не удалось удалить все выбранные черновики.');void refreshDrafts();}
    },'sv-doc-draft-bulk-delete');remove.disabled=!selectedDrafts.size;remove.dataset.svBulkRole='delete';remove.setAttribute('aria-label','Удалить выбранные черновики');remove.innerHTML=window.SEYVEO_DOCUMENT_ICONS?.markup('delete')||'';
-   bar.append(count,remove);details.append(bar);
+   bar.append(count,remove);details.classList.add('sv-doc-draft-selecting');
+   if(draftPage)draftPage.append(bar);else details.append(bar);
+   details.addEventListener('toggle',()=>{if(!details.open&&selectedDrafts&&details.isConnected){selectedDrafts=null;clearDraftFooter();void refreshDrafts();}});
   }
   for(const item of items){
    const row=$('div','sv-doc-draft-row');
