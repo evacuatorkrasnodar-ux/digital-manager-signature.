@@ -8,8 +8,8 @@
 #svWorkShell #svNotebookCategories[hidden]{display:none!important}
 #svWorkShell #svNotebookCategories .sv-nb-category{
  appearance:none;-webkit-appearance:none;display:flex;align-items:center;gap:8px;min-height:44px;
- min-width:0;padding:8px 11px;border:1px solid rgba(118,128,145,.14);border-radius:14px;
- background:rgba(136,145,158,.075);color:var(--text,#171a20);box-shadow:none;text-align:left;
+ min-width:0;padding:8px 11px;border:1px solid rgba(118,128,145,.11);border-radius:14px;
+ background:rgba(136,145,158,.045);color:var(--text,#171a20);box-shadow:none;text-align:left;
  font:500 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif
 }
 #svWorkShell #svNotebookCategories .sv-nb-category[aria-pressed="true"]{background:rgba(0,122,255,.085);border-color:rgba(0,122,255,.32)}
@@ -34,3 +34,35 @@ dialog.sv-nb-folder-sheet::backdrop{background:#0003;backdrop-filter:blur(5px)}
 html[data-theme="dark"] dialog.sv-nb-folder-sheet{background:#252a31;color:#fff}
 html[data-theme="dark"] .sv-nb-folder-sheet .sv-nb-folder-row{color:#fff;border-color:#ffffff20}
 @media(max-width:360px){#svWorkShell[data-active="notes"] #svNotebookCategories{margin-inline:8px;gap:5px}#svWorkShell #svNotebookCategories .sv-nb-category{padding-inline:7px;gap:5px;font-size:13px}}
+
+/* Catalog home and category screen share the same fixed work capsule.
+   Only the selected category's list is scrollable; home previews three notes. */
+#svWorkShell[data-active="notes"] #svNotebookCategories[data-nb-view="detail"]{
+ display:flex!important;align-items:center;gap:0;margin-block:6px 2px;
+}
+#svWorkShell[data-active="notes"] #svNotebookCategories .sv-nb-catalog-back,
+#svWorkShell[data-active="notes"] #svNotebookCategories .sv-nb-home-folder-link,
+#svWorkShell[data-active="notes"] #svNotebookCategories .sv-nb-folder-add,
+#svWorkShell[data-active="notes"] #svNotebookCategories .sv-nb-home-folder-row{
+ appearance:none;-webkit-appearance:none;display:flex;align-items:center;gap:8px;
+ box-sizing:border-box;min-height:44px;min-width:0;padding:4px 8px;border:0;
+ background:transparent;color:var(--text,#171a20);box-shadow:none;text-align:left;
+ font:500 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;cursor:pointer;
+}
+#svWorkShell #svNotebookCategories .sv-nb-catalog-back svg,
+#svWorkShell #svNotebookCategories .sv-nb-folder-add svg,
+#svWorkShell #svNotebookCategories .sv-nb-home-folder-row svg{
+ width:22px;height:22px;flex:0 0 22px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
+}
+#svWorkShell #svNotebookCategories .sv-nb-catalog-back{padding-inline:0 12px}
+#svWorkShell #svNotebookCategories .sv-nb-home-folders{grid-column:1/-1;min-width:0;margin-top:2px}
+#svWorkShell #svNotebookCategories .sv-nb-home-folder-head{display:flex;align-items:center;justify-content:space-between;padding-inline:4px}
+#svWorkShell #svNotebookCategories .sv-nb-home-folder-head strong{font:600 14px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:var(--secondary,#55606d)}
+#svWorkShell #svNotebookCategories .sv-nb-folder-add{min-width:44px;justify-content:center}
+#svWorkShell #svNotebookCategories .sv-nb-home-folder-link{color:#007aff;padding-inline:4px}
+#svWorkShell #svNotebookCategories .sv-nb-home-folder-row{width:100%;border-bottom:1px solid rgba(118,128,145,.14);padding-inline:4px}
+#svWorkShell #svNotebookCategories .sv-nb-home-folder-row span{min-width:0;flex:1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+#svWorkShell #svNotebookCategories .sv-nb-home-folder-row small{color:#78818d;font-variant-numeric:tabular-nums}
+dialog.sv-nb-folder-sheet .sv-nb-folder-rename{font-size:13px;padding-inline:4px;flex-shrink:0}
+dialog.sv-nb-folder-sheet button[hidden]{display:none!important}
+dialog.sv-nb-folder-sheet .sv-nb-folder-form{flex-wrap:wrap}
