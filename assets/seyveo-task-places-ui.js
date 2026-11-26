@@ -46,6 +46,9 @@
  function viewerIcon(name){
   const icons={
    down:'<path d="m6 9 6 6 6-6"/>',
+   back:'<path d="m15 5-7 7 7 7"/>',
+   navigate:'<path d="m3 11 18-8-8 18-2-8-8-2Z"/>',
+   route:'<circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="5" r="2.5"/><path d="m7 17 10-10"/>',
    close:'<path d="M6 6l12 12M18 6 6 18"/>',
    plus:'<path d="M12 5v14M5 12h14"/>',
    minus:'<path d="M5 12h14"/>',
@@ -74,29 +77,52 @@
   const header=node('div','sv-place-map-header');
   const headline=node('div','sv-place-map-headline');
   headline.append(node('strong','',target.name),node('span','',target.address));
-  const close=node('button','sv-place-map-close');close.type='button';close.append(viewerIcon('down'));
-  close.setAttribute('aria-label','Свернуть карту');close.addEventListener('click',closeMapViewer);
-  header.append(headline,close);
+  const close=node('button','sv-place-map-close');close.type='button';close.append(viewerIcon('back'));
+  close.setAttribute('aria-label','Назад к новому делу');close.addEventListener('click',closeMapViewer);
+  const mapTitle=node('strong','sv-place-map-title','Карта');
+  const spacer=node('span','sv-place-map-header-spacer');spacer.setAttribute('aria-hidden','true');
+  header.append(close,mapTitle,spacer);
   const viewport=node('div','sv-place-map-viewport');viewport.setAttribute('aria-label','Интерактивная карта: перетаскивай, увеличивай двумя пальцами или кнопками');
   const tilesLayer=node('div','sv-place-map-layer');
-  const pin=placeMarker(target,'sv-place-map-marker');
+  const pin=placeMarker(target,'sv-place-map-marker sv-place-jade-pin');
   const controls=node('div','sv-place-map-controls');
   const zoomIn=node('button','sv-place-map-zoom');zoomIn.type='button';zoomIn.append(viewerIcon('plus'));zoomIn.setAttribute('aria-label','Приблизить карту');
   const zoomOut=node('button','sv-place-map-zoom');zoomOut.type='button';zoomOut.append(viewerIcon('minus'));zoomOut.setAttribute('aria-label','Отдалить карту');
   const centerButton=node('button','sv-place-map-center');centerButton.type='button';centerButton.append(viewerIcon('center'));centerButton.setAttribute('aria-label','Вернуться к месту встречи');
-  controls.append(zoomIn,zoomOut,centerButton);
+  controls.append(centerButton,zoomIn,zoomOut);
   const attribution=node('a','sv-place-map-credit','© OpenStreetMap contributors');
   attribution.href='https://www.openstreetmap.org/copyright';attribution.target='_blank';attribution.rel='noopener noreferrer';
   viewport.append(tilesLayer,pin,controls,attribution);
   const footer=node('div','sv-place-map-footer');
-  const navigatorLink=node('a','sv-place-map-route-primary','Маршрут в Навигаторе');
+  const destinationCard=node('div','sv-place-map-destination');
+  const photoURL=places.photoURL(target,250);
+  if(photoURL){
+   const imageBox=node('div','sv-place-map-destination-photo');
+   const image=node('img');image.src=photoURL;image.alt='';image.decoding='async';
+   image.addEventListener('error',()=>imageBox.remove(),{once:true});
+   const info=places.photoInfo(target);
+   imageBox.append(image);
+   if(info?.sourceURL){const credit=node('a','sv-place-map-photo-credit','Фото');credit.href=info.sourceURL;credit.target='_blank';credit.rel='noopener noreferrer';credit.setAttribute('aria-label','Источник и лицензия фотографии');credit.title=[info.author,info.license].filter(Boolean).join(' · ');imageBox.append(credit);}
+   destinationCard.append(imageBox);
+  }
+  const brand=node('span','sv-place-map-brand','SEYVEO');
+  headline.prepend(brand);
+  const travel=window.SEYVEO_TASK_TRAVEL_EDITOR?.forSave?.();
+  if(travel&&['yandex','2gis'].includes(travel.source)){
+   const modes={driving:'На машине',walking:'Пешком',transit:'Транспорт',taxi:'Такси'};
+   headline.append(node('span','sv-place-map-travel',(modes[travel.mode]||'В пути')+' · '+travel.minutes+' мин'));
+  }
+  destinationCard.append(headline);
+  const navigatorLink=node('a','sv-place-map-route-primary');
+  navigatorLink.append(viewerIcon('navigate'),node('span','','Старт'));
   navigatorLink.href=places.navigatorRouteURL(target);
   navigatorLink.setAttribute('aria-label','Передать адрес в Яндекс Навигатор');
-  const webRoute=node('a','sv-place-map-route-web','В браузере');
+  const webRoute=node('a','sv-place-map-route-web');webRoute.append(viewerIcon('route'),node('span','','Маршрут'));
   webRoute.setAttribute('aria-label','Открыть маршрут в браузере');
   webRoute.href=places.yandexRouteURL(target);webRoute.target='_blank';webRoute.rel='noopener noreferrer';
-  footer.append(navigatorLink,webRoute);
-  sheet.append(handle,header,viewport,footer);shade.append(sheet);
+  const actions=node('div','sv-place-map-actions');actions.append(navigatorLink,webRoute);
+  footer.append(handle,destinationCard,actions);
+  sheet.append(viewport,header,footer);shade.append(sheet);
   shade.addEventListener('click',closeMapViewer);
   shade.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeMapViewer()}});
   // A downward swipe from the sheet header dismisses it. Map gestures stay
@@ -190,7 +216,7 @@
   if(window.SEYVEO_YANDEX_MAPS?.enabled()){
    pendingMap=true;nativeHost.hidden=false;pin.hidden=true;attribution.hidden=true;controls.hidden=true;
    showStatus('Загрузка карты…');
-   const mapOptions={isActive:()=>mapViewer===shade,onZoom:value=>{zoomIn.disabled=value>=18;zoomOut.disabled=value<=3}};
+   const mapOptions={isActive:()=>mapViewer===shade,onZoom:value=>{zoomIn.disabled=value>=18;zoomOut.disabled=value<=3},premium:true};
    window.SEYVEO_YANDEX_MAPS.mount(nativeHost,target,mapOptions).catch(error=>{
     if(mapViewer!==shade||window.SEYVEO_YANDEX_MAPS.status()!=='map-init-error')throw error;
     nativeHost.replaceChildren();

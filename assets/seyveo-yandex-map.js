@@ -10,16 +10,16 @@
   try{return String(root.SEYVEO_YANDEX_MAPS_CONFIG?.apiKey||PUBLIC_BROWSER_KEY).trim()}catch{return PUBLIC_BROWSER_KEY}
  }
  const enabled=()=>!!browserKey();
- function customization(){
+ function customization(premium=false){
   const fill=(tags,color,types)=>({tags:{any:tags},elements:'geometry.fill',...(types?{types}:{}),stylers:[{color}]});
   return [
-   fill(['land'],'#F5F5F0',['polygon']),
-   fill(['urban_area'],'#F0EFEB',['polygon']),
-   fill(['vegetation','park'],'#DCECCF',['polygon']),
-   fill(['water'],'#94CDEB'),
-   fill(['building'],'#DEDAD5',['polygon']),
+   fill(['land'],premium?'#F6F7F7':'#F5F5F0',['polygon']),
+   fill(['urban_area'],premium?'#EDF0F1':'#F0EFEB',['polygon']),
+   fill(['vegetation','park'],premium?'#DCE8DC':'#DCECCF',['polygon']),
+   fill(['water'],premium?'#B1CED5':'#94CDEB'),
+   fill(['building'],premium?'#E0E5E8':'#DEDAD5',['polygon']),
    fill(['road'],'#FFFFFF',['polyline']),
-   fill(['road_1','road_2','road_3'],'#F7D68A',['polyline'])
+   fill(['road_1','road_2','road_3'],premium?'#F7F5E9':'#F7D68A',['polyline'])
   ];
  }
  function load(){
@@ -43,7 +43,7 @@
   }).catch(error=>{sdkPromise=null;throw error});
   return sdkPromise;
  }
- async function mount(host,target,{isActive=()=>true,onZoom=()=>{},styled=true}={}){
+ async function mount(host,target,{isActive=()=>true,onZoom=()=>{},styled=true,premium=false}={}){
   if(!Number.isFinite(target?.lat)||!Number.isFinite(target?.lon))throw new Error('Invalid map coordinates');
   const sdk=await load();
   if(!isActive()||!host.isConnected)return null;
@@ -52,10 +52,10 @@
   lastStatus='initializing';
   try{
    map=new sdk.YMap(host,{location:{center,zoom:16},mode:styled?'vector':'auto',theme:'light',zoomRange:{min:3,max:18}});
-   map.addChild(new sdk.YMapDefaultSchemeLayer(styled?{customization:customization()}:{}));
+   map.addChild(new sdk.YMapDefaultSchemeLayer(styled?{customization:customization(premium)}:{}));
    map.addChild(new sdk.YMapDefaultFeaturesLayer());
    const pin=root.document.createElement('div');pin.className='sv-yandex-meeting-pin';pin.setAttribute('aria-label',target.name||'Место встречи');
-   pin.textContent='●';
+   if(premium){pin.classList.add('sv-place-jade-pin');}else pin.textContent='●';
    map.addChild(new sdk.YMapMarker({coordinates:center},pin));
    if(sdk.YMapListener)map.addChild(new sdk.YMapListener({onUpdate:()=>onZoom(map.zoom)}));
    onZoom(map.zoom);lastStatus='map-created';
