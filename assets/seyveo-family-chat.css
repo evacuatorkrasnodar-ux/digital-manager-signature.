@@ -153,10 +153,28 @@
 /* Matte header material ONLY while Family's Chat tab is active.
    Plans and other application sections keep their existing surfaces. */
 #seyveoFamilyDialog:has(#svfChatPanel:not([hidden])) .svf-head{
- background:rgba(232,241,249,.15);
- border-bottom:1px solid rgba(255,255,255,.25);
- -webkit-backdrop-filter:blur(16px) saturate(110%);
- backdrop-filter:blur(16px) saturate(110%);
+ position:relative;isolation:isolate;
+ background:transparent;border-bottom-color:transparent;
+ --svf-head-edge:calc(16px + var(--sv-nav-single-size,44px));
+ --svf-head-tint:rgba(30,35,42,.70);
+}
+:root[data-theme="light"] #seyveoFamilyDialog .svf-head{--svf-head-tint:rgba(250,250,251,.82)}
+#seyveoFamilyDialog:has(#svfChatPanel:not([hidden])) .svf-head::before{
+ content:"";position:absolute;inset:0 0 auto;z-index:-1;pointer-events:none;
+ height:calc(var(--svf-head-edge) + 32px);
+ background:var(--svf-head-tint);
+ -webkit-backdrop-filter:blur(22px) saturate(105%);backdrop-filter:blur(22px) saturate(105%);
+ -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 var(--svf-head-edge),transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0,#000 var(--svf-head-edge),transparent 100%);
+}
+@media(max-width:370px){
+ #seyveoFamilyDialog:has(#svfChatPanel:not([hidden])) .svf-head{--svf-head-edge:calc(12px + var(--sv-nav-single-size,44px))}
+}
+@media(prefers-reduced-transparency:reduce){
+ #seyveoFamilyDialog:has(#svfChatPanel:not([hidden])) .svf-head::before{
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  background:var(--bg,#20252b);
+ }
 }
 #seyveoFamilyDialog:has(#svfChatPanel:not([hidden])) #svfClose.svf-iconbutton{
  width:44px;height:44px;min-width:44px;min-height:44px;
