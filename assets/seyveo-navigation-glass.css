@@ -799,6 +799,29 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   bottom:-24px!important;
  }
 }
+/* V159: company card uses the existing measured native glass layer.
+   Align its optical edge to the lower edge of the 44px back button. */
+@layer seyveo-avatar-header-material{
+ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.sv-scroll-glass-ready[open] > .seyveo-passport-dialog-head{
+  isolation:isolate!important;overflow:visible!important;
+  background:transparent!important;background-image:none!important;
+  border:0!important;box-shadow:none!important;
+ }
+ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.sv-scroll-glass-ready[open] > .seyveo-passport-dialog-head > .sv-scroll-glass-material{
+  opacity:1!important;
+  bottom:calc(-24px + (var(--sv-header-compact-row,48px) - var(--sv-nav-single-size,44px)) / 2)!important;
+ }
+ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] > .seyveo-passport-dialog-head > :is(button.seyveo-dialog-close,#seyveoCompanyEditTop.is-header-action){
+  background:var(--sv-white-pearl-surface)!important;
+  border:var(--sv-white-pearl-edge)!important;
+  box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+  backdrop-filter:var(--sv-white-pearl-blur)!important;
+ }
+ @media(prefers-reduced-transparency:reduce){
+  html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.sv-scroll-glass-ready[open] > .seyveo-passport-dialog-head > .sv-scroll-glass-material{bottom:0!important}
+ }
+}
 /* V156: Messages settings and notification sheets scroll underneath the existing title row.
    Keep the sheet geometry, back button, cards and scroll height unchanged. */
 @layer seyveo-avatar-header-material{
