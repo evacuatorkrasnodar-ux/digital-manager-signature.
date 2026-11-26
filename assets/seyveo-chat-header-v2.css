@@ -214,15 +214,22 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 /* SKY shares the same fade, blur and start/end coordinates as WHITE,
    but keeps the cool blue reflection of its wallpaper. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2::before{
- /* The visible frosted glass begins at the TOP edge beside Back/avatar,
-    not in a bright stripe below the avatar. Same fade length as White. */
- background:linear-gradient(180deg,
-  rgba(213,239,252,.56) 0%,
-  rgba(193,231,249,.49) 28%,
-  rgba(170,218,246,.36) 52%,
-  rgba(157,213,245,.16) 78%,
-  rgba(157,213,245,0) 100%
- )!important;
+ /* Same approved optical surface as Avatar/White, tinted only by
+    the existing Sky wallpaper. End at the name, with a 12px feather. */
+ background:var(--sv-white-pearl-floating-dock)!important;background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ bottom:auto!important;
+ height:calc(2px + env(safe-area-inset-top,0px) + var(--svcp-header-avatar,56px) + var(--svcp-header-overlap,-5px) + var(--svcp-header-label,28px) + 12px)!important;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2::before{
+  background:#167ebd!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  -webkit-mask-image:none!important;mask-image:none!important;
+ }
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
  background:var(--sv-chat-blue-surface,rgba(11,84,174,.68))!important;
