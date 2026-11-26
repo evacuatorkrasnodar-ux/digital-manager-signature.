@@ -41,3 +41,6 @@ html:root body #homePage #svSayviHomeWeather.sv-home-music-weather-replaced{visi
 :root[data-theme=dark] #homePage #svHomeInlineMusic{--sv-home-player-ink:#f3f4f6;--sv-home-player-sub:#afb3b9;--sv-home-player-line:#52565e}
 @keyframes sv-home-player-fade{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){#homePage #svHomeInlineMusic{animation:none}}
+
+/* Hide both faces as well as their container; retain the weather row's geometry. */
+html:root body #homePage #svSayviHomeWeather.sv-home-music-weather-replaced > :is(.sv-home-weather-today-face,.sv-home-weather-week-face){opacity:0!important;visibility:hidden!important;pointer-events:none!important;animation:none!important;}

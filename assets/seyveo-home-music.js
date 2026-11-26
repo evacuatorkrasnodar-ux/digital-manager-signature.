@@ -20,7 +20,31 @@ function init(){
  let frame=0,weatherMode=false,wasSession=false,weather=null,observer=null;
  const onHome=()=>!home.hidden&&(!location.hash||location.hash==='#home')&&!root.classList.contains('seyveo-conversation');
  const fmt=n=>{n=Math.max(0,Math.floor(Number.isFinite(n)?n:0));return Math.floor(n/60)+':'+String(n%60).padStart(2,'0')};
- function replaceWeather(on){if(weather)weather.classList.toggle('sv-home-music-weather-replaced',on)}
+ // Keep the weather's measured footprint, but suppress its paint and hit target.
+ // The existing arrival/reveal rules use !important and can otherwise win.
+ const weatherPaint=new WeakMap();
+ function replaceWeather(on){
+  if(!weather)return;
+  if(on){
+   if(!weatherPaint.has(weather)){
+    weatherPaint.set(weather,{styles:['opacity','visibility','pointer-events','animation'].map(name=>[name,weather.style.getPropertyValue(name),weather.style.getPropertyPriority(name)]),aria:weather.getAttribute('aria-hidden'),tab:weather.getAttribute('tabindex')});
+   }
+   weather.classList.add('sv-home-music-weather-replaced');
+   weather.style.setProperty('opacity','0','important');
+   weather.style.setProperty('visibility','hidden','important');
+   weather.style.setProperty('pointer-events','none','important');
+   weather.style.setProperty('animation','none','important');
+   weather.setAttribute('aria-hidden','true');
+   weather.tabIndex=-1;
+  }else{
+   const saved=weatherPaint.get(weather);
+   weather.classList.remove('sv-home-music-weather-replaced');
+   if(!saved)return;
+   for(const [name,value,priority] of saved.styles){if(value)weather.style.setProperty(name,value,priority);else weather.style.removeProperty(name)}
+   for(const [name,value] of [['aria-hidden',saved.aria],['tabindex',saved.tab]]){if(value===null)weather.removeAttribute(name);else weather.setAttribute(name,value)}
+   weatherPaint.delete(weather);
+  }
+ }
  function hide(){panel.hidden=back.hidden=true;replaceWeather(false)}
  function updateTime(){
   if(panel.hidden)return;
