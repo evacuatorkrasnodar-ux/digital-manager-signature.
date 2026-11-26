@@ -297,7 +297,7 @@
  shell.insertBefore(allTasksTabs,toolPanel);
  // Rebuilt actions: just one floating capsule, with no footer or backdrop.
  const actionCapsule=document.createElement('nav');
- actionCapsule.id='svTaskActionCapsule';
+ actionCapsule.id='svTaskActionCapsule';actionCapsule.classList.add('sv-bulk-selection-capsule');
  actionCapsule.hidden=true;
  actionCapsule.setAttribute('aria-label','Действия с выбранными делами');
  document.body.append(actionCapsule);
@@ -372,6 +372,7 @@
   input.setAttribute('aria-label','Поиск по названию дела');
   input.addEventListener('input',()=>{query=input.value;paintResults()});
   toolPanel.append(input);
+  const selectionHead=make('div','sv-bulk-selection-head');selectionHead.id='svTaskSelectionHead';selectionHead.hidden=!selectionActive;toolPanel.append(selectionHead);
   let results=make('div','sv-tool-results');
   allTasksTabs.replaceChildren();
   for(const [key,label] of [['all','Все'],['active','Активные'],['done','Выполненные']]){
@@ -391,8 +392,8 @@
     hits.forEach(t=>fully?selected.delete(t.id):selected.add(t.id));paint();
    });
    counter=make('span','sv-task-count','Выбрано: 0');
-   counter.setAttribute('aria-live','polite');
-   deleteButton=make('button','sv-task-delete','Удалить');deleteButton.type='button';
+   counter.setAttribute('aria-live','polite');counter.dataset.svBulkRole='count';
+   deleteButton=make('button','sv-task-delete','Удалить');deleteButton.type='button';deleteButton.dataset.svBulkRole='delete';
    deleteButton.addEventListener('click',()=>{
     const ids=[...selected];if(!ids.length)return;
     if(!window.confirm('Переместить выбранные дела ('+ids.length+') в «Недавно удалённые»? Их можно вернуть в течение 30 дней.'))return;
@@ -401,10 +402,11 @@
     }
     selected.clear();paint();
    });
-   const cancel=make('button','sv-task-cancel','Отмена');cancel.type='button';
-   cancel.setAttribute('aria-label','Отменить выбор дел');
-   cancel.addEventListener('click',()=>{selected.clear();paint()});
-   actionCapsule.append(selectAll,counter,cancel,deleteButton);
+   const cancel=make('button','sv-task-cancel','Готово');cancel.type='button';
+   cancel.setAttribute('aria-label','Завершить выбор дел');
+   cancel.addEventListener('click',()=>setMode(''));
+   selectionHead.append(selectAll,cancel);
+   actionCapsule.append(counter,deleteButton);
   }
   function paintResults(){
    results.replaceChildren();
