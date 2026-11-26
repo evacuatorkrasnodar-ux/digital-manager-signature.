@@ -29,6 +29,7 @@ function clearPreview(){
  if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null;}
 }
 function reset(){
+ document.getElementById('svDocArchiveScope')?.remove();
  window.SEYVEO_DOCS_STUDIO?.reset?.();
  clearPreview();
  files={personal:null,business:null};stored={personal:false,business:false};
@@ -171,7 +172,7 @@ function bindDocumentScroll(body){
  if(!body||docScrollBodies.has(body))return;
  docScrollBodies.add(body);
  body.addEventListener('scroll',()=>{
-  const pinned=body.querySelector('.sv-doc-center > .sv-doc-pinned-switch');
+  const pinned=body.parentElement?.querySelector(':scope > #svDocArchiveScope')||body.querySelector('.sv-doc-center > .sv-doc-pinned-switch');
   if(pinned)pinned.classList.toggle('sv-doc-under-scroll',body.scrollTop>2);
  },{passive:true});
 }
@@ -187,6 +188,7 @@ function draw(){
  clearPreview();host.replaceChildren();
 
  const page=document.getElementById('sayviSurfacePage');
+ document.getElementById('svDocArchiveScope')?.remove();
  if(page)page.dataset.svDocView=view==='flow'?'flow':'archive';
  const switcher=el('div','sv-doc-switch');
  switcher.setAttribute('role','group');switcher.setAttribute('aria-label','Пространство документов');
@@ -194,7 +196,9 @@ function draw(){
   const b=button(names[key],()=>setArea(key),'sv-doc-tab');
   b.setAttribute('aria-pressed',String(area===key));switcher.append(b);
  }
- const pinned=el('div','sv-doc-pinned-switch');pinned.append(switcher);host.append(pinned);
+ const pinned=el('div','sv-doc-pinned-switch');pinned.append(switcher);
+ const titlebar=page?.querySelector(':scope > .sv-deep-top');
+ if(view==='archive'&&titlebar){pinned.id='svDocArchiveScope';titlebar.after(pinned);}else host.append(pinned);
  const scrollBody=host.closest('#sayviSurfaceBody');
  if(scrollBody){
   bindDocumentScroll(scrollBody);
