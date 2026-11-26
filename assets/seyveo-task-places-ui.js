@@ -215,7 +215,7 @@
  // A place suggested for a date or business meeting still needs the person's
  // explicit confirmation before it can become a task destination.
  function suggest(candidate){
-  const next=places.cleanPlace(candidate);if(!next||!dialog.open)return false;
+  const next=places.cleanPlace(candidate);if(!next||!dialog.open||places.extract(phraseForPlace())||place)return false;
   request++;photoRequest++;clearTimeout(searchTimer);closeMapViewer();
   place=next;confirmed=false;choices=[];choicesExpanded=false;choicesNearby=false;
   proposal=null;query='';sourceQuery='';status='found';refining=false;refineText='';cityEditing=false;
@@ -312,6 +312,13 @@
     change.setAttribute('aria-expanded',String(refining));
     change.addEventListener('click',()=>{refining=!refining;render()});
     actions.append(accept,change);panel.append(actions);
+   }
+   if(confirmed){
+    const actions=node('div','sv-place-confirm-actions');
+    const saved=node('span','sv-place-confirmed','Место подтверждено');
+    const change=node('button','sv-place-refine-trigger','Изменить');change.type='button';
+    change.addEventListener('click',()=>{confirmed=false;render();window.dispatchEvent(new Event('seyveo:task-place-updated'))});
+    actions.append(saved,change);panel.append(actions);
    }
    const details=places.venueInfo?.(place);
    if(details){
@@ -474,5 +481,5 @@
  const openObserver=new MutationObserver(()=>{if(dialog.open)sync()});
  openObserver.observe(dialog,{attributes:true,attributeFilter:['open']});
  dialog.addEventListener('close',reset);
- window.SEYVEO_TASK_PLACE_EDITOR=Object.freeze({reset,load,suggest,placeForSave,compactTitle,lookup,sync});
+ window.SEYVEO_TASK_PLACE_EDITOR=Object.freeze({reset,load,suggest,placeForSave,compactTitle,lookup,sync,hasPlace:()=>Boolean(place)});
 })();
