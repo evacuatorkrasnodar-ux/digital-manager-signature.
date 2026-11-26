@@ -17,10 +17,8 @@
   min-width:0!important;max-width:none!important;min-height:0!important;max-height:none!important;
   box-sizing:border-box!important;margin:0!important;padding:0!important;border:0!important;
   border-radius:999px!important;background:var(--sv-segment-selected,#fcfdfd)!important;background-image:none!important;
-  /* V102: the moving face is measured inside the track's 1px border.
-     An opaque, matching optical edge covers that rim as the face moves,
-     without making the translucent fill opaque or changing drag geometry. */
-  box-shadow:0 0 0 1px var(--sv-motion-edge-cover,#f7f8fa),var(--sv-segment-selected-shadow,0 1px 4px rgba(38,48,60,.12))!important;
+  /* V108: retain the track's visible outer rim; no covering outline. */
+  box-shadow:var(--sv-segment-selected-shadow,0 1px 4px rgba(38,48,60,.12))!important;
   transform:translate3d(var(--sv-motion-x,0px),0,0)!important;
   transition:transform 320ms cubic-bezier(.22,.8,.24,1),width 320ms cubic-bezier(.22,.8,.24,1)!important;
   opacity:1!important;visibility:visible!important;z-index:0!important;pointer-events:none!important;
