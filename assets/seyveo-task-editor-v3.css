@@ -959,8 +959,8 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-input-capsule :is
  color:#9298A2!important;opacity:1!important;font-weight:450!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-input-capsule:focus-within{
- border-color:rgba(255,255,255,.67)!important;
- box-shadow:var(--sv-task-field-shadow),0 0 0 1px rgba(118,133,156,.22)!important;
+ border-color:rgba(118,133,156,.38)!important;
+ box-shadow:none!important;
 }
 
 /* Calendar reference: crisp numerals, per-task dots and black date disc. */
@@ -1820,4 +1820,49 @@ html:root[data-theme="dark"] body dialog#personalTaskDialog.sv-task-editor-v3 .s
 @media(forced-colors:active){
  html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-phrase-mirror{display:none!important}
  html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-title-capsule.sv-task-phrase-colored:not(.is-grouped:not(.is-editing)) #personalTaskTitle{color:CanvasText!important;-webkit-text-fill-color:CanvasText!important}
+}
+
+/* New Task V55 · quiet reading surface and symmetric place actions. */
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-title-capsule:focus-within{
+ border:var(--sv-task-field-rim)!important;
+ box-shadow:none!important;outline:none!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-title-capsule:focus-within #personalTaskTitle{
+ border:0!important;box-shadow:none!important;outline:none!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm-actions{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important;
+ align-items:center!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm-actions > :is(.sv-place-confirm,.sv-place-refine-trigger){
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;
+ min-height:46px!important;height:46px!important;padding:6px 8px!important;margin:0!important;
+ border-radius:999px!important;font:550 15px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm-actions > .sv-place-refine-trigger{
+ background:rgba(222,226,234,.60)!important;color:#252830!important;
+ border:1px solid rgba(170,186,199,.26)!important;box-shadow:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(8px))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(8px))!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 #svTaskMeetingAdvice:not([hidden]){
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ border-radius:0!important;padding:10px 8px!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-notice{
+ color:#687582!important;font:470 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ margin:1px 8px 4px!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-pin{
+ width:28px!important;height:28px!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 :is(.sv-place-map-pin,.sv-place-map-marker) svg{
+ display:block;width:16px;height:16px;color:#fff;pointer-events:none;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-marker svg{width:20px;height:20px}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm-actions > .sv-place-refine-trigger{
+ background:#EAECF0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
 }
