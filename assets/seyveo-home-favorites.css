@@ -724,21 +724,57 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-pinned{
  @media not (prefers-reduced-transparency:reduce){
   html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned::before{
    content:""!important;display:block!important;position:absolute!important;
-   inset:calc(-32px - env(safe-area-inset-top,0px)) -20px -24px!important;
+   inset:calc(-32px - env(safe-area-inset-top,0px)) -20px -6px!important;
    z-index:-1!important;pointer-events:none!important;
    background:var(--sv-white-pearl-floating-dock,rgba(247,247,248,.86))!important;
    -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(16px))!important;
    backdrop-filter:var(--sv-white-pearl-floating-blur,blur(16px))!important;
-   -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
-   mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
+   -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 8px),transparent 100%)!important;
+   mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 8px),transparent 100%)!important;
    border:0!important;box-shadow:none!important;
   }
   html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid{
    position:relative!important;z-index:1!important;
    margin-top:calc(0px - var(--sv-home-chooser-header-height,0px))!important;
-   padding-top:calc(var(--sv-home-chooser-header-height,0px) + 1px)!important;
+   padding-top:calc(var(--sv-home-chooser-header-height,0px) + 7px)!important;
    scroll-padding-top:var(--sv-home-chooser-header-height,0px)!important;
    -webkit-mask-image:none!important;mask-image:none!important;
+  }
+ }
+}
+
+/* V163: compact app library, not miniature home-screen icons.
+   Five rows fit more often; any new rows remain natively scrollable.
+   Never mask the tile list itself or shrink its touch targets below 44px. */
+@layer seyveo-home-chooser-standard{
+ html:root body dialog#svHomeFavoritesEditor > .sv-home-favorites-editor-shell{
+  padding-bottom:6px!important;
+ }
+ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid,
+ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
+  --sv-home-tile-height:60px;
+  grid-template-rows:none!important;grid-auto-rows:var(--sv-home-tile-height)!important;
+  gap:6px!important;padding-bottom:4px!important;
+  overflow-y:auto!important;overscroll-behavior-y:contain;
+  scroll-padding-bottom:4px!important;
+  -webkit-mask-image:none!important;mask-image:none!important;
+ }
+ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{
+  min-height:44px!important;border-radius:14px!important;gap:3px!important;padding:3px 2px!important;
+ }
+ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button svg{
+  width:29px!important;height:29px!important;
+ }
+ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button span{
+  font-size:11.5px!important;line-height:1.2!important;
+ }
+ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button small{
+  top:4px!important;right:5px!important;
+ }
+ @media(max-height:760px){
+  html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid,
+  html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
+   --sv-home-tile-height:58px;gap:5px!important;
   }
  }
 }
