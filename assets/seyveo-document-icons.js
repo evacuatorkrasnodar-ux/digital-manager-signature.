@@ -4,7 +4,8 @@
 'use strict';
 const paths=Object.freeze({
  note:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/>',
- phone:'<path d="M7 3 4 4c-3 5 11 19 16 16l1-3-5-3-2 2a18 18 0 0 1-6-6l2-2Z"/>',
+ phone:'<path d="M5.8 3.8a1.5 1.5 0 0 1 2.1.3l2.7 3.4a1.5 1.5 0 0 1-.1 1.9L9 11a12.7 12.7 0 0 0 4 4l1.6-1.5a1.5 1.5 0 0 1 1.9-.1l3.4 2.7a1.5 1.5 0 0 1 .3 2.1l-1.1 1.4a2.6 2.6 0 0 1-2.8.8A19 19 0 0 1 3.6 7.7a2.6 2.6 0 0 1 .8-2.8Z"/>',
+ video:'<rect x="3.5" y="6.5" width="12.5" height="11" rx="2.5"/><path d="m16 10 3.5-2.3a.9.9 0 0 1 1.5.8v7a.9.9 0 0 1-1.5.8L16 14"/>',
  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
  web:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a16 16 0 0 1 0 18M12 3a16 16 0 0 0 0 18"/>',
  flip:'<path d="M12 3v18M8 5 3 18h5ZM16 5l5 13h-5Z"/>',
