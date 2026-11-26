@@ -91,7 +91,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    if(root.dataset.view!=='inbox'||root.classList.contains('svcp-history-screen-open'))return null;
    return {port:$('svcpConversationList'),controls:[root.querySelector('.svcp-work-chat-header'),$('svcpChatFilters'),$('svcpDirectorySearchBar')]};
   }],
-  // Documents owns its native sticky scope switch; do not extend its scrollport twice.
+  ['sayviSurfacePage',root=>{
+   if(root.dataset.svSubject!=='contract'||root.dataset.svDocView!=='archive')return null;
+   const sticky=root.querySelector('.sv-doc-pinned-switch');
+   const head=root.querySelector('.sv-deep-top');
+   if(!sticky||!head)return null;
+   return {port:$('sayviSurfaceBody'),controls:[head,sticky],sticky,documentArchive:true};
+  }],
   ['svcpManagerPeople',root=>{
    if(!root.open)return null;
    const sticky=root.querySelector('.sv-staff-pinned-tabs');
@@ -138,7 +144,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    const overlap=Math.max(0,Math.round(scroll.top-rect.top))+topGap;
    root.style.setProperty('--sv-full-glass-top-gap',topGap+'px');
    const pinnedTop=sticky?number(getComputedStyle(sticky).top):0;
-   const bottom=Math.max(scroll.top,...controls.map(el=>el.getBoundingClientRect().bottom),sticky?scroll.top+pinnedTop+sticky.offsetHeight:0);
+   // Archive switch is a native sticky child. Measure the resting header
+   // and the switch itself; never use a scroll-dependent sticky rect twice.
+   const docHead=target.documentArchive?Math.max(0,controls[0].getBoundingClientRect().bottom-rect.top):0;
+   const bottom=target.documentArchive?rect.top+docHead+sticky.offsetHeight:Math.max(scroll.top,...controls.map(el=>el.getBoundingClientRect().bottom),sticky?scroll.top+pinnedTop+sticky.offsetHeight:0);
+   if(target.documentArchive)root.style.setProperty('--sv-doc-header-height',Math.ceil(docHead)+'px');
    if(bottom<=rect.top||overlap>rect.height*.8||bottom-rect.top>rect.height*.8)return;
    root.style.setProperty('--sv-full-glass-overlap',overlap+'px');
    root.style.setProperty('--sv-full-glass-margin',(number(style.marginTop)-overlap)+'px');
