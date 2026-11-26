@@ -658,8 +658,27 @@ html body #seyveoCompanyDialog[open] #seyveoCompanyDemoToggle[hidden]{display:no
 
 /* Filled company passport — compact, readable and dock-safe. */
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open][data-sv-company-filled="true"][data-sv-company-mode="view"] .seyveo-passport-dialog-head{margin-bottom:9px!important}
+/* V159: reserve clearance inside the native scrollport, not in a white
+   stationary strip beneath the content. The shared footer remains fixed. */
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open][data-sv-company-filled="true"][data-sv-company-mode="view"]{
  padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))!important;
+}
+@layer seyveo-company-scroll-continuity{
+ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.seyveo-dock-host[open][data-sv-company-filled="true"][data-sv-company-mode="view"]{
+  padding-bottom:0!important;
+ }
+ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.seyveo-dock-host[open][data-sv-company-filled="true"][data-sv-company-mode="view"] > #seyveoCompanyDialogScroll{
+  padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
+  scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
+  background:transparent!important;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 30px),transparent 100%)!important;
+  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 30px),transparent 100%)!important;
+ }
+ @media(prefers-reduced-transparency:reduce){
+  html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.seyveo-dock-host[open] > #seyveoCompanyDialogScroll{
+   -webkit-mask-image:none!important;mask-image:none!important;
+  }
+ }
 }
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open][data-sv-company-mode="view"] .sv-company-view:not([hidden]){padding-top:2px!important;padding-bottom:8px!important}
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .sv-company-identity strong{font-weight:590!important}
