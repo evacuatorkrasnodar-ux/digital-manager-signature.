@@ -86,10 +86,15 @@
      void t.offsetWidth;
      t.removeAttribute('data-sv-motion-instant');
      setFace(t,g.active.x,g.active.width);
-    }else t.removeAttribute('data-sv-motion-instant');
+    }else{
+     // Commit the first painted position before enabling transitions.
+     // Otherwise a remounted capsule may animate from its default zero width.
+     void t.offsetWidth;
+     t.removeAttribute('data-sv-motion-instant');
+    }
     if(resume)pending.delete(k);
    }else{
-    const changed=prior.active!==g.active.b;
+    const changed=prior.active!==g.active.b&&nameOf(prior.active)!==nameOf(g.active.b);
     if(!changed&&(Math.abs(prior.x-g.active.x)>.5||Math.abs(prior.width-g.active.width)>.5))instant(t);
     t.removeAttribute('data-sv-motion-drag');
     if(changed||prior.x!==g.active.x||prior.width!==g.active.width||t.hasAttribute('data-sv-motion-instant')){
