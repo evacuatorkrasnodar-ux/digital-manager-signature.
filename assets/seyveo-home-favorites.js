@@ -314,7 +314,7 @@ function openCustomize(){
   autoButton.setAttribute('aria-pressed',String(autoActive));
   autoButton.title=autoActive?'Автовыбор включён':'Автовыбор: Сэйви подбирает частые кнопки';
   grid.dataset.section=activeTab;
-  grid.replaceChildren();
+  grid.replaceChildren(help);
   const options=cabinet?businessApps:[{id:'smart',name:'Умная кнопка'},...apps];
   for(const app of options){
    const b=document.createElement('button');b.type='button';
@@ -357,13 +357,17 @@ function openCustomize(){
  });
  head.insertBefore(autoButton,title);
  const pinned=document.createElement('div');pinned.className='sv-home-favorites-pinned';
- redraw();pinned.append(head,tabbar,help);shell.append(pinned,grid);dialog.append(shell);document.body.append(dialog);
+ redraw();pinned.append(head,tabbar);shell.append(pinned,grid);dialog.append(shell);document.body.append(dialog);
+ const syncHeaderGlass=()=>pinned.style.setProperty('--sv-home-header-opacity',String(Math.min(1,Math.max(0,grid.scrollTop/8))));
+ grid.addEventListener('scroll',syncHeaderGlass,{passive:true});
+ syncHeaderGlass();
  const measureHeader=()=>{const h=pinned.offsetHeight;if(h>0) shell.style.setProperty('--sv-home-chooser-header-height',h+'px');};
  const headerObserver=typeof ResizeObserver==='function'?new ResizeObserver(measureHeader):null;
  let closed=false;
  function close(saveChanges,animate=false){
   if(closed)return;closed=true;
   headerObserver?.disconnect();
+  grid.removeEventListener('scroll',syncHeaderGlass);
   window.removeEventListener('resize',onCurtainResize);
   document.removeEventListener('click',onDockNavigation,true);
   window.removeEventListener('seyveo:route-changed',onRouteChange);
