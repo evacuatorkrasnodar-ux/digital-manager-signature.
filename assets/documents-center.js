@@ -188,17 +188,28 @@ function draw(){
  clearPreview();host.replaceChildren();
 
  const page=document.getElementById('sayviSurfacePage');
- document.getElementById('svDocArchiveScope')?.remove();
+ // V115: keep the exact same header and track mounted across archive/flow
+ // and area changes. Only the selected state and the content are redrawn.
  if(page)page.dataset.svDocView=view==='flow'?'flow':'archive';
- const switcher=el('div','sv-doc-switch');
- switcher.setAttribute('role','group');switcher.setAttribute('aria-label','Пространство документов');
- for(const key of ['personal','business']){
-  const b=button(names[key],()=>setArea(key),'sv-doc-tab');
-  b.setAttribute('aria-pressed',String(area===key));switcher.append(b);
- }
- const pinned=el('div','sv-doc-pinned-switch');pinned.append(switcher);
  const titlebar=page?.querySelector(':scope > .sv-deep-top');
- if(titlebar){pinned.id='svDocArchiveScope';titlebar.after(pinned);}else host.append(pinned);
+ let pinned=page?.querySelector(':scope > #svDocArchiveScope');
+ let switcher=pinned?.querySelector(':scope > .sv-doc-switch');
+ if(!pinned||!switcher){
+  pinned?.remove();
+  switcher=el('div','sv-doc-switch');
+  switcher.setAttribute('role','group');switcher.setAttribute('aria-label','Пространство документов');
+  for(const key of ['personal','business']){
+   const b=button(names[key],()=>setArea(key),'sv-doc-tab');
+   b.dataset.svDocArea=key;
+   switcher.append(b);
+  }
+  pinned=el('div','sv-doc-pinned-switch');pinned.append(switcher);
+  if(titlebar){pinned.id='svDocArchiveScope';titlebar.after(pinned);}else host.append(pinned);
+ }
+ for(const b of switcher.children){
+  const pressed=String(b.dataset.svDocArea===area);
+  if(b.getAttribute('aria-pressed')!==pressed)b.setAttribute('aria-pressed',pressed);
+ }
  const scrollBody=host.closest('#sayviSurfaceBody');
  if(scrollBody){
   bindDocumentScroll(scrollBody);
