@@ -213,16 +213,22 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 }
 /* SKY shares the same fade, blur and start/end coordinates as WHITE,
    but keeps the cool blue reflection of its wallpaper. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2{
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;border:0!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2::after{content:none!important;display:none!important}
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2::before{
- /* Same approved optical surface as Avatar/White, tinted only by
-    the existing Sky wallpaper. End at the name, with a 12px feather. */
- background:var(--sv-white-pearl-floating-dock)!important;background-image:none!important;
+ /* Clear glass for colored wallpaper, not a milky white panel.
+    One optical layer, original avatar/name geometry, soft 24px feather. */
+ background:rgba(247,247,248,.10)!important;background-image:none!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
  backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
  bottom:auto!important;
  height:calc(2px + env(safe-area-inset-top,0px) + var(--svcp-header-avatar,56px) + var(--svcp-header-overlap,-5px) + var(--svcp-header-label,28px) + 12px)!important;
- -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)!important;
- mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)!important;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
 }
 @media(prefers-reduced-transparency:reduce){
  html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2::before{
