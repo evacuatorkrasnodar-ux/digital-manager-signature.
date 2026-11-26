@@ -49,7 +49,7 @@ const fallbackInfo=file=>metadata?.filenameParts(file?.name)||{
  title:String(file?.name||'Без названия').replace(/\.[^.]+$/,''),
  artist:'',display:String(file?.name||'Без названия')
 };
-let trackDescriptions=new WeakMap(),coverDataURL=null,coverReader=null;
+let trackDescriptions=new WeakMap(),trackThumbnails=new WeakMap(),coverDataURL=null,coverReader=null;
 let recentFiles=[];
 const infoFor=file=>file?.radio?{title:file.name,artist:file.country+' · '+file.quality,display:file.name,album:'SEYVEO RADIO'}:file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
 const safeName=file=>infoFor(file).display;
@@ -282,6 +282,14 @@ function showArtwork(){
  const probe=new Image();
  probe.onload=()=>{
   if(coverDataURL!==candidate)return;
+  const file=tracks[index];
+  if(file&&!file.radio&&!trackThumbnails.has(file)){
+   try{
+    const canvas=document.createElement('canvas');canvas.width=160;canvas.height=160;
+    const ctx=canvas.getContext('2d');const side=Math.min(probe.naturalWidth,probe.naturalHeight);
+    if(ctx&&side>0){ctx.drawImage(probe,(probe.naturalWidth-side)/2,(probe.naturalHeight-side)/2,side,side,0,0,160,160);trackThumbnails.set(file,canvas.toDataURL('image/jpeg',.84));}
+   }catch{}
+  }
   page.style.setProperty('--sv-music-player-art','url("'+candidate+'")');page.classList.add('sv-music-player-has-art');
   for(const [surface,holder] of [[artwork,stage],[miniArtwork,mini]]){
    if(!surface)continue;
@@ -290,6 +298,7 @@ function showArtwork(){
    holder?.classList.add('has-artwork');
   }
   stage?.classList.remove('is-checking-artwork');
+  syncResume();
  };
  probe.onerror=()=>{if(coverDataURL===candidate)stage?.classList.remove('is-checking-artwork')};
  probe.src=candidate;
@@ -482,7 +491,7 @@ function ingest(list){
   return false;
  }
  tracks=chosen;localTracks=chosen;
- trackDescriptions=new WeakMap();
+ trackDescriptions=new WeakMap();trackThumbnails=new WeakMap();
  switchTrack(0,false);
  if(candidates.length>chosen.length)
   sayviMessage('Добавлено '+chosen.length+' из '+candidates.length+' файлов. Ограничение — 40 файлов до 180 МБ каждый; неподдерживаемые пропущены.');
@@ -759,8 +768,8 @@ window.SEYVEO_MUSIC=Object.freeze({
  searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,
  // Read-only access to the selected local File for optional visual analysis.
  rhythmFile:()=>isRadio()?null:tracks[index]||null,
- browseTracks:()=>localTracks.map((file,i)=>({index:i,title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка'})),
- recentTracks:()=>recentFiles.filter(file=>localTracks.includes(file)).map(file=>({index:localTracks.indexOf(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка'})),
+ browseTracks:()=>localTracks.map((file,i)=>({index:i,title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null})),
+ recentTracks:()=>recentFiles.filter(file=>localTracks.includes(file)).map(file=>({index:localTracks.indexOf(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null})),
  state:()=>Object.freeze({
   loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
   homeSession:homeMusicSession,
