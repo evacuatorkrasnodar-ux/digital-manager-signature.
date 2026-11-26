@@ -220,17 +220,7 @@ html:root body #svTaskActionCapsule.sv-bulk-scrolling{
 /* All Tasks v40: standalone capsule. The light-mode optical face comes
    from the SAME seyveo-avatar-segment-material rule as Avatar / Photo. */
 html body #svWorkShell > #svAllTasksTabs[hidden]{display:none!important}
-html body #svWorkShell[data-task-tool-mode="all"] > #svAllTasksTabs:not([hidden]){
- box-sizing:border-box!important;display:grid!important;
- grid-template-columns:repeat(3,minmax(0,1fr))!important;
- align-items:center!important;align-content:center!important;
- position:relative!important;order:1!important;flex:0 0 auto!important;
- align-self:center!important;width:calc(100% - 28px)!important;max-width:none!important;
- height:var(--sv-avatar-segment-height,38px)!important;min-height:38px!important;max-height:38px!important;
- margin:4px auto 5px!important;padding:var(--sv-avatar-segment-inset,3px)!important;
- gap:3px!important;border:var(--sv-white-pearl-edge,1px solid rgba(209,214,223,.8))!important;
- border-radius:999px!important;background-image:none!important;
-}
+/* Shared outer geometry is owned by seyveo-work-floating-pearl.css. */
 html body #svWorkShell[data-task-tool-mode="all"] > #svAllTasksTabs > button{
  appearance:none!important;-webkit-appearance:none!important;
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
