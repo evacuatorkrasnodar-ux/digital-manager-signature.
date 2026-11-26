@@ -569,7 +569,7 @@ html.sv-music-screen[data-theme=dark][data-palette=plum] .app{
 #sayviMusicPage .sv-music-control:disabled{opacity:.3}
 #sayviMusicPage .sv-music-artwork{border-radius:20px!important}
 #sayviMusicPage .sv-music-favorite[aria-pressed=true]{color:var(--sv-music-jade)!important}
-#sayviMusicPage[data-music-section]:not([data-music-section="home"]) > :is(.sv-music-cover,.sv-music-track-bar,.sv-music-times,.sv-music-seek,.sv-music-controls,.sv-music-phrases,.sv-music-awake-control,.sv-music-stop-hide,.sv-music-lyrics,.sv-music-record){display:none!important}
+
 #sayviMusicPage .sv-music-tab-panel[hidden]{display:none!important}
 #sayviMusicPage .sv-music-tab-panel{width:100%;max-width:640px;margin:12px auto 0;padding:0 0 18px;flex:0 0 auto}
 #sayviMusicPage .sv-music-tab-panel h2{margin:0 0 4px;font:650 30px/1.16 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:-.04em}
@@ -587,7 +587,9 @@ html.sv-music-screen[data-theme=dark][data-palette=plum] .app{
 #sayviMusicPage .sv-radio-play{display:grid;place-items:center;width:44px;height:44px;min-width:44px;border:0;border-radius:50%;background:var(--sv-music-jade);color:#fff;font-size:17px}
 #sayviMusicPage .sv-music-library-actions button{display:flex;align-items:center;justify-content:space-between;text-align:left;min-height:54px;padding:10px 15px;border:0;border-radius:17px;background:var(--card2,var(--card));color:var(--text);font-size:16px}
 #sayviMusicPage .sv-music-library-actions button span{color:var(--sv-music-jade);font-size:21px}
-#sayviMusicPage[data-music-section="new"] #sayviDiscoveryPanel{border:0;padding:10px 0;margin-top:12px}
-#sayviMusicPage[data-music-section="new"] .sv-discovery-title{font-size:25px;font-weight:650}
+
+
 #sayviMusicPage .sv-discovery-actions button{border-radius:999px!important;padding:9px 13px!important;color:var(--sv-music-jade)!important}
 :root[data-theme=dark] #sayviMusicPage .sv-radio-copy a{color:#a1dbbf}
+
+#sayviMusicPage #svMusicRadioToggle{display:block;min-height:44px;margin:6px auto;padding:10px 24px;border:0;border-radius:999px;background:var(--sv-music-glass-control);color:var(--sv-music-jade);font-weight:600;flex:0 0 auto}
