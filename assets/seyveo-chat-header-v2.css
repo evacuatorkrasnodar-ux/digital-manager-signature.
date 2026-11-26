@@ -114,8 +114,9 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  opacity:1!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill > svg{
- display:block!important;flex:0 0 13px!important;width:13px!important;height:13px!important;
- fill:none!important;stroke:#9FDBFF!important;stroke-width:3!important;
+ /* Narrow rounded disclosure chevron, matching the supplied Andre reference. */
+ display:block!important;flex:0 0 12px!important;width:12px!important;height:16px!important;
+ fill:none!important;stroke:#64BFFF!important;stroke-width:3.6!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:translateY(-.5px)!important;
 }
