@@ -4,10 +4,20 @@
     controls WITHOUT changing their geometry or behavior. */
  --sv-white-pearl-surface:var(--sv-white-pearl-floating-dock);
  /* The same real dock glass for every ordinary button and capsule. */
- --sv-white-pearl-floating-dock:rgba(247,247,248,.46);
- --sv-white-pearl-floating-blur:blur(8px) saturate(108%);
+ --sv-white-pearl-floating-dock:rgba(235,237,240,.62);
+ --sv-white-pearl-header-face:rgba(247,247,248,.46);
+ --sv-white-pearl-menu-face:rgba(249,250,251,.94);
+ --sv-white-pearl-menu-blur:blur(12px) saturate(108%);
+ --sv-glass-sky-upper:rgba(0,100,182,.62);
+ --sv-glass-sky-lower:rgba(0,114,164,.46);
+ --sv-glass-sky-upper-rim:rgba(76,190,244,.48);
+ --sv-glass-sky-lower-rim:rgba(85,220,247,.68);
+ --sv-glass-sky-blur:blur(10px) saturate(108%);
+ --sv-glass-sky-shadow:inset 0 1px 0 rgba(151,223,255,.10);
+ --sv-glass-sky-ink:#fff;
+ --sv-white-pearl-floating-blur:blur(10px) saturate(108%);
  --sv-white-pearl-solid:#F7F7F8;
- --sv-white-pearl-rim-color:rgba(233,235,239,.82);
+ --sv-white-pearl-rim-color:rgba(255,255,255,.94);
  --sv-white-pearl-edge:1px solid var(--sv-white-pearl-rim-color);
  --sv-white-pearl-segment-ink:#444B56;
  --sv-white-pearl-blur:var(--sv-white-pearl-floating-blur);
@@ -18,11 +28,11 @@
  /* EXACT white-chat shadows: one fine readable rim and soft lift.
     No second outline pseudo element or heavy embossed gradient. */
  --sv-white-pearl-circle-shadow:
-   0 3px 10px rgba(38,48,60,.065),
+   0 4px 13px rgba(38,48,60,.085),
    inset 0 1px 0 rgba(255,255,255,.96),
    inset 0 -1px 0 rgba(214,222,231,.23);
  --sv-white-pearl-dock-shadow:
-   0 4px 13px rgba(38,48,60,.065),
+   0 5px 15px rgba(38,48,60,.085),
    0 1px 3px rgba(38,48,60,.025),
    inset 0 1px 0 rgba(255,255,255,.96),
    inset 0 -1px 0 rgba(214,222,231,.23);
@@ -66,6 +76,12 @@
   --sv-white-pearl-blur:none;
   --sv-white-pearl-floating-dock:var(--sv-white-pearl-solid);
   --sv-white-pearl-floating-blur:none;
+  --sv-white-pearl-header-face:#fff;
+  --sv-white-pearl-menu-face:#FCFCFD;
+  --sv-white-pearl-menu-blur:none;
+  --sv-glass-sky-upper:#0769B7;
+  --sv-glass-sky-lower:#167EAD;
+  --sv-glass-sky-blur:none;
  }
 }
 
