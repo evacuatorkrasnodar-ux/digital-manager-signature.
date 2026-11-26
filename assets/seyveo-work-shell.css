@@ -1018,6 +1018,12 @@ html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessT
 html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .svcp-manager-staff > summary,
 html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView #svCabinetContinueWithSayvi.sv-cabinet-resume:not([hidden]){border-top:0!important;border-bottom:0!important;box-shadow:none!important;}
 
+/* V149: move only the Cabinet content 10px toward its stationary capsule.
+   Preserve the scrollport's measured glass compensation and row spacing. */
+html:root body #svWorkShell#svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView > #unifiedTasksTeamBoard{
+ margin-block-start:-10px!important;
+}
+
 /* V148: Cabinet list polish. Keep all navigation, scroll glass and dock
    geometry unchanged. Single-line rows share the two-line row's baseline;
    allow longer localized labels to grow instead of clipping. */
