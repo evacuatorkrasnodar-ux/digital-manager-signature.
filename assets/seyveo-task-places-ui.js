@@ -207,8 +207,16 @@
  // Remove a redundant address only after it has a separate place card.
  // Never discard a person's name, other instructions or an unconfirmed address.
  function compactTitle(value,forSave=false){
-  if(!place||forSave&&!confirmed||place.source!=='known-address'||!proposal?.venueName)return value;
+  if(!place||forSave&&!confirmed||!proposal?.venueName)return value;
   const raw=String(value||'');
+  // Only shorten an exact, trailing named destination. Keep extra directions.
+  const escape=value=>Array.from(String(value)).map(c=>'\\^$.*+?()[]{}|'.includes(c)?'\\'+c:c).join('');
+  const venue=escape(proposal.venueName);
+  const city=proposal.city?'(?:\\s*,\\s*'+escape(proposal.city)+')?':'';
+  const suffix=new RegExp('\\s+(?:в|во|на|у)\\s+(?:трц|тц|торговом\\s+центре|кафе|кофейне|ресторане|баре|пиццерии|отеле|гостинице|музее|кинотеатре)\\s+[«"“]?'+venue+'[»"”]?'+city+'\\s*[.]?$','iu');
+  const shortened=raw.replace(suffix,'').trim();
+  if(shortened!==raw&&shortened.length>=4)return shortened;
+  if(place.source!=='known-address')return value;
   const branch=/^встреча\s+(?:в кафе\s+[«"]?вкусно\s*(?:[—–-]\s*)?и\s+точка[»"]?\s*,\s*(?:краснодар\s*,\s*)?(?:трц|тц)\s+[«"]?красная площадь[»"]?(?:\s*,\s*(?:ул\.?\s*)?дзержинского\s*,?\s*100)?|на красной площади\s+кафе\s+[«"]?вкусно\s*(?:[—–-]\s*)?и\s+точка[»"]?)\s*[.]?$/iu;
   return branch.test(raw)?'Встреча в кафе «Вкусно — и точка»':value;
  }
