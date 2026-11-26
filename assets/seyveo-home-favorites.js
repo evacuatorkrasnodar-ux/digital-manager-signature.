@@ -321,7 +321,9 @@ function openCustomize(){
    const chosen=app.id==='smart'?smart:picked.includes(app.id);
    b.setAttribute('aria-pressed',String(chosen));
    b.innerHTML=app.id==='smart'?'<svg viewBox="0 0 64 64" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>':icon(app.id);
-   const t=document.createElement('span');t.textContent=app.name;
+   const t=document.createElement('span');
+   t.textContent=app.id==='business-documents'?'Документы':app.id==='business-people'?'Сотрудники':app.name;
+   b.setAttribute('aria-label',app.name);b.title=app.name;
    const mark=document.createElement('small');mark.textContent=chosen?'✓':'';
    b.append(t,mark);
    b.addEventListener('click',()=>{
