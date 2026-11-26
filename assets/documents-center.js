@@ -198,7 +198,7 @@ function draw(){
  }
  const pinned=el('div','sv-doc-pinned-switch');pinned.append(switcher);
  const titlebar=page?.querySelector(':scope > .sv-deep-top');
- if(view==='archive'&&titlebar){pinned.id='svDocArchiveScope';titlebar.after(pinned);}else host.append(pinned);
+ if(titlebar){pinned.id='svDocArchiveScope';titlebar.after(pinned);}else host.append(pinned);
  const scrollBody=host.closest('#sayviSurfaceBody');
  if(scrollBody){
   bindDocumentScroll(scrollBody);
