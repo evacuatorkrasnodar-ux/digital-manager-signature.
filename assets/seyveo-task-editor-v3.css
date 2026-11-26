@@ -213,10 +213,6 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days
  width:30px!important;height:30px!important;padding:0!important;border:0!important;border-radius:50%!important;
  background:transparent!important;color:#202329!important;font:530 15px/1 system-ui!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-today:not(.is-selected){color:#007AFF!important}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-selected{
- background:#007AFF!important;color:#FFF!important;
-}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-settings{padding:0 17px!important;margin-bottom:6px!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-settings > :is(label,.sv-new-task-list-setting){
  display:flex!important;align-items:center!important;gap:11px!important;
@@ -908,8 +904,9 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-selected .sv-task-cal-number{
  background:#17191D!important;color:#FFF!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-today:not(.is-selected) .sv-task-cal-number{
- color:#F34A4D!important;
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-today .sv-task-cal-number{
+ background:var(--sv-date-today-bg,#109BDD)!important;color:#FFF!important;
+ box-shadow:none!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-marks{
  display:flex!important;align-items:center!important;justify-content:center!important;
@@ -1874,4 +1871,22 @@ html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-title-capsul
 }
 html:root body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
  flex-shrink:0!important;
+}
+
+/* V57 · date paint belongs to the numeral, never the touch cell.
+   Both discs have identical geometry; event dots sit on their own row. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button:is(.is-today,.is-selected){
+ background:transparent!important;border-radius:0!important;box-shadow:none!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button .sv-task-cal-number{
+ width:27px!important;height:27px!important;flex:0 0 27px!important;border:0!important;box-shadow:none!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-selected:not(.is-today) .sv-task-cal-number{
+ background:#17191D!important;color:#FFF!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-today .sv-task-cal-number{
+ background:var(--sv-date-today-bg,#109BDD)!important;color:#FFF!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button .sv-task-cal-marks{
+ flex:0 0 5px!important;min-height:5px!important;height:5px!important;margin-top:1px!important;
 }
