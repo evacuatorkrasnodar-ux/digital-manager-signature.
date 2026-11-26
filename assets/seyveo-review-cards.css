@@ -636,15 +636,20 @@ html:root[data-theme="light"] body #svReviewRoom:not([hidden])::before{
 }
 #svReviewRoom #seyveoLivingMoment .lm-inline-copy{min-width:0}
 #svReviewRoom #seyveoLivingMoment .sv-lm-inline-heading{row-gap:2px}
+/* Compact layout: the two secondary actions share a single grid row,
+   hence identical widths and heights even when a label needs two lines. */
 @media(max-width:480px){
  #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions:has(> button[data-sv-card-icon="sayvi"]:not([hidden])):has(> button[data-sv-card-icon="edit"]:not([hidden])):has(> button[data-sv-card-icon="navigate"]:not([hidden])){
-  gap:8px!important;
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:stretch!important;gap:8px!important;
  }
- #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions:has(> button[data-sv-card-icon="edit"]:not([hidden])):has(> button[data-sv-card-icon="navigate"]:not([hidden])) > button[data-sv-card-icon="sayvi"]:not([hidden]){
-  flex:1 0 100%!important;
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions:has(> button[data-sv-card-icon="sayvi"]:not([hidden])):has(> button[data-sv-card-icon="edit"]:not([hidden])):has(> button[data-sv-card-icon="navigate"]:not([hidden])) > button[data-sv-card-icon="sayvi"]:not([hidden]){
+  grid-column:1/-1!important;width:100%!important;
  }
- #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions:has(> button[data-sv-card-icon="sayvi"]:not([hidden])) > button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
-  flex:1 1 calc(50% - 4px)!important;min-width:0!important;
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions:has(> button[data-sv-card-icon="sayvi"]:not([hidden])):has(> button[data-sv-card-icon="edit"]:not([hidden])):has(> button[data-sv-card-icon="navigate"]:not([hidden])) > button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
+  width:100%!important;min-width:0!important;
+  height:100%!important;min-height:46px!important;
+  align-self:stretch!important;box-sizing:border-box!important;
   padding:7px 5px!important;
  }
 }
