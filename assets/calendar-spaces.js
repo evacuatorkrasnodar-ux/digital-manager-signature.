@@ -838,7 +838,7 @@ function svSyncControls(){
 }
 function svClosePicker(focus=true){
  const button=svPickerField==='kind'?svKindButton:svDateButton;
- svPicker.hidden=true;svPicker.replaceChildren();svPickerField=null;
+ svPicker.hidden=true;svPicker.replaceChildren();svPicker.classList.remove('sv-date-only-sheet');svPickerField=null;
  svKindButton.setAttribute('aria-expanded','false');svDateButton.setAttribute('aria-expanded','false');
  if(focus)button.focus({preventScroll:true});
 }
@@ -859,7 +859,12 @@ function svRenderKind(){
  svPicker.append(list);
 }
 function svRenderDate(){
- svPicker.replaceChildren();
+ svPicker.replaceChildren();svPicker.classList.add('sv-date-only-sheet');
+ const top=document.createElement('header');top.className='sv-date-sheet-head';
+ const grip=document.createElement('span');grip.className='sv-date-sheet-grip';grip.setAttribute('aria-hidden','true');
+ const title=document.createElement('strong');title.textContent='Календарь';
+ const done=document.createElement('button');done.type='button';done.className='sv-date-sheet-done';done.dataset.svClosePicker='1';done.textContent='Готово';
+ top.append(grip,title,done);svPicker.append(top);
  const head=document.createElement('div');head.className='cal-velvet-month sv-month-nav';
  const prev=document.createElement('button');prev.type='button';prev.dataset.svMonth='-1';prev.setAttribute('aria-label','Предыдущий месяц');prev.textContent='‹';
  const name=document.createElement('strong');
@@ -900,7 +905,7 @@ function svOpenPicker(field){
  if(svPickerField===field&&!svPicker.hidden){svClosePicker();return;}
  svPickerField=field;
  if(field==='date'){const value=svDate.value||new Date().toLocaleDateString('sv-SE');const date=new Date(value+'T12:00:00');svPickerYear=date.getFullYear();svPickerMonth=date.getMonth();svRenderDate();}
- else svRenderKind();
+ else {svPicker.classList.remove('sv-date-only-sheet');svRenderKind();}
  svPicker.hidden=false;svKindButton.setAttribute('aria-expanded',String(field==='kind'));svDateButton.setAttribute('aria-expanded',String(field==='date'));
  const button=svPicker.querySelector('button');button?.focus({preventScroll:true});
 }
