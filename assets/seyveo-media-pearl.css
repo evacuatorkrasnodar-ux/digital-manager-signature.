@@ -1,0 +1,53 @@
+/* SEYVEO White Pearl · media controls V191.
+ * One shared material on existing controls only. Preserve the approved
+ * blue/silver scanner entry (semantic action layer), dark and Sky chat,
+ * native camera/gallery, editing gestures, tool colors and geometry. */
+html:root[data-theme="light"] body dialog#noteScanDialog.paper-scan-dialog[open] > #svScanMore:not([hidden]),
+html:root[data-theme="light"] body dialog.sv-local-scan[open] > header > button,
+html:root[data-theme="light"] body .sv-pdf-markup[open] .sv-pdf-markup-round,
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-light-surface[open] .sv-paper-photo-handle{
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+}
+html:root[data-theme="light"] body dialog.sv-local-scan[open] > header > button:first-child,
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-light-surface[open] .sv-paper-photo-handle{
+ color:var(--sv-white-pearl-ink)!important;
+}
+html:root[data-theme="light"] body dialog.sv-local-scan[open] > header > button:last-child:not(:disabled){
+ background:var(--sv-confirm-face,rgba(179,220,248,.78))!important;
+ border-color:var(--sv-confirm-edge,rgba(56,146,230,.38))!important;
+ color:var(--sv-confirm-ink,#075ca8)!important;
+}
+html:root[data-theme="light"] body dialog.sv-local-scan[open] > .sv-local-scan-rail,
+html:root[data-theme="light"] body .sv-pdf-markup[open] .sv-editor-capsule[data-sv-editor-context="pdf"],
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-light-surface[open] .sv-paper-photo-hint{
+ background:var(--sv-white-pearl-floating-dock)!important;
+ background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+}
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-light-surface[open] .sv-paper-photo-hint{
+ color:var(--sv-white-pearl-ink)!important;
+}
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-light-surface[open] .sv-paper-photo-hint > button{
+ background:transparent!important;
+ box-shadow:none!important;
+}
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-light-surface[open] .sv-paper-photo-hint > button:last-child{
+ color:var(--sv-confirm-ink,#075ca8)!important;
+}
+html:root[data-theme="light"] body dialog.sv-local-scan[open] > header > button:focus-visible,
+html:root[data-theme="light"] body .sv-pdf-markup[open] .sv-pdf-markup-round:focus-visible{
+ outline:2px solid currentColor!important;outline-offset:2px!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body dialog.sv-local-scan[open] > header > button:last-child:not(:disabled){
+  background:#c3e2fa!important;
+ }
+}
