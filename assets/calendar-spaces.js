@@ -886,6 +886,9 @@ function svRenderDate(){
   if(date===new Date().toLocaleDateString('sv-SE'))button.classList.add('is-today');
   grid.append(button);
  }
+ if(window.SEYVEO_SHARED_DATE_CALENDAR?.render){
+  window.SEYVEO_SHARED_DATE_CALENDAR.render(month,svDate,name,grid,{dayClass:'cal-velvet-day',scope:'business'});
+ }
  svPicker.append(grid);
  const foot=document.createElement('div');foot.className='cal-velvet-picker-foot';
  for(const [key,label] of [['today','Сегодня'],['clear','Без даты']]){
@@ -916,7 +919,7 @@ svPicker.addEventListener('click',event=>{
  if(button.dataset.svClosePicker){svClosePicker();return;}
  if(button.dataset.svMonth){const d=new Date(svPickerYear,svPickerMonth+Number(button.dataset.svMonth),1,12);svPickerYear=d.getFullYear();svPickerMonth=d.getMonth();svRenderDate();return;}
  if(button.dataset.svKind!==undefined){svKind.value=button.dataset.svKind;svKind.dispatchEvent(new Event('change',{bubbles:true}));svSyncControls();svClosePicker();return;}
- let date=button.dataset.svDate;
+ let date=button.dataset.svDate??button.dataset.calPickDay;
  if(button.dataset.svDateAction==='today')date=new Date().toLocaleDateString('sv-SE');
  if(button.dataset.svDateAction==='clear')date='';
  if(date!==undefined){svDate.value=date;svDate.dispatchEvent(new Event('change',{bubbles:true}));svSyncControls();svClosePicker();}
