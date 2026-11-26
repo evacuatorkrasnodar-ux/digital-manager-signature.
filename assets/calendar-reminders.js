@@ -6,6 +6,7 @@
 (()=>{
 'use strict';
 const KEY='seyveo-calendar-events-v1';
+const TASKS='seyveo-personal-tasks-v1';
 const SEEN='seyveo-calendar-reminders-seen-v1';
 const TIME=/^([01]\d|2[0-3]):([0-5]\d)$/;
 const DATE=/^(\d{4})-(\d{2})-(\d{2})$/;
@@ -22,13 +23,21 @@ function reminderTime(item){
  return start.getTime();
 }
 function reminderKey(item){
- return [item.id,item.date,item.time,item.remind,item.updatedAt||''].join('|');
+ const key=[item.id,item.date,item.time,item.remind,item.updatedAt||''].join('|');
+ return item.source==='task'?'task|'+key:key;
+}
+function reminderItems(calendar,tasks){
+ const events=Array.isArray(calendar)?calendar:[];
+ const personal=(Array.isArray(tasks)?tasks:[]).filter(x=>x&&x.done!==true&&[15,30,60].includes(Number(x.remindBefore))).map(x=>({
+  id:x.id,title:x.title,date:x.due,time:x.time,remind:Number(x.remindBefore),source:'task'
+ }));
+ return [...events.slice(-300),...personal.slice(-150)];
 }
 function dueReminders(list,now=Date.now(),seen=new Set()){
  const timestamp=now instanceof Date?now.getTime():Number(now);
  if(!Number.isFinite(timestamp)||!Array.isArray(list))return [];
  const ready=[];
- for(const item of list.slice(-300)){
+ for(const item of list.slice(-450)){
   const when=reminderTime(item);
   if(when===null||seen.has(reminderKey(item)))continue;
   const until=when-timestamp,lead=Number(item.remind);
@@ -43,7 +52,7 @@ function dueReminders(list,now=Date.now(),seen=new Set()){
  return ready.sort((a,b)=>a.when-b.when||String(a.item.title).localeCompare(String(b.item.title),'ru'));
 }
 if(typeof module!=='undefined'&&module.exports){
- module.exports={reminderTime,reminderKey,dueReminders};
+ module.exports={reminderTime,reminderKey,dueReminders,reminderItems};
 }
 if(typeof document==='undefined'||typeof window==='undefined')return;
 const seen=new Set();
@@ -66,10 +75,8 @@ function persist(){
  }catch{}
 }
 function events(){
- try{
-  const source=JSON.parse(localStorage.getItem(KEY)||'[]');
-  return Array.isArray(source)?source:[];
- }catch{return []}
+ const read=key=>{try{const source=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(source)?source:[]}catch{return []}};
+ return reminderItems(read(KEY),read(TASKS));
 }
 function discreet(){
  try{return localStorage.getItem('seyveo-discreet-mode-v1')==='on'||window.SEYVEO_DISCREET_MODE===true}
@@ -129,7 +136,10 @@ function check(){
  if(next)show(next);
 }
 window.addEventListener('seyveo:calendar-changed',check);
-window.addEventListener('storage',event=>{if(event.key===KEY||event.key==='seyveo-discreet-mode-v1')check()});
+window.addEventListener('seyveo:tasks-changed',check);
+window.addEventListener('seyveo:personal-tasks-changed',check);
+window.addEventListener('seyveo:future-committed',check);
+window.addEventListener('storage',event=>{if(event.key===KEY||event.key===TASKS||event.key==='seyveo-discreet-mode-v1')check()});
 window.addEventListener('focus',check);
 document.addEventListener('visibilitychange',check);
 window.setInterval(check,15000);
