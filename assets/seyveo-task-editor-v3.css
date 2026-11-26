@@ -2234,3 +2234,35 @@ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .s
 html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-unified-wheel > .sv-unified-wheel-option.is-selected{
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
+
+/* V71 · identical geometry in Date and Time modes.
+   Explicit border-box tracks keep the header, selection band and actions stationary.
+   The outer sheet remains scrollable on short screens and with the keyboard. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-smart-wheel-edit{
+ display:grid!important;grid-template-rows:48px 52px 200px 44px!important;
+ grid-template-columns:minmax(0,1fr)!important;gap:8px!important;
+ box-sizing:border-box!important;width:100%!important;height:368px!important;
+ min-height:368px!important;max-height:none!important;
+ align-items:stretch!important;align-content:start!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-sheet-head{
+ box-sizing:border-box!important;height:48px!important;min-height:48px!important;max-height:48px!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-tabs{
+ box-sizing:border-box!important;height:52px!important;min-height:52px!important;max-height:52px!important;
+ margin:0!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-tabs > button{
+ box-sizing:border-box!important;height:44px!important;min-height:44px!important;max-height:44px!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-body{
+ box-sizing:border-box!important;height:200px!important;min-height:200px!important;max-height:200px!important;
+ grid-template-rows:200px!important;align-items:stretch!important;margin:0!important;padding:0!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-host{
+ box-sizing:border-box!important;height:200px!important;min-height:0!important;min-width:0!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-actions{
+ box-sizing:border-box!important;height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;
+}
