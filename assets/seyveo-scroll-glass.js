@@ -134,7 +134,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    const style=getComputedStyle(port);
    if(!/^(auto|scroll|overlay)$/.test(style.overflowY)||port.clientHeight<=0)return;
    const controls=target.controls.filter(el=>visible(el)&&root.contains(el));
-   if(!controls.length)return;
+   if(!controls.length||(target.documentArchive&&controls.length!==2))return;
    const rect=root.getBoundingClientRect(),scroll=port.getBoundingClientRect();
    // Work lives inside an app with a real top/safe-area inset. Extend the
    // material AND the existing scrollport through that strip, without
