@@ -431,7 +431,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
  backdrop-filter:var(--svcp-conversation-blue-blur)!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpAttachFile > svg{
- width:26px!important;height:26px!important;
+ width:28px!important;height:28px!important;
  stroke:#F6FDFF!important;stroke-width:1.65!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpVoiceRecord{
@@ -458,6 +458,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile:is(:hover,:active,:focus,[aria-expanded="true"]){
  background:rgba(0,130,179,.62)!important;
  background-image:none!important;
+ border-color:rgba(85,220,247,.96)!important;
 }
 @media(prefers-reduced-transparency:reduce){
  html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile,
