@@ -19,12 +19,39 @@ const subjects=Object.freeze({
 let fileUrl=null;
 let returnDestination=null;
 let mailEntryOrigin=null;
+let documentEntryOrigin=null;
 let lastSurfaceHash=location.hash;
 function updateBackDestination(){
  const label=returnDestination?.label||'Главная';
  const caption=back.querySelector('span:last-child');
  if(caption)caption.textContent=label;
  back.setAttribute('aria-label','Вернуться: '+label);
+}
+function captureDocumentOrigin(hash){
+ const origin=hash&&hash!=='#sayvi-documents'?hash:'#home';
+ const section=$('svWorkShell')?.dataset.active;
+ const workView=origin==='#tasks'?$('tasksPage')?.dataset.workView:null;
+ const notebook=(origin==='#tasks'||origin==='#calendar')&&section==='notes'&&$('notesDialog')?.open;
+ const wallet=(origin==='#tasks'||origin==='#calendar')&&section==='wallet'&&$('seyveoPayDialog')?.open;
+ const labels={'#home':'Главная','#life':'Мой мир','#manage':'Управление','#calendar':'Календарь','#tasks':workView==='business'?'Кабинет':workView==='employee'?'Моя работа':'Мои дела','#sayvi-mail':'Почта','#sayvi-health':'Здоровье'};
+ documentEntryOrigin={hash:origin,workView,notebook:!!notebook,wallet:!!wallet,label:notebook?'Блокнот':wallet?'Кошелёк':labels[origin]||'предыдущий экран',previousDestination:returnDestination};
+ returnDestination=documentEntryOrigin;
+}
+function returnFromDocuments(origin){
+ returnDestination=origin.previousDestination;
+ const work=window.SEYVEO_UNIFIED_TASKS;
+ if(origin.hash==='#tasks'){
+  if(origin.workView==='business'&&typeof work?.openBusiness==='function')work.openBusiness('preserve');
+  else if(origin.workView==='employee'&&typeof work?.openEmployee==='function'&&window.SEYVEO_PREVIEW?.isEmployee?.())work.openEmployee();
+  else location.hash=origin.hash;
+ }else location.hash=origin.hash;
+ if(origin.notebook||origin.wallet){
+  requestAnimationFrame(()=>{
+   if(location.hash!==origin.hash)return;
+   if(origin.notebook)window.SEYVEO_NOTES_API?.openNotes?.();
+   else if(origin.wallet)window.SEYVEO_PAY?.open?.();
+  });
+ }
 }
 function rememberOrigin(context){
  if(context==='business')returnDestination={hash:'#tasks',label:'Пульт руководителя'};
@@ -2269,6 +2296,8 @@ function currentKind(){
 function sync(){
  const hash=location.hash;
  const kind=currentKind();
+ if(kind==='contract'&&lastSurfaceHash!=='#sayvi-documents'&&!documentEntryOrigin)captureDocumentOrigin(lastSurfaceHash);
+ if(lastSurfaceHash==='#sayvi-documents'&&kind!=='contract')documentEntryOrigin=null;
  if(kind==='mail'&&lastSurfaceHash!=='#sayvi-mail'&&!mailEntryOrigin){
   captureMailOrigin(lastSurfaceHash);
  }
@@ -2312,7 +2341,8 @@ function open(kind,context){
  }
  if(location.hash===target){sync();return true}
  // Capture the calling section before changing the hash.
- if(!currentKind())rememberOrigin(context);
+ if(kind==='contract')captureDocumentOrigin(location.hash);
+ else if(!currentKind())rememberOrigin(context);
  if(kind==='contract')window.SEYVEO_DOCUMENT_CENTER?.setArea?.(context==='business'?'business':'personal');
  location.hash=target;
  return true;
@@ -2327,6 +2357,7 @@ back.addEventListener('click',()=>{
  // Employees cannot enter the owner vault, so their Back exits normally.
  if(currentKind()==='contract'&&
     window.SEYVEO_DOCUMENT_CENTER?.backFromNested?.())return;
+ if(currentKind()==='contract'&&documentEntryOrigin){const origin=documentEntryOrigin;documentEntryOrigin=null;returnFromDocuments(origin);return;}
  if(currentKind()==='mail'){
   if(typeof mailContactsExitHandler==='function'&&mailContactsExitHandler())return;
   if(typeof mailGuardExitHandler==='function'&&mailGuardExitHandler())return;
