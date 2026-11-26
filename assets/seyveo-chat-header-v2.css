@@ -306,7 +306,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-room-
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-call-actions > .svcp-call-button svg{
  display:block!important;width:20px!important;height:20px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.45!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:none!important;filter:none!important;
 }
@@ -487,4 +487,9 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 @media(prefers-reduced-transparency:reduce){
  html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]),
  html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{background:#0769B7!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
+
+/* V127 — shared, optically balanced call glyphs, no button geometry changes. */
+html:root body #svcpWorkChatScreen :is(#svcpRoomProfileAudio,#svcpRoomProfileVideo) > svg{
+ fill:none!important;stroke:currentColor!important;stroke-width:1.45!important;stroke-linecap:round!important;stroke-linejoin:round!important;
 }
