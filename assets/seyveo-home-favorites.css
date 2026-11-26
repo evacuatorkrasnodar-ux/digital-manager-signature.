@@ -823,15 +823,30 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
   padding:0 1px 4px!important;
   -webkit-mask-image:none!important;mask-image:none!important;
  }
- /* V176: only the capsule itself has optical material. No glass
-    protrudes below its rounded rim, and the gallery stays underneath. */
- html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned::before,
+ /* V177: the real gallery scrolls all the way to the curtain's top.
+    One full-header Avatar material, activated only when content scrolls. */
+ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned{
+  margin-top:0!important;gap:9px!important;
+ }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned::after{
   content:none!important;display:none!important;
  }
+ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned::before{
+  content:""!important;display:block!important;position:absolute!important;
+  inset:calc(-1 * var(--sv-home-avatar-top-inset,20px)) -18px -24px!important;
+  z-index:-1!important;pointer-events:none!important;
+  background:var(--sv-header-glass-face,rgba(247,247,248,.46))!important;
+  -webkit-backdrop-filter:var(--sv-header-glass-filter,blur(10px) saturate(108%))!important;
+  backdrop-filter:var(--sv-header-glass-filter,blur(10px) saturate(108%))!important;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
+  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
+  border:0!important;box-shadow:none!important;opacity:0!important;
+ }
+ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned.is-scrolled::before{
+  opacity:1!important;
+ }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-tabs:not([hidden]){
-  -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
-  backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-views{
   margin-top:calc(-1 * var(--sv-home-avatar-head-height,38px))!important;
