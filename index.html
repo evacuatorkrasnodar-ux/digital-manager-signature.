@@ -4585,7 +4585,14 @@ window.visualViewport?.addEventListener('resize',closeNoteRowMenus,{passive:true
 window.visualViewport?.addEventListener('scroll',closeNoteRowMenus,{passive:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)closeNoteRowMenus();});
 new MutationObserver(()=>{if(!$('notesDialog').open||$('svWorkShell')?.dataset.active!=='notes')closeNoteRowMenus();}).observe($('notesDialog'),{attributes:true,attributeFilter:['open','hidden']});
-new MutationObserver(()=>{if($('svWorkShell')?.dataset.active!=='notes')closeNoteRowMenus();}).observe($('svWorkShell'),{attributes:true,attributeFilter:['data-active']});
+// Work shell is created by a later script; never observe a missing DOM node.
+function bindNoteRowMenuWorkShell(){
+ const shell=$('svWorkShell');
+ if(!shell)return;
+ new MutationObserver(()=>{if(shell.dataset.active!=='notes')closeNoteRowMenus();}).observe(shell,{attributes:true,attributeFilter:['data-active']});
+}
+if($('svWorkShell'))bindNoteRowMenuWorkShell();
+else if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindNoteRowMenuWorkShell,{once:true});
 $('notesDialog').addEventListener('close',()=>{if(notebookSelecting)setNotebookSelection(false);});
 document.addEventListener('keydown',event=>{
  if(event.key==='Escape'&&notebookSelecting&&$('notesDialog').open){event.preventDefault();setNotebookSelection(false);}
