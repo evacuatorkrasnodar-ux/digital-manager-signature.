@@ -1971,7 +1971,7 @@ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3[op
 }
 html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarPopover::-webkit-scrollbar{display:none!important}
 html:root:not([data-theme="dark"]) body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet > #svNewTaskCalendarPopover:not([hidden]){
- background:rgba(218,222,229,.76)!important;background-image:none!important;
+ background:rgba(228,231,236,.65)!important;background-image:none!important;
  -webkit-backdrop-filter:blur(20px) saturate(110%)!important;backdrop-filter:blur(20px) saturate(110%)!important;
 }
 html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-calendar-shade{
@@ -2005,4 +2005,41 @@ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .s
  html:root:not([data-theme="dark"]) body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet > #svNewTaskCalendarPopover:not([hidden]){
   background:#E5E7EB!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
+}
+
+/* V61 · two independent calendar header rows, common right alignment.
+   Keep 44px touch targets and avoid stacked button shadows. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarPopover .sv-task-calendar-sheet-head{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:76px minmax(0,1fr) 76px!important;
+ align-items:center!important;min-height:56px!important;
+ padding:10px 0 0!important;margin:0 0 12px!important;gap:0!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarPopover .sv-task-calendar-done{
+ box-sizing:border-box!important;justify-self:end!important;
+ min-width:64px!important;min-height:44px!important;height:44px!important;
+ margin:0!important;padding:0 11px!important;
+ background:var(--sv-task-action-fill)!important;border:var(--sv-task-action-rim)!important;
+ border-radius:999px!important;box-shadow:none!important;
+ -webkit-backdrop-filter:var(--sv-task-action-blur)!important;backdrop-filter:var(--sv-task-action-blur)!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarPopover .sv-new-task-month-bar{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:space-between!important;
+ min-height:44px!important;margin:0 0 6px!important;padding:0!important;gap:12px!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarPopover .sv-month-controls{
+ box-sizing:border-box!important;flex:0 0 90px!important;width:90px!important;min-width:90px!important;
+ height:44px!important;min-height:44px!important;padding:0!important;margin:0!important;
+ box-shadow:none!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarPopover .sv-month-controls > button{
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;padding:0!important;margin:0!important;
+ border:0!important;box-shadow:none!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarPopover .sv-new-task-calendar-days > :is(button,.sv-new-task-empty-day){
+ border-top-color:rgba(60,60,67,.045)!important;
+}
+html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarPopover .sv-new-task-calendar-days > :is(button,.sv-new-task-empty-day){
+ border-top-color:rgba(255,255,255,.075)!important;
 }
