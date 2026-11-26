@@ -19,6 +19,28 @@
   const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;
   return el;
  };
+ // Use the actual destination category/name, never invent a venue type.
+ function placeMarker(target,cls){
+  const name=String(target?.name||'');
+  const kind=String(target?.kind||'').toLocaleLowerCase('ru-RU');
+  const typed=kind||((proposal?.venueName&&name.toLocaleLowerCase('ru-RU').includes(proposal.venueName.toLocaleLowerCase('ru-RU')))?proposal.kind:'');
+  let icon='pin';
+  if(typed==='трц'||/(?:^|\s)(?:ТРЦ|ТЦ)(?:\s|$)|торговый центр/iu.test(name))icon='mall';
+  else if(/кофей|кофе|coffee/iu.test(typed+' '+name))icon='coffee';
+  else if(/ресторан|restaurant|кафе|cafe|пиццер|бистро/iu.test(typed+' '+name))icon='food';
+  const marker=node('span',cls);marker.setAttribute('aria-hidden','true');
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');
+  svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.8');
+  svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');
+  svg.innerHTML={
+   mall:'<path d="M3 9h18l-2-5H5L3 9Zm1 0v11h16V9M9 20v-6h6v6M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/>',
+   coffee:'<path d="M4 8h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Zm12 1h2a3 3 0 0 1 0 6h-2M3 21h18M8 3v2m4-2v2"/>',
+   food:'<path d="M5 3v6a3 3 0 0 0 6 0V3M8 3v18M19 3c-4 3-4 8-4 11h4m0-11v18"/>',
+   pin:'<path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/>'
+  }[icon];
+  marker.append(svg);marker.dataset.placeIcon=icon;return marker;
+ }
  function viewerIcon(name){
   const icons={
    down:'<path d="m6 9 6 6 6-6"/>',
@@ -54,7 +76,7 @@
   header.append(headline,close);
   const viewport=node('div','sv-place-map-viewport');viewport.setAttribute('aria-label','Интерактивная карта: перетаскивай, увеличивай двумя пальцами или кнопками');
   const tilesLayer=node('div','sv-place-map-layer');
-  const pin=node('span','sv-place-map-marker');pin.setAttribute('aria-label','Выбранное место');
+  const pin=placeMarker(target,'sv-place-map-marker');
   const controls=node('div','sv-place-map-controls');
   const zoomIn=node('button','sv-place-map-zoom');zoomIn.type='button';zoomIn.append(viewerIcon('plus'));zoomIn.setAttribute('aria-label','Приблизить карту');
   const zoomOut=node('button','sv-place-map-zoom');zoomOut.type='button';zoomOut.append(viewerIcon('minus'));zoomOut.setAttribute('aria-label','Отдалить карту');
@@ -309,7 +331,7 @@
      img.referrerPolicy='strict-origin-when-cross-origin';img.src=tile.url;
      img.style.left=tile.left+'px';img.style.top=tile.top+'px';link.append(img);
     }
-    link.append(node('span','sv-place-map-pin','●'));
+    link.append(placeMarker(place,'sv-place-map-pin'));
    }
    visual.append(link);card.append(visual);
    if(!confirmed){
