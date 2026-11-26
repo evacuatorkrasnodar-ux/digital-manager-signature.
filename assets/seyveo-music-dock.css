@@ -380,8 +380,8 @@ html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > 
 }
 html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button svg{width:24px;height:24px;flex:none;display:block}
 html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button span{font-size:clamp(8px,2.4vw,10px);font-weight:550;letter-spacing:-.035em;white-space:nowrap;line-height:1.05}
-html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:#2463a5;background:rgba(94,117,149,.14)}
-html.sv-music-screen[data-theme="dark"] body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:#b6cce9;background:rgba(174,194,225,.15)}
+html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:#2463a5;background:transparent}
+html.sv-music-screen[data-theme="dark"] body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:#b6cce9;background:transparent}
 html.sv-music-screen.sv-music-player-open body footer.dock.sv-shared-dock.sv-music-navigation-only{display:none!important}
 
 /* Same physical mini-player, placed in the Listen page instead of its old CTA.
@@ -429,3 +429,25 @@ html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.
 }
 html:root[data-theme="light"].sv-music-screen body #svMusicHome .sv-music-feature{border:0!important}
 html:root[data-theme="light"].sv-music-screen body #svMusicHome .sv-music-feature::before{border:0}
+
+/* Music selection uses the same true-circle geometry as the Home indicator:
+   diameter = available cell width minus 8px, capped at 52px.
+   The full cell stays clickable; only the independent highlight is circular. */
+html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button{
+ position:relative!important;isolation:isolate;
+}
+html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{
+ background:transparent!important;
+}
+html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]::before{
+ content:""!important;display:block!important;position:absolute!important;
+ left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;
+ width:clamp(40px,calc(100% - 8px),52px)!important;
+ height:auto!important;aspect-ratio:1 / 1!important;
+ border-radius:50%!important;box-sizing:border-box!important;
+ border:0!important;box-shadow:none!important;
+ background:rgba(94,117,149,.14)!important;pointer-events:none!important;z-index:-1!important;
+}
+html.sv-music-screen[data-theme="dark"] body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]::before{
+ background:rgba(174,194,225,.15)!important;
+}
