@@ -33,7 +33,7 @@
   if(snowy(code)||cold)advice.push('оденься теплее');
   else if(cool)advice.push('может пригодиться куртка');
   const friendly=advice.join(' и ');
-  return 'Прогноз на день встречи · '+city+': '+conditions.join(', ')+'.'+
+  return city+' · '+conditions.join(', ')+'.'+
    (friendly?' '+friendly.charAt(0).toLocaleUpperCase('ru-RU')+friendly.slice(1)+'.':'');
  }
  function localDistanceKm(latA,lonA,latB,lonB){
@@ -71,9 +71,9 @@
    const [hour,minute]=time.value.split(':').map(Number);
    const target=new Date(day.getFullYear(),day.getMonth(),day.getDate(),hour,minute);
    const remaining=untilText(target);
-   if(remaining)parts.push(remaining);
+   if(remaining&&target.getTime()-Date.now()<120*60000)parts.push(remaining);
    if(day.getDay()===5&&hour>=16&&hour<=21&&target.getTime()>Date.now())
-    parts.push('В пятницу вечером движение может быть плотнее — проверь пробки перед выездом.');
+    parts.push('В пятницу вечером возможны пробки.');
   }
   const weather=window.SAYVI_WEATHER;
   const forecast=weather?.getForecast?.(due.value),location=weather?.getLocation?.();
