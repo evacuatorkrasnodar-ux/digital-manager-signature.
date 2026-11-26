@@ -334,12 +334,12 @@ html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"
  color:var(--sv-menu-text)!important;
 }
 html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"]
- .sv-mail-top-actions :is(.sv-mail-gate-accounts,.sv-mail-gate-account,.sv-mail-gate-mode,.sv-mail-gate-menu-close){
+ .sv-mail-top-actions :is(.sv-mail-gate-mode,.sv-mail-gate-menu-close){
  background:var(--sv-menu-item)!important;
  color:var(--sv-menu-text)!important;
 }
 html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"]
- .sv-mail-top-actions :is(.sv-mail-gate-account,.sv-mail-gate-mode)[aria-pressed="true"]{
+ .sv-mail-top-actions .sv-mail-gate-mode[aria-pressed="true"]{
  background:var(--sv-menu-item-selected)!important;
  color:var(--sv-menu-text)!important;
 }
