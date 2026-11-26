@@ -360,6 +360,45 @@
   if(filter==='active'&&t.done===true||filter==='done'&&t.done!==true)return false;
   return t.title.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').includes(query.trim().toLocaleLowerCase('ru-RU').replace(/ё/g,'е'));
  }).sort((a,b)=>String(b.doneAt||b.createdAt||'').localeCompare(String(a.doneAt||a.createdAt||'')));
+ function openBulkDate(ids){
+  if(!ids.length||document.getElementById('svTaskBulkDateSheet'))return;
+  const tasks=getTasks().filter(t=>ids.includes(t.id)&&!t.done);
+  if(tasks.length!==ids.length)return;
+  const dlg=make('dialog','sv-task-bulk-date');dlg.id='svTaskBulkDateSheet';dlg.setAttribute('aria-labelledby','svTaskBulkDateTitle');
+  const head=make('header','sv-task-bulk-date-head');
+  const grip=make('div','sv-nb-sheet-grip');grip.setAttribute('aria-hidden','true');
+  const back=make('button','sv-task-bulk-date-back');back.type='button';back.setAttribute('aria-label','Отмена');back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';back.onclick=()=>dlg.close();
+  const title=make('strong','','Перенести дела');title.id='svTaskBulkDateTitle';
+  const done=make('button','sv-confirm-circle');done.type='button';done.setAttribute('aria-label','Подтвердить перенос');done.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7.5"/></svg>';
+  head.append(grip,back,title,done);dlg.append(head);
+  const note=make('p','sv-task-bulk-date-note','Выбрано: '+ids.length+' · Время и напоминания сохранятся');dlg.append(note);
+  const localIso=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+  const today=new Date(), field={value:localIso(today)}, initial=tasks.every(t=>t.due===tasks[0].due)&&tasks[0].due;
+  if(initial)field.value=initial;
+  let month=new Date(field.value+'T12:00:00');if(!Number.isFinite(month.getTime()))month=today;
+  month=new Date(month.getFullYear(),month.getMonth(),1);
+  const nav=make('div','sv-task-bulk-month'),prev=make('button','','‹'),next=make('button','','›'),label=make('strong');
+  prev.type=next.type='button';prev.setAttribute('aria-label','Предыдущий месяц');next.setAttribute('aria-label','Следующий месяц');nav.append(prev,label,next);
+  const weekdays=make('div','sv-task-bulk-weekdays');for(const name of ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'])weekdays.append(make('span','',name));
+  const grid=make('div','sv-task-bulk-days'),status=make('p','sv-task-bulk-date-note');status.setAttribute('role','status');
+  const calendar=window.SEYVEO_SHARED_DATE_CALENDAR;
+  if(calendar?.render){
+   const draw=()=>calendar.render(month,field,label,grid,{scope:'personal',dayClass:'sv-task-bulk-day',blankClass:'sv-task-bulk-empty',onSelect:key=>{field.value=key;draw()}});
+   prev.onclick=()=>{month=new Date(month.getFullYear(),month.getMonth()-1,1);draw()};
+   next.onclick=()=>{month=new Date(month.getFullYear(),month.getMonth()+1,1);draw()};
+   dlg.append(nav,weekdays,grid);draw();
+  }else{
+   const input=make('input','sv-task-bulk-native-date');input.type='date';input.value=field.value;input.setAttribute('aria-label','Новая дата');input.onchange=()=>{field.value=input.value;done.disabled=!field.value};dlg.append(input);
+  }
+  dlg.append(status);
+  done.onclick=()=>{
+   if(!field.value||done.disabled)return;
+   done.disabled=true;
+   if(!window.SEYVEO_PERSONAL_TASK_TOOLS?.rescheduleMany?.(ids,field.value)){status.textContent='Не удалось перенести дела. Проверьте выбранные записи.';done.disabled=false;return}
+   selected.clear();dlg.close();paint();
+  };
+  dlg.addEventListener('close',()=>dlg.remove(),{once:true});document.body.append(dlg);window.SEYVEO_SHEET_NAVIGATION?.attach(grip,null,()=>dlg.close());dlg.showModal();
+ }
  function paint(){
   revealBulkCapsule();
   const previousResultScroll=toolPanel.querySelector('.sv-tool-results')?.scrollTop||0;
@@ -383,7 +422,7 @@
   }
   // The independent filter capsule owns its own buttons.
   toolPanel.append(results);
-  let counter=null,deleteButton=null,selectAll=null;
+  let counter=null,deleteButton=null,selectAll=null,moveButton=null;
   actionCapsule.replaceChildren();
   if(selectionActive){
    selectAll=make('button','sv-task-all','Выбрать все');selectAll.type='button';
@@ -393,7 +432,7 @@
    });
    counter=make('span','sv-task-count','Выбрано: 0');
    counter.setAttribute('aria-live','polite');counter.dataset.svBulkRole='count';
-   deleteButton=make('button','sv-task-delete','Удалить');deleteButton.type='button';deleteButton.dataset.svBulkRole='delete';
+   deleteButton=make('button','sv-task-delete','Удалить');deleteButton.type='button';deleteButton.dataset.svBulkRole='delete';deleteButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9 7V5.5h6V7m-9 0 .7 12h10.6L18 7M10 10.5v5.5m4-5.5v5.5"/></svg>';
    deleteButton.addEventListener('click',()=>{
     const ids=[...selected];if(!ids.length)return;
     if(!window.confirm('Переместить выбранные дела ('+ids.length+') в «Недавно удалённые»? Их можно вернуть в течение 30 дней.'))return;
@@ -406,7 +445,10 @@
    cancel.setAttribute('aria-label','Завершить выбор дел');
    cancel.addEventListener('click',()=>setMode(''));
    selectionHead.append(selectAll,cancel);
-   actionCapsule.append(counter,deleteButton);
+   moveButton=make('button','sv-task-reschedule','Перенести');moveButton.type='button';moveButton.dataset.svBulkRole='action';
+   moveButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M7.5 3.5v4M16.5 3.5v4M4 10h16M9 15h6m-2-2 2 2-2 2"/></svg><span>Перенести</span>';
+   moveButton.addEventListener('click',()=>openBulkDate([...selected]));
+   actionCapsule.append(moveButton,counter,deleteButton);
   }
   function paintResults(){
    results.replaceChildren();
@@ -469,9 +511,13 @@
     const hits=matches();
     selectAll.textContent=hits.length&&hits.every(t=>selected.has(t.id))?'Снять выбор':'Выбрать все';
    }
+   if(moveButton){
+    const activeIds=new Set(getTasks().filter(t=>!t.done).map(t=>t.id));
+    moveButton.disabled=!selected.size||[...selected].some(id=>!activeIds.has(id));
+    moveButton.title=moveButton.disabled&&selected.size?'Перенос доступен только для активных дел':'Перенести выбранные дела на другую дату';
+   }
    if(deleteButton){
     deleteButton.disabled=!selected.size;
-    deleteButton.textContent='Удалить ('+selected.size+')';
     deleteButton.setAttribute('aria-label','Удалить выбранные дела: '+selected.size);
    }
   }
