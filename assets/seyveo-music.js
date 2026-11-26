@@ -91,6 +91,45 @@ const favoriteId=file=>file?[
  String(file.name||'').trim().toLocaleLowerCase('ru-RU'),String(file.size||0),
  String(file.lastModified||0)
 ].join('|'):'';
+
+/* Replay: count actual advancing playback, never pauses, buffering or seeks.
+   Local-only, no audio uploads. Keep up to 24 monthly aggregates. */
+const REPLAY_KEY='seyveo-music-replay-v1';
+let replayMonths={},replaySample=null,replayDirty=false,replayLastSave=0;
+try{const saved=JSON.parse(localStorage.getItem(REPLAY_KEY)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))replayMonths=saved}catch{}
+function replayMonth(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+function replaySave(){
+ if(!replayDirty)return;
+ try{const keys=Object.keys(replayMonths).sort().slice(-24);localStorage.setItem(REPLAY_KEY,JSON.stringify(Object.fromEntries(keys.map(k=>[k,replayMonths[k]]))));replayDirty=false;replayLastSave=Date.now()}catch{}
+}
+function replayTick(){
+ const file=tracks[index],now=Date.now(),pos=audio.currentTime;
+ if(!file||audio.paused||audio.ended||audio.seeking||audio.readyState<2||!Number.isFinite(pos)){replaySample=null;return}
+ const prior=replaySample;replaySample={version:selectVersion,now,pos};
+ if(!prior||prior.version!==selectVersion)return;
+ const wall=(now-prior.now)/1000,advance=pos-prior.pos;
+ if(wall<=0||advance<=0||advance>wall*Math.max(1,audio.playbackRate)+.8)return;
+ const seconds=Math.min(wall,advance/Math.max(.1,audio.playbackRate),10);
+ if(seconds<=0)return;
+ const month=replayMonth(),bucket=replayMonths[month]||(replayMonths[month]={seconds:0,items:{}});
+ const key=file.radio?'radio:'+file.id:'file:'+favoriteId(file);
+ const info=infoFor(file);
+ const row=bucket.items[key]||(bucket.items[key]={seconds:0,title:'',artist:'',radio:!!file.radio});
+ row.title=info.title||safeName(file);row.artist=file.radio?file.country:(info.artist||'');row.seconds+=seconds;bucket.seconds+=seconds;
+ replayDirty=true;if(now-replayLastSave>15000)replaySave();
+}
+audio.addEventListener('timeupdate',replayTick);
+for(const event of ['playing','pause','seeking','waiting','ended','emptied','error'])audio.addEventListener(event,()=>{replaySample=null;replaySave()});
+window.addEventListener('pagehide',replaySave);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)replaySave()});
+function replaySummary(period){
+ const months=Object.keys(replayMonths).filter(k=>k===period||(/^\d{4}$/.test(period)&&k.startsWith(period+'-')));
+ const rows=new Map();let seconds=0;
+ for(const month of months){const b=replayMonths[month];seconds+=Number(b.seconds)||0;for(const [key,item] of Object.entries(b.items||{})){const old=rows.get(key);rows.set(key,{...item,key,seconds:(old?.seconds||0)+(Number(item.seconds)||0)});}}
+ const all=[...rows.values()].sort((a,b)=>b.seconds-a.seconds);
+ const artists=new Map();for(const t of all.filter(t=>!t.radio&&t.artist)){const old=artists.get(t.artist);artists.set(t.artist,{title:t.artist,seconds:(old?.seconds||0)+t.seconds});}
+ return {seconds,tracks:all.filter(t=>!t.radio).slice(0,5),stations:all.filter(t=>t.radio).slice(0,5),artists:[...artists.values()].sort((a,b)=>b.seconds-a.seconds).slice(0,5)};
+}
 function isFavorite(file){return !!file&&favorites.has(favoriteId(file))}
 function updateFavorite(){
  if(!favoriteButton)return;
@@ -172,7 +211,7 @@ function syncResume(){
   if(inline){if(mini.parentNode!==miniHomeSlot)miniHomeSlot.append(mini)}
   else if(miniOrigin.parentNode&&mini.parentNode!==miniOrigin.parentNode)miniOrigin.parentNode.insertBefore(mini,miniOrigin.nextSibling);
   mini.classList.toggle('sv-music-mini-inline',inline);
-  mini.hidden=!inline&&(!loaded||!hasPlayed||audio.ended||(location.hash==='#sayvi-music'&&page.dataset.musicView!=='home'&&page.dataset.musicView!=='new'&&page.dataset.musicView!=='radio'&&page.dataset.musicView!=='library')||miniDismissed);
+  mini.hidden=!inline&&(!loaded||!hasPlayed||audio.ended||(location.hash==='#sayvi-music'&&page.dataset.musicView!=='home'&&page.dataset.musicView!=='new'&&page.dataset.musicView!=='radio'&&page.dataset.musicView!=='library'&&page.dataset.musicView!=='replay')||miniDismissed);
   mini.classList.toggle('is-playing',playing);
   if(loaded){
    const file=tracks[index];
@@ -763,7 +802,7 @@ function playRadio(stations,id){
  tracks=available;miniDismissed=false;return switchTrack(selected,true);
 }
 window.SEYVEO_MUSIC=Object.freeze({
- playRadio,
+ playRadio,replaySummary,
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
  searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,
  // Read-only access to the selected local File for optional visual analysis.
