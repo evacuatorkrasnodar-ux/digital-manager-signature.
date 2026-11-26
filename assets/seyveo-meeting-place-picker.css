@@ -1,18 +1,21 @@
-/* One optional invitation under a meeting; no intrusive second dialog. */
-dialog#personalTaskDialog .sv-meeting-place-picker{margin:12px 21px 10px;padding:14px 15px;background:#f7f8fa;border:1px solid #edf0f3;border-radius:20px;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#22262e}
+/* SEYVEO · contextual meeting helper, on the same white reading surface.
+   No nested grey panel; actions use the approved Avatar material. */
+dialog#personalTaskDialog .sv-meeting-place-picker{box-sizing:border-box;width:100%;min-width:0;margin:10px 0 8px;padding:12px 4px;border:0;border-radius:0;background:transparent;box-shadow:none;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#22262e}
 dialog#personalTaskDialog .sv-meeting-place-picker[hidden]{display:none!important}
-dialog#personalTaskDialog .sv-meeting-place-heading{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.35}
-dialog#personalTaskDialog .sv-meeting-place-heading strong{font-weight:600}
-dialog#personalTaskDialog .sv-meeting-place-star{display:inline-flex;justify-content:center;align-items:center;flex:none;width:25px;height:25px;border-radius:50%;background:#e9f0fd;color:#367fdb;font-size:16px}
-dialog#personalTaskDialog .sv-meeting-place-open{display:block;margin:12px 0 0 34px;padding:9px 16px;background:#e9eef5;color:#2c4d78;border:1px solid #e0e8f3;border-radius:17px;font-size:13px;font-weight:600}
-dialog#personalTaskDialog .sv-meeting-place-moods{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
-dialog#personalTaskDialog .sv-meeting-place-mood{border:1px solid #e4e8ee;background:#fff;color:#2b323e;border-radius:17px;padding:9px 12px;font-size:12px;font-weight:600}
-dialog#personalTaskDialog .sv-meeting-place-mood.is-active{background:#323843;color:#fff;border-color:#323843}
-dialog#personalTaskDialog .sv-meeting-place-muted{margin:10px 0 0;color:#7a838f;font-size:12px;line-height:1.45}
-dialog#personalTaskDialog .sv-meeting-place-choice{display:grid;width:100%;text-align:left;gap:4px;padding:11px 12px;margin-top:7px;border:0;border-radius:14px;background:#fff;color:#232832}
-dialog#personalTaskDialog .sv-meeting-place-choice strong{font-size:13px;font-weight:600}
-dialog#personalTaskDialog .sv-meeting-place-choice small{font-size:11px;color:#7c8794;line-height:1.4}
-dialog#personalTaskDialog :is(.sv-meeting-place-more,.sv-meeting-place-dismiss){padding:8px 3px;margin-top:9px;background:transparent;border:0;color:#728092;font-size:12px}
-dialog#personalTaskDialog .sv-meeting-place-city{display:flex;gap:7px;margin-top:12px}
-dialog#personalTaskDialog .sv-meeting-place-city input{min-width:0;flex:1;min-height:39px;border:1px solid #e3e7eb;border-radius:12px;padding:8px 10px;font-size:14px;background:#fff}
-dialog#personalTaskDialog .sv-meeting-place-city button{border:0;border-radius:12px;background:#2c333d;color:#fff;padding:8px 12px;font-size:12px}
+dialog#personalTaskDialog .sv-meeting-place-heading{display:flex;align-items:center;gap:8px;font-size:17px;line-height:1.35}
+dialog#personalTaskDialog .sv-meeting-place-heading strong{font-weight:550}
+dialog#personalTaskDialog .sv-meeting-place-star{display:block;flex:0 0 24px;width:24px;height:24px;object-fit:contain}
+dialog#personalTaskDialog :is(.sv-meeting-place-open,.sv-meeting-place-mood,.sv-meeting-place-city button){box-sizing:border-box;min-height:44px;border:1px solid rgba(170,186,199,.26);border-radius:999px;padding:8px 13px;font:550 15px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:rgba(222,226,234,.60);color:#252830;-webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(8px));backdrop-filter:var(--sv-white-pearl-blur,blur(8px))}
+dialog#personalTaskDialog .sv-meeting-place-open{display:block;width:100%;margin:9px 0 0}
+dialog#personalTaskDialog :is(.sv-meeting-place-open,.sv-meeting-place-mood.is-active,.sv-meeting-place-city button){background:rgba(68,166,250,.34);border-color:rgba(56,146,230,.38);color:#075CA8}
+dialog#personalTaskDialog .sv-meeting-place-moods{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+dialog#personalTaskDialog .sv-meeting-place-muted{margin:8px 0 0;color:#687582;font-size:13px;line-height:1.45}
+dialog#personalTaskDialog .sv-meeting-place-choice{display:grid;grid-template-columns:minmax(0,1fr) 12px;width:100%;min-height:54px;text-align:left;gap:3px 8px;padding:10px 0;margin:0;border:0;border-bottom:1px solid rgba(103,116,128,.16);border-radius:0;background:transparent;color:#22262b}
+dialog#personalTaskDialog .sv-meeting-place-choice strong{grid-column:1;font-size:17px;font-weight:550;overflow-wrap:anywhere}
+dialog#personalTaskDialog .sv-meeting-place-choice small{grid-column:1;font-size:13px;color:#687582;line-height:1.4;overflow-wrap:anywhere}
+dialog#personalTaskDialog .sv-meeting-place-choice::after{content:"";grid-column:2;grid-row:1/3;align-self:center;width:7px;height:7px;border-top:1.5px solid #8995a3;border-right:1.5px solid #8995a3;transform:rotate(45deg)}
+dialog#personalTaskDialog :is(.sv-meeting-place-more,.sv-meeting-place-dismiss){min-height:44px;padding:8px 3px;margin-top:3px;background:transparent;border:0;color:#526170;font-size:15px}
+dialog#personalTaskDialog .sv-meeting-place-city{display:flex;gap:7px;margin-top:10px}
+dialog#personalTaskDialog .sv-meeting-place-city input{min-width:0;flex:1;min-height:44px;border:1px solid #e3e7eb;border-radius:14px;padding:8px 10px;font-size:17px;background:#fff}
+dialog#personalTaskDialog .sv-meeting-place-picker button:focus-visible{outline:2px solid #0A84FF;outline-offset:2px}
+@media(prefers-reduced-transparency:reduce){dialog#personalTaskDialog :is(.sv-meeting-place-open,.sv-meeting-place-mood,.sv-meeting-place-city button){-webkit-backdrop-filter:none;backdrop-filter:none;background:#EAECF0}dialog#personalTaskDialog :is(.sv-meeting-place-open,.sv-meeting-place-mood.is-active,.sv-meeting-place-city button){background:#B9DFFF}}
