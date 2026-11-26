@@ -139,20 +139,23 @@ html:root body #svTaskBulkDateSheet[open]{
  html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-page.sv-doc-selecting .sv-doc-list-more{visibility:hidden!important;pointer-events:none!important}
  html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-page.sv-doc-selecting > .sv-bulk-selection-head{flex:0 0 44px!important;position:relative!important;z-index:2!important;top:auto!important;margin:0!important}
  html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-page.sv-doc-selecting > .sv-doc-folder-page-body{flex:1 1 0!important;min-height:0!important;padding-top:6px!important;scroll-padding-top:6px!important}
- /* V124: the rail belongs to the page, not the scrolling details element. */
- html:root body #sayviSurfacePage[data-sv-subject="contract"]:has(.sv-doc-draft-list[open].sv-doc-draft-selecting){
-  position:relative!important;
- }
- html:root body #sayviSurfacePage > .sv-doc-draft-selection-footer{
-  position:absolute!important;top:auto!important;left:50%!important;right:auto!important;
-  bottom:calc(82px + env(safe-area-inset-bottom,0px))!important;
+ /* V125: portal shares the viewport containing block with the actual dock.
+    Do not position the page itself or use its already-inset bottom edge. */
+ html:root body > .sv-doc-draft-selection-footer.sv-bulk-selection-capsule{
+  position:fixed!important;top:auto!important;left:50%!important;right:auto!important;
+  bottom:calc(var(--seyveo-dock-bottom,7px) + var(--seyveo-dock-height,50px) + 10px)!important;
   transform:translateX(-50%)!important;margin:0!important;z-index:48!important;
+  grid-template-columns:44px minmax(0,1fr) 44px!important;gap:0!important;
  }
- html:root body #sayviSurfacePage:not([data-sv-subject="contract"]) > .sv-doc-draft-selection-footer,
- html:root body #sayviSurfacePage:not(:has(.sv-doc-draft-list[open].sv-doc-draft-selecting)) > .sv-doc-draft-selection-footer{display:none!important}
+ html:root[data-theme="light"] body > .sv-doc-draft-selection-footer.sv-bulk-selection-capsule{
+  bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 60px + 10px)!important;
+ }
+ html:root body:not(:has(#sayviSurfacePage[data-sv-subject="contract"]:not([hidden]) .sv-doc-draft-list[open].sv-doc-draft-selecting)) > .sv-doc-draft-selection-footer{display:none!important}
  html:root body #sayviSurfacePage[data-sv-subject="contract"]:has(.sv-doc-draft-list[open].sv-doc-draft-selecting) > #sayviSurfaceBody{
   padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important;
   scroll-padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important;
  }
+ html:root body > .sv-doc-draft-selection-footer > [data-sv-bulk-role="delete"] > *{display:none!important}
+ html:root body > .sv-doc-draft-selection-footer > [data-sv-bulk-role="delete"]::after{content:none!important;display:none!important}
  html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-page .sv-doc-scanner-head > strong{max-width:100%!important}
 }
