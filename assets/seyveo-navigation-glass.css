@@ -1273,3 +1273,13 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
   box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* Wallet: frosted header stops exactly at the lower edge of the Work capsule.
+   Fade inward, never over the debit card. Keep scroll mechanics unchanged. */
+@media not (prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-active="wallet"].sv-full-glass-ready > .sv-full-header-material{
+  height:calc(var(--sv-wallet-glass-edge,var(--sv-full-glass-height,0px)) + var(--sv-full-glass-top-gap,0px))!important;
+  --sv-header-glass-mask:linear-gradient(to bottom,#000 0,#000 calc(100% - 8px),transparent 100%);
+  -webkit-mask-image:var(--sv-header-glass-mask)!important;mask-image:var(--sv-header-glass-mask)!important;
+ }
+}

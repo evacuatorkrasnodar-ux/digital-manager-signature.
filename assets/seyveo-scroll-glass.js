@@ -155,6 +155,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    root.style.setProperty('--sv-full-glass-padding',(number(style.paddingTop)+overlap)+'px');
    root.style.setProperty('--sv-full-glass-scroll-padding',(number(style.scrollPaddingTop)+overlap)+'px');
    root.style.setProperty('--sv-full-glass-height',Math.ceil(bottom-rect.top)+'px');
+   // Wallet material ends at the actual shared capsule, not the scrollport
+   // start or its lower decorative fade. Recompute on existing resize events.
+   const walletTabs=root.id==='svWorkShell'&&root.dataset.active==='wallet'?controls.find(el=>el.id==='svWorkTabs'):null;
+   if(walletTabs)root.style.setProperty('--sv-wallet-glass-edge',Math.max(0,walletTabs.getBoundingClientRect().bottom-rect.top)+'px');
+   else root.style.removeProperty('--sv-wallet-glass-edge');
    // All Tasks: the optical edge is the real capsule's lower border,
    // not the scrollport start, its padding or the optional search field.
    const allTasksTabs=root.id==='svWorkShell'&&root.dataset.taskToolMode==='all'?(controls.find(el=>el.id==='svTaskSelectionHead')||controls.find(el=>el.id==='svAllTasksTabs')):null;
