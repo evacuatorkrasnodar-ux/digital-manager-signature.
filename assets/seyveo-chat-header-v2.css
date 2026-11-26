@@ -7,7 +7,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  box-sizing:border-box!important;position:absolute!important;
  inset:0 0 auto 0!important;display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:flex-start!important;
- --svcp-header-avatar:56px;--svcp-header-label:28px;--svcp-header-overlap:-5px;
+ --svcp-header-avatar:56px;--svcp-header-label:32px;--svcp-header-overlap:-5px;
  height:calc(136px + env(safe-area-inset-top,0px))!important;
  /* Keep the identity stack intact, just 2px below the device safe area. */
  padding:calc(2px + env(safe-area-inset-top,0px)) 12px 0!important;
@@ -226,7 +226,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
  -webkit-backdrop-filter:blur(12px) saturate(108%)!important;
  backdrop-filter:blur(12px) saturate(108%)!important;
  bottom:auto!important;
- height:calc(2px + env(safe-area-inset-top,0px) + var(--svcp-header-avatar,56px) + var(--svcp-header-overlap,-5px) + var(--svcp-header-label,28px) + 12px)!important;
+ height:calc(2px + env(safe-area-inset-top,0px) + var(--svcp-header-avatar,56px) + var(--svcp-header-overlap,-5px) + var(--svcp-header-label,32px) + 12px)!important;
  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
 }
