@@ -184,14 +184,17 @@
     pin.hidden=true;attribution.hidden=true;controls.hidden=true;
     showStatus('Открой место в Яндекс Картах');return;
    }
-   pin.hidden=false;attribution.hidden=false;controls.hidden=false;showStatus('');draw();
+   pin.hidden=false;attribution.hidden=false;controls.hidden=false;showStatus('');
+   attribution.title='Резервная карта · '+(window.SEYVEO_YANDEX_MAPS?.status()||'sdk-unavailable');draw();
   }
   if(window.SEYVEO_YANDEX_MAPS?.enabled()){
    pendingMap=true;nativeHost.hidden=false;pin.hidden=true;attribution.hidden=true;controls.hidden=true;
    showStatus('Загрузка карты…');
-   window.SEYVEO_YANDEX_MAPS.mount(nativeHost,target,{
-    isActive:()=>mapViewer===shade,
-    onZoom:value=>{zoomIn.disabled=value>=18;zoomOut.disabled=value<=3}
+   const mapOptions={isActive:()=>mapViewer===shade,onZoom:value=>{zoomIn.disabled=value>=18;zoomOut.disabled=value<=3}};
+   window.SEYVEO_YANDEX_MAPS.mount(nativeHost,target,mapOptions).catch(error=>{
+    if(mapViewer!==shade||window.SEYVEO_YANDEX_MAPS.status()!=='map-init-error')throw error;
+    nativeHost.replaceChildren();
+    return window.SEYVEO_YANDEX_MAPS.mount(nativeHost,target,{...mapOptions,styled:false});
    }).then(controller=>{
     if(mapViewer!==shade){controller?.destroy();return}
     if(!controller){fallback();return}
