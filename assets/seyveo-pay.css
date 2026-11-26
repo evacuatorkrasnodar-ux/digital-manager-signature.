@@ -671,3 +671,40 @@ html[data-theme="dark"] body #sypLoyaltyEditor #sypLoyaltyStatus{color:#9bd6b5}
 #seyveoPayDialog .syp-loyalty-examples-note{font:450 12px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:var(--secondary);margin:10px 2px 0;}
 #seyveoPayDialog .syp-loyalty-examples-note[hidden]{display:none!important;}
 #seyveoPayDialog #sypLoyaltyEmpty{margin-top:12px;}
+
+/* V211 · extensible horizontal wallet tools; shared capsule axis stays fixed. */
+html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch{
+ display:flex!important;justify-content:safe center!important;align-items:flex-start!important;
+ width:calc(100% - 24px)!important;max-width:100%!important;
+ gap:6px!important;overflow-x:auto!important;overflow-y:hidden!important;
+ scrollbar-width:none;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+}
+html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch::-webkit-scrollbar{display:none}
+html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch > button{
+ flex:0 0 76px!important;width:76px!important;min-width:76px!important;scroll-snap-align:center;
+}
+#seyveoPayDialog .syp-fx{padding-top:7px;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+#seyveoPayDialog .syp-fx-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}
+#seyveoPayDialog .syp-fx-head h3{font-size:23px;letter-spacing:-.035em;margin:0 0 3px;font-weight:650}
+#seyveoPayDialog .syp-fx-head small,#seyveoPayDialog .syp-fx-note{color:var(--secondary);font-size:12px;line-height:1.5}
+#seyveoPayDialog .syp-fx-circle{appearance:none;display:grid;place-items:center;width:44px;height:44px;min-width:44px;flex:none;border-radius:50%;padding:0;border:var(--sv-header-circle-border,1px solid #e1e4e8);background:var(--sv-header-circle,#f5f6f7);box-shadow:var(--sv-header-circle-shadow,none);color:var(--text);cursor:pointer}
+#seyveoPayDialog .syp-fx-circle svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+#seyveoPayDialog .syp-fx-circle:disabled{opacity:.45}
+#seyveoPayDialog .syp-fx-pair{display:grid;grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);gap:8px;align-items:end}
+#seyveoPayDialog .syp-fx-pair label{display:grid;gap:5px;min-width:0;color:var(--secondary);font-size:11px}
+#seyveoPayDialog .syp-fx-pair select{width:100%;min-width:0;box-sizing:border-box;height:44px;padding:7px;border:1px solid var(--line);border-radius:13px;background:var(--card,#f5f6f7);color:var(--text);font:500 15px/1.2 system-ui}
+#seyveoPayDialog .syp-fx-conversion{display:grid;gap:7px;margin:15px 0 23px;padding:16px;border-radius:20px;border:1px solid var(--line);background:var(--card,#f5f6f7)}
+#seyveoPayDialog .syp-fx-conversion label{font-size:12px;color:var(--secondary)}
+#seyveoPayDialog #sypFxAmount{box-sizing:border-box;width:100%;min-width:0;border:0;background:transparent;color:var(--text);font:620 32px/1.25 system-ui;letter-spacing:-.035em;padding:4px 0;outline-offset:3px}
+#seyveoPayDialog .syp-fx-result{display:grid;gap:6px;padding-top:13px;border-top:1px solid var(--line)}
+#seyveoPayDialog #sypFxResult{font:620 29px/1.3 system-ui;letter-spacing:-.035em;color:#287a58;overflow-wrap:anywhere}
+#seyveoPayDialog #sypFxRate{font-size:12px;color:var(--secondary)}
+#seyveoPayDialog .syp-fx-tablehead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+#seyveoPayDialog .syp-fx-tablehead h4{font-size:17px;margin:0;font-weight:620}
+#seyveoPayDialog .syp-fx-tablehead span{font-size:12px;color:var(--secondary)}
+#seyveoPayDialog .syp-fx-table{border-radius:16px;overflow:hidden;background:var(--card,#f5f6f7)}
+#seyveoPayDialog .syp-fx-row{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:8px;min-height:44px;padding:8px 13px;box-sizing:border-box;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);width:100%;text-align:left;font:500 15px/1.3 system-ui;font-variant-numeric:tabular-nums;cursor:pointer}
+#seyveoPayDialog .syp-fx-row:last-child{border-bottom:0}
+#seyveoPayDialog .syp-fx-row span:last-child{text-align:right;color:#287a58;font-weight:580;overflow-wrap:anywhere}
+#seyveoPayDialog .syp-fx-note{margin:12px 0}
+html[data-theme="dark"] #seyveoPayDialog :is(#sypFxResult,.syp-fx-row span:last-child){color:#92d3ae}

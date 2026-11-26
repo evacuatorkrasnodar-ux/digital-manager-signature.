@@ -18,8 +18,9 @@ tabs.setAttribute('aria-label','Раздел кошелька');
 // Matched optical bounds and rounded 1.55px strokes: card/chip and financial trend.
 const cardIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2.5" y="5.25" width="19" height="13.5" rx="3"/><rect x="6" y="8.5" width="4.75" height="4" rx="1"/><path d="M8.375 8.5v4M14.25 10h3.75M6 15.75h2.75m3 0h2.75"/></svg>';
 const financesIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 20.25h18M4.75 20.25v-5.5a1 1 0 0 1 1-1H7a1 1 0 0 1 1 1v5.5m2.5 0v-7.5a1 1 0 0 1 1-1h1.25a1 1 0 0 1 1 1v7.5m2.5 0V9.75a1 1 0 0 1 1-1h1.25a1 1 0 0 1 1 1v10.5"/><path d="m3.5 10 5-4.5 4.75 2 6.5-4.25m-3.75 0h3.75V7"/></svg>';
-tabs.innerHTML='<button type="button" data-syp-tab="card" aria-pressed="true" aria-controls="sypCardHome"><span class="syp-view-icon">'+cardIcon+'</span><span>Карта</span></button>'+
- '<button type="button" data-syp-tab="finances" aria-pressed="false" aria-controls="sypBudgetScreen"><span class="syp-view-icon">'+financesIcon+'</span><span>Финансы</span></button>';
+tabs.innerHTML='<button type="button" data-syp-tab="card" aria-pressed="true" aria-controls="sypCardHome"><span class="syp-view-icon">'+cardIcon+'</span><span>Карты</span></button>'+
+ '<button type="button" data-syp-tab="finances" aria-pressed="false" aria-controls="sypBudgetScreen"><span class="syp-view-icon">'+financesIcon+'</span><span>Финансы</span></button>'+
+ '<button type="button" data-syp-tab="currency" aria-pressed="false" aria-controls="sypCurrencyScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h17m-4-4 4 4-4 4M21 17H4m4-4-4 4 4 4"/></svg></span><span>Валюты</span></button>';
 home.id='sypCardHome';
 // Reuse Notebook's free header area above the permanent Work capsule.
 // Move the real controls, not a nonfunctional copy. The delegated click
@@ -76,7 +77,10 @@ function setTab(tab){
   button.setAttribute('aria-pressed',String(button.dataset.sypTab===tab));
  }
  title.textContent='Кошелёк';
- if(tab==='finances'){
+ if(tab==='currency'){
+  kicker.textContent='SEYVEO · ВАЛЮТЫ';
+  intro.textContent='Конвертер валют';
+ }else if(tab==='finances'){
   kicker.textContent='SEYVEO · МОИ ФИНАНСЫ';
   intro.textContent='Личные доходы и расходы';
  }else{
@@ -86,6 +90,10 @@ function setTab(tab){
 }
 async function select(tab){
  const token=++viewToken;
+ if(tab==='currency'){
+  setTab('currency');screen('currency');dialog.scrollTop=0;
+  window.SEYVEO_FX?.open();return;
+ }
  if(tab!=='finances'){
   setTab('card');
   screen('home');
@@ -133,7 +141,7 @@ function open(tab='card'){
   }else dialog.setAttribute('open','');
  }
  window.SEYVEO_WORK_SHELL?.sync?.();
- return select(tab==='finances'?'finances':'card');
+ return select(['finances','currency'].includes(tab)?tab:'card');
 }
 function close(switchingSection=false){
  const editor=q('#sypLoyaltyEditor');if(editor?.open)editor.close();
