@@ -4460,7 +4460,55 @@ function printNote(note){
   popup.opener=null;popup.document.open();
   popup.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>SEYVEO · Запись</title>'
    +'<style>body{font:16px/1.55 system-ui,sans-serif;color:#182033;max-width:740px;margin:40px auto;padding:14px}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}</style>'
-   +'</head><body><h1>Моя запись</h1><pre>'+escapeHtml(note.text)+'</pre></body></html>');
+   +'</head><body><h1>Моя запись</h1><pre>'+escapeHtml(note.text)+'</pre><style id="svMusicFinalCleanCanvas">
+/* Last paint layer: Music only. No frames, no white contour or bevel. */
+html:root[data-theme="light"].sv-music-screen,
+html:root[data-theme="light"].sv-music-screen body{
+ background:#fff!important;border:0!important;outline:0!important;border-radius:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"].sv-music-screen body > .app,
+html:root[data-theme="light"].sv-music-screen body #sayviMusicPage{
+ border:0!important;outline:0!important;border-radius:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body > .app,
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage{
+ background:transparent!important;background-image:none!important;
+}
+html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only{
+ background:transparent!important;background-image:none!important;border:0!important;outline:0!important;box-shadow:none!important;
+ --sv-white-pearl-edge:0px solid transparent;
+ --sv-white-pearl-rim-color:transparent;
+ --sv-white-pearl-dock-shadow:none;
+ --sv-dock-pearl-border:0px solid transparent;
+ --sv-dock-pearl-shadow:none;
+}
+html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only::before,
+html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only::after{
+ background:rgba(235,237,240,.62)!important;background-image:none!important;
+ border:0!important;outline:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage,
+html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only{
+ border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;
+}
+html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"])::before,
+html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"])::after{
+ content:none!important;display:none!important;
+}
+html:root[data-theme="light"].sv-music-screen body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline{
+ border:0!important;outline:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"].sv-music-screen body #svMusicHome .sv-music-feature{
+ border:0!important;outline:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"].sv-music-screen body #svMusicHome .sv-music-feature::before{border:0!important}
+html:root[data-theme="light"].sv-music-screen body #svMusicHome .sv-music-recent-card{border:0!important;box-shadow:none!important}
+html:root[data-theme="light"].sv-music-screen body #sayviMusicPage button:focus-visible,
+html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock button:focus-visible{
+ outline:2px solid #326ba8!important;outline-offset:-2px!important;
+}
+</style>
+</body></html>');
   popup.document.close();popup.focus();popup.print();
  }catch{
   try{popup.close()}catch{}
