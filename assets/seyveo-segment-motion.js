@@ -12,7 +12,7 @@
   '#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-options',
   '#svcpChatFilters','.sv-inbox-muted-tabs','.sv-new-avatar-tabs',
   '#svcpStaffTabs','#seyveoFamilyDialog:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) .svf-tabs',
-  '.syp-view-switch'
+  '.syp-view-switch','.svmc-tabs','.sv-invite-segments','.svcp-people-switch'
  ];
  const query=selectors.join(',');
  const states=new Map(),pending=new Map();
@@ -28,6 +28,7 @@
  function schedule(){if(!frame)frame=requestAnimationFrame(()=>{frame=0;refresh()})}
  function geometry(t){
   if(!t.isConnected||!t.getClientRects().length||t.clientWidth<40||t.clientHeight<24)return null;
+  if(getComputedStyle(t).visibility==='hidden')return null;
   const rect=t.getBoundingClientRect(),w=t.clientWidth,scale=rect.width/(t.offsetWidth||rect.width);
   if(!scale||!rect.height)return null;
   const buttons=Array.from(t.children).filter(b=>b.tagName==='BUTTON'&&!b.hidden&&b.getClientRects().length);
@@ -109,7 +110,7 @@
   schedule();
  },true);
  document.addEventListener('pointerdown',e=>{
-  if(!enabled()||e.button!==0||!e.isPrimary)return;
+  if(!enabled()||e.button!==0||e.isPrimary===false)return;
   const t=closestTrack(e);if(!t)return;
   const g=geometry(t);if(!g)return;
   suppress=null;const face=currentFace(t,g);
