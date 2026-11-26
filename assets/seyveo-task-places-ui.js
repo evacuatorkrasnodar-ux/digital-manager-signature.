@@ -118,7 +118,10 @@
   }
   mapViewer=shade;dialog.classList.add('sv-place-map-open');dialog.append(shade);
   let centerLat=target.lat,centerLon=target.lon,zoom=16;
-  const activePointers=new Map(),tileNodes=new Map();let pinchDistance=0;
+  const activePointers=new Map(),tileNodes=new Map();let pinchDistance=0,nativeMap=null,pendingMap=false;
+  const nativeHost=node('div','sv-yandex-map-host');nativeHost.hidden=true;viewport.prepend(nativeHost);
+  const mapStatus=node('div','sv-place-map-status');mapStatus.hidden=true;viewport.append(mapStatus);
+  const showStatus=value=>{mapStatus.textContent=value;mapStatus.hidden=!value;};
   function world(lat,lon){
    const size=256*2**zoom,radians=Math.max(-85.0511,Math.min(85.0511,lat))*Math.PI/180;
    return {x:(lon+180)/360*size,y:(1-Math.log(Math.tan(radians)+1/Math.cos(radians))/Math.PI)/2*size};
@@ -130,7 +133,7 @@
    centerLat=(2*Math.atan(Math.exp(Math.PI*(1-2*y/size)))-Math.PI/2)*180/Math.PI;
   }
   function draw(){
-   if(!mapViewer)return;
+   if(mapViewer!==shade||nativeMap||pendingMap||target.source==='yandex')return;
    const width=viewport.clientWidth||Math.min(window.innerWidth||390,440);
    const height=viewport.clientHeight||Math.min((window.innerHeight||820)*.59,530);
    const tiles=places.mapTiles({...target,lat:centerLat,lon:centerLon},width,height,zoom);
@@ -150,11 +153,11 @@
    pin.style.top='calc(50% + '+(point.y-origin.y)+'px)';
    zoomIn.disabled=zoom>=18;zoomOut.disabled=zoom<=3;
   }
-  function changeZoom(delta){zoom=Math.max(3,Math.min(18,zoom+delta));draw()}
+  function changeZoom(delta){if(nativeMap){nativeMap.zoom(delta);return}if(pendingMap||target.source==='yandex')return;zoom=Math.max(3,Math.min(18,zoom+delta));draw()}
   zoomIn.addEventListener('click',()=>changeZoom(1));zoomOut.addEventListener('click',()=>changeZoom(-1));
-  centerButton.addEventListener('click',()=>{centerLat=target.lat;centerLon=target.lon;zoom=16;draw()});
+  centerButton.addEventListener('click',()=>{if(nativeMap){nativeMap.center();return}if(pendingMap||target.source==='yandex')return;centerLat=target.lat;centerLon=target.lon;zoom=16;draw()});
   viewport.addEventListener('pointerdown',event=>{
-   if(event.target.closest?.('button,a'))return;
+   if(nativeMap||pendingMap||target.source==='yandex'||event.target.closest?.('button,a'))return;
    activePointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
    viewport.setPointerCapture?.(event.pointerId);
    if(activePointers.size===2){const [a,b]=[...activePointers.values()];pinchDistance=Math.hypot(a.x-b.x,a.y-b.y)}
@@ -172,10 +175,30 @@
   const pointerEnd=event=>{activePointers.delete(event.pointerId);pinchDistance=0};
   viewport.addEventListener('pointerup',pointerEnd);viewport.addEventListener('pointercancel',pointerEnd);
   viewport.addEventListener('lostpointercapture',pointerEnd);
-  viewport.addEventListener('wheel',event=>{event.preventDefault();changeZoom(event.deltaY<0?1:-1)},{passive:false});
+  viewport.addEventListener('wheel',event=>{if(nativeMap||pendingMap||target.source==='yandex')return;event.preventDefault();changeZoom(event.deltaY<0?1:-1)},{passive:false});
   const onResize=()=>draw();window.addEventListener?.('resize',onResize);
-  mapCleanup=()=>window.removeEventListener?.('resize',onResize);
-  draw();close.focus?.({preventScroll:true});
+  mapCleanup=()=>{window.removeEventListener?.('resize',onResize);nativeMap?.destroy();nativeMap=null};
+  function fallback(){
+   pendingMap=false;nativeHost.hidden=true;nativeHost.replaceChildren();
+   if(target.source==='yandex'){
+    pin.hidden=true;attribution.hidden=true;controls.hidden=true;
+    showStatus('Открой место в Яндекс Картах');return;
+   }
+   pin.hidden=false;attribution.hidden=false;controls.hidden=false;showStatus('');draw();
+  }
+  if(window.SEYVEO_YANDEX_MAPS?.enabled()){
+   pendingMap=true;nativeHost.hidden=false;pin.hidden=true;attribution.hidden=true;controls.hidden=true;
+   showStatus('Загрузка карты…');
+   window.SEYVEO_YANDEX_MAPS.mount(nativeHost,target,{
+    isActive:()=>mapViewer===shade,
+    onZoom:value=>{zoomIn.disabled=value>=18;zoomOut.disabled=value<=3}
+   }).then(controller=>{
+    if(mapViewer!==shade){controller?.destroy();return}
+    if(!controller){fallback();return}
+    nativeMap=controller;pendingMap=false;controls.hidden=false;showStatus('');
+   }).catch(()=>{if(mapViewer===shade)fallback()});
+  }else fallback();
+  close.focus?.({preventScroll:true});
  }
  function openPhotoViewer(location){
   const info=places.photoInfo(location),src=places.photoURL(location,960);
