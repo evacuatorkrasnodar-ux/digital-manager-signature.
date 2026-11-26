@@ -712,7 +712,7 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
 @media not (prefers-reduced-transparency:reduce){
  html:root[data-theme="light"] body #svWorkShell[data-task-tool-mode="all"] > #svAllTasksTabs{
   --sv-segment-track:rgba(210,216,225,.31);
-  --sv-segment-selected:rgba(250,251,252,.64);
+  --sv-segment-selected:rgba(255,255,255,.88);
   --sv-segment-selected-shadow:0 1px 3px rgba(38,48,60,.08);
  }
 }
