@@ -401,6 +401,31 @@ html.sv-music-screen #svMusicHomeMiniSlot #sayviMusicMini:not(.is-playing) .sv-m
 
 /* Only the inline mini gets a slightly clearer pearl rim; the shared dock is unchanged. */
 :root[data-theme="light"] #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline{
- border:1px solid rgba(255,255,255,.96)!important;
- box-shadow:inset 0 0 0 .5px rgba(111,127,148,.18),0 0 0 .5px rgba(111,127,148,.17),0 3px 9px rgba(37,54,76,.045)!important;
+ border:1px solid rgba(112,127,146,.12)!important;
+ box-shadow:0 2px 8px rgba(37,54,76,.045)!important;
 }
+
+/* Music-only canvas cleanup: no white double contours or footer underlay. */
+html:root[data-theme="light"].sv-music-screen body > .app{
+ border:0!important;outline:0!important;box-shadow:none!important;border-radius:0!important;
+ background-color:transparent!important;background-image:none!important;
+}
+html:root[data-theme="light"].sv-music-screen body > .app > #sayviMusicPage{
+ border:0!important;outline:0!important;box-shadow:none!important;border-radius:0!important;
+}
+html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only{
+ --sv-white-pearl-rim-color:rgba(112,127,146,.12);
+ --sv-white-pearl-edge:1px solid var(--sv-white-pearl-rim-color);
+ --sv-white-pearl-dock-shadow:0 3px 10px rgba(38,48,60,.055);
+ --sv-white-pearl-circle-shadow:0 2px 8px rgba(38,48,60,.045);
+ --sv-dock-pearl-border:var(--sv-white-pearl-edge);
+ --sv-dock-pearl-shadow:var(--sv-white-pearl-dock-shadow);
+ background:transparent!important;background-image:none!important;border:0!important;outline:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only::before,
+html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only::after{
+ border:var(--sv-white-pearl-edge)!important;box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+}
+html:root[data-theme="light"].sv-music-screen body #svMusicHome .sv-music-feature{border:0!important}
+html:root[data-theme="light"].sv-music-screen body #svMusicHome .sv-music-feature::before{border:0}
