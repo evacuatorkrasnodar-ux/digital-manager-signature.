@@ -1,12 +1,12 @@
-/* SEYVEO: canonical round affirmative action. V165, flat blue glass with a single visible blue rim.
+/* SEYVEO: canonical round affirmative action. V185, Sky chat cyan glass adapted to white backgrounds.
    Explicit circular save/commit controls only. Navigation, text actions,
    colored status controls, send buttons and dock retain their own materials. */
 :root{
  --sv-confirm-size:var(--sv-nav-single-size,44px);
- --sv-confirm-face:rgba(179,220,248,.78);
- --sv-confirm-edge:rgba(56,146,230,.38);
- --sv-confirm-ink:#075ca8;
- --sv-confirm-pressed:rgba(159,208,243,.84);
+ --sv-confirm-face:rgba(0,125,169,.95);
+ --sv-confirm-edge:var(--sv-glass-sky-lower-rim,rgba(85,220,247,.68));
+ --sv-confirm-ink:var(--sv-glass-sky-ink,#fff);
+ --sv-confirm-pressed:rgba(0,105,150,.96);
  --sv-confirm-pressed-edge:var(--sv-confirm-edge);
  --sv-confirm-disabled-face:#f0f1f3;
  --sv-confirm-disabled-edge:#e2e5e9;
@@ -16,7 +16,7 @@
 }
 @layer seyveo-confirm-standard{
  html:root[data-theme="light"] body :is(
-  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+  #calendarPage #calendarAdd,#tasksPage #personalAddTasks,#tasksPage .svcp-manager-task-create,#tasksPage .sv-cabinet-plus,#personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
    #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
   .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle,#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor-header > .sv-mail-send-trigger
  ):not([hidden]){
@@ -28,19 +28,19 @@
   border:1px solid var(--sv-confirm-edge)!important;background:var(--sv-confirm-face)!important;
   background-image:none!important;color:var(--sv-confirm-ink)!important;
   box-shadow:none!important;text-shadow:none!important;filter:none!important;
-  -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(10px) saturate(108%))!important;backdrop-filter:var(--sv-white-pearl-blur,blur(10px) saturate(108%))!important;
+  -webkit-backdrop-filter:var(--sv-glass-sky-blur,blur(10px) saturate(108%))!important;backdrop-filter:var(--sv-glass-sky-blur,blur(10px) saturate(108%))!important;
   opacity:1!important;transform:none!important;scale:1!important;
   transition:none!important;-webkit-tap-highlight-color:transparent!important;
  }
  html:root[data-theme="light"] body :is(
-  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+  #calendarPage #calendarAdd,#tasksPage #personalAddTasks,#tasksPage .svcp-manager-task-create,#tasksPage .sv-cabinet-plus,#personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
    #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
   .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle,#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor-header > .sv-mail-send-trigger
  ):not([hidden]):not(:disabled):not([aria-disabled="true"]):active{
   background:var(--sv-confirm-pressed)!important;border-color:var(--sv-confirm-pressed-edge)!important;
  }
  html:root[data-theme="light"] body :is(
-  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+  #calendarPage #calendarAdd,#tasksPage #personalAddTasks,#tasksPage .svcp-manager-task-create,#tasksPage .sv-cabinet-plus,#personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
    #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
   .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle,#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor-header > .sv-mail-send-trigger
  ):not([hidden]):is(:disabled,[aria-disabled="true"]){
@@ -48,7 +48,7 @@
   color:var(--sv-confirm-disabled-ink)!important;cursor:default!important;
  }
  html:root[data-theme="light"] body :is(
-  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+  #calendarPage #calendarAdd,#tasksPage #personalAddTasks,#tasksPage .svcp-manager-task-create,#tasksPage .sv-cabinet-plus,#personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
    #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
   .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle,#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor-header > .sv-mail-send-trigger
  ) svg{
@@ -57,23 +57,23 @@
   stroke-linecap:round!important;stroke-linejoin:round!important;
  }
  html:root[data-theme="light"] body :is(
-  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+  #calendarPage #calendarAdd,#tasksPage #personalAddTasks,#tasksPage .svcp-manager-task-create,#tasksPage .sv-cabinet-plus,#personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
    #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
   .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle,#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor-header > .sv-mail-send-trigger
  ) svg path{stroke:currentColor!important;fill:none!important}
  html:root[data-theme="light"] body :is(
-  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+  #calendarPage #calendarAdd,#tasksPage #personalAddTasks,#tasksPage .svcp-manager-task-create,#tasksPage .sv-cabinet-plus,#personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
    #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
   .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle,#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor-header > .sv-mail-send-trigger
  )::before,
- html:root[data-theme="light"] body :is(#personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone, #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,.sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle,#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor-header > .sv-mail-send-trigger)::after{content:none!important;display:none!important}
+ html:root[data-theme="light"] body :is(#calendarPage #calendarAdd,#tasksPage #personalAddTasks,#tasksPage .svcp-manager-task-create,#tasksPage .sv-cabinet-plus,#personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone, #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,.sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle,#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor-header > .sv-mail-send-trigger)::after{content:none!important;display:none!important}
  html:root[data-theme="light"] body :is(
-  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+  #calendarPage #calendarAdd,#tasksPage #personalAddTasks,#tasksPage .svcp-manager-task-create,#tasksPage .sv-cabinet-plus,#personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
    #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
   .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle,#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-editor-header > .sv-mail-send-trigger
- ):focus-visible{outline:2px solid var(--sv-confirm-ink)!important;outline-offset:3px!important}
+ ):focus-visible{outline:2px solid #007da9!important;outline-offset:3px!important}
 }
 
 @media(prefers-reduced-transparency:reduce){
- :root[data-theme="light"]{--sv-confirm-face:#c3e2fa;--sv-confirm-pressed:#a9d5f7}
+ :root[data-theme="light"]{--sv-confirm-face:#007da9;--sv-confirm-pressed:#006996}
 }
