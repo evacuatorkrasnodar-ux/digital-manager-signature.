@@ -518,9 +518,6 @@ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-mo
  padding-left:max(20px,calc(12px + env(safe-area-inset-left,0px)))!important;
  padding-right:max(20px,calc(12px + env(safe-area-inset-right,0px)))!important;
 }
-html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open][data-sv-company-mode="edit"]{
- padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))!important;
-}
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-dialog-head,
 html:root[data-theme="light"] body dialog#seyveoQrCardDialog.sv-qr-dialog[open] > header{
  box-sizing:border-box!important;display:grid!important;
@@ -658,26 +655,33 @@ html body #seyveoCompanyDialog[open] #seyveoCompanyDemoToggle[hidden]{display:no
 
 /* Filled company passport — compact, readable and dock-safe. */
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open][data-sv-company-filled="true"][data-sv-company-mode="view"] .seyveo-passport-dialog-head{margin-bottom:9px!important}
-/* V159: reserve clearance inside the native scrollport, not in a white
-   stationary strip beneath the content. The shared footer remains fixed. */
-html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open][data-sv-company-filled="true"][data-sv-company-mode="view"]{
- padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))!important;
-}
+/* V160: one continuous native scrollport in edit, view and empty states.
+   The footer's own two pearl shapes are the only dock surfaces. */
 @layer seyveo-company-scroll-continuity{
- html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.seyveo-dock-host[open][data-sv-company-filled="true"][data-sv-company-mode="view"]{
+ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.seyveo-dock-host[open]{
   padding-bottom:0!important;
  }
- html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.seyveo-dock-host[open][data-sv-company-filled="true"][data-sv-company-mode="view"] > #seyveoCompanyDialogScroll{
+ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.seyveo-dock-host[open] > #seyveoCompanyDialogScroll{
   padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
   scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
-  background:transparent!important;
-  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 30px),transparent 100%)!important;
-  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 30px),transparent 100%)!important;
+  background:transparent!important;background-image:none!important;
+  -webkit-mask-image:none!important;mask-image:none!important;
  }
- @media(prefers-reduced-transparency:reduce){
-  html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.seyveo-dock-host[open] > #seyveoCompanyDialogScroll{
-   -webkit-mask-image:none!important;mask-image:none!important;
-  }
+ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal.seyveo-dock-host[open] > footer.dock.sv-shared-dock{
+  background:transparent!important;background-image:none!important;
+  box-shadow:none!important;border-color:transparent!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] > .seyveo-passport-dialog-head{
+  grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;
+  grid-template-rows:44px!important;height:44px!important;min-height:44px!important;
+  gap:var(--sv-header-gap,8px)!important;padding:0!important;
+  margin:0 0 12px!important;
+  background:transparent!important;background-image:none!important;
+  box-shadow:none!important;border:0!important;
+ }
+ html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] > .seyveo-passport-dialog-head > button.seyveo-dialog-close svg{
+  width:22px!important;height:22px!important;stroke-width:1.55!important;
  }
 }
 html:root[data-theme="light"] body dialog#seyveoCompanyDialog.seyveo-passport-modal[open][data-sv-company-mode="view"] .sv-company-view:not([hidden]){padding-top:2px!important;padding-bottom:8px!important}
