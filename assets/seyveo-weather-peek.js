@@ -279,7 +279,9 @@
    const mark=document.createElement('img');mark.className='sv-weather-peek-brand-mark';
    mark.src='assets/seyveo-sayvi-user-upload.svg?v=3';mark.alt='';mark.decoding='async';
    brand.append(mark);add('sv-weather-peek-brand-title','Погода',brand);
-   eyebrow.append(brand);eyebrow.setAttribute('aria-hidden','true');
+   const disclosure=document.createElement('span');disclosure.className='sv-weather-peek-disclosure';
+   disclosure.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>';
+   eyebrow.append(brand,disclosure);eyebrow.setAttribute('aria-hidden','true');
   }
   const main=document.createElement('div');main.className='sv-weather-peek-main';
   if(day){
