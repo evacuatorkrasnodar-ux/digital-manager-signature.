@@ -570,3 +570,15 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[
   z-index:1!important;
  }
 }
+
+/* Work chat attachment menu: one camera entry, photo/scan modes inside the
+   same popover. Keep original capture handlers and theme-aware ink. */
+html:root body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]) > button[data-sv-attach-mode][hidden]{display:none!important}
+html:root body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]) > button[data-sv-attach-mode]:not([hidden]){min-height:44px!important;height:44px!important;gap:10px!important}
+html:root body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]) > button[data-sv-attach-mode] > svg{display:block!important;flex:0 0 20px!important;width:20px!important;height:20px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.6!important}
+html:root body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]) > button[data-sv-attach-mode] > span{display:block!important;flex:1 1 auto!important;width:auto!important;height:auto!important;text-align:left!important;font:inherit!important}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]){
+ background:rgba(11,84,174,.68)!important;background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+}
+@media(prefers-reduced-transparency:reduce){html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]){background:#167ebd!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}

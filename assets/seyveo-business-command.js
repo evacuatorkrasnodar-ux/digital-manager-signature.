@@ -1599,7 +1599,13 @@ if(svcpComposerFrame&&typeof ResizeObserver==='function'){
 /* A separate Plus like Home's search circle: file and camera are
    offered in its small menu, preserving the original input handlers. */
 const svcpAttachMenu=$('svcpAttachMenu');
+function setWorkAttachMode(mode){
+ if(!svcpAttachMenu)return;
+ for(const button of svcpAttachMenu.querySelectorAll('[data-sv-attach-mode]'))button.hidden=button.dataset.svAttachMode!==mode;
+ svcpAttachMenu.setAttribute('aria-label',mode==='camera'?'Режим камеры':'Добавить в чат');
+}
 function closeWorkAttachMenu(){
+ setWorkAttachMode('main');
  if(svcpAttachMenu)svcpAttachMenu.hidden=true;
  $('svcpAttachFile')?.setAttribute('aria-expanded','false');
 }
@@ -1608,6 +1614,7 @@ $('svcpAttachFile')?.addEventListener('click',event=>{
  const open=!!svcpAttachMenu?.hidden;
  setCameraTray(false);
  if(!svcpAttachMenu)return;
+ setWorkAttachMode('main');
  svcpAttachMenu.hidden=!open;
  $('svcpAttachFile')?.setAttribute('aria-expanded',String(open));
 });
@@ -1620,7 +1627,9 @@ $('svcpAttachScan')?.addEventListener('click',()=>{
  closeWorkAttachMenu();const room=state.room;
  window.SEYVEO_SCAN_AUTO?.capture(file=>{if(state.room!==room)return false;if(state.files.length>=10)return false;pickCaptureFile(file,'file');return true;});
 });
-$('svcpAttachChooseCamera')?.addEventListener('click',()=>{
+$('svcpAttachChooseCamera')?.addEventListener('click',()=>setWorkAttachMode('camera'));
+$('svcpAttachCameraBack')?.addEventListener('click',()=>setWorkAttachMode('main'));
+$('svcpAttachPhoto')?.addEventListener('click',()=>{
  closeWorkAttachMenu();
  $('svcpCameraToggle')?.click();
 });
