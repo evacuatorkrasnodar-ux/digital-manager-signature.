@@ -264,7 +264,7 @@
   event.stopPropagation();
   // History reuses the same 44px right-side header control for Search.
   if(shell.dataset.history==='true'){
-   window.dispatchEvent(new Event('seyveo:history-search-toggle'));
+   window.dispatchEvent(new CustomEvent('seyveo:history-menu-toggle',{detail:{anchor:add}}));
    return;
   }
   const section=activeSection();
@@ -766,16 +766,16 @@
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
   setHidden(add,active==='employee'||active==='notes'||active==='wallet');
-  const nextIcon=history?'search':'add';
+  const nextIcon=history?'history-menu':'add';
   if(add.dataset.svHeaderIcon!==nextIcon){
-   add.innerHTML=history?searchIcon:plusIcon;
+   add.innerHTML=history?'<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor" stroke="none"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></g></svg>':plusIcon;
    add.dataset.svHeaderIcon=nextIcon;
   }
-  add.setAttribute('aria-label',history?'Поиск в истории действий':active==='notes'?'Создать заметку':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Действия кабинета');
-  add.title=history?'Поиск по истории':'';
-  add.setAttribute('aria-haspopup',String(!history&&(active==='calendar'||active==='business')));
-  add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
-  add.setAttribute('aria-expanded',history?String(document.getElementById('sahHistorySearch')?.hidden===false):active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
+  add.setAttribute('aria-label',history?'Меню истории':active==='notes'?'Создать заметку':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Действия кабинета');
+  add.title=history?'Действия с историей':'';
+  add.setAttribute('aria-haspopup',String(history||(active==='calendar'||active==='business')));
+  add.setAttribute('aria-controls',history?'sahHistoryPopup':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
+  add.setAttribute('aria-expanded',history?String(document.getElementById('sahHistoryPopup')?.hidden===false):active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
   setData(shell,'active',active);
   // Wallet is a full Work section, not a modal overlay.
   const selectedWorkTab=active;
