@@ -665,11 +665,11 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
    its measured position, opening animation and all selection handlers. */
 @layer seyveo-home-chooser-standard{
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{
-  background:rgba(247,248,250,.36)!important;background-image:none!important;
+  background:var(--sv-white-pearl-floating-dock,rgba(235,237,240,.62))!important;background-image:none!important;
   border:0!important;border-bottom:1px solid rgba(155,168,186,.36)!important;outline:0!important;
   border-radius:0 0 30px 30px!important;
   box-shadow:0 9px 17px -7px rgba(43,55,73,.24),0 3px 5px -2px rgba(43,55,73,.12)!important;
-  -webkit-backdrop-filter:blur(6px) saturate(108%)!important;backdrop-filter:blur(6px) saturate(108%)!important;
+  -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor > .sv-home-favorites-editor-shell{
   background:transparent!important;background-image:none!important;
@@ -702,20 +702,20 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
   background:transparent!important;box-shadow:none!important;border:0!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{
-  background:rgba(255,255,255,.38)!important;background-image:none!important;
+  background:rgba(255,255,255,.64)!important;background-image:none!important;
   border:1px solid rgba(192,201,212,.48)!important;box-shadow:none!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"]{
-  background:rgba(224,239,252,.48)!important;border-color:rgba(155,194,229,.58)!important;
+  background:rgba(224,239,252,.72)!important;border-color:rgba(155,194,229,.58)!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"] small{
   background:#e0effc!important;color:#075ca8!important;
  }
 }
 
-/* V171: the capsule itself is the only glass surface. A tiny scroll-only
-   feather in the native scrollport is anchored to its lower edge, rather
-   than painting another translucent strip over the tiles. */
+/* V173: native tiles actually pass behind the capsule. No mask on the
+   scrollport: a separate optical edge samples the live tiles, not a hole
+   cut through the grid. The title row stays outside the scrollport. */
 dialog#svHomeFavoritesEditor .sv-home-favorites-pinned{
  display:flex;flex-direction:column;flex:0 0 auto;min-width:0;
 }
@@ -724,14 +724,28 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-pinned{
   position:relative!important;z-index:4!important;
   overflow:visible!important;background:transparent!important;
  }
- html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned::before,
- html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned::after{
+ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned::before{
   content:none!important;display:none!important;
  }
- html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid,
- html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
-  position:relative!important;z-index:1!important;
-  margin-top:0!important;padding-top:7px!important;scroll-padding-top:7px!important;
+ @media not (prefers-reduced-transparency:reduce){
+  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned:has(> .sv-home-favorites-tabs:not([hidden]))::after{
+   content:""!important;display:block!important;position:absolute!important;
+   top:100%!important;left:-20px!important;right:-20px!important;height:24px!important;
+   z-index:0!important;pointer-events:none!important;
+   background:var(--sv-header-glass-face,rgba(247,247,248,.46))!important;
+   -webkit-backdrop-filter:var(--sv-header-glass-filter,blur(10px))!important;
+   backdrop-filter:var(--sv-header-glass-filter,blur(10px))!important;
+   -webkit-mask-image:linear-gradient(to bottom,#000,transparent)!important;
+   mask-image:linear-gradient(to bottom,#000,transparent)!important;
+   opacity:var(--sv-home-header-opacity,0)!important;
+  }
+  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid,
+  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
+   position:relative!important;z-index:1!important;
+   margin-top:calc(-1 * var(--sv-home-chooser-capsule-height,0px))!important;
+   padding-top:calc(var(--sv-home-chooser-capsule-height,0px) + 7px)!important;
+   scroll-padding-top:calc(var(--sv-home-chooser-capsule-height,0px) + 7px)!important;
+  }
  }
 }
 /* V163: compact app library, not miniature home-screen icons.
@@ -806,14 +820,3 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-pinned{
  }
 }
 
-/* V171: inherit actual capsule geometry, with no second gray glass band.
-   The feather is zero at rest and grows only with real upward scrolling. */
-@layer seyveo-home-chooser-standard{
- @media not (prefers-reduced-transparency:reduce){
-  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid,
-  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
-   -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,calc(1 - var(--sv-home-header-opacity,0))) 0,#000 8px,#000 100%)!important;
-   mask-image:linear-gradient(to bottom,rgba(0,0,0,calc(1 - var(--sv-home-header-opacity,0))) 0,#000 8px,#000 100%)!important;
-  }
- }
-}
