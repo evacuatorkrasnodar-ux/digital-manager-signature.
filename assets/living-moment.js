@@ -1077,7 +1077,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   const destinationLabel='Перейти '+place;
   const destinationCaption=open.querySelector('.sv-card-icon-caption');
   if(destinationCaption){
-   destinationCaption.textContent=destinationLabel;
+   destinationCaption.textContent='Перейти';
    const shortLabel=place.replace(/^в /,'В ');
    destinationCaption.dataset.svCompactCaption=shortLabel;
    destinationCaption.dataset.svTinyCaption=shortLabel;
