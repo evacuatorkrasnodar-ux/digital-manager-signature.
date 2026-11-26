@@ -158,12 +158,12 @@
  --svf-head-edge:calc(16px + var(--sv-nav-single-size,44px));
  --svf-head-tint:rgba(30,35,42,.70);
 }
-:root[data-theme="light"] #seyveoFamilyDialog .svf-head{--svf-head-tint:rgba(250,250,251,.82)}
+:root[data-theme="light"] #seyveoFamilyDialog .svf-head{--svf-head-tint:var(--sv-white-pearl-header-face,rgba(247,247,248,.46))}
 #seyveoFamilyDialog:has(#svfChatPanel:not([hidden])) .svf-head::before{
  content:"";position:absolute;inset:0 0 auto;z-index:-1;pointer-events:none;
- height:calc(var(--svf-head-edge) + 32px);
+ height:calc(var(--svf-head-edge) + 24px);
  background:var(--svf-head-tint);
- -webkit-backdrop-filter:blur(22px) saturate(105%);backdrop-filter:blur(22px) saturate(105%);
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%));backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%));
  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 var(--svf-head-edge),transparent 100%);
  mask-image:linear-gradient(to bottom,#000 0,#000 var(--svf-head-edge),transparent 100%);
 }
