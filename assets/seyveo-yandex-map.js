@@ -1,12 +1,13 @@
-/* SEYVEO Maps · optional, owner-enabled Yandex JS API v3 preview.
+/* SEYVEO Maps · domain-restricted Yandex JS API v3 browser integration.
    Only a domain-restricted browser JavaScript API key, never a server key.
    No Yandex geocoding, organization search, caching or persistence here. */
 (function(root){
  'use strict';
+ const PUBLIC_BROWSER_KEY="fc0f9182-0eee-4e83-bed3-8e561c88c4d5";
  const KEY='seyveo.yandex.maps.testKey';
  let sdkPromise=null,lastStatus='idle';
  function browserKey(){
-  try{return String(root.SEYVEO_YANDEX_MAPS_CONFIG?.apiKey||root.sessionStorage?.getItem(KEY)||'').trim()}catch{return ''}
+  try{return String(root.SEYVEO_YANDEX_MAPS_CONFIG?.apiKey||PUBLIC_BROWSER_KEY).trim()}catch{return PUBLIC_BROWSER_KEY}
  }
  const enabled=()=>!!browserKey();
  function customization(){
@@ -50,7 +51,7 @@
   let map;
   lastStatus='initializing';
   try{
-   map=new sdk.YMap(host,{location:{center,zoom:16},mode:'auto',theme:'light',zoomRange:{min:3,max:18}});
+   map=new sdk.YMap(host,{location:{center,zoom:16},mode:styled?'vector':'auto',theme:'light',zoomRange:{min:3,max:18}});
    map.addChild(new sdk.YMapDefaultSchemeLayer(styled?{customization:customization()}:{}));
    map.addChild(new sdk.YMapDefaultFeaturesLayer());
    const pin=root.document.createElement('div');pin.className='sv-yandex-meeting-pin';pin.setAttribute('aria-label',target.name||'Место встречи');
