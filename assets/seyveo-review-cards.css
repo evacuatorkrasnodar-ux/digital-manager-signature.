@@ -389,7 +389,7 @@
 }
 #svReviewRoom #seyveoLivingMoment .lm-primary-subtitle{
  font-size:17px!important;line-height:1.48!important;
- color:#626A74!important;
+ color:#39434E!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-section-label.sv-sayvi-observation{
  margin:4px 0 2px!important;
@@ -652,4 +652,34 @@ html:root[data-theme="light"] body #svReviewRoom:not([hidden])::before{
   align-self:stretch!important;box-sizing:border-box!important;
   padding:7px 5px!important;
  }
+}
+
+/* Review mail typography: use the same readable scale as the document
+   and work-chat cards. Keep the original incoming text and reply intact. */
+#svReviewRoom #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content{
+ gap:5px!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > :is(.lm-mail-address,.lm-mail-intro){
+ font-size:13px!important;line-height:1.4!important;
+ font-weight:470!important;color:#687582!important;
+ margin:0!important;overflow-wrap:anywhere;
+}
+#svReviewRoom #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > :is(.lm-mail-original,.lm-mail-draft,.lm-source-line){
+ font-size:17px!important;line-height:1.48!important;
+ font-weight:425!important;color:#39434E!important;
+ margin:0!important;white-space:pre-wrap;overflow-wrap:anywhere;
+ max-height:none!important;overflow:visible!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > .lm-section-label{
+ font-size:15px!important;line-height:1.42!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content .lm-mail-edit-input{
+ font-size:17px!important;line-height:1.48!important;
+}
+:root[data-theme="dark"] #svReviewRoom #seyveoLivingMoment .lm-primary-subtitle,
+:root[data-theme="dark"] #svReviewRoom #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > :is(.lm-mail-original,.lm-mail-draft,.lm-source-line){
+ color:var(--text,#F6F6F8)!important;
+}
+:root[data-theme="dark"] #svReviewRoom #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > :is(.lm-mail-address,.lm-mail-intro){
+ color:var(--secondary,#BDC4CD)!important;
 }
