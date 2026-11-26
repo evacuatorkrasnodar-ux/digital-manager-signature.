@@ -356,10 +356,14 @@ function openCustomize(){
   redraw();preview();
  });
  head.insertBefore(autoButton,title);
- redraw();shell.append(head,tabbar,help,grid);dialog.append(shell);document.body.append(dialog);
+ const pinned=document.createElement('div');pinned.className='sv-home-favorites-pinned';
+ redraw();pinned.append(head,tabbar,help);shell.append(pinned,grid);dialog.append(shell);document.body.append(dialog);
+ const measureHeader=()=>{const h=pinned.offsetHeight;if(h>0) shell.style.setProperty('--sv-home-chooser-header-height',h+'px');};
+ const headerObserver=typeof ResizeObserver==='function'?new ResizeObserver(measureHeader):null;
  let closed=false;
  function close(saveChanges,animate=false){
   if(closed)return;closed=true;
+  headerObserver?.disconnect();
   window.removeEventListener('resize',onCurtainResize);
   document.removeEventListener('click',onDockNavigation,true);
   window.removeEventListener('seyveo:route-changed',onRouteChange);
@@ -387,8 +391,9 @@ function openCustomize(){
  dialog.addEventListener('cancel',e=>{e.preventDefault();close(false,true)});
  positionCurtain(); // establish final geometry before the opening animation
  dialog.show();
+ measureHeader();headerObserver?.observe(pinned);
  homeShortcutTopLocked=false;
- const onCurtainResize=()=>{positionCurtain(true);homeShortcutTopLocked=false;show();};
+ const onCurtainResize=()=>{positionCurtain(true);measureHeader();homeShortcutTopLocked=false;show();};
  window.addEventListener('resize',onCurtainResize);
  document.addEventListener('click',onDockNavigation,true);
  window.addEventListener('seyveo:route-changed',onRouteChange);
