@@ -2118,3 +2118,47 @@ html:root body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat
  color:#18384D!important;-webkit-text-fill-color:#18384D!important;
  opacity:1!important;
 }
+
+/* SKY · shared circular header glass v6
+   One optical material for the real Back / audio / video circles.
+   Keep the 44px targets, positions, existing handlers and header fade.
+   Local tokens intentionally do not recolor the composer or name capsule. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]){
+ --svcp-room-glass-face:rgba(0,74,157,.53);
+ --svcp-room-glass-rim:.75px solid rgba(122,208,255,.32);
+ --svcp-room-glass-shine:inset 0 1px 1px rgba(170,226,255,.20),inset 0 -1px 1px rgba(26,115,201,.13);
+ --svcp-room-glass-filter:blur(9px) saturate(122%);
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack:is(:active,:hover,:focus),
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]),
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]):is(:active,:hover,:focus){
+ background:var(--svcp-room-glass-face)!important;
+ background-image:none!important;
+ border:var(--svcp-room-glass-rim)!important;
+ box-shadow:var(--svcp-room-glass-shine)!important;
+ -webkit-backdrop-filter:var(--svcp-room-glass-filter)!important;
+ backdrop-filter:var(--svcp-room-glass-filter)!important;
+ color:#fff!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack svg,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]) svg{
+ display:block!important;
+ width:28px!important;height:28px!important;
+ fill:none!important;stroke:#fff!important;
+ stroke-width:1.85!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack svg{
+ width:29px!important;height:29px!important;
+ stroke-width:2.65!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]):is(#svcpVideoCall) svg{
+ width:29px!important;height:29px!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]){
+  --svcp-room-glass-face:#075DAE;
+  --svcp-room-glass-filter:none;
+ }
+}
