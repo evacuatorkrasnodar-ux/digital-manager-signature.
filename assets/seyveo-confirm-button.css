@@ -21,7 +21,7 @@
   .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle
  ):not([hidden]){
   appearance:none!important;-webkit-appearance:none!important;
-  box-sizing:border-box!important;display:grid!important;place-items:center!important;
+  box-sizing:border-box!important;place-items:center!important;
   width:var(--sv-confirm-size)!important;min-width:var(--sv-confirm-size)!important;max-width:var(--sv-confirm-size)!important;
   height:var(--sv-confirm-size)!important;min-height:var(--sv-confirm-size)!important;max-height:var(--sv-confirm-size)!important;
   padding:0!important;border-radius:50%!important;
