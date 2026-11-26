@@ -684,3 +684,15 @@ html:root[data-theme="light"] body #svReviewRoom:not([hidden])::before{
  color:var(--secondary,#BDC4CD)!important;
 }
 
+
+/* Music borrows the shared dock shell, never the Home task counter.
+   Hide the actual separate orange disc behind the glass and its numeral.
+   The counter's data and state remain intact for the original dock. */
+html:root body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-dock-review-underlay,
+html:root.sv-music-screen body footer.dock.sv-shared-dock > .sv-dock-review-underlay{
+ display:none!important;visibility:hidden!important;opacity:0!important;
+}
+html:root body footer.dock.sv-shared-dock.sv-music-navigation-only > #navTasks[data-sv-review-count]::after,
+html:root.sv-music-screen body footer.dock.sv-shared-dock > #navTasks[data-sv-review-count]::after{
+ content:none!important;display:none!important;visibility:hidden!important;
+}
