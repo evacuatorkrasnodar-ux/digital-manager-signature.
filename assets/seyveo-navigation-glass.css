@@ -639,11 +639,11 @@ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.pictur
    capsules, not the dock, circular controls, icon-only wallet launcher,
    header backing, inputs or colored chat wallpapers. */
 :root[data-theme="light"]{
- --sv-segment-track:rgba(210,216,225,.31);
- --sv-segment-edge:rgba(209,214,223,.80);
- --sv-segment-selected:rgba(255,255,255,.88);
- --sv-segment-track-shadow:0 2px 7px rgba(38,48,60,.055),inset 0 1px 0 rgba(255,255,255,.55);
- --sv-segment-selected-shadow:0 1px 3px rgba(38,48,60,.08);
+ --sv-segment-track:rgba(221,226,232,.36);
+ --sv-segment-edge:rgba(211,217,224,.58);
+ --sv-segment-selected:rgba(255,255,255,.87);
+ --sv-segment-track-shadow:0 3px 10px rgba(38,48,60,.055),inset 0 1px 0 rgba(255,255,255,.92);
+ --sv-segment-selected-shadow:0 1px 3px rgba(38,48,60,.045);
  --sv-avatar-segment-height:38px;
  --sv-avatar-segment-face-height:30px;
  --sv-avatar-segment-inset:3px;
@@ -709,11 +709,11 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  color:#14171C!important;border-color:transparent!important;
  box-shadow:var(--sv-segment-selected-shadow)!important;
 }
-/* V108: preserve the mobile glass tint; use the shared original soft
-   shadows and visible track perimeter rather than experimental edges. */
+/* V129: the same neutral chat-inspired glass, with a slightly stronger
+   mobile tint for legibility on iPhone. Geometry and switching unchanged. */
 @media (hover:none) and (pointer:coarse), (max-width:720px){
  :root[data-theme="light"]{
-  --sv-segment-track:rgba(210,216,225,.48);
+  --sv-segment-track:rgba(221,226,232,.43);
  }
 }
 @media(prefers-reduced-transparency:reduce){
