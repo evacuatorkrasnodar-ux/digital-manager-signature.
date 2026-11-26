@@ -18,7 +18,7 @@
   if(!b||!b.matches('button'))return;
   const name=b.textContent.replace(/\s+/g,' ').trim().toLocaleLowerCase('ru-RU');
   const eligible=!b.closest(excluded)&&!b.hasAttribute('aria-pressed')&&!b.hasAttribute('aria-selected')&&!b.hasAttribute('aria-expanded')&&!b.querySelector('svg,img,canvas')&&!b.matches('[role="tab"],[role="menuitem"]');
-  const kind=eligible?(labels[name]||(/^удалить\s*\(\d+\)$/.test(name)?'danger':null)):null;
+  const kind=eligible?(b.matches('#svTaskActionCapsule > .sv-task-all')?'neutral':labels[name]||(/^удалить\s*\(\d+\)$/.test(name)?'danger':null)):null;
   if(kind){if(b.dataset.svActionGlass!==kind)b.dataset.svActionGlass=kind}
   else if(b.hasAttribute('data-sv-action-glass'))b.removeAttribute('data-sv-action-glass');
  }
