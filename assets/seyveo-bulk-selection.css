@@ -139,9 +139,20 @@ html:root body #svTaskBulkDateSheet[open]{
  html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-page.sv-doc-selecting .sv-doc-list-more{visibility:hidden!important;pointer-events:none!important}
  html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-page.sv-doc-selecting > .sv-bulk-selection-head{flex:0 0 44px!important;position:relative!important;z-index:2!important;top:auto!important;margin:0!important}
  html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-page.sv-doc-selecting > .sv-doc-folder-page-body{flex:1 1 0!important;min-height:0!important;padding-top:6px!important;scroll-padding-top:6px!important}
- html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-draft-list[open] .sv-doc-draft-selection-footer{
-  position:fixed!important;bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;margin:0!important;
+ /* V124: the rail belongs to the page, not the scrolling details element. */
+ html:root body #sayviSurfacePage[data-sv-subject="contract"]:has(.sv-doc-draft-list[open].sv-doc-draft-selecting){
+  position:relative!important;
  }
- html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-center:has(.sv-doc-draft-list[open] .sv-doc-draft-selection-footer) > :is(.sv-doc-connections-entry,.sv-doc-assistant){display:none!important}
+ html:root body #sayviSurfacePage > .sv-doc-draft-selection-footer{
+  position:absolute!important;top:auto!important;left:50%!important;right:auto!important;
+  bottom:calc(82px + env(safe-area-inset-bottom,0px))!important;
+  transform:translateX(-50%)!important;margin:0!important;z-index:48!important;
+ }
+ html:root body #sayviSurfacePage:not([data-sv-subject="contract"]) > .sv-doc-draft-selection-footer,
+ html:root body #sayviSurfacePage:not(:has(.sv-doc-draft-list[open].sv-doc-draft-selecting)) > .sv-doc-draft-selection-footer{display:none!important}
+ html:root body #sayviSurfacePage[data-sv-subject="contract"]:has(.sv-doc-draft-list[open].sv-doc-draft-selecting) > #sayviSurfaceBody{
+  padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important;
+  scroll-padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important;
+ }
  html:root body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-page .sv-doc-scanner-head > strong{max-width:100%!important}
 }
