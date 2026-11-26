@@ -202,8 +202,17 @@
   viewport.addEventListener('pointerup',pointerEnd);viewport.addEventListener('pointercancel',pointerEnd);
   viewport.addEventListener('lostpointercapture',pointerEnd);
   viewport.addEventListener('wheel',event=>{if(nativeMap||pendingMap||target.source==='yandex')return;event.preventDefault();changeZoom(event.deltaY<0?1:-1)},{passive:false});
-  const onResize=()=>draw();window.addEventListener?.('resize',onResize);
-  mapCleanup=()=>{window.removeEventListener?.('resize',onResize);nativeMap?.destroy();nativeMap=null};
+  // Keep the provider's logo and attribution above the floating destination card.
+  function syncCardClearance(){
+   const mapRect=viewport.getBoundingClientRect(),cardRect=footer.getBoundingClientRect();
+   const clearance=Math.max(0,Math.ceil(mapRect.bottom-cardRect.top+4));
+   if(clearance>0&&clearance<mapRect.height-70)viewport.style.setProperty('--sv-map-card-clearance',clearance+'px');
+  }
+  const onResize=()=>{syncCardClearance();draw()};window.addEventListener?.('resize',onResize);
+  syncCardClearance();
+  const observer=typeof ResizeObserver==='function'?new ResizeObserver(onResize):null;
+  observer?.observe(footer);observer?.observe(viewport);
+  mapCleanup=()=>{observer?.disconnect();window.removeEventListener?.('resize',onResize);nativeMap?.destroy();nativeMap=null};
   function fallback(){
    pendingMap=false;nativeHost.hidden=true;nativeHost.replaceChildren();
    if(target.source==='yandex'){

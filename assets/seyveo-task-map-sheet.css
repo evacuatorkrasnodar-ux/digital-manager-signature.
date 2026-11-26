@@ -341,3 +341,15 @@ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .s
  html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open .sv-place-map-footer{max-width:330px!important;margin:auto 8px 24px auto!important;}
  html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-controls{left:12px!important;right:auto!important;top:66px!important;}
 }
+
+/* Keep provider attribution and interactive controls unobscured. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open .sv-yandex-map-host{
+ bottom:var(--sv-map-card-clearance,190px)!important;height:auto!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open .sv-place-map-credit{
+ bottom:calc(var(--sv-map-card-clearance,190px) + 4px)!important;
+}
+@media(max-height:460px){
+ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open .sv-yandex-map-host{bottom:0!important;right:min(340px,48%)!important;width:auto!important;}
+ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3.sv-place-map-open .sv-place-map-credit{bottom:8px!important;right:auto!important;left:8px!important;}
+}
