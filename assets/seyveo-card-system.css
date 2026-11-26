@@ -7,12 +7,12 @@
  * the existing Home living-card scene without changing its event handlers.
  * All card families share geometry, text rhythm and material references. */
 :root{
- --sv-master-title-size:15.5px;
+ --sv-master-title-size:17px;
  --sv-master-title-weight:550;
  --sv-master-title-leading:1.34;
- --sv-master-description-size:13px;
+ --sv-master-description-size:17px;
  --sv-master-description-leading:1.48;
- --sv-master-queue-title-size:13.5px;
+ --sv-master-queue-title-size:17px;
  --sv-master-task-title-size:13px;
  --sv-master-task-title-leading:1.42;
  --sv-master-person-title-size:13.5px;
@@ -23,10 +23,15 @@
  --sv-master-menu-description-size:12px;
  --sv-master-menu-description-leading:1.48;
  --sv-master-action-quiet-size:12px;
- --sv-master-queue-description-size:12.5px;
+ --sv-master-queue-description-size:15px;
  --sv-master-queue-leading:1.48;
- --sv-master-action-size:12px;
+ --sv-master-action-size:15px;
  --sv-master-touch-target:44px;
+ --sv-master-action-height:46px;
+ --sv-master-meta-size:13px;
+ --sv-master-observation-size:15px;
+ --sv-master-icon-column:44px;
+ --sv-master-icon-size:36px;
  --sv-master-glass:rgba(184,195,201,.19);
  --sv-master-glass-blur:blur(18px) saturate(145%);
  --sv-master-card-radius:20px;
@@ -96,74 +101,19 @@
  color:var(--sv-card-subtle);font-size:10.5px;line-height:1.45;
  font-weight:430;letter-spacing:0;
 }
-.sv-card-system--rendered .sv-card-actions{
- display:flex;align-items:center;flex-wrap:wrap;
- column-gap:15px;row-gap:0;
- margin:8px 0 0;padding:0;
-}
-.sv-card-system--rendered .sv-card-action{
- appearance:none;display:inline-flex;align-items:center;justify-content:center;
- box-sizing:border-box;flex:0 0 auto;
- min-height:var(--sv-card-hit);min-width:0;
- padding:8px 2px;margin:0;
- border:0;border-radius:0;outline-offset:3px;
- background:transparent;box-shadow:none;
- color:var(--sv-card-ink);font:inherit;
- font-size:var(--sv-card-action-size);font-weight:520;
- line-height:1.3;letter-spacing:-.01em;cursor:pointer;
- -webkit-tap-highlight-color:transparent;
-}
-/* Canonical action hierarchy. One material definition — no obsolete
- * opaque white primary or outline secondary hiding below Liquid Glass. */
-.sv-card-system--rendered .sv-card-actions{
- column-gap:9px;row-gap:0;
-}
-.sv-card-system--rendered .sv-card-action{
- font-weight:560;
-}
-.sv-card-system--rendered .sv-card-action:is([data-card-role="primary"],[data-card-role="secondary"]){
- position:relative;isolation:isolate;
- border:0;border-radius:999px;
- padding:8px 12px;
- background:transparent;
- color:var(--sv-card-ink);
- box-shadow:none;
-}
-.sv-card-system--rendered .sv-card-action:is([data-card-role="primary"],[data-card-role="secondary"])::before{
- content:"";position:absolute;inset:5px 0;
- border:0;border-radius:999px;
- background:var(--sv-master-glass);
- -webkit-backdrop-filter:var(--sv-master-glass-blur);
- backdrop-filter:var(--sv-master-glass-blur);
- pointer-events:none;z-index:-1;
-}
-.sv-card-system--rendered .sv-card-action[data-card-role="secondary"]::before{
- background:var(--sv-master-secondary-glass,rgba(184,195,201,.095));
- box-shadow:none;
-}
-.sv-card-system--rendered .sv-card-action:first-child{
- padding-inline:14px;font-weight:630;
-}
-.sv-card-system--rendered .sv-card-action:nth-child(n+3){
- padding:8px 4px;color:var(--sv-card-subtle);
-}
-/* Action hierarchy follows meaning, not array position: some families
- * have only two actions, where the second is "Позже". */
-.sv-card-system--rendered .sv-card-action[data-card-action="later"],
-.sv-card-system--rendered .sv-card-action[data-card-action="not-interested"]{
- border:0;
- padding:8px 4px;
- background:transparent;
- -webkit-backdrop-filter:none;
- backdrop-filter:none;
- box-shadow:none;
- color:var(--sv-card-subtle);
-}
-.sv-card-system--rendered .sv-card-action:active{opacity:.65}
-.sv-card-system--rendered .sv-card-action:disabled{opacity:.5;cursor:default}
-.sv-card-system--rendered .sv-card-action:focus-visible{
- outline:2px solid currentColor;border-radius:8px;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
 .sv-card-system--home .lm-primary-title{
  font-size:15.5px;line-height:1.3;letter-spacing:-.025em;font-weight:550;
 }
@@ -201,10 +151,10 @@
 }
 @media(max-width:375px){
  .sv-card-system--rendered{--sv-card-copy:13px;--sv-card-action-size:12px}
- .sv-card-system--rendered .sv-card-actions{column-gap:12px}
+
 }
 @media(prefers-reduced-motion:reduce){
- .sv-card-system--rendered .sv-card-action{transition:none}
+
 }
 
 /* Shared master controls: same CSS contract for canonical cards and Home.
@@ -249,10 +199,7 @@
  --sv-action-primary:var(--sv-master-glass);
 }
 @media(prefers-reduced-transparency:reduce){
- .sv-card-system--rendered .sv-card-action:is(:first-child,:nth-child(2)){
-  background:var(--sv-velvet-panel,var(--card2));
-  -webkit-backdrop-filter:none;backdrop-filter:none;
- }
+
 }
 
 /* Live owner-advice cards already receive sv-card-system from Card Engine.
@@ -331,19 +278,7 @@
  }
 }
 
-/* Actions are classified by meaning, not by position. A "В чат"
- * navigation remains unpainted even when it is the second button. */
-.sv-card-system--rendered .sv-card-action[data-card-role="navigation"],
-.sv-card-system--rendered .sv-card-action[data-card-role="quiet"]{
- padding:8px 4px;
- border:0;border-radius:0;background:transparent;box-shadow:none;
- color:var(--sv-card-subtle);
- -webkit-backdrop-filter:none;backdrop-filter:none;
-}
-.sv-card-system--rendered .sv-card-action:is([data-card-role="navigation"],[data-card-role="quiet"])::before,
-.sv-card-system--rendered .sv-card-action:is([data-card-role="navigation"],[data-card-role="quiet"])::after{
- content:none!important;display:none!important;
-}
+
 /* SEYVEO Card Studio · single thin action material standard.
  * Keep 44px finger targets, but draw 30px optically thin glass lenses.
  * Do NOT fill the entire button height or draw a second glass layer.
@@ -485,93 +420,16 @@
  border-top:1px solid var(--sv-card-rule)!important;
  box-shadow:none!important;
 }
-.sv-card-system--rendered .sv-card-actions{
- display:flex;
- align-items:center;
- justify-content:flex-start;
- flex-wrap:wrap;
- gap:0 10px;
- margin:8px 0 0;
-}
-/* A 44px accessible touch area, optically a modest 32px graphite pill.
-   No gradient, optical glow, gloss, outer card border or blur. */
-.sv-card-system--rendered .sv-card-actions .sv-card-action{
- box-sizing:border-box!important;
- display:inline-flex!important;
- align-items:center!important;
- justify-content:center!important;
- flex:0 0 auto!important;
- min-height:44px!important;
- max-width:100%;
- margin:0!important;
- padding:8px 3px!important;
- background:transparent!important;
- background-image:none!important;
- border:0!important;
- border-radius:0!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
- color:var(--sv-card-ink)!important;
- font-size:var(--sv-master-action-size,12px)!important;
- font-weight:500!important;
- line-height:1.25;
- white-space:normal;
- overflow-wrap:anywhere;
- text-align:center;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action[data-card-role="primary"]{
- position:relative!important;
- isolation:isolate!important;
- border-radius:999px!important;
- padding:8px 12px!important;
- font-weight:570!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action[data-card-role="primary"]::before{
- content:""!important;
- display:block!important;
- position:absolute!important;
- inset:6px 0!important;
- z-index:-1!important;
- pointer-events:none!important;
- border:0!important;
- border-radius:999px!important;
- background:var(--sv-card-action-material,#38383A)!important;
- background-image:none!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action[data-card-role="primary"]:active::before{
- background:var(--sv-card-action-pressed,#48484B)!important;
-}
-/* Meaningful alternate, navigation and Later are text only. No second capsule. */
-.sv-card-system--rendered .sv-card-actions .sv-card-action:not([data-card-role="primary"]){
- color:var(--sv-card-subtle)!important;
- border-radius:0!important;
- padding:8px 3px!important;
- font-weight:500!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action[data-card-role="secondary"]{
- color:var(--sv-card-ink)!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action:not([data-card-role="primary"])::before,
-.sv-card-system--rendered .sv-card-actions .sv-card-action::after{
- content:none!important;
- display:none!important;
- background:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action:focus-visible{
- outline:2px solid var(--sv-card-ink)!important;
- outline-offset:2px!important;
- border-radius:8px!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action:disabled{
- opacity:.5!important;
- cursor:default!important;
-}
+
+
+
+
+
+
+
+
+
+
 /* Simulated light theme inside Studio does not inherit the device palette.
    Studio itself sets local --sv-card-action-material / --pressed. */
 :root[data-theme="light"]{
@@ -579,10 +437,7 @@
  --sv-card-action-pressed:var(--sv-flat-panel-raised,#D5DADE);
 }
 @media(prefers-reduced-transparency:reduce){
- .sv-card-system--rendered .sv-card-actions .sv-card-action{
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
- }
+
 }
 
 /* Card Visibility v1 · menu is hidden until a deliberate hold or context key.
@@ -674,11 +529,7 @@
 #seyveoCardStudio .scs-gallery-item .sv-card-actions .sv-card-action[data-card-role="primary"]{
  color:#F6F6F7!important;
 }
-.sv-card-system--rendered .sv-card-actions .sv-card-action[data-card-role="primary"]::before{
- background:#38383A!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- box-shadow:none!important;
-}
+
 #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden]){
  color:#F6F6F7!important;
 }
@@ -784,27 +635,7 @@
  border:0!important;border-radius:14px!important;
 }
 
-/* SEYVEO Card Glyphs v1 · recognizable iPhone action language.
- * Symbols are actual inline SVG, not font glyphs, emoji or generated PNGs.
- * Optical control stays compact; reliable touch targets stay >=44px.
- * The Sayvi four-point emblem contains our own central sphere.
- */
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button{
- display:inline-flex!important;flex-direction:column!important;
- justify-content:center!important;align-items:center!important;
- flex:0 0 58px!important;width:58px!important;
- min-width:58px!important;min-height:48px!important;
- box-sizing:border-box!important;
- padding:5px 4px!important;margin:0!important;
- gap:2px!important;
- border:0!important;border-radius:14px!important;
- background:transparent!important;box-shadow:none!important;
- white-space:nowrap!important;
- color:var(--sv-card-ink)!important;
-}
-.sv-card-system--rendered .sv-card-actions{
- gap:0 14px!important;
-}
+
 .sv-card-symbol{
  display:block;flex:0 0 auto;
  box-sizing:border-box;width:21px;height:21px;
@@ -816,21 +647,10 @@
  letter-spacing:.01em;white-space:nowrap;
  color:inherit;
 }
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-card-role="primary"]{
- color:#F7F7F8!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-card-role="primary"]::before{
- inset:3px 1px!important;border-radius:13px!important;
- background:#38383A!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:not([data-card-role="primary"]){
- color:var(--sv-card-ink)!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:focus-visible{
- outline:2px solid var(--sv-card-ink)!important;
- outline-offset:2px!important;
-}
+
+
+
+
 /* Final human-controlled action (Card Engine / Studio): no auto-send.
    Send uses only an accessible paper plane; Save/Confirm retain text. */
 .sv-card-system--rendered .sv-card-draft-confirm.sv-card-icon-button:not([data-sv-card-icon="send"]){
@@ -864,34 +684,16 @@
  font-size:12px;font-weight:550;
 }
 @media(max-width:375px){
- .sv-card-system--rendered .sv-card-actions{gap:0 9px!important}
- .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button{
-  flex-basis:55px!important;min-width:55px!important;width:55px!important;
- }
+
+
 }
 
-/* SEYVEO card icons v2 · labels removed from the three START actions.
- * The icons remain accessible by aria-label/title. Final Send/Save retains
- * its explicit confirmation text, to avoid unintended changes.
- */
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button .sv-card-icon-caption{
- display:none!important;
-}
-.sv-card-system--rendered .sv-card-actions{
- column-gap:12px!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button{
- flex:0 0 48px!important;width:48px!important;min-width:48px!important;
- height:48px!important;min-height:48px!important;padding:0!important;gap:0!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button .sv-card-symbol{
- width:23px!important;height:23px!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-card-role="primary"]::before{
- inset:3px!important;border-radius:13px!important;
-}
+
+
+
+
 @media(max-width:375px){
- .sv-card-system--rendered .sv-card-actions{column-gap:9px!important}
+
 }
 
 /* SEYVEO CARD WORKSHOP · Approved Home action standard (15 November).
@@ -957,92 +759,22 @@
  --sv-card-sayvi-glyph:20px;
  --sv-card-sayvi-stroke:1.8;
 }
-.sv-card-system--rendered .sv-card-actions{
- display:flex!important;align-items:center!important;justify-content:flex-start!important;
- column-gap:10px!important;row-gap:0!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button{
- box-sizing:border-box!important;display:inline-flex!important;
- flex:0 0 var(--sv-card-icon-touch)!important;
- width:var(--sv-card-icon-touch)!important;min-width:var(--sv-card-icon-touch)!important;
- height:var(--sv-card-icon-touch)!important;min-height:var(--sv-card-icon-touch)!important;
- margin:0!important;padding:0!important;gap:0!important;
- border:var(--sv-card-action-outline)!important;border-radius:var(--sv-card-icon-radius)!important;
- background:var(--sv-card-action-neutral-bg)!important;
- background-image:none!important;box-shadow:var(--sv-card-action-shadow)!important;
- -webkit-backdrop-filter:var(--sv-card-action-blur)!important;backdrop-filter:var(--sv-card-action-blur)!important;
- color:var(--sv-card-ink,var(--text))!important;
- justify-content:center!important;align-items:center!important;
- flex-direction:row!important;
- -webkit-tap-highlight-color:transparent;
- transition:transform 220ms cubic-bezier(.22,1,.36,1),opacity 180ms ease,
-  background-color 180ms ease,border-color 180ms ease;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"]{
- border:var(--sv-card-sayvi-outline)!important;
- border-radius:var(--sv-card-icon-radius)!important;
- background:var(--sv-card-sayvi-bg)!important;
- box-shadow:var(--sv-card-sayvi-shadow)!important;
- -webkit-backdrop-filter:var(--sv-card-sayvi-blur)!important;
- backdrop-filter:var(--sv-card-sayvi-blur)!important;
- color:var(--sv-card-sayvi-ink)!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button::before,
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button::after{
- content:none!important;display:none!important;
- background:none!important;box-shadow:none!important;
- -webkit-mask:none!important;mask:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button .sv-card-symbol{
- display:block!important;
- width:20px!important;height:20px!important;flex:0 0 20px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:var(--sv-card-icon-stroke)!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
- opacity:1!important;filter:none!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{
- width:var(--sv-card-sayvi-glyph)!important;
- height:var(--sv-card-sayvi-glyph)!important;
- flex:0 0 var(--sv-card-sayvi-glyph)!important;
- color:var(--sv-card-sayvi-ink)!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol > path{
- fill:none!important;stroke:var(--sv-card-sayvi-ink)!important;
- stroke-width:var(--sv-card-sayvi-stroke)!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol > circle{
- fill:var(--sv-card-sayvi-ink)!important;stroke:none!important;
-}
-/* The new assistant emblem is artwork inside the existing 50px button. */
-:root[data-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"],
-#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"]{
- background-image:var(--sv-sayvi-mark-image, url('./seyveo-sayvi-user-upload.svg?v=3'))!important;
- background-position:center!important;
- background-size:100% 100%!important;
- background-repeat:no-repeat!important;
-}
-:root[data-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol,
-#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{
- visibility:hidden!important;
-}
-/* Studio's independent dark preview must keep its approved graphite symbol. */
-#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="dark"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"]{
- background-image:none!important;
-}
-#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="dark"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{
- visibility:visible!important;
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:active{
- opacity:.92!important;transform:scale(.965);
-}
-.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:focus-visible{
- outline:2px solid currentColor!important;outline-offset:3px!important;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @media(prefers-reduced-motion:reduce){
- .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button{
-  transition:none!important;
- }
+
 }
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"],
@@ -1159,242 +891,124 @@
 }
 
 
-/* SEYVEO Master · 17.11.2026 editorial card, inherited by all Card Engine families.
-   One white reading surface, no nested card frame. Explicitly replaces only the
-   rendered-card's obsolete circular action treatment, not the Home animation. */
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]{
- --sv-card-ink:var(--text,#22262b);
- --sv-card-subtle:var(--secondary,#7b828b);
- --sv-card-eyebrow-ink:var(--sv-card-subtle);
- --sv-card-rule:rgba(103,116,128,.16);
- padding:10px 1px 13px!important;
- background:transparent!important;border:0!important;border-radius:0!important;
- box-shadow:none!important;
+
+/* SEYVEO master 26.11.2026 · approved Review / Avatar standard.
+   Every Card Engine family uses this contract. Studio has no separate
+   card design. The shared semantic glass layer owns light button paint. */
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]{
+ --sv-card-ink:var(--text,#22262b);--sv-card-subtle:var(--secondary,#687582);
+ --sv-card-body-ink:var(--sv-card-ink);--sv-card-observation-ink:#77BAF2;
+ box-sizing:border-box;display:flex;flex-direction:column;gap:0;width:100%;min-width:0;
+ padding:8px 0 12px!important;background:transparent!important;border:0!important;
+ border-radius:0!important;box-shadow:none!important;
+ font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ container-type:inline-size;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-eyebrow{
- display:flex;justify-content:space-between;align-items:center;gap:12px;
- min-height:28px;margin:0 0 4px;padding:0;
- font-size:10px;line-height:1.25;
+:root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *),
+#seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]{
+ --sv-card-ink:#22262b;--sv-card-subtle:#687582;--sv-card-body-ink:#39434E;
+ --sv-card-observation-ink:#217FCD;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-category{
- color:var(--sv-card-eyebrow-ink);font-size:10px;font-weight:590;letter-spacing:.008em;
- text-transform:uppercase;
+#seyveoCardStudio [data-preview-theme="dark"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]{
+ --sv-card-ink:#F1F4F6;--sv-card-subtle:#AEBBC3;--sv-card-body-ink:#E5E9EC;
+ --sv-card-observation-ink:#77BAF2;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-moment{
- flex:none;color:var(--sv-card-subtle);font-size:10px;font-weight:430;letter-spacing:0;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-eyebrow{
+ display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;
+ gap:4px 12px;margin:0 0 8px;padding:0;
+ font-size:var(--sv-master-meta-size);line-height:1.35;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-header{
- display:grid;grid-template-columns:40px minmax(0,1fr);
- gap:10px;align-items:center;margin:0 0 8px;padding:0;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] :is(.sv-card-category,.sv-card-moment,.sv-card-source){
+ color:var(--sv-card-subtle)!important;font-size:var(--sv-master-meta-size)!important;
+ line-height:1.4;font-weight:470;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-mark{
- width:38px;height:38px;border:0!important;border-radius:0!important;
- background:none!important;box-shadow:none!important;
- color:var(--sv-card-accent,#abcddb);
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-category{font-weight:570;text-transform:uppercase}
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-category[data-priority="important"]{color:#B56A26!important}
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-category[data-priority="urgent"]{color:#D6534A!important}
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-moment{font-variant-numeric:tabular-nums}
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-header{
+ display:grid;grid-template-columns:var(--sv-master-icon-column) minmax(0,1fr);
+ gap:11px;align-items:center;margin:0 0 8px;padding:0;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-mark svg{
- display:block;width:30px;height:30px;stroke:currentColor;fill:none;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-mark{
+ display:grid;place-items:center;width:var(--sv-master-icon-column);height:var(--sv-master-icon-column);
+ color:var(--sv-card-ink)!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-header-copy{gap:3px}
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-title{
- color:var(--sv-card-ink)!important;font-size:16px;line-height:1.32;
- letter-spacing:-.022em;font-weight:510;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-mark svg{
+ display:block;width:var(--sv-master-icon-size)!important;height:var(--sv-master-icon-size)!important;
+ stroke:currentColor;stroke-width:1.7;fill:none;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-source{
- color:var(--sv-card-subtle)!important;font-size:11px;font-weight:430;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-title{
+ font-size:var(--sv-master-title-size)!important;line-height:1.34;font-weight:550;
+ letter-spacing:-.025em;color:var(--sv-card-ink)!important;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] :is(.sv-card-fact,.sv-card-proposal){
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] :is(.sv-card-fact,.sv-card-proposal){
  border:0!important;padding:0!important;margin:0 0 6px!important;background:none!important;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-value{
- color:var(--sv-card-ink)!important;font-size:12.5px;line-height:1.52;
- letter-spacing:0;font-weight:430;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-value{
+ font-size:var(--sv-master-description-size)!important;line-height:1.48!important;font-weight:425;
+ color:var(--sv-card-body-ink)!important;white-space:pre-wrap;overflow-wrap:anywhere;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-proposal{
- margin-top:6px!important;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-sayvi-observation{
+ display:flex;align-items:center;gap:6px;margin:4px 0 3px;
+ font-size:var(--sv-master-observation-size)!important;line-height:1.42;font-weight:550;
+ color:var(--sv-card-observation-ink)!important;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-sayvi-observation{
- display:flex;align-items:center;gap:4px;
- color:#161B1B!important;font-weight:550;letter-spacing:.01em;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-potok{width:21px;height:21px;flex:0 0 21px;object-fit:contain;filter:none!important}
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-training{display:none!important}
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions:not([hidden]){
+ display:grid!important;grid-template-columns:minmax(0,1.2fr) minmax(0,1.3fr) minmax(0,.85fr);
+ align-items:stretch!important;gap:8px!important;margin:6px 0 0!important;padding:0!important;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-potok{
- display:inline-block;width:16px;height:16px;object-fit:contain;flex:0 0 16px;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions[hidden]{display:none!important}
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > .sv-card-action{
+ box-sizing:border-box!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ min-height:var(--sv-master-action-height)!important;height:100%!important;max-height:none!important;
+ padding:7px 5px!important;margin:0!important;gap:6px!important;
+ border:0!important;border-radius:23px!important;background:#38383A!important;box-shadow:none!important;
+ color:#F6F7F8!important;font-size:var(--sv-master-action-size)!important;font-weight:550;
+ line-height:1.25!important;white-space:normal!important;transform:none!important;
+ isolation:auto!important;cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-actions{
- display:flex!important;flex-wrap:wrap!important;align-items:center!important;
- justify-content:flex-start!important;gap:2px 9px!important;
- margin:4px 0 0!important;padding:0!important;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > .sv-card-action::before,
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > .sv-card-action::after,
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions .sv-card-icon-caption::after{
+ content:none!important;display:none!important;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-actions .sv-card-action.sv-card-icon-button{
- flex:0 1 auto!important;width:auto!important;min-width:0!important;
- max-width:100%!important;height:auto!important;min-height:44px!important;
- padding:6px 1px!important;margin:0!important;gap:3px!important;
- display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;
- border:0!important;border-radius:0!important;
- background:transparent!important;background-image:none!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- color:var(--sv-card-ink)!important;
- font-size:11px!important;font-weight:530!important;line-height:1.25!important;
- letter-spacing:-.01em;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions .sv-card-icon-caption{
+ display:inline!important;visibility:visible!important;min-width:0;
+ font-size:var(--sv-master-action-size)!important;line-height:1.25!important;
+ white-space:normal!important;text-align:center;color:inherit!important;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-actions .sv-card-action.sv-card-icon-button .sv-card-icon-caption{
- display:inline!important;visibility:visible!important;
- font-size:11px!important;line-height:1.2!important;
- font-weight:520!important;letter-spacing:-.015em!important;
- white-space:nowrap!important;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions .sv-card-symbol{
+ display:block!important;visibility:visible!important;width:18px!important;height:18px!important;flex:0 0 18px!important;
+ opacity:1!important;filter:none!important;stroke-width:1.65!important;color:inherit!important;
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-actions .sv-card-action.sv-card-icon-button .sv-card-symbol{
- display:block!important;visibility:visible!important;
- width:18px!important;height:18px!important;flex:0 0 18px!important;
- opacity:1!important;filter:none!important;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button:disabled{opacity:.5!important;cursor:default}
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button:focus-visible{outline:2px solid #0A84FF!important;outline-offset:2px!important}
+@container(max-width:456px){
+ .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions:not([hidden]){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > [data-card-role="primary"]{grid-column:1/-1}
 }
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"]{
- color:#217FCD!important;background-image:none!important;
+@supports not (container-type:inline-size){
+ @media(max-width:480px){
+  .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions:not([hidden]){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > [data-card-role="primary"]{grid-column:1/-1}
+ }
 }
-:root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"]{
- background-image:none!important;
+.sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] :is(.sv-card-draft-input,.sv-card-draft-text){
+ box-sizing:border-box!important;min-height:112px!important;padding:14px 13px!important;
+ font-size:var(--sv-master-description-size)!important;line-height:1.48!important;
 }
-:root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{
- visibility:visible!important;
-}
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-actions .sv-card-icon-button:where(:hover,:focus-visible){
- color:#217FCD!important;
-}
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-training{display:none!important}
-
-/* Dock-matched matte pearl: the same glass surface for reading and editing,
-   with silver rim, warm neutral base and quiet inner highlight, never mint. */
-:root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- :is(.sv-card-draft-input,.sv-card-draft-text){
- box-sizing:border-box!important;min-height:112px!important;
- padding:14px 13px!important;
+:root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) :is(.sv-card-draft-input,.sv-card-draft-text),
+#seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] :is(.sv-card-draft-input,.sv-card-draft-text){
  border:1px solid rgba(196,202,213,.48)!important;border-radius:15px!important;
- background:linear-gradient(150deg,rgba(250,251,252,.91),rgba(220,226,234,.38) 68%,rgba(246,247,249,.78))!important;
- box-shadow:inset 0 1px 1px rgba(255,255,255,.84),
-  inset 0 -1px 1px rgba(106,119,134,.07),0 1px 3px rgba(55,69,85,.035)!important;
- -webkit-backdrop-filter:blur(17px) saturate(108%)!important;
- backdrop-filter:blur(17px) saturate(108%)!important;
- color:#202429!important;font-size:13px!important;line-height:1.5!important;
+ background:var(--sv-white-pearl-surface,rgba(222,226,234,.60))!important;
+ color:#39434E!important;-webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;
 }
-:root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-draft-input:focus{
- outline:2px solid rgba(33,127,205,.35)!important;outline-offset:2px!important;
-}
-@media(max-width:350px){
- .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-actions{
-  column-gap:7px!important;
- }
- .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
-  .sv-card-actions .sv-card-action.sv-card-icon-button .sv-card-icon-caption{
-   font-size:10.5px!important;
- }
-}
-
-:root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]{
- --sv-card-ink:#22262b;--sv-card-subtle:#858c96;--sv-card-eyebrow-ink:#4d5157;
-}
-#seyveoCardStudio [data-preview-theme="dark"] .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]{
- --sv-card-ink:#f1f4f6;--sv-card-subtle:#aebbc3;--sv-card-eyebrow-ink:#ced4d9;
-}
-
-/* The approved edit step has the same quiet inline actions as the review row.
-   A 44px hit area remains even though the visual control has no capsule. */
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-draft-actions{
- display:flex!important;align-items:center!important;flex-wrap:wrap!important;
- gap:2px 13px!important;margin-top:5px!important;
-}
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-draft-actions :is(.sv-card-draft-confirm,.sv-card-draft-option).sv-card-icon-button{
- display:inline-flex!important;flex:0 1 auto!important;
- width:auto!important;min-width:0!important;max-width:100%!important;
- height:auto!important;min-height:44px!important;max-height:none!important;
- padding:6px 1px!important;gap:4px!important;
- border:0!important;border-radius:0!important;
- background:transparent!important;background-image:none!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- color:var(--sv-card-ink)!important;font-size:11px!important;
- font-weight:530!important;line-height:1.3!important;
-}
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-draft-actions .sv-card-icon-caption{
- display:inline!important;visibility:visible!important;
- font-size:11px!important;line-height:1.25!important;font-weight:530!important;
- white-space:nowrap!important;
-}
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-draft-actions .sv-card-symbol{
- display:block!important;visibility:visible!important;
- width:18px!important;height:18px!important;flex:0 0 18px!important;
-}
-:root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-draft-hint{display:none!important}
-
-/* Studio uses an independent theme attribute with an ID; it must never inherit
-   the retired decorative SVG painted behind the new blue Potok artwork. */
-#seyveoCardStudio [data-preview-theme="light"]
- .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"]{
- background-image:none!important;background-color:transparent!important;
-}
-#seyveoCardStudio [data-preview-theme="light"]
- .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
- .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] img.sv-card-symbol{
- visibility:visible!important;opacity:1!important;
-}
-
-
-/* iPhone: semantic labels stay explicit for VoiceOver, while only the
-   destination is optically shortened to keep all three actions on one row. */
-@media(max-width:420px){
- .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
-  .sv-card-actions .sv-card-action.sv-card-icon-button
-  .sv-card-icon-caption[data-sv-compact-caption]{font-size:0!important}
- .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
-  .sv-card-actions .sv-card-action.sv-card-icon-button
-  .sv-card-icon-caption[data-sv-compact-caption]::after{
-   content:attr(data-sv-compact-caption);
-   font:520 11px/1.2 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
-   letter-spacing:-.015em;white-space:nowrap;
- }
-}
-
-/* Keep original jade/platinum colors in both themes. */
 :root[data-theme="dark"] .sv-card-system--rendered img.sv-card-potok,
 :root[data-theme="dark"] .sv-card-system--rendered img.sv-potok-symbol,
 #seyveoCardStudio [data-preview-theme="dark"] img.sv-card-potok,
-#seyveoCardStudio [data-preview-theme="dark"] img.sv-potok-symbol{
- filter:none!important;
-}
-@media(max-width:365px){
- .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
-  .sv-card-actions .sv-card-action.sv-card-icon-button
-  .sv-card-icon-caption[data-sv-tiny-caption]{font-size:0!important}
- .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
-  .sv-card-actions .sv-card-action.sv-card-icon-button
-  .sv-card-icon-caption[data-sv-tiny-caption]::after{
-   content:attr(data-sv-tiny-caption);
-   font:520 11px/1.2 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
-   letter-spacing:-.015em;white-space:nowrap;
- }
-}
-/* Approved application source glyphs retain their original 64px vector grid.
-   Use the same graphite ink as Home, including in Studio theme previews. */
-.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-mark svg.sv-app-source-icon{
- width:34px;height:34px;stroke:currentColor;fill:none;
-}
-:root[data-theme="light"] .sv-card-system--rendered .sv-card-mark:has(.sv-app-source-icon),
-#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"] .sv-card-system--rendered .sv-card-mark:has(.sv-app-source-icon){
- color:#24272c!important;
-}
-#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="dark"] .sv-card-system--rendered .sv-card-mark:has(.sv-app-source-icon){
- color:#edf1f2!important;
-}
+#seyveoCardStudio [data-preview-theme="dark"] img.sv-potok-symbol{filter:none!important}
