@@ -873,3 +873,12 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
   overflow-wrap:anywhere!important;
  }
 }
+
+/* V182: keep the shared sliding face, with an extra 2px of visible
+   Pearl track on each edge of the Home chooser capsule. */
+@layer seyveo-segment-motion{
+ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-tabs[data-sv-motion-ready]::before{
+  inset:5px auto 5px 5px!important;
+  width:max(0px,calc(var(--sv-motion-width,0px) - 10px))!important;
+ }
+}
