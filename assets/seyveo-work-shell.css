@@ -1017,3 +1017,21 @@ html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessT
 html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .svcp-manager-row:not(.sv-cabinet-dragging),
 html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .svcp-manager-staff > summary,
 html:root body #svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView #svCabinetContinueWithSayvi.sv-cabinet-resume:not([hidden]){border-top:0!important;border-bottom:0!important;box-shadow:none!important;}
+
+/* V148: Cabinet list polish. Keep all navigation, scroll glass and dock
+   geometry unchanged. Single-line rows share the two-line row's baseline;
+   allow longer localized labels to grow instead of clipping. */
+html:root body #svWorkShell#svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView #svCabinetToolbar.sv-cabinet-toolbar{
+ min-height:32px!important;
+ padding-top:0!important;padding-bottom:4px!important;
+}
+html:root body #svWorkShell#svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .svcp-manager-row,
+html:root body #svWorkShell#svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-actions > .svcp-manager-staff > summary{
+ min-height:57px!important;
+ padding-block:6px!important;
+}
+html:root body #svWorkShell#svWorkShell[data-active="business"] #tasksPage #unifiedBusinessTasksView .svcp-manager-chevron > svg{
+ display:block!important;width:16px!important;height:16px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
