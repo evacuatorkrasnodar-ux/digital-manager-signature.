@@ -325,7 +325,16 @@ function mount(target,{
     catch{setDraftFeedback('Не удалось удалить черновик.');}
    },'sv-doc-draft-delete');
    erase.setAttribute('aria-label','Удалить черновик '+title);
-   erase.textContent='';erase.append(toolArt('delete'),$('span','','Удалить'));
+   function draftMenuLabel(control,kind,label){
+    const template=document.createElement('template');
+    template.innerHTML=window.SEYVEO_DOCUMENT_ICONS.markup(kind);
+    const glyph=template.content.firstElementChild;
+    glyph.setAttribute('data-sv-menu-action-glyph',kind);
+    glyph.classList.add('sv-doc-draft-menu-glyph');
+    control.classList.add('sv-menu-with-action-glyph');
+    control.replaceChildren(glyph,$('span','sv-doc-draft-menu-label',label));
+   }
+   draftMenuLabel(erase,'delete','Удалить');
    const actions=$('div','sv-doc-draft-actions sv-menu-surface');actions.hidden=true;
    const rename=button('Переименовать',()=>{
     toggleActions(false);
@@ -343,9 +352,9 @@ function mount(target,{
     form.append(field,cancel,save);row.after(form);field.focus();field.select();
     field.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save.click();}if(e.key==='Escape')form.remove();});
    },'sv-doc-draft-menu-action');
-   rename.replaceChildren(toolArt('rename'),$('span','','Переименовать'));
+   draftMenuLabel(rename,'rename','Переименовать');
    const select=button('Выбрать',()=>{selectedDrafts=new Set([item.id]);void refreshDrafts();},'sv-doc-draft-menu-action');
-   select.replaceChildren(toolArt('select'),$('span','','Выбрать'));
+   draftMenuLabel(select,'select','Выбрать');
    actions.append(rename,select,erase);
    function toggleActions(open){
     if(open)for(const other of details.querySelectorAll('.sv-doc-draft-row.sv-doc-draft-revealed')){
