@@ -47,7 +47,7 @@ const paths=Object.freeze({
  reply:'<path d="m9 5-6 6 6 6M3 11h10a7 7 0 0 1 7 7"/>',
  forward:'<path d="m15 5 6 6-6 6M21 11H11a7 7 0 0 0-7 7"/>',
  pin:'<path d="m9 3 12 12-4 1-4 4-3-3-6 4 4-6-3-3 4-4Z"/>',
- plus:'<path d="M12 5v14M5 12h14"/>',
+ plus:'<path d="M12 5.5v13M5.5 12h13" stroke-width="1.4" stroke-linecap="round"/>',
  chat:'<path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM7 9h10M7 13h6"/>' ,
  info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5m0-8h.01"/>',
  history:'<path d="M3.5 11a8.5 8.5 0 1 1 3 7.5M3.5 5v6h6M12 7.5V12l3 2"/>',
