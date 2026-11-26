@@ -1017,7 +1017,26 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdf-root .svdf-template-gallery>.svdf-template-card[aria-pressed="true"]{background:#fff!important;outline:1px solid rgba(23,106,180,.18)!important;outline-offset:-1px!important;}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdf-root .svdf-template-card[aria-pressed="true"]>strong{color:#176ab4!important;}
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdf-root .svdf-template-paper{background:#fff!important;border:1px solid rgba(55,75,95,.14)!important;box-shadow:0 2px 5px rgba(30,45,60,.07)!important;}
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdf-root .svdf-create-simple>.svdf-primary,html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdf-root .svdf-actions .svdf-primary{background:#fff!important;color:#176ab4!important;border:1px solid rgba(30,45,65,.08)!important;border-radius:999px!important;box-shadow:0 1px 4px rgba(30,45,60,.05)!important;min-height:44px!important;}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdf-root .svdf-actions .svdf-primary{background:#fff!important;color:#176ab4!important;border:1px solid rgba(30,45,65,.08)!important;border-radius:999px!important;box-shadow:0 1px 4px rgba(30,45,60,.05)!important;min-height:44px!important;}
+/* V117: affirmative wide action; Avatar-inspired translucent blue,
+   using the shared confirmation palette rather than solid legacy blue. */
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdf-root .svdf-create-simple>.svdf-primary{
+ background:rgba(165,213,249,.58)!important;background-image:none!important;
+ color:var(--sv-confirm-ink,#075ca8)!important;
+ border:1px solid var(--sv-confirm-edge,#acd4f9)!important;border-radius:999px!important;
+ box-shadow:0 2px 7px rgba(38,83,124,.07),inset 0 1px 0 rgba(255,255,255,.36)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;
+ min-height:44px!important;font-weight:600!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdf-root .svdf-create-simple>.svdf-primary:not(:disabled):active{
+ background:rgba(145,199,243,.72)!important;border-color:var(--sv-confirm-pressed-edge,#96c7ee)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdf-root .svdf-create-simple>.svdf-primary:disabled{
+ background:var(--sv-confirm-disabled-face,#f0f1f3)!important;color:var(--sv-confirm-disabled-ink,#a5adb8)!important;border-color:var(--sv-confirm-disabled-edge,#e2e5e9)!important;box-shadow:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdf-root .svdf-create-simple>.svdf-primary:not(:disabled){background:var(--sv-confirm-face,#c3e2fa)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;}
+}
 /* V116: use the canonical segment tokens, not a nested painted pill. */
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .svdf-root .svdf-list-filters{
  position:relative!important;isolation:isolate!important;box-sizing:border-box!important;
