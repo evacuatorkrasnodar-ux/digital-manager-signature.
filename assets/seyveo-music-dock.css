@@ -398,3 +398,9 @@ html.sv-music-screen #svMusicHomeMiniSlot #sayviMusicMini .sv-music-mini-artist{
 html.sv-music-screen #svMusicHomeMiniSlot #sayviMusicMini .sv-music-mini-skip:disabled{opacity:.35!important}
 html.sv-music-screen #svMusicHomeMiniSlot #sayviMusicMini .sv-music-mini-skip:disabled svg{opacity:.4!important}
 html.sv-music-screen #svMusicHomeMiniSlot #sayviMusicMini:not(.is-playing) .sv-music-mini-progress{opacity:.35!important}
+
+/* Only the inline mini gets a slightly clearer pearl rim; the shared dock is unchanged. */
+:root[data-theme="light"] #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline{
+ border:1px solid rgba(255,255,255,.96)!important;
+ box-shadow:inset 0 0 0 .5px rgba(111,127,148,.18),0 0 0 .5px rgba(111,127,148,.17),0 3px 9px rgba(37,54,76,.045)!important;
+}
