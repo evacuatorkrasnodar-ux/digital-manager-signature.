@@ -2094,3 +2094,19 @@ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #s
 }
 html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-card-route{color:#64B5FF!important}
 html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-hours-unknown{color:#A6ADB8!important}
+
+/* V66 · compact route and hours integrated in the disclosure row. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-card-route{
+ margin:-9px 0 -9px!important;min-height:44px!important;padding:0 8px!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-info-label-stack{
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important;
+ min-width:0!important;text-align:left!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-info-label-stack .sv-place-hours-status{
+ display:block!important;margin:0!important;padding:0!important;font:500 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-info-label-stack .sv-place-hours-status[hidden],
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-info-toggle[aria-expanded="false"] + .sv-place-info-content{
+ display:none!important;
+}
