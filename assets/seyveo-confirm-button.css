@@ -1,11 +1,10 @@
-/* SEYVEO: canonical round affirmative action. V164, shared blue White Pearl glass with a visible blue rim.
+/* SEYVEO: canonical round affirmative action. V165, flat blue glass with a single visible blue rim.
    Explicit circular save/commit controls only. Navigation, text actions,
    colored status controls, send buttons and dock retain their own materials. */
 :root{
  --sv-confirm-size:var(--sv-nav-single-size,44px);
  --sv-confirm-face:rgba(179,220,248,.78);
  --sv-confirm-edge:rgba(56,146,230,.38);
- --sv-confirm-highlight:inset 0 1px 0 rgba(255,255,255,.65);
  --sv-confirm-ink:#075ca8;
  --sv-confirm-pressed:rgba(159,208,243,.84);
  --sv-confirm-pressed-edge:var(--sv-confirm-edge);
@@ -28,7 +27,7 @@
   padding:0!important;border-radius:50%!important;
   border:1px solid var(--sv-confirm-edge)!important;background:var(--sv-confirm-face)!important;
   background-image:none!important;color:var(--sv-confirm-ink)!important;
-  box-shadow:var(--sv-confirm-highlight),var(--sv-white-pearl-circle-shadow,0 2px 8px rgba(38,48,60,.055))!important;text-shadow:none!important;filter:none!important;
+  box-shadow:none!important;text-shadow:none!important;filter:none!important;
   -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(10px) saturate(108%))!important;backdrop-filter:var(--sv-white-pearl-blur,blur(10px) saturate(108%))!important;
   opacity:1!important;transform:none!important;scale:1!important;
   transition:none!important;-webkit-tap-highlight-color:transparent!important;
