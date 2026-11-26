@@ -667,7 +667,8 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{
   background:var(--sv-white-pearl-floating-dock,rgba(235,237,240,.62))!important;background-image:none!important;
   border:0!important;border-bottom:1px solid rgba(155,168,186,.36)!important;outline:0!important;
-  border-radius:0 0 30px 30px!important;box-shadow:0 4px 14px rgba(43,55,73,.085)!important;
+  border-radius:0 0 30px 30px!important;
+  box-shadow:0 9px 17px -7px rgba(43,55,73,.24),0 3px 5px -2px rgba(43,55,73,.12)!important;
   -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px))!important;
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor > .sv-home-favorites-editor-shell{
@@ -790,5 +791,14 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-pinned{
   }
   html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{background:#fff!important}
   html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button[aria-pressed="true"]{background:#edf5fd!important}
+ }
+}
+
+/* V167: release the opening clip after the curtain arrives so the
+   single downward shadow can follow the actual rounded lower edge.
+   Keep the original opening/retraction timing and viewport geometry. */
+@layer seyveo-home-chooser-standard{
+ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor:not(.is-leaving){
+  animation-fill-mode:backwards!important;
  }
 }
