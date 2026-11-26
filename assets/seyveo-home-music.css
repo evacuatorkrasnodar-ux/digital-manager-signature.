@@ -1,0 +1,43 @@
+/* Only the approved Home weather slot. No dock or mini-player styling changes. */
+html.sv-home-inline-music-route #sayviMusicMini{display:none!important}
+html:root body #homePage #svSayviHomeWeather.sv-home-music-weather-replaced{visibility:hidden!important;opacity:0!important;pointer-events:none!important;animation:none!important}
+#homePage #svHomeInlineMusic[hidden],#homePage #svHomeMusicReturn[hidden]{display:none!important}
+#homePage #svHomeInlineMusic{
+ --sv-home-player-ink:#161719;--sv-home-player-sub:#777b81;--sv-home-player-line:#dedfe2;
+ position:absolute!important;z-index:5;transform:translateX(-50%);box-sizing:border-box;
+ width:min(278px,calc(100% - 48px));margin:0;padding:0;display:grid;gap:0;
+ background:transparent!important;border:0!important;box-shadow:none!important;color:var(--sv-home-player-ink);
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ animation:sv-home-player-fade .24s ease-out both;
+}
+#homePage #svHomeInlineMusic button,#homePage #svHomeMusicReturn{
+ appearance:none;-webkit-appearance:none;border:0!important;background:transparent!important;box-shadow:none!important;
+ color:inherit;padding:0;margin:0;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#homePage #svHomeInlineMusic .sv-home-music-heading{position:relative;display:grid;place-items:center;min-height:36px}
+#homePage #svHomeInlineMusic .sv-home-music-meta{display:grid;gap:2px;min-width:0;width:calc(100% - 70px);text-align:center;line-height:1.13}
+#homePage #svHomeInlineMusic .sv-home-music-meta strong{font-size:15px;font-weight:610;letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#homePage #svHomeInlineMusic .sv-home-music-meta small{font-size:11.5px;font-weight:400;color:var(--sv-home-player-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#homePage #svHomeInlineMusic .sv-home-music-weather{position:absolute;right:-8px;top:-3px;width:44px;height:44px;display:grid;place-items:center;color:var(--sv-home-player-sub)}
+#homePage #svHomeInlineMusic .sv-home-music-weather svg,#homePage #svHomeMusicReturn svg{width:18px;height:18px;display:block}
+#homePage #svHomeInlineMusic .sv-home-music-timeline{padding:0 10px}
+#homePage #svHomeInlineMusic input[type=range]{appearance:none;-webkit-appearance:none;display:block;width:100%;height:19px;border:0;background:transparent;margin:0;padding:0;--sv-home-music-progress:0%}
+#homePage #svHomeInlineMusic input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:4px;background:linear-gradient(to right,var(--sv-home-player-ink) 0 var(--sv-home-music-progress),var(--sv-home-player-line) var(--sv-home-music-progress) 100%)}
+#homePage #svHomeInlineMusic input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:7px;height:7px;margin-top:-2px;border-radius:50%;border:0;background:var(--sv-home-player-ink)}
+#homePage #svHomeInlineMusic input[type=range]::-moz-range-track{height:3px;border-radius:4px;background:var(--sv-home-player-line)}
+#homePage #svHomeInlineMusic input[type=range]::-moz-range-progress{height:3px;border-radius:4px;background:var(--sv-home-player-ink)}
+#homePage #svHomeInlineMusic input[type=range]::-moz-range-thumb{width:7px;height:7px;border-radius:50%;border:0;background:var(--sv-home-player-ink)}
+#homePage #svHomeInlineMusic .sv-home-music-times{display:flex;justify-content:space-between;font-size:10px;line-height:1;color:var(--sv-home-player-sub);font-variant-numeric:tabular-nums}
+#homePage #svHomeInlineMusic .sv-home-music-controls{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:3px}
+#homePage #svHomeInlineMusic .sv-home-music-controls button{display:grid;place-items:center;width:44px;height:44px;border-radius:50%}
+#homePage #svHomeInlineMusic .sv-home-music-controls svg{display:block;width:24px;height:24px;fill:currentColor;stroke:none}
+#homePage #svHomeInlineMusic .sv-home-music-controls [data-home-music=play] svg{width:30px;height:30px}
+#homePage #svHomeInlineMusic .sv-home-music-controls button:disabled{opacity:.26;cursor:default}
+#homePage #svHomeInlineMusic button:active:not(:disabled){opacity:.62}
+#homePage #svHomeInlineMusic button:focus-visible,#homePage #svHomeMusicReturn:focus-visible{outline:2px solid currentColor;outline-offset:1px}
+#homePage #svHomeMusicReturn{position:absolute!important;z-index:5;width:44px;height:44px;display:grid;place-items:center;color:#777b81}
+#homePage #svHomeInlineMusic.sv-home-music-compact .sv-home-music-heading{min-height:31px}
+#homePage #svHomeInlineMusic.sv-home-music-compact .sv-home-music-controls{margin-top:0;gap:20px}
+:root[data-theme=dark] #homePage #svHomeInlineMusic{--sv-home-player-ink:#f3f4f6;--sv-home-player-sub:#afb3b9;--sv-home-player-line:#52565e}
+@keyframes sv-home-player-fade{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){#homePage #svHomeInlineMusic{animation:none}}
