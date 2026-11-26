@@ -35,7 +35,7 @@
   'music.release_verified':'music'
  });
  const actionLabels=Object.freeze({
-   sayvi:'Сэйви',edit:'Исправить',navigate:'Перейти',
+   sayvi:'Сэйви поможет',edit:'Исправить самому',navigate:'Перейти',
    'confirm-preview':'Подтвердить',
   reply:'Ответить','open-chat':'В чат',later:'Позже',
   'review-draft':'Проверить черновик','open-mail':'В почту',
@@ -47,23 +47,21 @@
   'review-recognition':'Проверить благодарность','review-document':'Проверить документ',
   'open-release':'Открыть альбом','not-interested':'Неинтересно'
  });
- // SEYVEO Card Studio · approved editorial review standard (17.11.2026).
- // A visible Sayvi proposal is already an explanation. Do not create a
- // second button that merely repeats it. Preserve actual distinct operations:
- // composing drafts, opening chats, reviewing, sending (with confirmation).
+ // Approved 26.11.2026: the same readable Review card for every event family.
+ // UI-only standard; services still own all real confirmations.
  const cardPolicy=Object.freeze({
-  id:'review-editorial-v1',
-  darkMaterial:'#38383A',lightMaterial:'transparent',
-  primaryActionsMax:1,primaryPillsMax:1,visibleActionLimit:3,secondaryPresentation:'text',
-  // Approved source-of-truth: future Card Engine families inherit this white-theme style.
+  id:'review-avatar-v2',
+  darkMaterial:'#38383A',lightMaterial:'avatar-matte-glass',
+  primaryActionsMax:1,primaryPillsMax:1,visibleActionLimit:3,secondaryPresentation:'neutral-glass',
+  typography:Object.freeze({titlePx:17,bodyPx:17,queueTitlePx:17,queueBodyPx:15,metaPx:13,observationPx:15,actionPx:15}),
+  layout:Object.freeze({actionHeightPx:46,touchPx:44,iconColumnPx:44,iconPx:36,compactWidthPx:480,compactRows:'primary-full-secondary-equal'}),
   sayviButtonStandard:Object.freeze({
-   theme:'light',shape:'inline',touchPx:44,ringPx:0,outerRingPx:0,
-   rimOpacity:.28,outerRimOpacity:.16,glyphPx:30,
-   mark:'jade-platinum',fill:'transparent',ink:'#161B1B',
+   theme:'light',shape:'capsule',touchPx:44,heightPx:46,glyphPx:18,
+   mark:'jade-platinum',fill:'avatar-primary-glass',ink:'#075CA8',
    darkTheme:'preserve-current'
   }),
   deferGesture:'swipe-both-cycle',dismissGesture:'long-press-only',contextGesture:'long-press',deferMinPixels:75,
-   singleCardSnoozeMs:60*60*1000,protectedSnoozeMs:10*60*1000,premiumGraphite:'#38383A',
+  singleCardSnoozeMs:60*60*1000,protectedSnoozeMs:10*60*1000,premiumGraphite:'#38383A',
   redundantAdviceActions:Object.freeze(['show-sayvi','show-sayvi-advice','show-suggestion','show-advice']),
   preserveDistinctAssistantActions:true
  });
@@ -362,8 +360,7 @@
   symbol.setAttribute('aria-hidden','true');
   const caption=document.createElement('span');caption.className='sv-card-icon-caption';
   caption.textContent=cardIconLabels[kind];
-  if(kind==='sayvi')caption.dataset.svTinyCaption='Сэйви';
-  if(kind==='edit')caption.dataset.svTinyCaption='Самому';
+
   button.replaceChildren(symbol,caption);
   // Living Moment's old Sayvi SVG and masked ::before are obsolete once
   // the single canonical action glyph is installed. Never paint both.
@@ -413,7 +410,7 @@
   const article=el('article','sv-card-system sv-card-system--rendered');
   article.dataset.svCardFamily=card.family;
   article.dataset.svCardDemo=String(p.demo);
-  article.dataset.svCardVersion='4';
+  article.dataset.svCardVersion='5';
   article.dataset.svCardStandard=cardPolicy.id;
   article.setAttribute('aria-label',p.family+': '+p.title);
   const eyebrow=el('div','sv-card-eyebrow');
@@ -454,9 +451,7 @@
     const place=destination[card.family]||'в раздел';
     const title='Перейти '+place;
     const caption=button.querySelector('.sv-card-icon-caption');
-    caption.textContent=title;
-    caption.dataset.svCompactCaption=place.replace(/^в /,'В ');
-    caption.dataset.svTinyCaption=caption.dataset.svCompactCaption;
+    caption.textContent=cardIconLabels.navigate;
     button.setAttribute('aria-label',title);button.title=title;
    }
    button.disabled=typeof onAction!=='function';
