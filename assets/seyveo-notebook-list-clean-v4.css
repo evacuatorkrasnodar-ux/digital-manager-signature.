@@ -627,3 +627,8 @@ html:root[data-theme="light"] body #svNoteUndoToast > span{min-width:0;line-heig
 html:root[data-theme="light"] body #svNoteUndoToast > button{
  flex:none;min-height:44px!important;border-radius:999px!important;white-space:nowrap!important;
 }
+
+/* V193: the More action uses the same horizontal ellipsis as row menus. */
+html:root body #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb4-more svg circle{
+ fill:currentColor!important;stroke:none!important;
+}

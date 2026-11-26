@@ -938,7 +938,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=5">
 <link rel="stylesheet" href="assets/seyveo-header-system.css?v=20261126-compact-axis-v126">
 <link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=20261125-signature-icons">
-<link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=20261126-swipe-pearl-v192">
+<link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=20261126-swipe-finish-v193">
 <link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=20261126-flat-confirm-v72">
 <link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=20261126-map-v74">
 <link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3">
@@ -1020,7 +1020,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
 <script src="assets/seyveo-scan-auto.js?v=2" defer></script>
 <link rel="stylesheet" href="assets/seyveo-signature.css?v=1">
 <script src="assets/seyveo-signature.js?v=20261125-stylus-v2" defer></script>
-<link rel="stylesheet" href="assets/seyveo-navigation-glass.css?v=20261126-swipe-pearl-v192">
+<link rel="stylesheet" href="assets/seyveo-navigation-glass.css?v=20261126-swipe-finish-v193">
 <link rel="stylesheet" href="assets/seyveo-notebook-collections.css?v=20261126-avatar-glass-v118">
 <link rel="stylesheet" href="assets/seyveo-bulk-selection.css?v=20261126-draft-dock-v125">
 <link rel="stylesheet" href="assets/seyveo-media-pearl.css?v=20261126-v191">
@@ -4641,7 +4641,7 @@ function renderNotes(){
   const swipeMore=document.createElement('button');swipeMore.type='button';
   swipeMore.className='sv-nb4-more';swipeMore.setAttribute('aria-label','Другие действия с заметкой');
   swipeMore.setAttribute('aria-expanded','false');
-  swipeMore.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11v8h12v-8M12 3v11M8.5 6.5 12 3l3.5 3.5"/></svg><span>Ещё</span>';
+  swipeMore.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg><span>Ещё</span>';
   const controls=document.createElement('div');controls.className='sv-nb4-front';
   let suppressNoteClickUntil=0;
   const open=document.createElement('button');open.type='button';open.className='sv-nb4-open';open.setAttribute('aria-label','Открыть запись: '+content.textContent);open.setAttribute('aria-haspopup','true');open.setAttribute('aria-expanded','false');

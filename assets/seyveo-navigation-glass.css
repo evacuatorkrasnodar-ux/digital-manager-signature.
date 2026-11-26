@@ -1141,3 +1141,18 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  opacity:1!important;visibility:visible!important;z-index:-1!important;pointer-events:none!important;
  transform:none!important;translate:none!important;scale:none!important;filter:none!important;
 }
+
+/* V193: a quieter nested action inside the existing Pearl undo capsule.
+   The outer toast owns the glass depth; keep the 44px touch target. */
+@layer seyveo-semantic-actions{
+ html:root[data-theme="light"] body #svNoteUndoToast > button[data-sv-action-glass="neutral"]{
+  --sv-action-face:rgba(255,255,255,.48);
+  --sv-action-edge:rgba(185,195,209,.25);
+  --sv-action-pressed:rgba(255,255,255,.68);
+ }
+ @media(prefers-reduced-transparency:reduce){
+  html:root[data-theme="light"] body #svNoteUndoToast > button[data-sv-action-glass="neutral"]{
+   --sv-action-face:#fff;--sv-action-pressed:#e9ebef;
+  }
+ }
+}
