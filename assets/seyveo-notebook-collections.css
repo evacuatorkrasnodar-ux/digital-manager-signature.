@@ -124,9 +124,8 @@ html:root[data-theme="light"] body .app:has(> #svWorkShell[data-active="notes"] 
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-active="notes"]:has(#svNotebookCategories[data-nb-view="detail"]){
  background:#fff!important;background-image:none!important;
 }
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-active="notes"]:has(#svNotebookCategories[data-nb-view="detail"]) > .sv-full-header-material{
- --sv-header-glass-face:rgba(255,255,255,.94);
-}
+/* V118: collection detail inherits the canonical Avatar glass face.
+   No nearly opaque local white coating. */
 /* Use the shared compact reading-menu tokens and a single anchored edge. */
 html:root body > #svNotebookListMenu#svNotebookListMenu:not([hidden]){
  right:auto!important;left:var(--sv-nb-collection-left,0px)!important;
