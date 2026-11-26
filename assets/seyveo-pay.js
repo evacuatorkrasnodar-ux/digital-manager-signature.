@@ -47,7 +47,16 @@ function stopCamera(){
  if(video){video.pause();video.srcObject=null;video.hidden=true;}
 }
 function status(value){const el=q('#sypScanStatus');if(el)el.textContent=value;}
+function setWalletMenu(open,restoreFocus=false){
+ const menu=q('#sypWalletMenu'),trigger=q('[data-syp="more"]');
+ if(!menu||!trigger)return;
+ menu.hidden=!open;
+ trigger.setAttribute('aria-expanded',String(open));
+ if(open)menu.querySelector('button')?.focus?.({preventScroll:true});
+ else if(restoreFocus)trigger.focus?.({preventScroll:true});
+}
 function screen(name){
+ setWalletMenu(false);
  if(name!=='scan')stopCamera();
  for(const node of dialog.querySelectorAll('.syp-screen'))node.hidden=node.dataset.sypScreen!==name;
 }
@@ -117,6 +126,7 @@ function open(tab='card'){
  return select(tab==='finances'?'finances':'card');
 }
 function close(switchingSection=false){
+ setWalletMenu(false);
  ++viewToken;
  stopCamera();
  skipCloseFocus=!!switchingSection;
@@ -133,9 +143,10 @@ dialog.addEventListener('click',event=>{
  const button=event.target.closest('[data-syp]');
  if(!button)return;
  const action=button.dataset.syp;
+ if(action==='more'){setWalletMenu(button.getAttribute('aria-expanded')!=='true');return;}
  if(action==='close'){close();return;}
  if(action==='home'){screen('home');dialog.scrollTop=0;return;}
- if(action==='cards'||action==='history'){
+ if(action==='cards'||action==='history'||action==='add'){
   screen(action);dialog.scrollTop=0;return;
  }
  if(action==='scan'){
@@ -151,8 +162,21 @@ document.addEventListener('click',event=>{
   event.preventDefault();event.stopImmediatePropagation();void open();
  }
 },true);
+// Disclosure menu closes on outside tap or Escape, without dismissing Wallet.
+document.addEventListener('click',event=>{
+ const menu=q('#sypWalletMenu');
+ if(!menu||menu.hidden)return;
+ if(!menu.contains(event.target)&&!event.target.closest?.('[data-syp="more"]'))setWalletMenu(false);
+},true);
+document.addEventListener('keydown',event=>{
+ const menu=q('#sypWalletMenu');
+ if(event.key==='Escape'&&menu&&!menu.hidden){
+  event.preventDefault();event.stopPropagation();setWalletMenu(false,true);
+ }
+},true);
 // No backdrop dismissal: this is an inline page with the shared navigation.
 dialog.addEventListener('close',()=>{
+ setWalletMenu(false);
  ++viewToken;
  stopCamera();
  if(!skipCloseFocus)launchButton?.focus?.({preventScroll:true});
