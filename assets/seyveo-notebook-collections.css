@@ -37,9 +37,6 @@ html[data-theme="dark"] .sv-nb-folder-sheet .sv-nb-folder-row{color:#fff;border-
 
 /* Catalog home and category screen share the same fixed work capsule.
    Only the selected category's list is scrollable; home previews three notes. */
-#svWorkShell[data-active="notes"] #svNotebookCategories[data-nb-view="detail"]{
- display:flex!important;align-items:center;gap:0;margin-block:6px 2px;
-}
 #svWorkShell[data-active="notes"] #svNotebookCategories .sv-nb-catalog-back,
 #svWorkShell[data-active="notes"] #svNotebookCategories .sv-nb-home-folder-link,
 #svWorkShell[data-active="notes"] #svNotebookCategories .sv-nb-folder-add,
@@ -85,3 +82,79 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-active="notes"]
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-active="notes"]:has(#svNotebookCategories[data-nb-view="home"]) > .sv-full-header-material{
  --sv-header-glass-face:rgba(255,255,255,.94);
 }
+
+/* Category pages: one real toolbar, shared 44px navigation geometry.
+   Scope to detail mode, never change the catalog home or permanent dock. */
+html:root body #svWorkShell#svWorkShell[data-active="notes"]:has(#svNotebookCategories[data-nb-view="detail"]) > :is(seyveo-work-head,#svNotebookCreateTiles,#svWorkTabs){
+ display:none!important;
+}
+html:root body #svWorkShell#svWorkShell[data-active="notes"]:has(#svNotebookCategories[data-nb-view="detail"]) > #notesDialog[open]{
+ padding-top:var(--sv-apple-top-inset,14px)!important;
+}
+html:root body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog:has(#svNotebookCategories[data-nb-view="detail"]):not(.sv-nb-selecting) > #svNotebookListTools:not([hidden]){
+ display:grid!important;grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px)!important;
+ grid-template-rows:var(--sv-header-slot,44px)!important;gap:8px!important;align-items:center!important;
+ flex:0 0 54px!important;min-height:54px!important;padding:0 12px 10px!important;
+ background:transparent!important;box-sizing:border-box!important;
+}
+html:root body #svWorkShell[data-active="notes"] #svNotebookCatalogBack[hidden]{display:none!important}
+html:root body #svWorkShell[data-active="notes"] #notesDialog:has(#svNotebookCategories[data-nb-view="detail"]) #svNotebookListLabel{
+ grid-column:2!important;grid-row:1!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ text-align:center!important;color:var(--text,#1c1c1e)!important;
+ font:var(--sv-header-title-weight,590) var(--sv-header-title-size,20px)/var(--sv-header-title-leading,1.2) -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:var(--sv-header-title-tracking,-.02em)!important;
+}
+html:root body #svWorkShell#svWorkShell[data-active="notes"] #notesDialog:has(#svNotebookCategories[data-nb-view="detail"]) :is(#svNotebookCatalogBack,#svNotebookListMore):not([hidden]),
+html:root body dialog#svNbFolderSheet.sv-nb-folder-sheet .sv-nb-sheet-close{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:var(--sv-header-slot,44px)!important;min-width:var(--sv-header-slot,44px)!important;
+ height:var(--sv-header-slot,44px)!important;min-height:var(--sv-header-slot,44px)!important;
+ margin:0!important;padding:0!important;border-radius:50%!important;
+ border:var(--sv-header-circle-border)!important;background:var(--sv-header-circle)!important;background-image:none!important;
+ color:var(--sv-header-icon-ink,#0b0b0d)!important;box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;backdrop-filter:var(--sv-header-circle-filter)!important;
+}
+#svNotebookCatalogBack{grid-column:1;grid-row:1}
+html:root body #svWorkShell[data-active="notes"] #notesDialog:has(#svNotebookCategories[data-nb-view="detail"]) #svNotebookListMore{grid-column:3!important;grid-row:1!important}
+html:root body #svNotebookCatalogBack svg,html:root body #svNbFolderSheet .sv-nb-sheet-close svg{
+ width:var(--sv-header-back-icon,22px)!important;height:var(--sv-header-back-icon,22px)!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:var(--sv-header-back-weight,1.45)!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html:root[data-theme="light"] body .app:has(> #svWorkShell[data-active="notes"] #svNotebookCategories[data-nb-view="detail"]),
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-active="notes"]:has(#svNotebookCategories[data-nb-view="detail"]){
+ background:#fff!important;background-image:none!important;
+}
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-active="notes"]:has(#svNotebookCategories[data-nb-view="detail"]) > .sv-full-header-material{
+ --sv-header-glass-face:rgba(255,255,255,.94);
+}
+/* Use the shared compact reading-menu tokens and a single anchored edge. */
+html:root body > #svNotebookListMenu#svNotebookListMenu:not([hidden]){
+ right:auto!important;left:var(--sv-nb-collection-left,0px)!important;
+ width:190px!important;max-width:calc(100% - 24px)!important;
+ border:var(--sv-menu-border)!important;border-radius:var(--sv-menu-compact-radius)!important;
+ background:var(--sv-menu-bg)!important;box-shadow:var(--sv-menu-shadow)!important;
+}
+html:root body > #svNotebookListMenu#svNotebookListMenu > button[hidden]{display:none!important}
+/* Folder panel: shared sheet entrance, grip, and navigation material. */
+html:root body dialog#svNbFolderSheet.sv-nb-folder-sheet[open]{
+ position:fixed!important;inset:auto 0 0!important;margin:0 auto!important;width:100%!important;
+ max-width:var(--sv-sheet-max-width,680px)!important;max-height:75vh!important;max-height:75dvh!important;
+ padding:8px 16px max(16px,env(safe-area-inset-bottom,0px))!important;
+ border-radius:var(--sv-sheet-radius,28px) var(--sv-sheet-radius,28px) 0 0!important;
+ border:var(--sv-menu-border)!important;background:var(--sv-menu-bg)!important;color:var(--sv-menu-text)!important;
+ box-shadow:var(--sv-menu-shadow)!important;overflow-y:auto!important;overscroll-behavior:contain;
+ animation:svSharedSheetEnter var(--sv-sheet-enter-duration,.28s) var(--sv-sheet-enter-ease,ease-out)!important;
+}
+html:root body #svNbFolderSheet::backdrop{background:rgba(25,31,41,.24)!important;backdrop-filter:blur(3px)!important;animation:svSharedSheetShade .2s ease-out}
+html:root body #svNbFolderSheet .sv-nb-folder-head{
+ display:grid;grid-template-columns:var(--sv-header-symmetric-grid,44px minmax(0,1fr) 44px);grid-template-rows:8px 44px;gap:6px;
+ padding-bottom:8px;
+}
+#svNbFolderSheet .sv-nb-sheet-grip{grid-column:1/-1;grid-row:1;justify-self:center;align-self:center;width:var(--sv-sheet-grip-width,34px);height:var(--sv-sheet-grip-height,4px);border-radius:999px;background:var(--sv-sheet-grip-color,#cbd0d5);touch-action:none;position:relative}
+#svNbFolderSheet .sv-nb-sheet-grip::before{content:"";position:absolute;inset:-8px -12px}
+#svNbFolderSheet .sv-nb-folder-head strong{grid-column:2;grid-row:2;align-self:center;text-align:center;font:var(--sv-header-title-weight,590) 17px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+#svNbFolderSheet .sv-nb-sheet-close{grid-column:3;grid-row:2}
+#svNbFolderSheet .sv-nb-folder-form input{background:var(--sv-menu-item)!important;border:1px solid var(--sv-menu-item-border)!important;color:var(--sv-menu-text)!important}
+#svNbFolderSheet .sv-nb-folder-submit{border-radius:999px;background:#007aff;color:#fff;padding:0 16px;min-height:44px}
+#svNbFolderSheet .sv-nb-folder-status:empty{display:none}
+@media(prefers-reduced-motion:reduce){html:root body dialog#svNbFolderSheet.sv-nb-folder-sheet[open],html:root body #svNbFolderSheet::backdrop{animation:none!important}}
