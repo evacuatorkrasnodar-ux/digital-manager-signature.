@@ -29,7 +29,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3{
 html body dialog#personalTaskDialog.sv-task-editor-v3::backdrop{background:#FFFFFF!important;backdrop-filter:none!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
  position:relative!important;box-sizing:border-box!important;
- --sv-task-float-bottom:calc(14px + env(safe-area-inset-bottom,0px));
+ --sv-task-float-bottom:calc(14px + max(env(safe-area-inset-bottom,0px),var(--sv-task-keyboard-inset,0px)));
  inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
  transform:none!important;
  display:flex!important;flex-direction:column!important;align-items:stretch!important;
@@ -380,7 +380,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-popo
  -webkit-backdrop-filter:var(--sv-task-field-blur)!important;backdrop-filter:var(--sv-task-field-blur)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .personal-task-sheet.sv-task-keyboard-visible{
- --sv-task-float-bottom:calc(12px + var(--sv-task-keyboard-inset,0px));
+ --sv-task-float-bottom:calc(12px + max(env(safe-area-inset-bottom,0px),var(--sv-task-keyboard-inset,0px)));
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-main{
  padding:8px 15px!important;margin:7px 0 3px!important;border-radius:19px!important;
@@ -1665,7 +1665,7 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .
   justify-content:center!important;
  }
  html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-title-capsule:not(.is-grouped:not(.is-editing)) #personalTaskTitle{
-  min-height:24px!important;max-height:128px!important;
+  min-height:24px!important;max-height:none!important;
   padding:0!important;resize:none!important;
   font:490 17px/1.36 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  }
@@ -1865,4 +1865,13 @@ html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-marker 
  html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm-actions > .sv-place-refine-trigger{
  background:#EAECF0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
+}
+
+/* V56: textarea height is measured at its actual available width.
+   Once editing ends the whole phrase is visible, not a clipped scroll tail. */
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-title-capsule:not(.is-grouped:not(.is-editing)) #personalTaskTitle{
+ box-sizing:border-box!important;max-height:none!important;flex:0 0 auto!important;resize:none!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
+ flex-shrink:0!important;
 }
