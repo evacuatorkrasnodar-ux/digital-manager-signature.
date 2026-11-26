@@ -335,8 +335,8 @@ function openCustomize(){
   grid.dataset.section=activeTab;
   grid.replaceChildren(help);
   const groups=cabinet?[[null,businessApps]]:[
-   ['Приложения',[{id:'smart',name:'Умная кнопка'},...primaryApps,taskApp]],
-   ['Блокнот',noteTools],
+   ['Приложения',[{id:'smart',name:'Умная кнопка'},...primaryApps.filter(app=>app.id!=='documents'),taskApp]],
+   ['Блокнот',[...noteTools,...primaryApps.filter(app=>app.id==='documents')]],
    ['Кошелёк',walletTools.filter(a=>!a.planned)],
    ['Кошелёк · в разработке',walletTools.filter(a=>a.planned)]
   ];
