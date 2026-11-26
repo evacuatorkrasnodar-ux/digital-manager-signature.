@@ -281,6 +281,15 @@
   status.textContent=result===null?'':result?'В '+meetingTime.value+' открыто':'В '+meetingTime.value+' закрыто';
   status.title=result===null?'':'По опубликованному графику; возможны изменения.';
  }
+ function makeSearchField(input){
+  const field=node('div','sv-place-refine-field');
+  const searchIcon=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  searchIcon.setAttribute('viewBox','0 0 24 24');searchIcon.setAttribute('aria-hidden','true');
+  searchIcon.setAttribute('focusable','false');searchIcon.setAttribute('class','sv-place-refine-search');
+  searchIcon.innerHTML='<circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4.2 4.2"/>';
+
+  field.append(searchIcon,input);return field;
+ }
  function render(){
   if(!dialog.open)return;
   // Reveal the place card only once a place is actually mentioned or loaded.
@@ -294,7 +303,7 @@
    else{
     const city=node('button','sv-place-city-trigger',proposal.city?proposal.city+' · изменить':'Указать город');city.type='button';
     city.setAttribute('aria-label',proposal.city?'Изменить город поиска: '+proposal.city:'Указать город поиска');
-    city.addEventListener('click',()=>{cityEditing=!cityEditing;render()});heading.append(city);
+    city.addEventListener('click',()=>{cityEditing=!cityEditing;if(cityEditing)refining=false;render()});heading.append(city);
    }
   }
   panel.append(heading);
@@ -371,7 +380,7 @@
     change.setAttribute('aria-expanded',String(refining));
     change.addEventListener('click',()=>{
      if(!proposal){reset();window.SEYVEO_MEETING_PLACE_PICKER?.reset();window.dispatchEvent(new Event('seyveo:task-place-updated'));return}
-     refining=!refining;render();
+     refining=!refining;if(refining)cityEditing=false;render();
     });
     actions.append(accept,change);panel.append(actions);
    }
@@ -397,6 +406,7 @@
      toggle.append(labels,node('strong','sv-place-info-value',value),chevron);
      const content=node('div','sv-place-info-content');content.id=id;
      const setExpanded=open=>{
+      row.classList.toggle('is-expanded',open);
       content.hidden=!open;toggle.setAttribute('aria-expanded',String(open));
       if(open)content.style.removeProperty('display');else content.style.setProperty('display','none','important');
      };
@@ -429,7 +439,7 @@
    }
    if(!details?.hours){
     const unknown=node('p','sv-place-hours-unknown','Часы работы не уточнены');
-    panel.append(unknown);
+    copy.append(unknown);
    }
    if(place.websiteURL){
     const website=node('a','sv-place-manual-map','Сайт заведения ↗');
@@ -452,7 +462,7 @@
    }
    const other=node('button','sv-place-refine-trigger',refining?'Отмена':'Другой адрес');other.type='button';
    other.setAttribute('aria-expanded',String(refining));
-   other.addEventListener('click',()=>{refining=!refining;render()});card.append(other);
+   other.addEventListener('click',()=>{refining=!refining;if(refining)cityEditing=false;render()});card.append(other);
   }else{
    const copy=node('div','sv-place-copy');
    const headline=proposal?.label||'Место пока не указано';
@@ -483,7 +493,7 @@
     render();void lookup();
    });
    input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();apply.click()}});
-   row.append(input,apply);panel.append(row);
+   row.append(makeSearchField(input),apply);panel.append(row);
   }
   if(refining&&proposal){
    const row=node('div','sv-place-refine-row');
@@ -501,12 +511,7 @@
     void lookup();
    });
    input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();apply.click()}});
-   const field=node('div','sv-place-refine-field');
-   const searchIcon=document.createElementNS('http://www.w3.org/2000/svg','svg');
-   searchIcon.setAttribute('viewBox','0 0 24 24');searchIcon.setAttribute('aria-hidden','true');
-   searchIcon.setAttribute('focusable','false');searchIcon.setAttribute('class','sv-place-refine-search');
-   searchIcon.innerHTML='<circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4.2 4.2"/>';
-   field.append(searchIcon,input);row.append(field,apply);
+   row.append(makeSearchField(input),apply);
    // Keep address refinement next to its trigger, before opening hours/menu.
    const strip=panel.querySelector('.sv-place-venue-details, .sv-place-manual-map');
    if(strip)panel.insertBefore(row,strip);
