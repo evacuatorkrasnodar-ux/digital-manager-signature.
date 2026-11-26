@@ -446,19 +446,13 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
    This replaces flat fillings on existing controls; it creates no new layer. */
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  :is(button#noteReviewBack.sv-note-back-arrow,button#svNoteUndo.sv-note-nav-circle,button#svNoteMore.sv-note-nav-circle){
- border:var(--sv-dock-pearl-border)!important;
- background:var(--sv-dock-pearl-bg)!important;
- box-shadow:var(--sv-dock-pearl-shadow)!important;
- -webkit-backdrop-filter:var(--sv-dock-pearl-blur)!important;
- backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ border:var(--sv-header-circle-border)!important;
+ background:var(--sv-header-circle)!important;
+ box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
+ backdrop-filter:var(--sv-header-circle-filter)!important;
 }
-/* Preserve the approved gold action while giving it the same soft relief. */
-html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-nav-actions button#svNoteDone{
- border:.75px solid rgba(20,97,173,.18)!important;
- background:#237bd3!important;
- box-shadow:0 2px 6px rgba(32,92,155,.13)!important;
-}
+/* V154: affirmative action material is owned by seyveo-confirm-button.css. */
 /* The iOS keyboard state keeps the real pearl ring instead of a flat fill. */
 @media(max-width:699px){
  html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
