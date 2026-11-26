@@ -1901,7 +1901,7 @@ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .s
  max-height:calc(100% - 48px - var(--sv-task-keyboard-inset,0px))!important;
  overflow-y:auto!important;overscroll-behavior:contain!important;
  -webkit-backdrop-filter:var(--sv-task-action-blur)!important;backdrop-filter:var(--sv-task-action-blur)!important;
- animation:sv-task-calendar-rise .28s cubic-bezier(.2,.75,.2,1) both;
+ animation:sv-task-calendar-rise .28s cubic-bezier(.2,.75,.2,1) backwards;
 }
 @keyframes sv-task-calendar-rise{from{transform:translateY(100%)}to{transform:translateY(0)}}
 html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-calendar-shade{
@@ -1956,3 +1956,53 @@ html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.s
 }
 @media(prefers-reduced-motion:reduce){html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-popover{animation:none!important}}
 @media(prefers-reduced-transparency:reduce){html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-popover{background:#F0F1F4!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+
+/* V59 · calendar overlay never participates in the form's horizontal layout. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
+ box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
+ flex:0 0 auto!important;margin-inline:auto!important;overflow:hidden!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet > #svNewTaskCalendarPopover:not([hidden]){
+ box-sizing:border-box!important;position:absolute!important;left:0!important;right:0!important;
+ width:auto!important;min-width:0!important;max-width:100%!important;margin:0!important;
+ padding:8px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))!important;
+ overflow-x:hidden!important;overflow-y:auto!important;scrollbar-width:none!important;
+ border:var(--sv-task-field-rim)!important;border-radius:26px 26px 0 0!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarPopover::-webkit-scrollbar{display:none!important}
+html:root:not([data-theme="dark"]) body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet > #svNewTaskCalendarPopover:not([hidden]){
+ background:rgba(218,222,229,.76)!important;background-image:none!important;
+ -webkit-backdrop-filter:blur(20px) saturate(110%)!important;backdrop-filter:blur(20px) saturate(110%)!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-calendar-shade{
+ background:rgba(35,40,50,.08)!important;inset:0!important;max-width:100%!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-time-conflict{
+ margin:5px 0 2px!important;padding:8px 10px 8px 12px!important;
+ border:0!important;border-left:3px solid #E5A15D!important;border-radius:12px!important;
+ background:rgba(242,156,71,.055)!important;box-shadow:none!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-time-conflict strong{
+ font:600 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;color:#9E5D24!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-time-conflict p{
+ font:450 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;margin:3px 0!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-time-conflict .sv-task-conflict-name{
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-time-options{
+ gap:6px!important;margin-top:4px!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-time-options button{
+ min-height:44px!important;min-width:62px!important;padding:0 12px!important;
+ background:var(--sv-task-action-fill)!important;border:var(--sv-task-action-rim)!important;
+ border-radius:99px!important;box-shadow:var(--sv-task-action-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-task-action-blur)!important;backdrop-filter:var(--sv-task-action-blur)!important;
+ color:#007AFF!important;font:600 14px/1 system-ui!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root:not([data-theme="dark"]) body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet > #svNewTaskCalendarPopover:not([hidden]){
+  background:#E5E7EB!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
