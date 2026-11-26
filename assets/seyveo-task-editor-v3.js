@@ -123,6 +123,17 @@
  dayAgenda.setAttribute('aria-label','Дела выбранного дня');
  dayAgenda.setAttribute('aria-live','polite');
  calendarPopover?.append(dayAgenda);
+ const calendarHead=document.createElement('header');
+ calendarHead.className='sv-task-calendar-sheet-head';
+ const calendarGrip=document.createElement('span');calendarGrip.className='sv-task-calendar-grip';calendarGrip.setAttribute('aria-hidden','true');
+ const calendarDone=document.createElement('button');calendarDone.type='button';calendarDone.className='sv-task-calendar-done';calendarDone.textContent='Готово';
+ calendarDone.addEventListener('click',()=>{setCalendarOpen(false);calendarButton?.focus({preventScroll:true})});
+ const calendarTitle=document.createElement('strong');calendarTitle.textContent='Календарь';
+ calendarHead.append(calendarGrip,calendarTitle,calendarDone);
+ calendarPopover?.prepend(calendarHead);
+ const calendarShade=document.createElement('div');calendarShade.className='sv-task-calendar-shade';calendarShade.hidden=true;calendarShade.setAttribute('aria-hidden','true');
+ calendarPopover?.before(calendarShade);
+ calendarShade.addEventListener('click',()=>setCalendarOpen(false));
 
  /* The dots come from the user's actual saved tasks and calendar events.
     Never fabricate busy days to imitate the Apple reference. */
@@ -157,13 +168,39 @@
   const entries=[];
   for(const entry of read('seyveo-calendar-events-v1')){
    if(entry?.date!==day||typeof entry.title!=='string')continue;
-   entries.push({title:entry.title,time:entry.time||entry.startTime||'',category:entry.kind==='business'?'work':'personal'});
+   entries.push({id:entry.id,title:entry.title,date:entry.date,time:entry.time||entry.startTime||'',duration:entry.duration||0,travel:entry.travel||0,tone:entry.kind==='business'?'blue':'orange',category:entry.kind==='business'?'work':'personal'});
   }
   for(const entry of read('seyveo-personal-tasks-v1')){
    if(entry?.due!==day||entry.done===true||typeof entry.title!=='string')continue;
-   entries.push({title:entry.title,time:entry.time||'',category:entry.category==='work'?'work':'personal'});
+   entries.push({id:entry.id,title:entry.title,date:entry.due,time:entry.time||'',duration:entry.duration||0,travel:entry.travel||0,tone:['blue','purple','orange','green','red','yellow'].includes(entry.tone)?entry.tone:entry.category==='work'?'blue':'purple',category:entry.category==='work'?'work':'personal'});
   }
   return entries.sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
+ }
+ function renderTimeConflict(parent){
+   if(isEditing()||!date.value||!timeInput?.value)return;
+   const all=savedDayEntries(date.value);
+   const planner=window.SEYVEO_CALENDAR_TIME;
+   const options={duration:0,travel:0};
+   const issue=planner?.issue(all,date.value,timeInput.value,null,options);
+   const match=issue?.item||all.find(item=>item.time===timeInput.value);
+   if(!match)return;
+   const notice=document.createElement('section');notice.className='sv-task-time-conflict';
+   notice.setAttribute('aria-label','Проверка времени');
+   const label=document.createElement('strong');label.textContent=match.time===timeInput.value?'Это время уже занято':'Возможное пересечение';
+   const description=document.createElement('p');description.textContent=match.time+' · '+match.title;
+   notice.append(label,description);
+   const suggestions=planner?.suggestions(all,date.value,timeInput.value,null,new Date(),options)||[];
+   if(suggestions.length){
+    const hint=document.createElement('p');hint.textContent='Другие варианты по календарю · проверь длительность встречи';
+    const actions=document.createElement('div');actions.className='sv-task-time-options';
+    for(const value of suggestions){
+     const button=document.createElement('button');button.type='button';button.textContent=value;
+     button.addEventListener('click',()=>{manualTime=true;timeInput.value=value;timeInput.dispatchEvent(new Event('change',{bubbles:true}));});
+     actions.append(button);
+    }
+    notice.append(hint,actions);
+   }
+   parent.append(notice);
  }
  function chooseCalendarDate(value){
   manualDate=true;
@@ -184,7 +221,7 @@
   const list=document.createElement('div');list.className='sv-task-day-agenda-list';
   for(const entry of items){
    const row=document.createElement('div');
-   row.className='sv-task-day-agenda-item '+(entry.category==='work'?'is-work':'is-personal');
+   row.className='sv-task-day-agenda-item is-tone-'+entry.tone;
    const dot=document.createElement('span');dot.className='sv-task-day-agenda-dot';dot.setAttribute('aria-hidden','true');
    const titleText=document.createElement('span');titleText.className='sv-task-day-agenda-title';titleText.textContent=entry.title;
    row.append(dot,titleText);
@@ -202,7 +239,7 @@
  }
  function setCalendarOpen(open){
   if(!calendarButton||!calendarPopover)return;
-  calendarPopover.hidden=!open;
+  calendarPopover.hidden=!open;calendarShade.hidden=!open;sheet?.classList.toggle('sv-task-calendar-open',open);
   calendarButton.setAttribute('aria-expanded',String(open));
   previewDate='';dayAgenda.hidden=true;dayAgenda.replaceChildren();
   if(open){
@@ -487,6 +524,7 @@
   when.append(whenDate,whenTime,arrow);
   when.addEventListener('click',()=>{quickDateOpen=!quickDateOpen;if(quickDateOpen)quickWheelMode='date';updateSmartPreview()});
   summaryGroup.append(when);
+   renderTimeConflict(smartDetails);
   if(quickDateOpen)smartDetails.append(makeWheelEditor(whenDate,whenTime));
   }
   const meta=document.createElement('div');meta.className='sv-task-smart-meta';
@@ -531,7 +569,7 @@
   title.blur();setCalendarOpen(Boolean(calendarPopover?.hidden));
  });
  dialog.addEventListener('pointerdown',event=>{
-  if(!calendarPopover?.hidden&&!calendarPopover.contains(event.target)&&!calendarButton?.contains(event.target))setCalendarOpen(false);
+  if(!calendarPopover?.hidden&&!calendarPopover.contains(event.target)&&!calendarButton?.contains(event.target)&&event.target!==calendarShade)setCalendarOpen(false);
  },true);
  dialog.addEventListener('cancel',event=>{
   if(!calendarPopover?.hidden){event.preventDefault();setCalendarOpen(false)}
@@ -607,7 +645,7 @@
  },true);
  calendarSurface?.addEventListener('touchcancel',()=>{calendarTouch=null},{passive:true});
  for(const name of ['seyveo:tasks-changed','seyveo:personal-tasks-changed','seyveo:calendar-changed']){
-  window.addEventListener(name,()=>{if(dialog.open&&!calendarPopover?.hidden)draw()});
+  window.addEventListener(name,()=>{if(dialog.open){if(!calendarPopover?.hidden){renderDayAgenda(previewDate||date.value||today());draw()}updateSmartPreview()}});
  }
  const observer=new MutationObserver(()=>{
   if(!dialog.open)return;
@@ -637,5 +675,5 @@
   categoryOverrides.clear();categorySource='';
   form.scrollTop=0;
  });
- window.SEYVEO_TASK_SCREEN=Object.freeze({version:7,sync,titleForSave:()=>window.SEYVEO_TASK_PLACE_EDITOR?.compactTitle?.(effectiveTitle(),true)||effectiveTitle(),draftsForSave,needsReview:batchNeedsReview});
+ window.SEYVEO_TASK_SCREEN=Object.freeze({version:8,sync,titleForSave:()=>window.SEYVEO_TASK_PLACE_EDITOR?.compactTitle?.(effectiveTitle(),true)||effectiveTitle(),draftsForSave,needsReview:batchNeedsReview});
 })();
