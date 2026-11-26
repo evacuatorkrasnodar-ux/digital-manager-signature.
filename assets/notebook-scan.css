@@ -420,7 +420,8 @@ html body dialog#noteScanDialog.paper-scan-dialog[open] > #noteScanBack{
 
 /* Temporary OCR test source: only on the initial photo selection stage. */
 html:root body #noteScanDialog #svNoteScanExample{display:none!important}
-html:root body #noteScanDialog[data-step="pick"] #svNoteScanExample{
+html:root[data-seyveo-demo="on"] body #noteScanDialog[data-step="pick"] #svNoteScanExample,
+html:root[data-sv-scan-demo="on"] body #noteScanDialog[data-step="pick"] #svNoteScanExample{
  display:block!important;min-height:44px!important;margin:6px auto!important;
  padding:8px 16px!important;border:0!important;background:transparent!important;
  box-shadow:none!important;color:var(--text)!important;
@@ -781,4 +782,49 @@ html:root body #noteScanDialog > #svScanPrepared button svg{
 }
 html:root body #noteScanDialog > #svScanPrepared > :is(#svScanShareDestinations,#svScanShareRooms):not([hidden]){
  padding:0 0 3px!important;
+}
+
+/* V189: scanner entry, shared Pearl controls and Avatar header material.
+   Preserve native camera/gallery inputs and the independent OCR reader. */
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-step="pick"]{
+ border:0!important;outline:0!important;box-shadow:none!important;
+}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-step="pick"] > #noteScanTitle{
+ position:relative!important;z-index:2!important;
+ font:600 18px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:-.012em!important;
+}
+html:root[data-theme="light"] body dialog#noteScanDialog.paper-scan-dialog[open][data-step="pick"] > #noteScanTitle::before{
+ content:"";position:absolute;z-index:-1;pointer-events:none;
+ inset:calc(-16px - env(safe-area-inset-top,0px)) -16px -8px;
+ background:var(--sv-header-glass-face,var(--sv-white-pearl-header-face))!important;
+ -webkit-backdrop-filter:var(--sv-header-glass-filter,var(--sv-white-pearl-floating-blur))!important;
+ backdrop-filter:var(--sv-header-glass-filter,var(--sv-white-pearl-floating-blur))!important;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 16px),transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 16px),transparent 100%);
+}
+html:root[data-theme="light"] body dialog#noteScanDialog.paper-scan-dialog[open][data-step="pick"] > #noteScanBack{
+ border:var(--sv-white-pearl-edge)!important;background:var(--sv-white-pearl-surface)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ color:var(--sv-header-icon-ink,#111216)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-step="pick"] > #noteScanBack svg{
+ width:var(--sv-nav-icon-size,19px)!important;height:var(--sv-nav-icon-size,19px)!important;
+ stroke-width:var(--sv-nav-glyph-stroke,1.55)!important;
+}
+html:root[data-theme="light"] body dialog#noteScanDialog.paper-scan-dialog[open][data-step="pick"] .paper-scan-inputs label{
+ border:var(--sv-white-pearl-edge)!important;
+ background:var(--sv-white-pearl-floating-dock)!important;background-image:none!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;color:var(--sv-white-pearl-ink)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-step="pick"] .paper-scan-inputs label span{
+ white-space:normal!important;overflow-wrap:anywhere!important;
+}
+html:root body dialog#noteScanDialog.paper-scan-dialog[open][data-step="pick"] .paper-scan-inputs label:focus-within{
+ outline:2px solid #76869a;outline-offset:2px;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body dialog#noteScanDialog.paper-scan-dialog[open][data-step="pick"] > #noteScanTitle::before{content:none}
 }
