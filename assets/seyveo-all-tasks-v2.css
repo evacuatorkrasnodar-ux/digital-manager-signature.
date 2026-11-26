@@ -116,11 +116,11 @@ html:root.sv-task-search-focus body #svWorkShell[data-task-tool-mode="all"] #svA
  font-size:14px;font-weight:500;
 }
 
-/* The canonical shared selection component owns all visual styles.
-   This route only owns the fixed position above the unchanged dock. */
+/* All Tasks hides the Home dock, so its selection capsule occupies the
+   bottom safe-area position instead of reserving an invisible dock slot. */
 html:root body #svTaskActionCapsule{
  position:fixed!important;z-index:110;left:50%!important;transform:translateX(-50%);
- bottom:calc(80px + env(safe-area-inset-bottom,0px))!important;margin:0!important;
+ bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;margin:0!important;
 }
 html:root body #svTaskActionCapsule[hidden]{display:none!important}
 html.sv-task-search-focus #svTaskActionCapsule{visibility:hidden!important;pointer-events:none!important}
