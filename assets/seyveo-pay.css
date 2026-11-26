@@ -1007,14 +1007,14 @@ html:root body #seyveoPayDialog .syp-card.syp-private-jade.syp-jade-approved,
 html:root[data-theme="light"] body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-card.syp-private-jade.syp-jade-approved{
  aspect-ratio:85.6 / 53.98!important;
  border-radius:3.72% / 5.89%!important;
- background:linear-gradient(145deg,#e7eeee,#798e90 38%,#e0e7e8 70%,#566d70)!important;
+ background:linear-gradient(145deg,#d9e3e3,#839596 38%,#cbd7d8 70%,#607779)!important;
  border:0!important;padding:0!important;
- box-shadow:0 6px 17px rgba(13,47,45,.15)!important;
+ box-shadow:0 3px 9px rgba(13,47,45,.09)!important;
  -webkit-mask-image:none!important;mask-image:none!important;
 }
 #seyveoPayDialog .syp-jade-approved .syp-jade-approved-art{
- display:block!important;position:absolute!important;inset:2px!important;width:calc(100% - 4px)!important;
- height:calc(100% - 4px)!important;max-width:none!important;max-height:none!important;
+ display:block!important;position:absolute!important;inset:1px!important;width:calc(100% - 2px)!important;
+ height:calc(100% - 2px)!important;max-width:none!important;max-height:none!important;
  object-fit:cover!important;object-position:center!important;border-radius:inherit!important;
  filter:none!important;image-rendering:auto!important;
 }
