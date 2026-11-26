@@ -854,9 +854,10 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  background:transparent!important;background-image:none!important;
 }
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode="all"] > seyveo-work-head{
- --work-left:max(6px,env(safe-area-inset-left,0px));
- --work-right:max(6px,env(safe-area-inset-right,0px));
- --work-top:calc(8px + env(safe-area-inset-top,0px));
+ /* Match the Avatar reference circle's observed inset: +4px on each axis. */
+ --work-left:max(10px,env(safe-area-inset-left,0px));
+ --work-right:max(10px,env(safe-area-inset-right,0px));
+ --work-top:calc(12px + env(safe-area-inset-top,0px));
  --sv-header-circle:var(--sv-white-pearl-surface);
  --sv-header-circle-border:var(--sv-white-pearl-edge);
  --sv-header-circle-shadow:var(--sv-white-pearl-circle-shadow);
