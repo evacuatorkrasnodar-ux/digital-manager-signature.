@@ -87,11 +87,11 @@
  margin-bottom:10px!important;
  font-size:11px!important;color:#64717e!important;
 }
-.sv-weather-peek .sv-weather-peek-eyebrow::after{
- content:"›"!important;color:#9BA5B0!important;
- font-size:19px!important;font-weight:350!important;
- line-height:.75!important;
-}
+/* V144: the same blue disclosure as chat and avatar name capsules. */
+.sv-weather-peek .sv-weather-peek-eyebrow::after{content:none!important;display:none!important}
+.sv-weather-peek .sv-weather-peek-disclosure{display:grid;place-items:center;flex:0 0 12px;width:12px;height:12px;color:#007AFF}
+.sv-weather-peek .sv-weather-peek-disclosure > svg{display:block;width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round}
+:root[data-theme="dark"] .sv-weather-peek .sv-weather-peek-disclosure{color:#64BFFF}
 .sv-weather-peek .sv-weather-peek-main{
  display:flex!important;
  align-items:center!important;gap:9px!important;min-height:76px!important;
