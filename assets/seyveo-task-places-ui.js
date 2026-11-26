@@ -91,7 +91,8 @@
   const navigatorLink=node('a','sv-place-map-route-primary','Маршрут в Навигаторе');
   navigatorLink.href=places.navigatorRouteURL(target);
   navigatorLink.setAttribute('aria-label','Передать адрес в Яндекс Навигатор');
-  const webRoute=node('a','sv-place-map-route-web','Маршрут в браузере');
+  const webRoute=node('a','sv-place-map-route-web','В браузере');
+  webRoute.setAttribute('aria-label','Открыть маршрут в браузере');
   webRoute.href=places.yandexRouteURL(target);webRoute.target='_blank';webRoute.rel='noopener noreferrer';
   footer.append(navigatorLink,webRoute);
   sheet.append(handle,header,viewport,footer);shade.append(sheet);
