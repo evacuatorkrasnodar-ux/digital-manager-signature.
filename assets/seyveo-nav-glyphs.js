@@ -1,5 +1,5 @@
 /* SEYVEO navigation glyph standard — 26 Nov 2026.
- * Shared optical scale from the approved Sky chat. Do not alter button
+ * Shared optical scale from the approved SEYVEO navigation system. Do not alter button
  * surfaces, click handlers, labels, layout, dock or editor toolbars.
  * Only recognized simple navigation/action artwork is normalized. */
 (()=>{'use strict';
@@ -10,12 +10,9 @@
   search:Object.freeze({d:'M15.7 15.7 L21 21',size:25,stroke:1.65}),
   history:Object.freeze({d:'M3.8 11.4a8.2 8.2 0 1 1 2.4 6M3.8 6.6v4.8h4.8M12 7.3V12l3.2 2',size:24,stroke:1.65})
  });
- const skyBack=Object.freeze({d:'M15.5 5 L7.4 12 L15.5 19',size:29,stroke:1.9});
- function glyphSpec(svg,kind){
-  if(kind!=='back')return spec[kind];
-  const work=svg.closest('#svcpWorkChatScreen');
-  return work?.dataset.view==='room'&&work.querySelector('#svcpConversation[data-chat-wallpaper="sky"]')?skyBack:spec.back;
- }
+ // V144: Sky uses the same approved SEYVEO Back glyph as every other header.
+ // Wallpaper changes affect the button material only, not the artwork.
+ function glyphSpec(svg,kind){return spec[kind];}
  const compact=s=>(s||'').replace(/\s+/g,' ').trim();
  const backPaths=new Set([
   'm14.5 5-7 7 7 7','m14 5-7 7 7 7','m15 5-7 7 7 7',
