@@ -53,6 +53,14 @@ panel.innerHTML=[
  '<button type="button" class="cal-pick-time-done" id="seyveoPickDone">Выбрать время</button></div></section>'
 ].join('');
 row.insertAdjacentElement('afterend',panel);
+const dateShade=document.createElement('div');dateShade.className='sv-date-sheet-shade';dateShade.hidden=true;dialog.append(dateShade);
+const dateHead=document.createElement('header');dateHead.className='sv-date-sheet-head';dateHead.hidden=true;
+const dateGrip=document.createElement('span');dateGrip.className='sv-date-sheet-grip';dateGrip.setAttribute('aria-hidden','true');
+const dateTitle=document.createElement('strong');dateTitle.textContent='Календарь';
+const dateDone=document.createElement('button');dateDone.type='button';dateDone.className='sv-date-sheet-done';dateDone.textContent='Готово';
+dateHead.append(dateGrip,dateTitle,dateDone);panel.prepend(dateHead);
+dateDone.addEventListener('click',()=>{close();dateButton.focus({preventScroll:true})});
+dateShade.addEventListener('click',()=>{close();dateButton.focus({preventScroll:true})});
 const datePanel=$('seyveoPickDate'),timePanel=$('seyveoPickTime'),days=$('seyveoPickDays');
 const hourWheel=$('seyveoPickHours'),minuteWheel=$('seyveoPickMinutes');
 timePanel.append(window.SEYVEO_WHEEL.feedbackButton());
@@ -62,7 +70,7 @@ const dayFormatter=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',y
 let month=new Date(),hour=12,minute=0;
 const isOpen=()=>!panel.hidden;
 function close(){
- panel.hidden=true;datePanel.hidden=true;timePanel.hidden=true;panel.dataset.mode='';
+ panel.hidden=true;datePanel.hidden=true;timePanel.hidden=true;panel.dataset.mode='';dateShade.hidden=true;dateHead.hidden=true;row.insertAdjacentElement('afterend',panel);
  dateButton.setAttribute('aria-expanded','false');
  timeButton.setAttribute('aria-expanded','false');
 }
@@ -122,6 +130,8 @@ function open(which){
  const focused=document.activeElement;
  if(focused&&dialog.contains(focused)&&focused.matches('input,textarea'))focused.blur();
  panel.hidden=false;panel.dataset.mode=which;
+ dateShade.hidden=which!=='date';dateHead.hidden=which!=='date';
+ if(which==='date')dialog.append(panel);else row.insertAdjacentElement('afterend',panel);
  datePanel.hidden=which!=='date';timePanel.hidden=which!=='time';
  dateButton.setAttribute('aria-expanded',String(which==='date'));
  timeButton.setAttribute('aria-expanded',String(which==='time'));
@@ -139,7 +149,7 @@ function open(which){
  }
  const sheet=dialog.querySelector('.cal-event-sheet');
  requestAnimationFrame(()=>{
-  if(!isOpen()||!sheet)return;
+  if(!isOpen()||!sheet||which==='date')return;
   const extra=panel.getBoundingClientRect().bottom-sheet.getBoundingClientRect().bottom+8;
   if(extra>0)sheet.scrollTop+=extra;
  });
@@ -491,6 +501,7 @@ if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-ed
   if(sheet.open)sheet.close();
   current=field;trigger=launch;title.textContent=name;
   kind=field.tagName==='SELECT'?'select':field.type;
+  sheet.classList.toggle('sv-date-only-sheet',kind==='date');
   if(kind==='date'){
    const d=parseDate(field.value)||new Date();year=d.getFullYear();month=d.getMonth();
   }else if(kind==='time'){
