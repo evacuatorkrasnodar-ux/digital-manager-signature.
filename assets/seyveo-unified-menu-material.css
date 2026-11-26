@@ -700,3 +700,21 @@ html:root body dialog#notePaperDialog.sv-paper-studio[open] #svPaperBrushPicker.
 @media(max-width:350px){
  html:root body dialog#notePaperDialog.sv-paper-studio[open] #svPaperBrushPicker.sv-paper-brush-picker .sv-brush-picker-grid > button{padding:7px 6px!important;gap:5px!important;font-size:12px!important;}
 }
+
+/* V120: icon + label is the canonical compact action row. Only controls
+   decorated by the semantic menu glyph adapter opt into this geometry. */
+@layer seyveo-menu-action-glyphs{
+ html:root body .sv-menu-with-action-glyph{
+  box-sizing:border-box!important;display:flex!important;align-items:center!important;
+  justify-content:flex-start!important;gap:10px!important;text-align:left!important;
+  min-height:44px!important;padding-inline:10px!important;
+ }
+ html:root body .sv-menu-with-action-glyph [data-sv-menu-action-glyph]{
+  display:block!important;flex:0 0 20px!important;width:20px!important;height:20px!important;
+  min-width:20px!important;max-width:20px!important;
+  color:inherit!important;fill:none;stroke:currentColor;stroke-width:1.55!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;pointer-events:none!important;
+ }
+ html:root body .sv-menu-with-action-glyph:has([data-sv-menu-action-glyph="delete"]){color:#c13c37!important}
+ html:root[data-theme="dark"] body .sv-menu-with-action-glyph:has([data-sv-menu-action-glyph="delete"]){color:#ff898b!important}
+}
