@@ -176,6 +176,25 @@
   }
   return entries.sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
  }
+ // Synchronize only a uniquely recognized time in a single task.
+ function syncTimePhrase(value){
+  if(isEditing()||extraFields().some(field=>field.value.trim()))return;
+  const raw=title.value;
+  if(!raw.trim()||!window.SEYVEO_TASK_SMART_RANGES)return;
+  const plan=window.SEYVEO_TASK_SMART_PLAN?.(raw);
+  if(plan?.items?.length!==1)return;
+  const oldTime=readPhrase?.(raw)?.time||'';
+  if(oldTime===value)return;
+  const ranges=window.SEYVEO_TASK_SMART_RANGES(raw,new Date(),window.SEYVEO_TASK_PLACES?.extract?.(raw)).filter(item=>item.kind==='time');
+  if(ranges.length!==1||!oldTime)return;
+  const {start,end}=ranges[0];
+  const prefix=raw.slice(start,end).match(/^(в|к|на)\s+/iu)?.[1]||'в';
+  const next=(raw.slice(0,start)+(value?prefix+' '+value:'')+raw.slice(end)).replace(/\s{2,}/g,' ').trim();
+  if(next===raw)return;
+  title.value=next;
+  categorySource=[next,...extraFields().map(field=>field.value)].join('\u001f');
+  title.dispatchEvent(new Event('input',{bubbles:true}));
+ }
  function renderTimeConflict(parent){
    if(isEditing()||!date.value||!timeInput?.value)return;
    const all=savedDayEntries(date.value);
@@ -449,7 +468,7 @@
   clear.textContent=quickWheelMode==='date'?'Без даты':'Без времени';
   clear.addEventListener('click',()=>{
    if(quickWheelMode==='date'){manualDate=true;date.value='';whenDate.textContent='Без даты'}
-   else{manualTime=true;if(timeInput)timeInput.value='';whenTime.textContent='Время не выбрано'}
+   else{manualTime=true;if(timeInput){timeInput.value='';syncTimePhrase('');timeInput.dispatchEvent(new Event('change',{bubbles:true}));}whenTime.textContent='Время не выбрано'}
    updateSmartPreview();
   });
   const done=document.createElement('button');done.type='button';done.className='sv-task-smart-quick-done';done.textContent='Готово';
@@ -563,7 +582,7 @@
   if(repeat&&!manualRepeat&&(!isEditing()||signals.repeat!=='none'))repeat.value=signals.repeat;
   updateSmartPreview();
  }
- title.addEventListener('input',()=>{sizePhrase();applyPhrase()});
+ title.addEventListener('input',event=>{if(event.isTrusted&&manualTime){const typed=readPhrase?.(title.value)?.time;if(typed&&typed!==timeInput?.value)manualTime=false;}sizePhrase();applyPhrase()});
  dialog.addEventListener('sv-task-ai-updated',()=>{applyPhrase();sizePhrase()});
  calendarButton?.addEventListener('click',()=>{
   title.blur();setCalendarOpen(Boolean(calendarPopover?.hidden));
@@ -575,7 +594,7 @@
   if(!calendarPopover?.hidden){event.preventDefault();setCalendarOpen(false)}
  });
  date.addEventListener('change',event=>{if(event.isTrusted)manualDate=true;updateSmartPreview();});
- timeInput?.addEventListener('change',event=>{if(event.isTrusted)manualTime=true;updateSmartPreview();});
+ timeInput?.addEventListener('change',event=>{if(event.isTrusted)manualTime=true;if(manualTime)syncTimePhrase(timeInput.value);updateSmartPreview();});
  document.getElementById('personalTaskPriority')?.addEventListener('change',event=>{if(event.isTrusted)manualPriority=true;updateSmartPreview();});
  document.getElementById('personalTaskRepeat')?.addEventListener('change',event=>{if(event.isTrusted)manualRepeat=true;updateSmartPreview();});
  for(const selector of ['input[name="personalTaskType"]','input[name="personalTaskCategory"]','#svNewTaskListChoice']){
@@ -675,5 +694,5 @@
   categoryOverrides.clear();categorySource='';
   form.scrollTop=0;
  });
- window.SEYVEO_TASK_SCREEN=Object.freeze({version:9,sync,titleForSave:()=>window.SEYVEO_TASK_PLACE_EDITOR?.compactTitle?.(effectiveTitle(),true)||effectiveTitle(),draftsForSave,needsReview:batchNeedsReview});
+ window.SEYVEO_TASK_SCREEN=Object.freeze({version:10,sync,titleForSave:()=>window.SEYVEO_TASK_PLACE_EDITOR?.compactTitle?.(effectiveTitle(),true)||effectiveTitle(),draftsForSave,needsReview:batchNeedsReview});
 })();
