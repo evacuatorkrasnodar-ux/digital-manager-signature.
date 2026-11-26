@@ -4,6 +4,10 @@
 @layer seyveo-segment-motion{
  html:root[data-theme="light"] body [data-sv-motion-ready]{
   isolation:isolate!important;touch-action:pan-y!important;
+  /* V105: every opted-in segment uses the approved shared track color,
+     including newer controls outside the original Avatar material list. */
+  background-color:var(--sv-segment-track,rgba(210,216,225,.31))!important;
+  background-image:none!important;
   -webkit-user-select:none;user-select:none;
  }
  html:root[data-theme="light"] body [data-sv-motion-ready][data-sv-motion-static]{position:relative!important}
