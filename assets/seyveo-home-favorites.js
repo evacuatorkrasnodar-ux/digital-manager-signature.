@@ -315,7 +315,6 @@ function openCustomize(){
   autoButton.title=autoActive?'Автовыбор включён':'Автовыбор: Сэйви подбирает частые кнопки';
   grid.dataset.section=activeTab;
   grid.replaceChildren(help);
-  grid.scrollTop=0;
   const options=cabinet?businessApps:[{id:'smart',name:'Умная кнопка'},...apps];
   for(const app of options){
    const b=document.createElement('button');b.type='button';
