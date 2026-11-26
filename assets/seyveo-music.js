@@ -707,6 +707,8 @@ function playFromSearch(query){
 window.SEYVEO_MUSIC=Object.freeze({
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
  searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,
+ // Read-only access to the selected local File for optional visual analysis.
+ rhythmFile:()=>tracks[index]||null,
  browseTracks:()=>tracks.map((file,i)=>({index:i,title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка'})),
  recentTracks:()=>recentFiles.filter(file=>tracks.includes(file)).map(file=>({index:tracks.indexOf(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка'})),
  state:()=>Object.freeze({
