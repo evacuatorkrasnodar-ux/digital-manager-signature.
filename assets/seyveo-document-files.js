@@ -4,6 +4,9 @@
 'use strict';
 const enc=new TextEncoder(),dec=new TextDecoder(),limit=20*1024*1024;
 const check=a=>{if(!['personal','business'].includes(a))throw Error('Неизвестное пространство');};
+// Personal starter folders are scoped independently from legacy business folders.
+const personalFolders=Object.freeze({identity:'Паспорта',family:'Семья',health:'Здоровье',property:'Недвижимость',vehicle:'Автомобиль',contracts:'Договоры',receipts:'Чеки и гарантии'});
+const isDefaultFolder=(a,target)=>['contracts','projects','clients'].includes(target)||(a==='personal'&&Object.prototype.hasOwnProperty.call(personalFolders,target));
 let opening;
 function db(){
  if(!window.isSecureContext||!window.crypto?.subtle||!window.indexedDB)return Promise.reject(Error('Хранилище недоступно'));
@@ -122,7 +125,7 @@ async function listTrash(a){return (await readIndex(a)).filter(x=>x.m.kind==='tr
 async function changeFiles(a,ids,operation,folder=''){
  check(a);const unique=[...new Set(ids)];if(!unique.length)return 0;
  const k=await key(a),now=Date.now(),changes=[];
- if(operation==='move'&&folder&&!['contracts','projects','clients'].includes(folder)){
+ if(operation==='move'&&folder&&!isDefaultFolder(a,folder)){
   if((await meta(await row(a,folder),k)).kind!=='folder')throw Error('Папка не найдена');
  }
  for(const i of unique){
@@ -130,7 +133,7 @@ async function changeFiles(a,ids,operation,folder=''){
   if(operation==='restore'){
    if(m.kind!=='trash'||m.deletedAt+TRASH_LIFETIME<=now)throw Error('Срок восстановления истёк или файл уже восстановлен.');
    m.kind='file';delete m.deletedAt;
-   if(m.folder&&!['contracts','projects','clients'].includes(m.folder)){
+   if(m.folder&&!isDefaultFolder(a,m.folder)){
     try{if((await meta(await row(a,m.folder),k)).kind!=='folder')m.folder='';}catch{m.folder='';}
    }
   }else{
@@ -159,11 +162,11 @@ async function get(a,i){
 function sourceText(file){return editableSource.get(file)||'';}
 function sourceId(file){return fileIds.get(file)||'';}
 async function createFolder(a,name){check(a);name=String(name||'').trim().slice(0,60);if(!name)throw Error('Введите название');const i=id(),k=await key(a),m=await seal(k,enc.encode(JSON.stringify({kind:'folder',name,createdAt:Date.now()})),prefix(a,i)+':meta');await run('files','readwrite',s=>s.add({id:i,area:a,meta:m}));changed(a);return i;}
-async function update(a,i,patch){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind==='folder'&&typeof patch.name==='string'){const name=patch.name.trim().slice(0,60);if(!name)throw Error('Введите название');m.name=name;}if(m.kind==='folder'&&Number.isFinite(patch.order))m.order=patch.order;if(m.kind==='file'&&typeof patch.name==='string'){const ext=String(m.name||'').match(/\.[^.]+$/)?.[0]||'';const base=patch.name.trim().replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').trim().slice(0,Math.max(1,180-ext.length));if(!base)throw Error('Введите название');m.name=base+ext;}if(m.kind==='file'&&typeof patch.folder==='string'){if(patch.folder&&!['contracts','projects','clients'].includes(patch.folder)){const target=await row(a,patch.folder);if((await meta(target,k)).kind!=='folder')throw Error('Папка не найдена');}m.folder=patch.folder;}r.meta=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');await run('files','readwrite',s=>s.put(r));changed(a);}
+async function update(a,i,patch){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind==='folder'&&typeof patch.name==='string'){const name=patch.name.trim().slice(0,60);if(!name)throw Error('Введите название');m.name=name;}if(m.kind==='folder'&&Number.isFinite(patch.order))m.order=patch.order;if(m.kind==='file'&&typeof patch.name==='string'){const ext=String(m.name||'').match(/\.[^.]+$/)?.[0]||'';const base=patch.name.trim().replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').trim().slice(0,Math.max(1,180-ext.length));if(!base)throw Error('Введите название');m.name=base+ext;}if(m.kind==='file'&&typeof patch.folder==='string'){if(patch.folder&&!isDefaultFolder(a,patch.folder)){const target=await row(a,patch.folder);if((await meta(target,k)).kind!=='folder')throw Error('Папка не найдена');}m.folder=patch.folder;}r.meta=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');await run('files','readwrite',s=>s.put(r));changed(a);}
 async function remove(a,i){return removeMany(a,[i]);}
 async function removeFolder(a,i){const r=await row(a,i),k=await key(a);if((await meta(r,k)).kind!=='folder')throw Error('Папка не найдена');const all=await list(a);if(all.some(x=>x.kind==='file'&&x.folder===i))throw Error('Сначала переместите документы из папки.');await run('files','readwrite',s=>s.delete(i));changed(a);}
 async function setDefaultFolder(a,target,patch){
- check(a);if(!['contracts','projects','clients'].includes(target))throw Error('Системную папку изменять нельзя.');
+ check(a);if(!isDefaultFolder(a,target))throw Error('Системную папку изменять нельзя.');
  const i=a+':folder-pref:'+target,k=await key(a);
  const previous=await run('files','readonly',s=>s.get(i));
  const m=previous?await meta(previous,k):{kind:'folder-pref',target};
@@ -180,7 +183,7 @@ async function saveAttachment(a,file,source,folder=''){
  if(!['mail','work-chat','family-chat'].includes(source))throw Error('Неизвестный источник');
  if(!(file instanceof File)||!file.size||file.size>limit)throw Error('Размер файла должен быть до 20 МБ.');
  if((source==='work-chat'&&a!=='business')||(source==='family-chat'&&a!=='personal'))throw Error('Неверное пространство');
- if(folder){const target=await row(a,folder);if((await meta(target,await key(a))).kind!=='folder')throw Error('Папка не найдена');}
+ if(folder&&!isDefaultFolder(a,folder)){const target=await row(a,folder);if((await meta(target,await key(a))).kind!=='folder')throw Error('Папка не найдена');}
  const bytes=await file.arrayBuffer();
  const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
  const i='attachment-'+a+'-'+hash,k=await key(a),tag=prefix(a,i);
@@ -210,5 +213,5 @@ async function listTemplates(a){return (await list(a)).filter(x=>x.kind==='templ
 async function getTemplate(a,i){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='template')throw Error('Шаблон не найден');return {...m,...JSON.parse(dec.decode(await unseal(k,r.content,prefix(a,i)+':data')))};}
 async function renameTemplate(a,i,name){const r=await row(a,i),k=await key(a),m=await meta(r,k);if(m.kind!=='template')throw Error('Шаблон не найден');name=String(name||'').trim().slice(0,100);if(!name)throw Error('Введите название');m.name=name;r.meta=await seal(k,enc.encode(JSON.stringify(m)),prefix(a,i)+':meta');await run('files','readwrite',s=>s.put(r));changed(a);}
 async function removeTemplate(a,i){const r=await row(a,i),k=await key(a);if((await meta(r,k)).kind!=='template')throw Error('Шаблон не найден');await run('files','readwrite',s=>s.delete(i));changed(a);}
-window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,listTrash,removeMany,restoreMany,moveMany,get,sourceText,sourceId,createFolder,update,remove,removeFolder,setDefaultFolder,saveAttachment,saveTemplate,listTemplates,getTemplate,renameTemplate,removeTemplate,docTypes,inferDocumentType,updateDocument,addVersion,getVersion});
+window.SEYVEO_DOCUMENT_FILES=Object.freeze({save,list,listTrash,removeMany,restoreMany,moveMany,get,sourceText,sourceId,createFolder,update,remove,removeFolder,setDefaultFolder,personalFolders,saveAttachment,saveTemplate,listTemplates,getTemplate,renameTemplate,removeTemplate,docTypes,inferDocumentType,updateDocument,addVersion,getVersion});
 })();

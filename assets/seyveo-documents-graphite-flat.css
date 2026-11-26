@@ -2796,3 +2796,33 @@ html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"] #s
  padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important;
  scroll-padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important;
 }
+
+/* Personal documents: compact two-column archive, independent of Business. */
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-folders-grid.sv-doc-personal-folders {
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-flow:row!important;
+ grid-auto-columns:auto!important;gap:6px 12px!important;overflow:visible!important;
+ scroll-snap-type:none!important;mask-image:none!important;-webkit-mask-image:none!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-personal-folders>.sv-doc-folder-card {
+ display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;
+ gap:8px!important;min-height:48px!important;height:auto!important;padding:5px 4px!important;text-align:left!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-personal-folders>.sv-doc-folder-card .sv-doc-folder-art {
+ width:35px!important;height:38px!important;flex:0 0 35px!important;--sv-personal-folder:#8396a4;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-personal-folders>.sv-doc-folder-card>strong {
+ font-size:14px!important;font-weight:550!important;line-height:1.25!important;white-space:normal!important;text-align:left!important;
+ overflow-wrap:anywhere;min-width:0!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-personal-folders .sv-doc-folder-back {
+ fill:none!important;stroke:var(--sv-personal-folder)!important;stroke-width:1.6!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-personal-folders .sv-doc-folder-front {
+ fill:var(--sv-personal-folder)!important;fill-opacity:.09!important;stroke:var(--sv-personal-folder)!important;stroke-width:1.6!important;
+}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-personal-folders .sv-doc-folder-identity .sv-doc-folder-art{--sv-personal-folder:#64849e;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-personal-folders .sv-doc-folder-family .sv-doc-folder-art{--sv-personal-folder:#8c81ac;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-personal-folders .sv-doc-folder-health .sv-doc-folder-art{--sv-personal-folder:#b97878;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-personal-folders .sv-doc-folder-property .sv-doc-folder-art{--sv-personal-folder:#75958a;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-personal-folders .sv-doc-folder-contracts .sv-doc-folder-art{--sv-personal-folder:#a18d70;}
+html:root body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-personal-folders .sv-doc-folder-receipts .sv-doc-folder-art{--sv-personal-folder:#78949a;}

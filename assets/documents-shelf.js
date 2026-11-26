@@ -113,11 +113,14 @@ function schedulePdfPreview(state,item,card,art){
 }
 const defaultIds=['contracts','projects','clients'];
 const ownFolders=state=>{
- // No pre-created sample folders. Keep only legacy folders the user actually used.
- const defaults=categories.filter(x=>defaultIds.includes(x.id)).map((x,i)=>{
+ // Personal starter categories are real selectable destinations, not sample files.
+ const starter=state.options.area==='personal'?(localFiles()?.personalFolders||{}):{};
+ const starterIds=Object.keys(starter);
+ const definitions=[...Object.entries(starter).map(([id,title])=>({id,title})),...categories.filter(x=>defaultIds.includes(x.id)&&!starterIds.includes(x.id))];
+ const defaults=definitions.map((x,i)=>{
   const prefs=state.local.find(p=>p.kind==='folder-pref'&&p.target===x.id);
   const assigned=state.local.some(p=>p.kind==='file'&&p.folder===x.id);
-  if(!assigned&&!prefs?.name&&!Number.isFinite(prefs?.order))return null;
+  if(!starterIds.includes(x.id)&&!assigned&&!prefs?.name&&!Number.isFinite(prefs?.order))return null;
   return {id:x.id,name:prefs?.name||x.title,createdAt:i,order:prefs?.order??i,hidden:prefs?.hidden===true,defaultFolder:true};
  }).filter(Boolean);
  return [...defaults,...state.local.filter(x=>x.kind==='folder')].filter(x=>!x.hidden).sort((a,b)=>(a.order??a.createdAt)-(b.order??b.createdAt)||a.id.localeCompare(b.id));
@@ -131,7 +134,11 @@ const smartFolders=state=>{
  if(files.some(x=>x.dueDate&&!['paid','closed'].includes(x.status)))output.push({id:'smart-due',title:'Со сроком',smart:true});
  return output;
 };
-const folderEntries=state=>[...categories.filter(x=>['device','scan','archive'].includes(x.id)),...ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true,defaultFolder:x.defaultFolder===true})),...smartFolders(state)];
+const folderEntries=state=>{
+ const system=categories.filter(x=>['device','scan','archive'].includes(x.id));
+ const own=ownFolders(state).map(x=>({id:x.id,title:x.name,custom:true,defaultFolder:x.defaultFolder===true}));
+ return state.options.area==='personal'?[...own,...system,...smartFolders(state)]:[...system,...own,...smartFolders(state)];
+};
 const updateFolder=(state,category,patch)=>category.defaultFolder?localFiles().setDefaultFolder(state.options.area,category.id,patch):localFiles().update(state.options.area,category.id,patch);
 function notice(state,text){state.folderCaption.textContent=text;}
 function closeFolderMenu(state){state.folderMenu.hidden=true;state.folderMenu.replaceChildren();}
@@ -746,19 +753,19 @@ function mount(parent,options={}){
  recent.append(header,recentGrid,status);
  const folders=el('section','sv-doc-shelf sv-doc-folders');
  const folderHeader=el('div','sv-doc-shelf-heading');
- folderHeader.append(el('h2','','Папки'));
+ folderHeader.append(el('h2','',options.area==='personal'?'Мои папки':'Папки'));
  const folderCaption=el('small','sv-doc-folder-caption','');
  const addFolder=el('button','sv-doc-folder-add');addFolder.type='button';addFolder.setAttribute('aria-label','Создать новую папку');addFolder.title='Новая папка';addFolder.append(svg('<path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round"/>','0 0 24 24'));addFolder.addEventListener('click',()=>{if(state===active)void makeFolder(state);});
  folderHeader.append(folderCaption,addFolder);
- const foldersGrid=el('div','sv-doc-folders-grid');
+ const foldersGrid=el('div','sv-doc-folders-grid'+(options.area==='personal'?' sv-doc-personal-folders':''));
  foldersGrid.setAttribute('role','region');
- foldersGrid.setAttribute('aria-label','Папки документов, листайте горизонтально');
- foldersGrid.tabIndex=0;enableMouseRail(foldersGrid);
+ foldersGrid.setAttribute('aria-label',options.area==='personal'?'Папки личных документов':'Папки документов, листайте горизонтально');
+ foldersGrid.tabIndex=0;if(options.area!=='personal')enableMouseRail(foldersGrid);
  const folderMenu=el('div','sv-doc-folder-menu sv-menu-surface');folderMenu.hidden=true;folderMenu.setAttribute('role','group');folderMenu.setAttribute('aria-label','Действия с папкой');
  folders.append(folderHeader,foldersGrid,folderMenu);
  folders.addEventListener('keydown',e=>{if(e.key==='Escape')closeFolderMenu(state);});
  foldersGrid.addEventListener('scroll',()=>closeFolderMenu(state),{passive:true});
- parent.append(recent,folders);
+ if(options.area==='personal')parent.append(folders,recent);else parent.append(recent,folders);
  Object.assign(state,{recent,recentTitle,showAll,recentGrid,status,foldersGrid,folderCaption,folderMenu});
  refresh();
  return true;
