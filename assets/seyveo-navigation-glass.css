@@ -1,4 +1,4 @@
-/* SEYVEO · Approved Mail Glass standard (25 Nov 2026).
+/* SEYVEO · Approved Avatar / Photo reference (26 Nov 2026).
    Only existing navigation capsules and audited scroll edges, never the dock,
    editor toolbar, hit targets, native scrolling or dark theme. */
 :root[data-theme="light"]{
@@ -501,13 +501,13 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
  border:0!important;border-radius:0!important;box-shadow:none!important;pointer-events:none!important;
  }
- html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready :is(#notesList#notesList,#seyveoPayDialog#seyveoPayDialog,#unifiedBusinessTasksView#unifiedBusinessTasksView,#svcpConversationList#svcpConversationList,#sayviSurfaceBody#sayviSurfaceBody,#svcpManagerPeopleScroll#svcpManagerPeopleScroll)[data-sv-full-glass-port]{
+ html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready :is(#notesList#notesList,#seyveoPayDialog#seyveoPayDialog,#unifiedBusinessTasksView#unifiedBusinessTasksView,#svcpConversationList#svcpConversationList,#sayviSurfaceBody#sayviSurfaceBody,#svcpManagerPeopleScroll#svcpManagerPeopleScroll,#svAllTasksView#svAllTasksView > .sv-tool-results)[data-sv-full-glass-port]{
   box-sizing:border-box!important;
   margin-top:var(--sv-full-glass-margin)!important;
   padding-top:var(--sv-full-glass-padding)!important;
   scroll-padding-top:var(--sv-full-glass-scroll-padding)!important;
  }
- html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready :is(#notesList#notesList,#seyveoPayDialog#seyveoPayDialog,#unifiedBusinessTasksView#unifiedBusinessTasksView,#svcpConversationList#svcpConversationList,#sayviSurfaceBody#sayviSurfaceBody,#svcpManagerPeopleScroll#svcpManagerPeopleScroll)[data-sv-full-glass-port][data-sv-full-glass-port="plain"]{position:relative!important;z-index:1!important}
+ html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready :is(#notesList#notesList,#seyveoPayDialog#seyveoPayDialog,#unifiedBusinessTasksView#unifiedBusinessTasksView,#svcpConversationList#svcpConversationList,#sayviSurfaceBody#sayviSurfaceBody,#svcpManagerPeopleScroll#svcpManagerPeopleScroll,#svAllTasksView#svAllTasksView > .sv-tool-results)[data-sv-full-glass-port][data-sv-full-glass-port="plain"]{position:relative!important;z-index:1!important}
  html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready [data-sv-full-glass-pass]{overflow:visible!important;z-index:auto!important;isolation:auto!important}
  html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready [data-sv-full-glass-control]{z-index:8!important}
  html:root[data-theme="light"] body :is(#svWorkShell#svWorkShell,#svcpWorkChatScreen#svcpWorkChatScreen,#sayviSurfacePage#sayviSurfacePage,#svcpManagerPeople#svcpManagerPeople).sv-full-glass-ready [data-sv-full-glass-sticky]{top:var(--sv-full-glass-sticky-top)!important;background:transparent!important;isolation:auto!important}
@@ -553,7 +553,7 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[
    The outer app remains the clipping boundary; the original control safe
    area and all in-flow spacing remain unchanged. */
 @media not (prefers-reduced-transparency:reduce){
- html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready:is([data-active="notes"],[data-active="wallet"],[data-active="business"]){overflow:visible!important}
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready:is([data-active="notes"],[data-active="wallet"],[data-active="business"],[data-task-tool-mode="all"]){overflow:visible!important}
  html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready > .sv-full-header-material{
   top:calc(0px - var(--sv-full-glass-top-gap,0px))!important;
   height:calc(var(--sv-full-glass-height,0px) + var(--sv-full-glass-top-gap,0px) + 24px)!important;
@@ -636,7 +636,7 @@ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.pictur
 }
 
 @layer seyveo-avatar-segment-material{
-/* SEYVEO Grey Segments · shared optical standard for actual segmented
+/* SEYVEO Avatar / Photo · canonical optical standard for actual segmented
    capsules, not the dock, circular controls, icon-only wallet launcher,
    header backing, inputs or colored chat wallpapers. */
 :root[data-theme="light"]{
@@ -645,6 +645,9 @@ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.pictur
  --sv-segment-selected:rgba(255,255,255,.96);
  --sv-segment-track-shadow:0 2px 7px rgba(38,48,60,.055),inset 0 1px 0 rgba(255,255,255,.55);
  --sv-segment-selected-shadow:0 1px 4px rgba(38,48,60,.12);
+ --sv-avatar-segment-height:38px;
+ --sv-avatar-segment-face-height:30px;
+ --sv-avatar-segment-inset:3px;
 }
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]),
 html:root[data-theme="light"] body #tasksPage#tasksPage #unifiedTasksTabs:not([hidden]),
@@ -705,6 +708,39 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  background:var(--sv-segment-selected)!important;background-image:none!important;
  color:#14171C!important;border-color:transparent!important;
  box-shadow:var(--sv-segment-selected-shadow)!important;
+}
+/* The nested All Tasks status filter is the same physical capsule as
+   Avatar / Photo: one shell, one active face and identical rim clearance.
+   The number of segments is the only difference. */
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]:not([hidden]){
+ grid-template-columns:minmax(0,1fr)!important;
+ grid-template-rows:var(--sv-avatar-segment-face-height)!important;
+ grid-auto-rows:var(--sv-avatar-segment-face-height)!important;
+ height:var(--sv-avatar-segment-height)!important;
+ min-height:var(--sv-avatar-segment-height)!important;
+ max-height:var(--sv-avatar-segment-height)!important;
+ padding:var(--sv-avatar-segment-inset)!important;gap:0!important;
+ border:1px solid var(--sv-segment-edge)!important;
+ border-radius:999px!important;filter:none!important;
+}
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ grid-column:1/-1!important;grid-row:1!important;align-items:center!important;
+ width:100%!important;min-width:0!important;height:var(--sv-avatar-segment-face-height)!important;
+ gap:var(--sv-avatar-segment-inset)!important;padding:0!important;margin:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters > button{
+ box-sizing:border-box!important;position:relative!important;inset:auto!important;
+ width:100%!important;min-width:0!important;
+ height:var(--sv-avatar-segment-face-height)!important;min-height:var(--sv-avatar-segment-face-height)!important;max-height:var(--sv-avatar-segment-face-height)!important;
+ margin:0!important;padding:0 2px!important;border:0!important;border-radius:999px!important;
+ transform:none!important;translate:none!important;filter:none!important;
+}
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters::before,
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters::after{
+ content:none!important;display:none!important;
 }
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"]{--sv-segment-track:#E5E5EA;--sv-segment-selected:#fff}
@@ -834,4 +870,14 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][dat
 }
 @media(max-width:720px), (orientation:landscape) and (max-height:540px){
  html:root[data-theme="light"] body .app:has(> #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"]:not([hidden])){--sv-mail-head-top:var(--sv-apple-top-inset,calc(8px + env(safe-area-inset-top,0px)))}
+}
+
+/* All Tasks: use the Avatar full-width measured header and remove the old
+   upper list mask; keep the independently floating lower action capsule. */
+@media not (prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] #svAllTasksView > .sv-tool-results[data-sv-full-glass-port]{
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 16px),transparent 100%)!important;
+  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 16px),transparent 100%)!important;
+ }
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] #svAllTasksView > .sv-tool-input[data-sv-full-glass-control]{position:relative!important}
 }
