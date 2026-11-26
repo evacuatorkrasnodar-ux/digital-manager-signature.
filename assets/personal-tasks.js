@@ -111,12 +111,21 @@ function save(items){
  try{localStorage.setItem(KEY,JSON.stringify(items.slice(-MAX)));return true}
  catch{return false}
 }
+// Reuse locale formatters: the 105-day strip must not allocate 210 Intl
+// instances on each build. Formatting and accessible labels remain identical.
+const svDateFormatters=new Map();
+function svDateFormatter(options){
+ const key=JSON.stringify(options);
+ let formatter=svDateFormatters.get(key);
+ if(!formatter){formatter=new Intl.DateTimeFormat('ru-RU',options);svDateFormatters.set(key,formatter);}
+ return formatter;
+}
 function strDate(iso){
  if(!/^\d{4}-\d{2}-\d{2}$/.test(iso))return '';
  const [y,m,d]=iso.split('-').map(Number);
  const x=new Date(y,m-1,d);
  if(x.getFullYear()!==y||x.getMonth()+1!==m||x.getDate()!==d)return '';
- return new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(x);
+ return svDateFormatter({day:'numeric',month:'short'}).format(x);
 }
 function element(tag,cls,txt){
  const el=document.createElement(tag);if(cls)el.className=cls;if(txt!==undefined)el.textContent=txt;return el;
@@ -636,7 +645,7 @@ function svAgendaDistantTodayRail(strip,track,today,width){
   day.dataset.day=iso;day.dataset.weekday=String(date.getDay());
   if(iso===today)day.dataset.today='true';
   if(iso===svTaskSelectedDate)day.dataset.selected='true';
-  const weekday=new Intl.DateTimeFormat('ru-RU',{weekday:'short'}).format(date).replace('.','');
+  const weekday=svDateFormatter({weekday:'short'}).format(date).replace('.','');
   day.append(element('span','sv-agenda-weekday',weekday),
    element('span','sv-agenda-day-number',String(date.getDate())));
   const marks=element('span','sv-agenda-marks');
@@ -774,7 +783,7 @@ function svAgendaMarkSelected(iso){
  }
  if(nav.dataset.monthSelected!==iso.slice(0,7)){
   nav.dataset.monthSelected=iso.slice(0,7);
-  const date=svTaskDate(iso),month=new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(date);
+  const date=svTaskDate(iso),month=svDateFormatter({month:'long'}).format(date);
   const name=nav.querySelector('.sv-agenda-month-name'),year=nav.querySelector('.sv-agenda-year');
   if(name)name.textContent=month.charAt(0).toLocaleUpperCase('ru-RU')+month.slice(1);
   if(year)year.textContent=String(date.getFullYear());
@@ -1026,7 +1035,7 @@ function svAgendaRenderNav(rows){
  const month=element('button','sv-agenda-month-heading');
  month.type='button';month.setAttribute('aria-label','Вернуться к сегодняшнему дню');
  month.addEventListener('click',svAgendaReturnToday);
- const monthName=new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(picked);
+ const monthName=svDateFormatter({month:'long'}).format(picked);
  const monthLabel=element('strong','sv-agenda-month-name',monthName.charAt(0).toLocaleUpperCase('ru-RU')+monthName.slice(1));
  const year=element('span','sv-agenda-year',String(picked.getFullYear()));
  month.append(monthLabel,year);
@@ -1054,13 +1063,13 @@ function svAgendaRenderNav(rows){
   const btn=element('button','sv-agenda-day');
   btn.type='button';btn.dataset.day=iso;btn.dataset.weekday=String(day.getDay());
   btn.setAttribute('aria-pressed',String(iso===svTaskSelectedDate));
-  const dayLabel=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(day);
+  const dayLabel=svDateFormatter({weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(day);
   const workCount=entries.filter(task=>svTaskCategory(task)==='work').length;
   btn.setAttribute('aria-label',dayLabel+(entries.length?', дел: '+entries.length+', рабочих: '+workCount+', личных: '+(entries.length-workCount):', дел нет'));
   if(entries.some(item=>svTaskEntryType(item)==='task'&&!item.done))btn.dataset.hasTasks='true';
   if(iso===today)btn.dataset.today='true';
   if(iso===svTaskSelectedDate)btn.dataset.selected='true';
-  const shortDay=new Intl.DateTimeFormat('ru-RU',{weekday:'short'}).format(day).replace('.','');
+  const shortDay=svDateFormatter({weekday:'short'}).format(day).replace('.','');
   btn.append(element('span','sv-agenda-weekday',shortDay),
    element('span','sv-agenda-day-number',String(day.getDate())));
   const marks=element('span','sv-agenda-marks');
@@ -1162,13 +1171,13 @@ function svAgendaSection(iso,titleOverride){
  let caption=titleOverride||'';
  if(!caption){
   caption=iso===today?'Сегодня':iso===tomorrow?'Завтра':
-   new Intl.DateTimeFormat('ru-RU',{weekday:'long'}).format(day);
+   svDateFormatter({weekday:'long'}).format(day);
  }
  if(iso===today&&caption.toLocaleLowerCase('ru-RU')==='сегодня')header.dataset.today='true';
  header.append(element('strong','',caption.toLocaleUpperCase('ru-RU')));
  if(day){
   header.dataset.weatherDate=iso;
-  header.append(element('span','sv-agenda-section-date',new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'numeric',year:'numeric'}).format(day)));
+  header.append(element('span','sv-agenda-section-date',svDateFormatter({day:'numeric',month:'numeric',year:'numeric'}).format(day)));
   const weather=element('span','sv-agenda-weather');
   weather.hidden=true;
   header.append(weather);
@@ -1299,7 +1308,7 @@ function row(item,compact=false,deferred=false){
   const details=element('div','personal-task-detail-data');details.hidden=true;
   const created=Date.parse(item.createdAt||'');
   const creation=Number.isFinite(created)?
-   new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(created)):'Неизвестно';
+   svDateFormatter({day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(created)):'Неизвестно';
   const scheduled=item.due?(strDate(item.due)+(item.time?' · '+item.time:'')):'Не назначено';
   details.append(
    element('div','personal-task-detail-entry','Создано: '+creation),
@@ -1473,7 +1482,7 @@ function syncDueDateDisplay(){
   const [year,month,day]=value.split('-').map(Number);
   const parsed=new Date(year,month-1,day);
   if(parsed.getFullYear()===year&&parsed.getMonth()===month-1&&parsed.getDate()===day)
-   label=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',year:'numeric'}).format(parsed);
+   label=svDateFormatter({day:'numeric',month:'short',year:'numeric'}).format(parsed);
  }
  display.textContent=label;
  control.dataset.filled=String(label!=='Не выбрана');
@@ -2282,8 +2291,11 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
 });
 window.addEventListener('storage',event=>{if(event.key===KEY||event.key===CAL_EVENTS_KEY){justCompletedTaskId='';render()}});
 window.addEventListener('seyveo:calendar-changed',()=>{if(!$('tasksPage')?.hidden)render()});
-window.addEventListener('hashchange',()=>{if(!$('tasksPage')?.hidden)render()});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+// Agenda entry owns its one render. The route event and Work visibility
+// changes below are coalesced, instead of rebuilding on hashchange too.
+document.addEventListener('visibilitychange',()=>{
+ if(!document.hidden&&!svAgendaIsOpen())render();
+});
 // The list owns vertical momentum. Never intercept touchmove or emulate
 // scrolling with JavaScript: iOS handles the gesture and its deceleration.
 function svAgendaAlignInitial(){
@@ -2312,8 +2324,20 @@ function svAgendaAlignInitial(){
 /* Every fresh entry into My Tasks starts at today, including a PWA resume.
    A user may then browse other dates; that browsing is never overwritten
    during the same visit except by the deliberately requested Today action. */
+function svAgendaIsOpen(){
+ const shell=$('svWorkShell');
+ return location.hash==='#tasks'&&!$('tasksPage')?.hidden&&
+  document.documentElement.classList.contains('sv-agenda-scroll-active')&&
+  (!shell||(shell.dataset.active==='personal'&&shell.dataset.taskToolMode!=='all'));
+}
+let svAgendaEntryFrame=0;
+function svAgendaQueueEntry(){
+ if(!svAgendaIsOpen())svAgendaWasOpen=false;
+ if(svAgendaEntryFrame)return;
+ svAgendaEntryFrame=requestAnimationFrame(()=>{svAgendaEntryFrame=0;svAgendaOpenAtToday();});
+}
 function svAgendaOpenAtToday(){
- const open=!$('tasksPage')?.hidden&&document.documentElement.classList.contains('sv-agenda-scroll-active');
+ const open=svAgendaIsOpen();
  if(!open){svAgendaWasOpen=false;return;}
  if(svAgendaWasOpen)return;
  svAgendaWasOpen=true;
@@ -2360,21 +2384,21 @@ window.addEventListener('pointerup',()=>{if(svAgendaPointerHeld){svAgendaPointer
 window.addEventListener('pointercancel',()=>{svAgendaPointerHeld=false;svAgendaQueueToday();},{passive:true});
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden){clearTimeout(svAgendaTodayTimer);svAgendaStopRoulette();}
- else{svAgendaWasOpen=false;requestAnimationFrame(svAgendaOpenAtToday);}
+ else{svAgendaWasOpen=false;svAgendaQueueEntry();}
 });
 dialog.addEventListener('close',svAgendaPauseDockMotion);
 new MutationObserver(()=>{
  if(!document.documentElement.classList.contains('sv-agenda-scroll-active')&&
     document.documentElement.classList.contains('sv-agenda-dock-minimized'))svAgendaPauseDockMotion();
- requestAnimationFrame(svAgendaOpenAtToday);
+ svAgendaQueueEntry();
 }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
-window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(svAgendaOpenAtToday));
+window.addEventListener('seyveo:route-changed',()=>svAgendaQueueEntry());
 if(svAgendaDockMedia.addEventListener)svAgendaDockMedia.addEventListener('change',svAgendaPauseDockMotion);
 render();
-requestAnimationFrame(svAgendaOpenAtToday);
+svAgendaQueueEntry();
 window.addEventListener('pageshow',()=>{
  svAgendaWasOpen=false;
- requestAnimationFrame(svAgendaOpenAtToday);
+ svAgendaQueueEntry();
 });
 // The optional “Посмотреть в делах” action from Sayvi selects the saved day.
 try{

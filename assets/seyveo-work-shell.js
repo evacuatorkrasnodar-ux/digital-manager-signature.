@@ -872,7 +872,8 @@
    scheduleSync();
   }
  });
- const observer=new MutationObserver(sync);
+ // Coalesce related hidden/class changes into one shell refresh per frame.
+ const observer=new MutationObserver(scheduleSync);
  observer.observe(tasks,{attributes:true,attributeFilter:['hidden','data-work-view','class']});
  observer.observe(calendar,{attributes:true,attributeFilter:['hidden']});
  if(notesPage)observer.observe(notesPage,{attributes:true,attributeFilter:['open']});
