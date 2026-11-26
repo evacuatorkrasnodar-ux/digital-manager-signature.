@@ -16,9 +16,10 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wall
    This preset reuses the SAME existing layout, grid and click handlers. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]{
- --svcp-conversation-blue-glass:var(--sv-white-pearl-floating-dock,rgba(247,247,248,.46));
- --svcp-conversation-blue-glass-expanded:var(--sv-white-pearl-floating-dock,rgba(247,247,248,.46));
- --svcp-conversation-blue-rim:var(--sv-white-pearl-rim-color,rgba(233,235,239,.82));
+ --svcp-pearl-control-face:rgba(235,237,240,.62);
+ --svcp-conversation-blue-glass:var(--svcp-pearl-control-face);
+ --svcp-conversation-blue-glass-expanded:var(--svcp-pearl-control-face);
+ --svcp-conversation-blue-rim:rgba(255,255,255,.94);
  --svcp-conversation-blue-blur:var(--sv-white-pearl-floating-blur,blur(8px) saturate(108%));
   --sv-chat-outgoing:#3DAEFE;
 }
@@ -463,4 +464,11 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 @media(prefers-reduced-transparency:reduce){
  html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile,
  html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile:is(:hover,:active,:focus,[aria-expanded="true"]){background:#0786B5!important}
+}
+
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"]{
+  --svcp-pearl-control-face:#F0F1F3;
+  --svcp-conversation-blue-blur:none;
+ }
 }
