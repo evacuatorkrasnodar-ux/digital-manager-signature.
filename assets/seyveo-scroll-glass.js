@@ -80,7 +80,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    // All Tasks uses the same approved Avatar pinned header. Keep the live
    // search input above the glass and the existing results list underneath.
    if(mode==='personal'&&root.dataset.taskToolMode==='all'){
-    return {port:root.querySelector('#svAllTasksView:not([hidden]) > .sv-tool-results'),controls:[root.querySelector('seyveo-work-head'),$('svWorkTabs'),root.querySelector('#svAllTasksView > .sv-tool-input:not([hidden])')]};
+    return {port:root.querySelector('#svAllTasksView:not([hidden]) > .sv-tool-results'),controls:[root.querySelector('seyveo-work-head'),$('svAllTasksTabs'),root.querySelector('#svAllTasksView > .sv-tool-input:not([hidden])')]};
    }
    if(!['notes','wallet','business'].includes(mode))return null;
    const port=mode==='notes'?root.querySelector('#notesDialog[open] > #notesList.sv-note-clean-list:not(.is-empty)'):mode==='wallet'?root.querySelector('#seyveoPayDialog[open]'):root.querySelector('#unifiedBusinessTasksView:not([hidden])');
@@ -152,7 +152,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    root.style.setProperty('--sv-full-glass-height',Math.ceil(bottom-rect.top)+'px');
    // All Tasks: the optical edge is the real capsule's lower border,
    // not the scrollport start, its padding or the optional search field.
-   const allTasksTabs=root.id==='svWorkShell'&&root.dataset.taskToolMode==='all'?controls.find(el=>el.id==='svWorkTabs'):null;
+   const allTasksTabs=root.id==='svWorkShell'&&root.dataset.taskToolMode==='all'?controls.find(el=>el.id==='svAllTasksTabs'):null;
    if(allTasksTabs)root.style.setProperty('--sv-all-tasks-glass-edge',Math.max(0,allTasksTabs.getBoundingClientRect().bottom-rect.top)+'px');
    else root.style.removeProperty('--sv-all-tasks-glass-edge');
    root.style.setProperty('--sv-full-glass-sticky-top',(pinnedTop+overlap)+'px');
