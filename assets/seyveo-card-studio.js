@@ -14,7 +14,7 @@ const localDeveloper=['localhost','127.0.0.1','[::1]'].includes(location.hostnam
 const studioRequested=new URLSearchParams(location.search).get('studio')==='1';
 const githubPreview=location.hostname==='evacuatorkrasnodar-ux.github.io';
 if(!localDeveloper&&!(githubPreview&&studioRequested))return;
-const button=document.createElement('button');button.id='seyveoCardStudioLaunch';button.type='button';button.textContent='✧ Студия карточек';
+const button=document.createElement('button');button.id='seyveoCardStudioLaunch';button.type='button';button.textContent='Мастерская карточек';
 const management=document.querySelector('#manageOverview #seyveoCleanManageMenu')||document.querySelector('#manageOverview');
 if(management){
  const section=document.createElement('section');section.className='manage-group';section.setAttribute('aria-label','Инструменты разработчика');
@@ -24,7 +24,7 @@ if(management){
  button.style.cssText='display:block;position:static;inset:auto;margin:12px 0;min-height:44px;padding:10px 14px;border:1px solid var(--soft-line);border-radius:16px;background:var(--card2);color:var(--text);font:inherit;';
 }else{document.body.append(button);}
 const page=document.createElement('section');page.id='seyveoCardStudio';page.hidden=true;
-page.innerHTML='<div class="scs-wrap"><header><h2>Студия карточек Сэйви</h2><button type="button" data-close>Закрыть</button></header><p class="scs-note">Только учебные события. Ничего не отправляется.</p><div class="scs-grid"><div class="scs-panel"><label for="scsFamily">Семейство карточки</label><select id="scsFamily"></select><div class="scs-states"></div></div><div class="scs-panel" id="scsPreview"></div></div></div>';
+page.innerHTML='<div class="scs-wrap"><header><h2>Мастерская карточек Сэйви</h2><button type="button" data-close>Закрыть</button></header><p class="scs-note">Только учебные события. Ничего не отправляется.</p><div class="scs-grid"><div class="scs-panel"><label for="scsFamily">Семейство карточки</label><select id="scsFamily"></select><div class="scs-states"></div></div><div class="scs-panel" id="scsPreview"></div></div></div>';
 document.body.append(page);
 const select=page.querySelector('select'),states=page.querySelector('.scs-states'),preview=page.querySelector('#scsPreview');
 entries.forEach((e,i)=>{const opt=document.createElement('option');opt.value=i;opt.textContent=e[0];select.append(opt)});
@@ -48,7 +48,7 @@ page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 const policyGuide=document.createElement('p');
 policyGuide.className='scs-note';
-policyGuide.textContent='Эталон SEYVEO · «Разобрать дела» (17.11): белый цельный фон, компактная категория и дата события, фирменная иконка приложения из единого каталога SEYVEO (для текущих и будущих карточек), читаемый текст и три понятных действия: «Сэйви поможет», «Исправить самому», «Перейти в нужный раздел». Сэйви обозначена оригинальной нефритово-платиновой эмблемой SEYVEO. Редактор «Ваш вариант» — матовое перламутровое серебро нашего дока, без зелёной заливки. Нажатие на Сэйви открывает подготовленное предложение и требует подтверждения человека. Все 16 типов, старые и будущие, наследуют этот договор интерфейса. Тёмная тема остаётся графитовой.';
+policyGuide.textContent='Утверждённый стандарт SEYVEO · «Разобрать дела» / «Аватары и фото» · 26.11.2026. Все '+entries.length+' типов и будущие карточки наследуют единый движок: заголовок и основной текст 17 px, подписи действий 15 px, дата и источник 13 px, эмблема Сэйви из оригинального каталога, три действия на матовом стекле. «Сэйви поможет» — голубая, «Исправить самому» и «Перейти» — серые. На iPhone: основное действие на всю ширину, две равные кнопки ниже, высота не менее 46 px. Белый фон без внешней рамки. Реальные операции требуют отдельного подтверждения. Тёмная тема — графитовая.';
 galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
 const policyAudit=document.createElement('p');
 policyAudit.className='scs-note';
@@ -70,9 +70,15 @@ function renderGallery(){
   const roles=(view?.actions||[]).map(action=>action.role);
   const required=['sayvi','edit','navigate'];
   const sayviStandard=engine.cardPolicy.sayviButtonStandard;
-  if(!sayviStandard||sayviStandard.touchPx!==44||sayviStandard.shape!=='inline'||
-     sayviStandard.mark!=='jade-platinum'||sayviStandard.ink!=='#161B1B'){
-   errors.push(event[0]+' · отклонение от утверждённого стандарта Сэйви');
+  const policy=engine.cardPolicy;
+  if(policy.id!=='review-avatar-v2'||!sayviStandard||sayviStandard.touchPx!==44||
+     sayviStandard.shape!=='capsule'||sayviStandard.heightPx!==46||
+     sayviStandard.mark!=='jade-platinum'||sayviStandard.ink!=='#075CA8'||
+     policy.secondaryPresentation!=='neutral-glass'||
+     policy.typography?.titlePx!==17||policy.typography?.bodyPx!==17||
+     policy.typography?.metaPx!==13||policy.typography?.actionPx!==15||
+     policy.layout?.compactRows!=='primary-full-secondary-equal'){
+   errors.push(event[0]+' · отклонение от утверждённого стандарта 26.11');
   }
   const same=(actual,expected)=>actual.length===expected.length&&
    expected.every((value,i)=>actual[i]===value);
@@ -119,7 +125,8 @@ function renderGallery(){
      !buttons[0]?.querySelector('img.sv-potok-symbol[src*="seyveo-sayvi-user-upload.svg"]')||
      (surface.querySelector('.sv-card-potok')&&!surface.querySelector('.sv-card-potok[src*="seyveo-sayvi-user-upload.svg"]'))||
      !buttons[1]?.textContent.includes('Исправить самому')||
-     !buttons[2]?.textContent.includes('Перейти')||
+     buttons[2]?.querySelector('.sv-card-icon-caption')?.textContent!=='Перейти'||
+     surface.dataset.svCardStandard!==engine.cardPolicy.id||
      !surface.querySelector('.sv-card-category')||
      !surface.querySelector('.sv-card-moment')){
    errors.push(event[0]+' · значки или доступность отличаются от эталона');
@@ -132,7 +139,7 @@ function renderGallery(){
  }
  policyAudit.textContent=errors.length||tested!==entries.length
   ?'Проверка стандарта: '+(errors.join('; ')||'не все зарегистрированные типы отображены')
-  :'Стандарт проверен: '+tested+' типов · плоские карточки, цветная эмблема SEYVEO, 44px цели, понятные подписи и матовое серебро поля · тёмная тема сохранена';
+  :'Стандарт проверен: '+tested+' типов · единый шаблон, структура и роли действий · 17/15/13 px · капсулы 46 px · визуальная проверка отдельно';
 }
 renderGallery();
 const queueResult=queuePanel.querySelector('[data-queue-result]');
