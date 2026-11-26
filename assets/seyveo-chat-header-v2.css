@@ -164,7 +164,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
    rule: the name became invisible on a white capsule. No geometry changes. */
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
  background:var(--svcp-pearl-control-face,rgba(235,237,240,.62))!important;
- border:1px solid rgba(255,255,255,.94)!important;
+ border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.94))!important;
  box-shadow:var(--sv-white-pearl-circle-shadow)!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
  backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
@@ -208,7 +208,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
  background:rgba(13,73,186,.84)!important;color:#fff!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack svg{
- stroke:#161b20!important;
+ stroke:currentColor!important;
 }
 /* SKY shares the same fade, blur and start/end coordinates as WHITE,
    but keeps the cool blue reflection of its wallpaper. */
@@ -329,8 +329,8 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
  border:var(--sv-white-pearl-edge)!important;
  box-shadow:var(--sv-white-pearl-circle-shadow)!important;
  color:var(--sv-white-pearl-ink,#0b0b0d)!important;
- -webkit-backdrop-filter:blur(16px) saturate(100%)!important;
- backdrop-filter:blur(16px) saturate(100%)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
  transform:none!important;transition:none!important;
 }
 @media(prefers-reduced-transparency:reduce){
@@ -479,9 +479,9 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]),
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]):is(:active,:hover,:focus),
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
- background:rgba(0,100,182,.62)!important;background-image:none!important;
- border:1px solid rgba(76,190,244,.48)!important;
- box-shadow:inset 0 1px 0 rgba(151,223,255,.10)!important;
+ background:var(--sv-glass-sky-upper,rgba(0,100,182,.62))!important;background-image:none!important;
+ border:1px solid var(--sv-glass-sky-upper-rim,rgba(76,190,244,.48))!important;
+ box-shadow:var(--sv-glass-sky-shadow,inset 0 1px 0 rgba(151,223,255,.10))!important;
  -webkit-backdrop-filter:blur(8px) saturate(108%)!important;backdrop-filter:blur(8px) saturate(108%)!important;
 }
 @media(prefers-reduced-transparency:reduce){
@@ -492,4 +492,14 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 /* V127 — shared, optically balanced call glyphs, no button geometry changes. */
 html:root body #svcpWorkChatScreen :is(#svcpRoomProfileAudio,#svcpRoomProfileVideo) > svg{
  fill:none!important;stroke:currentColor!important;stroke-width:1.45!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+
+/* V128: Sky controls use the same upper glass; white glyph contrast. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack:is(:hover,:focus,:active){
+ background:var(--sv-glass-sky-upper,rgba(0,100,182,.62))!important;
+ border:1px solid var(--sv-glass-sky-upper-rim,rgba(76,190,244,.48))!important;
+ box-shadow:var(--sv-glass-sky-shadow,inset 0 1px 0 rgba(151,223,255,.10))!important;
+ color:var(--sv-glass-sky-ink,#fff)!important;
+ -webkit-backdrop-filter:var(--sv-glass-sky-blur,blur(10px))!important;backdrop-filter:var(--sv-glass-sky-blur,blur(10px))!important;
 }
