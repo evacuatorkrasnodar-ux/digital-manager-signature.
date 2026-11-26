@@ -223,8 +223,8 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
  /* Clear glass for colored wallpaper, not a milky white panel.
     One optical layer, original avatar/name geometry, soft 24px feather. */
  background:rgba(247,247,248,.10)!important;background-image:none!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
- backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(108%)!important;
+ backdrop-filter:blur(12px) saturate(108%)!important;
  bottom:auto!important;
  height:calc(2px + env(safe-area-inset-top,0px) + var(--svcp-header-avatar,56px) + var(--svcp-header-overlap,-5px) + var(--svcp-header-label,28px) + 12px)!important;
  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
