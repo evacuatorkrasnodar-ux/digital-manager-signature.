@@ -1501,8 +1501,10 @@ html:root body #personalTaskDialog #personalTaskForm > .sv-task-example-launch[h
 
 /* New Task · approved blue confirmation and a single clean reading surface. */
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm:not(:disabled){
- min-height:44px!important;color:#fff!important;background:#287fda!important;
- border:0!important;box-shadow:none!important;
+ min-height:44px!important;color:#075CA8!important;background:rgba(68,166,250,.34)!important;
+ border:1px solid rgba(56,146,230,.38)!important;box-shadow:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(8px))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(8px))!important;
 }
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-trigger{min-height:44px!important;color:#526170!important;}
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-link .sv-place-photo-label{
@@ -1757,4 +1759,17 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[o
   background:#F6F7F9!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
  html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open] .sv-new-task-header > #personalTaskSave:not(:disabled){background:#B9DFFF!important}
+}
+
+/* Explicit place confirmation · quiet status, reversible action. */
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirmed{
+ color:#397854;font:550 14px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice p{
+ font-size:var(--sv-master-observation-size,15px)!important;line-height:1.48!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm:not(:disabled){
+ background:#B9DFFF!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
 }
