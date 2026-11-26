@@ -6,8 +6,8 @@
  /* The same real dock glass for every ordinary button and capsule. */
  --sv-white-pearl-floating-dock:rgba(235,237,240,.62);
  --sv-white-pearl-header-face:rgba(247,247,248,.46);
- --sv-white-pearl-menu-face:rgba(249,250,251,.94);
- --sv-white-pearl-menu-blur:blur(12px) saturate(108%);
+ --sv-white-pearl-menu-face:rgba(249,250,251,.985);
+ --sv-white-pearl-menu-blur:blur(20px) saturate(108%);
  --sv-glass-sky-upper:rgba(0,100,182,.62);
  --sv-glass-sky-lower:rgba(0,114,164,.46);
  --sv-glass-sky-upper-rim:rgba(76,190,244,.48);
