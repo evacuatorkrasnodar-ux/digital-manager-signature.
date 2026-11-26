@@ -750,21 +750,7 @@ function showSettings(){
  body.append(makeChatWallpapers());
  sectionHeading('Сообщения');
  menuLink('Уведомления','Непрочитанные и тихие чаты','bell',()=>openSubSheet('notifications','settings'));
- // Quiet discovery for the owner only; never mix personal content with work data.
- if(!employee()){
-  const invite=node('button','sv-inbox-one-promo');
-  invite.type='button';
-  invite.setAttribute('aria-label','О SEYVEO One: личные и семейные чаты');
-  const emblem=node('span','sv-inbox-one-mark');emblem.setAttribute('aria-hidden','true');
-  const info=node('span','sv-inbox-one-copy');
-  info.append(node('strong',null,'Личное общение · SEYVEO One'),
-              node('small',null,'Семья и друзья — отдельно от работы'));
-  const chevron=node('span','sv-inbox-one-chevron');chevron.innerHTML=svg('chevron');
-  chevron.setAttribute('aria-hidden','true');
-  invite.append(emblem,info,chevron);
-  invite.addEventListener('click',()=>openSubSheet('one','settings'));
-  body.append(invite);
- }
+
 }
 function showOneInfo(){
  const info=node('div','sv-inbox-one-detail');
