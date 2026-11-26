@@ -833,7 +833,7 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
  }
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned::before{
   content:""!important;display:block!important;position:absolute!important;
-  inset:calc(-1 * var(--sv-home-avatar-top-inset,20px)) -18px -24px!important;
+  inset:calc(-1 * var(--sv-home-avatar-top-inset,20px)) -18px 0!important;
   z-index:-1!important;pointer-events:none!important;
   background:var(--sv-header-glass-face,rgba(247,247,248,.46))!important;
   -webkit-backdrop-filter:var(--sv-header-glass-filter,blur(10px) saturate(108%))!important;
