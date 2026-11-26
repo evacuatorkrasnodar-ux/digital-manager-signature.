@@ -1427,3 +1427,18 @@ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] :is
  max-width:var(--sv-header-back-icon,22px)!important;max-height:var(--sv-header-back-icon,22px)!important;
  stroke-width:var(--sv-header-back-weight,1.45)!important;
 }
+
+/* V141: the existing reply/assistant capsule is the sole glass surface.
+   The two controls must not blur or paint individual circular backgrounds. */
+@layer seyveo-mail-detail-single-glass{
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-actions > :is(.sv-mail-reply-action,.sv-mail-assist-action):not([hidden]),
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-actions > :is(.sv-mail-reply-action,.sv-mail-assist-action):not([hidden]):is(:hover,:active,:focus,[aria-expanded="true"]){
+  background:transparent!important;background-image:none!important;
+  border:0!important;box-shadow:none!important;filter:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  -webkit-appearance:none!important;appearance:none!important;
+  -webkit-tap-highlight-color:transparent!important;
+ }
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-actions > :is(.sv-mail-reply-action,.sv-mail-assist-action)::before,
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="detail"] .sv-mail-detail-actions > :is(.sv-mail-reply-action,.sv-mail-assist-action)::after{content:none!important;display:none!important}
+}
