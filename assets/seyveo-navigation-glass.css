@@ -738,6 +738,8 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
    paint declarations without touching layout, visibility, focus or handlers. */
 @layer seyveo-semantic-actions{
  :root[data-theme="light"] button[data-sv-action-glass="neutral"],
+ :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action:is([data-card-role="secondary"],[data-card-role="navigation"]),
+ #seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button.sv-card-action:is([data-card-role="secondary"],[data-card-role="navigation"]),
  html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
   --sv-action-face:rgba(222,226,234,.60);
   --sv-action-edge:rgba(185,195,209,.40);
@@ -745,6 +747,8 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   --sv-action-pressed:rgba(209,215,225,.76);
  }
  :root[data-theme="light"] button[data-sv-action-glass="primary"],
+ :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action[data-card-role="primary"],
+ #seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button.sv-card-action[data-card-role="primary"],
  html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
   --sv-action-face:rgba(68,166,250,.34);
   --sv-action-edge:rgba(56,146,230,.38);
@@ -758,6 +762,8 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   --sv-action-pressed:rgba(246,99,104,.28);
  }
  :root[data-theme="light"] button[data-sv-action-glass],
+ :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action,
+ #seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button.sv-card-action,
  html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
   background:var(--sv-action-face)!important;background-image:none!important;
   color:var(--sv-action-ink)!important;
@@ -767,6 +773,8 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px))!important;
  }
  :root[data-theme="light"] button[data-sv-action-glass]:active:not(:disabled),
+ :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action:active:not(:disabled),
+ #seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button.sv-card-action:active:not(:disabled),
  html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]):active:not(:disabled){
   background:var(--sv-action-pressed)!important;
  }
@@ -775,10 +783,16 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   color:var(--sv-action-ink)!important;
  }
  @media(prefers-reduced-transparency:reduce){
-  :root[data-theme="light"] button[data-sv-action-glass="neutral"],html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){--sv-action-face:#EAECF0}
-  :root[data-theme="light"] button[data-sv-action-glass="primary"],html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){--sv-action-face:#B9DFFF}
+  :root[data-theme="light"] button[data-sv-action-glass="neutral"],
+ :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action:is([data-card-role="secondary"],[data-card-role="navigation"]),
+ #seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button.sv-card-action:is([data-card-role="secondary"],[data-card-role="navigation"]),html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){--sv-action-face:#EAECF0}
+  :root[data-theme="light"] button[data-sv-action-glass="primary"],
+ :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action[data-card-role="primary"],
+ #seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button.sv-card-action[data-card-role="primary"],html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){--sv-action-face:#B9DFFF}
   :root[data-theme="light"] button[data-sv-action-glass="danger"]{--sv-action-face:#FCE0E1}
-  :root[data-theme="light"] button[data-sv-action-glass],html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  :root[data-theme="light"] button[data-sv-action-glass],
+ :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"]:not([data-preview-theme="dark"] *) .sv-card-actions > button.sv-card-action,
+ #seyveoCardStudio [data-preview-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-avatar-v2"] .sv-card-actions > button.sv-card-action,html:root[data-theme="light"] body #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions button.lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
  }
 }
 
