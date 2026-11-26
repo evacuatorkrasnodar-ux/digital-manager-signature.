@@ -922,9 +922,12 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode=
  html:root[data-theme="light"] body #svWorkShell#svWorkShell.sv-full-glass-ready[data-task-tool-mode="all"] > .sv-full-header-material{
   display:block!important;position:absolute!important;
   top:calc(0px - var(--sv-full-glass-top-gap,0px))!important;left:0!important;right:0!important;bottom:auto!important;
-  /* Glass crosses the shared safe-area inset but ends at the capsule rim. */
-  --sv-header-glass-mask:linear-gradient(to bottom,#000 0,#000 calc(100% - 5px),transparent 100%);
-  height:calc(var(--sv-all-tasks-glass-edge,var(--sv-full-glass-height,0px)) + var(--sv-full-glass-top-gap,0px))!important;
+  /* V97: preserve the shared translucent face and blur. Soften only
+     backdrop contrast, not the foreground title or buttons. Extend the
+     optical feather without moving the measured header or scrollport. */
+  --sv-header-glass-filter:var(--sv-white-pearl-floating-blur,blur(8px) saturate(108%)) contrast(.78) brightness(1.11);
+  --sv-header-glass-mask:linear-gradient(to bottom,#000 0,#000 calc(100% - 17px),transparent 100%);
+  height:calc(var(--sv-all-tasks-glass-edge,var(--sv-full-glass-height,0px)) + var(--sv-full-glass-top-gap,0px) + 12px)!important;
   background:var(--sv-header-glass-face)!important;background-image:none!important;
   -webkit-backdrop-filter:var(--sv-header-glass-filter)!important;
   backdrop-filter:var(--sv-header-glass-filter)!important;
