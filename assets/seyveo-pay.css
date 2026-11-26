@@ -448,7 +448,7 @@ html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch > button{
  height:60px!important;min-height:60px!important;gap:1px!important;
 }
 html:root body #svWorkShell[data-active="wallet"] > .syp-view-switch .syp-view-icon svg{
- width:24px!important;height:24px!important;stroke-width:1.55!important;
+ width:28px!important;height:28px!important;stroke-width:1.55!important;
 }
 html:root[data-theme="light"] body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-card{
  box-shadow:inset 0 1px 0 var(--syp-sheen),0 4px 12px rgba(32,61,50,.075)!important;
@@ -494,5 +494,5 @@ html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-
 /* Wallet home: a little breathing room below the unchanged Work tabs.
    Move the complete card section in normal flow, not the shared navigation. */
 html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="home"]{
- padding-top:10px!important;
+ padding-top:7px!important;
 }

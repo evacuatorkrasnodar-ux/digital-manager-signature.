@@ -172,8 +172,9 @@ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-ac
 
 /* Wallet: same stationary capsule and 24px feather as the cabinet and mail.
    The native wallet scrollport underlaps the capsule; matching padding retains
-   the original 5px tab margin and the card's existing initial position. */
-html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="wallet"] > #svWorkTabs:not([hidden]){
+   the original 5px tab margin. V205: match the shared capsule selector's
+   specificity so the compensating negative margin is not overridden. */
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-active="wallet"] > #svWorkTabs:not([hidden]){
  margin-bottom:calc(0px - var(--sv-cabinet-tab-height,32px))!important;
  position:relative!important;z-index:20!important;overflow:visible!important;
 }
@@ -189,7 +190,7 @@ html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-ac
  border:0!important;box-shadow:none!important;pointer-events:none!important;
 }
 @media(prefers-reduced-transparency:reduce){
- html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="wallet"] > #svWorkTabs:not([hidden]){margin-bottom:5px!important}
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-active="wallet"] > #svWorkTabs:not([hidden]){margin-bottom:5px!important}
  html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="wallet"] > dialog#seyveoPayDialog[open]{padding-top:0!important;scroll-padding-top:0!important}
  html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-active="wallet"].sv-wallet-under-scroll > #svWorkTabs:not([hidden])::after{content:none!important;display:none!important}
 }
