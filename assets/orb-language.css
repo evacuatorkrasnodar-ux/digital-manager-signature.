@@ -74,3 +74,21 @@
   flex-basis:1.5px;
   background:rgba(253,254,255,.98);
 }
+
+
+/* Home music only: a restrained silver-blue refraction inside the existing
+   signal plane. Preserve the globe, its rim, geometry and all voice states.
+   This is the existing playback animation, not an audio-spectrum analyser. */
+html[data-theme="light"] #homePage #orb #signal.svl-live.svl-equalizer .svl-depth{
+ color:#597d96;
+}
+html[data-theme="light"] #homePage #orb #signal.svl-live.svl-equalizer .svl-depth::before{
+ background:radial-gradient(ellipse at center,rgba(106,153,190,.16),rgba(176,207,225,.07) 48%,transparent 73%);
+}
+html[data-theme="light"] #homePage #orb #signal.svl-live.svl-equalizer .svl-bars i{
+ width:2.4px;
+ flex-basis:2.4px;
+ border-radius:999px;
+ background:linear-gradient(180deg,rgba(160,193,215,.88) 0%,rgba(82,121,149,.90) 48%,rgba(126,164,188,.84) 100%);
+ box-shadow:0 0 3px rgba(100,148,182,.18),inset 0 1px 0 rgba(248,252,255,.55);
+}
