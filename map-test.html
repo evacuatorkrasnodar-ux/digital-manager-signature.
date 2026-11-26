@@ -22,47 +22,44 @@ a{display:flex;align-items:center;justify-content:center;color:#007aff;text-deco
 </head>
 <body>
 <main>
-<small>SEYVEO MAPS · ТЕСТ</small>
-<h1>Подключить Яндекс Карты</h1>
-<p>Введи браузерный ключ JavaScript API с ограничением по HTTP Referer для этого домена. Ключ сохранится только в текущей вкладке и не попадёт в адрес страницы или GitHub.</p>
-<form id="setup" autocomplete="off">
-<label for="key">Ключ JavaScript API</label>
-<input id="key" type="password" autocomplete="off" spellcheck="false" autocapitalize="none" placeholder="Вставь ключ">
-<button class="primary" type="submit">Включить тестовую карту</button>
-<button class="secondary" id="disable" type="button">Отключить тестовую карту</button>
-</form>
-<p id="status" role="status" aria-live="polite"></p><div id="preview" hidden></div><button type="button" class="secondary" id="diagnose">Проверить Яндекс здесь</button>
+<small>SEYVEO MAPS · V80</small>
+<h1>Проверка Яндекс Карт</h1>
+<p>Отдельный тест SDK без окна встречи, без OpenStreetMap и без оформления SEYVEO. Ключ уже настроен в приложении.</p>
+<button type="button" class="primary" id="diagnose">Проверить Яндекс</button>
+<p id="status" role="status" aria-live="polite">Готов к проверке.</p>
+<div id="preview" hidden></div>
+<p id="details" style="white-space:pre-wrap;overflow-wrap:anywhere"></p>
 <a href="./index.html#tasks">Вернуться в SEYVEO</a>
-<p>При отсутствии ключа или ошибке загрузки используется резервный сценарий. Проверка доступности сервиса выполняется при открытии карты.</p>
 </main>
-<script src="assets/seyveo-yandex-map.js?v=20261126-map-v76"></script>
+<script src="assets/seyveo-yandex-map.js?v=20261126-map-v80"></script>
 <script>
 (function(){
  'use strict';
- const storageKey='seyveo.yandex.maps.testKey';
- const field=document.getElementById('key'),status=document.getElementById('status'),preview=document.getElementById('preview');
- let controller=null;
- const labels={'no-key':'Ключ не найден','sdk-timeout':'Яндекс не ответил за 20 секунд','sdk-not-ready':'SDK не инициализировался','sdk-network-error':'SDK не загрузился: проверь сеть, ограничения ключа или блокировщик','map-init-error':'Ошибка создания карты','sdk-ready':'SDK загружен','map-created':'Карта создана'};
- document.getElementById('diagnose').addEventListener('click',async()=>{
-  const value=field.value.trim();
-  try{if(value)sessionStorage.setItem(storageKey,value)}catch{status.textContent='Хранилище вкладки недоступно';return}
-  if(!window.SEYVEO_YANDEX_MAPS?.enabled()){status.textContent='Вставь ключ JavaScript API';return}
-  if(controller){controller.destroy();controller=null;preview.replaceChildren()}
-  preview.hidden=false;status.textContent='Проверяем SDK Яндекса…';
-  const button=document.getElementById('diagnose');button.disabled=true;
-  try{controller=await window.SEYVEO_YANDEX_MAPS.mount(preview,{lat:45.101,lon:38.984,name:'Тестовая точка'},{styled:false});status.textContent='Карта создана. Проверь, появились ли улицы и логотип Яндекса.'}
-  catch{preview.hidden=true;status.textContent=labels[window.SEYVEO_YANDEX_MAPS.status()]||'Ошибка загрузки карты'}finally{button.disabled=false;field.value=''}
+ const status=document.getElementById('status'),details=document.getElementById('details'),preview=document.getElementById('preview'),button=document.getElementById('diagnose');
+ let map=null;
+ function log(value){details.textContent+=(details.textContent?'\n':'')+value}
+ document.addEventListener('securitypolicyviolation',event=>{
+  let host=event.blockedURI;
+  try{host=new URL(host).hostname}catch{if(!['inline','eval','data','blob'].includes(host))host='ресурс'}
+  log('CSP: '+event.effectiveDirective+' · '+host);
  });
- function go(){field.value='';location.replace('./index.html#tasks')}
- try{if(sessionStorage.getItem(storageKey))status.textContent='Тестовая карта уже включена в этой вкладке.'}catch{}
- document.getElementById('setup').addEventListener('submit',event=>{
-  event.preventDefault();
-  const value=field.value.trim();
-  if(value.length>256){status.textContent='Проверь ключ JavaScript API.';return}
-  try{if(value)sessionStorage.setItem(storageKey,value);if(!sessionStorage.getItem(storageKey)){status.textContent='Вставь ключ JavaScript API.';return}go()}catch{status.textContent='Браузер запретил временное хранение ключа.'}
- });
- document.getElementById('disable').addEventListener('click',()=>{
-  try{sessionStorage.removeItem(storageKey);go()}catch{status.textContent='Не удалось изменить настройки вкладки.'}
+ button.addEventListener('click',async()=>{
+  button.disabled=true;details.textContent='';status.textContent='Загрузка SDK…';
+  log('Адрес: '+location.origin);log('Ключ: '+(window.SEYVEO_YANDEX_MAPS?.enabled()?'подключён':'отсутствует'));
+  if(map){try{map.destroy()}catch{}map=null}
+  preview.replaceChildren();preview.hidden=true;
+  try{
+   const sdk=await window.SEYVEO_YANDEX_MAPS.loadSdk();
+   log('SDK: готов');preview.hidden=false;
+   map=new sdk.YMap(preview,{location:{center:[38.984,45.101],zoom:15}});
+   map.addChild(new sdk.YMapDefaultSchemeLayer());
+   log('Стандартный слой: создан');
+   status.textContent='Карта создана. Проверь, появились ли улицы и логотип Яндекса.';
+  }catch{
+   status.textContent='Ошибка подключения';
+   log('Этап: '+(window.SEYVEO_YANDEX_MAPS?.status()||'модуль недоступен'));
+   if(window.SEYVEO_YANDEX_MAPS?.status()==='sdk-ready')log('Ошибка создания базовой карты');
+  }finally{button.disabled=false}
  });
 })();
 </script>
