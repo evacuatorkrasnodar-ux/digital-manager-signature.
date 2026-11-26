@@ -5,7 +5,7 @@
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
  /* Sky reference: a slightly deeper translucent cyan tint, with the
     approved White Pearl blur. Both heights and Plus share one material. */
- --svcp-conversation-blue-glass:rgba(0,122,178,.55);
+ --svcp-conversation-blue-glass:rgba(0,116,191,.55);
  --svcp-conversation-blue-glass-expanded:var(--svcp-conversation-blue-glass);
  --svcp-conversation-blue-rim:rgba(64,214,247,.86);
  --svcp-conversation-blue-blur:var(--sv-white-pearl-floating-blur,blur(8px) saturate(108%));
