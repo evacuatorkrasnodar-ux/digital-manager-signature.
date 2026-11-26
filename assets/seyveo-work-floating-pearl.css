@@ -37,15 +37,6 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs[hidden],
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][hidden]{
  display:none!important;
 }
-/* The All Tasks view replaces destinations with the live status filters.
-   The shared pearl grid must never render the destination buttons in a
-   second implicit row. Match the actual shell state, not the active tab. */
-html body #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] #svWorkTabs[data-task-filters="true"] > button[data-sv-work-tab]{
- display:none!important;
-}
-html body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([data-task-filters="true"]) > .sv-tool-filters{
- display:none!important;
-}
 /* No decorative masks, glass highlights, or legacy sliding pearl. */
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs::before,
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs::after,
