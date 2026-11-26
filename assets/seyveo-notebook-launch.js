@@ -15,6 +15,13 @@
   draw.innerHTML='<span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M32 5v7"/><rect x="12.5" y="12" width="39" height="35" rx="3.2"/><circle cx="40.2" cy="22.1" r="3.6"/><path d="m17.5 38 10.1-12.7 7.7 9.7 5.8-6.4 5.4 9.4"/><path d="M17.5 41.5c8-2.8 17.7 4.2 29-1.2" opacity=".55"/><path d="M10 49h44M24 49l-5 10M40 49l5 10"/></svg></span><span class="paper-choice-copy"><strong>Рисовать</strong><small>Холст и кисти</small></span>';
   tiles.append(draw);
  }
+ // Personal documents are available independently of Business.
+ if(!document.getElementById('noteModeDocuments')){
+  const button=document.createElement('button');
+  button.id='noteModeDocuments';button.className='paper-choice-item';button.type='button';
+  button.innerHTML='<span class="paper-choice-icon" aria-hidden="true"></span><span class="paper-choice-copy"><strong>Документы</strong><small>Личный архив</small></span>';
+  tiles.append(button);
+ }
  const noteTile=document.getElementById('noteModeText');
  const legacyInkTile=document.getElementById('noteModePaper');
  noteTile?.querySelector('.paper-choice-copy strong')?.replaceChildren(document.createTextNode('Заметка'));
@@ -25,7 +32,7 @@
  scanTile?.querySelector('.paper-choice-copy strong')?.replaceChildren(document.createTextNode('Сканировать'));
  scanTile?.querySelector('.paper-choice-copy small')?.replaceChildren(document.createTextNode('Фото → текст'));
  // Reuse shared artwork. Keep the original launch buttons and handlers.
- const icons={noteModeText:'note-create',noteModeScan:'note-scan',noteModeDraw:'note-draw',noteModePaper:'notebook'};
+ const icons={noteModeText:'note-create',noteModeScan:'note-scan',noteModeDraw:'note-draw',noteModePaper:'notebook',noteModeDocuments:'documents'};
  for(const [id,key] of Object.entries(icons)){
   const host=document.getElementById(id)?.querySelector('.paper-choice-icon');
   const library=window.SEYVEO_APP_ICONS;
@@ -36,7 +43,8 @@
   noteModeText:{label:'Заметка',run:()=>window.SEYVEO_NOTES_API?.reviewText?.('')},
   noteModePaper:{label:'От руки',run:()=>window.SEYVEO_HANDWRITING?.open?.()},
   noteModeScan:{label:'Сканировать',run:()=>window.SEYVEO_NOTE_SCANNER?.open?.()},
-  noteModeDraw:{label:'Рисовать',run:()=>window.SEYVEO_PAPER?.open?.()}
+  noteModeDraw:{label:'Рисовать',run:()=>window.SEYVEO_PAPER?.open?.()},
+  noteModeDocuments:{label:'Документы',run:()=>window.SEYVEO_SAYVI_SURFACES?.open?.('contract','personal')}
  };
  function report(message){
   if(status){status.textContent=message;status.hidden=false;}
@@ -44,6 +52,18 @@
  }
  function launch(id){
   const route=destinations[id];if(!route)return;
+  if(id==='noteModeDocuments'){
+   // Capture Notebook as the origin BEFORE closing it; Documents owns Back.
+   try{
+    if(route.run()===true){
+     if(status){status.hidden=true;status.textContent='';}
+     if(notebook.open)notebook.close();
+     return true;
+    }
+   }catch(error){console.warn('SEYVEO Personal Documents:',error);}
+   report('Личные документы не загрузились. Обновите страницу и повторите действие.');
+   return false;
+  }
   const ready=id==='noteModeText'
    ?typeof window.SEYVEO_NOTES_API?.reviewText==='function'
    :id==='noteModePaper'
@@ -81,5 +101,5 @@
   event.preventDefault();event.stopImmediatePropagation();
   launch(tile.id);
  },true);
- window.SEYVEO_NOTE_LAUNCH=Object.freeze({version:1,launch});
+ window.SEYVEO_NOTE_LAUNCH=Object.freeze({version:2,launch});
 })();

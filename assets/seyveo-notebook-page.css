@@ -56,11 +56,11 @@
  display:none!important;
 }
 
-/* Three creation actions; text and ink now share one Smart Note editor. */
+/* Four direct actions; text and ink now share one Smart Note editor. */
 #svWorkShell[data-active="notes"] #notesDialog > #svNotebookCreateTiles{
  box-sizing:border-box!important;
  display:grid!important;
- grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
  column-gap:10px!important;
  row-gap:8px!important;
  align-items:start!important;
@@ -162,7 +162,7 @@
 #svWorkShell[data-active="notes"] #svNotebookCreateTiles > .paper-choice-item[hidden]{display:none!important}
 #svWorkShell[data-active="notes"] #notesDialog #svNotebookCreateTiles > .paper-choice-item[hidden]{display:none!important}
 
-/* Notebook · three direct unframed icons in the unused permanent header area.
+/* Notebook · four direct unframed icons in the unused permanent header area.
    Keep one-tap launchers, no extra plus, popover, or shifting page content. */
 #svWorkShell > #svNotebookCreateTiles[hidden]{display:none!important}
 #svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]){
@@ -173,7 +173,7 @@
  left:50%!important;
  right:auto!important;
  display:grid!important;
- grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
  gap:6px!important;
  width:min(420px,calc(100% - 20px))!important;
  height:66px!important;
@@ -276,7 +276,7 @@ html[data-theme="dark"] #svWorkShell[data-active="notes"] > #svNotebookCreateTil
  #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-copy strong{font-size:10.3px!important}
 }
 
-/* Three unframed launchers: one grid, icon size and baseline. */
+/* Four unframed launchers: one grid, icon size and baseline. */
 html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]){
  gap:0!important;width:min(420px,calc(100% - 24px))!important;
 }
@@ -289,4 +289,14 @@ html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper
 }
 html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-copy strong{
  font-size:11.5px!important;font-weight:550!important;line-height:1.25!important;
+}
+
+/* V221: same 66px header, four personal actions; no wrapped labels on iPhone. */
+html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]){
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+@media(max-width:360px){
+ html:root body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-copy strong{
+  font-size:10.3px!important;
+ }
 }
