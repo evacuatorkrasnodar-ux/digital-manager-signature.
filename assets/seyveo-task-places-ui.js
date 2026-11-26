@@ -7,6 +7,8 @@
  const dialog=document.getElementById('personalTaskDialog');
  const title=document.getElementById('personalTaskTitle');
  const panel=document.getElementById('svNewTaskPlacePanel');
+ const meetingTime=document.getElementById('personalTaskTime');
+ const meetingDate=document.getElementById('personalTaskDue');
  if(!places||!dialog||!title||!panel)return;
  let proposal=null,place=null,confirmed=false,choices=[],choicesExpanded=false,choicesNearby=false,query='',sourceQuery='',status='idle',request=0,photoRequest=0,searchTimer=0,refining=false,refineText='',cityEditing=false,photoViewer=null,mapViewer=null,mapCleanup=null;
  function phraseForPlace(){
@@ -260,6 +262,24 @@
   if(token!==photoRequest||!dialog.open||!place||place.lat!==target.lat||place.lon!==target.lon)return;
   if(updated?.photo){place=places.cleanPlace(updated);render()}
  }
+ // Compare simple published clock ranges only. Complex/day-specific hours stay unknown.
+ function hoursAtTime(hours,time){
+  const m=String(hours||'').trim().match(/^([01]\d|2[0-3]):([0-5]\d)\s*[-–—]\s*([01]\d|2[0-3]):([0-5]\d)$/u);
+  if(!m||!/^([01]\d|2[0-3]):[0-5]\d$/.test(time||''))return null;
+  const start=Number(m[1])*60+Number(m[2]),end=Number(m[3])*60+Number(m[4]);
+  if(start===end)return null;
+  const [h,n]=time.split(':').map(Number),at=h*60+n;
+  return start<end?at>=start&&at<end:at>=start||at<end;
+ }
+ function refreshHoursStatus(){
+  const status=panel.querySelector('.sv-place-hours-status');
+  if(!status)return;
+  const hours=place?places.venueInfo?.(place)?.hours:'';
+  const result=meetingDate?.value?hoursAtTime(hours,meetingTime?.value):null;
+  status.hidden=result===null;
+  status.classList.toggle('is-closed',result===false);
+  status.textContent=result===null?'':result?'По указанным часам в '+meetingTime.value+' открыто':'По указанным часам в '+meetingTime.value+' закрыто · проверь график';
+ }
  function render(){
   if(!dialog.open)return;
   // Reveal the place card only once a place is actually mentioned or loaded.
@@ -336,9 +356,9 @@
    visual.append(link);card.append(visual);
    if(!confirmed){
     const actions=node('div','sv-place-confirm-actions');
-    const accept=node('button','sv-place-confirm','Это место');accept.type='button';
+    const accept=node('button','sv-place-confirm','Подтвердить');accept.type='button';
     accept.addEventListener('click',()=>{confirmed=true;refining=false;refineText='';render();window.dispatchEvent(new Event('seyveo:task-place-updated'))});
-    const change=node('button','sv-place-refine-trigger',refining?'Отмена':'Другой адрес');change.type='button';
+    const change=node('button','sv-place-refine-trigger',refining?'Свернуть поиск':'Другое место');change.type='button';
     change.setAttribute('aria-expanded',String(refining));
     change.addEventListener('click',()=>{
      if(!proposal){reset();window.SEYVEO_MEETING_PLACE_PICKER?.reset();window.dispatchEvent(new Event('seyveo:task-place-updated'));return}
@@ -390,6 +410,7 @@
      });
     }
     panel.append(strip);
+    if(details.hours){const status=node('p','sv-place-hours-status');status.hidden=true;strip.after(status);refreshHoursStatus();}
    }
    if(place.websiteURL){
     const website=node('a','sv-place-manual-map','Сайт заведения ↗');
@@ -509,6 +530,8 @@
   render();resolvePlacePhoto();
   window.dispatchEvent(new Event('seyveo:task-place-updated'));
  }
+ meetingTime?.addEventListener('change',refreshHoursStatus);
+ meetingDate?.addEventListener('change',refreshHoursStatus);
  title.addEventListener('input',sync);
  title.addEventListener('blur',()=>{if(proposal&&status==='idle'&&search?.hasPlaceConsent?.())void lookup()});
  const openObserver=new MutationObserver(()=>{if(dialog.open)sync()});
