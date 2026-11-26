@@ -174,7 +174,7 @@ function safe(req){
  // Chrome sets Sec-Fetch-Site: cross-site on a link from ChatGPT.
  // A top-level document navigation is safe to display without CORS.
  return req.method==='GET'&&
-  (pathname==='/'||pathname==='/index.html')&&
+  (pathname==='/'||pathname==='/index.html'||pathname==='/map-test.html')&&
   req.headers['sec-fetch-mode']==='navigate'&&
   req.headers['sec-fetch-dest']==='document';
 }
@@ -528,6 +528,15 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
     console.error('[SEYVEO Voice QA] Не удалось открыть тест ударений:',error?.message||error);
     send(res,404,{error:'Тест ударений не найден.'});
    }
+   return;
+  }
+  // Explicit isolated map diagnostic; no private data or application APIs.
+  if(req.method==='GET'&&path==='/map-test.html'){
+   try{
+    const html=await readFile(resolve(ROOT,'map-test.html'),'utf8');
+    res.writeHead(200,{...mapHomeHeaders(),'content-type':'text/html; charset=utf-8'});
+    res.end(html);
+   }catch{send(res,404,{error:'Диагностика карты не найдена.'})}
    return;
   }
   // Explicitly serve the new blank Sayvi page, without exposing other root files.
