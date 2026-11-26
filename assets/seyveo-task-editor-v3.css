@@ -2165,3 +2165,63 @@ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .s
  box-shadow:none!important;
 }
 html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-refine-row .sv-place-refine-apply{color:#64B5FF!important}
+
+/* V69 — staged date/time wheel sheet, matching the V67 calendar. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host[hidden],
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-shade[hidden]{display:none!important}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host:not([hidden]){
+ position:absolute!important;z-index:54!important;inset:auto 0 var(--sv-task-keyboard-inset,0px)!important;
+ display:block!important;width:auto!important;max-width:100%!important;min-width:0!important;
+ box-sizing:border-box!important;max-height:calc(100% - 48px - var(--sv-task-keyboard-inset,0px))!important;
+ overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;
+ padding:8px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))!important;
+ margin:0!important;border-radius:26px 26px 0 0!important;
+ border:var(--sv-task-field-rim)!important;
+ background:var(--sv-date-sheet-light,rgba(228,231,236,.65))!important;background-image:none!important;
+ box-shadow:0 -5px 28px rgba(40,48,60,.12)!important;
+ -webkit-backdrop-filter:var(--sv-date-sheet-filter,blur(20px) saturate(110%))!important;
+ backdrop-filter:var(--sv-date-sheet-filter,blur(20px) saturate(110%))!important;
+ animation:sv-task-calendar-rise .28s cubic-bezier(.2,.75,.2,1) backwards;
+}
+html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host:not([hidden]){
+ background:var(--sv-date-sheet-dark,rgba(36,38,44,.94))!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-smart-wheel-edit{
+ padding:0!important;margin:0!important;gap:8px!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-head{
+ position:relative!important;display:grid!important;place-items:center!important;
+ min-height:48px!important;padding:10px 0 0!important;margin:0!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-head strong{
+ font:650 17px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;color:inherit!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-tabs{
+ min-height:50px!important;padding:3px!important;gap:3px!important;
+ background:var(--sv-task-action-fill)!important;border:var(--sv-task-action-rim)!important;
+ box-shadow:none!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-tabs button{
+ min-height:44px!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-body::before{
+ top:80px!important;height:40px!important;box-sizing:border-box!important;
+ background:rgba(115,127,145,.08)!important;border-color:rgba(100,110,125,.13)!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-unified-wheel{
+ height:200px!important;min-height:200px!important;max-height:200px!important;padding:80px 0!important;
+ scroll-padding:80px 0!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-unified-wheel > .sv-unified-wheel-option{
+ height:40px!important;min-height:40px!important;max-height:40px!important;
+ margin:0!important;box-sizing:border-box!important;background:transparent!important;box-shadow:none!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host .sv-task-wheel-actions :is(.sv-task-wheel-clear,.sv-task-smart-quick-done){
+ min-height:44px!important;padding:8px 12px!important;background:transparent!important;border:0!important;box-shadow:none!important;
+ color:var(--sv-date-sheet-blue,#007AFF)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-sheet-host:not([hidden]){animation:none!important}
+}
