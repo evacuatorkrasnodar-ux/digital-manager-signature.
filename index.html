@@ -938,7 +938,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=5">
 <link rel="stylesheet" href="assets/seyveo-header-system.css?v=20261126-compact-axis-v126">
 <link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=20261125-signature-icons">
-<link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=20261126-swipe-finish-v193">
+<link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=20261126-menu-portal-v194">
 <link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=20261126-flat-confirm-v72">
 <link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=20261126-map-v74">
 <link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3">
@@ -4567,9 +4567,10 @@ window.addEventListener('resize',closeNotebookListMenu,{passive:true});
 window.visualViewport?.addEventListener('resize',closeNotebookListMenu,{passive:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)closeNotebookListMenu();});
 new MutationObserver(()=>{if(!$('notesDialog').open||$('svWorkShell')?.dataset.active!=='notes')closeNotebookListMenu();}).observe($('notesDialog'),{attributes:true,attributeFilter:['open','hidden']});
+let activeNoteRowMenu=null;
 function closeNoteRowMenus(){
  const list=$('notesList');
- list.querySelectorAll('.sv-nb4-actions').forEach(el=>el.hidden=true);
+ if(activeNoteRowMenu){activeNoteRowMenu.hidden=true;activeNoteRowMenu.remove();activeNoteRowMenu=null;}
  list.querySelectorAll('.sv-nb4-open:not([role="checkbox"]),.sv-nb4-more').forEach(el=>el.setAttribute('aria-expanded','false'));
 }
 document.addEventListener('pointerdown',event=>{
@@ -4578,6 +4579,13 @@ document.addEventListener('pointerdown',event=>{
 document.addEventListener('keydown',event=>{if(event.key==='Escape')closeNoteRowMenus();});
 $('notesList').addEventListener('scroll',closeNoteRowMenus,{passive:true});
 $('notesDialog').addEventListener('close',closeNoteRowMenus);
+window.addEventListener('seyveo:route-changed',closeNoteRowMenus);
+window.addEventListener('resize',closeNoteRowMenus,{passive:true});
+window.visualViewport?.addEventListener('resize',closeNoteRowMenus,{passive:true});
+window.visualViewport?.addEventListener('scroll',closeNoteRowMenus,{passive:true});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)closeNoteRowMenus();});
+new MutationObserver(()=>{if(!$('notesDialog').open||$('svWorkShell')?.dataset.active!=='notes')closeNoteRowMenus();}).observe($('notesDialog'),{attributes:true,attributeFilter:['open','hidden']});
+new MutationObserver(()=>{if($('svWorkShell')?.dataset.active!=='notes')closeNoteRowMenus();}).observe($('svWorkShell'),{attributes:true,attributeFilter:['data-active']});
 $('notesDialog').addEventListener('close',()=>{if(notebookSelecting)setNotebookSelection(false);});
 document.addEventListener('keydown',event=>{
  if(event.key==='Escape'&&notebookSelecting&&$('notesDialog').open){event.preventDefault();setNotebookSelection(false);}
@@ -4587,6 +4595,7 @@ $('notesList').addEventListener('scroll',()=>{
  $('notesDialog').classList.toggle('sv-nb-list-scrolled',$('notesList').scrollTop>1);
 },{passive:true});
 function renderNotes(){
+ closeNoteRowMenus();
  const container=$('notesList');container.replaceChildren();
  const noteTime=note=>new Date(note.updatedAt||note.createdAt||0).getTime()||0;
  const allNotes=getNotes().slice().sort((a,b)=>noteTime(b)-noteTime(a));
@@ -4687,7 +4696,7 @@ function renderNotes(){
    const button=document.createElement('button');button.type='button';button.textContent=label;
    if(cls)button.className=cls;
    button.addEventListener('click',()=>{
-    menu.hidden=true;open.setAttribute('aria-expanded','false');swipeMore.setAttribute('aria-expanded','false');callback();
+    closeNoteRowMenus();callback();
    });
    menu.append(button);
   }
@@ -4696,32 +4705,34 @@ function renderNotes(){
   action('Распечатать',()=>{printNote(note)});
   action('Удалить',()=>deleteNoteWithUndo(note),'sv-nb4-danger');
   function toggleActions(fromSwipe=false,forceOpen=false){
+   if(!card.isConnected||!$('notesDialog').open||$('svWorkShell')?.dataset.active!=='notes')return;
    if(!fromSwipe&&!forceOpen&&Date.now()<suppressNoteClickUntil)return;
-   if(forceOpen&&!menu.hidden)return;
+   if(forceOpen&&activeNoteRowMenu===menu)return;
    const rect=(fromSwipe?swipeMore:open).getBoundingClientRect();
+   const expanding=activeNoteRowMenu!==menu;
+   closeNoteRowMenus();closeNotebookListMenu();
    container.querySelectorAll('.sv-nb4-slide.is-open').forEach(el=>el.classList.remove('is-open'));
-   const expanding=menu.hidden;
-   container.querySelectorAll('.sv-nb4-actions').forEach(el=>{el.hidden=true});
-   container.querySelectorAll('.sv-nb4-open').forEach(el=>el.setAttribute('aria-expanded','false'));
-   container.querySelectorAll('.sv-nb4-more').forEach(el=>el.setAttribute('aria-expanded','false'));
-   if(expanding){
-    // Use viewport coordinates: the scrolling list clips absolute menus,
-    // especially the last saved note and its Delete action.
-    const viewportWidth=window.innerWidth||document.documentElement?.clientWidth||390;
-    const viewportHeight=window.innerHeight||document.documentElement?.clientHeight||720;
-    const menuWidth=Math.min(190,viewportWidth-24);
-    const menuHeight=menu.children.length*42+10;
-    const bottomInset=viewportHeight>550?100:12;
-    const anchorRight=Number.isFinite(rect.right)?rect.right:viewportWidth-12;
-    const left=Math.max(12,Math.min(viewportWidth-menuWidth-12,anchorRight-menuWidth+10));
-    let top=rect.bottom+6;
-    if(top+menuHeight>viewportHeight-bottomInset)top=rect.top-menuHeight-6;
-    top=Math.max(8,Math.min(top,viewportHeight-menuHeight-bottomInset));
-    menu.style.setProperty('--sv-nb-actions-top',Math.round(top)+'px');
-    menu.style.setProperty('--sv-nb-actions-left',Math.round(left)+'px');
-   }
-   menu.hidden=!expanding;open.setAttribute('aria-expanded',String(expanding));
-   swipeMore.setAttribute('aria-expanded',String(expanding));
+   if(!expanding)return;
+   // Portal the existing menu above all scroll/header glass stacking contexts.
+   // Measure the actual rows, not an estimate of their heights.
+   const vv=window.visualViewport;
+   const vx=vv?.offsetLeft||0,vy=vv?.offsetTop||0;
+   const vw=vv?.width||window.innerWidth||390,vh=vv?.height||window.innerHeight||720;
+   const bottomInset=vh>550?100:12;
+   const available=Math.max(44,vh-bottomInset-16);
+   menu.style.setProperty('--sv-nb-actions-width',Math.min(190,Math.max(44,vw-24))+'px');
+   menu.style.setProperty('--sv-nb-actions-max-height',available+'px');
+   menu.style.setProperty('--sv-nb-actions-top',vy+8+'px');
+   menu.style.setProperty('--sv-nb-actions-left',vx+12+'px');
+   document.body.append(menu);activeNoteRowMenu=menu;menu.hidden=false;
+   const width=menu.offsetWidth,height=menu.offsetHeight;
+   const left=Math.max(vx+12,Math.min(vx+vw-width-12,rect.right-width+10));
+   let top=rect.bottom+6;
+   if(top+height>vy+vh-bottomInset)top=rect.top-height-6;
+   top=Math.max(vy+8,Math.min(top,vy+vh-height-bottomInset));
+   menu.style.setProperty('--sv-nb-actions-top',Math.round(top)+'px');
+   menu.style.setProperty('--sv-nb-actions-left',Math.round(left)+'px');
+   open.setAttribute('aria-expanded','true');swipeMore.setAttribute('aria-expanded','true');
   }
   // Long press or right click exposes the same actions as a left swipe.
   let holdTimer=0,holdPoint=null,holdFired=false;
@@ -4768,7 +4779,7 @@ function renderNotes(){
     if(Math.abs(dx)<9||Math.abs(dx)<Math.abs(dy))return;
     touch.dragging=true;swipe.classList.add('is-dragging');
     for(const other of container.querySelectorAll('.sv-nb4-slide.is-open'))if(other!==swipe)other.classList.remove('is-open');
-    container.querySelectorAll('.sv-nb4-actions').forEach(el=>{el.hidden=true});
+    closeNoteRowMenus();
     container.querySelectorAll('.sv-nb4-open').forEach(el=>el.setAttribute('aria-expanded','false'));
     container.querySelectorAll('.sv-nb4-more').forEach(el=>el.setAttribute('aria-expanded','false'));
    }
@@ -4807,7 +4818,7 @@ function renderNotes(){
     pointerDrag.dragging=true;swipe.classList.add('is-dragging');
     try{controls.setPointerCapture(event.pointerId)}catch{}
     container.querySelectorAll('.sv-nb4-slide.is-open').forEach(el=>{if(el!==swipe)el.classList.remove('is-open')});
-    container.querySelectorAll('.sv-nb4-actions').forEach(el=>{el.hidden=true});
+    closeNoteRowMenus();
     container.querySelectorAll('.sv-nb4-open,.sv-nb4-more').forEach(el=>el.setAttribute('aria-expanded','false'));
    }
    event.preventDefault();
@@ -4830,7 +4841,7 @@ function renderNotes(){
   controls.addEventListener('pointercancel',finishPointerSwipe);
   if(!note.paper)menu.prepend(calendar);
   controls.append(open);swipe.append(swipeMore,swipeDelete,controls);
-  card.append(swipe,menu);container.append(card);
+  card.append(swipe);container.append(card);
  });
 }
 function openNotes(){

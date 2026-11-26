@@ -179,17 +179,18 @@ html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-cont
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 
-/* The menu is viewport-positioned: notesList scrolls, so an absolute popover
- * on the final row gets clipped and its Delete/Print actions disappear. */
-#svWorkShell[data-active="notes"] #notesList .sv-nb4-actions[hidden]{display:none!important}
-/* V153: shared menu owns paint and rows, notebook owns placement. */
-#svWorkShell[data-active="notes"] #notesList .sv-nb4-actions:not([hidden]){
+/* V194: the active row menu is a body-level portal, never inside
+ * the scrollport or behind the shared frosted header. */
+html:root body > .sv-nb4-actions[hidden]{display:none!important}
+html:root body > .sv-nb4-actions:not([hidden]){
  position:fixed!important;top:var(--sv-nb-actions-top,12px)!important;
  left:var(--sv-nb-actions-left,12px)!important;right:auto!important;bottom:auto!important;z-index:10020!important;
  display:flex!important;flex-direction:column!important;gap:0!important;
- width:190px!important;max-width:calc(100% - 24px)!important;margin:0!important;padding:5px!important;
+ width:var(--sv-nb-actions-width,190px)!important;max-width:calc(100% - 24px)!important;
+ max-height:var(--sv-nb-actions-max-height,70vh)!important;margin:0!important;padding:5px!important;
+ overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;
 }
-#svWorkShell[data-active="notes"] #notesList .sv-nb4-actions > button{width:100%!important;}
+html:root body > .sv-nb4-actions > button{width:100%!important;flex:0 0 auto!important;}
 html[data-theme="dark"] #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open],
 html[data-theme="dark"] #svWorkShell[data-active="notes"] #notesList .sv-nb4-front{
  background:var(--bg)!important;
