@@ -1,0 +1,34 @@
+/* Notebook collections · compact Apple-inspired category grid. */
+#svWorkShell[data-active="notes"] #svNotebookCategories{
+ flex:0 0 auto!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+ box-sizing:border-box;margin:10px 12px 8px;padding:0;min-width:0
+}
+#svWorkShell #svNotebookCategories[hidden]{display:none!important}
+#svWorkShell #svNotebookCategories .sv-nb-category{
+ appearance:none;-webkit-appearance:none;display:flex;align-items:center;gap:8px;min-height:44px;
+ min-width:0;padding:8px 11px;border:1px solid rgba(118,128,145,.14);border-radius:14px;
+ background:rgba(136,145,158,.075);color:var(--text,#171a20);box-shadow:none;text-align:left;
+ font:500 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif
+}
+#svWorkShell #svNotebookCategories .sv-nb-category[aria-pressed="true"]{background:rgba(0,122,255,.085);border-color:rgba(0,122,255,.32)}
+.sv-nb-category svg,.sv-nb-folder-row svg{width:22px;height:22px;flex:0 0 22px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linejoin:round;stroke-linecap:round}
+.sv-nb-category-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.sv-nb-category-count,.sv-nb-folder-row small{font-size:13px;font-variant-numeric:tabular-nums;color:#78818d}
+#svWorkShell #svNotebookCategories .sv-nb-category:active{transform:scale(.98)}
+#svNotebookDeleteAll[hidden]{display:none!important}
+#notesList .sv-nb-category-empty{padding:24px 16px;text-align:center;font-size:15px;color:#78818d}
+dialog.sv-nb-folder-sheet{box-sizing:border-box;position:fixed;inset:auto 0 0;margin:0 auto;width:min(100%,480px);max-width:100%;max-height:75dvh;padding:16px 16px calc(16px + env(safe-area-inset-bottom));border:1px solid rgba(120,130,145,.18);border-radius:25px 25px 0 0;background:#f6f7f9;color:#171a20;box-shadow:0 -8px 40px #0002;overflow:auto}
+dialog.sv-nb-folder-sheet::backdrop{background:#0003;backdrop-filter:blur(5px)}
+.sv-nb-folder-head,.sv-nb-folder-line,.sv-nb-folder-form{display:flex;align-items:center;gap:8px}
+.sv-nb-folder-head{justify-content:space-between;font-size:18px;padding-bottom:10px}
+.sv-nb-folder-sheet button{appearance:none;border:0;background:none;color:#007aff;min-height:44px;padding:8px;font:500 15px/1.2 system-ui;cursor:pointer}
+.sv-nb-folder-sheet .sv-nb-folder-row{flex:1;width:100%;display:flex;align-items:center;gap:10px;text-align:left;color:#171a20;border-bottom:1px solid #dfe2e7}
+.sv-nb-folder-row span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.sv-nb-folder-row[aria-current="true"]{color:#007aff!important}
+.sv-nb-folder-sheet .sv-nb-folder-remove{color:#747d88;min-width:44px;font-size:24px}
+.sv-nb-folder-form{margin-top:12px}
+.sv-nb-folder-form input{min-width:0;flex:1;min-height:44px;border:1px solid #d9dce2;border-radius:12px;padding:10px;background:white;color:#171a20;font:16px system-ui}
+.sv-nb-folder-empty,.sv-nb-folder-status{font-size:14px;color:#737c88}
+html[data-theme="dark"] dialog.sv-nb-folder-sheet{background:#252a31;color:#fff}
+html[data-theme="dark"] .sv-nb-folder-sheet .sv-nb-folder-row{color:#fff;border-color:#ffffff20}
+@media(max-width:360px){#svWorkShell[data-active="notes"] #svNotebookCategories{margin-inline:8px;gap:5px}#svWorkShell #svNotebookCategories .sv-nb-category{padding-inline:7px;gap:5px;font-size:13px}}
