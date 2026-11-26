@@ -23,11 +23,11 @@
  function picker(noteId=null,focusCreate=false){
   const old=document.getElementById('svNbFolderSheet');if(old){old.close();old.remove()}
   const dlg=el('dialog','sv-nb-folder-sheet');dlg.id='svNbFolderSheet';
-  const top=el('div','sv-nb-folder-head');top.append(el('strong','',noteId?'Переместить в папку':'Мои папки'));
-  const close=el('button','','Готово');close.type='button';close.onclick=()=>dlg.close();top.append(close);dlg.append(top);
+  const top=el('div','sv-nb-folder-head');const grip=el('div','sv-nb-sheet-grip');grip.setAttribute('aria-hidden','true');top.append(grip);const heading=el('strong','',noteId?'Переместить в папку':focusCreate?'Новая папка':'Мои папки');heading.id='svNbFolderTitle';dlg.setAttribute('aria-labelledby',heading.id);top.append(heading);
+  const close=el('button','sv-nb-sheet-close');close.type='button';close.setAttribute('aria-label','Закрыть');close.append(icon('m6 12 4 4 8-8','currentColor'));close.onclick=()=>dlg.close();top.append(close);dlg.append(top);root.SEYVEO_SHEET_NAVIGATION?.attach(grip,null,()=>dlg.close());
   const list=el('div','sv-nb-folder-list');dlg.append(list);
   const form=el('form','sv-nb-folder-form');const input=el('input');input.placeholder='Название новой папки';input.maxLength=60;input.required=true;input.setAttribute('aria-label','Название новой папки');
-  const add=el('button','','Создать');add.type='submit';form.append(input,add);dlg.append(form);let editing=null;
+  const add=el('button','sv-nb-folder-submit','Создать');add.type='submit';form.append(input,add);dlg.append(form);let editing=null;
   const cancelRename=el('button','','Отмена');cancelRename.type='button';cancelRename.hidden=true;cancelRename.onclick=resetForm;form.append(cancelRename);
   function resetForm(){editing=null;input.value='';input.placeholder='Название новой папки';add.textContent='Создать';cancelRename.hidden=true;status.textContent=''}
   const status=el('p','sv-nb-folder-status','');status.setAttribute('role','status');dlg.append(status);
@@ -63,11 +63,7 @@
  function render(notes,callback,selecting){
   lastNotes=notes;rerender=callback;const host=document.getElementById('svNotebookCategories');if(!host)return;
   const home=active==='home';host.dataset.nbView=home?'home':'detail';
-  host.hidden=selecting;if(selecting)return;
-  host.replaceChildren();
-  if(!home){
-   const back=el('button','sv-nb-catalog-back');back.type='button';back.append(icon('m15 5-7 7 7 7','#68717d'),el('span','','Блокнот'));back.setAttribute('aria-label','Назад в блокнот');back.onclick=()=>choose('home');host.append(back);return;
-  }
+  host.hidden=selecting||!home;host.replaceChildren();if(selecting||!home)return;
   for(const [id,name,color,path] of defs){
    const b=el('button','sv-nb-category');b.type='button';
    b.setAttribute('aria-label',name);
@@ -81,5 +77,5 @@
   if(state.folders.length>2){const more=el('button','sv-nb-home-folder-link','Все папки ('+state.folders.length+')');more.type='button';more.onclick=()=>picker();folders.append(more)}
   host.append(folders);
  }
- root.SEYVEO_NOTE_COLLECTIONS=Object.freeze({kind,visible,title,render,isAll:()=>active==='all',isHome:()=>active==='home',move:note=>picker(note.id)});
+ root.SEYVEO_NOTE_COLLECTIONS=Object.freeze({kind,visible,title,render,isAll:()=>active==='all',isHome:()=>active==='home',home:()=>choose('home'),move:note=>picker(note.id)});
 })(window);
