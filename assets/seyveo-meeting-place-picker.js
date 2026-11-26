@@ -38,13 +38,15 @@
    !/(?:^|\s)(?:в|во)\s+(?:кафе|ресторане|кофейне|баре|пиццерии|бистро)\b/iu.test(value);
  }
  function render(){
-  section.hidden=!dialog.open||dismissed||!hasMeeting()||Boolean(places.extract(title.value));
+  section.hidden=!dialog.open||dismissed||!hasMeeting()||Boolean(places.extract(title.value))||Boolean(editor.hasPlace?.());
   section.replaceChildren();if(section.hidden)return;
   const top=node('div','sv-meeting-place-heading');
-  top.append(node('span','sv-meeting-place-star','✦'),node('strong','','Хочешь, подберу место для встречи?'));
+  const mark=node('img','sv-meeting-place-star');mark.src='assets/seyveo-sayvi-user-upload.svg?v=3';mark.alt='';
+  const recommended=moods.find(item=>item.id===suggestedMood(title.value));
+  top.append(mark,node('strong','',recommended?'Подберём место · '+recommended.label:'Подберём место для встречи?'));
   section.append(top);
   if(!expanded){
-   section.append(button('Подобрать',()=>{expanded=true;render()},'sv-meeting-place-open'));
+   section.append(button('Подобрать место',()=>{expanded=true;const city=cityValue||places.suggestedCity();if(recommended&&city)void choose(recommended);else render()},'sv-meeting-place-open'));
    return;
   }
   const currentCity=cityValue||places.suggestedCity();
@@ -61,8 +63,8 @@
    row.append(input,button('Найти',accept));section.append(row);
   }else{
    const chips=node('div','sv-meeting-place-moods');
-   const recommended=suggestedMood(title.value);
-   const ordered=[...moods].sort((a,b)=>Number(b.id===recommended)-Number(a.id===recommended));
+   const preferred=suggestedMood(title.value);
+   const ordered=[...moods].sort((a,b)=>Number(b.id===preferred)-Number(a.id===preferred));
    for(const item of ordered){
     chips.append(button(item.label,()=>void choose(item),
      'sv-meeting-place-mood'+(mood===item.id?' is-active':'')));
@@ -70,10 +72,10 @@
    section.append(chips);
   }
   if(!mood){
-   const recommended=moods.find(item=>item.id===suggestedMood(title.value));
-   section.append(node('p','sv-meeting-place-muted',recommended?'По описанию встречи подходит вариант «'+recommended.label+'». Можно выбрать другой.':'Выбери характер встречи. Сэйви предложит места по типу заведения.'));
+   section.append(node('p','sv-meeting-place-muted',recommended?'Учла характер встречи. Можно выбрать другой вариант.':'Выбери характер встречи.'));
   }
-  if(busy)section.append(node('p','sv-meeting-place-muted','Смотрю реальные заведения…'));
+  if(busy)section.append(node('p','sv-meeting-place-muted','Ищу места в справочнике…'));
+  else if(candidates.length)section.append(node('p','sv-meeting-place-muted','Места по типу заведения. Атмосферу, цены и наличие столиков нужно уточнить.'));
   if(note)section.append(node('p','sv-meeting-place-muted',note));
   for(const candidate of candidates.slice(0,visible)){
    const option=button('',()=>{
@@ -92,7 +94,7 @@
    const city=cityValue||places.suggestedCity();
    const proposal={query:item.kind+', '+city,kind:item.kind,venueName:'',city,citySelected:Boolean(cityValue)};
    const found=await hub.findPlace(proposal);
-   if(sequence!==token||!dialog.open||places.extract(title.value))return;
+   if(sequence!==token||!dialog.open||places.extract(title.value)||editor.hasPlace?.())return;
    if(found?.consentRequired)note='Разреши поиск мест, чтобы Сэйви показала реальные варианты.';
    else if(found?.cityRequired)note='Сначала укажи город.';
    else{
@@ -111,6 +113,7 @@
   clearTimeout(timer);token++;mood='';candidates=[];note='';busy=false;dismissed=false;
   timer=setTimeout(render,620);
  });
+ window.addEventListener('seyveo:task-place-updated',render);
  dialog.addEventListener('close',reset);
  new MutationObserver(()=>{if(dialog.open)reset()}).observe(dialog,{attributes:true,attributeFilter:['open']});
  window.SEYVEO_MEETING_PLACE_PICKER=Object.freeze({reset,render});
