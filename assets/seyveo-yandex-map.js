@@ -66,5 +66,5 @@
    };
   }catch(error){lastStatus='map-init-error';try{map?.destroy()}catch{}throw new Error('Map initialization failed')}
  }
- root.SEYVEO_YANDEX_MAPS=Object.freeze({enabled,mount,status:()=>lastStatus});
+ root.SEYVEO_YANDEX_MAPS=Object.freeze({enabled,mount,loadSdk:load,status:()=>lastStatus});
 })(window);
