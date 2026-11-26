@@ -159,13 +159,10 @@
 .company:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:5px}
 
 
-:host([data-task-selecting="true"]) .sv-history-dual{
- width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);padding:0 1px;
-}
-:host([data-task-selecting="true"]) .sv-history-dual .control:not(.sv-history-search){display:none!important}
-:host([data-task-selecting="true"]) .sv-history-dual .sv-history-search{
- display:grid;flex:0 0 var(--sv-nav-capsule-cell,42px);width:var(--sv-nav-capsule-cell,42px);height:var(--sv-nav-capsule-cell,42px);
-}
+/* Dedicated All Tasks search: direct sibling of Back, using .control. */
+:host([data-task-selecting="true"]) .sv-history-dual{display:none!important}
+.sv-all-tasks-search{grid-column:4;grid-row:1;justify-self:end}
+.sv-all-tasks-search svg{width:22px;height:22px;stroke-width:1.65}
 .month[hidden]{display:none!important}
 .month:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:3px}
 .month{
@@ -272,39 +269,6 @@
  border:0;background:transparent;box-shadow:none;
 }
 :host([data-theme="dark"]) .calendar-jump,:host([data-theme="dark"]) .month-year{color:#F47883}
-/* All Tasks: the search glyph is a real 44px Avatar-reference circle.
-   The previous history capsule is only an alignment wrapper, never a
-   second painted or blurred surface around the one live button. */
-:host(:not([data-theme="dark"])[data-task-selecting="true"]) .sv-history-dual{
- width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);
- padding:0;border:0;background:transparent;background-image:none;
- box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
-}
-:host(:not([data-theme="dark"])[data-task-selecting="true"]) .sv-history-dual .sv-history-search,
-:host(:not([data-theme="dark"])[data-task-selecting="true"]) .sv-history-dual .sv-history-search:is(:hover,:focus,:active){
- box-sizing:border-box;display:grid;place-items:center;
- flex:0 0 var(--sv-nav-single-size,44px);
- width:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px);max-width:var(--sv-nav-single-size,44px);
- height:var(--sv-nav-single-size,44px);min-height:var(--sv-nav-single-size,44px);max-height:var(--sv-nav-single-size,44px);
- margin:0;padding:0;border-radius:50%;
- border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.92));
- background:var(--sv-white-pearl-surface,rgba(255,255,255,.72));background-image:none;
- color:var(--sv-white-pearl-ink,#16191d);
- box-shadow:var(--sv-white-pearl-circle-shadow,0 5px 17px rgba(38,46,64,.09));
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(8px) saturate(115%));
- backdrop-filter:var(--sv-white-pearl-blur,blur(8px) saturate(115%));
- transform:none;opacity:1;filter:none;
-}
-:host(:not([data-theme="dark"])[data-task-selecting="true"]) .sv-history-dual .sv-history-search:focus-visible{
- outline:2px solid currentColor;outline-offset:2px;
-}
-@media(prefers-reduced-transparency:reduce){
- :host(:not([data-theme="dark"])[data-task-selecting="true"]) .sv-history-dual .sv-history-search,
- :host(:not([data-theme="dark"])[data-task-selecting="true"]) .sv-history-dual .sv-history-search:is(:hover,:focus,:active){
-  background:var(--sv-white-pearl-solid,#fff);-webkit-backdrop-filter:none;backdrop-filter:none;
- }
-}
-
 @media(prefers-reduced-transparency:reduce){
  :host(:not([data-theme="dark"])) .control{
   background:var(--sv-white-pearl-solid,#fff);
