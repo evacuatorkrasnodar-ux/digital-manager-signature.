@@ -364,7 +364,7 @@
   refreshOneField();
   const raw=title.value.trim().replace(/\s+/g,' ');
   const empty=!raw;
-  const recognized=Boolean((typeof readPhrase==='function'&&readPhrase(raw))||date.value||timeInput?.value||proposedPlan()?.items?.length>1||extraFields().some(field=>field.value.trim()));
+  const recognized=Boolean((typeof readPhrase==='function'&&readPhrase(raw))||date.value||timeInput?.value||proposedPlan()?.items?.length>1||extraFields().some(field=>field.value.trim())||Boolean(window.SEYVEO_TASK_PLACES?.extract?.(raw))||/(?:встреч|встрет|свидан|переговор|совещан|пообед|поужин)/iu.test(raw));
   // Show structured cards only when Sayvi has something useful to extract.
   // A plain phrase remains a simple input; manual details are then available.
   smartPreview.hidden=empty||!recognized;
@@ -438,7 +438,7 @@
   const repeat=document.getElementById('personalTaskRepeat')?.value;
   if(repeat&&repeat!=='none')meta.append(createText('repeat',({daily:'Каждый день',weekly:'Каждую неделю',monthly:'Каждый месяц'})[repeat]||'Повтор'));
   if(meta.childElementCount)smartDetails.append(meta);
-  if(lead)smartDetails.append(createText('notice','Уведомление за час пока недоступно.'));
+  if(lead)smartDetails.append(createText('notice','Время напоминания распознано. Уведомления пока не подключены.'));
   if(timeInput?.value&&!date.value)smartDetails.append(createText('notice','Укажи дату для напоминания по времени.'));
  }
  function applyPhrase(){
