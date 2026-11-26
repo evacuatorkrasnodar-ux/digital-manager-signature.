@@ -722,11 +722,12 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
  html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid,
  html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
   --sv-home-tile-height:60px;
-  grid-template-rows:none!important;grid-auto-rows:var(--sv-home-tile-height)!important;
+  grid-template-rows:none!important;grid-auto-rows:auto!important;
   gap:6px!important;padding-bottom:4px!important;
   overflow:visible!important;
  }
  html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{
+  box-sizing:border-box!important;height:var(--sv-home-tile-height)!important;
   min-height:44px!important;border-radius:14px!important;gap:3px!important;padding:3px 2px!important;
  }
  html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button svg{
@@ -885,3 +886,23 @@ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > .sv
  letter-spacing:-.01em;align-self:end;
 }
 html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > .sv-home-favorites-group-label:nth-child(2){margin-top:3px!important}
+
+/* V222: labels take their own intrinsic row, not the height of a shortcut tile.
+   Keep the same touch targets, curtain, scrolling and selected state. */
+@layer seyveo-home-chooser-standard{
+ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid,
+ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
+  grid-template-rows:none!important;grid-auto-rows:auto!important;align-content:start!important;
+ }
+ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > .sv-home-favorites-group-label{
+  grid-column:1 / -1!important;align-self:start!important;
+  height:auto!important;min-height:0!important;
+  margin:9px 2px 2px!important;padding:0!important;
+ }
+ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > .sv-home-favorites-group-label:nth-child(2){
+  margin-top:1px!important;
+ }
+ html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid > .sv-home-favorites-editor-help{
+  height:auto!important;min-height:0!important;margin:0 0 2px!important;
+ }
+}
