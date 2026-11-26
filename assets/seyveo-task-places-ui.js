@@ -311,6 +311,7 @@
    card.append(copy);
    const visual=node('div','sv-place-visual');
    const photoURL=places.photoURL(place);
+   if(!photoURL)card.classList.add('sv-place-card-map-only');
    if(photoURL){
     card.className+=' sv-place-card-has-photo';
     visual.className+=' sv-place-visual-has-photo';
@@ -345,7 +346,7 @@
     link.className+=' sv-place-map-yandex';
     link.append(node('span','sv-place-map-yandex-label','Открыть\nкарту ↗'));
    }else{
-    for(const tile of places.mapTiles(place,narrow?96:112,photoURL?(narrow?118:132):(narrow?88:96))){
+    for(const tile of places.mapTiles(place,photoURL?(narrow?96:112):Math.max(1,Math.round((panel.clientWidth||dialog.clientWidth||320)-28)),photoURL?(narrow?118:132):132)){
      const img=document.createElement('img');img.className='sv-place-map-tile';img.loading='lazy';
      img.alt='';img.setAttribute('aria-hidden','true');img.decoding='async';
      img.referrerPolicy='strict-origin-when-cross-origin';img.src=tile.url;
@@ -354,6 +355,13 @@
     link.append(placeMarker(place,'sv-place-map-pin'));
    }
    visual.append(link);card.append(visual);
+   const routeURL=places.yandexRouteURL(place);
+   if(routeURL){
+    const route=node('a','sv-place-card-route','Маршрут ↗');
+    route.href=routeURL;route.target='_blank';route.rel='noopener noreferrer';
+    route.setAttribute('aria-label','Открыть маршрут к выбранному месту в Яндекс Картах');
+    card.append(route);
+   }
    if(!confirmed){
     const actions=node('div','sv-place-confirm-actions');
     const accept=node('button','sv-place-confirm','Подтвердить');accept.type='button';
@@ -411,6 +419,10 @@
     }
     panel.append(strip);
     if(details.hours){const status=node('p','sv-place-hours-status');status.hidden=true;strip.after(status);refreshHoursStatus();}
+   }
+   if(!details?.hours){
+    const unknown=node('p','sv-place-hours-unknown','Часы работы не уточнены');
+    panel.append(unknown);
    }
    if(place.websiteURL){
     const website=node('a','sv-place-manual-map','Сайт заведения ↗');
