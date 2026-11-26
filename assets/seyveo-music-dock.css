@@ -380,6 +380,6 @@ html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > 
 }
 html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button svg{width:24px;height:24px;flex:none;display:block}
 html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button span{font-size:clamp(8px,2.4vw,10px);font-weight:550;letter-spacing:-.035em;white-space:nowrap;line-height:1.05}
-html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:#26755e;background:rgba(38,117,94,.12)}
-html.sv-music-screen[data-theme="dark"] body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:#a1dbbf;background:rgba(161,219,191,.13)}
+html.sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:#2463a5;background:rgba(94,117,149,.14)}
+html.sv-music-screen[data-theme="dark"] body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:#b6cce9;background:rgba(174,194,225,.15)}
 html.sv-music-screen.sv-music-player-open body footer.dock.sv-shared-dock.sv-music-navigation-only{display:none!important}
