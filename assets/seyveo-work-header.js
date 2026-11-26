@@ -72,7 +72,7 @@
  transform:none;transition:none;filter:none;
 }
 .back{grid-column:1;grid-row:1;justify-self:start}
-.back svg{width:29px;height:29px;stroke-width:1.9}
+.back svg{width:22px;height:22px;stroke-width:1.55}
 .action{grid-column:4;grid-row:1;justify-self:end}
 .action svg{width:28px;height:28px;stroke-width:1.65}
 .sv-review-cards-control{
@@ -279,7 +279,7 @@
  }
 }
 `;
- const BACK=window.SEYVEO_NAV_GLYPHS?.svg('back')||'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.5 5 L7.4 12 L15.5 19"/></svg>';
+ const BACK=window.SEYVEO_NAV_GLYPHS?.svg('back')||'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>';
  const PLUS=window.SEYVEO_NAV_GLYPHS?.svg('plus')||'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5.5v13M5.5 12h13"/></svg>';
  const SEARCH=window.SEYVEO_NAV_GLYPHS?.svg('search')||'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.7 15.7 L21 21"/></svg>';
  function create(){
