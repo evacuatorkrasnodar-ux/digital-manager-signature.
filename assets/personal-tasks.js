@@ -1806,6 +1806,20 @@ window.SEYVEO_PERSONAL_TASK_TOOLS=Object.freeze({
  removeMany:ids=>{
   if(!Array.isArray(ids)||!ids.length||ids.length>MAX)return false;
   return svTrashArchiveMany(ids);
+ },
+ rescheduleMany:(ids,due)=>{
+  if(!Array.isArray(ids)||!ids.length||ids.length>MAX||typeof due!=='string'||!strDate(due))return false;
+  const chosen=new Set(ids);
+  let records;try{records=JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return false}
+  if(!Array.isArray(records))return false;
+  const active=new Set(read().filter(t=>!t.done).map(t=>t.id));
+  if([...chosen].some(id=>!active.has(id)))return false;
+  const next=records.map(t=>t&&chosen.has(t.id)?{...t,due}:t);
+  try{localStorage.setItem(KEY,JSON.stringify(next))}catch{return false}
+  render();
+  window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
+  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
+  return true;
  }
 });
 /* Task edits from the Center of Decisions use the existing local editor.
