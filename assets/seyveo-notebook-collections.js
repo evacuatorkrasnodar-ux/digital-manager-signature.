@@ -77,7 +77,6 @@
   }
   const folders=el('section','sv-nb-home-folders');const head=el('div','sv-nb-home-folder-head');head.append(el('strong','','Мои папки'));
   const addFolder=el('button','sv-nb-folder-add');addFolder.type='button';addFolder.setAttribute('aria-label','Создать папку');addFolder.append(icon('M3 6h7l2 2h9v12H3zM12 11v6M9 14h6','#007aff'));addFolder.onclick=()=>picker(null,true);head.append(addFolder);folders.append(head);
-  if(!state.folders.length){const create=el('button','sv-nb-home-folder-link','Создать папку');create.type='button';create.onclick=()=>picker(null,true);folders.append(create)}
   for(const f of state.folders.slice(0,2)){const row=el('button','sv-nb-home-folder-row');row.type='button';row.append(icon(defs[5][3],defs[5][2]),el('span','',f.name),el('small','',String(notes.filter(n=>folderOf(n.id)===f.id).length)),icon('m9 6 6 6-6 6','#78818d'));row.onclick=()=>choose('folder:'+f.id);folders.append(row)}
   if(state.folders.length>2){const more=el('button','sv-nb-home-folder-link','Все папки ('+state.folders.length+')');more.type='button';more.onclick=()=>picker();folders.append(more)}
   host.append(folders);
