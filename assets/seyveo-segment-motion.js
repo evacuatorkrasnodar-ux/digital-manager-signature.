@@ -12,7 +12,8 @@
   '#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-options',
   '#svcpChatFilters','.sv-inbox-muted-tabs','.sv-new-avatar-tabs',
   '#svcpStaffTabs','#seyveoFamilyDialog:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) .svf-tabs',
-  '.syp-view-switch','.svmc-tabs','.sv-invite-segments','.svcp-people-switch'
+  // V109: the Wallet header uses independent icon launchers, not a pill.
+  '#seyveoPayDialog:not(#svWorkShell #seyveoPayDialog) .syp-view-switch','.svmc-tabs','.sv-invite-segments','.svcp-people-switch'
  ];
  const query=selectors.join(',');
  const states=new Map(),pending=new Map();
