@@ -1942,11 +1942,13 @@ function svOpenTaskContext(row){
  menu.setAttribute('role','menu');menu.setAttribute('aria-label','Действия с делом');
  const edit=element('button','','Изменить');
  edit.type='button';edit.setAttribute('role','menuitem');
+ const editGlyph=window.SEYVEO_DOCUMENT_ICONS?.markup('edit');if(editGlyph)edit.insertAdjacentHTML('afterbegin',editGlyph);
  edit.addEventListener('click',()=>svOpenTaskEditor(row));
  menu.append(edit);
  if(!row.dataset.calendarId){
   const remove=element('button','sv-task-context-delete','Удалить');
   remove.type='button';remove.setAttribute('role','menuitem');
+  const deleteGlyph=window.SEYVEO_DOCUMENT_ICONS?.markup('delete');if(deleteGlyph)remove.insertAdjacentHTML('afterbegin',deleteGlyph);
   remove.addEventListener('click',()=>{svCloseTaskContext();svDeleteTaskWithUndo(id)});
   menu.append(remove);
  }
@@ -1956,6 +1958,7 @@ function svOpenTaskContext(row){
  const preferredTop=rect.bottom+height+16<innerHeight-74?rect.bottom+6:rect.top-height-6;
  const top=Math.max(12,Math.min(preferredTop,innerHeight-height-12));
  menu.style.left=left+'px';menu.style.top=top+'px';
+ menu.dataset.svOpensUp=String(top<rect.top);
  edit.focus({preventScroll:true});
 }
 function svNotifyTaskStoreChanged(){
