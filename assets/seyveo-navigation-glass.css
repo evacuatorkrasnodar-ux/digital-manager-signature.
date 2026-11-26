@@ -6,7 +6,7 @@
  --sv-nav-glass-backing:rgba(255,255,255,.65);
  --sv-nav-glass-selected:var(--sv-white-pearl-selected);
  --sv-nav-glass-filter:var(--sv-white-pearl-floating-blur);
- --sv-nav-glass-shadow:0 3px 9px rgba(38,48,60,.045),inset 0 1px 0 rgba(255,255,255,.85);
+ --sv-nav-glass-shadow:var(--sv-white-pearl-dock-shadow);
  --sv-nav-glass-feather:linear-gradient(to bottom,rgba(255,255,255,.58) 0%,rgba(255,255,255,.30) 45%,rgba(255,255,255,0) 100%);
  --sv-nav-glass-feather-height:24px;
 }
@@ -577,7 +577,7 @@ html:root body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu.svcp-att
 html:root body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]) > button[data-sv-attach-mode] > svg{display:block!important;flex:0 0 20px!important;width:20px!important;height:20px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.6!important}
 html:root body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]) > button[data-sv-attach-mode] > span{display:block!important;flex:1 1 auto!important;width:auto!important;height:auto!important;text-align:left!important;font:inherit!important}
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]){
- background:rgba(11,84,174,.68)!important;background-image:none!important;
+ background:var(--sv-glass-sky-upper,rgba(11,84,174,.68))!important;background-image:none!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
 }
 @media(prefers-reduced-transparency:reduce){html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]){background:#167ebd!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
@@ -804,7 +804,7 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
    Important cascade layer prevents legacy per-screen tint/blur overrides. */
 @layer seyveo-avatar-header-material{
  :root[data-theme="light"]{
-  --sv-header-glass-face:var(--sv-white-pearl-floating-dock);
+  --sv-header-glass-face:var(--sv-white-pearl-header-face,var(--sv-white-pearl-floating-dock));
   --sv-header-glass-filter:var(--sv-white-pearl-floating-blur);
   --sv-header-glass-mask:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%);
  }
