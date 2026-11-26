@@ -649,7 +649,8 @@ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.pictur
  --sv-avatar-segment-face-height:30px;
  --sv-avatar-segment-inset:3px;
 }
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]),
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]),
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]:not([hidden]) > .sv-tool-filters,
 html:root[data-theme="light"] body #tasksPage#tasksPage #unifiedTasksTabs:not([hidden]),
 html:root[data-theme="light"] body #calendarPage#calendarPage :is(.cal-scope,#managerCalendarTabs):not([hidden]),
 html:root[data-theme="light"] body #picturePage#picturePage #pictureBusiness > .sv-pulse-periods,
@@ -714,23 +715,29 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
    The number of segments is the only difference. */
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]:not([hidden]){
  grid-template-columns:minmax(0,1fr)!important;
- grid-template-rows:var(--sv-avatar-segment-face-height)!important;
- grid-auto-rows:var(--sv-avatar-segment-face-height)!important;
+ grid-template-rows:var(--sv-avatar-segment-height)!important;
+ grid-auto-rows:var(--sv-avatar-segment-height)!important;
  height:var(--sv-avatar-segment-height)!important;
  min-height:var(--sv-avatar-segment-height)!important;
  max-height:var(--sv-avatar-segment-height)!important;
- padding:var(--sv-avatar-segment-inset)!important;gap:0!important;
- border:1px solid var(--sv-segment-edge)!important;
- border-radius:999px!important;filter:none!important;
- isolation:auto!important;
+ padding:0!important;gap:0!important;
+ /* Layout slot only. The actual child is the sole glass capsule. */
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;border-radius:0!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;isolation:auto!important;overflow:visible!important;
 }
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters{
- display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
- grid-column:1/-1!important;grid-row:1!important;align-items:center!important;
- width:100%!important;min-width:0!important;height:var(--sv-avatar-segment-face-height)!important;
- gap:var(--sv-avatar-segment-inset)!important;padding:0!important;margin:0!important;
- background:transparent!important;border:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ grid-column:1/-1!important;grid-row:1!important;align-items:center!important;align-content:center!important;
+ width:100%!important;min-width:0!important;height:var(--sv-avatar-segment-height)!important;
+ min-height:var(--sv-avatar-segment-height)!important;max-height:var(--sv-avatar-segment-height)!important;
+ gap:var(--sv-avatar-segment-inset)!important;padding:var(--sv-avatar-segment-inset)!important;margin:0!important;
+ position:relative!important;top:auto!important;overflow:visible!important;
+ border:var(--sv-white-pearl-edge)!important;border-color:var(--sv-segment-edge)!important;
+ border-radius:999px!important;isolation:auto!important;filter:none!important;
+ /* No local paint override: shared Avatar track rule owns background,
+    blur, edge tint and shadow for this physical control. */
 }
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters > button{
  box-sizing:border-box!important;position:relative!important;inset:auto!important;
@@ -741,12 +748,16 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  transform:none!important;translate:none!important;filter:none!important;
 }
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters::before,
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters::after{
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters::after,
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]::before,
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]::after,
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters > button::before{
  content:none!important;display:none!important;
 }
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"]{--sv-segment-track:#E5E5EA;--sv-segment-selected:#fff}
- html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]),
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]),
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]:not([hidden]) > .sv-tool-filters,
 html:root[data-theme="light"] body #tasksPage#tasksPage #unifiedTasksTabs:not([hidden]),
 html:root[data-theme="light"] body #calendarPage#calendarPage :is(.cal-scope,#managerCalendarTabs):not([hidden]),
 html:root[data-theme="light"] body #picturePage#picturePage #pictureBusiness > .sv-pulse-periods,
