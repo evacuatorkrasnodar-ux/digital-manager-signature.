@@ -275,6 +275,9 @@ html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-
  background:var(--sv-white-pearl-surface)!important;
  border:var(--sv-white-pearl-edge)!important;
  box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ /* V112: the pinned Avatar glass already blurs the background.
+    Avoid a second backdrop sampling pass inside the circular control. */
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-head > .sv-inbox-sheet-back svg,
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] > #svcpWorkChatBack svg{
