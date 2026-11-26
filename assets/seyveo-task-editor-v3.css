@@ -2065,3 +2065,32 @@ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #s
 html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-hours-status.is-closed{color:#A35E20!important}
 html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-hours-status{color:#83CCA0!important}
 html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-hours-status.is-closed{color:#F4B675!important}
+
+/* V65 · a wide map when a verified photograph is unavailable. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-card-map-only{
+ flex-direction:column!important;align-items:stretch!important;gap:8px!important;padding:13px!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-card-map-only .sv-place-copy{
+ flex:none!important;width:100%!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-card-map-only .sv-place-visual{
+ display:block!important;flex:none!important;width:100%!important;height:132px!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-card-map-only .sv-place-map{
+ width:100%!important;height:132px!important;flex:none!important;border-radius:16px!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-card-route{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ min-height:44px!important;width:100%!important;margin:-3px 0 -5px!important;padding:0 8px!important;
+ font:550 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#007AFF!important;background:transparent!important;border:0!important;box-shadow:none!important;text-decoration:none!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-hours-unknown{
+ margin:2px 10px 0!important;padding:0!important;
+ color:#687582!important;font:450 13px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svTaskMeetingAdvice:not([hidden]){
+ margin-top:4px!important;padding-top:5px!important;
+}
+html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-card-route{color:#64B5FF!important}
+html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskPlacePanel .sv-place-hours-unknown{color:#A6ADB8!important}
