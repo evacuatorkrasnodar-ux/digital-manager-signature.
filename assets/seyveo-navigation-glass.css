@@ -95,7 +95,6 @@ html:root[data-theme="light"] body :is(dialog[open],#picturePage:not([hidden])).
    No inset press shadows or legacy painted pills in the shared work tabs.
    Preserve every existing size, label, focus ring and scroll container. */
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]),
-html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] #svWorkTabs[data-task-filters="true"]:not([hidden]),
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters,
 html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs{
  background:var(--sv-nav-glass-face)!important;background-image:none!important;
@@ -104,20 +103,17 @@ html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbo
  -webkit-backdrop-filter:var(--sv-nav-glass-filter)!important;backdrop-filter:var(--sv-nav-glass-filter)!important;
 }
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]) > button:not([hidden]):not([aria-pressed="true"]),
-html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] #svWorkTabs[data-task-filters="true"]:not([hidden]) > .sv-tool-filters > button:not([aria-pressed="true"]),
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters > button:not([aria-pressed="true"]),
 html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs .sv-inbox-muted-tab:not([aria-pressed="true"]){
  background:transparent!important;background-image:none!important;box-shadow:none!important;
 }
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]) > button:not([hidden])[aria-pressed="true"],
-html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] #svWorkTabs[data-task-filters="true"]:not([hidden]) > .sv-tool-filters > button[aria-pressed="true"],
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters > button[aria-pressed="true"],
 html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs .sv-inbox-muted-tab[aria-pressed="true"]{
  background:var(--sv-nav-glass-selected)!important;background-image:none!important;
  border-radius:999px!important;box-shadow:var(--sv-white-pearl-selected-shadow)!important;
 }
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]) > button:not([hidden])::before,
-html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] #svWorkTabs[data-task-filters="true"]:not([hidden]) > .sv-tool-filters > button::before,
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters > button::before,
 html:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs .sv-inbox-muted-tab::before{
  content:none!important;display:none!important;
@@ -649,8 +645,8 @@ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.pictur
  --sv-avatar-segment-face-height:30px;
  --sv-avatar-segment-inset:3px;
 }
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]),
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]:not([hidden]) > .sv-tool-filters,
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]),
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svAllTasksTabs:not([hidden]),
 html:root[data-theme="light"] body #tasksPage#tasksPage #unifiedTasksTabs:not([hidden]),
 html:root[data-theme="light"] body #calendarPage#calendarPage :is(.cal-scope,#managerCalendarTabs):not([hidden]),
 html:root[data-theme="light"] body #picturePage#picturePage #pictureBusiness > .sv-pulse-periods,
@@ -686,7 +682,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen#svcpWorkChatScreen #svcpI
 html:root[data-theme="light"] body dialog#svcpManagerPeople#svcpManagerPeople.sv-staff-page[open] #svcpStaffTabs.svstaff-tabs > button:not([hidden]):not([aria-pressed="true"]):not([aria-selected="true"]),
 html:root[data-theme="light"] body #seyveoFamilyDialog#seyveoFamilyDialog:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) .svf-tabs > button:not([hidden]):not([aria-pressed="true"]):not([aria-selected="true"]),
 html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkShell #seyveoPayDialog) .syp-view-switch > button:not([hidden]):not([aria-pressed="true"]):not([aria-selected="true"]),
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters > button:not([hidden]):not([aria-pressed="true"]):not([aria-selected="true"]){
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svAllTasksTabs > button:not([hidden]):not([aria-pressed="true"]):not([aria-selected="true"]){
  background:transparent!important;background-image:none!important;
  color:#454B55!important;border-color:transparent!important;box-shadow:none!important;
 }
@@ -705,59 +701,15 @@ html:root[data-theme="light"] body #svcpWorkChatScreen#svcpWorkChatScreen #svcpI
 html:root[data-theme="light"] body dialog#svcpManagerPeople#svcpManagerPeople.sv-staff-page[open] #svcpStaffTabs.svstaff-tabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]),
 html:root[data-theme="light"] body #seyveoFamilyDialog#seyveoFamilyDialog:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) .svf-tabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]),
 html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkShell #seyveoPayDialog) .syp-view-switch > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]),
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]){
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svAllTasksTabs > button:not([hidden]):is([aria-pressed="true"],[aria-selected="true"]){
  background:var(--sv-segment-selected)!important;background-image:none!important;
  color:#14171C!important;border-color:transparent!important;
  box-shadow:var(--sv-segment-selected-shadow)!important;
 }
-/* The nested All Tasks status filter is the same physical capsule as
-   Avatar / Photo: one shell, one active face and identical rim clearance.
-   The number of segments is the only difference. */
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]:not([hidden]){
- grid-template-columns:minmax(0,1fr)!important;
- grid-template-rows:var(--sv-avatar-segment-height)!important;
- grid-auto-rows:var(--sv-avatar-segment-height)!important;
- height:var(--sv-avatar-segment-height)!important;
- min-height:var(--sv-avatar-segment-height)!important;
- max-height:var(--sv-avatar-segment-height)!important;
- padding:0!important;gap:0!important;
- /* Layout slot only. The actual child is the sole glass capsule. */
- background:transparent!important;background-image:none!important;
- border:0!important;box-shadow:none!important;border-radius:0!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- filter:none!important;isolation:auto!important;overflow:visible!important;
-}
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters{
- box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
- grid-column:1/-1!important;grid-row:1!important;align-items:center!important;align-content:center!important;
- width:100%!important;min-width:0!important;height:var(--sv-avatar-segment-height)!important;
- min-height:var(--sv-avatar-segment-height)!important;max-height:var(--sv-avatar-segment-height)!important;
- gap:var(--sv-avatar-segment-inset)!important;padding:var(--sv-avatar-segment-inset)!important;margin:0!important;
- position:relative!important;top:auto!important;overflow:visible!important;
- border:var(--sv-white-pearl-edge)!important;border-color:var(--sv-segment-edge)!important;
- border-radius:999px!important;isolation:auto!important;filter:none!important;
- /* No local paint override: shared Avatar track rule owns background,
-    blur, edge tint and shadow for this physical control. */
-}
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters > button{
- box-sizing:border-box!important;position:relative!important;inset:auto!important;
- width:100%!important;min-width:0!important;
- height:var(--sv-avatar-segment-face-height)!important;min-height:var(--sv-avatar-segment-face-height)!important;max-height:var(--sv-avatar-segment-face-height)!important;
- margin:0!important;padding:0 6px!important;border:0!important;border-radius:999px!important;
- font:590 13px/1.2 -apple-system,system-ui,sans-serif!important;
- transform:none!important;translate:none!important;filter:none!important;
-}
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters::before,
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters::after,
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]::before,
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]::after,
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"] > .sv-tool-filters > button::before{
- content:none!important;display:none!important;
-}
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"]{--sv-segment-track:#E5E5EA;--sv-segment-selected:#fff}
- html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]),
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]:not([hidden]) > .sv-tool-filters,
+ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]),
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-task-tool-mode="all"] > #svAllTasksTabs:not([hidden]),
 html:root[data-theme="light"] body #tasksPage#tasksPage #unifiedTasksTabs:not([hidden]),
 html:root[data-theme="light"] body #calendarPage#calendarPage :is(.cal-scope,#managerCalendarTabs):not([hidden]),
 html:root[data-theme="light"] body #picturePage#picturePage #pictureBusiness > .sv-pulse-periods,
@@ -909,10 +861,7 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode=
  --sv-header-circle-border:var(--sv-white-pearl-edge);
  --sv-header-circle-shadow:var(--sv-white-pearl-circle-shadow);
 }
-html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-task-tool-mode="all"] > #svWorkTabs[data-task-filters="true"]:not([hidden]){
- width:calc(100% - 28px)!important;max-width:none!important;
- margin-inline:auto!important;
-}
+
 /* All Tasks has a direct shell child now. Keep the list and the single
    reference glass as separate paint siblings, with no nested masks. */
 @media not (prefers-reduced-transparency:reduce){
