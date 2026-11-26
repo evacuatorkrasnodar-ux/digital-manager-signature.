@@ -6417,7 +6417,7 @@ html:root[data-theme="light"].sv-music-screen.sv-music-browse body > .app,
 html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage{
  background:transparent!important;background-image:none!important;
 }
-html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only{
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only{
  background:transparent!important;background-image:none!important;border:0!important;outline:0!important;box-shadow:none!important;
  --sv-white-pearl-edge:0px solid transparent;
  --sv-white-pearl-rim-color:transparent;
@@ -6425,17 +6425,17 @@ html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.
  --sv-dock-pearl-border:0px solid transparent;
  --sv-dock-pearl-shadow:none;
 }
-html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only::before,
-html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only::after{
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::before,
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::after{
  background:rgba(235,237,240,.62)!important;background-image:none!important;
  border:0!important;outline:0!important;box-shadow:none!important;
 }
-html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage,
-html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only{
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage,
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only{
  border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;
 }
-html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"])::before,
-html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"])::after{
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"])::before,
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"])::after{
  content:none!important;display:none!important;
 }
 html:root[data-theme="light"].sv-music-screen body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline{
@@ -6449,6 +6449,31 @@ html:root[data-theme="light"].sv-music-screen body #svMusicHome .sv-music-recent
 html:root[data-theme="light"].sv-music-screen body #sayviMusicPage button:focus-visible,
 html:root[data-theme="light"].sv-music-screen body > footer.dock.sv-shared-dock button:focus-visible{
  outline:2px solid #326ba8!important;outline-offset:-2px!important;
+}
+
+/* One scroll surface: the app no longer clips Music at the old reserved dock line.
+   Keep the bottom clearance INSIDE the scrollable page, not outside it. */
+html:root.sv-music-screen.sv-music-browse body .app{
+ padding-bottom:0!important;
+}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage{
+ flex:1 1 0!important;min-height:0!important;max-height:100%!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))!important;
+ -webkit-mask-image:none!important;mask-image:none!important;
+}
+html:root.sv-music-screen.sv-music-browse body #svMusicHome{
+ flex-shrink:0!important;overflow:visible!important;
+}
+html:root.sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot{
+ flex-shrink:0!important;min-height:56px!important;margin-bottom:12px!important;
+}
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::before,
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::after{
+ filter:none!important;border:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only{
+ box-shadow:none!important;filter:none!important;outline:0!important;
 }
 </style>
 </body></html>
