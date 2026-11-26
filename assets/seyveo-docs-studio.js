@@ -343,9 +343,9 @@ function mount(target,{
     form.append(field,cancel,save);row.after(form);field.focus();field.select();
     field.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save.click();}if(e.key==='Escape')form.remove();});
    },'sv-doc-draft-menu-action');
-   rename.replaceChildren(toolArt('create'),$('span','','Переименовать'));
+   rename.replaceChildren(toolArt('rename'),$('span','','Переименовать'));
    const select=button('Выбрать',()=>{selectedDrafts=new Set([item.id]);void refreshDrafts();},'sv-doc-draft-menu-action');
-   select.replaceChildren(toolArt('check'),$('span','','Выбрать'));
+   select.replaceChildren(toolArt('select'),$('span','','Выбрать'));
    actions.append(rename,select,erase);
    function toggleActions(open){
     if(open)for(const other of details.querySelectorAll('.sv-doc-draft-row.sv-doc-draft-revealed')){
