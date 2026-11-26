@@ -195,6 +195,23 @@
   categorySource=[next,...extraFields().map(field=>field.value)].join('\u001f');
   title.dispatchEvent(new Event('input',{bubbles:true}));
  }
+ // Replace only the recognized date, not a venue address or another task.
+ function syncDatePhrase(value){
+  if(isEditing()||extraFields().some(field=>field.value.trim()))return;
+  const raw=title.value;
+  const plan=window.SEYVEO_TASK_SMART_PLAN?.(raw);
+  const parsed=readPhrase?.(raw);
+  if(!raw.trim()||plan?.items?.length!==1||!parsed?.date||parsed.date===value)return;
+  const ranges=window.SEYVEO_TASK_SMART_RANGES?.(raw,new Date(),window.SEYVEO_TASK_PLACES?.extract?.(raw))?.filter(item=>item.kind==='date')||[];
+  if(ranges.length!==1)return;
+  const {start,end}=ranges[0];
+  const replacement=value?value.split('-').reverse().join('.'):'';
+  const next=(raw.slice(0,start)+replacement+raw.slice(end)).replace(/\s{2,}/g,' ').trim();
+  if(next===raw)return;
+  title.value=next;
+  categorySource=[next,...extraFields().map(field=>field.value)].join('\u001f');
+  title.dispatchEvent(new Event('input',{bubbles:true}));
+ }
  function renderTimeConflict(parent){
    if(isEditing()||!date.value||!timeInput?.value)return;
    const all=savedDayEntries(date.value);
@@ -502,6 +519,9 @@
   });
   const done=document.createElement('button');done.type='button';done.className='sv-task-smart-quick-done';done.textContent='Готово';
   done.addEventListener('click',()=>{
+   if(wheelDraft&&quickWheelMode==='date'&&!wheelDraft.date)wheelDraft.date=today();
+   if(wheelDraft&&quickWheelMode==='time'&&!wheelDraft.time)wheelDraft.time='09:00';
+   if(wheelDraft?.time&&!wheelDraft.date)wheelDraft.date=today();
    acceptQuickWheel();
   });
   actions.append(clear,done);editor.append(actions);
@@ -610,7 +630,7 @@
   if(repeat&&!manualRepeat&&(!isEditing()||signals.repeat!=='none'))repeat.value=signals.repeat;
   updateSmartPreview();
  }
- title.addEventListener('input',event=>{if(event.isTrusted&&manualTime){const typed=readPhrase?.(title.value)?.time;if(typed&&typed!==timeInput?.value)manualTime=false;}sizePhrase();applyPhrase()});
+ title.addEventListener('input',event=>{if(event.isTrusted){const parsed=readPhrase?.(title.value);if(manualDate&&parsed?.date&&parsed.date!==date.value)manualDate=false;if(manualTime&&parsed?.time&&parsed.time!==timeInput?.value)manualTime=false;}sizePhrase();applyPhrase()});
  dialog.addEventListener('sv-task-ai-updated',()=>{applyPhrase();sizePhrase()});
  calendarButton?.addEventListener('click',()=>{
   title.blur();if(quickDateOpen)closeQuickWheel();setCalendarOpen(Boolean(calendarPopover?.hidden));
@@ -622,7 +642,7 @@
   if(quickDateOpen){event.preventDefault();closeQuickWheel();return}
   if(!calendarPopover?.hidden){event.preventDefault();setCalendarOpen(false)}
  });
- date.addEventListener('change',event=>{if(event.isTrusted)manualDate=true;updateSmartPreview();});
+ date.addEventListener('change',event=>{if(event.isTrusted)manualDate=true;if(manualDate)syncDatePhrase(date.value);updateSmartPreview();});
  timeInput?.addEventListener('change',event=>{if(event.isTrusted)manualTime=true;if(manualTime)syncTimePhrase(timeInput.value);updateSmartPreview();});
  document.getElementById('personalTaskPriority')?.addEventListener('change',event=>{if(event.isTrusted)manualPriority=true;updateSmartPreview();});
  document.getElementById('personalTaskRepeat')?.addEventListener('change',event=>{if(event.isTrusted)manualRepeat=true;updateSmartPreview();});
