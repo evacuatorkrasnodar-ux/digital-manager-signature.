@@ -60,6 +60,13 @@
  --sv-header-circle-filter:var(--sv-white-pearl-blur);
  --sv-header-segment:#EDEDED;
 }
+/* V126: compact native top axis for the white theme.
+   Keep safe-area ownership with each existing route. All dependent Work
+   rows, Documents, Mail, Pulse and collections derive from this same gap.
+   Glass heights are still measured by the existing ResizeObserver. */
+:root[data-theme="light"]{
+ --sv-apple-top-gap:6px;
+}
 :root[data-theme="dark"]{
  /* Preserve the approved dark-theme navigation until its own design pass. */
  --sv-nav-pearl-border:1.5px solid rgba(255,255,255,.96);
