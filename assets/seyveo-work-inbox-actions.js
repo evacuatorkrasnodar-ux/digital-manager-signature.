@@ -748,15 +748,6 @@ function showSettings(){
  avatarEntry.prepend(avatarThumb);
  sectionHeading('Темы чатов');
  body.append(makeChatWallpapers());
- const holiday=window.SEYVEO_SAYVI_HOLIDAY;
- if(holiday?.ready){
-  sectionHeading('Настроение Сэйви');
-  const select=node('select','sv-sayvi-holiday-select');select.setAttribute('aria-label','Настроение Сэйви');
-  for(const [value,label] of [['auto','Автоматически по праздникам'],['off','Обычный значок'],...holiday.variants]){
-   const option=node('option',null,label);option.value=value;select.append(option);
-  }
-  select.value=holiday.mode;select.addEventListener('change',()=>holiday.setMode(select.value));body.append(select);
- }
  sectionHeading('Сообщения');
  menuLink('Уведомления','Непрочитанные и тихие чаты','bell',()=>openSubSheet('notifications','settings'));
  // Quiet discovery for the owner only; never mix personal content with work data.
