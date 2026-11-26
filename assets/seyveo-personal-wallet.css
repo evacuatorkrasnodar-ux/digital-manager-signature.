@@ -119,3 +119,12 @@ html[data-theme="dark"] #seyveoPayDialog{
  #seyveoPayDialog .sw-totals strong{font-size:16px}
  #seyveoPayDialog .sw-title-row{flex-wrap:wrap}
 }
+
+/* V213: Monefy-inspired category overview using local finance records. */
+#seyveoPayDialog .sw-chart{display:grid;place-items:center;margin:16px 0 22px}
+#seyveoPayDialog .sw-chart[hidden]{display:none!important}
+#seyveoPayDialog .sw-ring{width:min(190px,56vw);aspect-ratio:1;border-radius:50%;display:grid;place-items:center}
+#seyveoPayDialog .sw-ring>div{width:76%;aspect-ratio:1;border-radius:50%;background:var(--sw-bg,var(--bg));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;box-sizing:border-box;padding:8px}
+#seyveoPayDialog .sw-ring small{color:var(--sw-muted);font-size:12px}
+#seyveoPayDialog .sw-ring strong{font-size:17px;letter-spacing:-.025em;max-width:100%;overflow-wrap:anywhere}
+#seyveoPayDialog .sw-cat-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:2px}

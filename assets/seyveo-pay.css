@@ -751,3 +751,38 @@ html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-
  #seyveoPayDialog #sypLoyaltyStack .syp-loyalty-pass:active{transform:none;filter:none}
  html:root body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-screen[data-syp-screen="loyalty-detail"]:not([hidden]){animation:none!important}
 }
+
+/* V213 — travel converter: country cues, scale and budget. */
+#seyveoPayDialog .syp-fx-zone{display:flex;align-items:center;gap:8px;padding:8px 12px;margin:0 0 12px;background:var(--card2);border-radius:13px;color:var(--secondary);font-size:12px;line-height:1.4}
+#seyveoPayDialog .syp-fx-zone[hidden],#seyveoPayDialog .syp-fx-expense[hidden]{display:none!important}
+#seyveoPayDialog .syp-fx-zone button{flex:none;min-height:44px;border:0;background:transparent;color:var(--text);font:600 13px system-ui}
+#seyveoPayDialog .syp-fx-pair label{position:relative;gap:6px}
+#seyveoPayDialog .syp-fx-flag{font-size:29px;line-height:1.3;display:block}
+#seyveoPayDialog .syp-fx-pair select{font-size:16px}
+#seyveoPayDialog .syp-fx-scale{display:flex;gap:4px;margin:10px 0 0;padding:3px;border-radius:999px;border:var(--sv-white-pearl-edge,1px solid var(--line));background:var(--sv-white-pearl-surface,var(--card2))}
+#seyveoPayDialog .syp-fx-scale button{flex:1;min-height:44px;border:0;background:transparent;color:var(--secondary);border-radius:999px;font:550 14px system-ui}
+#seyveoPayDialog .syp-fx-scale button[aria-pressed="true"]{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+#seyveoPayDialog .syp-fx-trip{margin-top:24px;padding:15px;border:1px solid var(--line);border-radius:20px;background:var(--card)}
+#seyveoPayDialog .syp-fx-triphead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:15px}
+#seyveoPayDialog .syp-fx-triphead h4{font-size:18px;letter-spacing:-.025em;margin:0}
+#seyveoPayDialog .syp-fx-triphead span,#seyveoPayDialog .syp-fx-trip label,#seyveoPayDialog .syp-fx-tripstats small{font-size:12px;color:var(--secondary)}
+#seyveoPayDialog .syp-fx-tripinput{display:flex;gap:8px;align-items:center;margin-top:6px}
+#seyveoPayDialog .syp-fx-trip input{min-width:0;width:100%;box-sizing:border-box;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card2);color:var(--text);font:16px system-ui}
+#seyveoPayDialog .syp-fx-tripinput button{flex:none;width:44px;height:44px;border-radius:50%;border:var(--sv-header-circle-border,1px solid var(--line));background:var(--sv-header-circle,var(--card2));color:var(--text)}
+#seyveoPayDialog .syp-fx-trip svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#seyveoPayDialog .syp-fx-tripstats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0 12px}
+#seyveoPayDialog .syp-fx-tripstats div{display:grid;gap:4px;min-width:0}
+#seyveoPayDialog .syp-fx-tripstats strong{font-size:19px;font-weight:630;overflow-wrap:anywhere}
+#seyveoPayDialog .syp-fx-progress{height:6px;background:var(--card2);border-radius:8px;overflow:hidden}
+#seyveoPayDialog .syp-fx-progress i{display:block;height:100%;background:#459773;border-radius:8px}
+#seyveoPayDialog .syp-fx-progress i.is-over{background:#d45a48}
+#seyveoPayDialog .syp-fx-add{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:44px;margin:15px 0 0;border:0;border-radius:999px;background:var(--card2);color:var(--text);font:600 14px system-ui}
+#seyveoPayDialog .syp-fx-add:disabled{opacity:.45}
+#seyveoPayDialog .syp-fx-expense{display:grid;gap:9px;margin-top:14px}
+#seyveoPayDialog .syp-fx-expense label{display:grid;gap:5px}
+#seyveoPayDialog .syp-fx-expense p,#seyveoPayDialog #sypFxTripStatus{font-size:12px;color:var(--secondary);margin:8px 0}
+#seyveoPayDialog .syp-fx-expense button,#seyveoPayDialog .syp-fx-reset{min-height:44px;border:0;border-radius:12px;background:var(--card2);color:var(--text);font:550 13px system-ui}
+#seyveoPayDialog .syp-fx-reset{margin-top:8px;background:transparent;padding:0 2px}
+#seyveoPayDialog .syp-fx-triprow{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+#seyveoPayDialog .syp-fx-triprow span{min-width:0;overflow-wrap:anywhere}
+#seyveoPayDialog .syp-fx-triprow strong{flex:none;font-weight:600}

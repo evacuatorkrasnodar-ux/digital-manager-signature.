@@ -22,7 +22,7 @@ screen.innerHTML=`<div class="sw-summary">
  <div class="sw-manual" id="swManual" hidden><label>Сумма, ₽<input id="swAmount" type="text" inputmode="decimal" placeholder="250"></label><label>Название<input id="swTitle" maxlength="100" placeholder="Кофе"></label><label>Категория<select id="swCategory"></select></label><label>Дата<input id="swDate" type="date"></label><button type="button" class="sw-primary" data-sw="save">Сохранить</button><button type="button" class="sw-secondary" data-sw="cancel-edit" hidden>Отмена</button></div>
  <div id="swReview" class="sw-review" hidden></div><p id="swMessage" class="sw-message" role="status" aria-live="polite"></p>
  </div>
- <div class="sw-block"><div class="sw-title-row"><h3>Куда уходят деньги</h3><span id="swCategoryPeriod"></span></div><div id="swCategories"></div></div>
+ <div class="sw-block"><div class="sw-title-row"><h3>Куда уходят деньги</h3><span id="swCategoryPeriod"></span></div><div id="swChart" class="sw-chart" hidden><div class="sw-ring" id="swRing"><div><small>Расходы</small><strong id="swRingTotal"></strong></div></div></div><div id="swCategories"></div></div>
  <div class="sw-block"><div class="sw-title-row"><h3>История</h3><span id="swCount"></span></div><div id="swHistory"></div></div>
  <p class="sw-privacy">Личные записи хранятся только в этом браузере. Это не банковский баланс. Если очистить данные сайта, записи могут исчезнуть.</p>`;
 dialog.querySelector('.syp-shell').appendChild(screen);
@@ -37,7 +37,7 @@ const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let entries=[];try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(v))entries=v.filter(x=>x&&['income','expense'].includes(x.kind)&&Number.isFinite(x.amount)&&x.amount>0&&/^\d{4}-\d{2}-\d{2}$/.test(x.date)).slice(0,10000);}catch{}
 let selected=new Date();selected.setDate(1);let kind='expense',editing=null,pending=[],scannedReceiptHash='',receiptObjectURL='';
-const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(entries));return true;}catch{message('Не удалось сохранить. Проверь свободное место и настройки браузера.');return false;}};
+const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(entries));dialog.dispatchEvent(new CustomEvent('seyveo:finance-changed'));return true;}catch{message('Не удалось сохранить. Проверь свободное место и настройки браузера.');return false;}};
 const message=t=>{$('swMessage').textContent=t;};
 const amountValue=s=>{let t=String(s).trim().replace(/\s/g,'').replace(',','.');const n=Number(t);return /^\d+(?:\.\d{1,2})?$/.test(t)&&n>0&&n<1e10?Math.round(n*100)/100:NaN;};
 const category=t=>{t=t.toLowerCase();if(/кофе|капучино|латте|американо|эспрессо/.test(t))return 'Кофе';if(/продукт|магазин|молок|хлеб|пятёроч|магнит/.test(t))return 'Продукты';if(/кафе|ресторан|обед|ужин|пицц/.test(t))return 'Кафе';if(/бензин|заправ|топлив/.test(t))return 'Бензин';if(/такси|автобус|метро|проезд/.test(t))return 'Транспорт';if(/аптек|врач|лекарств/.test(t))return 'Здоровье';if(/квартир|аренд|коммунал/.test(t))return 'Дом';if(/одежд|обув|покупк/.test(t))return 'Покупки';return 'Другое';};
@@ -114,9 +114,13 @@ function render(){
  $('swCategoryPeriod').textContent=monthText(selected);
  const sums={};month.filter(x=>x.kind==='expense').forEach(x=>sums[x.category]=(sums[x.category]||0)+x.amount);
  const cats=Object.entries(sums).sort((a,b)=>b[1]-a[1]);
- $('swCategories').innerHTML=cats.length?cats.map(([name,n])=>`<div class="sw-category"><span class="sw-category-label">${icons[name]||'•'} ${escape(name)}</span><strong>${rub(n)}</strong><div class="sw-bar"><i style="width:${expense?100*n/expense:0}%"></i></div></div>`).join(''):'<p class="sw-empty">Пока нет расходов за этот месяц.</p>';
+ const palette=['#459773','#5c87cb','#e7a64f','#9b83c6','#d87982','#67a6aa','#778497','#b3a46b','#8ea985'];let pos=0;
+ $('swChart').hidden=!cats.length;
+ if(cats.length){const stops=cats.map(([name,n],i)=>{const a=pos;pos+=100*n/expense;return palette[i%palette.length]+' '+a+'% '+pos+'%';});$('swRing').style.background='conic-gradient('+stops.join(',')+')';$('swRingTotal').textContent=rub(expense);}
+
+ $('swCategories').innerHTML=cats.length?cats.map(([name,n],i)=>`<div class="sw-category"><span class="sw-category-label"><i class="sw-cat-dot" style="background:${palette[i%palette.length]}"></i>${icons[name]||'•'} ${escape(name)}</span><strong>${rub(n)}</strong><div class="sw-bar"><i style="width:${expense?100*n/expense:0}%"></i></div></div>`).join(''):'<p class="sw-empty">Пока нет расходов за этот месяц.</p>';
  $('swCount').textContent=month.length+' записей';
- $('swHistory').innerHTML=month.length?month.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>`<div class="sw-row"><div class="sw-row-main"><span class="sw-row-icon">${x.kind==='income'?'↗':icons[x.category]||'•'}</span><div><strong>${escape(x.title)}</strong><small>${dateText(x.date)} · ${escape(x.category)}</small></div></div><strong class="${x.kind==='income'?'sw-income':''}">${x.kind==='income'?'+':'−'}${rub(x.amount)}</strong><div class="sw-row-tools"><button type="button" data-sw="edit" data-id="${escape(x.id)}" aria-label="Изменить запись">✎</button><button type="button" data-sw="delete" data-id="${escape(x.id)}" aria-label="Удалить запись">×</button></div></div>`).join(''):'<p class="sw-empty">Записей пока нет. Расскажи Сэйви о первой покупке или доходе.</p>';
+ $('swHistory').innerHTML=month.length?month.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>`<div class="sw-row"><div class="sw-row-main"><span class="sw-row-icon">${x.kind==='income'?'↗':icons[x.category]||'•'}</span><div><strong>${escape(x.title)}</strong><small>${dateText(x.date)} · ${escape(x.category)}${x.foreign?' · '+escape(String(x.foreign.amount)+' '+x.foreign.currency):''}</small></div></div><strong class="${x.kind==='income'?'sw-income':''}">${x.kind==='income'?'+':'−'}${rub(x.amount)}</strong><div class="sw-row-tools"><button type="button" data-sw="edit" data-id="${escape(x.id)}" aria-label="Изменить запись">✎</button><button type="button" data-sw="delete" data-id="${escape(x.id)}" aria-label="Удалить запись">×</button></div></div>`).join(''):'<p class="sw-empty">Записей пока нет. Расскажи Сэйви о первой покупке или доходе.</p>';
 }
 function showManual(x){
  $('swManual').hidden=false;$('swReview').hidden=true;$('swAmount').value=x?.amount??'';$('swTitle').value=x?.title??'';$('swCategory').value=x?.category??(kind==='income'?'Доход':'Другое');$('swDate').value=x?.date||today();
@@ -147,7 +151,8 @@ screen.addEventListener('click',ev=>{
  if(action==='save'){
  const n=amountValue($('swAmount').value),title=$('swTitle').value.trim(),date=$('swDate').value;
  if(!Number.isFinite(n)||!title||!/^\d{4}-\d{2}-\d{2}$/.test(date)){message('Проверь сумму, название и дату.');return;}
- const entry={id:editing||crypto.randomUUID?.()||String(Date.now()),kind,title:title.slice(0,100),amount:n,date,category:kind==='income'?'Доход':$('swCategory').value,...(scannedReceiptHash?{sourceHash:scannedReceiptHash}:{})};
+ const prior=editing?entries.find(x=>x.id===editing):null;
+ const entry={id:editing||crypto.randomUUID?.()||String(Date.now()),kind,title:title.slice(0,100),amount:n,date,category:kind==='income'?'Доход':$('swCategory').value,...(scannedReceiptHash?{sourceHash:scannedReceiptHash}:{}),...(prior?.foreign&&kind==='expense'?{foreign:prior.foreign,tripId:prior.tripId}:{})};
  const before=entries.slice();entries=editing?entries.map(x=>x.id===editing?entry:x):[entry,...entries];
  if(!persist()){entries=before;return;}editing=null;$('swManual').hidden=true;discardReceipt();render();message('Сохранено.');
  }
@@ -165,6 +170,14 @@ window.SEYVEO_WALLET=Object.freeze({
   await window.SEYVEO_PAY?.open?.('finances');
   return scanReceipt(file);
  },
+ addTravelExpense({title,amount,currency,rate,date,tripId}){
+  if(typeof title!=='string'||!title.trim()||!Number.isFinite(amount)||amount<=0||!Number.isFinite(rate)||rate<=0||! /^[A-Z]{3}$/.test(currency)||typeof tripId!=='string')return false;
+  const rubAmount=Math.round(amount*rate*100)/100;if(!Number.isFinite(rubAmount)||rubAmount<=0||rubAmount>=1e10)return false;
+  const before=entries.slice();
+  entries=[{id:crypto.randomUUID?.()||String(Date.now())+Math.random(),kind:'expense',title:title.trim().slice(0,100),amount:rubAmount,category:category(title),date:today(),tripId,foreign:{amount,currency,rate,rateDate:String(date||'')}},...entries];
+  if(!persist()){entries=before;return false;}render();return true;
+ },
+ getTripExpenses:tripId=>entries.filter(e=>e.kind==='expense'&&e.tripId===tripId&&e.foreign&&Number.isFinite(e.foreign.amount)).map(e=>({...e,foreign:{...e.foreign}})),
  getSummary:()=>({entries:entries.length,balance:entries.reduce((a,x)=>a+(x.kind==='income'?x.amount:-x.amount),0)})
 });
 })();
