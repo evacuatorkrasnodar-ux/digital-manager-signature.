@@ -684,14 +684,3 @@ html:root[data-theme="light"] body #svReviewRoom:not([hidden])::before{
  color:var(--secondary,#BDC4CD)!important;
 }
 
-/* V199 · The quiet orange count remains under Pearl glass, but its one
-   foreground numeral must remain readable when the Tasks icon is inactive. */
-:root[data-theme="light"] #navTasks[data-sv-review-count]:not(.active):not(.sv-dock-nav-press)::after{
- opacity:1!important;color:#8A420D!important;background:rgba(255,180,108,.44)!important;
-}
-:root[data-theme="light"] .dock.sv-shared-dock .sv-dock-review-underlay-digit{
- background:#F4A66D;opacity:.85;
-}
-:root[data-theme="light"] #navTasks[data-sv-review-count]:is(.active,.sv-dock-nav-press)::after{
- opacity:1!important;color:#fff!important;background:#D6534A!important;
-}
