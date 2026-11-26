@@ -315,6 +315,7 @@ function openCustomize(){
   autoButton.title=autoActive?'Автовыбор включён':'Автовыбор: Сэйви подбирает частые кнопки';
   grid.dataset.section=activeTab;
   grid.replaceChildren(help);
+  grid.scrollTop=0;
   const options=cabinet?businessApps:[{id:'smart',name:'Умная кнопка'},...apps];
   for(const app of options){
    const b=document.createElement('button');b.type='button';
@@ -358,7 +359,7 @@ function openCustomize(){
  head.insertBefore(autoButton,title);
  const pinned=document.createElement('div');pinned.className='sv-home-favorites-pinned';
  redraw();pinned.append(head,tabbar);shell.append(pinned,grid);dialog.append(shell);document.body.append(dialog);
- const syncHeaderGlass=()=>pinned.style.setProperty('--sv-home-header-opacity',String(Math.min(1,Math.max(0,grid.scrollTop/8))));
+ const syncHeaderGlass=()=>shell.style.setProperty('--sv-home-header-opacity',String(Math.min(1,Math.max(0,grid.scrollTop/8))));
  grid.addEventListener('scroll',syncHeaderGlass,{passive:true});
  syncHeaderGlass();
  const measureHeader=()=>{const h=tabbar.hidden?0:tabbar.offsetHeight; shell.style.setProperty('--sv-home-chooser-capsule-height',h+'px');};
