@@ -461,11 +461,11 @@ html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open].
  border:0!important;box-shadow:none!important;pointer-events:none!important;
  bottom:-24px!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden])),
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden])),
 html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll{
  background:transparent!important;
 }
-html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after,html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll::after{
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after,html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll::after{
  content:""!important;display:block!important;position:absolute!important;
  inset:0 0 -24px!important;width:auto!important;height:auto!important;z-index:-1!important;
  background:var(--sv-white-pearl-floating-dock)!important;background-image:none!important;
@@ -484,8 +484,8 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
   background:#fff!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
   -webkit-mask-image:none!important;mask-image:none!important;
  }
- html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden])),html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll{background:#fff!important}
- html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after,html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll::after{content:none!important;display:none!important}
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden])),html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll{background:#fff!important}
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after,html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll::after{content:none!important;display:none!important}
 }
 
 /* Approved Avatar reference, 25 Nov. Full stationary header, not the pill.
@@ -776,7 +776,7 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
  html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-pinned-head::before,
  html:root[data-theme="light"] body :is(dialog[open],#picturePage:not([hidden])).sv-scroll-glass-ready > .sv-scroll-glass-head > .sv-scroll-glass-material,
  html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open].sv-scroll-glass-ready > .sv-staff-head > .sv-scroll-glass-material,
- html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"].sv-mail-scrolled .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after,
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden]))::after,
  html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] #sayviSurfaceBody .sv-doc-pinned-switch.sv-doc-under-scroll::after,
  html:root[data-theme="light"] body :is(#svWorkShell,#svcpWorkChatScreen,#sayviSurfacePage,#svcpManagerPeople).sv-full-glass-ready > .sv-full-header-material,
  html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2::before,
@@ -790,7 +790,16 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   border:0!important;border-radius:0!important;box-shadow:none!important;
   pointer-events:none!important;
  }
+ /* Mail: the title and account selector sit on a single optical face.
+    Do not paint a second white strip over the upper part of the glass. */
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden])),
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden])) > .sv-mail-top-actions:not([hidden]){
+  background:transparent!important;background-image:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  border:0!important;box-shadow:none!important;
+ }
  @media(prefers-reduced-transparency:reduce){
+  html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden])){background:#fff!important}
   :root[data-theme="light"]{
    --sv-header-glass-face:#fff;
    --sv-header-glass-filter:none;
