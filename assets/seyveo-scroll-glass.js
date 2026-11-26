@@ -139,7 +139,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    // Work lives inside an app with a real top/safe-area inset. Extend the
    // material AND the existing scrollport through that strip, without
    // moving controls or deleting the safe-area spacing.
-   const app=root.id==='svWorkShell'&&root.parentElement?.classList.contains('app')?root.parentElement:null;
+   const app=(root.id==='svWorkShell'||target.documentArchive)&&root.parentElement?.classList.contains('app')?root.parentElement:null;
    const topGap=app?Math.max(0,Math.min(Math.round(rect.top-app.getBoundingClientRect().top),Math.ceil(number(getComputedStyle(app).paddingTop)))):0;
    const overlap=Math.max(0,Math.round(scroll.top-rect.top))+topGap;
    root.style.setProperty('--sv-full-glass-top-gap',topGap+'px');
