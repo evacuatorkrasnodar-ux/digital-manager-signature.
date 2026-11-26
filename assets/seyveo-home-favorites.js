@@ -361,7 +361,15 @@ function openCustomize(){
  const syncHeaderGlass=()=>shell.style.setProperty('--sv-home-header-opacity',String(Math.min(1,Math.max(0,grid.scrollTop/8))));
  grid.addEventListener('scroll',syncHeaderGlass,{passive:true});
  syncHeaderGlass();
- const measureHeader=()=>{const h=tabbar.hidden?0:tabbar.offsetHeight; shell.style.setProperty('--sv-home-chooser-capsule-height',h+'px');};
+ const measureHeader=()=>{
+  const box=shell.getBoundingClientRect(), pin=pinned.getBoundingClientRect();
+  const cap=tabbar.getBoundingClientRect();
+  const top=tabbar.hidden?pin.bottom:cap.top;
+  const overlap=tabbar.hidden?0:Math.max(0,pin.bottom-top);
+  shell.style.setProperty('--sv-home-scroll-top',Math.max(0,top-box.top)+'px');
+  shell.style.setProperty('--sv-home-scroll-overlap',overlap+'px');
+  shell.style.setProperty('--sv-home-chooser-capsule-height',(tabbar.hidden?0:cap.height)+'px');
+ };
  const headerObserver=typeof ResizeObserver==='function'?new ResizeObserver(measureHeader):null;
  let closed=false;
  function close(saveChanges,animate=false){
