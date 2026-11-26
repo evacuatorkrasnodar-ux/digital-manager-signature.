@@ -20,7 +20,8 @@ const cardIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 const financesIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 20.25h18M4.75 20.25v-5.5a1 1 0 0 1 1-1H7a1 1 0 0 1 1 1v5.5m2.5 0v-7.5a1 1 0 0 1 1-1h1.25a1 1 0 0 1 1 1v7.5m2.5 0V9.75a1 1 0 0 1 1-1h1.25a1 1 0 0 1 1 1v10.5"/><path d="m3.5 10 5-4.5 4.75 2 6.5-4.25m-3.75 0h3.75V7"/></svg>';
 tabs.innerHTML='<button type="button" data-syp-tab="card" aria-pressed="true" aria-controls="sypCardHome"><span class="syp-view-icon">'+cardIcon+'</span><span>Карты</span></button>'+
  '<button type="button" data-syp-tab="finances" aria-pressed="false" aria-controls="sypBudgetScreen"><span class="syp-view-icon">'+financesIcon+'</span><span>Финансы</span></button>'+
- '<button type="button" data-syp-tab="currency" aria-pressed="false" aria-controls="sypCurrencyScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h17m-4-4 4 4-4 4M21 17H4m4-4-4 4 4 4"/></svg></span><span>Валюты</span></button>';
+ '<button type="button" data-syp-tab="currency" aria-pressed="false" aria-controls="sypCurrencyScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h17m-4-4 4 4-4 4M21 17H4m4-4-4 4 4 4"/></svg></span><span>Валюты</span></button>'+
+ '<button type="button" data-syp-tab="goals" aria-pressed="false" aria-controls="sypGoalsScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13c0-4 4-7 9-7h2l3-2v4c2 1 3 3 3 5h2v4h-3l-1.5 3h-3l-.5-2.5h-5L8 20H5l-1.5-4C1 16 1 13 2 12"/><path d="M9 8.5h4"/><circle cx="16" cy="11.5" r=".6"/></svg></span><span>Копилка</span></button>';
 home.id='sypCardHome';
 // Reuse Notebook's free header area above the permanent Work capsule.
 // Move the real controls, not a nonfunctional copy. The delegated click
@@ -57,6 +58,7 @@ function setWalletMenu(open,restoreFocus=false){
  else if(restoreFocus)trigger.focus?.({preventScroll:true});
 }
 function screen(name){
+ const goalEditor=q('#sypGoalEditor');if(name!=='goals'&&goalEditor?.open)goalEditor.close();
  setWalletMenu(false);
  if(name!=='scan')stopCamera();
  const editor=q('#sypLoyaltyEditor');
@@ -77,7 +79,9 @@ function setTab(tab){
   button.setAttribute('aria-pressed',String(button.dataset.sypTab===tab));
  }
  title.textContent='Кошелёк';
- if(tab==='currency'){
+ if(tab==='goals'){
+  kicker.textContent='SEYVEO · КОПИЛКА';intro.textContent='Цели накоплений';
+ }else if(tab==='currency'){
   kicker.textContent='SEYVEO · ВАЛЮТЫ';
   intro.textContent='Конвертер валют';
  }else if(tab==='finances'){
@@ -90,6 +94,9 @@ function setTab(tab){
 }
 async function select(tab){
  const token=++viewToken;
+ if(tab==='goals'){
+  setTab('goals');screen('goals');dialog.scrollTop=0;window.SEYVEO_GOALS?.render();return;
+ }
  if(tab==='currency'){
   setTab('currency');screen('currency');dialog.scrollTop=0;
   window.SEYVEO_FX?.open();return;
@@ -141,9 +148,10 @@ function open(tab='card'){
   }else dialog.setAttribute('open','');
  }
  window.SEYVEO_WORK_SHELL?.sync?.();
- return select(['finances','currency'].includes(tab)?tab:'card');
+ return select(['finances','currency','goals'].includes(tab)?tab:'card');
 }
 function close(switchingSection=false){
+ const goalEditor=q('#sypGoalEditor');if(goalEditor?.open)goalEditor.close();
  const editor=q('#sypLoyaltyEditor');if(editor?.open)editor.close();
  setWalletMenu(false);
  ++viewToken;
@@ -194,7 +202,9 @@ document.addEventListener('keydown',event=>{
  }
 },true);
 // No backdrop dismissal: this is an inline page with the shared navigation.
-dialog.addEventListener('close',()=>{
+dialog.addEventListener('close',e=>{
+ if(e.target!==dialog)return;
+ const goalEditor=q('#sypGoalEditor');if(goalEditor?.open)goalEditor.close();
  const editor=q('#sypLoyaltyEditor');if(editor?.open)editor.close();
  setWalletMenu(false);
  ++viewToken;
