@@ -605,3 +605,24 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]){background:#E9EBEF!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
  html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]) > button:not([hidden])[aria-pressed="true"]{background:#fff!important}
 }
+
+/* Pulse route: one full-bleed glass header, including the existing top inset.
+   Move the spacer into the measured header so its scrollport reaches the
+   viewport edge. Keep header controls on the original axis and preserve
+   the original dock, native scrolling and iPhone safe area. */
+html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])){
+ --sv-pulse-top-inset:calc(8px + env(safe-area-inset-top,0px));
+ padding-top:0!important;
+ border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]){padding-top:0!important;border:0!important;border-radius:0!important}
+html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]) > .picture-head{
+ padding-top:var(--sv-pulse-top-inset)!important;
+}
+html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])) > #picturePage.picture-main:not([hidden]).sv-scroll-glass-ready > .picture-head.sv-scroll-glass-head > .sv-scroll-glass-material{
+ top:0!important;left:0!important;right:0!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+@media(max-width:720px), (orientation:landscape) and (max-height:540px){
+ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.picture-main:not([hidden])){--sv-pulse-top-inset:var(--sv-apple-top-inset,calc(8px + env(safe-area-inset-top,0px)))}
+}
