@@ -1401,7 +1401,8 @@ function deferredPreviewRow(item){
  section.append(art,copy,sayvi,details);
  return section;
 }
-function render(){
+let svAgendaRenderedModel='',svAgendaRenderedRail='';
+function render(reuseOnEntry=false){
  clearTaskError();
  const all=read(),open=all.filter(item=>!item.done)
  .sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||a.createdAt.localeCompare(b.createdAt));
@@ -1412,6 +1413,21 @@ function render(){
  const postponed=open.filter(item=>deferredIds.has(item.id));
  const active=open.filter(item=>!deferredIds.has(item.id));
  const visibleActive=[...active,...svCalendarAgendaEvents()].sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||(a.time||'').localeCompare(b.time||''));
+ const today=svTaskISO(new Date());
+ if(!svTaskSelectedDate)svTaskSelectedDate=today;
+ if(!svTaskWindowStart)svTaskWindowStart=today;
+ // Keep the existing list/105-day rail on a normal re-entry only when
+ // its complete model, date and actual rail are unchanged. A live travel
+ // countdown or continuation is deliberately rebuilt rather than cached.
+ let model='';
+ if(!justCompletedTaskId&&!open.some(item=>item.travel)){
+  try{model=JSON.stringify([today,svTaskSelectedDate,svTaskWindowStart,all,visibleActive,postponed,preview]);}catch{}
+ }
+ const rail=$('svTasksDateNav');
+ if(reuseOnEntry===true&&model&&model===svAgendaRenderedModel&&rail?.dataset.modelSignature===svAgendaRenderedRail&&rail.querySelector('.sv-agenda-day[data-today="true"]')&&list.querySelector('.sv-agenda-section-heading[data-weather-date="'+today+'"]')){
+  svAgendaAnchorCache=null;
+  return;
+ }
  renderContext(active);
  const hasDeferred=postponed.length>0||preview.length>0;
  const wasRendered=!!list.querySelector('.sv-agenda-section-heading');
@@ -1470,6 +1486,8 @@ function render(){
  window.dispatchEvent(new CustomEvent('seyveo:tasks-changed',{detail:{open:open.length,total:all.length}}));
  svAgendaAnchorCache=null;
  svAgendaSyncPinnedDate();
+ svAgendaRenderedModel=model;
+ svAgendaRenderedRail=$('svTasksDateNav')?.dataset.modelSignature||'';
  document.dispatchEvent(new Event('seyveo:agenda-rendered'));
 }
 window.addEventListener('seyveo:home-deferred-changed',render);
@@ -2346,8 +2364,10 @@ function svAgendaOpenAtToday(){
  svAgendaUserInteracted=false;svAgendaInitiallyAligned=false;
  svAgendaOpeningUntil=Date.now()+900;
  svTaskSelectedDate=svTaskISO(new Date());svTaskWindowStart=svTaskSelectedDate;
- render();
- requestAnimationFrame(svAgendaAlignInitial);
+ render(true);
+ // This entry already runs inside a coalesced frame. Align now, without
+ // another frame showing an old scroll position. ResizeObserver can retry.
+ svAgendaAlignInitial();
 }
 new MutationObserver(()=>{svAgendaAnchorCache=null;})
  .observe(list,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});

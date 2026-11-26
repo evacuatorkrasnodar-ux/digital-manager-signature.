@@ -853,12 +853,19 @@
   if(request?.kind==='chat')showChat(request.roomId,request.viewpoint,request.filter);
   else if(request?.kind==='team')select(isEmployee()?'employee':'business');
   else if(request?.kind==='employee')select('employee');
-  else select('personal');
+  else if(!(request?.kind==='personal'&&request.prepared&&page.dataset.workView==='personal'&&!personal.hidden))select('personal');
  }
  function navigate(kind,roomId,viewpoint,filter){
   pending={kind,roomId:roomId||null,viewpoint:viewpoint||'manager',filter:filter||'all'};
-  if(location.hash!=='#tasks')location.hash='#tasks';
-  else routePending();
+  if(location.hash!=='#tasks'){
+   // Choose the personal pane while Work is still hidden. The first route
+   // paint must never mount the previous Cabinet and then switch again.
+   if(kind==='personal'&&page.hidden){
+    select('personal');
+    pending.prepared=true;
+   }
+   location.hash='#tasks';
+  }else routePending();
  }
  function openBusiness(source='manage'){
   if(!isManager()){navigate(isEmployee()?'employee':'personal');return}
@@ -1042,11 +1049,14 @@
  });
  // The separate chat demo perspective must not change the selected app version.
  $('navTasks')?.addEventListener('click',()=>{
-  // One dock destination, three meaningful workspaces.
-  // Managers enter Business rather than being dropped into private errands;
-  // ONE remains entirely personal, while employees land in their work view.
-  if(isEmployee()){navigate('employee');return}
-  if(isManager()){openBusiness('home');return}
+  // The checklist glyph is always My Tasks, independent of preview role.
+  // Cabinet and employee work retain their own explicit Work tabs.
+  const notes=$('notesDialog'),wallet=$('seyveoPayDialog');
+  if(notes?.open)notes.close();
+  if(wallet?.open&&wallet.parentElement?.id==='svWorkShell'){
+   if(window.SEYVEO_PAY?.close)window.SEYVEO_PAY.close(true);
+   else wallet.close();
+  }
   openPersonal();
  });
  window.addEventListener('hashchange',()=>{
