@@ -55,7 +55,9 @@
   const parts=transform&&transform!=='none'?transform.slice(transform.indexOf('(')+1,-1).split(',').map(Number):[];
   const x=parts.length===16?parts[12]:parts.length===6?parts[4]:g.active.x;
   const width=parseFloat(css.width);
-  return {x:Number.isFinite(x)?x:g.active.x,width:Number.isFinite(width)&&width>0?width:g.active.width};
+  // V139: recover logical cell width from inset painted face for drag/resume.
+  const inset=(parseFloat(css.left)||0)*2;
+  return {x:Number.isFinite(x)?x:g.active.x,width:Number.isFinite(width)&&width>0?width+inset:g.active.width};
  }
  function cleanup(t){
   t.removeAttribute('data-sv-motion-ready');t.removeAttribute('data-sv-motion-static');
