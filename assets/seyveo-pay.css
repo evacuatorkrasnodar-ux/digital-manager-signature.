@@ -903,3 +903,69 @@ html:root body #svNotebookCreateTiles .paper-choice-icon svg.sv-app-source-icon{
  color:#272c32!important;filter:none!important;
 }
 html:root[data-theme="dark"] body #svNotebookCreateTiles .paper-choice-icon svg.sv-app-source-icon{color:#e7ebef!important}
+
+/* V219 · Private Wallet / Jade Platinum. Approved artwork, live DOM labels.
+   The face has no demo badge; payment availability is stated below the card. */
+html:root body #seyveoPayDialog .syp-card.syp-private-jade,
+html:root[data-theme="light"] body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open] .syp-card.syp-private-jade{
+ box-sizing:border-box!important;display:block!important;position:relative!important;isolation:isolate!important;
+ width:100%!important;aspect-ratio:420 / 228!important;height:auto!important;min-height:0!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:clamp(12px,3vw,20px)!important;
+ overflow:hidden!important;color:#f0f3f3!important;container-type:inline-size;
+ background:#102f2e url("seyveo-private-jade-card.webp") center / 100% 100% no-repeat!important;
+ box-shadow:0 6px 17px rgba(13,47,45,.18)!important;
+}
+html:root body #seyveoPayDialog .syp-private-jade::before,
+html:root body #seyveoPayDialog .syp-private-jade::after{content:none!important;display:none!important;}
+#seyveoPayDialog .syp-private-jade .syp-cardhead{
+ position:absolute!important;inset:9.5% 11% auto 9%!important;
+ display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:8px!important;
+ color:#f0f3f3!important;
+}
+#seyveoPayDialog .syp-private-jade .syp-cardbrand{
+ font:650 clamp(15px,4.4vw,28px)/1.08 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-size:4.55cqw!important;letter-spacing:.13em!important;color:#f4f6f6!important;
+ text-shadow:0 1px 2px #0009!important;
+}
+#seyveoPayDialog .syp-private-jade .syp-cardbrand small{
+ margin-top:5px!important;font:550 clamp(7px,1.8vw,11px)/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-size:1.75cqw!important;letter-spacing:.32em!important;color:#e5efee!important;opacity:1!important;
+}
+#seyveoPayDialog .syp-private-jade .syp-private-debit{
+ padding-top:2px!important;color:#e9efef!important;
+ font:550 clamp(8px,2vw,13px)/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-size:2cqw!important;letter-spacing:.24em!important;text-shadow:0 1px 2px #0008;
+}
+#seyveoPayDialog .syp-private-jade .syp-private-number{
+ position:absolute!important;left:6.7%!important;top:56%!important;max-width:51%!important;
+}
+#seyveoPayDialog .syp-private-jade .syp-number{
+ color:#f4f6f6!important;font:540 clamp(12px,3.8vw,24px)/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-size:3.85cqw!important;font-variant-numeric:tabular-nums!important;letter-spacing:.065em!important;
+ white-space:nowrap!important;text-shadow:0 1px 2px #000b!important;
+}
+#seyveoPayDialog .syp-private-jade .syp-private-expiry{
+ position:absolute!important;left:6.7%!important;top:69%!important;display:grid!important;gap:3px!important;
+ color:#f4f6f6!important;text-shadow:0 1px 2px #000a!important;
+}
+#seyveoPayDialog .syp-private-jade .syp-private-expiry small{
+ font:500 clamp(7px,1.6vw,10px)/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-size:1.55cqw!important;letter-spacing:.09em!important;
+}
+#seyveoPayDialog .syp-private-jade .syp-private-expiry span{
+ font:500 clamp(10px,2.4vw,16px)/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-size:2.55cqw!important;letter-spacing:.11em!important;
+}
+#seyveoPayDialog .syp-private-jade .syp-private-holder{
+ position:absolute!important;left:6.7%!important;top:85%!important;
+ color:#f4f6f6!important;font:560 clamp(10px,2.5vw,16px)/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-size:2.7cqw!important;letter-spacing:.18em!important;white-space:nowrap!important;text-shadow:0 1px 2px #000a!important;
+}
+#seyveoPayDialog .syp-private-status{
+ margin:7px 0 0!important;text-align:center!important;font:450 11px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:var(--secondary,#717b80)!important;
+}
+@media(max-width:350px){
+ #seyveoPayDialog .syp-private-jade .syp-cardbrand small{margin-top:3px!important;}
+ #seyveoPayDialog .syp-private-jade .syp-private-expiry{gap:2px!important;}
+}
