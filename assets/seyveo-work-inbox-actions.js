@@ -846,6 +846,10 @@ function showMutedChats(){
    const row=node('div','sv-inbox-ios-row sv-inbox-muted-person');
    const avatar=node('span','sv-inbox-ios-avatar',(r.label||'?').slice(0,1));
    avatar.setAttribute('aria-hidden','true');
+   // Use the actual room portrait, exactly as in the main messages list.
+   if(window.SEYVEO_BUSINESS_COMMAND?.paintContactAvatar?.(avatar,r.id)===true){avatar.classList.add('sv-inbox-muted-native-avatar');}
+   else if(r.id==='dm-sayvi'){avatar.replaceChildren();avatar.classList.add('is-sayvi','sv-sayvi-avatar');}
+   else if(r.kind==='groups'){avatar.innerHTML=svg(r.id==='general'?'messages':r.id==='docs'?'file':'users');avatar.classList.add('sv-inbox-muted-group-avatar');}
    const copy=node('span','sv-inbox-ios-copy');
    copy.append(node('strong',null,r.label));
    const toggle=button(isMuted?'Включить звук':'Без звука',null,()=>{
