@@ -1,6 +1,8 @@
 /* Notebook collections · compact Apple-inspired category grid. */
 #svWorkShell[data-active="notes"] #svNotebookCategories{
  flex:0 0 auto!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+ /* Categories are interactive foreground controls, not content behind header glass. */
+ position:relative!important;z-index:8!important;
  box-sizing:border-box;margin:10px 12px 8px;padding:0;min-width:0
 }
 #svWorkShell #svNotebookCategories[hidden]{display:none!important}
