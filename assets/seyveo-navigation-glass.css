@@ -988,8 +988,9 @@ html:root body #svDocArchiveScope .sv-doc-tab::before,html:root body #svDocArchi
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
  html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"][data-sv-doc-view="archive"] > .sv-full-header-material{
-  inset:calc(0px - var(--sv-full-glass-top-gap,0px)) 0 auto!important;height:calc(var(--sv-doc-glass-edge,var(--sv-full-glass-height,0px)) + var(--sv-full-glass-top-gap,0px))!important;z-index:5!important;
-  --sv-header-glass-mask:linear-gradient(to bottom,#000 0,#000 calc(100% - 5px),transparent 100%);
+  /* V111: exactly the Avatar header optical edge, without local tint
+     or shortened feather. Keep the measured document geometry. */
+  inset:calc(0px - var(--sv-full-glass-top-gap,0px)) 0 auto!important;height:calc(var(--sv-doc-glass-edge,var(--sv-full-glass-height,0px)) + var(--sv-full-glass-top-gap,0px) + 24px)!important;z-index:5!important;
  }
 }
 
