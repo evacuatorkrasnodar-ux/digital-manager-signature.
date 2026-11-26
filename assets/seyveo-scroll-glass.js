@@ -91,12 +91,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    if(root.dataset.view!=='inbox'||root.classList.contains('svcp-history-screen-open'))return null;
    return {port:$('svcpConversationList'),controls:[root.querySelector('.svcp-work-chat-header'),$('svcpChatFilters'),$('svcpDirectorySearchBar')]};
   }],
-  ['sayviSurfacePage',root=>{
-   if(root.dataset.svSubject!=='contract'||root.dataset.svDocView!=='archive')return null;
-   const sticky=root.querySelector('.sv-doc-pinned-switch');
-   if(!sticky)return null;
-   return {port:$('sayviSurfaceBody'),controls:[root.querySelector('.sv-deep-top'),sticky],sticky};
-  }],
+  // Documents owns its native sticky scope switch; do not extend its scrollport twice.
   ['svcpManagerPeople',root=>{
    if(!root.open)return null;
    const sticky=root.querySelector('.sv-staff-pinned-tabs');
