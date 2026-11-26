@@ -6475,5 +6475,52 @@ html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv
 html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only{
  box-shadow:none!important;filter:none!important;outline:0!important;
 }
+
+/* Music navigation uses the SAME coordinate system as Home / Tasks.
+   Keep the shared tokens, not the legacy 50px transport-dock geometry. */
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only{
+ position:fixed!important;box-sizing:border-box!important;
+ left:max(var(--sv-feng-side,clamp(14px,5vw,22px)),env(safe-area-inset-left,0px))!important;
+ right:max(var(--sv-feng-side,clamp(14px,5vw,22px)),env(safe-area-inset-right,0px))!important;
+ bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;top:auto!important;
+ width:auto!important;max-width:none!important;
+ height:60px!important;min-height:60px!important;max-height:60px!important;
+ transform:none!important;padding:0!important;margin:0!important;
+ grid-template-columns:repeat(4,minmax(0,calc(var(--sv-feng-capsule) / 4))) minmax(0,1fr) 60px!important;
+ grid-template-rows:minmax(0,1fr)!important;gap:0!important;align-items:center!important;
+}
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::before,
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::after{
+ top:0!important;bottom:0!important;height:60px!important;min-height:60px!important;
+ margin:0!important;transform:none!important;box-sizing:border-box!important;
+}
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::before{
+ left:0!important;right:auto!important;width:var(--sv-feng-capsule)!important;max-width:var(--sv-feng-capsule)!important;
+}
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::after{
+ left:auto!important;right:0!important;width:60px!important;max-width:60px!important;
+}
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]){
+ left:0!important;right:auto!important;top:0!important;bottom:0!important;
+ width:var(--sv-feng-capsule)!important;height:60px!important;
+ padding:0!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;align-items:center!important;
+}
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > .sv-music-nav-only button{
+ box-sizing:border-box!important;justify-self:center!important;align-self:center!important;
+ width:100%!important;height:52px!important;min-height:44px!important;max-height:52px!important;
+ margin:0!important;padding:2px 0!important;transform:none!important;
+}
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage{
+ position:relative!important;grid-column:6!important;grid-row:1!important;justify-self:end!important;align-self:center!important;
+ left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;margin:0!important;
+ width:60px!important;min-width:60px!important;max-width:60px!important;
+ height:60px!important;min-height:60px!important;max-height:60px!important;
+}
+html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage > svg{
+ width:28px!important;height:28px!important;min-width:28px!important;max-width:28px!important;
+ min-height:28px!important;max-height:28px!important;stroke-width:1.8!important;stroke:currentColor!important;
+ color:#0B0B0D!important;opacity:1!important;filter:none!important;
+}
+html:root[data-theme="light"].sv-music-screen.sv-global-search-open body footer.dock.sv-shared-dock.sv-music-navigation-only > #navManage#navManage > svg{color:#087DF1!important}
 </style>
 </body></html>
