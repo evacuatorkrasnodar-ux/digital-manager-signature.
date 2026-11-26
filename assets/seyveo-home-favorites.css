@@ -735,20 +735,6 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
  html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button span{
   font-size:11.5px!important;line-height:1.2!important;
  }
- /* V179: full Cabinet labels, with matched two-line label areas. */
- html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
-  --sv-home-tile-height:84px;
- }
- html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"] button span{
-  display:block!important;flex:0 0 auto!important;
-  width:100%!important;min-width:0!important;min-height:2.4em!important;max-height:none!important;
-  font-size:12px!important;line-height:1.2!important;
-  white-space:normal!important;overflow:visible!important;text-overflow:clip!important;
-  overflow-wrap:break-word;text-align:center!important;
- }
- html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"] button svg{
-  flex:0 0 29px!important;
- }
  html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button small{
   top:4px!important;right:5px!important;
  }
@@ -757,7 +743,6 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
   html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{
    --sv-home-tile-height:58px;gap:5px!important;
   }
-  html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"]{--sv-home-tile-height:82px}
  }
 }
 
@@ -877,14 +862,11 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
 }
 
 /* V180: reuse the My Tasks motion face; never show the legacy second face.
-   The full-height Cabinet tiles allow real two-line titles. */
+   Personal and Cabinet use one compact tile standard. */
 @layer seyveo-home-chooser-standard{
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-tabs[data-sv-motion-ready] > button::before,
  html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-tabs[data-sv-motion-ready] > button::after{
   content:none!important;display:none!important;
- }
- html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid[data-section="business"] button{
-  box-sizing:border-box!important;min-width:0!important;gap:5px!important;padding:5px 4px!important;
  }
  html:root body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button span{
   white-space:normal!important;text-overflow:clip!important;overflow:visible!important;text-align:center!important;
