@@ -92,7 +92,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    return {port:$('svcpConversationList'),controls:[root.querySelector('.svcp-work-chat-header'),$('svcpChatFilters'),$('svcpDirectorySearchBar')]};
   }],
   ['sayviSurfacePage',root=>{
-   if(root.dataset.svSubject!=='contract'||root.dataset.svDocView!=='archive')return null;
+   if(root.dataset.svSubject!=='contract'||!['archive','flow'].includes(root.dataset.svDocView))return null;
    const scope=root.querySelector(':scope > #svDocArchiveScope');
    const head=root.querySelector(':scope > .sv-deep-top');
    if(!scope||!head)return null;
