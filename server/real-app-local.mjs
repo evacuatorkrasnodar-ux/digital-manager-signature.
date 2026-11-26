@@ -158,11 +158,16 @@ function send(res,status,data){
  res.writeHead(status,{...HEADERS,'content-type':'application/json; charset=utf-8'});
  res.end(JSON.stringify(data));
 }
+// Accept only the two explicit loopback hostnames on the fixed local port.
+function localOrigin(req){
+ const host=req.headers.host;
+ return host===HOST+':'+PORT?ORIGIN:host==='localhost:'+PORT?'http://localhost:'+PORT:null;
+}
 function safe(req){
  // A cross-site LINK can open the local Home, but must never authorize
  // external scripts, API calls, state changes or access from the network.
- if(req.headers.host!==HOST+':'+PORT)return false;
- if(req.headers.origin&&req.headers.origin!==ORIGIN)return false;
+ if(!localOrigin(req))return false;
+ if(req.headers.origin&&req.headers.origin!==localOrigin(req))return false;
  const site=req.headers['sec-fetch-site'];
  if(!site||site==='same-origin'||site==='none')return true;
  const pathname=(req.url||'').split('?')[0];
@@ -249,7 +254,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
   if(req.method==='POST'&&path==='/api/seyveo-note-transcribe'){
    // Only the actual local notebook may submit raw audio. The recording is
    // processed on this PC and its temporary copy is deleted after recognition.
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
    const type=String(req.headers['content-type']||'');
    if(!noteAudioFormat(type)){send(res,415,{error:'Неподдерживаемый формат аудио.'});return}
    if(Number(req.headers['content-length'])>MAX_NOTE_AUDIO_BYTES){send(res,413,{error:'Запись слишком большая (максимум 10 МБ).'});return}
@@ -291,7 +296,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    send(res,200,await inspectLocalPaperModel());return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-paper-draft'){
-   if(req.headers.origin!==ORIGIN||req.headers['sec-fetch-site']==='cross-site'){
+   if(req.headers.origin!==localOrigin(req)||req.headers['sec-fetch-site']==='cross-site'){
     send(res,403,{error:'Недоверенная страница.'});return;
    }
    if(process.env.SEYVEO_ENABLE_PAPER_AI!=='1'){
@@ -331,7 +336,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-index-search'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    try{
     const q=await readQuestion(req);
     const results=await searchLocalIndex(q,ROOT);
@@ -342,7 +347,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
   if(req.method==='POST'&&path==='/api/seyveo-task-analyze'){
    // Local loopback only. A draft is returned for the user's review; the
    // model is never allowed to save tasks or forward text to cloud services.
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
    if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){send(res,415,{error:'Ожидается JSON.'});return}
    if(taskAnalyzeBusy){send(res,429,{error:'Сэйви завершает предыдущий разбор. Пока доступен быстрый локальный алгоритм.'});return}
    taskAnalyzeBusy=true;
@@ -355,7 +360,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-route-options'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
    if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){send(res,415,{error:'Ожидается JSON.'});return}
    const minute=Math.floor(Date.now()/60000);
    if(routeMinute!==minute){routeMinute=minute;routeCount=0}
@@ -368,7 +373,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-place-lookup'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
    if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){send(res,415,{error:'Ожидается JSON.'});return}
    let query;
    try{query=await readPlaceQuery(req)}catch{send(res,400,{error:'Уточни название места.'});return}
@@ -401,7 +406,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
   if(req.method==='POST'&&path==='/api/seyveo-live-search'){
    // The current owner explicitly requested a public web search. Only the
    // question is passed to the provider, never private notes or chat history.
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){
     send(res,415,{error:'Ожидается JSON.'});return;
    }
@@ -447,7 +452,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-private-tts'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
    if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){
     send(res,415,{error:'Ожидается JSON.'});return;
    }
@@ -557,7 +562,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
   if(req.method==='GET'&&path==='/sw.js'){send(res,404,{error:'Service worker disabled.'});return}
   // Read-only SEYVEO Agent Core: returns a proposed plan, never executes tools.
   if(req.method==='POST'&&path==='/api/seyveo-agent-plan'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){
     send(res,415,{error:'Ожидается JSON.'});return;
    }
@@ -573,7 +578,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
   }
   // Restricted code review: file allowlist, read-only, no model or script execution.
   if(req.method==='POST'&&path==='/api/seyveo-agent-review'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){
     send(res,415,{error:'Ожидается JSON.'});return;
    }
@@ -602,7 +607,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    send(res,200,intelligenceCatalog());return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-intelligence-preview'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){
     send(res,415,{error:'Ожидается JSON.'});return;
    }
@@ -624,7 +629,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-memory'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    if(!String(req.headers['content-type']||'').startsWith('application/json')){
     send(res,415,{error:'Ожидается JSON.'});return;
    }
@@ -661,7 +666,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
   }
   // Local document-to-text only: no storage, macros, OCR or voice changes.
   if(req.method==='POST'&&path==='/api/seyveo-export-docx'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){send(res,415,{error:'Ожидается JSON.'});return}
    try{
     let size=0;const chunks=[];
@@ -676,7 +681,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-document-text'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    try{send(res,200,await readDocumentUpload(req))}
    catch(err){
     const reason=String(err?.message||'');
@@ -694,7 +699,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-attachments'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    try{send(res,200,await imageAttachments.upload(req))}
    catch(err){
     const reason=String(err?.message||'');
@@ -707,7 +712,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-stream'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    if(!String(req.headers['content-type']||'').startsWith('application/json')){
     send(res,415,{error:'Ожидается JSON.'});return;
    }
@@ -829,7 +834,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-mail-analyze'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    if(!String(req.headers['content-type']||'').startsWith('application/json')){send(res,415,{error:'Ожидается JSON.'});return}
    let size=0,chunks=[];
    try{
@@ -850,7 +855,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-learning-proposal'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    if(!String(req.headers['content-type']||'').startsWith('application/json')){
     send(res,415,{error:'Ожидается JSON.'});return;
    }
@@ -883,7 +888,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    send(res,200,await learningStats());return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-learning-approve'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return;}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return;}
    if(!String(req.headers['content-type']||'').startsWith('application/json')){send(res,415,{error:'Ожидается JSON.'});return;}
    try{
     const chunks=[];let size=0;
@@ -895,7 +900,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-ask'){
-   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Недоверенная страница.'});return}
    if(!String(req.headers['content-type']||'').startsWith('application/json')){
     send(res,415,{error:'Ожидается JSON.'});return;
    }
