@@ -636,11 +636,11 @@ html:root[data-theme="light"] body .app.sv-pulse-route:has(> #picturePage.pictur
    capsules, not the dock, circular controls, icon-only wallet launcher,
    header backing, inputs or colored chat wallpapers. */
 :root[data-theme="light"]{
- --sv-segment-track:rgba(226,229,235,.73);
+ --sv-segment-track:rgba(210,216,225,.31);
  --sv-segment-edge:rgba(209,214,223,.80);
- --sv-segment-selected:rgba(255,255,255,.96);
+ --sv-segment-selected:rgba(255,255,255,.88);
  --sv-segment-track-shadow:0 2px 7px rgba(38,48,60,.055),inset 0 1px 0 rgba(255,255,255,.55);
- --sv-segment-selected-shadow:0 1px 4px rgba(38,48,60,.12);
+ --sv-segment-selected-shadow:0 1px 3px rgba(38,48,60,.08);
  --sv-avatar-segment-height:38px;
  --sv-avatar-segment-face-height:30px;
  --sv-avatar-segment-inset:3px;
@@ -706,16 +706,8 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  color:#14171C!important;border-color:transparent!important;
  box-shadow:var(--sv-segment-selected-shadow)!important;
 }
-/* V103: final light optical polish of the All Tasks reference.
-   Reduce tint by five opacity points and soften the moving face shadow.
-   Preserve the V102 rim cover, selected fill, blur, geometry and motion. */
-@media not (prefers-reduced-transparency:reduce){
- html:root[data-theme="light"] body #svWorkShell[data-task-tool-mode="all"] > #svAllTasksTabs{
-  --sv-segment-track:rgba(210,216,225,.31);
-  --sv-segment-selected:rgba(255,255,255,.88);
-  --sv-segment-selected-shadow:0 1px 3px rgba(38,48,60,.08);
- }
-}
+/* V105: All Tasks V104 is the single shared optical standard.
+   No route-local tint, selection opacity or shadow overrides. */
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"]{--sv-segment-track:#E5E5EA;--sv-segment-selected:#fff}
  html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]),
@@ -975,9 +967,6 @@ html:root body #svDocArchiveScope::before,html:root body #svDocArchiveScope::aft
 html:root body #svDocArchiveScope > .sv-doc-switch::before,html:root body #svDocArchiveScope > .sv-doc-switch::after,
 html:root body #svDocArchiveScope .sv-doc-tab::before,html:root body #svDocArchiveScope .sv-doc-tab::after{content:none!important;display:none!important}
 @media not (prefers-reduced-transparency:reduce){
- html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="archive"] > #svDocArchiveScope > .sv-doc-switch{
-  --sv-segment-track:rgba(226,229,235,.62);
- }
  html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage.sv-full-glass-ready[data-sv-subject="contract"][data-sv-doc-view="archive"]{
   position:relative!important;overflow:visible!important;
  }
