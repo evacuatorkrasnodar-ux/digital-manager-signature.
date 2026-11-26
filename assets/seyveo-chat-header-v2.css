@@ -129,7 +129,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  text-align:center!important;overflow:hidden!important;text-overflow:ellipsis!important;opacity:1!important;
 }
 /* V146 — one matte header for all rooms and wallpapers.
-   Full frost through the actual Back row; a soft 32px feather starts below it.
+   Full frost through the actual Back row; the Avatar 24px feather starts below it.
    The avatar, name and live controls are never masked. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2{
  isolation:isolate!important;
@@ -140,7 +140,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  --svcp-header-frost-edge:calc(var(--svcp-call-control-top,var(--svcp-nav-back-y,calc(12px + env(safe-area-inset-top,0px)))) + var(--sv-nav-single-size,44px));
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2{
- --svcp-header-frost:rgba(250,250,251,.82);
+ --svcp-header-frost:var(--sv-white-pearl-header-face,rgba(247,247,248,.46));
  --svcp-header-solid:#fafafb;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2{
@@ -155,12 +155,12 @@ html:root body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-i
  content:""!important;display:block!important;
  box-sizing:border-box!important;position:absolute!important;
  inset:0 0 auto 0!important;
- height:calc(var(--svcp-header-frost-edge) + 32px)!important;
+ height:calc(var(--svcp-header-frost-edge) + 24px)!important;
  z-index:-1!important;pointer-events:none!important;
  border:0!important;border-radius:0!important;box-shadow:none!important;
  background:var(--svcp-header-frost)!important;
- -webkit-backdrop-filter:blur(22px) saturate(105%)!important;
- backdrop-filter:blur(22px) saturate(105%)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 var(--svcp-header-frost-edge),transparent 100%)!important;
  mask-image:linear-gradient(to bottom,#000 0,#000 var(--svcp-header-frost-edge),transparent 100%)!important;
  -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
