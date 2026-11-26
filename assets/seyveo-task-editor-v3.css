@@ -1773,3 +1773,51 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .
  background:#B9DFFF!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* Smart composer V54 · native text input, one visual mirror, one summary rail.
+   The mirror never receives events or becomes an editable surface. */
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-main{position:relative!important}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-title-capsule{position:relative!important;box-shadow:none!important}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-title-capsule.sv-task-has-clear{padding-right:48px!important}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-title-capsule:not(.is-grouped:not(.is-editing)) #personalTaskTitle{
+ position:relative!important;z-index:1!important;caret-color:#0878CB!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-title-capsule.sv-task-phrase-colored:not(.is-grouped:not(.is-editing)) #personalTaskTitle{
+ color:transparent!important;-webkit-text-fill-color:transparent!important;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-phrase-mirror{
+ position:absolute!important;z-index:0;box-sizing:border-box;overflow:hidden;pointer-events:none;
+ white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;
+ color:#17191E;background:transparent;font-kerning:auto;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-phrase-mirror[hidden],
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-phrase-clear[hidden]{display:none!important}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-phrase-mirror span[data-kind]{color:#0875C6;font-weight:inherit}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-phrase-clear{
+ position:absolute!important;top:2px!important;right:2px!important;z-index:3!important;
+ box-sizing:border-box;display:grid!important;place-items:center;
+ width:44px!important;height:44px!important;margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+ border-radius:50%;color:#8D97A4;cursor:pointer;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-phrase-clear svg{width:20px;height:20px}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-summary{
+ position:relative;display:flex;flex-direction:column;gap:7px;min-width:0;
+ box-sizing:border-box;width:100%;padding-left:12px;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-summary::before{
+ content:"";position:absolute;left:0;top:2px;bottom:2px;width:4px;border-radius:999px;background:#F29C47;
+ pointer-events:none;
+}
+html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-smart-preview.is-work .sv-task-smart-summary::before{background:#168DF4}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-summary > :is(.sv-task-smart-main,.sv-task-smart-when){
+ border:1px solid rgba(171,181,196,.18)!important;box-shadow:none!important;
+ background:rgba(232,235,240,.40)!important;
+}
+html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-card{box-shadow:none!important}
+html:root[data-theme="dark"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-phrase-mirror{color:#F2F3F5}
+html:root[data-theme="dark"] body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-phrase-mirror span[data-kind]{color:#83C4FF}
+@media(forced-colors:active){
+ html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-phrase-mirror{display:none!important}
+ html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-title-capsule.sv-task-phrase-colored:not(.is-grouped:not(.is-editing)) #personalTaskTitle{color:CanvasText!important;-webkit-text-fill-color:CanvasText!important}
+}
