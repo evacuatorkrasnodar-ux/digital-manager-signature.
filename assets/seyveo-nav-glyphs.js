@@ -5,11 +5,17 @@
 (()=>{'use strict';
  if(window.SEYVEO_NAV_GLYPHS)return;
  const spec=Object.freeze({
-  back:Object.freeze({d:'M15.5 5 L7.4 12 L15.5 19',size:29,stroke:1.9}),
+  back:Object.freeze({d:'M14.5 5.5 8 12l6.5 6.5',size:22,stroke:1.55}),
   plus:Object.freeze({d:'M12 5.5v13M5.5 12h13',size:28,stroke:1.65}),
   search:Object.freeze({d:'M15.7 15.7 L21 21',size:25,stroke:1.65}),
   history:Object.freeze({d:'M3.8 11.4a8.2 8.2 0 1 1 2.4 6M3.8 6.6v4.8h4.8M12 7.3V12l3.2 2',size:24,stroke:1.65})
  });
+ const skyBack=Object.freeze({d:'M15.5 5 L7.4 12 L15.5 19',size:29,stroke:1.9});
+ function glyphSpec(svg,kind){
+  if(kind!=='back')return spec[kind];
+  const work=svg.closest('#svcpWorkChatScreen');
+  return work?.dataset.view==='room'&&work.querySelector('#svcpConversation[data-chat-wallpaper="sky"]')?skyBack:spec.back;
+ }
  const compact=s=>(s||'').replace(/\s+/g,' ').trim();
  const backPaths=new Set([
   'm14.5 5-7 7 7 7','m14 5-7 7 7 7','m15 5-7 7 7 7',
@@ -27,9 +33,10 @@
  const navClasses='.sv-nav-back,.sv-nav-arrow,.sv-header-material-circle,.sv-note-nav-circle,.sv-top-action,.svcp-work-chat-back,.svcp-work-history-top,.svcp-directory-search-toggle,.sv-doc-head-icon,.sv-mail-icon-button,.sv-doc-shelf-add,.sv-cabinet-plus,.calendar-header-add,.personal-tasks-add,.svcp-manager-task-create';
  const headerArea='header,.sv-continuity-titlebar,.sv-deep-top,.sv-note-reader-header,.sv-note-nav-actions,.sv-paper-top,.sv-doc-head-tools,.svdv-reader-head,.svmc-head,.sv-med-header,.history-head,.sv-inbox-sheet-head,.sv-recruit-head,.syp-top';
  function styleSvg(svg,kind){
-  const s=spec[kind];
+  const s=glyphSpec(svg,kind);
   svg.setAttribute('data-sv-nav-glyph',kind);
   for(const [k,v] of Object.entries({'width':s.size+'px','height':s.size+'px','stroke-width':String(s.stroke),'stroke-linecap':'round','stroke-linejoin':'round'}))svg.style.setProperty(k,v,'important');
+  if(kind==='back')for(const key of ['min-width','max-width','min-height','max-height'])svg.style.setProperty(key,s.size+'px','important');
   for(const child of svg.querySelectorAll('path,circle,line,polyline,rect')){
    child.style.setProperty('stroke-width',String(s.stroke),'important');
    child.style.setProperty('stroke-linecap','round','important');
@@ -58,7 +65,8 @@
   if(kind==='search'){
    circles[0].setAttribute('cx','10.8');circles[0].setAttribute('cy','10.8');circles[0].setAttribute('r','6.6');
   }
-  if(path.getAttribute('d')!==spec[kind].d)path.setAttribute('d',spec[kind].d);
+  const shape=glyphSpec(svg,kind);
+  if(path.getAttribute('d')!==shape.d)path.setAttribute('d',shape.d);
   styleSvg(svg,kind);
  }
  function scan(root){
@@ -75,6 +83,10 @@
  const observer=new MutationObserver(records=>{
   const roots=new Set();
   for(const record of records){
+   if(record.type==='attributes'){
+    roots.add(record.target.closest('#svcpWorkChatScreen')||record.target);
+    continue;
+   }
    for(const n of record.addedNodes){
     if(n.nodeType!==1)continue;
     const parentSvg=n.closest('svg');
@@ -84,5 +96,5 @@
   }
   roots.forEach(scan);
  });
- observer.observe(document.body,{childList:true,subtree:true});
+ observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['data-chat-wallpaper','data-view']});
 })();
