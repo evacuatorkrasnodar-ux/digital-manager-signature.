@@ -1,5 +1,5 @@
 /* SEYVEO Air · Music — native-first, PWA test drive.
- * Plays only audio files explicitly selected by the user.
+ * Plays user-selected local files and curated HTTPS radio streams.
  * Does NOT fetch or stream Spotify/Apple Music/YouTube; does NOT store files.
  * Keep the ORIGINAL Sayvi sphere and routing. Object URLs are ephemeral.
  */
@@ -47,7 +47,7 @@ const fallbackInfo=file=>metadata?.filenameParts(file?.name)||{
 };
 let trackDescriptions=new WeakMap(),coverDataURL=null,coverReader=null;
 let recentFiles=[];
-const infoFor=file=>file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
+const infoFor=file=>file?.radio?{title:file.name,artist:file.country+' · '+file.quality,display:file.name,album:'SEYVEO RADIO'}:file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
 const safeName=file=>infoFor(file).display;
 const extensions=/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i;
 const MAX_TRACKS=40,MAX_FILE_SIZE=180*1024*1024;
@@ -73,7 +73,8 @@ const providers=Object.freeze({
   copy:'Сейчас доступно настоящее прослушивание ваших собственных аудиофайлов. Они остаются на устройстве и открываются только на время работы плеера.'
  }
 });
-let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false,collectionMode='tracks';
+let tracks=[],localTracks=[],index=-1,url=null,selectVersion=0,queueOpen=false,collectionMode='tracks',radioFallback=false;
+ const isRadio=()=>!!tracks[index]?.radio;
 
 /* Saved favorites are track fingerprints, not copied audio or subscriptions. */
 const FAVORITES_KEY='seyveo-music-favorites-v1';
@@ -91,14 +92,15 @@ function updateFavorite(){
  if(!favoriteButton)return;
  const file=index>=0?tracks[index]:null;
  const liked=isFavorite(file);
- favoriteButton.disabled=!file;
+ favoriteButton.disabled=!file||!!file.radio;
  favoriteButton.setAttribute('aria-pressed',String(liked));
  favoriteButton.setAttribute('aria-label',!file?'Выберите трек для избранного':liked?'Убрать из избранного':'Добавить в избранное');
  favoriteButton.title=liked?'Убрать из избранного':'В избранное';
 }
 function toggleFavorite(){
  const file=index>=0?tracks[index]:null;if(!file)return;
- const key=favoriteId(file);
+ if(file.radio)return;
+  const key=favoriteId(file);
  if(favorites.has(key))favorites.delete(key);else favorites.add(key);
  try{localStorage.setItem(FAVORITES_KEY,JSON.stringify([...favorites].slice(-200)))}
  catch{sayviMessage('Не удалось сохранить избранное на этом устройстве.')}
@@ -122,7 +124,7 @@ function stopDiscoveryListen(){
 }
 function qualifyDiscoveryListen(){
  stopDiscoveryListen();
- if(!window.SEYVEO_DISCOVERY?.enabled?.()||index<0||audio.paused)return;
+ if(!window.SEYVEO_DISCOVERY?.enabled?.()||index<0||audio.paused||isRadio())return;
  const selectedVersion=selectVersion;
  if(selectedVersion===discoveryCountedVersion)return;
  discoveryListenTimer=setTimeout(()=>{
@@ -168,7 +170,7 @@ function syncResume(){
    const file=tracks[index];
    const info=infoFor(file);
    if(miniTitle)miniTitle.textContent=info.title||safeName(file);
-   if(miniArtist)miniArtist.textContent=info.artist||'Моя музыка';
+   if(miniArtist)miniArtist.textContent=isRadio()&&radioFallback?file.country+' · '+file.fallbackQuality:info.artist||'Моя музыка';
    if(miniOpen)miniOpen.setAttribute('aria-label','Открыть плеер: '+safeName(file));
    if(miniPlay){
     miniPlay.setAttribute('aria-label',playing?'Пауза':'Продолжить воспроизведение');
@@ -234,9 +236,9 @@ function toggleSources(force){
 }
 
 function updateTime(){
- const total=Number.isFinite(audio.duration)?audio.duration:0;
+ const total=!isRadio()&&Number.isFinite(audio.duration)?audio.duration:0;
  const now=Number.isFinite(audio.currentTime)?audio.currentTime:0;
- elapsed.textContent=fmt(now);duration.textContent=total?fmt(total):'0:00';
+ elapsed.textContent=isRadio()?'LIVE':fmt(now);duration.textContent=isRadio()?'Эфир':total?fmt(total):'0:00';
  seek.max='1000';seek.value=total>0?String(Math.round(now/total*1000)):'0';
  seek.disabled=!total;
  seek.setAttribute('aria-valuetext',fmt(now)+' из '+fmt(total));
@@ -325,7 +327,7 @@ function mediaSession(){
   navigator.mediaSession.setActionHandler('previoustrack',()=>switchTrack(index-1,true));
   navigator.mediaSession.setActionHandler('nexttrack',()=>switchTrack(index+1,true));
   navigator.mediaSession.setActionHandler('seekto',details=>{
-   if(Number.isFinite(details.seekTime))audio.currentTime=Math.min(Math.max(0,details.seekTime),audio.duration||0);
+   if(!isRadio()&&Number.isFinite(details.seekTime))audio.currentTime=Math.min(Math.max(0,details.seekTime),audio.duration||0);
   });
  }catch{}
 }
@@ -338,7 +340,7 @@ function collectionRender(){
  }
  collection.hidden=!queueOpen;
  const favoriteView=collectionMode==='favorites';
- const loaded=new Map(tracks.map((file,i)=>[favoriteId(file),{file,i}]));
+ const loaded=new Map(tracks.filter(file=>!file.radio).map(file=>[favoriteId(file),{file,i:tracks.indexOf(file)}]));
  const entries=favoriteView?[...favorites].map(key=>({key,match:loaded.get(key)}))
   :tracks.map((file,i)=>({key:favoriteId(file),match:{file,i}}));
  const header=document.createElement('div');
@@ -394,7 +396,16 @@ function switchTrack(i,autoplay=false){
  const newIndex=((i%tracks.length)+tracks.length)%tracks.length;
  const file=tracks[newIndex];const version=++selectVersion;
  audio.pause();audio.removeAttribute('src');audio.load();safeRelease();
- try{url=URL.createObjectURL(file)}catch{
+ radioFallback=false;
+  if(file.radio){
+   index=newIndex;audio.src=file.stream;
+   coverDataURL=file.artwork||null;if(coverDataURL)showArtwork();
+   heading.textContent=file.name;artist.textContent=file.country+' · '+file.quality;
+   previous.disabled=next.disabled=tracks.length<2;updateFavorite();collectionRender();mediaSession();updatePlay();updateTime();
+   if(autoplay){sayviMessage('Подключение к '+file.name+'…');audio.play().catch(()=>{if(version===selectVersion&&!audio.error)sayviMessage('Не удалось начать эфир. Нажмите Play ещё раз.')});}
+   return true;
+  }
+  try{url=URL.createObjectURL(file)}catch{
   sayviMessage('Не удалось открыть файл. Попробуйте выбрать другой аудиофайл.');
   updatePlay();return false;
  }
@@ -436,6 +447,7 @@ function play(){
   return;
  }
  if(!audio.paused){audio.pause();return}
+ if(isRadio()&&!audio.getAttribute('src'))audio.src=radioFallback?tracks[index].fallback:tracks[index].stream;
  const p=audio.play();
  if(p&&typeof p.catch==='function')p.catch(()=>{
   sayviMessage('Не удалось начать воспроизведение. Возможно, формат файла не поддерживается этим устройством.');
@@ -451,7 +463,7 @@ function ingest(list){
   sayviMessage('Не нашла подходящие аудиофайлы. Выберите MP3, M4A, AAC, WAV или другой поддерживаемый телефоном формат.');
   return false;
  }
- tracks=chosen;
+ tracks=chosen;localTracks=chosen;
  trackDescriptions=new WeakMap();
  switchTrack(0,false);
  if(candidates.length>chosen.length)
@@ -511,6 +523,7 @@ stopAndHide?.addEventListener('click',()=>{
  miniDismissed=true;
  homeMusicSession=false;
  audio.pause();
+ if(isRadio()){audio.removeAttribute('src');audio.load();hasPlayed=false;}
  updatePlay();
  minimizeMusic();
  syncResume();
@@ -627,7 +640,7 @@ next.addEventListener('click',()=>switchTrack(index+1,true));
 fileInput.addEventListener('change',()=>{ingest(fileInput.files);fileInput.value=''});
 seek.addEventListener('input',()=>{
  const duration=audio.duration;
- if(Number.isFinite(duration)&&duration>0)audio.currentTime=Number(seek.value)/1000*duration;
+ if(!isRadio()&&Number.isFinite(duration)&&duration>0)audio.currentTime=Number(seek.value)/1000*duration;
 });
 options.addEventListener('click',event=>{
  const btn=event.target.closest('[data-music-provider]');
@@ -636,10 +649,10 @@ options.addEventListener('click',event=>{
 audio.addEventListener('timeupdate',updateTime);
 audio.addEventListener('durationchange',updateTime);
 audio.addEventListener('loadedmetadata',updateTime);
-audio.addEventListener('playing',()=>{homeMusicSession=true;const file=tracks[index];if(file)recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);updatePlay();sayviMessage('');qualifyDiscoveryListen()});
+audio.addEventListener('playing',()=>{homeMusicSession=true;const file=tracks[index];if(file&&!file.radio)recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);updatePlay();sayviMessage('');qualifyDiscoveryListen()});
 audio.addEventListener('pause',()=>{stopDiscoveryListen();updatePlay()});
-audio.addEventListener('ended',()=>{stopDiscoveryListen();if(tracks.length>1)switchTrack(index+1,true);else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
-audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
+audio.addEventListener('ended',()=>{stopDiscoveryListen();if(isRadio()){updatePlay();sayviMessage('Эфир прервался. Нажмите Play для повторного подключения.');return}if(tracks.length>1)switchTrack(index+1,true);else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
+audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(isRadio()){const station=tracks[index],version=selectVersion;if(!radioFallback&&station.fallback){radioFallback=true;audio.src=station.fallback;artist.textContent=station.country+' · '+station.fallbackQuality;audio.play().catch(()=>{if(version===selectVersion)sayviMessage('Резервный эфир недоступен.')});return}sayviMessage('Эфир недоступен. Попробуйте другую станцию.');return}if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
 /* Screen lock/background can dispatch lifecycle changes.
  * Never stop an actively playing track on pagehide: the OS decides if WebKit
  * can continue. A full browser termination remains outside PWA control. */
@@ -668,7 +681,7 @@ const musicKey=value=>String(value||'').toLocaleLowerCase('ru-RU')
 function searchTracks(query){
  const q=musicKey(query);
  if(!q||q.length<2)return [];
- return tracks.map((file,i)=>{
+ return localTracks.map((file,i)=>{
   const info=infoFor(file);
   const name=musicKey(info.title),artist=musicKey(info.artist),filename=musicKey(file.name);
   const full=[name,artist,filename].join(' ');
@@ -683,8 +696,8 @@ function searchTracks(query){
 }
 function playIndexFromSearch(trackIndex){
  const idx=Number(trackIndex);
- if(!Number.isSafeInteger(idx)||idx<0||idx>=tracks.length)return false;
- open();
+ if(!Number.isSafeInteger(idx)||idx<0||idx>=localTracks.length)return false;
+ tracks=localTracks;open();
  return switchTrack(idx,true);
 }
 function playFromSearch(query){
@@ -704,17 +717,24 @@ function playFromSearch(query){
  const ok=playIndexFromSearch(hits[0].index);
  return {status:ok?'started':'unavailable',track:hits[0]};
 }
+function playRadio(stations,id){
+ const available=stations.filter(station=>station.radio&&/^https:\/\//.test(station.stream||''));
+ const selected=available.findIndex(station=>station.id===id);if(selected<0)return false;
+ if(isRadio()&&tracks[index].id===id){play();return true;}
+ tracks=available;miniDismissed=false;return switchTrack(selected,true);
+}
 window.SEYVEO_MUSIC=Object.freeze({
+ playRadio,
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
  searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,
  // Read-only access to the selected local File for optional visual analysis.
- rhythmFile:()=>tracks[index]||null,
- browseTracks:()=>tracks.map((file,i)=>({index:i,title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка'})),
- recentTracks:()=>recentFiles.filter(file=>tracks.includes(file)).map(file=>({index:tracks.indexOf(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка'})),
+ rhythmFile:()=>isRadio()?null:tracks[index]||null,
+ browseTracks:()=>localTracks.map((file,i)=>({index:i,title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка'})),
+ recentTracks:()=>recentFiles.filter(file=>localTracks.includes(file)).map(file=>({index:localTracks.indexOf(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка'})),
  state:()=>Object.freeze({
   loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
   homeSession:homeMusicSession,
-  source:'local-file',connectedServices:0
+  source:isRadio()?'radio':'local-file',stationId:isRadio()?tracks[index].id:null,quality:isRadio()?(radioFallback?tracks[index].fallbackQuality:tracks[index].quality):null,connectedServices:0
  })
 });
 })();
