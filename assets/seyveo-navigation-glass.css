@@ -1255,3 +1255,13 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
  :root[data-theme="light"] #tasksPage #personalTaskList .sv-task-swipe-delete:active:not(:disabled){background:var(--sv-action-face)!important}
  }
 }
+
+/* V198: semantic material never overrides the actual hidden state.
+   A closed task action must not allocate a live blur surface. */
+@layer seyveo-semantic-actions{
+ :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-swipe-delete[hidden]{display:none!important}
+ :root[data-theme="light"] #tasksPage #personalTaskList .sv-agenda-entry:not(.is-swipe-open):not(.is-swipe-dragging) .sv-task-swipe-delete{
+  visibility:hidden!important;opacity:0!important;pointer-events:none!important;
+  box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}

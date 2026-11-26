@@ -762,8 +762,16 @@ html.sv-agenda-scroll-active .app{
  font:600 13px/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  box-shadow:none!important;
 }
+/* V198: a closed swipe must not paint at all. The foreground can be
+   shorter than the rounded glass button, especially on compact agenda rows. */
+#tasksPage #personalTaskList .sv-agenda-entry:not(.is-swipe-open):not(.is-swipe-dragging) .sv-task-swipe-delete{
+ visibility:hidden!important;opacity:0!important;pointer-events:none!important;
+}
+#tasksPage #personalTaskList .sv-agenda-entry:is(.is-swipe-open,.is-swipe-dragging) .sv-task-swipe-delete{
+ visibility:visible!important;opacity:1!important;
+}
 #tasksPage #personalTaskList .sv-agenda-entry:not(.is-swipe-open) .sv-task-swipe-delete{
- pointer-events:none;
+ pointer-events:none!important;
 }
 #tasksPage #personalTaskList .sv-agenda-entry .sv-task-swipe-foreground .personal-task-content,
 #tasksPage #personalTaskList .sv-agenda-entry .sv-task-swipe-foreground .personal-task-check,
