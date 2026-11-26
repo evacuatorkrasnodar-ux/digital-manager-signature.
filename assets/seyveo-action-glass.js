@@ -13,7 +13,7 @@
   'удалить':'danger','удалить контакт':'danger','удалить выбранное':'danger',
   'удалить выбранные':'danger','удалить запись':'danger'
  };
- const excluded='footer.dock,.sv-newdock-button,[role="menu"],[role="menuitem"],[role="listbox"],[role="tablist"],.svcp-attach-menu,.svcp-bubble,.sv-editor-capsule,.sv-paper-tools,.sv-note-tool-row,.sv-tool-filters,.sv-mail-account-switch,.sv-nav-back,.sv-nav-arrow,.sv-header-material-circle,.svcp-call-actions,.svcp-clean-surface,[class*="context-menu"],[class*="context-actions"],[class*="dropdown-menu"],[class*="popover"],[class*="action-menu"]';
+ const excluded='.sv-bulk-selection-capsule,.sv-bulk-selection-head,footer.dock,.sv-newdock-button,[role="menu"],[role="menuitem"],[role="listbox"],[role="tablist"],.svcp-attach-menu,.svcp-bubble,.sv-editor-capsule,.sv-paper-tools,.sv-note-tool-row,.sv-tool-filters,.sv-mail-account-switch,.sv-nav-back,.sv-nav-arrow,.sv-header-material-circle,.svcp-call-actions,.svcp-clean-surface,[class*="context-menu"],[class*="context-actions"],[class*="dropdown-menu"],[class*="popover"],[class*="action-menu"]';
  function mark(b){
   if(!b||!b.matches('button'))return;
   const name=b.textContent.replace(/\s+/g,' ').trim().toLocaleLowerCase('ru-RU');
