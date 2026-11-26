@@ -598,7 +598,8 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
 html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]) > button:not([hidden])[aria-pressed="true"]{
  background:rgba(255,255,255,.96)!important;background-image:none!important;
  color:#14171C!important;
- box-shadow:0 1px 4px rgba(38,48,60,.12),inset 0 0 0 .75px rgba(203,208,218,.76)!important;
+ border-color:transparent!important;
+ box-shadow:0 1px 4px rgba(38,48,60,.12)!important;
 }
 @media(prefers-reduced-transparency:reduce){
  html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]):not([data-task-filters="true"]){background:#E9EBEF!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
