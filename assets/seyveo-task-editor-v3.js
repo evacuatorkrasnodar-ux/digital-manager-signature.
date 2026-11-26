@@ -521,7 +521,6 @@
   done.addEventListener('click',()=>{
    if(wheelDraft&&quickWheelMode==='date'&&!wheelDraft.date)wheelDraft.date=today();
    if(wheelDraft&&quickWheelMode==='time'&&!wheelDraft.time)wheelDraft.time='09:00';
-   if(wheelDraft?.time&&!wheelDraft.date)wheelDraft.date=today();
    acceptQuickWheel();
   });
   actions.append(clear,done);editor.append(actions);
