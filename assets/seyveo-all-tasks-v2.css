@@ -116,43 +116,47 @@ html:root.sv-task-search-focus body #svWorkShell[data-task-tool-mode="all"] #svA
  font-size:14px;font-weight:500;
 }
 
-/* A single body-level capsule: no parent rectangle, footer or backdrop. */
-#svTaskActionCapsule{
- box-sizing:border-box;display:grid;align-items:center;
- position:fixed;z-index:110;
- left:50%;bottom:max(12px,env(safe-area-inset-bottom,0px));
+/* Bulk actions: three independent Avatar-reference buttons. The layout
+   container is invisible, with no shared rim or second backdrop filter.
+   The selection count is incorporated into the delete label. */
+html:root body #svTaskActionCapsule{
+ box-sizing:border-box!important;display:grid!important;align-items:center!important;
+ position:fixed!important;z-index:110;left:50%!important;
+ bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
  transform:translateX(-50%);
- grid-template-columns:minmax(0,1.30fr) minmax(0,.95fr) minmax(0,.85fr) minmax(0,.85fr);
- gap:2px;width:min(312px,calc(100% - 30px));max-width:312px;height:44px;min-height:44px;padding:5px;
- grid-template-rows:32px;align-content:center;
- border:var(--sv-dock-pearl-border,.7px solid rgba(255,255,255,.28));border-radius:999px;
- background:var(--sv-dock-pearl-bg,rgba(190,193,202,.10));
- box-shadow:var(--sv-dock-pearl-shadow,0 0 0 .45px rgba(164,170,184,.16));
- -webkit-backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(100%));
- backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(100%));
+ grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr) minmax(0,1.15fr);
+ gap:8px!important;width:min(390px,calc(100% - 28px))!important;max-width:390px!important;
+ height:46px!important;min-height:46px!important;padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;pointer-events:none;
 }
-:root[data-theme="dark"] #svTaskActionCapsule{
- border:var(--sv-nav-pearl-border);
- background:var(--sv-nav-pearl-bg);
- box-shadow:var(--sv-nav-pearl-shadow);
-}
-#svTaskActionCapsule button{
- appearance:none;-webkit-appearance:none;display:grid;place-items:center;
+html:root body #svTaskActionCapsule[hidden]{display:none!important}
+html:root body #svTaskActionCapsule > button{
+ appearance:none!important;-webkit-appearance:none!important;display:grid!important;place-items:center!important;
  box-sizing:border-box!important;align-self:center!important;
- width:100%;height:32px!important;min-height:32px!important;max-height:32px!important;min-width:0;margin:0!important;padding:0 2px;
+ width:100%!important;min-width:0!important;height:46px!important;min-height:46px!important;max-height:46px!important;
+ margin:0!important;padding:0 5px!important;
  top:auto!important;bottom:auto!important;transform:none!important;
- border:0;border-radius:999px;background:transparent;box-shadow:none;
- color:#202329;font:550 12.2px/1.15 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
- white-space:nowrap;cursor:pointer;
+ border:0!important;border-radius:23px!important;
+ background:rgba(222,226,234,.60);box-shadow:none;
+ color:#252830;font:600 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ white-space:nowrap;cursor:pointer;pointer-events:auto;touch-action:manipulation;
+ -webkit-tap-highlight-color:transparent;
 }
-#svTaskActionCapsule .sv-task-all{background:rgba(255,255,255,.74)}
-#svTaskActionCapsule .sv-task-count{display:grid;place-items:center;align-self:center;height:32px;min-width:0;color:#707782;font-size:11.8px;line-height:1.15;white-space:nowrap}
-#svTaskActionCapsule .sv-task-count[data-has-selection="true"]{color:#3769A9;font-weight:570}
-#svTaskActionCapsule .sv-task-delete:not(:disabled){color:#C43E42!important}
-#svTaskActionCapsule .sv-task-delete:disabled{color:#B6A4A8;opacity:.55}
-#svTaskActionCapsule .sv-task-cancel{color:#60636B}
-#svTaskActionCapsule button:active{background:rgba(130,135,148,.12)}
-#svTaskActionCapsule button:focus-visible{outline:2px solid #3769A9;outline-offset:1px}
+#svTaskActionCapsule > button::before,#svTaskActionCapsule > button::after{content:none!important;display:none!important}
+#svTaskActionCapsule .sv-task-count{
+ position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
+ overflow:hidden!important;clip-path:inset(50%);white-space:nowrap!important;
+}
+#svTaskActionCapsule .sv-task-delete:disabled{opacity:.48;cursor:default}
+#svTaskActionCapsule button:focus-visible{outline:2px solid #0A84FF!important;outline-offset:2px}
+html:root[data-theme="dark"] body #svTaskActionCapsule > button{background:rgba(213,227,240,.16);color:#F8FAFC}
+html:root[data-theme="dark"] body #svTaskActionCapsule > .sv-task-delete{background:rgba(246,99,104,.19);color:#FFB4B8}
+@media(max-width:350px){
+ html:root body #svTaskActionCapsule{gap:5px!important}
+ html:root body #svTaskActionCapsule > button{font-size:12px;padding:0 2px!important}
+}
 
 /* The existing dock is merely hidden during bulk actions, never restyled. */
 html.sv-task-selection-active body > footer.dock.sv-shared-dock{visibility:hidden!important;pointer-events:none!important}
@@ -164,10 +168,6 @@ html.sv-task-search-focus #svTaskActionCapsule{visibility:hidden!important;point
  }
 }
 
-@media(max-width:350px){
- #svTaskActionCapsule button{font-size:11.5px;padding:0 2px}
- #svTaskActionCapsule .sv-task-count{font-size:10.5px}
-}
 @media(prefers-reduced-motion:reduce){#svAllTasksView *{scroll-behavior:auto!important}}
 
 /* All Tasks is a focused workspace: the Home dock returns on exit. */
@@ -197,16 +197,6 @@ html:has(#svWorkShell[data-task-tool-mode="all"]) body > footer.dock.sv-shared-d
  display:grid;place-items:center;flex:0 0 20px;width:20px;height:24px;
 }
 #svAllTasksView .sv-tool-chevron svg{width:18px;height:18px;display:block;}
-html:root[data-theme="light"] body #svTaskActionCapsule{
- border:.8px solid rgba(158,170,185,.38)!important;
- background:var(--sv-white-pearl-surface)!important;
- box-shadow:var(--sv-white-pearl-dock-shadow)!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
- backdrop-filter:var(--sv-white-pearl-blur)!important;
-}
-html:root[data-theme="light"] body #svTaskActionCapsule .sv-task-all{
- background:var(--sv-white-pearl-selected,rgba(255,255,255,.74))!important;
-}
 /* Idle bulk actions quietly leave the reading surface during native scrolling.
    The reserved list space never changes. Selected tasks keep actions visible. */
 #svTaskActionCapsule{
@@ -225,14 +215,6 @@ html:root body #svTaskActionCapsule.sv-bulk-scrolling{
   transition:none!important;
   transform:translateX(-50%)!important;
  }
-}
-
-/* Active bulk selection: denser glass on the capsule itself, never a footer. */
-html:root[data-theme="light"] body #svTaskActionCapsule[data-has-selection="true"]{
- background:rgba(248,249,251,.97)!important;
-}
-html:root[data-theme="dark"] body #svTaskActionCapsule[data-has-selection="true"]{
- background:rgba(47,49,54,.97)!important;
 }
 
 /* All Tasks v40: standalone capsule. The light-mode optical face comes
