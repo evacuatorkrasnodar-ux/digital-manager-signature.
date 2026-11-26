@@ -713,8 +713,8 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorit
  }
 }
 
-/* V169: only the capsule overlaps the native scrollport. The title row
-   remains clean, and the Avatar feather starts at the capsule's lower edge. */
+/* V170: the scrollport and its glass feather start strictly at the
+   capsule's bottom edge. No tiles or extra glass above that boundary. */
 dialog#svHomeFavoritesEditor .sv-home-favorites-pinned{
  display:flex;flex-direction:column;flex:0 0 auto;min-width:0;
 }
@@ -726,8 +726,8 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-pinned{
  @media not (prefers-reduced-transparency:reduce){
   html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-pinned:has(> .sv-home-favorites-tabs:not([hidden]))::before{
    content:""!important;display:block!important;position:absolute!important;
-   inset:auto -20px -24px!important;
-   height:calc(var(--sv-home-chooser-capsule-height,0px) + 24px)!important;
+   inset:100% -20px auto!important;
+   height:24px!important;
    z-index:-1!important;pointer-events:none!important;
    background:var(--sv-header-glass-face,rgba(247,247,248,.46))!important;
    opacity:var(--sv-home-header-opacity,0)!important;
@@ -739,9 +739,9 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-pinned{
   }
   html:root[data-theme="light"] body dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid{
    position:relative!important;z-index:1!important;
-   margin-top:calc(0px - var(--sv-home-chooser-capsule-height,0px))!important;
-   padding-top:calc(var(--sv-home-chooser-capsule-height,0px) + 7px)!important;
-   scroll-padding-top:var(--sv-home-chooser-capsule-height,0px)!important;
+   margin-top:0!important;
+   padding-top:7px!important;
+   scroll-padding-top:7px!important;
    -webkit-mask-image:none!important;mask-image:none!important;
   }
  }
