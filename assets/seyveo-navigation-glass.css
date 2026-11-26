@@ -949,9 +949,10 @@ html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is
  /* V113: match the Work header's 74px tab row, including its 14px top axis. */
  box-sizing:border-box!important;display:block!important;flex:0 0 var(--sv-header-work-tabs-row,74px)!important;
  width:100%!important;height:var(--sv-header-work-tabs-row,74px)!important;min-height:var(--sv-header-work-tabs-row,74px)!important;
- margin:0!important;padding:var(--sv-apple-top-gap,14px) max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px))!important;
+ margin:0!important;padding:var(--sv-apple-top-gap,14px) max(10px,env(safe-area-inset-right,0px)) 0 max(10px,env(safe-area-inset-left,0px))!important;
 }
 html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope{
+ /* V115: a fixed rail, identical to Work's capsule footprint. */
  box-sizing:border-box!important;display:flow-root!important;position:relative!important;
  flex:0 0 auto!important;top:auto!important;min-width:0!important;min-height:0!important;
  width:100%!important;margin:0!important;padding:0!important;
@@ -1030,3 +1031,15 @@ html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-su
 html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top > .sv-continuity-titlebar::before,
 html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top > .sv-continuity-titlebar::after{content:none!important;display:none!important}
 /* Mobile segment spacing follows the shared Work rule too. */
+
+/* V115: keep the document rail at the approved Work tab thickness.
+   The extra specificity protects both modes from legacy doc control sizes. */
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope#svDocArchiveScope > .sv-doc-switch{
+ box-sizing:border-box!important;height:38px!important;min-height:38px!important;max-height:38px!important;
+ grid-template-rows:30px!important;grid-auto-rows:30px!important;
+ width:calc(100% - 24px)!important;max-width:404px!important;
+ padding:3px!important;gap:3px!important;
+}
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope#svDocArchiveScope > .sv-doc-switch > .sv-doc-tab{
+ height:30px!important;min-height:30px!important;max-height:30px!important;
+}
