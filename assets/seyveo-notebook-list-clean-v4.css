@@ -182,36 +182,17 @@ html:root body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-cont
 /* The menu is viewport-positioned: notesList scrolls, so an absolute popover
  * on the final row gets clipped and its Delete/Print actions disappear. */
 #svWorkShell[data-active="notes"] #notesList .sv-nb4-actions[hidden]{display:none!important}
+/* V153: shared menu owns paint and rows, notebook owns placement. */
 #svWorkShell[data-active="notes"] #notesList .sv-nb4-actions:not([hidden]){
- box-sizing:border-box!important;position:fixed!important;
- top:var(--sv-nb-actions-top,12px)!important;
- left:var(--sv-nb-actions-left,12px)!important;
- right:auto!important;bottom:auto!important;z-index:10020!important;
+ position:fixed!important;top:var(--sv-nb-actions-top,12px)!important;
+ left:var(--sv-nb-actions-left,12px)!important;right:auto!important;bottom:auto!important;z-index:10020!important;
  display:flex!important;flex-direction:column!important;gap:0!important;
- width:190px!important;max-width:calc(100% - 24px)!important;
- margin:0!important;padding:5px!important;
- border:0!important;border-radius:13px!important;
- background:#fff!important;box-shadow:0 10px 24px rgba(25,30,40,.12)!important;
+ width:190px!important;max-width:calc(100% - 24px)!important;margin:0!important;padding:5px!important;
 }
-#svWorkShell[data-active="notes"] #notesList .sv-nb4-actions > button{
- box-sizing:border-box!important;display:flex!important;align-items:center!important;
- justify-content:flex-start!important;width:100%!important;
- height:42px!important;min-height:42px!important;
- margin:0!important;padding:0 12px!important;
- border:0!important;border-radius:9px!important;
- background:transparent!important;box-shadow:none!important;
- color:var(--text)!important;
- font:500 14px/1.3 -apple-system,BlinkMacSystemFont,sans-serif!important;
-}
-#svWorkShell[data-active="notes"] #notesList .sv-nb4-actions > .sv-nb4-danger{
- color:#d34148!important;
-}
+#svWorkShell[data-active="notes"] #notesList .sv-nb4-actions > button{width:100%!important;}
 html[data-theme="dark"] #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open],
 html[data-theme="dark"] #svWorkShell[data-active="notes"] #notesList .sv-nb4-front{
  background:var(--bg)!important;
-}
-html[data-theme="dark"] #svWorkShell[data-active="notes"] #notesList .sv-nb4-actions:not([hidden]){
- background:#292b2f!important;
 }
 html[data-theme="dark"] #svWorkShell[data-active="notes"] #notesList .sv-nb4-more{
  background:#50565f!important;
