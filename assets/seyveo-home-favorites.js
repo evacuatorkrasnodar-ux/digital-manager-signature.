@@ -358,16 +358,20 @@ function openCustomize(){
  head.insertBefore(autoButton,title);
  const pinned=document.createElement('div');pinned.className='sv-home-favorites-pinned';
  const views=document.createElement('div');views.className='sv-home-favorites-views';
- redraw();pinned.append(tabbar);views.append(grid);shell.append(head,pinned,views);dialog.append(shell);document.body.append(dialog);
+ redraw();pinned.append(head,tabbar);views.append(grid);shell.append(pinned,views);dialog.append(shell);document.body.append(dialog);
  const measureHeader=()=>{
-  shell.style.setProperty('--sv-home-avatar-head-height',(tabbar.hidden?0:pinned.offsetHeight)+'px');
-  pinned.hidden=tabbar.hidden;
+  const top=parseFloat(getComputedStyle(shell).paddingTop)||0;
+  shell.style.setProperty('--sv-home-avatar-top-inset',top+'px');
+  shell.style.setProperty('--sv-home-avatar-head-height',(pinned.offsetHeight+top)+'px');
  };
+ const syncHeaderGlass=()=>pinned.classList.toggle('is-scrolled',views.scrollTop>0);
+ views.addEventListener('scroll',syncHeaderGlass,{passive:true});
  const headerObserver=typeof ResizeObserver==='function'?new ResizeObserver(measureHeader):null;
  let closed=false;
  function close(saveChanges,animate=false){
   if(closed)return;closed=true;
   headerObserver?.disconnect();
+  views.removeEventListener('scroll',syncHeaderGlass);
   window.removeEventListener('resize',onCurtainResize);
   document.removeEventListener('click',onDockNavigation,true);
   window.removeEventListener('seyveo:route-changed',onRouteChange);
