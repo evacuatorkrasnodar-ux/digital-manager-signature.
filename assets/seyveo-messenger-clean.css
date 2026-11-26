@@ -2175,3 +2175,58 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
   --svcp-room-glass-filter:none;
  }
 }
+
+/* PEARL chat · 26 Nov · match the approved reference without changing
+   the Sky palette, composer, contact identity or interaction geometry. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2::before{
+ background:linear-gradient(180deg,rgba(255,255,255,.80) 0%,rgba(255,255,255,.69) 58%,rgba(255,255,255,.30) 84%,transparent 100%)!important;
+ -webkit-backdrop-filter:blur(7px) saturate(100%)!important;
+ backdrop-filter:blur(7px) saturate(100%)!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="pearl"]) > #svcpWorkChatBack,html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="pearl"]) > #svcpWorkChatBack:is(:active,:hover,:focus),
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > :is(#svcpAudioCall,#svcpVideoCall).svcp-call-button:not([hidden]),html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > :is(#svcpAudioCall,#svcpVideoCall).svcp-call-button:not([hidden]):is(:active,:hover,:focus){
+ background:rgba(248,248,249,.83)!important;
+ background-image:none!important;
+ border:1px solid rgba(255,255,255,.88)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:blur(7px) saturate(100%)!important;
+ backdrop-filter:blur(7px) saturate(100%)!important;
+ color:#161b20!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > :is(#svcpAudioCall,#svcpVideoCall).svcp-call-button:not([hidden]) svg{
+ width:28px!important;height:28px!important;
+ stroke:#161b20!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > :is(#svcpAudioCall,#svcpVideoCall).svcp-call-button:not([hidden]) svg :is(path,rect){stroke-width:1.55!important;stroke:#161b20!important}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > :is(#svcpAudioCall,#svcpVideoCall).svcp-call-button:not([hidden]):is(#svcpVideoCall) svg{width:29px!important;height:29px!important}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages{gap:4px!important}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages > article.svcp-bubble.svcp-imessage-text{margin-top:3px!important}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages > article.svcp-bubble.svcp-imessage-text.svcp-imessage-follow{margin-top:1px!important}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages > article.svcp-bubble.svcp-imessage-text > .svcp-message-text{font-weight:400!important}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages > .svcp-chat-day{
+ color:#697582!important;-webkit-text-fill-color:#697582!important;
+ opacity:1!important;font-weight:500!important;
+ margin-block:12px 8px!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages > article.svcp-bubble.svcp-imessage-text.is-self.svcp-bottom-stamp > .svcp-message-stamp,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages > article.svcp-bubble.svcp-imessage-text.is-self.svcp-bottom-stamp > .svcp-message-stamp > :is(.svcp-time,.svcp-message-local-check){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;opacity:1!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi).svcp-bottom-stamp > .svcp-message-stamp,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi).svcp-bottom-stamp > .svcp-message-stamp > :is(.svcp-time,.svcp-message-local-check){
+ color:#52606C!important;-webkit-text-fill-color:#52606C!important;opacity:1!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages .svcp-file-card.svcp-sent-document-tile > .svcp-sent-document-status{
+ background:rgba(0,0,0,.73)!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ opacity:1!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages .svcp-file-card.svcp-sent-document-tile > .svcp-sent-document-status > :is(.svcp-time,.svcp-message-local-check){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ opacity:1!important;text-shadow:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2::before{background:#fff!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="pearl"]) > #svcpWorkChatBack,html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="pearl"]) > #svcpWorkChatBack:is(:active,:hover,:focus),html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > :is(#svcpAudioCall,#svcpVideoCall).svcp-call-button:not([hidden]),html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > :is(#svcpAudioCall,#svcpVideoCall).svcp-call-button:not([hidden]):is(:active,:hover,:focus){background:#F7F7F8!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
