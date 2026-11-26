@@ -783,6 +783,7 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   --sv-header-glass-filter:var(--sv-white-pearl-floating-blur);
   --sv-header-glass-mask:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%);
  }
+ html:root[data-theme="light"] body #svReviewRoom:not([hidden])::before,
  html:root[data-theme="light"] body #svcpWorkChatScreen #svcpInboxSheet.sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-pinned-head::before,
  html:root[data-theme="light"] body :is(dialog[open],#picturePage:not([hidden])).sv-scroll-glass-ready > .sv-scroll-glass-head > .sv-scroll-glass-material,
  html:root[data-theme="light"] body dialog#svcpManagerPeople.sv-staff-page[open].sv-scroll-glass-ready > .sv-staff-head > .sv-scroll-glass-material,
