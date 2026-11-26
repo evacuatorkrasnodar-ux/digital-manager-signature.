@@ -114,11 +114,11 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  opacity:1!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill > svg{
- /* Narrow rounded disclosure chevron, matching the supplied Andre reference. */
- display:block!important;flex:0 0 12px!important;width:12px!important;height:16px!important;
- fill:none!important;stroke:#64BFFF!important;stroke-width:3.6!important;
+ /* V112: match the thin 12px disclosure glyph in Avatar name capsules. */
+ display:block!important;flex:0 0 12px!important;width:12px!important;height:12px!important;
+ fill:none!important;stroke:#64BFFF!important;stroke-width:1.7!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
- transform:translateY(-.5px)!important;
+ transform:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpConversationHeading > #svcpConversationDetail{
  display:block!important;position:relative!important;min-width:0!important;
