@@ -10,8 +10,18 @@
  const moods=[
   {id:'date',label:'Свидание',kind:'ресторан',hint:'романтический ресторан'},
   {id:'work',label:'Деловая',kind:'кафе',hint:'тихое кафе для деловой встречи'},
+  {id:'friends',label:'С друзьями',kind:'кафе',hint:'кафе для встречи с друзьями'},
+  {id:'family',label:'С семьёй',kind:'ресторан',hint:'семейный ресторан'},
   {id:'coffee',label:'Кофе',kind:'кофейня',hint:'кофейня'}
  ];
+ function suggestedMood(value){
+  if(/(?:свидан|романтическ|с девушкой|с парнем)/iu.test(value))return 'date';
+  if(/(?:делов|переговор|поставщик|заказчик|клиент|партн[её]р|подрядчик|коллег|совещан)/iu.test(value))return 'work';
+  if(/(?:семей|семь[еёйию]|с детьми|с ребёнком|с ребенком|с мамой|с папой)/iu.test(value))return 'family';
+  if(/(?:с друз|с другом|с подругой|дружеск)/iu.test(value))return 'friends';
+  if(/(?:кофе|кофей)/iu.test(value))return 'coffee';
+  return '';
+ }
  const section=document.createElement('section');section.className='sv-meeting-place-picker';section.hidden=true;
  section.setAttribute('aria-label','Сэйви подберёт место встречи');placePanel.after(section);
  let expanded=false,mood='',candidates=[],busy=false,note='',dismissed=false,token=0,visible=5,cityValue='';
@@ -51,13 +61,18 @@
    row.append(input,button('Найти',accept));section.append(row);
   }else{
    const chips=node('div','sv-meeting-place-moods');
-   for(const item of moods){
+   const recommended=suggestedMood(title.value);
+   const ordered=[...moods].sort((a,b)=>Number(b.id===recommended)-Number(a.id===recommended));
+   for(const item of ordered){
     chips.append(button(item.label,()=>void choose(item),
      'sv-meeting-place-mood'+(mood===item.id?' is-active':'')));
    }
    section.append(chips);
   }
-  if(!mood)section.append(node('p','sv-meeting-place-muted','Подбор по типу заведения. Атмосферу и цены уточним по проверенным данным.'));
+  if(!mood){
+   const recommended=moods.find(item=>item.id===suggestedMood(title.value));
+   section.append(node('p','sv-meeting-place-muted',recommended?'По описанию встречи подходит вариант «'+recommended.label+'». Можно выбрать другой.':'Выбери характер встречи. Сэйви предложит места по типу заведения.'));
+  }
   if(busy)section.append(node('p','sv-meeting-place-muted','Смотрю реальные заведения…'));
   if(note)section.append(node('p','sv-meeting-place-muted',note));
   for(const candidate of candidates.slice(0,visible)){
@@ -77,7 +92,7 @@
    const city=cityValue||places.suggestedCity();
    const proposal={query:item.kind+', '+city,kind:item.kind,venueName:'',city,citySelected:Boolean(cityValue)};
    const found=await hub.findPlace(proposal);
-   if(sequence!==token||!dialog.open)return;
+   if(sequence!==token||!dialog.open||places.extract(title.value))return;
    if(found?.consentRequired)note='Разреши поиск мест, чтобы Сэйви показала реальные варианты.';
    else if(found?.cityRequired)note='Сначала укажи город.';
    else{
