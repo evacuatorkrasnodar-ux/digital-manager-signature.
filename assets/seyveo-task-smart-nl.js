@@ -44,6 +44,15 @@
   else if(/каждый\s+месяц|ежемесячно/u.test(words))repeat='monthly';
   return {priority,repeat};
  }
+ // A trailing reminder is an instruction, not the name or address of a task.
+ function trailingReminder(value){
+  const match=value.match(/(?:^|[\s,.!?;])(?:и\s+)?напомни(?:те)?(?:\s+мне)?\s+за\s+(?:(\d{1,3}|один|одну)\s+)?(полчаса|час(?:а|ов)?|минут(?:у|ы)?)(?:\s+до\s+(?:начала|встречи|события))?\s*[.!?;]*$/iu);
+  if(!match)return {body:value,leadMinutes:0};
+  const amount=Number(match[1])||1,unit=match[2].toLocaleLowerCase('ru-RU');
+  const leadMinutes=unit==='полчаса'?30:unit.startsWith('час')?amount*60:amount;
+  if(leadMinutes<1||leadMinutes>1440)return {body:value,leadMinutes:0};
+  return {body:value.slice(0,match.index).replace(/[\s,.!?;]+$/u,'').trim(),leadMinutes};
+ }
  function parse(input,now=new Date()){
   if(typeof input!=='string'||input.length>700||!Number.isFinite(now?.getTime?.()))return null;
   let body=unwrapOuterQuotes(correctKnownTypos(input).replace(/\r?\n+/g,'; ').replace(/\s+/g,' ').replace(/(^|[\s,;])в(?=\d{1,2}(?=$|[\s,.!?]))/giu,'$1в '));
@@ -52,6 +61,7 @@
   body=body.replace(/^(?:напомни(?:те)?(?:\s+мне)?|запланируй|запиши|назначь|создай|добавь)\s+(?:(?:(?:мне|в\s+(?:календарь|дела)|дело|задачу|событие)\s+){0,2})/iu,'');
   body=body.replace(/^[:—–,\s]+/u,'').trim();
   if(!body||/\b(?:через\s+\d+|на\s+следующ\w+\s+недел\w+)\b/iu.test(body))return null;
+  const reminder=trailingReminder(body);body=reminder.body;
   let date=null,time='';
   function remove(match){
    body=(body.slice(0,match.index)+' '+body.slice(match.index+match[0].length)).replace(/\s+/g,' ').trim();
@@ -110,7 +120,7 @@
   if(/(?:^|\s)(?:сегодня|завтра|послезавтра|понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)(?=$|\s)/iu.test(body))return null;
   body=body.replace(/^(?:мне|что|пожалуйста)\s+/iu,'').replace(/\s*[,.!?;:]+\s*$/u,'').trim();
   if(!body||body.length>140||!/[\p{L}]/u.test(body))return null;
-  return {title:body.charAt(0).toLocaleUpperCase('ru-RU')+body.slice(1),date:date?iso(date):'',time};
+  return {title:body.charAt(0).toLocaleUpperCase('ru-RU')+body.slice(1),date:date?iso(date):'',time,...(reminder.leadMinutes?{leadMinutes:reminder.leadMinutes}:{})};
  }
  /* Multi-action review. Split only at an explicit conjunction followed by a
     second actionable verb; do not split 'чай и кофе' or a person's full name. */
@@ -176,7 +186,7 @@
   value=value.replace(/(^|[\s,])(позвонить|созвониться|списаться|написать)\s+([а-яё]{3,30})(?=$|[\s,.!?])/giu,(match,prefix,verb,person)=>
    commonPeople[person.toLocaleLowerCase('ru-RU')]||/^(?:письмо|сообщение|смс|всем|кому|ещё)$/iu.test(person)?match:prefix+verb+' '+cap(person));
   value=value.replace(/(^|[\s,])(встретиться|встреча|поговорить|увидеться|созвониться)\s+с\s+([а-яё]{3,30})(?=$|[\s,.!?])/giu,(match,prefix,verb,person)=>
-   commonPeople[person.toLocaleLowerCase('ru-RU')]?match:prefix+verb+' с '+cap(person));
+   (commonPeople[person.toLocaleLowerCase('ru-RU')]||/^(?:поставщик(?:ом)?|подрядчик(?:ом)?|заказчик(?:ом)?|партн[её]р(?:ом)?|представител[ье]м|директор(?:ом)?|руководител[ье]м|менеджер(?:ом)?)$/iu.test(person))?match:prefix+verb+' с '+cap(person));
   // A casually typed city belongs to the location, not inside the venue name.
   // Handle a stray closing quote as in "кафе вкусно и точка краснодар»".
   const cities={краснодар:'Краснодар',краснодаре:'Краснодар',москва:'Москва',москве:'Москва',сочи:'Сочи',казань:'Казань',казани:'Казань'};
@@ -192,7 +202,8 @@
    .replace(/^(?:(?:сэйви|сейви|сэй|сей)[,!:.,\s]+)?(?:пожалуйста[,]?\s+)?/iu,'')
    .replace(/^(?:напомни(?:те)?(?:\s+мне)?|запланируй|запиши|назначь|создай|добавь)\s+/iu,'');
   body=body.replace(/^(?:срочно|немедленно|очень\s+важно|важно)\s*[:,!—–-]?\s*/iu,'');
-  let leadMinutes=0;
+  const trailing=trailingReminder(body);body=trailing.body;
+  let leadMinutes=trailing.leadMinutes;
   const lead=body.match(/^за\s+(час|один\s+час|1\s+час|полчаса|30\s+минут|15\s+минут)(?=$|[\s,.!?])/iu);
   if(lead){leadMinutes=/15/u.test(lead[1])?15:/полчаса|30/u.test(lead[1])?30:60;body=body.slice(lead[0].length).trim()}
   const parts=body.split(actionSeparator).flatMap(fragment=>fragment.split(datedActionSeparator)).flatMap(fragment=>splitLooseActions(fragment)).map(part=>part.trim()).filter(Boolean);
