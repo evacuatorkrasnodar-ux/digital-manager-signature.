@@ -41,3 +41,27 @@ html:root body #svStandardPickerDialog .sv-unified-wheel > .sv-unified-wheel-opt
 html:root body dialog#personalTaskDialog.sv-task-editor-v3 .sv-unified-wheel > .sv-unified-wheel-option,
 html:root body #calendarSpaceDialog[data-space="health"] .sv-unified-wheel > .sv-unified-wheel-option{height:40px!important;min-height:40px!important;max-height:40px!important;padding:0 4px!important;background:transparent!important;color:var(--text,#20262d)!important;}
 html:root body :is(#calendarEventDialog,#personalTaskDialog,#svStandardPickerDialog,#calendarSpaceDialog) .sv-unified-wheel > .sv-unified-wheel-option.is-selected{background:rgba(115,127,145,.12)!important;}
+
+/* V70 — common wheel material, without straight separator rules. */
+:root{
+ --sv-wheel-selection-fill:rgba(115,127,145,.15);
+ --sv-wheel-segment-fill:rgba(189,195,205,.34);
+ --sv-wheel-segment-selected:rgba(255,255,255,.78);
+}
+:root[data-theme="dark"]{
+ --sv-wheel-selection-fill:rgba(180,190,205,.16);
+ --sv-wheel-segment-fill:rgba(115,127,145,.25);
+ --sv-wheel-segment-selected:rgba(160,170,185,.24);
+}
+html:root body .sv-unified-wheel.sv-unified-wheel > .sv-unified-wheel-option.is-selected,
+html:root body :is(#calendarEventDialog,#personalTaskDialog,#svStandardPickerDialog,#calendarSpaceDialog,#sayviSurfacePage) .sv-unified-wheel.sv-unified-wheel > .sv-unified-wheel-option.is-selected{
+ background:var(--sv-wheel-selection-fill)!important;border:0!important;border-radius:12px!important;box-shadow:none!important;
+}
+html:root body #calendarEventDialog[open] #seyveoPickTime .cal-pick-wheels::before{
+ background:var(--sv-wheel-selection-fill)!important;border:0!important;border-radius:12px!important;box-shadow:none!important;
+}
+html:root body #calendarEventDialog[open] #seyveoPickTime .cal-pick-wheels .sv-unified-wheel > .sv-unified-wheel-option.is-selected{
+ background:transparent!important;
+}
+html:root body #personalTaskDialog#personalTaskDialog .sv-task-wheel-sheet-host .sv-unified-wheel > .sv-unified-wheel-option.is-selected{background:transparent!important}
+html:root body #svStandardPickerDialog .sv-standard-time-wheel.sv-unified-wheel{background:transparent!important}
