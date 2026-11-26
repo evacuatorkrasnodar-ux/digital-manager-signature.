@@ -561,7 +561,7 @@
   const repeat=document.getElementById('personalTaskRepeat')?.value;
   if(repeat&&repeat!=='none')meta.append(createText('repeat',({daily:'Каждый день',weekly:'Каждую неделю',monthly:'Каждый месяц'})[repeat]||'Повтор'));
   if(meta.childElementCount)smartDetails.append(meta);
-  if(lead)smartDetails.append(createText('notice','Время напоминания распознано. Уведомления пока не подключены.'));
+  if(lead)smartDetails.append(createText('notice','Напоминание появится, когда SEYVEO открыто. При закрытом приложении доставка пока не гарантируется.'));
   if(timeInput?.value&&!date.value)smartDetails.append(createText('notice','Укажи дату для напоминания по времени.'));
  }
  function applyPhrase(){
