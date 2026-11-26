@@ -361,7 +361,7 @@ function openCustomize(){
  const syncHeaderGlass=()=>pinned.style.setProperty('--sv-home-header-opacity',String(Math.min(1,Math.max(0,grid.scrollTop/8))));
  grid.addEventListener('scroll',syncHeaderGlass,{passive:true});
  syncHeaderGlass();
- const measureHeader=()=>{const h=pinned.offsetHeight;if(h>0) shell.style.setProperty('--sv-home-chooser-header-height',h+'px');};
+ const measureHeader=()=>{const h=tabbar.hidden?0:tabbar.offsetHeight; shell.style.setProperty('--sv-home-chooser-capsule-height',h+'px');};
  const headerObserver=typeof ResizeObserver==='function'?new ResizeObserver(measureHeader):null;
  let closed=false;
  function close(saveChanges,animate=false){
