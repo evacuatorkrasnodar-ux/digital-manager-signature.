@@ -144,3 +144,66 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-route-web{
  color:#176ab4!important;text-align:center!important;text-decoration:none!important;
  font:500 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
+
+/* V72 · map viewer follows the SEYVEO bottom-sheet and action material. */
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-overlay{
+ background:rgba(35,40,50,.08)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-sheet{
+ background:var(--sv-date-sheet-light,rgba(228,231,236,.65))!important;
+ border:0!important;border-top:1px solid rgba(255,255,255,.65)!important;
+ border-radius:26px 26px 0 0!important;
+ -webkit-backdrop-filter:var(--sv-date-sheet-filter,blur(20px) saturate(110%))!important;
+ backdrop-filter:var(--sv-date-sheet-filter,blur(20px) saturate(110%))!important;
+ box-shadow:0 -5px 28px rgba(40,48,60,.12)!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-handle{
+ width:34px!important;height:4px!important;margin:8px auto 3px!important;background:rgba(90,99,112,.32)!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-header{
+ padding:10px 16px 12px!important;gap:10px!important;background:transparent!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-headline{
+ flex:1 1 0!important;min-width:0!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-headline strong,
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-headline span{
+ white-space:normal!important;text-overflow:clip!important;overflow:visible!important;overflow-wrap:anywhere!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-headline strong{
+ font:600 16px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:var(--sv-date-sheet-ink,#17191D)!important;letter-spacing:0!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 :is(.sv-place-map-close,.sv-place-map-zoom,.sv-place-map-center){
+ box-sizing:border-box!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;max-width:44px!important;max-height:44px!important;flex:0 0 44px!important;
+ border-radius:50%!important;background:var(--sv-task-action-fill,rgba(235,238,242,.85))!important;
+ border:var(--sv-task-action-rim,1px solid rgba(166,173,184,.24))!important;
+ box-shadow:var(--sv-task-action-shadow,none)!important;color:var(--sv-date-sheet-ink,#17191D)!important;
+ -webkit-backdrop-filter:var(--sv-task-action-blur,blur(12px))!important;backdrop-filter:var(--sv-task-action-blur,blur(12px))!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-controls{right:12px!important;top:12px!important;gap:6px!important}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-viewport{
+ min-height:0!important;border:0!important;border-radius:0!important;margin:0!important;width:100%!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-footer{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;
+ gap:8px!important;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px))!important;background:transparent!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-route-primary{
+ min-height:44px!important;height:auto!important;padding:10px 12px!important;
+ background:var(--sv-task-action-fill)!important;border:var(--sv-task-action-rim)!important;
+ box-shadow:var(--sv-task-action-shadow)!important;color:var(--sv-date-sheet-ink,#17191D)!important;
+ -webkit-backdrop-filter:var(--sv-task-action-blur)!important;backdrop-filter:var(--sv-task-action-blur)!important;
+}
+html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-route-web{
+ min-height:44px!important;padding:0 8px!important;background:transparent!important;border:0!important;box-shadow:none!important;
+ color:var(--sv-date-sheet-blue,#007AFF)!important;white-space:normal!important;
+}
+html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-sheet{
+ background:var(--sv-date-sheet-dark,rgba(36,38,44,.94))!important;
+}
+html:root[data-theme="dark"] body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-headline span{color:#A6ADB8!important}
+@media(min-width:650px){
+ html:root body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-sheet{border-radius:26px!important}
+}
