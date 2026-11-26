@@ -104,36 +104,16 @@ html body #svcpWorkChatScreen[data-view="room"] .sv-inbox-options-button{display
 :root[data-theme="dark"] #svcpWorkChatScreen{
  --sv-inbox-panel-bg:#24262A;--sv-inbox-panel-ink:#F7F7FA;--sv-inbox-divider:rgba(255,255,255,.13)
 }
+/* V152: inbox owns placement only. All menu painting and action geometry
+   is maintained in seyveo-unified-menu-material.css. */
 html body #svcpWorkChatScreen .sv-inbox-popover{
  position:absolute!important;top:calc(72px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));
- z-index:570!important;width:min(277px,calc(100vw - 24px));padding:7px;box-sizing:border-box;
- border:1px solid rgba(180,189,200,.24);border-radius:var(--sv-menu-radius,20px);
- background:var(--sv-inbox-panel-bg)!important;color:var(--sv-inbox-panel-ink);
- box-shadow:0 15px 45px rgba(22,30,47,.16),0 2px 7px rgba(22,30,47,.04);
- -webkit-backdrop-filter:blur(24px) saturate(110%);backdrop-filter:blur(24px) saturate(110%);
+ z-index:570!important;max-width:calc(100% - 24px);max-height:calc(100% - 100px);overflow-y:auto;overscroll-behavior:contain;
 }
-:root[data-theme="light"] body #svcpWorkChatScreen .sv-inbox-popover{
- background:var(--sv-menu-bg,#FCFCFD)!important;
- border:var(--sv-menu-border)!important;
- border-radius:var(--sv-menu-radius,20px)!important;
- box-shadow:var(--sv-menu-shadow)!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- color:var(--sv-menu-text,#252A33)!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-menu-row{
- display:flex!important;align-items:center;justify-content:flex-start;
- gap:11px;width:100%;min-height:46px;padding:9px 11px;
- border:0!important;border-bottom:1px solid var(--sv-inbox-divider)!important;border-radius:0!important;
- background:transparent!important;color:inherit!important;box-shadow:none!important;
- font:500 14px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- text-align:left;cursor:pointer
-}
-html body #svcpWorkChatScreen .sv-inbox-menu-row:last-child{border-bottom:0!important}
-html body #svcpWorkChatScreen .sv-inbox-menu-row:active{background:rgba(147,156,176,.10)!important;border-radius:11px!important}
-html body #svcpWorkChatScreen :is(.sv-inbox-menu-row,.sv-inbox-action-row,.sv-inbox-contact-row,.sv-inbox-profile-mute,.sv-inbox-restore) svg{
+html body #svcpWorkChatScreen .sv-inbox-menu-row{width:100%;cursor:pointer}
+html body #svcpWorkChatScreen :is(.sv-inbox-action-row,.sv-inbox-contact-row,.sv-inbox-profile-mute,.sv-inbox-restore) svg{
  flex:none;width:19px;height:19px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.6
 }
-html body #svcpWorkChatScreen .sv-inbox-menu-row svg{opacity:.76}
 html body #svcpWorkChatScreen .sv-inbox-overlay{
  position:absolute!important;inset:0!important;z-index:590!important;
  display:flex;align-items:flex-end;justify-content:center;
