@@ -1,0 +1,75 @@
+/* SEYVEO: canonical round affirmative action. V88, approved light-blue flat face.
+   Explicit circular save/commit controls only. Navigation, text actions,
+   colored status controls, send buttons and dock retain their own materials. */
+:root{
+ --sv-confirm-size:var(--sv-nav-single-size,44px);
+ --sv-confirm-face:#c3e2fa;
+ --sv-confirm-edge:#acd4f9;
+ --sv-confirm-ink:#075ca8;
+ --sv-confirm-pressed:#a9d5f7;
+ --sv-confirm-pressed-edge:#96c7ee;
+ --sv-confirm-disabled-face:#f0f1f3;
+ --sv-confirm-disabled-edge:#e2e5e9;
+ --sv-confirm-disabled-ink:#a5adb8;
+ --sv-confirm-glyph-size:20px;
+ --sv-confirm-glyph-stroke:1.8;
+}
+@layer seyveo-confirm-standard{
+ html:root[data-theme="light"] body :is(
+  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+   #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
+  .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle
+ ):not([hidden]){
+  appearance:none!important;-webkit-appearance:none!important;
+  box-sizing:border-box!important;display:grid!important;place-items:center!important;
+  width:var(--sv-confirm-size)!important;min-width:var(--sv-confirm-size)!important;max-width:var(--sv-confirm-size)!important;
+  height:var(--sv-confirm-size)!important;min-height:var(--sv-confirm-size)!important;max-height:var(--sv-confirm-size)!important;
+  padding:0!important;border-radius:50%!important;
+  border:1px solid var(--sv-confirm-edge)!important;background:var(--sv-confirm-face)!important;
+  background-image:none!important;color:var(--sv-confirm-ink)!important;
+  box-shadow:none!important;text-shadow:none!important;filter:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  opacity:1!important;transform:none!important;scale:1!important;
+  transition:none!important;-webkit-tap-highlight-color:transparent!important;
+ }
+ html:root[data-theme="light"] body :is(
+  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+   #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
+  .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle
+ ):not([hidden]):not(:disabled):not([aria-disabled="true"]):active{
+  background:var(--sv-confirm-pressed)!important;border-color:var(--sv-confirm-pressed-edge)!important;
+ }
+ html:root[data-theme="light"] body :is(
+  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+   #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
+  .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle
+ ):not([hidden]):is(:disabled,[aria-disabled="true"]){
+  background:var(--sv-confirm-disabled-face)!important;border-color:var(--sv-confirm-disabled-edge)!important;
+  color:var(--sv-confirm-disabled-ink)!important;cursor:default!important;
+ }
+ html:root[data-theme="light"] body :is(
+  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+   #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
+  .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle
+ ) svg{
+  display:block!important;width:var(--sv-confirm-glyph-size)!important;height:var(--sv-confirm-glyph-size)!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:var(--sv-confirm-glyph-stroke)!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+ }
+ html:root[data-theme="light"] body :is(
+  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+   #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
+  .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle
+ ) svg path{stroke:currentColor!important;fill:none!important}
+ html:root[data-theme="light"] body :is(
+  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+   #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
+  .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle
+ )::before,
+ html:root[data-theme="light"] body :is(#personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone, #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,.sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle)::after{content:none!important;display:none!important}
+ html:root[data-theme="light"] body :is(
+  #personalTaskSave,#svNoteDone,#svScanTextDone,#svScanAnnotationDone,
+   #notePaperDialog:not(.sv-paper-scan-page) #notePaperSave,.sv-doc-edit-done,.sv-doc-scanner-done,.sv-doc-detail-save,
+  .sv-doc-picker-round.sv-wheel-done,.sv-confirm-circle
+ ):focus-visible{outline:2px solid var(--sv-confirm-ink)!important;outline-offset:3px!important}
+}
