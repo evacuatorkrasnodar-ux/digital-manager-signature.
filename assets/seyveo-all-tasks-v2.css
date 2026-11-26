@@ -202,3 +202,18 @@ html body #svWorkShell > #svAllTasksTabs > button:focus-visible{outline:2px soli
 html:root[data-theme="dark"] body #svWorkShell > #svAllTasksTabs:not([hidden]){background:rgba(223,234,245,.085)!important;border-color:rgba(214,230,241,.15)!important}
 html:root[data-theme="dark"] body #svWorkShell > #svAllTasksTabs > button{color:#BDC4CD!important}
 html:root[data-theme="dark"] body #svWorkShell > #svAllTasksTabs > button[aria-pressed="true"]{background:rgba(213,227,240,.16)!important;color:#F8FAFC!important}
+
+/* V96 · All Tasks bulk selection: fade the moving content, not the glass.
+   The footer retains the canonical bulk material and safe-area anchor.
+   Only the bottom of the actual scrollport is masked; the final row can
+   scroll fully above it using the existing 76px selection reserve. */
+html:root[data-theme="light"].sv-task-selection-active:not(.sv-task-search-focus):has(#svTaskActionCapsule:not([hidden]):not(.sv-bulk-scrolling)) body #svWorkShell#svWorkShell[data-task-tool-mode="all"] > #svAllTasksView#svAllTasksView > .sv-tool-results{
+ --sv-task-bottom-fade:linear-gradient(to bottom,#000 0%,#000 calc(100% - 76px - env(safe-area-inset-bottom,0px)),transparent calc(100% - 18px - env(safe-area-inset-bottom,0px)),transparent 100%);
+ -webkit-mask-image:var(--sv-task-bottom-fade)!important;
+ mask-image:var(--sv-task-bottom-fade)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"].sv-task-selection-active:not(.sv-task-search-focus):has(#svTaskActionCapsule:not([hidden]):not(.sv-bulk-scrolling)) body #svWorkShell#svWorkShell[data-task-tool-mode="all"] > #svAllTasksView#svAllTasksView > .sv-tool-results{
+  -webkit-mask-image:none!important;mask-image:none!important;
+ }
+}
