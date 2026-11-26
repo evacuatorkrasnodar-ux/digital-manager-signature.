@@ -321,33 +321,6 @@
 }
 
 
-/* Contextual labels on iPhone XR/compact Safari: never wrap the action row.
-   Full verbs remain on the button's accessible name and title. */
-@media(max-width:420px){
- #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
-  .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="navigate"]
-  .sv-card-icon-caption[data-sv-compact-caption]{font-size:0!important}
- #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
-  .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="navigate"]
-  .sv-card-icon-caption[data-sv-compact-caption]::after{
-   content:attr(data-sv-compact-caption);
-   font:520 11px/1.2 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
-   white-space:nowrap;letter-spacing:-.01em;
- }
-}
-@media(max-width:365px){
- #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
-  .lm-actions .lm-polymer.sv-card-icon-button
-  .sv-card-icon-caption[data-sv-tiny-caption]{font-size:0!important}
- #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
-  .lm-actions .lm-polymer.sv-card-icon-button
-  .sv-card-icon-caption[data-sv-tiny-caption]::after{
-   content:attr(data-sv-tiny-caption);
-   font:520 11px/1.2 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
-   white-space:nowrap;letter-spacing:-.01em;
- }
-}
-
 /* SEYVEO REVIEW READING POLISH 21.11
    A single editorial reading surface: one featured decision followed by a
    quiet two-row queue. No nested cards, new buttons, or altered handlers. */
@@ -391,11 +364,11 @@
  overflow:visible!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-field-eyebrow{
- font-size:10.5px!important;font-weight:570!important;
+ font-size:13px!important;font-weight:570!important;
  letter-spacing:.025em!important;color:#606874!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-field-top .sv-lm-event-clock{
- font-size:11px!important;
+ font-size:13px!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-primary{
  padding:0 0 6px!important;
@@ -410,20 +383,20 @@
  width:44px!important;height:44px!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-primary-title{
- font-size:16px!important;font-weight:540!important;
+ font-size:17px!important;font-weight:540!important;
  letter-spacing:-.025em!important;line-height:1.3!important;
  color:#22252A!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-primary-subtitle{
- font-size:13px!important;line-height:1.5!important;
+ font-size:17px!important;line-height:1.48!important;
  color:#626A74!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-section-label.sv-sayvi-observation{
  margin:4px 0 2px!important;
- font-size:12.5px!important;line-height:1.42!important;
+ font-size:15px!important;line-height:1.42!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-document-content .lm-document-note{
- font-size:14.5px!important;line-height:1.5!important;
+ font-size:17px!important;line-height:1.5!important;
  color:#39434E!important;letter-spacing:-.008em!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions{
@@ -471,14 +444,14 @@
  width:44px!important;height:44px!important;
 }
 #svReviewRoom #seyveoLivingMoment .sv-lm-inline-heading .lm-inline-title{
- font-size:14.5px!important;font-weight:560!important;
+ font-size:17px!important;font-weight:560!important;
  line-height:1.35!important;color:#292E35!important;
 }
 #svReviewRoom #seyveoLivingMoment .sv-lm-inline-heading .sv-lm-sample-time{
- font-size:11px!important;line-height:1.35!important;color:#687582!important;
+ font-size:13px!important;line-height:1.35!important;color:#687582!important;
 }
 #svReviewRoom #seyveoLivingMoment .lm-inline-item .lm-inline-note{
- font-size:12.5px!important;line-height:1.46!important;
+ font-size:15px!important;line-height:1.46!important;
  color:#515D69!important;
 }
 @media(max-width:355px){
@@ -511,7 +484,7 @@
  margin-bottom:10px!important;
 }
 #svReviewRoom .sv-review-header h2{font-weight:600!important;font-size:18px!important}
-#svReviewRoom .sv-review-header #svReviewProgress{color:#65717e!important;font-size:11.5px!important}
+#svReviewRoom .sv-review-header #svReviewProgress{color:#65717e!important;font-size:13px!important}
 #svReviewRoom .sv-review-header > #svReviewBack svg{width:19px;height:19px;stroke-width:1.55}
 #svReviewRoom .sv-review-content{
  flex:1 1 0!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;
@@ -644,4 +617,34 @@ html:root[data-theme="light"] body #svReviewRoom:not([hidden])::before{
  width:7px;height:7px;box-sizing:border-box;
  border-top:1.5px solid #8995a3;border-right:1.5px solid #8995a3;
  transform:rotate(45deg);background:transparent;pointer-events:none;
+}
+
+/* Review readability · iPhone logical viewport, not desktop screenshot scale.
+   Use native system-font proportions and let controls reflow, not shrink. */
+#svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
+ font-size:15px!important;line-height:1.3!important;
+ height:auto!important;min-height:46px!important;max-height:none!important;
+ white-space:normal!important;flex-wrap:nowrap!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]) .sv-card-icon-caption{
+ font-size:15px!important;line-height:1.25!important;
+ white-space:normal!important;text-align:center;overflow-wrap:normal;
+}
+#svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions .lm-polymer.sv-card-icon-button .sv-card-icon-caption:is([data-sv-compact-caption],[data-sv-tiny-caption])::after{content:none!important;display:none!important}
+#svReviewRoom #seyveoLivingMoment .lm-secondary > button.lm-inline-item{
+ min-height:64px!important;height:auto!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-inline-copy{min-width:0}
+#svReviewRoom #seyveoLivingMoment .sv-lm-inline-heading{row-gap:2px}
+@media(max-width:480px){
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions:has(> button[data-sv-card-icon="sayvi"]:not([hidden])):has(> button[data-sv-card-icon="edit"]:not([hidden])):has(> button[data-sv-card-icon="navigate"]:not([hidden])){
+  gap:8px!important;
+ }
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions:has(> button[data-sv-card-icon="edit"]:not([hidden])):has(> button[data-sv-card-icon="navigate"]:not([hidden])) > button[data-sv-card-icon="sayvi"]:not([hidden]){
+  flex:1 0 100%!important;
+ }
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions:has(> button[data-sv-card-icon="sayvi"]:not([hidden])) > button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
+  flex:1 1 calc(50% - 4px)!important;min-width:0!important;
+  padding:7px 5px!important;
+ }
 }
