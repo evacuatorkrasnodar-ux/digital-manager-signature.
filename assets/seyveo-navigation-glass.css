@@ -582,3 +582,26 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
  -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur)!important;backdrop-filter:var(--sv-white-pearl-floating-blur)!important;
 }
 @media(prefers-reduced-transparency:reduce){html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]){background:#167ebd!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
+
+/* Agenda Today + weather: one local matte glass face, exactly between the
+   calendar rail and the task list. Preserve the existing sticky caption,
+   calendar geometry, typography, weather tap and every other date. */
+html:root[data-theme="light"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading[data-today="true"]{
+ background:var(--sv-white-pearl-floating-dock,rgba(247,247,248,.46))!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px) saturate(108%))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(8px) saturate(108%))!important;
+ border-top-color:transparent!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.40)!important;
+}
+html:root[data-theme="light"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading[data-today="true"][data-sv-edge-fade]::after{
+ background:linear-gradient(to bottom,rgba(255,255,255,.30),rgba(255,255,255,0))!important;
+ pointer-events:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading[data-today="true"]{
+  background:#fff!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ html:root[data-theme="light"] body #svWorkShell[data-agenda-scroll="true"]:not([data-task-tool-mode="all"]) #tasksPage #personalTaskList .sv-agenda-day-group > .sv-agenda-section-heading[data-today="true"][data-sv-edge-fade]::after{content:none!important;display:none!important}
+}
