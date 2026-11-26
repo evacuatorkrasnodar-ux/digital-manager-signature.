@@ -221,6 +221,58 @@
   const items=unique.slice(0,12);
   return {items,date:items[0]?.date||'',time:items[0]?.time||'',leadMinutes,needsReview};
  }
- if(typeof module!=='undefined'&&module.exports)module.exports={parse,signals,plan,polishTitle};
- if(root){root.SEYVEO_TASK_SMART_NL=parse;root.SEYVEO_TASK_SMART_SIGNALS=signals;root.SEYVEO_TASK_SMART_PLAN=plan;}
+ // Display-only ranges. Never rewrite the input.
+ function recognizedRanges(value,now=new Date(),place=null){
+  const raw=String(value||''), result=plan(raw,now);
+  if(!result)return [];
+  const ranges=[];
+  function add(start,end,kind){
+   if(end<=start||ranges.some(r=>start<r.end&&end>r.start))return;
+   ranges.push({start,end,kind});
+  }
+  const escape=value=>Array.from(value).map(c=>'\\^$.*+?()[]{}|'.includes(c)?'\\'+c:c).join('');
+  if(place?.venueName){
+   const name=String(place.venueName).trim();
+   if(name){
+    const match=new RegExp(escape(name),'iu').exec(raw);
+    if(match){
+     const prefix=raw.slice(0,match.index).match(/(?:в|во|на|у)\s+(?:трц|тц|торговом\s+центре|торгово-развлекательном\s+центре|кафе|кофейне|ресторане|баре|пиццерии|отеле|гостинице|музее|кинотеатре)\s+[«"“]?$/iu);
+     let end=match.index+match[0].length;
+     if(/[»"”]/u.test(raw[end]||''))end++;
+     add(prefix?match.index-prefix[0].length:match.index,end,'place');
+    }
+   }
+  }
+  if(place?.explicitCity&&place.city){
+   const city=new RegExp(escape(place.city)+'(?:е)?(?=$|[\\s,.!?;])','giu');
+   for(const m of raw.matchAll(city))add(m.index,m.index+m[0].length,'place');
+  }
+  const reminder=trailingReminder(raw);
+  if(reminder.leadMinutes&&result.leadMinutes){
+   const m=raw.match(/(?:и\s+)?напомни(?:те)?(?:\s+мне)?\s+за\s+[^.!?;]+[.!?;]*$/iu);
+   if(m)add(m.index,m.index+m[0].length,'reminder');
+  }
+  const dates=/(?:^|[\s,;])((?:(?:на|в|во|к)\s+)?(?:сегодня|завтра|послезавтра|понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье|\d{1,2}[./-]\d{1,2}(?:[./-]\d{4})?|\d{1,2}\s+(?:января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)(?:\s+\d{4})?))(?=$|[\s,.!?;])/giu;
+  const times=/(?:^|[\s,;])((?:(?:в|к|на)\s+\d{1,2}(?::\d{1,2})?(?:\s*час(?:а|ов)?)?|\d{1,2}:\d{1,2})(?:\s+(?:утра|дня|вечера|ночи))?)(?=$|[\s,.!?;])/giu;
+  for(const [regex,kind] of [[dates,'date'],[times,'time']]){
+   for(const m of raw.matchAll(regex)){
+    const parsed=parse('Дело '+m[1],now);
+    if(parsed?.[kind]&&result.items.some(item=>item[kind]===parsed[kind])){
+     const start=m.index+m[0].length-m[1].length;
+     add(start,start+m[1].length,kind);
+    }
+   }
+  }
+  const contacts=contactWords();
+  const roles=/^(?:поставщиком|заказчиком|подрядчиком|клиентом|партн[её]ром|руководителем|директором)$/iu;
+  for(const m of raw.matchAll(/(?:встреча|встретиться|поговорить|увидеться|созвониться)\s+с\s+([\p{L}-]{3,30})/giu)){
+   const word=m[1],lower=word.toLocaleLowerCase('ru-RU');
+   if(names.has(lower)||contacts.has(lower)||commonPeople[lower]||roles.test(word)){
+    const start=m.index+m[0].length-word.length;add(start,start+word.length,'person');
+   }
+  }
+  return ranges.sort((a,b)=>a.start-b.start);
+ }
+ if(typeof module!=='undefined'&&module.exports)module.exports={parse,signals,plan,polishTitle,recognizedRanges};
+ if(root){root.SEYVEO_TASK_SMART_NL=parse;root.SEYVEO_TASK_SMART_SIGNALS=signals;root.SEYVEO_TASK_SMART_PLAN=plan;root.SEYVEO_TASK_SMART_RANGES=recognizedRanges;}
 })(typeof window!=='undefined'?window:null);
