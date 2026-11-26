@@ -1523,6 +1523,7 @@ function resizeWorkComposer(){
   form.classList.remove('svcp-compose-multiline');
   svcpPlaceComposerActions(false);
   form.style.setProperty('--svcp-editor-height','40px');
+  form.style.setProperty('--svcp-attachment-row-height','0px');
   form.style.setProperty('--svcp-compose-height','56px');
   form.style.setProperty('height','56px','important');
   input.style.setProperty('height','40px','important');
@@ -1549,7 +1550,7 @@ function resizeWorkComposer(){
  // Single-line wraps need only 24px of text plus 10px breathing room.
  // Keep attachment padding and maximum multi-line height unchanged.
  const textPadding=withAttachment?16:10;
- const editorHeight=wraps?Math.min(144,Math.max(withAttachment?44:34,expandedHeight+textPadding)):base;
+ const editorHeight=wraps?(withAttachment&&!value?44:Math.min(144,Math.max(withAttachment?44:34,expandedHeight+textPadding))):base;
  // Same three logical rows as Sayvi: attachment, editor, toolbar.
  const rowCount=Math.ceil((state.files.length+(state.scanCode?1:0))/3);
  const viewport=window.visualViewport?.height||window.innerHeight;
