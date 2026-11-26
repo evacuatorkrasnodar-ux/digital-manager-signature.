@@ -114,9 +114,9 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  opacity:1!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill > svg{
- /* V112: match the thin 12px disclosure glyph in Avatar name capsules. */
+ /* V143: compact blue disclosure glyph, identical to the avatar name. */
  display:block!important;flex:0 0 12px!important;width:12px!important;height:12px!important;
- fill:none!important;stroke:#64BFFF!important;stroke-width:1.7!important;
+ fill:none!important;stroke:#64BFFF!important;stroke-width:2.15!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:none!important;
 }
@@ -174,7 +174,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
  text-shadow:none!important;opacity:1!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill > svg{
- stroke:#637080!important;
+ stroke:#007AFF!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationHeading > #svcpConversationDetail{
  color:#626E7A!important;
