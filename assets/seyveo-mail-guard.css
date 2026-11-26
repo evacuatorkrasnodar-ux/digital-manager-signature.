@@ -752,10 +752,10 @@ html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-panel .sv
  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:inherit!important;
 }
 html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-panel .sv-mail-settings-row + .sv-mail-settings-row::before{
- content:"";position:absolute;left:11px;right:11px;top:0;height:1px;background:var(--sv-menu-rule,rgba(60,60,67,.12));pointer-events:none;
+ content:"";position:absolute;left:40px;right:11px;top:0;height:1px;background:var(--sv-menu-rule,rgba(60,60,67,.12));pointer-events:none;
 }
 html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-settings-row > svg{
- width:19px!important;height:19px!important;flex:0 0 19px!important;color:var(--sv-menu-muted,#697583)!important;
+ width:var(--sv-menu-icon-size,20px)!important;height:var(--sv-menu-icon-size,20px)!important;flex:0 0 var(--sv-menu-icon-size,20px)!important;color:var(--sv-menu-muted,#697583)!important;stroke-width:var(--sv-menu-icon-stroke,1.6)!important;stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-settings-row > .sv-mail-settings-chevron{transform:rotate(180deg)!important;}
 html:root body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-settings-copy{display:flex;flex-direction:column;flex:1;min-width:0;gap:2px;}
