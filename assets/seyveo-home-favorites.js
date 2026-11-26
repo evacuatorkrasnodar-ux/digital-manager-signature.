@@ -267,7 +267,7 @@ function openCustomize(){
  const shell=document.createElement('div');shell.className='sv-home-favorites-editor-shell';
  const head=document.createElement('div');head.className='sv-home-favorites-editor-head';
  const title=document.createElement('strong');title.textContent='Настроить главную';
- const done=document.createElement('button');done.type='button';done.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>';done.setAttribute('aria-label','Готово');done.title='Готово';
+ const done=document.createElement('button');done.type='button';done.className='sv-confirm-circle';done.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>';done.setAttribute('aria-label','Готово');done.title='Готово';
  head.append(title,done);
  const help=document.createElement('p');help.className='sv-home-favorites-editor-help';
  const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';
