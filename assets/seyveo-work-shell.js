@@ -280,7 +280,9 @@
  const taskList=personalView?.querySelector('#personalTaskList');
  const toolPanel=document.createElement('section');
  toolPanel.id='svAllTasksView';toolPanel.hidden=true;
- if(taskList)taskList.parentElement.insertBefore(toolPanel,taskList);
+ // All Tasks is its own direct Work-shell surface. The old agenda wrappers
+ // are not ancestors of its native scrollport and cannot clip its glass.
+ shell.append(toolPanel);
  // Rebuilt actions: just one floating capsule, with no footer or backdrop.
  const actionCapsule=document.createElement('nav');
  actionCapsule.id='svTaskActionCapsule';
