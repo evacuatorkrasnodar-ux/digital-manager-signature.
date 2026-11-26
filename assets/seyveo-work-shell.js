@@ -212,8 +212,8 @@
  businessCreate.append(assignChoice,cabinetChoice);
  shell.append(businessCreate);
  function closeBusinessCreate(){
-  businessCreate.hidden=true;
-  if(add.getAttribute('aria-controls')==='svWorkCreateChoices')add.setAttribute('aria-expanded','false');
+  if(!businessCreate.hidden)businessCreate.hidden=true;
+  if(add.getAttribute('aria-controls')==='svWorkCreateChoices'&&add.getAttribute('aria-expanded')!=='false')add.setAttribute('aria-expanded','false');
  }
  cabinetChoice.addEventListener('click',()=>{closeBusinessCreate();cabinetAdd?.click()});
  assignChoice.addEventListener('click',()=>{
@@ -618,6 +618,8 @@
  // Avoid redundant hidden-attribute mutations: the shared dock fade observes them.
  function setHidden(el,hidden){if(el.hidden!==hidden)el.hidden=hidden;}
  function setData(el,key,value){if(el.dataset[key]!==value)el.dataset[key]=value;}
+ function setAttr(el,key,value){if(el.getAttribute(key)!==value)el.setAttribute(key,value);}
+ function setStyle(el,key,value,priority=''){if(el.style.getPropertyValue(key)!==value||el.style.getPropertyPriority(key)!==priority)el.style.setProperty(key,value,priority);}
  let syncFrame=0;
  function scheduleSync(){
   if(syncFrame)return;
@@ -627,6 +629,7 @@
   // A direct route commit takes precedence over queued refreshes.
   if(syncFrame){cancelAnimationFrame(syncFrame);syncFrame=0;}
 
+  const started=performance.now();
   const active=activeSection();
   const managerTasks=!tasks.hidden&&oldTasks.dataset.manager==='true';
   const managerCal=!calendar.hidden&&!oldCalendar.hidden;
@@ -644,8 +647,8 @@
   const workRoute=location.hash==='#tasks'||location.hash==='#calendar';
   const visible=workRoute&&(!!walletDialog?.open||!!notesPage?.open||!tasks.hidden||!calendar.hidden);
   setHidden(shell,!visible);
-  if(visible)shell.style.removeProperty('display');
-  else shell.style.setProperty('display','none','important');
+  if(visible){if(shell.style.getPropertyValue('display'))shell.style.removeProperty('display');}
+  else setStyle(shell,'display','none','important');
   if(notebookChoices)setHidden(notebookChoices,!visible||active!=='notes');
   const history=visible&&!walletDialog?.open&&!notesPage?.open&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
   parkCalendarMenu(visible&&!history&&active==='calendar');
@@ -664,15 +667,15 @@
   setHidden(nav,!visible||history||calendarOnly||nested);
   setHidden(allTasksTabs,!nested);
   setHidden(allTasksSearch,!nested);
-  heading.dataset.workTabs=String(!nav.hidden||nested);
-  heading.dataset.history=String(history);
+  setData(heading,'workTabs',String(String(!nav.hidden||nested)));
+  setData(heading,'history',String(String(history)));
   // Notebook is a top-level tab: its Back and card-review shortcuts repeat
   // controls that belong to the tabs/dock or to My Tasks, respectively.
   setHidden(reviewCards,history||calendarOnly||active==='notes'||active==='wallet');
-  nav.dataset.employee=String(employeeMode);
-  nav.dataset.one=String(!managerMode&&!employeeMode);
-  nav.dataset.business=String(managerMode&&!employeeMode);
-  nav.dataset.wallet='true';
+  setData(nav,'employee',String(String(employeeMode)));
+  setData(nav,'one',String(String(!managerMode&&!employeeMode)));
+  setData(nav,'business',String(String(managerMode&&!employeeMode)));
+  setData(nav,'wallet',String('true'));
   for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
    const name=tab.dataset.svWorkTab;
    // Manager (Business): 4; personal (ONE): 3; employee view: 2.
@@ -685,7 +688,7 @@
    setHidden(tab,hide);
    // Older CSS has display:flex!important. Preserve hidden semantics even
    // if a previously cached stylesheet arrives after this component.
-   tab.style.setProperty('display',hide?'none':'flex','important');
+   setStyle(tab,'display',hide?'none':'flex','important');
    const nextTabLabel=employeeMode
     ? (name==='personal'?'Мои дела':name==='employee'?'Моя работа':name==='wallet'?'Кошелёк':name==='business'?'Кабинет':'Блокнот')
     : name==='personal'?'Мои дела':name==='notes'?'Блокнот':name==='wallet'?'Кошелёк':name==='business'?'Кабинет':'Моя работа';
@@ -695,22 +698,22 @@
   // Wallet's shared capsule starts at the identical vertical coordinate.
   // Hide the header visually, but never collapse its layout height.
   setHidden(heading,!visible);
-  heading.style.visibility=active==='wallet'?'hidden':'';
-  heading.style.pointerEvents=active==='wallet'?'none':'';
-  heading.setAttribute('aria-hidden',String(active==='wallet'));
-  heading.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
-  shell.dataset.sharedWork=String(visible);
-  shell.dataset.history=String(history);
-  heading.dataset.taskTools=String(active==='personal'&&!history);
+  setStyle(heading,'visibility',active==='wallet'?'hidden':'');
+  setStyle(heading,'pointer-events',active==='wallet'?'none':'');
+  setAttr(heading,'aria-hidden',String(active==='wallet'));
+  setData(heading,'theme',String(document.documentElement.dataset.theme==='dark'?'dark':'light'));
+  setData(shell,'sharedWork',String(String(visible)));
+  setData(shell,'history',String(String(history)));
+  setData(heading,'taskTools',String(String(active==='personal'&&!history)));
   // Cabinet is a top-level Work tab. Its existing Review and Plus controls
   // share one right capsule, matching the Tasks capsule's 44px button axis.
-  heading.dataset.businessTools=String(active==='business'&&!history);
+  setData(heading,'businessTools',String(String(active==='business'&&!history)));
   if(company)setHidden(company,!visible||active!=='business'||history);
   if(toolMode&&(!visible||active!=='personal'||history)){setMode('');return;}
-  allTasksSearch.setAttribute('aria-expanded',String(nested&&searchOpen));
-  nav.setAttribute('aria-label',managerMode?'Мои дела, Блокнот, Кошелёк и Кабинет':employeeMode?'Мои дела и Моя работа':'Мои дела, Блокнот и Кошелёк');
-  heading.dataset.taskSelecting=String(nested);
-  heading.dataset.selectionActive=String(selectionActive);
+  setAttr(allTasksSearch,'aria-expanded',String(nested&&searchOpen));
+  setAttr(nav,'aria-label',managerMode?'Мои дела, Блокнот, Кошелёк и Кабинет':employeeMode?'Мои дела и Моя работа':'Мои дела, Блокнот и Кошелёк');
+  setData(heading,'taskSelecting',String(String(nested)));
+  setData(heading,'selectionActive',String(String(selectionActive)));
   const nextTitle=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
   const showCalendarPeriod=active==='calendar'&&!history&&!nested;
   if(!showCalendarPeriod||!calendarPeriodLabel){
@@ -725,7 +728,7 @@
   if(showCalendarPeriod)syncCalendarPeriod();
   const showMonth=active==='personal'&&!history&&!nested&&visible;
   setHidden(month,!showMonth);
-  heading.dataset.agenda=String(showMonth);
+  setData(heading,'agenda',String(String(showMonth)));
   // Both the agenda and «Все дела» use a fixed shell with a native inner
   // scroll area. Only the agenda has the month and seven-day strip.
   const innerScroll=showMonth||nested;
@@ -741,7 +744,7 @@
   if(returningToAgenda&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
    const view=document.getElementById('unifiedPersonalTasksView');
    view?.animate?.([{opacity:.90},{opacity:1}],{
-    duration:180,easing:'cubic-bezier(.22,1,.36,1)'
+    duration:90,easing:'cubic-bezier(.22,1,.36,1)'
    });
   }
   if(showMonth){
@@ -758,9 +761,9 @@
   // Tasks/History and Calendar, but never in Cabinet or employee root.
   setHidden(back,(active==='personal'&&!history&&!nested)||active==='notes'||active==='wallet'||active==='business'||active==='employee');
   if(back.dataset.svHeaderIcon!=='back'){back.innerHTML=backIcon;back.dataset.svHeaderIcon='back'}
-  back.setAttribute('aria-label',history||nested?'Вернуться к моим делам':'Вернуться назад');
-  back.title='';
-  back.setAttribute('aria-haspopup','false');
+  setAttr(back,'aria-label',history||nested?'Вернуться к моим делам':'Вернуться назад');
+  if(back.title)back.title='';
+  setAttr(back,'aria-haspopup','false');
   // A single stylesheet now owns Back/Add material for all routes,
   // including History. Do not write inline visual overrides here.
   // The employee home has contextual controls inside its own dashboard.
@@ -771,17 +774,18 @@
    add.innerHTML=history?'<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor" stroke="none"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></g></svg>':plusIcon;
    add.dataset.svHeaderIcon=nextIcon;
   }
-  add.setAttribute('aria-label',history?'Меню истории':active==='notes'?'Создать заметку':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Действия кабинета');
+  setAttr(add,'aria-label',history?'Меню истории':active==='notes'?'Создать заметку':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Действия кабинета');
   add.title=history?'Действия с историей':'';
-  add.setAttribute('aria-haspopup',String(history||(active==='calendar'||active==='business')));
-  add.setAttribute('aria-controls',history?'sahHistoryPopup':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
-  add.setAttribute('aria-expanded',history?String(document.getElementById('sahHistoryPopup')?.hidden===false):active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
+  setAttr(add,'aria-haspopup',String(history||(active==='calendar'||active==='business')));
+  setAttr(add,'aria-controls',history?'sahHistoryPopup':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
+  setAttr(add,'aria-expanded',history?String(document.getElementById('sahHistoryPopup')?.hidden===false):active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
   setData(shell,'active',active);
   // Wallet is a full Work section, not a modal overlay.
   const selectedWorkTab=active;
   for(const button of nav.querySelectorAll('[data-sv-work-tab]')){
-   button.setAttribute('aria-pressed',String(button.dataset.svWorkTab===selectedWorkTab));
+   setAttr(button,'aria-pressed',String(button.dataset.svWorkTab===selectedWorkTab));
   }
+  window.SEYVEO_DOCK_PERF?.phase('workShell',performance.now()-started);
  }
  nav.addEventListener('click',event=>{
   const button=event.target.closest('[data-sv-work-tab]');

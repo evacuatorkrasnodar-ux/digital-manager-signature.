@@ -767,3 +767,9 @@ body > #orb.sv-sayvi-handoff-flight {
 html:root body #homePage #stage > .message > #headline{
  font-weight:550!important;
 }
+
+/* V203: Tasks navigation does not wait for the Home cinema. */
+:root[data-sv-space="tasks"].sv-home-empty-sphere.sv-home-empty-route-exit :is(body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock))::before{
+ animation-duration:140ms!important;animation-delay:0ms!important;
+}
+:root[data-sv-space="tasks"].sv-home-empty-sphere.sv-home-empty-route-exit footer.dock.sv-shared-dock > #assistantButton{animation-duration:140ms!important;animation-delay:0ms!important;}

@@ -247,15 +247,18 @@
     const item=nextAgenda();
     // If the calendar has not exposed a stored upcoming item, leave Home's
     // real message/decision feed alone: never imply the user has no plans.
-    todayCard.hidden=!!hasRealCard||!item;
+    const nextHidden=!!hasRealCard||!item;
+    if(todayCard.hidden!==nextHidden)todayCard.hidden=nextHidden;
     const title=todayCard.querySelector('.sv-sayvi-handoff-agenda-title');
     const meta=todayCard.querySelector('.sv-sayvi-handoff-agenda-meta');
-    title.textContent=item?.title||'';
-    if(!item){meta.textContent='';return;}
+    const nextTitle=item?.title||'';
+    if(title.textContent!==nextTitle)title.textContent=nextTitle;
+    if(!item){if(meta.textContent)meta.textContent='';return;}
     const date=item.date?new Date(item.date+'T12:00:00'):null;
     const isToday=date&&item.date===new Date().toLocaleDateString('sv-SE');
     const label=isToday?'Сегодня':date?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(date):'Без даты';
-    meta.textContent=label+(item.time?' · '+item.time:'');
+    const nextMeta=label+(item.time?' · '+item.time:'');
+    if(meta.textContent!==nextMeta)meta.textContent=nextMeta;
   }
   function finish({spark=false,stayHome=false}={}){
     if(done)return;
@@ -1036,7 +1039,8 @@
       emptyRouteLeaving=true;
       if(emptyOrbCluster){emptyOrbCluster.inert=true;emptyOrbCluster.setAttribute('aria-hidden','true');}
       root.classList.add('sv-home-empty-sphere-leaving','sv-home-empty-route-exit');
-      emptyRouteTimer=setTimeout(settle,620);
+      // Navigation is independent of the Home sphere cinema.
+      emptyRouteTimer=setTimeout(settle,location.hash==='#tasks'?180:620);
       return;
     }
     if(!animate||reduceMotion()||home.hidden||typeof orb.animate!=='function'){
@@ -1096,6 +1100,11 @@
       (home.hidden||(location.hash&&location.hash!=='#home')||
        !!document.querySelector('dialog[open]:not(#svHomeFavoritesEditor)'));
     if(urgent)delay=Math.min(delay,32);
+    if(urgent&&location.hash==='#tasks'){
+      clearTimeout(emptySyncTimer);emptySyncTimer=0;
+      syncEmptySphere();
+      return;
+    }
     if(emptySyncTimer&&!urgent)return;
     clearTimeout(emptySyncTimer);
     emptySyncTimer=setTimeout(syncEmptySphere,delay);

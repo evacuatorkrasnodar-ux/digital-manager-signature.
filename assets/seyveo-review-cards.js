@@ -55,9 +55,11 @@
  function update(){
   const total=count();
   if(tasksButton){
-   if(total>0)tasksButton.setAttribute('data-sv-review-count',total>99?'99+':String(total));
-   else tasksButton.removeAttribute('data-sv-review-count');
-   tasksButton.setAttribute('aria-label',total?'Открыть дела · '+total+' для разбора':'Открыть дела');
+   const nextCount=total>99?'99+':String(total);
+   if(total>0){if(tasksButton.getAttribute('data-sv-review-count')!==nextCount)tasksButton.setAttribute('data-sv-review-count',nextCount);}
+   else if(tasksButton.hasAttribute('data-sv-review-count'))tasksButton.removeAttribute('data-sv-review-count');
+   const label=total?'Открыть дела · '+total+' для разбора':'Открыть дела';
+   if(tasksButton.getAttribute('aria-label')!==label)tasksButton.setAttribute('aria-label',label);
   }
   // Only the disc sits below the glass; a single translucent white digit
   // is painted by the Tasks button to avoid a blurry second numeral.
@@ -130,12 +132,19 @@
  room.querySelector('#svReviewBack').addEventListener('click',event=>{event.preventDefault();event.stopPropagation();leave()});
  window.addEventListener('keydown',event=>{if(open&&event.key==='Escape')leave()});
  window.addEventListener('hashchange',()=>{if(open&&location.hash&&location.hash!=='#home')leave()});
- const observer=new MutationObserver(()=>{if(!document.hidden)requestAnimationFrame(update)});
+ let updateFrame=0;
+ function queueUpdate(){
+  if(document.hidden||updateFrame)return;
+  updateFrame=requestAnimationFrame(()=>{updateFrame=0;update()});
+ }
+ const observer=new MutationObserver(queueUpdate);
  for(const element of sources())observer.observe(element,{childList:true,subtree:false,attributes:true,attributeFilter:['hidden','class']});
  observer.observe(home,{childList:true,subtree:false});
- ['seyveo:tasks-changed','seyveo:calendar-changed','seyveo:card-visibility-changed','seyveo:home-recommendation-changed'].forEach(name=>window.addEventListener(name,update));
+ ['seyveo:tasks-changed','seyveo:calendar-changed','seyveo:card-visibility-changed','seyveo:home-recommendation-changed'].forEach(name=>window.addEventListener(name,queueUpdate));
  // A script loaded after the first review-count event can read current state.
  window.SEYVEO_REVIEW_CARDS=Object.freeze({count});
- setInterval(update,900);
+ // Fallback for legacy producers that have no change event.
+ setInterval(queueUpdate,3000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)queueUpdate();});
  update();
 })();

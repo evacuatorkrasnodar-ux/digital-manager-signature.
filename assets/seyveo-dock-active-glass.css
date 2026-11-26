@@ -112,3 +112,6 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
   transition:none!important;
  }
 }
+
+/* V203: native tap without double-tap zoom delay; retain assistant hold. */
+footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock) > :is(#navHome,#navTasks,#navPicture,#navManage){touch-action:manipulation!important;}

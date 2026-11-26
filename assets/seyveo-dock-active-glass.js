@@ -32,9 +32,10 @@ function init(){
   // Size from the dock height and available track, then center on the icon.
   const diameter=Math.max(40,Math.min(52,r.width-8,outer.height-8));
   const x=r.left-outer.left+(r.width-diameter)/2;
-  indicator.style.setProperty('--sv-indicator-size',`${diameter.toFixed(2)}px`);
-  indicator.style.setProperty('--sv-indicator-x',`${x.toFixed(2)}px`);
-  indicator.dataset.accent=tab.accent;
+  const size=diameter.toFixed(2)+'px',left=x.toFixed(2)+'px';
+  if(indicator.style.getPropertyValue('--sv-indicator-size')!==size)indicator.style.setProperty('--sv-indicator-size',size);
+  if(indicator.style.getPropertyValue('--sv-indicator-x')!==left)indicator.style.setProperty('--sv-indicator-x',left);
+  if(indicator.dataset.accent!==tab.accent)indicator.dataset.accent=tab.accent;
   return true;
  }
  function refresh(){
@@ -51,13 +52,14 @@ function init(){
   requestAnimationFrame(refresh);
  }
  function release(){
+  if(!press)return;
   clearTimeout(releaseTimer);
   releaseTimer=setTimeout(()=>{
    press?.element?.classList.remove('sv-dock-nav-press');
    press=null;
    dock.classList.remove('sv-dock-indicator-pressing');
    schedule();
-  },80);
+  },35);
  }
  dock.addEventListener('pointerdown',event=>{
   if(!normal()||event.button!==0)return;
