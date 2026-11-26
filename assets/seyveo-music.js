@@ -34,6 +34,10 @@ const mini=$('sayviMusicMini');
 const miniOpen=$('sayviMusicMiniOpen');
 const miniPlay=$('sayviMusicMiniPlay');
 const miniNext=$('sayviMusicMiniNext');
+ const miniHomeSlot=$('svMusicHomeMiniSlot');
+ const miniOrigin=document.createComment('seyveo music mini original position');
+ if(mini?.parentNode)mini.parentNode.insertBefore(miniOrigin,mini);
+ const miniOnMusicHome=()=>location.hash==='#sayvi-music'&&page.dataset.musicView==='home'&&!page.hidden&&!!miniHomeSlot;
 const miniIcon=$('sayviMusicMiniIcon');
 const minimize=$('sayviMusicMinimize');
 const favoriteButton=$('sayviMusicFavorite');
@@ -164,7 +168,11 @@ function syncResume(){
  const playing=loaded&&!audio.paused&&!audio.ended;
  // One actual audio element. The mini is a small remote, not a second player.
  if(mini){
-  mini.hidden=!loaded||!hasPlayed||audio.ended||(location.hash==='#sayvi-music'&&page.dataset.musicView!=='home'&&page.dataset.musicView!=='new'&&page.dataset.musicView!=='radio'&&page.dataset.musicView!=='library')||miniDismissed;
+  const inline=miniOnMusicHome();
+  if(inline){if(mini.parentNode!==miniHomeSlot)miniHomeSlot.append(mini)}
+  else if(miniOrigin.parentNode&&mini.parentNode!==miniOrigin.parentNode)miniOrigin.parentNode.insertBefore(mini,miniOrigin.nextSibling);
+  mini.classList.toggle('sv-music-mini-inline',inline);
+  mini.hidden=!inline&&(!loaded||!hasPlayed||audio.ended||(location.hash==='#sayvi-music'&&page.dataset.musicView!=='home'&&page.dataset.musicView!=='new'&&page.dataset.musicView!=='radio'&&page.dataset.musicView!=='library')||miniDismissed);
   mini.classList.toggle('is-playing',playing);
   if(loaded){
    const file=tracks[index];
@@ -179,6 +187,16 @@ function syncResume(){
    miniIcon?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
    const canSkip=tracks.length>1;
    if(miniNext)miniNext.disabled=!canSkip;
+  }else if(inline){
+   const last=window.SEYVEO_RADIO?.recent?.()[0];
+   if(miniTitle)miniTitle.textContent=last?.title||'Моя музыка';
+   if(miniArtist)miniArtist.textContent=last?.artist||'Выберите музыку или радио';
+   if(miniOpen)miniOpen.setAttribute('aria-label',last?'Открыть плеер':'Выбрать музыку или радио');
+   if(miniPlay){miniPlay.setAttribute('aria-label',last?'Включить '+last.title:'Выбрать музыку или радио');miniPlay.setAttribute('aria-pressed','false')}
+   miniIcon?.setAttribute('d','M8 5.5 18 12 8 18.5z');
+   if(miniNext)miniNext.disabled=true;
+   if(miniArtwork){miniArtwork.hidden=!last?.artwork;miniArtwork.style.backgroundImage=last?.artwork?'url("'+last.artwork+'")':'';}
+   mini.classList.toggle('has-artwork',!!last?.artwork);
   }
  }
  document.dispatchEvent(new CustomEvent('seyveo:music-state',{detail:{loaded,playing,hasPlayed}}));
@@ -446,7 +464,7 @@ function play(){
   sayviMessage('Выберите свои аудиофайлы — Сэйви откроет их здесь.');
   return;
  }
- if(!audio.paused){audio.pause();return}
+ if(!audio.paused&&!audio.ended){audio.pause();return}
  if(isRadio()&&!audio.getAttribute('src'))audio.src=radioFallback?tracks[index].fallback:tracks[index].stream;
  const p=audio.play();
  if(p&&typeof p.catch==='function')p.catch(()=>{
@@ -561,6 +579,7 @@ miniOpen?.addEventListener('click',event=>{
   event.preventDefault();
   return;
  }
+ if(miniOnMusicHome()&&index<0&&!window.SEYVEO_RADIO?.recent?.().length){window.SEYVEO_MUSIC_DOCK?.show?.('radio');return}
  if(window.SEYVEO_MUSIC_DOCK?.openPlayer)window.SEYVEO_MUSIC_DOCK.openPlayer();else open();
 });
 if(miniOpen){
@@ -588,7 +607,18 @@ if(miniOpen){
   }
  },{passive:false});
 }
-miniPlay?.addEventListener('click',play);
+miniPlay?.addEventListener('click',()=>{
+ if(!miniOnMusicHome()){play();return}
+ if(index<0||!tracks.length){
+  const last=window.SEYVEO_RADIO?.recent?.()[0];
+  if(last&&window.SEYVEO_RADIO?.play?.(last.id)){window.SEYVEO_MUSIC_DOCK?.openPlayer?.();return}
+  window.SEYVEO_MUSIC_DOCK?.show?.('radio');return;
+ }
+ const wasPlaying=!audio.paused&&!audio.ended;
+ miniDismissed=false;play();
+ if(!wasPlaying)window.SEYVEO_MUSIC_DOCK?.openPlayer?.();
+});
+document.addEventListener('seyveo:radio-history',()=>{if(miniOnMusicHome())syncResume()});
 miniNext?.addEventListener('click',()=>{if(tracks.length>1)switchTrack(index+1,true)});
 // Now Playing stays in one stable position above the dock or chat composer.
 // The fixed mini rests ABOVE the native chat writer, including multiline drafts.
