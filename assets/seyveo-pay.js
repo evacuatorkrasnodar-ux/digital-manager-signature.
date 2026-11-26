@@ -21,7 +21,14 @@ const financesIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 tabs.innerHTML='<button type="button" data-syp-tab="card" aria-pressed="true" aria-controls="sypCardHome"><span class="syp-view-icon">'+cardIcon+'</span><span>Карты</span></button>'+
  '<button type="button" data-syp-tab="finances" aria-pressed="false" aria-controls="sypBudgetScreen"><span class="syp-view-icon">'+financesIcon+'</span><span>Финансы</span></button>'+
  '<button type="button" data-syp-tab="currency" aria-pressed="false" aria-controls="sypCurrencyScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h17m-4-4 4 4-4 4M21 17H4m4-4-4 4 4 4"/></svg></span><span>Валюты</span></button>'+
- '<button type="button" data-syp-tab="goals" aria-pressed="false" aria-controls="sypGoalsScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13c0-4 4-7 9-7h2l3-2v4c2 1 3 3 3 5h2v4h-3l-1.5 3h-3l-.5-2.5h-5L8 20H5l-1.5-4C1 16 1 13 2 12"/><path d="M9 8.5h4"/><circle cx="16" cy="11.5" r=".6"/></svg></span><span>Копилка</span></button>';
+ '<button type="button" data-syp-tab="goals" aria-pressed="false" aria-controls="sypGoalsScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13c0-4 4-7 9-7h2l3-2v4c2 1 3 3 3 5h2v4h-3l-1.5 3h-3l-.5-2.5h-5L8 20H5l-1.5-4C1 16 1 13 2 12"/><path d="M9 8.5h4"/><circle cx="16" cy="11.5" r=".6"/></svg></span><span>Копилка</span></button>'+ 
+ '<button type="button" data-syp-tab="receipts" aria-pressed="false" aria-controls="sypReceiptsScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18l-3.5-2.5L12 21l-3.5-2.5L5 21V3Z"/><path d="M8.5 8h7m-7 4h7m-7 4H12"/></svg></span><span>Чеки</span></button>'+
+ '<button type="button" data-syp-tab="payments" aria-pressed="false" aria-controls="sypPaymentsScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18"/><circle cx="13" cy="15" r="3.5"/><path d="M13 13v2l1.5 1"/></svg></span><span>Платежи</span></button>'+
+ '<button type="button" data-syp-tab="family" aria-pressed="false" aria-controls="sypFamilyBudgetScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3.2"/><path d="M2.5 20v-2a6.5 6.5 0 0 1 13 0v2M16 4a3 3 0 0 1 0 6m1 3a5 5 0 0 1 4.5 5v2"/></svg></span><span>Семья</span></button>'+
+ '<button type="button" data-syp-tab="debts" aria-pressed="false" aria-controls="sypDebtsScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="16.5" cy="6.5" r="4"/><path d="M16.5 4.5v4m-1.5-2h3M3 13h4l3 2h4a2 2 0 0 1 0 4h-4m-7-6v7h4l3 1h5l6-5a2 2 0 0 0-2.5-3L16 15"/></svg></span><span>Долги</span></button>'+
+ '<button type="button" data-syp-tab="calculator" aria-pressed="false" aria-controls="sypCalculatorScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="3"/><path d="M8 6h8v3H8zm0 7h1m6 0h1m-8 4h1m6 0h1"/></svg></span><span>Расчёты</span></button>'+
+ '<button type="button" data-syp-tab="analytics" aria-pressed="false" aria-controls="sypAnalyticsScreen"><span class="syp-view-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3a9 9 0 1 0 10 10H11V3Z"/><path d="M14 2v8h8a8 8 0 0 0-8-8Z"/></svg></span><span>Аналитика</span></button>';
+const moduleNames={"receipts":{"name":"Чеки","desc":"Покупки, чеки и гарантии"},"payments":{"name":"Платежи","desc":"Подписки и регулярные платежи"},"family":{"name":"Семья","desc":"Семейный бюджет"},"debts":{"name":"Долги","desc":"Долги и возвраты"},"calculator":{"name":"Расчёты","desc":"Финансовые калькуляторы"},"analytics":{"name":"Аналитика","desc":"Анализ личных финансов"}};
 home.id='sypCardHome';
 // Reuse Notebook's free header area above the permanent Work capsule.
 // Move the real controls, not a nonfunctional copy. The delegated click
@@ -77,9 +84,16 @@ function setTab(tab){
  dialog.dataset.walletTab=tab;
  for(const button of tabs.querySelectorAll('[data-syp-tab]')){
   button.setAttribute('aria-pressed',String(button.dataset.sypTab===tab));
+  if(button.dataset.sypTab===tab&&tabs.clientWidth){
+   const left=button.offsetLeft,right=left+button.offsetWidth;
+   if(left<tabs.scrollLeft)tabs.scrollLeft=left;
+   else if(right>tabs.scrollLeft+tabs.clientWidth)tabs.scrollLeft=right-tabs.clientWidth;
+  }
  }
  title.textContent='Кошелёк';
- if(tab==='goals'){
+ if(Object.hasOwn(moduleNames,tab)){
+  kicker.textContent='SEYVEO · '+moduleNames[tab].name.toUpperCase();intro.textContent=moduleNames[tab].desc;
+ }else if(tab==='goals'){
   kicker.textContent='SEYVEO · КОПИЛКА';intro.textContent='Цели накоплений';
  }else if(tab==='currency'){
   kicker.textContent='SEYVEO · ВАЛЮТЫ';
@@ -94,6 +108,9 @@ function setTab(tab){
 }
 async function select(tab){
  const token=++viewToken;
+ if(Object.hasOwn(moduleNames,tab)){
+  setTab(tab);screen(tab);dialog.scrollTop=0;return;
+ }
  if(tab==='goals'){
   setTab('goals');screen('goals');dialog.scrollTop=0;window.SEYVEO_GOALS?.render();return;
  }
@@ -148,7 +165,7 @@ function open(tab='card'){
   }else dialog.setAttribute('open','');
  }
  window.SEYVEO_WORK_SHELL?.sync?.();
- return select(['finances','currency','goals'].includes(tab)?tab:'card');
+ return select(['finances','currency','goals',...Object.keys(moduleNames)].includes(tab)?tab:'card');
 }
 function close(switchingSection=false){
  const goalEditor=q('#sypGoalEditor');if(goalEditor?.open)goalEditor.close();
@@ -167,6 +184,8 @@ tabs.addEventListener('click',event=>{
  if(tab&&tabs.contains(tab))void select(tab.dataset.sypTab);
 });
 dialog.addEventListener('click',event=>{
+ const link=event.target.closest('[data-syp-module-link]');
+ if(link){void select(link.dataset.sypModuleLink);return;}
  const button=event.target.closest('[data-syp]');
  if(!button)return;
  const action=button.dataset.syp;
