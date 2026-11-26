@@ -628,7 +628,7 @@ html:root[data-theme="light"] body dialog#svHomeFavoritesEditor{
 html:root body #homePage #svHomeFavorites .sv-home-favorite-icon svg[viewBox="0 0 64 64"]{
  stroke-width:2.05!important;
 }
-html:root body #homePage #svHomeFavorites .sv-home-favorite-icon svg[viewBox="0 0 64 64"] :is(path,circle,rect,ellipse,line,polyline,polygon):not([stroke="none"]){
+html:root body #homePage #svHomeFavorites .sv-home-favorite-icon svg[viewBox="0 0 64 64"]:not([data-app-icon^="wallet-"]):not([data-app-icon^="note-"]):not([data-app-icon="family"]):not([data-app-icon="tasks"]) :is(path,circle,rect,ellipse,line,polyline,polygon):not([stroke="none"]){
  stroke-width:2.05!important;
 }
 
@@ -649,7 +649,7 @@ dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button{
  gap:5px!important;padding:5px 3px!important;
 }
 dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button svg[viewBox="0 0 64 64"],
-dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button svg[viewBox="0 0 64 64"] :is(path,circle,rect,ellipse,line,polyline,polygon):not([stroke="none"]){
+dialog#svHomeFavoritesEditor .sv-home-favorites-editor-grid button svg[viewBox="0 0 64 64"]:not([data-app-icon^="wallet-"]):not([data-app-icon^="note-"]):not([data-app-icon="family"]):not([data-app-icon="tasks"]) :is(path,circle,rect,ellipse,line,polyline,polygon):not([stroke="none"]){
  stroke-width:2.05!important;
 }
 @media(prefers-reduced-transparency:reduce){
