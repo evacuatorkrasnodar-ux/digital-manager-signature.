@@ -3,11 +3,11 @@
    duplicate pseudo-buttons, top/left coordinates or animated icon positions.
    JS retains all handlers and only supplies text/attachment heights. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
- /* Same optical density and blur as the approved White Pearl composer,
-    with blue pigment rather than white. Both heights and Plus share it. */
- --svcp-conversation-blue-glass:rgba(9,128,181,.46);
+ /* Sky reference: a slightly deeper translucent cyan tint, with the
+    approved White Pearl blur. Both heights and Plus share one material. */
+ --svcp-conversation-blue-glass:rgba(0,122,178,.55);
  --svcp-conversation-blue-glass-expanded:var(--svcp-conversation-blue-glass);
- --svcp-conversation-blue-rim:rgba(101,226,244,.72);
+ --svcp-conversation-blue-rim:rgba(64,214,247,.86);
  --svcp-conversation-blue-blur:var(--sv-white-pearl-floating-blur,blur(8px) saturate(108%));
   --sv-chat-outgoing:#008FFF;
 }
@@ -422,5 +422,5 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > .svcp-clean-surface,
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile{
  border:1px solid var(--svcp-conversation-blue-rim)!important;
- box-shadow:inset 0 1px 0 rgba(190,248,255,.16)!important;
+ box-shadow:inset 0 1px 0 rgba(155,239,255,.20)!important;
 }
