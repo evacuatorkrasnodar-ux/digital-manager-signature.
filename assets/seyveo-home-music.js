@@ -6,18 +6,17 @@ function init(){
  const $=id=>document.getElementById(id);
  const root=document.documentElement,home=$('homePage'),stage=home?.querySelector('#stage'),audio=$('sayviMusicAudio');
  if(!home||!stage||!audio||$('svHomeInlineMusic'))return;
- const cloud='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 18h12a3.7 3.7 0 0 0 .4-7.4 6 6 0 0 0-11.4-.7A4.1 4.1 0 0 0 5.5 18Z"/></svg>';
  const note='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.2"/><ellipse cx="17" cy="16" rx="3" ry="2.2"/></svg>';
  const prev='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5.8a1 1 0 0 1 1.5.8v10.8a1 1 0 0 1-1.5.8L2 12.9a1 1 0 0 1 0-1.8zm11 0a1 1 0 0 1 1.5.8v10.8a1 1 0 0 1-1.5.8l-8-5.3a1 1 0 0 1 0-1.8z"/></svg>';
  const next='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.8a1 1 0 0 0-1.5.8v10.8a1 1 0 0 0 1.5.8l8-5.3a1 1 0 0 0 0-1.8zm11 0a1 1 0 0 0-1.5.8v10.8a1 1 0 0 0 1.5.8l8-5.3a1 1 0 0 0 0-1.8z"/></svg>';
  const play='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.8a1.5 1.5 0 0 0-2 1.4v13.6A1.5 1.5 0 0 0 7.3 20l13-6.8a1.5 1.5 0 0 0 0-2.6Z"/></svg>';
  const pause='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="5.5" height="18" rx="1.8"/><rect x="13.5" y="3" width="5.5" height="18" rx="1.8"/></svg>';
  const panel=document.createElement('section');panel.id='svHomeInlineMusic';panel.hidden=true;panel.setAttribute('aria-label','Музыка на главной');
- panel.innerHTML='<div class="sv-home-music-heading"><button type="button" class="sv-home-music-meta" aria-label="Открыть музыкальный плеер"><strong></strong><small></small></button><button type="button" class="sv-home-music-weather" aria-label="Показать погоду">'+cloud+'</button></div><div class="sv-home-music-timeline"><input type="range" min="0" max="1000" step="1" value="0" aria-label="Положение воспроизведения"><div class="sv-home-music-times"><span>0:00</span><span>0:00</span></div></div><div class="sv-home-music-controls" role="group" aria-label="Воспроизведение"><button type="button" data-home-music="previous" aria-label="Предыдущий трек">'+prev+'</button><button type="button" data-home-music="play" aria-label="Пауза">'+pause+'</button><button type="button" data-home-music="next" aria-label="Следующий трек">'+next+'</button></div>';
- const back=document.createElement('button');back.type='button';back.id='svHomeMusicReturn';back.hidden=true;back.setAttribute('aria-label','Вернуть музыкальный плеер');back.innerHTML=note;
+ panel.innerHTML='<div class="sv-home-music-heading"><button type="button" class="sv-home-music-meta" aria-label="Открыть музыкальный плеер"><strong></strong><small></small></button></div><div class="sv-home-music-timeline"><input type="range" min="0" max="1000" step="1" value="0" aria-label="Положение воспроизведения"><div class="sv-home-music-times"><span>0:00</span><span>0:00</span></div></div><div class="sv-home-music-controls" role="group" aria-label="Воспроизведение"><button type="button" data-home-music="previous" aria-label="Предыдущий трек">'+prev+'</button><button type="button" data-home-music="play" aria-label="Пауза">'+pause+'</button><button type="button" data-home-music="next" aria-label="Следующий трек">'+next+'</button></div>';
+ const back=document.createElement('button');back.type='button';back.id='svHomeMusicReturn';back.hidden=true;back.setAttribute('aria-label','Открыть музыкальный плеер');back.innerHTML=note;
  stage.append(panel,back);
  const title=panel.querySelector('strong'),artist=panel.querySelector('small'),seek=panel.querySelector('input'),times=panel.querySelector('.sv-home-music-times');
- let frame=0,weatherMode=false,wasSession=false,weather=null,observer=null;
+ let frame=0,weather=null,observer=null;
  const onHome=()=>!home.hidden&&(!location.hash||location.hash==='#home')&&!root.classList.contains('seyveo-conversation');
  const fmt=n=>{n=Math.max(0,Math.floor(Number.isFinite(n)?n:0));return Math.floor(n/60)+':'+String(n%60).padStart(2,'0')};
  // Keep the weather's measured footprint, but suppress its paint and hit target.
@@ -58,7 +57,6 @@ function init(){
   if(weather!==target){replaceWeather(false);weather=target;if(weather&&observer)observer.observe(weather)}
   const session=!!window.SEYVEO_MUSIC?.state?.().homeSession;
   const playing=session&&!audio.paused&&!audio.ended;
-  if(!session||!wasSession)weatherMode=false;wasSession=session;
   if(!route||!session||!weather||weather.hidden||!root.classList.contains('sv-home-empty-sphere')||root.classList.contains('sv-home-empty-arriving')||root.classList.contains('sv-home-empty-route-exit')||root.classList.contains('sv-home-weather-preview')||getComputedStyle(weather).display==='none'){hide();return}
   const stageRect=stage.getBoundingClientRect(),row=weather.getBoundingClientRect(),orb=$('orb')?.getBoundingClientRect(),rail=$('svHomeFavorites'),railRect=rail&&!rail.hidden?rail.getBoundingClientRect():null,dock=document.querySelector('body > footer.dock.sv-shared-dock')?.getBoundingClientRect();
   if(!row.height||!stageRect.height){hide();return}
@@ -66,7 +64,7 @@ function init(){
   const bottomLimit=Math.min(dock?.top||innerHeight,railRect?.height?railRect.top:Infinity)-8;
   const room=bottomLimit-topLimit;
   panel.classList.toggle('sv-home-music-compact',room<130);
-  if(!weatherMode&&room>=105){
+  if(room>=105){
    title.textContent=$('sayviMusicTrack')?.textContent||'Моя музыка';artist.textContent=$('sayviMusicArtist')?.textContent||'';
    panel.querySelector('[data-home-music="previous"]').disabled=!!$('sayviMusicPrevious')?.disabled;
    panel.querySelector('[data-home-music="next"]').disabled=!!$('sayviMusicNext')?.disabled;
@@ -75,7 +73,8 @@ function init(){
    panel.hidden=false;back.hidden=true;
    const height=panel.offsetHeight;
    if(height<=room+1){
-    const y=Math.min(bottomLimit-height,Math.max(topLimit,row.top+row.height/2-height/2));
+    const extraAir=Math.min(10,Math.max(0,room-height));
+    const y=Math.min(bottomLimit-height-extraAir,Math.max(topLimit,row.top+row.height/2-height/2));
     const parent=panel.offsetParent?.getBoundingClientRect()||stageRect;
     panel.style.top=Math.round(y-parent.top)+'px';
     panel.style.left=Math.round(stageRect.left+stageRect.width/2-parent.left)+'px';
@@ -90,8 +89,7 @@ function init(){
  }
  function schedule(){if(!frame)frame=requestAnimationFrame(layout)}
  panel.querySelector('.sv-home-music-meta').addEventListener('click',()=>{if(window.SEYVEO_MUSIC_DOCK?.openPlayer)window.SEYVEO_MUSIC_DOCK.openPlayer();else window.SEYVEO_MUSIC?.open?.()});
- panel.querySelector('.sv-home-music-weather').addEventListener('click',()=>{weatherMode=true;schedule()});
- back.addEventListener('click',()=>{weatherMode=false;schedule()});
+ back.addEventListener('click',()=>{if(window.SEYVEO_MUSIC_DOCK?.openPlayer)window.SEYVEO_MUSIC_DOCK.openPlayer();else window.SEYVEO_MUSIC?.open?.()});
  panel.querySelector('[data-home-music="previous"]').addEventListener('click',()=>$('sayviMusicPrevious')?.click());
  panel.querySelector('[data-home-music="play"]').addEventListener('click',()=>$('sayviMusicPlay')?.click());
  panel.querySelector('[data-home-music="next"]').addEventListener('click',()=>$('sayviMusicNext')?.click());
