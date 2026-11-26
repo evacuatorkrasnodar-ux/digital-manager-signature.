@@ -62,6 +62,7 @@
  function closeMapViewer(){
   if(!mapViewer)return;
   mapCleanup?.();mapCleanup=null;mapViewer.remove();mapViewer=null;
+  dialog.classList.remove('sv-place-map-open');
  }
  function openMapViewer(value){
   const target=places.cleanPlace(value);if(!target||!dialog.open)return;
@@ -115,7 +116,7 @@
    area.addEventListener('pointerup',endDismiss);
    area.addEventListener('pointercancel',()=>{dismissGesture=null});
   }
-  mapViewer=shade;dialog.append(shade);
+  mapViewer=shade;dialog.classList.add('sv-place-map-open');dialog.append(shade);
   let centerLat=target.lat,centerLon=target.lon,zoom=16;
   const activePointers=new Map(),tileNodes=new Map();let pinchDistance=0;
   function world(lat,lon){
