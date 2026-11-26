@@ -20,7 +20,7 @@
   svg.setAttribute('aria-hidden','true');
   svg.setAttribute('focusable','false');
   const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-  path.setAttribute('d','M14.5 5.5 8 12l6.5 6.5');
+  path.setAttribute('d',window.SEYVEO_NAV_GLYPHS?.spec.back.d||'M15.5 5 L7.4 12 L15.5 19');
   svg.appendChild(path);
   return svg;
  }
@@ -143,5 +143,5 @@
     confirmLeaving(event);
   },true);
  });
- window.SEYVEO_NAVIGATION=Object.freeze({version:7});
+ window.SEYVEO_NAVIGATION=Object.freeze({version:8});
 })();
