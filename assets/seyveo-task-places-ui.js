@@ -310,7 +310,10 @@
     accept.addEventListener('click',()=>{confirmed=true;refining=false;refineText='';render();window.dispatchEvent(new Event('seyveo:task-place-updated'))});
     const change=node('button','sv-place-refine-trigger',refining?'Отмена':'Другой адрес');change.type='button';
     change.setAttribute('aria-expanded',String(refining));
-    change.addEventListener('click',()=>{refining=!refining;render()});
+    change.addEventListener('click',()=>{
+     if(!proposal){reset();window.SEYVEO_MEETING_PLACE_PICKER?.reset();window.dispatchEvent(new Event('seyveo:task-place-updated'));return}
+     refining=!refining;render();
+    });
     actions.append(accept,change);panel.append(actions);
    }
    if(confirmed){
