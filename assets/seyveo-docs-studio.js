@@ -268,7 +268,7 @@ function mount(target,{
  const draftTitle=item=>{const name=String(item.name||'').trim();return name&&!/^документ(?: · копия)?(?:\.(?:pdf|docx|txt))?$/i.test(name)?name:String(item.text||'').trim().split('\n')[0].trim().slice(0,70)||'Документ';};
  let selectedDrafts=null;
  const draftPage=editor.closest('#sayviSurfacePage');
- const clearDraftFooter=()=>draftPage?.querySelector(':scope > .sv-doc-draft-selection-footer')?.remove();
+ const clearDraftFooter=()=>{document.body.querySelector(':scope > .sv-doc-draft-selection-footer')?.remove();draftPage?.querySelector(':scope > .sv-doc-draft-selection-footer')?.remove();};
  async function refreshDrafts(){
   const seq=++draftRefresh;
   if(!drafts)return;
@@ -298,7 +298,7 @@ function mount(target,{
     catch{setDraftFeedback('Не удалось удалить все выбранные черновики.');void refreshDrafts();}
    },'sv-doc-draft-bulk-delete');remove.disabled=!selectedDrafts.size;remove.dataset.svBulkRole='delete';remove.setAttribute('aria-label','Удалить выбранные черновики');remove.innerHTML=window.SEYVEO_DOCUMENT_ICONS?.markup('delete')||'';
    bar.append(count,remove);details.classList.add('sv-doc-draft-selecting');
-   if(draftPage)draftPage.append(bar);else details.append(bar);
+   if(draftPage)document.body.append(bar);else details.append(bar);
    details.addEventListener('toggle',()=>{if(!details.open&&selectedDrafts&&details.isConnected){selectedDrafts=null;clearDraftFooter();void refreshDrafts();}});
   }
   for(const item of items){
