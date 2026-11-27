@@ -4,7 +4,7 @@
  */
 import {createServer} from 'node:http';
 import {lookupMusicReleases} from './music-discovery.mjs';
-import {MAX_LYRIC_BYTES,lyricFormat,transcribeLyrics} from './music-lyrics.mjs';
+import {MAX_LYRIC_BYTES,lyricFormat,transcribeLyrics,vocalModelConfigured} from './music-lyrics.mjs';
 import {pythonForNoteAudio} from './note-audio-transcriber.mjs';
 import {MAX_MUSIC_CLIP,clipFormat,recognitionConfigured,recognizeMusic} from './music-recognition.mjs';
 import {createImageAttachments} from './image-attachments.mjs';
@@ -301,7 +301,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
   if(req.method==='GET'&&path==='/api/seyveo-music-lyrics-status'){
    const job=new URL(req.url,ORIGIN).searchParams.get('job');
    const progress=job&&lyricProgress?.job===job?{phase:lyricProgress.phase,percent:lyricProgress.percent}:null;
-   send(res,200,{protocol:2,engine:'local-whisper',pythonConfigured:!!pythonForNoteAudio(),busy:noteAudioBusy,progress});return;
+   send(res,200,{protocol:2,engine:'local-whisper',vocalConfigured:vocalModelConfigured(),pythonConfigured:!!pythonForNoteAudio(),busy:noteAudioBusy,progress});return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-music-lyrics'){
    if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
