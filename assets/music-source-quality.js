@@ -109,10 +109,24 @@
  async function detect(file){
   if(!file||typeof file.slice!=='function'||!Number.isSafeInteger(file.size)||file.size<44)return null;
   try{
-   const b=new Uint8Array(await file.slice(0,Math.min(LIMIT,file.size)).arrayBuffer());
-   if(text(b,0,4)==='fLaC')return flac(b,file.size);
-   if(text(b,0,4)==='RIFF')return wav(b,file.size);
-   return mp3(b,file.size);
+   const read=async(start,end)=>{
+    const part=file.slice(start,end);
+    const bytes=typeof part.arrayBuffer==='function'?await part.arrayBuffer():await new Promise((ok,no)=>{const reader=new FileReader();reader.onload=()=>ok(reader.result);reader.onerror=no;reader.readAsArrayBuffer(part)});
+    return new Uint8Array(bytes);
+   };
+   // Large embedded album art can make ID3 tags exceed the initial window.
+   // Seek directly to the audio, without reading the whole tag or file.
+   const head=await read(0,Math.min(10,file.size));
+   let start=0;
+   if(text(head,0,3)==='ID3'){
+    if(head.length<10||head[3]<2||head[3]>4||head.slice(6,10).some(v=>v>127))return null;
+    start=10+((head[6]<<21)|(head[7]<<14)|(head[8]<<7)|head[9])+((head[3]===4&&(head[5]&16))?10:0);
+    if(start+44>file.size)return null;
+   }
+   const b=await read(start,Math.min(start+LIMIT-10,file.size)),size=file.size-start;
+   if(text(b,0,4)==='fLaC')return flac(b,size);
+   if(text(b,0,4)==='RIFF')return wav(b,size);
+   return mp3(b,size);
   }catch{}
   return null;
  }
