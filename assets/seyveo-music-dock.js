@@ -129,7 +129,47 @@ function init(){
  }
  function refresh(){if(inside())enter();else leave()}
  function openPlayer(){if(active)return show('player');pending=true;return music()?.open?.()}
- function closePlayer(){if(!active||view!=='player')return false;return show(last)}
+ function closePlayer(){
+  if(!active||view!=='player')return false;
+  const stage=get('sayviMusicStage'),art=get('sayviMusicArtwork'),mini=get('sayviMusicMini');
+  let snapshot=null;
+  if(stage&&typeof stage.animate==='function'&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
+   const rect=stage.getBoundingClientRect();
+   if(rect.width>40&&rect.height>40&&rect.top>=0&&rect.bottom<=innerHeight+1){
+    const real=art&&!art.hidden;
+    const fallback=stage.querySelector('.sv-now-fallback');
+    const palette=fallback?Array.from(fallback.querySelectorAll('.sv-music-scene-palette > span')).reverse().find(node=>Number(getComputedStyle(node).opacity)>.6):null;
+    const source=real?art:(palette||fallback);
+    if(source)snapshot={rect,background:getComputedStyle(source).backgroundImage,real};
+   }
+  }
+  const ok=show(last);
+  if(!ok||!snapshot||!mini)return ok;
+  requestAnimationFrame(()=>{
+   if(!active||view==='player'||mini.hidden||document.hidden)return;
+   const symbol=mini.querySelector('.sv-music-mini-symbol');if(!symbol)return;
+   const end=symbol.getBoundingClientRect(),start=snapshot.rect;
+   if(end.width<12||end.height<12||end.bottom>innerHeight+1)return;
+   const ghost=document.createElement('span');ghost.setAttribute('aria-hidden','true');
+   Object.assign(ghost.style,{position:'fixed',left:start.left+'px',top:start.top+'px',width:start.width+'px',height:start.height+'px',
+    borderRadius:'20px',overflow:'hidden',pointerEvents:'none',zIndex:'9999',backgroundColor:'#315759',
+    backgroundImage:snapshot.background,backgroundSize:'cover',backgroundPosition:'center',transformOrigin:'top left',display:'grid',placeItems:'center'});
+   if(!snapshot.real){
+    const glyph=mini.querySelector('.sv-music-mini-placeholder')?.cloneNode(true);
+    if(glyph){Object.assign(glyph.style,{width:'30%',height:'30%',stroke:'#F2F9F8',fill:'none'});ghost.append(glyph)}
+   }
+   document.body.append(ghost);
+   const sx=end.width/start.width,sy=end.height/start.height;
+   try{
+    const animation=ghost.animate([
+     {transform:'translate(0px,0px) scale(1)',borderRadius:'20px',opacity:.98},
+     {transform:'translate('+(end.left-start.left)+'px,'+(end.top-start.top)+'px) scale('+sx+','+sy+')',borderRadius:'50%',opacity:.92}
+    ],{duration:320,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
+    animation.onfinish=animation.oncancel=()=>ghost.remove();
+   }catch{ghost.remove()}
+  });
+  return ok;
+ }
  nav.addEventListener('click',e=>{const btn=e.target.closest('button[data-music-nav]');if(!btn)return;e.preventDefault();e.stopPropagation();show(btn.dataset.musicNav)});
  page.addEventListener('click',e=>{const btn=e.target.closest('[data-music-view-action]');if(!btn)return;const key=btn.dataset.musicViewAction;if(key==='import')get('sayviMusicImport')?.click();else if(key==='favorites')get('sayviMusicFavoritesToggle')?.click();else if(key==='sources')get('sayviMusicSourcesToggle')?.click();else show(key)});
  window.addEventListener('hashchange',refresh);window.addEventListener('seyveo:route-changed',refresh);
