@@ -1,10 +1,10 @@
-/* SEYVEO Liquid Sound V71 · antialiased silk microtexture · WebGL 1. */
+/* SEYVEO Liquid Sound V72 · unified silk filaments · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
  const gl=canvas.getContext('webgl',{alpha:true,antialias:true,depth:false,stencil:false,premultipliedAlpha:true,preserveDrawingBuffer:true,powerPreference:'low-power'});
  if(!gl)return null;
- const surfaceDots=!!gl.getExtension('OES_standard_derivatives')&&gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER,gl.HIGH_FLOAT).precision>0;
+ const surfaceDots=!mobile&&!!gl.getExtension('OES_standard_derivatives')&&(gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER,gl.HIGH_FLOAT)?.precision||0)>0;
  let lost=false;canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();lost=true});
  const vs=`precision highp float;
 attribute vec4 aData;
@@ -123,6 +123,10 @@ void main(){
 uniform mediump float uKind,uMode; varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 float peak(float a,float c,float w){return exp(-(1.0-cos(a-c))/(w*w));}
 float gauss(float x,float w){float q=x/w;return exp(-q*q);}
+#ifdef SURFACE_DOTS
+// Integral of a periodic pulse, so subpixel filaments preserve their average energy.
+highp vec2 pulseIntegral(highp vec2 t,highp vec2 r){return floor(t)*(2.0*r)+clamp(fract(t)-(.5-r),vec2(0.0),2.0*r);}
+#endif
 void main(){
  float x=vUV.x,v=vUV.y,alpha;vec3 col;
  if(uKind>4.5&&uKind<5.5){
@@ -181,7 +185,7 @@ void main(){
   else alpha=(.30+.18*turn+.36*pow(v,1.8)*gauss(x-.05,.52)+.16*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.44*tip);
   if(uMode<.5){
    if(uKind<2.5){float rimLight=.20*pow(1.0-v,32.0)*(.55+.45*focus);alpha=.010+.025*fres+rimLight+.10*pow(v,4.0)*tipGlow+.035*shoulderLight+.075*foldApproach;col=mix(col,vec3(.008,.045,.065),.84*bodyMask);alpha+=.16*bodyMask;}
-   else if(uKind<3.5){alpha=clamp(.035+.64*edge+.15*start+.35*silkLight+.26*tipGlow+.14*leftTurn+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.20+tipGlow*.30+.24*leftTurn,0.0,1.0));}
+   else if(uKind<3.5){alpha=clamp(.035+.57*edge+.15*start+.35*silkLight+.26*tipGlow+.14*leftTurn+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.20+tipGlow*.30+.24*leftTurn,0.0,1.0));}
    else if(uKind<4.5){float rim=.29*edge*gauss(x-.35,.78)+.16*pow(1.0-v,12.0)*(.55+.45*focus);alpha=.009+.019*fres+rim+.29*bodyMask;col=mix(vec3(.006,.045,.065),vec3(.07,.92,.89),clamp(rim*2.7+.12*highlight,0.0,1.0));}
    else {float low=gauss(x-.02,.18),sweep=gauss(x-.27,.42);float seam=pow(1.0-v,38.0)*(.18+.82*gauss(x-.40,.60));float broad=.12*gauss(v-.67,.33)*gauss(x-.13,.68);alpha=clamp(.015+.76*edge*low+.63*pow(v,2.1)*low+.15*start*gauss(x-.25,.76)+.24*pow(v,2.5)*sweep+.47*seam+broad,0.0,.98);col=mix(vec3(.025,.80,.79),vec3(.88,1.0,.98),clamp(edge*(.90*low+.16*sweep)+.35*seam,0.0,1.0));}
   }
@@ -196,23 +200,27 @@ void main(){
   }
   if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*5.2)*(1.0-smoothstep(.24,.50,d));}
   // Subtle individual silk filaments, confined to the turning central fold.
-  if(uMode>1.5&&uMode<2.5){float taper=pow(max(0.0,sin(3.14159265*(x+1.0)*.5)),.55);col=mix(vec3(.015,.74,.77),vec3(.55,1.0,.97),pow(v,2.0));alpha=(.035+.19*middleLight+.14*pow(v,5.0))*taper*(1.0-.65*smoothstep(.70,.90,x));}
+  if(uMode>1.5&&uMode<2.5){float taper=pow(max(0.0,sin(3.14159265*(x+1.0)*.5)),.55);col=mix(vec3(.015,.74,.77),vec3(.55,1.0,.97),pow(v,2.0));alpha=(.025+.085*middleLight+.07*pow(v,5.0))*taper*(1.0-.65*smoothstep(.70,.90,x));}
 #ifdef SURFACE_DOTS
   // Continuous UV microtexture on the broad faces, with screen-space coverage antialiasing.
   if(uMode>2.5){
    highp float u=(x+1.0)*.5;
    highp float w=v;
    highp float bow=sin(3.14159265*u)*sin(3.14159265*w);
-   highp float flow=uKind<2.5?.22:-.18;
-   highp vec2 uv=vec2(u+flow*bow*(w-.42),w-.13*bow*(.35+.65*u));
-   highp vec2 cells=uv*vec2(uKind<2.5?116.0:106.0,uKind<2.5?48.0:42.0);
+   bool ribbon=uKind>2.5&&uKind<3.5;
+   highp float flow=uKind<2.5?.22:ribbon?-.07:-.18;
+   highp vec2 uv=vec2(u+flow*bow*(w-.42),w-(ribbon?.035:.13)*bow*(.35+.65*u));
+   // Dots and central filaments share one lattice; no overlaid line mesh.
+   highp vec2 cells=uv*vec2(ribbon?132.0:uKind<2.5?116.0:106.0,ribbon?34.0:uKind<2.5?48.0:42.0)+.5;
    highp vec2 aa=max(fwidth(cells),vec2(.001));
-   highp vec2 delta=abs(fract(cells+.5)-.5);
-   highp vec2 core=vec2(.145,.145);
-   highp vec2 coverage=clamp((min(delta+aa*.5,core)-max(delta-aa*.5,-core))/aa,0.0,1.0);
+   highp vec2 core=ribbon?vec2(.105,.18):vec2(.145);
+   highp vec2 coverage=clamp((pulseIntegral(cells+aa*.5,core)-pulseIntegral(cells-aa*.5,core))/aa,0.0,1.0);
    highp float dotMask=coverage.x*coverage.y;
-   highp float resolved=1.0-smoothstep(.70,1.35,max(aa.x,aa.y));
-   alpha*=mix(.0841,dotMask,resolved);
+   highp float filament=ribbon?coverage.x*(.24+.36*sin(3.14159265*w))*(1.0-.55*smoothstep(.82,.99,u)):0.0;
+   highp float mask=max(dotMask,filament);
+   highp float mean=ribbon?.105:.0841;
+   highp float resolved=1.0-smoothstep(.85,1.65,max(aa.x,aa.y));
+   alpha*=mix(mean,mask,resolved);
   }
 #endif
  }
@@ -248,8 +256,8 @@ void main(){
   const dims=kind===7?[58,24,88,36]:kind===2?[94,42,132,54]:kind===3?[94,36,132,52]:kind===4?[94,34,132,46]:[94,35,132,48];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   const layers=[mesh(kind,mobile?64:96,mobile?20:32,0)];
-  if(kind===3)layers.push(mesh(kind,n,mobile?14:22,2));
-  if(surfaceDots&&!mobile&&(kind===2||kind===4))layers.push(mesh(kind,96,44,3));
+  if(kind===3&&!surfaceDots)layers.push(mesh(kind,n,m,2));
+  if(surfaceDots&&(kind===2||kind===3||kind===4))layers.push(mesh(kind,96,44,3));
   else layers.push(mesh(kind,n,m,1));return layers;
  });
  function draw(obj){
