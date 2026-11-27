@@ -163,6 +163,38 @@
   }
   audio.addEventListener('timeupdate',updateLine);audio.addEventListener('seeking',updateLine);
   d.addEventListener('seyveo:music-state',updateLine);
+  // Source quality, never a claim about the Bluetooth/DAC/output chain.
+  const sourceCache=new WeakMap();
+  let qualityFile=null,qualityResult=null,qualityVersion=0,qualityRadio='',qualityPending=false;
+  function paintQuality(){
+   const chip=$('sayviMusicQuality'),detail=$('svAdaptiveSourceQuality');
+   const q=qualityResult;
+   const label=q?(q.hiRes?'Hi-Res':q.format==='MP3'?'MP3':'Lossless'):qualityRadio?'RADIO':'';
+   if(chip){chip.hidden=!label;chip.textContent=label;chip.title=q?'Параметры исходного файла: '+q.format+' · '+q.detail:qualityRadio?'Заявленное качество радиостанции: '+qualityRadio:'';chip.dataset.quality=q?.hiRes?'hires':q?'file':'radio'}
+   if(detail){
+    detail.replaceChildren();
+    const top=d.createElement('strong');top.textContent=q?label+' · '+q.format:qualityRadio?'Радио':qualityPending?'Анализ исходного файла…':'Качество файла не определено';detail.append(top);
+    if(q||qualityRadio){const sub=d.createElement('small');sub.textContent=q?(q.format==='MP3'?q.bitrateKbps+' кбит/с (первый кадр) · '+q.sampleRate/1000+' кГц':q.bits+' бит · '+q.sampleRate/1000+' кГц'):'Заявлено станцией: '+qualityRadio;detail.append(sub)}
+    const note=d.createElement('small');note.textContent='Параметры источника, не качество выхода Bluetooth или ЦАП.';detail.append(note);
+   }
+  }
+  async function syncQuality(){
+   const musicState=music()?.state?.(),file=music()?.rhythmFile?.()||null;
+   const radio=musicState?.source==='radio'?String(musicState.quality||'Прямой эфир'):'';
+   if(file===qualityFile&&radio===qualityRadio){paintQuality();return}
+   qualityFile=file;qualityRadio=radio;qualityResult=null;qualityPending=!!file;
+   const version=++qualityVersion;paintQuality();
+   if(!file)return;
+   let info=sourceCache.get(file);
+   if(info===undefined){
+    try{info=await w.SEYVA_MUSIC_SOURCE_QUALITY?.detect(file)||null}catch{info=null}
+    sourceCache.set(file,info);
+   }
+   if(version!==qualityVersion||music()?.rhythmFile?.()!==file)return;
+   qualityPending=false;qualityResult=info;paintQuality();
+  }
+  d.addEventListener('seyveo:music-state',syncQuality);
+  audio.addEventListener('loadedmetadata',syncQuality);
   function soundSheet(){
    if(!show('Adaptive Sound','sound'))return;
    const mark=d.createElement('div');mark.className='sv-adaptive-mark';mark.setAttribute('aria-hidden','true');
@@ -171,6 +203,7 @@
    const tagline=d.createElement('strong');tagline.className='sv-adaptive-tagline';tagline.textContent='Интеллект в каждой ноте.';body.append(tagline);
    message('Не настраивайте музыку. Наслаждайтесь ею.');
    const statusLine=d.createElement('p');statusLine.className='sv-adaptive-status';statusLine.setAttribute('aria-live','polite');body.append(statusLine);
+   const sourceLine=d.createElement('div');sourceLine.id='svAdaptiveSourceQuality';body.append(sourceLine);paintQuality();
    message('Бережная коррекция громкости. Характер записи сохраняется.');
    const modeButton=action('Pure Sound · без коррекции',()=>{const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
    modeButton.id='svAdaptivePure';
@@ -244,7 +277,7 @@
   quickButton?.addEventListener('click',()=>{if(quickCollapsed){revealQuick();return}revealQuick();const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
   $('svAdaptiveQuickInfo')?.addEventListener('click',soundSheet);
   dialog?.addEventListener('close',()=>{delete dialog.dataset.soundPhase});
-  updateSound();
+  updateSound();syncQuality();
   $('svAdaptiveSoundMenu')?.addEventListener('click',soundSheet);
   $('svSmartShare')?.addEventListener('click',share);
   $('svSmartSleep')?.addEventListener('click',sleepSheet);
