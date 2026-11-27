@@ -216,7 +216,7 @@
   $('svMusicRecognizeQuick')?.addEventListener('click',()=>recognitionSheet(true));
   function shareData(){
    if(!loaded())return null;
-   const name=$('sayviMusicTrack')?.textContent?.trim()||'Музыка';
+   const name=($('sayviMusicTrack')?.dataset.fullTitle||$('sayviMusicTrack')?.textContent)?.trim()||'Музыка';
    const artist=$('sayviMusicArtist')?.textContent?.trim()||'';
    return {title:name,text:[name,artist==='Моя музыка'?'':artist].filter(Boolean).join(' — ')+'\nSEYVEO Music'};
   }

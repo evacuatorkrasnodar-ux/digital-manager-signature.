@@ -54,6 +54,16 @@ let recentFiles=[];
 const recentPlayedAt=new Map();
 const infoFor=file=>file?.radio?{title:file.name,artist:file.country+' · '+file.quality,display:file.name,album:'SEYVEO RADIO'}:file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
 const safeName=file=>infoFor(file).display;
+// Shorten only unambiguous repeated compilation phrases in the player.
+// The original title remains in metadata, collection and media session.
+function setPlayerTitle(value,compact=true){
+ const full=String(value||'Без названия');
+ const label=compact?full.replace(/^Музыка\s+(20\d{2})\s+Русские\s+хиты\s+Сборник\s+русских\s+хитов\s+\1(?=$|[\s,.:;—–-])/i,'Русские хиты $1'):full;
+ heading.dataset.fullTitle=full;
+ heading.title=full;
+ heading.setAttribute('aria-label',full);
+ heading.textContent=label;
+}
 const extensions=/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i;
 const MAX_TRACKS=40,MAX_FILE_SIZE=180*1024*1024;
 const providers=Object.freeze({
@@ -792,7 +802,7 @@ function switchTrack(i,autoplay=false,fromNavigation=false,resumeSeconds=0){
   if(file.radio){
    index=newIndex;audio.src=file.stream;
    coverDataURL=file.artwork||null;if(coverDataURL)showArtwork();
-   heading.textContent=file.name;artist.textContent=file.country+' · '+file.quality;
+   setPlayerTitle(file.name,false);artist.textContent=file.country+' · '+file.quality;
    previous.disabled=next.disabled=tracks.length<2;updateFavorite();collectionRender();mediaSession();updatePlay();updateTime();
    if(autoplay){sayviMessage('Подключение к '+file.name+'…');audio.play().catch(()=>{if(version===selectVersion&&!audio.error)sayviMessage('Не удалось начать эфир. Нажмите Play ещё раз.')});}
    return true;
@@ -807,7 +817,7 @@ function switchTrack(i,autoplay=false,fromNavigation=false,resumeSeconds=0){
  audio.src=url;
  updateFavorite();
  const visible=infoFor(file);
- heading.textContent=visible.title;
+ setPlayerTitle(visible.title);
  artist.textContent=visible.artist||'Моя музыка';
  previous.disabled=next.disabled=tracks.length<2;
  collectionRender();mediaSession();updatePlay();updateTime();
@@ -820,7 +830,7 @@ function switchTrack(i,autoplay=false,fromNavigation=false,resumeSeconds=0){
    updateFavorite();
    if(info.artwork)loadArtwork(info.artwork,version,file);
    else stage?.classList.remove('is-checking-artwork');
-   heading.textContent=info.title;
+   setPlayerTitle(info.title);
    artist.textContent=info.artist||'Моя музыка';
    collectionRender();mediaSession();syncResume();
   }).catch(()=>{if(version===selectVersion)stage?.classList.remove('is-checking-artwork')});
