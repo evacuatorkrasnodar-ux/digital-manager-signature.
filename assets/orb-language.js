@@ -236,15 +236,15 @@
    let r;
    if(kind===0){
     const silhouette=radius*(1+.007*Math.sin(2*a+t)+.004*Math.sin(3*a-t*.5));
-    const depth=radius*(.008+(.105+.018*m)*topLeft+.093*rightFold+.064*bottomFold+.125*shoulder-.071*pinch);
+    const depth=radius*(.012+(.142+.018*m)*topLeft+.115*rightFold+.088*bottomFold+.153*shoulder-.065*pinch);
     // Opposed bending produces a bright turning edge without deforming the silhouette.
-    const curl=radius*(.054*pinch-.026*shoulder+.016*rightFold*Math.sin(4*a+t));
+    const curl=radius*(.080*pinch-.038*shoulder+.025*rightFold*Math.sin(4*a+t));
     r=silhouette-depth*u+curl*Math.sin(Math.PI*u);
    }else{
     const opening=radius*(.753+.009*Math.sin(2*a+t)+.005*Math.sin(3*a-t*.65));
     // At the bottom the membrane turns inward rather than forming another external hoop.
-    const depth=radius*(.005+.065*innerTop-.087*innerBottom+.032*innerKnot);
-    r=opening+depth*u+radius*.041*innerKnot*Math.sin(Math.PI*u);
+    const depth=radius*(.005+.079*innerTop-.119*innerBottom+.055*innerKnot);
+    r=opening+depth*u+radius*.052*innerKnot*Math.sin(Math.PI*u);
    }
    const shear=(kind===0?.085:.045)*Math.sin(Math.PI*u)*Math.sin(2*a+.8+t*.45);
    const cs=Math.cos(shear),ss=Math.sin(shear);
@@ -258,18 +258,35 @@
   // folded surface turns toward its edge, while the wider shell stays transparent.
   function ribbon(kind,count){
    const rows=Array.from({length:count},(_,j)=>geom.map(g=>point(g,kind,j/(count-1))));
+   // Soft light runs across the fabric, not just the sharp turning lip.
+   // Directional gradients are continuous, with opposing luminous lobes.
    const fiber=ctx.createLinearGradient(64,55,339,345);
-   fiber.addColorStop(0,'rgba(140,255,231,.92)');
-   fiber.addColorStop(.24,'rgba(146,255,224,1)');
-   fiber.addColorStop(.48,'rgba(73,186,174,.24)');
-   fiber.addColorStop(.73,'rgba(156,255,232,.94)');
-   fiber.addColorStop(1,'rgba(213,255,247,.82)');
+   fiber.addColorStop(0,'rgba(130,255,231,.96)');
+   fiber.addColorStop(.21,'rgba(124,255,224,1)');
+   fiber.addColorStop(.47,'rgba(59,174,166,.20)');
+   fiber.addColorStop(.76,'rgba(116,255,224,.98)');
+   fiber.addColorStop(1,'rgba(187,255,240,.92)');
+   const veil=ctx.createLinearGradient(45,76,350,326);
+   veil.addColorStop(0,'rgba(76,223,204,.45)');
+   veil.addColorStop(.22,'rgba(116,249,221,.67)');
+   veil.addColorStop(.48,'rgba(56,158,153,.08)');
+   veil.addColorStop(.75,'rgba(117,251,222,.60)');
+   veil.addColorStop(1,'rgba(91,229,207,.45)');
+   // A seamless underlay softens gaps without tiled fills or a blurred halo.
+   ctx.beginPath();
+   for(let i=0;i<rows[0].length;i++){const [x,y]=rows[0][i];if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}
+   ctx.closePath();
+   const far=rows[count-1];
+   for(let i=far.length-1;i>=0;i--){const [x,y]=far[i];if(i===far.length-1)ctx.moveTo(x,y);else ctx.lineTo(x,y)}
+   ctx.closePath();
+   ctx.fillStyle=veil;ctx.globalAlpha=kind===0?.34:.24;ctx.fill('evenodd');
    for(let j=0;j<count;j++){
-    const u=j/(count-1);
-    const lip=Math.exp(-Math.pow((u-(kind===0?.89:.08))/.22,2));
+    const u=j/(count-1),edgeU=kind===0?.89:.08;
+    const lip=Math.exp(-Math.pow((u-edgeU)/.23,2));
+    const body=Math.exp(-Math.pow((u-(kind===0?.57:.42))/.31,2));
     path(rows[j]);ctx.strokeStyle=fiber;
-    ctx.globalAlpha=.075+.78*lip;
-    ctx.lineWidth=.20+.27*lip;ctx.stroke();
+    ctx.globalAlpha=.055+.47*lip+.28*body;
+    ctx.lineWidth=.21+.23*lip+.13*body;ctx.stroke();
    }
    ctx.globalAlpha=1;
    const edge=rows[kind===0?count-1:0];
@@ -324,17 +341,17 @@
   const foldCount=liquidMobile?28:44,foldCols=liquidMobile?100:156;
   for(let j=0;j<foldCount;j++){
    const v=(j+.45)/foldCount;
-   const bend=Math.sin(v*Math.PI*.5);
+   const bend=1-Math.cos(v*Math.PI*.5);
    ctx.beginPath();
    for(let i=1;i<foldCols;i++){
     const x=-1+2*(i+(j%2)*.34)/foldCols,[px,py]=membrane(x,1);
     const env=Math.pow(Math.max(0,1-x*x),.78);
-    const width=R*(.29+.035*m)*env*(.77+.23*Math.cos(Math.PI*(x+.36)+t*.5));
+    const width=R*(.34+.035*m)*env*(.74+.26*Math.cos(Math.PI*(x+.36)+t*.5));
     const dx=R*.045*env*Math.sin(Math.PI*v);
-    const size=.43+.19*Math.pow(v,2);
+    const size=.46+.19*Math.pow(v,2);
     ctx.rect(px+dx-size/2,py+width*bend-size/2,size,size);
    }
-   ctx.fillStyle=memGradient;ctx.globalAlpha=.48+.45*Math.pow(v,2);ctx.fill();
+   ctx.fillStyle=memGradient;ctx.globalAlpha=.54+.42*Math.pow(v,2);ctx.fill();
   }
   ctx.globalAlpha=1;
   // Sparse back-surface pearls make the lower hemisphere read as a volume.
