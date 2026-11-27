@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V65 · convex silk body · WebGL 1. */
+/* SEYVEO Liquid Sound V66 · broad central silk ribbon · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -25,7 +25,12 @@ vec3 contour(float k,float u){
   vec2 dCrest=vec2(.90,0.0);
   vec2 p;
   if(u<.46)p=bez(leftLip,nearEdge?vec2(-.885,.105):vec2(-.854,.025),dip-dDip*(.46/3.0),dip,u/.46);
-  else if(u<.86)p=bez(dip,dip+dDip*(.40/3.0),crest-dCrest*(.40/3.0),crest,(u-.46)/.40);
+  else if(u<.86){
+   float t=(u-.46)/.40;
+   p=bez(dip,dip+dDip*(.40/3.0),crest-dCrest*(.40/3.0),crest,t);
+   // Broaden the ribbon through its center-right face, without breaking the shared contours.
+   float b=sin(PI*t);p.y+=(nearEdge?.045:-.075)*b*b;
+  }
   else p=bez(crest,crest+dCrest*(.14/3.0),vec2(.947,-.185),r,(u-.86)/.14);
   return vec3(p,(nearEdge?.38:.23)*sin(PI*u));
  }
@@ -86,10 +91,10 @@ void main(){
   if(uKind<2.5||uKind>3.5){
    float curved=.5-.5*cos(PI*v);
    v=mix(v,curved,uKind<2.5?.37:.32);
-   float sweep=uKind<2.5?.18:uKind<4.5?-.30:.18;
+   float sweep=uKind<2.5?.12:uKind<4.5?-.20:.12;
    // A monotonic shear fans the rows out without zig-zagging the individual points.
    u+=sweep*sin(PI*u)*sin(PI*v)*(v-.24);
-   if(uKind<2.5)v+=.14*sin(PI*v)*sin(PI*u-.45);
+   if(uKind<2.5)v+=.075*sin(PI*v)*sin(PI*u-.45);
   }else{
    u-=.07*sin(PI*u)*sin(PI*v)*(v-.36);
   }
@@ -156,7 +161,7 @@ void main(){
   float shoulderLight=gauss(x+.43,.64)*gauss(v-.48,.45);
   float highlight=clamp(vSheen,0.0,1.0);
   float silkLight=pow(v,2.4)*(.57+.43*gauss(x+.25,.70));
-  float middleLight=gauss(v-.60,.44)*(.70+.30*gauss(x-.05,.8));
+  float middleLight=gauss(v-.60,.44)*(.68+.32*gauss(x-.36,.52));
   // Translucent absorption masks rear particles under the near-facing silk.
   float bodyMask=smoothstep(0.0,.13,v)*smoothstep(0.0,.13,1.0-v)*smoothstep(0.0,.18,1.0-abs(x));
   col=mix(vec3(.08,.88,.88),vec3(.84,1.0,.98),clamp(.24*turn+.22*fres+.30*tip,0.0,1.0));
@@ -168,7 +173,7 @@ void main(){
    if(uKind<2.5){float rimLight=.20*pow(1.0-v,32.0)*(.55+.45*focus);alpha=.010+.025*fres+rimLight+.10*pow(v,4.0)*tipGlow+.035*shoulderLight;col=mix(col,vec3(.008,.045,.065),.84*bodyMask);alpha+=.16*bodyMask;}
    else if(uKind<3.5){alpha=clamp(.055+.64*edge+.30*start+.35*silkLight+.26*tipGlow+.14*leftTurn+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30+.24*leftTurn,0.0,1.0));}
    else if(uKind<4.5){float rim=.29*edge*gauss(x-.35,.78)+.16*pow(1.0-v,12.0)*(.55+.45*focus);alpha=.009+.019*fres+rim+.29*bodyMask;col=mix(vec3(.006,.045,.065),vec3(.07,.92,.89),clamp(rim*2.7+.12*highlight,0.0,1.0));}
-   else {float low=gauss(x-.06,.20),sweep=gauss(x-.27,.49);float seam=pow(1.0-v,24.0)*(.20+.80*gauss(x-.32,.60));alpha=clamp(.016+.90*edge*low+.65*pow(v,3.0)*low+.27*start*gauss(x-.25,.76)+.18*pow(v,3.0)*sweep+.62*seam,0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),clamp(edge*(.90*low+.24*sweep)+.44*seam,0.0,1.0));}
+   else {float low=gauss(x-.06,.20),sweep=gauss(x-.27,.49);float seam=pow(1.0-v,32.0)*(.30+.70*gauss(x-.32,.66));alpha=clamp(.016+.90*edge*low+.65*pow(v,3.0)*low+.27*start*gauss(x-.25,.76)+.18*pow(v,3.0)*sweep+.62*seam,0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),clamp(edge*(.90*low+.24*sweep)+.44*seam,0.0,1.0));}
   }
   if(uKind>6.5&&uKind<7.5){
    float taper=sin(3.14159265*(x+1.0)*.5);
@@ -181,7 +186,7 @@ void main(){
   }
   if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*5.2)*(1.0-smoothstep(.24,.50,d));}
   // Subtle individual silk filaments, confined to the turning central fold.
-  if(uMode>1.5){float taper=pow(max(0.0,sin(3.14159265*(x+1.0)*.5)),.55);col=mix(vec3(.015,.74,.77),vec3(.55,1.0,.97),pow(v,2.0));alpha=(.045+.15*middleLight+.16*pow(v,5.0))*taper*(1.0-.65*smoothstep(.70,.90,x));}
+  if(uMode>1.5){float taper=pow(max(0.0,sin(3.14159265*(x+1.0)*.5)),.55);col=mix(vec3(.015,.74,.77),vec3(.55,1.0,.97),pow(v,2.0));alpha=(.035+.19*middleLight+.14*pow(v,5.0))*taper*(1.0-.65*smoothstep(.70,.90,x));}
 
  }
  gl_FragColor=vec4(col,clamp(alpha,0.0,1.0));
@@ -211,7 +216,7 @@ void main(){
  // Four distinct cloth intervals: 2=0..1, 3=1..2, 4=2..3, 6=3..4; 7 is the shoulder.
  // Back-to-front compositing keeps the lower returning silk behind the broad face.
  const parts=[6,4,7,2,3].map(kind=>{
-  const dims=kind===7?[52,20,78,30]:kind===2?[82,44,120,62]:kind===3?[110,34,152,48]:[78,35,114,48];
+  const dims=kind===7?[52,20,78,30]:kind===2?[82,44,120,62]:kind===3?[110,36,152,52]:[78,35,114,48];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   const layers=[mesh(kind,mobile?64:96,mobile?20:32,0)];
   if(kind===3)layers.push(mesh(kind,n,mobile?14:22,2));
