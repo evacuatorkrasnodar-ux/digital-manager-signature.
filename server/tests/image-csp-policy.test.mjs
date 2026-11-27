@@ -40,3 +40,12 @@ test('Wallet exchange rates are allowed only by the Home connect-src exception',
  assert.ok(base);
  assert.doesNotMatch(base,/cbr-xml-daily/);
 });
+
+test('Music catalog is allowed only by the Home connect-src exception',()=>{
+ const home=server.slice(server.indexOf('function mapHomeHeaders(){'),server.indexOf('function homePageHeaders(req)'));
+ assert.match(home,/const musicCatalog='https:\/\/itunes\.apple\.com\/search';/);
+ assert.match(home,/'connect-src':data\+' '\+walletRates\+' '\+musicCatalog/);
+ const base=server.match(/connect-src ([^;]+);/)?.[1];
+ assert.ok(base);
+ assert.doesNotMatch(base,/itunes\.apple\.com/);
+});
