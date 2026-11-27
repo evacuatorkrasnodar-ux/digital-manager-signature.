@@ -3,6 +3,7 @@
    production index.html, plasma, layouts, local data or public app.
  */
 import {createServer} from 'node:http';
+import {MAX_MUSIC_CLIP,clipFormat,recognitionConfigured,recognizeMusic} from './music-recognition.mjs';
 import {createImageAttachments} from './image-attachments.mjs';
 import {proposeLocalPaperDraft} from './paper-vision-draft.mjs';
 import {inspectLocalPaperModel} from './paper-model-health.mjs';
@@ -252,9 +253,34 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
  const proposals=learningQueue||createLearningQueue({approveExample:addApprovedExample});
  const voiceRunner=createVoiceWorker();
  process.once('exit',()=>voiceRunner.close());
+ let recognitionBusy=false,recognitionMinute=-1,recognitionCount=0;
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  if(req.method==='GET'&&path==='/api/seyveo-music-recognition-status'){
+   send(res,200,{configured:recognitionConfigured(),provider:'AudD'});return;
+  }
+  if(req.method==='POST'&&path==='/api/seyveo-music-recognize'){
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   if(!recognitionConfigured()){send(res,503,{error:'Сервис распознавания не подключён.'});return}
+   const type=req.headers['content-type'];
+   if(!clipFormat(type)){send(res,415,{error:'Формат записи не поддерживается.'});return}
+   if(Number(req.headers['content-length'])>MAX_MUSIC_CLIP){send(res,413,{error:'Запись слишком большая.'});return}
+   const minute=Math.floor(Date.now()/60000);
+   if(minute!==recognitionMinute){recognitionMinute=minute;recognitionCount=0}
+   if(recognitionBusy||recognitionCount>=3){send(res,429,{error:'Повторите попытку немного позже.'});return}
+   recognitionBusy=true;recognitionCount++;
+   try{
+    let size=0;const chunks=[];
+    for await(const chunk of req){size+=chunk.length;if(size<=MAX_MUSIC_CLIP)chunks.push(chunk)}
+    if(size>MAX_MUSIC_CLIP){send(res,413,{error:'Запись слишком большая.'});return}
+    if(!size){send(res,400,{error:'Пустая запись.'});return}
+    const result=await recognizeMusic(Buffer.concat(chunks),type);
+    if(!res.destroyed)send(res,200,{result});
+   }catch{if(!res.destroyed)send(res,502,{error:'Сервис распознавания недоступен. Попробуйте позже.'})}
+   finally{recognitionBusy=false}
+   return;
+  }
   if(req.method==='POST'&&path==='/api/seyveo-note-transcribe'){
    // Only the actual local notebook may submit raw audio. The recording is
    // processed on this PC and its temporary copy is deleted after recognition.
