@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V82 · audio-driven living silk, quiet ground reflection · WebGL 1. */
+/* SEYVEO Liquid Sound V83 · audio-driven living silk, quiet ground reflection · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -154,27 +154,18 @@ void main(){
    glow=clamp(glow+floorGlow,0.0,.75);
    gl_FragColor=vec4(.27,.75,.77,glow*.66);return;
   }
+  // Original V36 glass (27 Nov 14:08 Moscow), independent of today's silk.
   float n=sqrt(max(0.0,1.0-r*r));
-  float top=peak(a,-2.08,.61),bottom=peak(a,1.37,.57),right=peak(a,.60,.61),left=peak(a,2.85,.48);
-  float lip=.21+.78*top+.77*bottom+.72*right+.29*left;
-  // V82: clear glass with a crisp thin edge and a restrained aqua reflection.
-  float lowerRim=smoothstep(-.10,.28,xy.y); float edge=gauss(r-.995,.0038)*(.23+.20*top+.44*bottom+.32*right+.16*left),edgeSoft=gauss(r-.977,.018)*(.14+.45*bottom+.22*right);
-  float reflected=gauss(r-(.957-.064*top),.014+.030*top)*pow(top,1.8);
-  // Broad curved softbox reflection: a distinct inner edge with a translucent tail.
-  float innerArc=.945-.185*top;
-  float crescent=smoothstep(innerArc-.022,innerArc+.022,r)*(1.0-smoothstep(.929,.975,r))*pow(top,1.35);
-  float shoulder=peak(a,-1.05,.60)*gauss(r-.91,.045);
-  float base=gauss(r-(.952-.048*bottom),.044)*bottom;
-  float lowerLens=gauss(r-(.927-.035*bottom),.044)*peak(a,1.14,.80);
-  float inner=gauss(r-.960,.019)*(.10+.25*right+.20*left)*lowerRim;
+  float top=peak(a,-2.16,.47),bottom=peak(a,1.37,.47),right=peak(a,.60,.55),left=peak(a,2.85,.48);
+  float lip=.22+.78*top+.95*bottom+.68*right+.32*left;
+  float edge=gauss(r-.994,.007),edgeSoft=gauss(r-.977,.018);
+  float reflected=gauss(r-(.925-.065*top),.026+.024*top)*top;
+  float base=gauss(r-(.940-.035*bottom),.035)*bottom;
+  float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left);
   float fres=pow(max(0.0,1.0-n),3.0);
-  // Direct reflection stays white; weak transmitted color appears only at the lens.
-  float direct=.58*reflected+.50*crescent+1.02*edge*lip;
-  float transmitted=.22*edgeSoft*lip+.38*base+.10*inner+.32*lowerLens+.14*shoulder;
-  float light=clamp(direct+transmitted,0.0,1.0);
-  float blueDepth=gauss(r-.91,.085)*(.55+.45*peak(a,-.75,.9));
-  col=mix(vec3(.27,.65,.67),vec3(.90,.99,.99),clamp(direct/(light+.001),0.0,1.0));
-  alpha=clamp(.002+.026*fres+.90*light+.025*blueDepth,0.0,.90);
+  float light=clamp(1.25*reflected+1.12*edge*lip+.40*edgeSoft*lip+.83*base+.21*inner,0.0,1.0);
+  col=mix(vec3(.07,.53,.57),vec3(.91,1.0,.99),clamp(light*1.12,0.0,1.0));
+  alpha=clamp(.010+.16*fres+.90*light,0.0,.97);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.89,.16)+gauss(x-.73,.19);
