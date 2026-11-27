@@ -269,25 +269,38 @@
        if(file.size>25*1024*1024){progress('Для автоматического анализа нужна песня до 25 МБ.');return}
        if(!type?.startsWith('audio/')){progress('Формат песни не поддерживается.');return}
        const controller=new AbortController();lyricAbort=controller;
+       const job=Array.from(w.crypto.getRandomValues(new Uint8Array(16)),v=>v.toString(16).padStart(2,'0')).join('');
+       let pollTimer=0,done=false;
        start.disabled=true;progress('Проверяю локальный движок…');
+       const meter=d.createElement('progress');meter.className='sv-lyrics-progress';meter.max=100;meter.setAttribute('aria-label','Обработанная часть песни');status.after(meter);
+       const showProgress=(phase,percent)=>{
+        const labels={receiving:'Подготавливаю песню…',checking:'Проверяю аудиофайл…',loading:'Загружаю локальную модель…',decoding:'Разбираю вокал',finishing:'Подготавливаю текст…',complete:'Распознавание завершено'};
+        if(Number.isFinite(percent)){meter.value=percent;progress((labels[phase]||'Анализ песни')+' · '+percent+'%')}else{meter.removeAttribute('value');progress(labels[phase]||'Сэйви готовит песню…')}
+       };
+       const poll=async()=>{
+        if(done||!valid()||controller.signal.aborted)return;
+        try{const response=await w.fetch('/api/seyveo-music-lyrics-status?job='+job,{cache:'no-store',signal:controller.signal});const data=await response.json();if(!done&&valid()&&!controller.signal.aborted&&response.ok&&data.progress)showProgress(data.progress.phase,data.progress.percent)}catch{}
+        if(!done&&valid()&&!controller.signal.aborted)pollTimer=w.setTimeout(poll,1000);
+       };
        const cancel=action('Отменить анализ',()=>controller.abort());
        try{
         const upgrade='Запущена старая версия сервера. Обновите проект из GitHub, остановите сервер (Ctrl+C) и снова запустите server/start-real-seyveo.cmd. Затем обновите страницу.';
         const check=await w.fetch('/api/seyveo-music-lyrics-status',{cache:'no-store',signal:controller.signal});
         if(check.status===404)throw Error(upgrade);
         const readiness=await check.json().catch(()=>null);
-        if(!check.ok||readiness?.protocol!==1)throw Error(upgrade);
+        if(!check.ok||readiness?.protocol!==2)throw Error(upgrade);
         if(!readiness.pythonConfigured)throw Error('Локальный Whisper не установлен. Запустите server/install-note-transcription.cmd, затем перезапустите SEYVEO.');
         if(readiness.busy)throw Error('Сэйви уже распознаёт запись. Повторите после завершения.');
         if(!valid()||controller.signal.aborted)return;
-        progress('Сэйви разбирает вокал… Музыка может продолжать играть.');
-        const response=await w.fetch('/api/seyveo-music-lyrics',{method:'POST',headers:{'content-type':type},body:file,signal:controller.signal});
+        showProgress('receiving',null);pollTimer=w.setTimeout(poll,500);
+        const response=await w.fetch('/api/seyveo-music-lyrics',{method:'POST',headers:{'content-type':type,'x-seyveo-lyric-job':job},body:file,signal:controller.signal});
         if(response.status===404)throw Error(upgrade);
         const data=await response.json().catch(()=>({}));if(!valid()||controller.signal.aborted)return;
         if(!response.ok||!data.lines?.length)throw Error(data.error||'Текст не определён.');
+        done=true;showProgress('complete',100);
         const saved=await engine.put(id,data);if(valid()&&!controller.signal.aborted)render(data,true,saved);
        }catch(error){if(valid())status.textContent=controller.signal.aborted?'Анализ отменён.':String(error.message||'Анализ недоступен.')}
-       finally{if(lyricAbort===controller)lyricAbort=null;if(valid()){start.disabled=false;cancel.remove()}}
+       finally{done=true;w.clearTimeout(pollTimer);meter.remove();if(lyricAbort===controller)lyricAbort=null;if(valid()){start.disabled=false;cancel.remove()}}
       });
      }else message('Автоматическое распознавание пока доступно в локальной версии на компьютере.');
     }
