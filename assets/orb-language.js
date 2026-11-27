@@ -178,24 +178,56 @@
  let liquidQuality=1,liquidSlowFrames=0,liquidAmbientLast=0,liquidRenderCost=0;
  let liquidAutoReason="",liquidIdleMix=0,liquidIdleActive=false;
  const longAmbient=()=>Number.isFinite(audio?.duration)&&audio.duration>MAX_RHYTHM_SECONDS;
- // Frame budget adapts to actual render cost, independently of screen width.
- // Once reduced for overload, stay at the safe ceiling for this session.
+ // Adapt to actual display callbacks and render cost; never force extra GPU frames.
  const liquidCores=navigator.hardwareConcurrency||4;
- let liquidFPS=liquidCores>=6?60:30,liquidFPSCeiling=60,liquidFastFrames=0;
+ const liquidTiers=[20,30,60,90,120];
+ let liquidFPS=liquidCores>=6?60:30,liquidFPSCeiling=120,liquidFastFrames=0;
+ let liquidRafLast=0,liquidRefreshMs=0,liquidRefreshSamples=0;
+ let liquidNext=0,liquidScheduledInterval=0;
+ function observeLiquidRefresh(timestamp){
+  const dt=liquidRafLast?timestamp-liquidRafLast:0;liquidRafLast=timestamp;
+  if(dt>=3&&dt<=45){
+   liquidRefreshMs=liquidRefreshSamples?liquidRefreshMs*.92+dt*.08:dt;
+   liquidRefreshSamples=Math.min(120,liquidRefreshSamples+1);
+  }
+ }
  function liquidInterval(){return 1000/(musicPage?.dataset.liquidRhythm==='ambient'?Math.min(30,liquidFPS):liquidFPS)}
- function liquidFrameDue(timestamp){return !liquidLast||timestamp-liquidLast>=liquidInterval()-2}
+ function liquidFrameDue(timestamp,interval=liquidInterval()){
+  return !liquidLast||!liquidNext||liquidScheduledInterval!==interval||timestamp+.5>=liquidNext;
+ }
+ function markLiquidFrame(timestamp,interval){
+  if(!liquidNext||liquidScheduledInterval!==interval||timestamp-liquidNext>interval*2){
+   liquidNext=timestamp+interval;
+  }else{
+   liquidNext+=interval;
+   if(liquidNext<=timestamp+.5)liquidNext=timestamp+interval;
+  }
+  liquidScheduledInterval=interval;liquidLast=timestamp;
+ }
+ function resetLiquidTiming(){
+  liquidLast=0;liquidNext=0;liquidScheduledInterval=0;
+  liquidRafLast=0;liquidRefreshMs=0;liquidRefreshSamples=0;liquidFastFrames=0;
+ }
  function adjustLiquidBudget(dt,interval){
-  const overloaded=dt>interval*1.55||liquidRenderCost>interval*.80;
+  const overloaded=dt>Math.max(interval*1.65,interval+8)||liquidRenderCost>interval*.80;
   liquidSlowFrames=overloaded?liquidSlowFrames+1:Math.max(0,liquidSlowFrames-1);
   if(liquidSlowFrames>=12){
    if(liquidFPS>20){
-    liquidFPS=liquidFPS>30?30:20;liquidFPSCeiling=liquidFPS;
+    liquidFPS=liquidTiers[liquidTiers.indexOf(liquidFPS)-1];liquidFPSCeiling=liquidFPS;
    }else if(liquidQuality>.64){liquidQuality=liquidQuality>.85?.8:.64}
    else{fallBackLiquid("slow-render");return false}
    liquidSlowFrames=0;liquidFastFrames=0;
-  }else if(musicPage?.dataset.liquidRhythm==='audio'&&liquidFPS<liquidFPSCeiling&&dt<=interval*1.12&&liquidRenderCost<7){
-   if(++liquidFastFrames>=90){liquidFPS=liquidFPS<30?30:60;liquidFastFrames=0;liquidSlowFrames=0}
-  }else liquidFastFrames=0;
+  }else{
+   const next=liquidTiers[liquidTiers.indexOf(liquidFPS)+1];
+   // Promote only when the browser actually supplies fast callbacks and the
+   // next tier has spare render time. 60 Hz displays cannot qualify for 90/120.
+   const canPromote=musicPage?.dataset.liquidRhythm==='audio'&&next&&next<=liquidFPSCeiling&&
+    liquidRefreshSamples>=30&&liquidRefreshMs<=1000/next*1.09&&
+    dt<=interval*1.45&&liquidRenderCost<1000/next*.55;
+   if(canPromote){
+    if(++liquidFastFrames>=90){liquidFPS=next;liquidFastFrames=0;liquidSlowFrames=0}
+   }else liquidFastFrames=0;
+  }
   return true;
  }
  const liquidEnergy=new Float32Array(3);
@@ -204,7 +236,7 @@
  function liquidResting(){return liquidVisible()&&!reduce?.matches&&(audio.paused||audio.ended)&&!audio.error}
  function releaseLiquid(){
   if(liquidGPU){try{liquidGPU.dispose?.()}catch{}liquidGPU=null}
-  liquidGPUAttempted=false;liquidLast=0;liquidClock=-1;liquidSlowFrames=0;liquidFastFrames=0;liquidAmbientLast=0;liquidRenderCost=0;
+  liquidGPUAttempted=false;resetLiquidTiming();liquidClock=-1;liquidSlowFrames=0;liquidAmbientLast=0;liquidRenderCost=0;
   if(liquidSize){liquidCanvas.width=liquidCanvas.height=1;liquidSize=0;liquidGradient=null}
   liquidEnergy.fill(0);liquidIdleMix=0;liquidIdleActive=false;
  }
@@ -215,11 +247,11 @@
   if(!liquidVisible()||document.hidden)return;
   const interval=idle?1000/(liquidRenderCost>35?8:liquidMobile?12:15):liquidInterval();
   if(!force&&!idle&&longAmbient())return;
-  if(!force&&liquidLast&&timestamp-liquidLast<interval-2)return;
+  if(!force&&!liquidFrameDue(timestamp,interval))return;
   const dt=liquidLast?clamp(timestamp-liquidLast,1,150):33;
   if(!force&&!idle&&liquidLast&&!adjustLiquidBudget(dt,interval))return;
   const renderStarted=performance.now();
-  liquidLast=timestamp;
+  markLiquidFrame(timestamp,idle?interval:liquidInterval());
   const cssSize=liquidCanvas.clientWidth;
   if(!cssSize)return;
   const pixelRatio=liquidMobile?Math.min(window.devicePixelRatio||1,1.5):Math.max(1.75,Math.min(window.devicePixelRatio||1,2));
@@ -311,6 +343,7 @@
   if(!data?.length&&!full){resetSceneWave();return}
   const liquidActive=full&&liquidMode&&liquidVisible();
   // Avoid sampling and DOM updates between actual Liquid Sound frames.
+  if(liquidActive)observeLiquidRefresh(timestamp);
   if(liquidActive&&!liquidFrameDue(timestamp)){sceneFrame=requestAnimationFrame(tickScene);return}
   if(liquidActive||timestamp-sceneLast>=(full?(data?.length?0:50):50)){
    const dt=sceneLast?clamp(timestamp-sceneLast,1,80):16.7;
@@ -369,7 +402,7 @@
   if(musicPage)musicPage.dataset.longAmbient=String(longAmbient());
   const resting=scene===playerScene&&liquidResting();
   if(resting!==liquidIdleActive){
-   resetSceneWave();liquidIdleActive=resting;liquidClock=-1;liquidLast=0;liquidSlowFrames=0;liquidFastFrames=0;liquidRenderCost=0;
+   resetSceneWave();liquidIdleActive=resting;liquidClock=-1;resetLiquidTiming();liquidSlowFrames=0;liquidRenderCost=0;
   }
   if(scene===playerScene&&liquidMode&&!allowed&&!liquidSize)paintLiquid(performance.now(),0,0,0,true);
   if(scene===playerScene&&liquidMode&&liquidVisible()&&!liquidSize)paintLiquid(performance.now(),0,0,0,true);
