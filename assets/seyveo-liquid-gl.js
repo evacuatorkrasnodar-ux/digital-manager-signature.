@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V87 · audio-driven living silk, quiet ground reflection · WebGL 1. */
+/* SEYVEO Liquid Sound V88 · audio-driven living silk, quiet ground reflection · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -254,9 +254,19 @@ void main(){
  }
  if(uKind<4.5||uKind>5.5&&uKind<7.5){float shimmer=.5+.5*sin(18.0*x+9.0*v-uMusic.x*12.0);alpha*=1.0+(.12*uMusic.w)*shimmer;}
  if(uPearl>.5){
-  if(uKind>7.5){alpha*=.92;col=mix(col,vec3(.40,1.0,.97),.22);}
-  else if(uMode<.5){float shine=smoothstep(.35,.86,col.r);col=mix(vec3(.12,.39,.43),vec3(.66,.93,.91),shine);alpha*=.98;}
-  else {float shine=smoothstep(.40,.94,col.r);col=mix(vec3(.08,.38,.43),vec3(.72,1.0,.97),shine);alpha*=1.08;}
+  if(uKind>7.5){
+   // A colored penumbra makes the white luminous crease visible on pale glass.
+   float core=gauss(v-.5,.067);
+   col=mix(vec3(.035,.57,.60),vec3(.80,1.0,.98),core);
+   alpha=clamp(alpha*1.35,0.0,1.0);
+  }else if(uMode<.5){
+   float shine=smoothstep(.38,.86,col.r);
+   col=mix(vec3(.095,.38,.42),vec3(.10,.74,.72),shine);
+   alpha*=1.20;
+  }else {
+   col=mix(vec3(.045,.32,.36),vec3(.16,.66,.65),smoothstep(.40,.94,col.r));
+   alpha*=1.65;
+  }
  }
  gl_FragColor=vec4(col,clamp(alpha,0.0,1.0));
 }
@@ -302,6 +312,6 @@ void main(){
  }
  gl.disable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
  const resources=[glass,glowMid,glowBottom,glowSeam,...parts.flat()];
- return {dispose(){if(lost)return;lost=true;for(const obj of resources){gl.deleteBuffer(obj.buffer);if(obj.index)gl.deleteBuffer(obj.index)}gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();canvas.width=canvas.height=1;},render(size,phase,bass,mid,air,idle=0,pearl=false){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uIdle,idle);gl.uniform1f(uniform.uPearl,pearl?1:0);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
+ return {dispose(){if(lost)return;lost=true;for(const obj of resources){gl.deleteBuffer(obj.buffer);if(obj.index)gl.deleteBuffer(obj.index)}gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();canvas.width=canvas.height=1;},render(size,phase,bass,mid,air,idle=0,pearl=false){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uIdle,idle);gl.uniform1f(uniform.uPearl,pearl?1:0);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,pearl?gl.ONE_MINUS_SRC_ALPHA:gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
 }};
 })();
