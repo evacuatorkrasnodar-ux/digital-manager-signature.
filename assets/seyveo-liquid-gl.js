@@ -152,7 +152,7 @@ void main(){
   float upper=peak(a,-2.16,.60),foot=peak(a,1.52,.40);
   if(r>1.0){
    float glow=gauss(r-1.0,.049)*(.23*upper+.29*foot);
-   float floorGlow=gauss(xy.x,.57)*gauss(xy.y-1.052,.052)*.24+gauss(xy.x,.20)*gauss(xy.y-1.039,.028)*.39;
+   float floorGlow=gauss(xy.x,.60)*gauss(xy.y-1.056,.058)*.27+gauss(xy.x,.19)*gauss(xy.y-1.040,.026)*.49;
    gl_FragColor=vec4(.13,.91,.86,clamp(glow+floorGlow,0.0,.68));return;
   }
   float n=sqrt(max(0.0,1.0-r*r));
@@ -160,36 +160,38 @@ void main(){
   float lowerRight=peak(a,.78,.51),lowerLeft=peak(a,2.38,.40);
   float fres=pow(max(0.0,1.0-n),3.0);
   // A soft, directional Fresnel edge: almost invisible on the side walls.
-  float rimWeight=clamp(.015+.72*upper+.68*foot+.48*lowerRight+.38*lowerLeft+.15*upperRight,0.0,1.0);
-  float rim=gauss(r-.991,.008)*rimWeight;
+  float rimWeight=clamp(.015+.88*upper+.88*foot+.72*lowerRight+.58*lowerLeft+.24*upperRight,0.0,1.0);
+  float rim=gauss(r-.989,.010)*rimWeight;
   float rimTail=gauss(r-.967,.025)*rimWeight;
   // Upper reflection follows a curved lens with a small secondary shoulder.
   float arc=length(xy-vec2(.055,.175));
-  float band=smoothstep(.988,1.005,arc)*(1.0-smoothstep(.948,.978,r));
-  float mainReflection=band*peak(a,-2.05,.68);
+  // The upper-right shoulder bends the reflected light inward, as in the crystal reference.
+  float bend=.060*peak(a,-.88,.37);
+  float band=smoothstep(.981-bend,1.004-bend,arc)*(1.0-smoothstep(.951,.984,r));
+  float mainReflection=band*clamp(peak(a,-2.00,.70)+.37*upperRight,0.0,1.0);
   float secondary=gauss(r-(.954-.052*upperRight),.032)*upperRight;
-  float lowerLens=gauss(r-.925,.065)*clamp(.70*foot+.45*lowerRight+.36*lowerLeft,0.0,1.0);
-  float sideDepth=gauss(r-.922,.075)*(.28*upper+.18*lowerRight+.12*lowerLeft);
-  float light=clamp(.80*rim+.23*rimTail+.39*lowerLens+.16*secondary,0.0,1.0);
+  float lowerLens=gauss(r-.921,.079)*clamp(.87*foot+.63*lowerRight+.50*lowerLeft,0.0,1.0);
+  float sideDepth=gauss(r-.922,.086)*(.25*upper+.32*lowerRight+.25*lowerLeft+.16*upperRight);
+  float light=clamp(.93*rim+.29*rimTail+.48*lowerLens+.18*secondary,0.0,1.0);
   col=mix(vec3(.035,.36,.43),vec3(.11,.88,.84),clamp(light*1.7+.20*sideDepth,0.0,1.0));
   col=mix(col,vec3(.83,1.0,.97),smoothstep(.48,.92,light));
   alpha=clamp(.004+.028*fres+.80*light+.14*sideDepth,0.0,.92);
   // Silver-to-aqua light is translucent and fades along the curved surface.
   float silver=clamp(mainReflection*(.26+.65*peak(a,-2.05,.43))+.34*secondary,0.0,.91);
-  vec3 reflectedWhite=mix(vec3(.36,.79,.78),vec3(.95,1.0,.99),peak(a,-2.05,.43));
+  vec3 reflectedWhite=mix(vec3(.25,.91,.85),vec3(.95,1.0,.97),peak(a,-2.05,.37));
   col=(col*alpha*(1.0-silver)+reflectedWhite*silver)/max(.0001,alpha*(1.0-silver)+silver);
   alpha=alpha*(1.0-silver)+silver;
-  float caustic=.57*gauss(r-.978,.027)*peak(a,1.57,.26);
+  float caustic=.65*gauss(r-.978,.029)*peak(a,1.57,.31);
   col=(col*alpha*(1.0-caustic)+vec3(.52,1.0,.94)*caustic)/max(.0001,alpha*(1.0-caustic)+caustic);
   alpha=clamp(alpha*(1.0-caustic)+caustic,0.0,.97);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.89,.16)+gauss(x-.73,.19);
   float strength=uKind<8.5?(.19+.91*tips+.16*gauss(x-.05,.65)):uKind<9.5?(.63*gauss(x+.01,.145)+.10*gauss(x-.26,.35)):(.055+.16*tips);
-  float g=gauss(v-.5,.055),soft=gauss(v-.5,.29);
+  float g=gauss(v-.5,.061),soft=gauss(v-.5,.32);
   col=mix(vec3(.02,.91,.88),vec3(.88,1.0,.98),g*.78);
   float taper=smoothstep(0.0,.08,w);
-  alpha=strength*(.36*g+.64*soft)*taper*(1.0-smoothstep(.46,.50,abs(v-.5)));
+  alpha=strength*(.33*g+.67*soft)*taper*(1.0-smoothstep(.43,.50,abs(v-.5)));
  }else{
   float tip=pow(abs(x),6.0),turn=pow(v,5.0),fres=1.0-vLight;
   float focus=gauss(x+.20,.78),edge=pow(v,20.0),start=pow(1.0-v,20.0);
