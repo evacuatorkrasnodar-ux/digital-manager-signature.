@@ -8137,4 +8137,83 @@ html[data-theme="light"]:not(.sv-music-player-open) #svSmartMusicSheet[data-soun
 html[data-theme="light"]:not(.sv-music-player-open) #svSmartMusicSheet[data-sound-indicator="ready"]{--sv-adaptive-indicator:#46515e}
 @media(prefers-reduced-motion:reduce){#svSmartMusicSheet .sv-adaptive-mark{transition:none}}
 </style>
+<style id="svMusicLiveMenuPaletteStyle">
+/* Explicit palette tracking: dialog top layer cannot reliably sample player backdrop. */
+html.sv-music-player-open #svSmartMusicSheet,
+html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel,#sayviMusicCollection,#svInlineKaraokeSettings):not([hidden]){
+ --sv-sheet-bg:rgba(var(--sv-music-live-menu-rgb,29,65,68),.94);
+ transition:background-color .45s linear;
+}
+@media(prefers-reduced-motion:reduce){
+ html.sv-music-player-open #svSmartMusicSheet,
+ html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel,#sayviMusicCollection,#svInlineKaraokeSettings):not([hidden]){transition:none}
+}
+@media(prefers-reduced-transparency:reduce){
+ html.sv-music-player-open #svSmartMusicSheet,
+ html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel,#sayviMusicCollection,#svInlineKaraokeSettings):not([hidden]){--sv-sheet-bg:rgb(var(--sv-music-live-menu-rgb,29,65,68))}
+}
+</style>
+<script id="svMusicLiveMenuPalette">
+(function(){
+ const root=document.documentElement,page=document.getElementById('sayviMusicPage');
+ if(!page)return;
+ const ambient=Array.from(page.querySelectorAll('.sv-now-ambient > span'));
+ const dialog=document.getElementById('svSmartMusicSheet');
+ const panels=['svNowMenu','sayviMusicSourcesPanel','sayviMusicCollection','svInlineKaraokeSettings'].map(id=>document.getElementById(id)).filter(Boolean);
+ const colors=[[29,65,68],[37,58,87],[67,44,79],[83,57,38]];
+ let timer=0,artKey='',artTint=null,previous='';
+ function isOpen(){return !document.hidden&&root.classList.contains('sv-music-player-open')&&!page.hidden&&page.dataset.musicView==='player'&&(dialog?.open||panels.some(p=>!p.hidden&&p.getClientRects().length))}
+ function paint(){
+  if(!isOpen()){sync();return}
+  let rgb=colors[0].slice();
+  ambient.forEach((layer,i)=>{
+   const alpha=Math.max(0,Math.min(1,Number(getComputedStyle(layer).opacity)||0));
+   rgb=rgb.map((v,k)=>v*(1-alpha)+colors[i+1][k]*alpha);
+  });
+  const key=page.classList.contains('sv-music-player-has-art')?page.style.getPropertyValue('--sv-music-player-art').trim():'';
+  if(key!==artKey){
+   artKey=key;artTint=null;
+   const match=key.match(/^url\(["']?(.*?)["']?\)$/);
+   if(match){
+    const img=new Image();
+    img.onload=()=>{
+     if(artKey!==key||!isOpen())return;
+     try{
+      const canvas=document.createElement('canvas');canvas.width=canvas.height=12;
+      const ctx=canvas.getContext('2d',{willReadFrequently:true});if(!ctx)return;
+      ctx.drawImage(img,0,0,12,12);
+      const data=ctx.getImageData(0,0,12,12).data,sum=[0,0,0];let weight=0;
+      for(let i=0;i<data.length;i+=4){
+       const spread=Math.max(data[i],data[i+1],data[i+2])-Math.min(data[i],data[i+1],data[i+2]);
+       const w=(.3+spread/255)*data[i+3]/255;
+       for(let k=0;k<3;k++)sum[k]+=data[i+k]*w;weight+=w;
+      }
+      if(weight){artTint=sum.map(v=>Math.round(15+v/weight*.29));paint()}
+     }catch{}
+    };
+    img.src=match[1];
+   }
+  }
+  if(artTint&&key)rgb=artTint;
+  const value=rgb.map(Math.round).join(',');
+  if(value!==previous){root.style.setProperty('--sv-music-live-menu-rgb',value);previous=value}
+ }
+ function sync(){
+  if(isOpen()){
+   if(!timer){timer=setInterval(paint,400);paint()}
+  }else{
+   if(timer)clearInterval(timer);timer=0;previous='';artKey='';artTint=null;
+   root.style.removeProperty('--sv-music-live-menu-rgb');
+  }
+ }
+ const observer=new MutationObserver(sync);
+ observer.observe(root,{attributes:true,attributeFilter:['class']});
+ observer.observe(page,{attributes:true,attributeFilter:['hidden','data-music-view','class']});
+ if(dialog)observer.observe(dialog,{attributes:true,attributeFilter:['open']});
+ for(const panel of panels)observer.observe(panel,{attributes:true,attributeFilter:['hidden','class']});
+ document.addEventListener('visibilitychange',sync);
+ window.addEventListener('pagehide',()=>{if(timer)clearInterval(timer);timer=0});
+ window.addEventListener('pageshow',sync);sync();
+})();
+</script>
 </body></html>
