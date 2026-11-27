@@ -7370,33 +7370,43 @@ html.sv-video-screen #sayviVideoPage{flex:1 1 0;min-height:0;overflow-y:auto;ove
 #sayviVideoPage #sayviVideoExternal{font-size:13px}
 </style>
 <style id="svNowStableMetadata">
-/* Now Playing: reserve exactly two title lines and one artist line.
-   Keep the transport in normal flow; neither late metadata nor a missing
-   favorite action may change its geometry. Only the expanded player. */
+/* Reserve the former two-line metadata budget on the outer row, not
+   on the title itself. Short titles and artists remain visually grouped. */
 html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] > .sv-music-track-bar{
- flex:0 0 auto!important;
- min-height:0!important;
- align-items:center;
+ --sv-now-meta-height:calc(clamp(49.56px,13.216vw,68.44px) + clamp(18.46px,4.828vw,21.3px) + 4px);
+ box-sizing:border-box;display:flex!important;flex:0 0 auto!important;
+ height:var(--sv-now-meta-height)!important;min-height:var(--sv-now-meta-height)!important;max-height:var(--sv-now-meta-height)!important;
+ align-items:center!important;gap:12px;
 }
 html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-music-track-copy{
+ display:flex!important;flex-direction:column;justify-content:center;align-self:stretch;
  flex:1 1 0;min-width:0;gap:4px;
 }
 html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #sayviMusicTrack{
  box-sizing:border-box;display:-webkit-box!important;
  -webkit-box-orient:vertical;-webkit-line-clamp:2;
- line-height:1.18!important;height:2.36em!important;
- min-height:2.36em!important;max-height:2.36em!important;
+ font-size:clamp(20px,5.3vw,26px)!important;font-weight:570!important;
+ line-height:1.18!important;height:auto!important;min-height:0!important;max-height:2.36em!important;
  flex:0 0 auto;overflow:hidden;text-overflow:ellipsis;
  white-space:normal;overflow-wrap:anywhere;margin:0!important;padding:0!important;
 }
 html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #sayviMusicArtist{
- box-sizing:border-box;display:block!important;line-height:1.42!important;
- height:1.42em!important;min-height:1.42em!important;max-height:1.42em!important;
+ box-sizing:border-box;display:block!important;
+ font-size:clamp(13px,3.2vw,14px)!important;font-weight:430!important;
+ line-height:1.42!important;height:1.42em!important;min-height:1.42em!important;max-height:1.42em!important;
  flex:0 0 auto;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
  margin:0!important;padding:0!important;
 }
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #sayviMusicFavorite{
+ display:grid!important;place-items:center!important;align-self:center!important;position:relative!important;
+ flex:0 0 44px!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;box-shadow:none!important;transform:none!important;
+}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #sayviMusicFavorite > svg{
+ display:block;margin:0;transform:none!important;
+}
 html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #sayviMusicFavorite:disabled{
- display:grid!important;visibility:hidden;pointer-events:none;
+ visibility:hidden;pointer-events:none;
 }
 </style>
 <script>
