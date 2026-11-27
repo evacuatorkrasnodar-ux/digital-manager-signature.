@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V84 · audio-driven living silk, quiet ground reflection · WebGL 1. */
+/* SEYVEO Liquid Sound V85 · audio-driven living silk, quiet ground reflection · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -160,12 +160,13 @@ void main(){
   float lip=.22+.78*top+.95*bottom+.68*right+.32*left;
   // Keep broad optical reflections, not a drawn circular outline.
   float edgeSoft=gauss(r-.977,.018);
-  float reflected=gauss(r-(.925-.065*top),.026+.024*top)*top;
-  float base=gauss(r-(.940-.035*bottom),.035)*bottom;
+  float reflected=gauss(r-(.925-.065*top),.021+.021*top)*top;
+  float base=gauss(r-(.940-.035*bottom),.028)*bottom;
   float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left);
   float fres=pow(max(0.0,1.0-n),3.0);
-  float light=clamp(1.25*reflected+.30*edgeSoft*lip+.83*base+.13*inner,0.0,1.0);
+  float light=clamp(1.30*reflected+.30*edgeSoft*lip+.90*base+.13*inner,0.0,1.0);
   col=mix(vec3(.07,.60,.63),vec3(.91,1.0,.99),clamp(light*1.12,0.0,1.0));
+  col=mix(col,vec3(.38,.93,.91),.14*base);
   alpha=clamp(.010+.045*fres+.90*light,0.0,.97);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
