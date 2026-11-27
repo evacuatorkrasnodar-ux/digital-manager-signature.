@@ -90,12 +90,36 @@ function init(){
   const total=document.createElement('div');total.className='sv-replay-total';
   const minutes=Math.floor(data.seconds/60),value=document.createElement('strong');value.textContent=minutes.toLocaleString('ru-RU');
   const label=document.createElement('span');label.textContent='мин. прослушивания';total.append(value,label);out.append(total);
+  const localSeconds=Number(data.musicSeconds)||0,radioSeconds=Number(data.radioSeconds)||0,combined=localSeconds+radioSeconds;
+  if(combined>0){
+   const chart=document.createElement('div');chart.className='sv-replay-chart';
+   const bar=document.createElement('div');bar.className='sv-replay-chart-bar';bar.setAttribute('role','img');
+   const legend=document.createElement('div');legend.className='sv-replay-chart-legend';
+   const labels=[];
+   for(const [name,seconds,kind] of [['Музыка',localSeconds,'music'],['Радио',radioSeconds,'radio']]){
+    const percent=Math.round(seconds/combined*100);labels.push(name+' '+percent+'%');
+    const part=document.createElement('i');part.className='sv-replay-chart-'+kind;part.style.flexGrow=String(seconds);bar.append(part);
+    const item=document.createElement('span');item.className='sv-replay-chart-'+kind;item.textContent=name+' '+percent+'%';legend.append(item);
+   }
+   bar.setAttribute('aria-label',labels.join(', '));chart.append(bar,legend);total.append(chart);
+  }
   const duration=s=>s<60?Math.floor(s)+' сек.':Math.floor(s/60)+' мин.';
   if(!data.seconds){const empty=document.createElement('p');empty.className='sv-music-browse-caption';empty.textContent='Слушайте музыку и радио. Здесь появятся ваши настоящие музыкальные итоги.';out.append(empty);return}
+  const libraryByKey=new Map((music()?.browseTracks?.()||[]).map(track=>[track.artKey,track]));
   for(const [title,items] of [['Любимые исполнители',data.artists],['Любимые треки',data.tracks],['Любимые станции',data.stations]]){
    if(!items.length)continue;
    const h=document.createElement('h3');h.textContent=title;h.className='sv-music-section-title';out.append(h);
-   for(const [i,item] of items.entries()){const row=document.createElement('div');row.className='sv-replay-row';const rank=document.createElement('span');rank.textContent=String(i+1);rank.className='sv-replay-rank';const copy=document.createElement('div');const name=document.createElement('strong');name.textContent=item.title;const sub=document.createElement('small');sub.textContent=item.artist||'';copy.append(name,sub);const time=document.createElement('span');time.textContent=duration(item.seconds);time.className='sv-replay-time';row.append(rank,copy,time);out.append(row)}
+   for(const [i,item] of items.entries()){const row=document.createElement('div');row.className='sv-replay-row';const rank=document.createElement('span');rank.textContent=String(i+1);rank.className='sv-replay-rank';const copy=document.createElement('div');const name=document.createElement('strong');name.textContent=item.title;const sub=document.createElement('small');sub.textContent=item.artist||'';copy.append(name,sub);const time=document.createElement('span');time.textContent=duration(item.seconds);time.className='sv-replay-time';row.append(rank);
+    if(title==='Любимые треки'){
+     const key=String(item.key||'').replace(/^file:/,'');
+     const match=libraryByKey.get(key);
+     const art=document.createElement('span');art.className='sv-music-track-tile sv-replay-art';art.setAttribute('aria-hidden','true');
+     if(!paintCover(art,match?.artwork))fallbackCover(art,{artKey:key||item.title});
+     row.append(art);
+     if(match&&!match.artwork&&music()?.prepareTrackPreview)music().prepareTrackPreview(match.index).then(info=>{if(art.isConnected&&info?.artwork)paintCover(art,info.artwork)}).catch(()=>{});
+    }
+    if(!item.artist)sub.hidden=true;
+    row.append(copy,time);out.append(row)}
   }
  }
  get('svMusicReplayPeriod')?.addEventListener('change',renderReplay);
