@@ -232,6 +232,7 @@
    karaokeTools?.setAttribute('aria-expanded','false');
    $('svNowKaraoke')?.setAttribute('aria-pressed','false');
    $('sayviMusicStage')?.setAttribute('aria-label','Обложка текущей песни');
+   scheduleLibraryLyrics(1000);
   }
   function toggleKaraoke(){if(lyricsActive)exitKaraoke();else karaoke()}
   karaokeTools?.addEventListener('click',()=>setLyricSettings(karaokeSettings.hidden));
@@ -241,7 +242,7 @@
   async function karaoke(){
    if(!karaokePanel||!karaokeBody||!karaokeSettings||page.dataset.musicView!=='player')return;
    const file=music()?.rhythmFile?.();
-   cancelLyric();++lyricGeneration;lyricsActive=true;lyricData=null;current=-2;lyricFile=file;
+   pauseLibraryLyrics();cancelLyric();++lyricGeneration;lyricsActive=true;lyricData=null;current=-2;lyricFile=file;
    stopLyricFrame();activeWords=[];lyricRows=[];lastLyricTime=-1;
    page.classList.add('sv-karaoke-active');karaokePanel.hidden=false;karaokePanel.inert=false;
    $('svNowKaraoke')?.setAttribute('aria-pressed','true');
@@ -339,6 +340,7 @@
       function progress(text){if(!status){status=message(text);status.setAttribute('role','status')}else status.textContent=text;return status}
       const start=action('Повторить распознавание',async()=>{
        if(!valid()||lyricAbort)return;
+       pauseLibraryLyrics();
        const ext=(file.name.match(/\.([^.]+)$/)||[])[1]?.toLowerCase();
        const type=({mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',flac:'audio/flac',ogg:'audio/ogg',opus:'audio/opus',aiff:'audio/aiff',aif:'audio/aiff'})[ext]||file.type;
        if(file.size>25*1024*1024){progress('Для автоматического анализа нужна песня до 25 МБ.');return}
@@ -401,7 +403,7 @@
      action(data?'Заменить текст':'Добавить текст песни',()=>input.click(),data?settings:body);
      if(imported)action('Удалить добавленный текст',async()=>{if(!valid())return;const removed=await engine.remove(id);if(valid()){if(removed)karaoke();else message('Не удалось удалить сохранённый текст.',settings)}},settings);
     }
-    updateLine(true);startLyricFrame();
+    updateLine(true);startLyricFrame();scheduleLibraryLyrics(1500);
     if(autoStart&&valid()&&!lyricAbort){autoStart.click();if(!lyricAbort)autoStart.hidden=false}
    };
    render(result,attached);
@@ -452,6 +454,84 @@
   audio.addEventListener('ended',()=>{stopLyricFrame();updateLine()});
   w.addEventListener('resize',()=>updateLine(true));
   d.addEventListener('seyveo:music-state',()=>{if(lyricsActive&&music()?.rhythmFile?.()!==lyricFile){karaoke();return}updateLine()});
+  // One local worker. Automatically prepare missing lyrics, never replace an existing text.
+  const libraryLyricsLocal=['localhost','127.0.0.1'].includes(w.location.hostname);
+  const libraryLyricStatus=$('svMusicLyricsQueueStatus');
+  let libraryLyricTimer=0,libraryLyricJob=null,libraryLyricRunning=false,libraryLyricClosed=false;
+  const lyricReady=new Set(),lyricSkipped=new Set();
+  const queueStatus=text=>{if(libraryLyricStatus){libraryLyricStatus.hidden=!text;if(libraryLyricStatus.textContent!==text)libraryLyricStatus.textContent=text}};
+  function pauseLibraryLyrics(){
+   w.clearTimeout(libraryLyricTimer);libraryLyricTimer=0;
+   libraryLyricJob?.abort();
+  }
+  function scheduleLibraryLyrics(delay=1000){
+   if(!libraryLyricsLocal||libraryLyricClosed||libraryLyricTimer||libraryLyricRunning)return;
+   libraryLyricTimer=w.setTimeout(()=>{libraryLyricTimer=0;void prepareLibraryLyrics()},delay);
+  }
+  async function prepareLibraryLyrics(){
+   if(libraryLyricRunning||libraryLyricClosed)return;
+   const player=music(),engine=w.SEYVEO_LYRICS;
+   if(!player||!engine||player.state?.().libraryLoading){scheduleLibraryLyrics(2500);return}
+   if(lyricAbort||(lyricsActive&&!lyricData)){scheduleLibraryLyrics(3000);return}
+   const items=player.recognitionLibrary?.()||[];
+   if(!items.length){queueStatus('');return}
+   const current=player.rhythmFile?.();
+   const ordered=items.slice().sort((a,b)=>Number(b.file===current)-Number(a.file===current));
+   const summary=()=> 'Караоке · '+items.filter(x=>lyricReady.has(x.id)).length+' из '+items.length+' готово';
+   libraryLyricRunning=true;
+   const controller=new AbortController();libraryLyricJob=controller;
+   let nextDelay=1200;
+   try{
+    let item=null;
+    for(const entry of ordered){
+     if(controller.signal.aborted)return;
+     if(!entry.id||lyricReady.has(entry.id)||lyricSkipped.has(entry.id))continue;
+     const existing=await engine.get(entry.id);
+     if(controller.signal.aborted)return;
+     if(existing?.lines?.length){lyricReady.add(entry.id);continue}
+     let embedded=null;try{embedded=await readEmbedded(entry.file)}catch{}
+     if(controller.signal.aborted)return;
+     if(embedded?.lines?.length){if(!(await engine.get(entry.id)))await engine.put(entry.id,embedded);lyricReady.add(entry.id);continue}
+     item=entry;break;
+    }
+    if(!item){
+     const count=items.filter(x=>lyricSkipped.has(x.id)).length;
+     queueStatus(summary()+(count?' · не удалось: '+count:''));
+     nextDelay=0;return;
+    }
+    const ext=(item.file.name.match(/\.([^.]+)$/)||[])[1]?.toLowerCase();
+    const type=({mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',flac:'audio/flac',ogg:'audio/ogg',opus:'audio/opus',aiff:'audio/aiff',aif:'audio/aiff'})[ext]||item.file.type;
+    if(item.file.size>25*1024*1024||!type?.startsWith('audio/')){lyricSkipped.add(item.id);return}
+    const check=await w.fetch('/api/seyveo-music-lyrics-status',{cache:'no-store',signal:controller.signal});
+    const readiness=await check.json().catch(()=>null);
+    if(!check.ok||readiness?.protocol!==2||!readiness.pythonConfigured){queueStatus(summary()+' · ожидает локальный движок');nextDelay=30000;return}
+    if(readiness.busy){nextDelay=3500;return}
+    if(controller.signal.aborted||lyricAbort||(lyricsActive&&!lyricData))return;
+    queueStatus(summary()+' · Сэйви готовит следующую песню');
+    const job=Array.from(w.crypto.getRandomValues(new Uint8Array(16)),v=>v.toString(16).padStart(2,'0')).join('');
+    const response=await w.fetch('/api/seyveo-music-lyrics',{method:'POST',headers:{'content-type':type,'x-seyveo-lyric-job':job},body:item.file,signal:controller.signal});
+    const data=await response.json().catch(()=>null);
+    if(controller.signal.aborted)return;
+    if(!response.ok||!data?.lines?.length){
+     if(response.status===409||response.status===429||response.status>=500){nextDelay=15000;return}
+     lyricSkipped.add(item.id);return;
+    }
+    if(!(music()?.recognitionLibrary?.()||[]).some(x=>x.id===item.id))return;
+    if(!(await engine.get(item.id)))await engine.put(item.id,data);
+    lyricReady.add(item.id);
+    queueStatus(summary());
+   }catch(error){
+    if(!controller.signal.aborted){queueStatus(summary()+' · очередь ожидает соединение');nextDelay=15000}
+   }finally{
+    libraryLyricRunning=false;if(libraryLyricJob===controller)libraryLyricJob=null;
+    if(nextDelay)scheduleLibraryLyrics(nextDelay);
+   }
+  }
+  d.addEventListener('seyveo:music-library',()=>scheduleLibraryLyrics(1500));
+  w.addEventListener('pagehide',()=>{libraryLyricClosed=true;pauseLibraryLyrics()});
+  w.addEventListener('pageshow',()=>{libraryLyricClosed=false;scheduleLibraryLyrics(1500)});
+  w.addEventListener('online',()=>scheduleLibraryLyrics(1000));
+  scheduleLibraryLyrics(2000);
   // Source quality, never a claim about the Bluetooth/DAC/output chain.
   const sourceCache=new WeakMap();
   let qualityFile=null,qualityResult=null,qualityVersion=0,qualityRadio='',qualityPending=false;
