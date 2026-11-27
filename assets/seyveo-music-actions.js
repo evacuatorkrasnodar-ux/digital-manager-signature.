@@ -10,6 +10,7 @@ function handle(raw){
  let q=raw.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').replace(/\s+/g,' ').trim()
   .replace(/^(?:сэйви|сейви|сэйва|сейва|сэй|сей|seyveo)[,.!:\s]+/,'').replace(/[!?]+$/,'').trim();
  if(!q)return null;
+ const smart=window.SEYVEO_MUSIC_SMART?.handle?.(q);if(smart){msg(smart.message);return smart}
  const music=window.SEYVEO_MUSIC,audio=$('sayviMusicAudio');
  if(!music||!audio)return null;
  const local=()=>music.state?.().loaded||0;
