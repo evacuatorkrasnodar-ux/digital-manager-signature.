@@ -287,18 +287,21 @@ function initRadio(){
  document.dispatchEvent(new Event('seyveo:radio-history'));
  function drawRadio(){
   const state=window.SEYVEO_MUSIC?.state?.();
-  for(const [id,btn] of buttons){const selected=state?.stationId===id&&state.playing;btn.setAttribute('aria-pressed',String(!!selected));btn.textContent=selected?'Ⅱ':'▶';btn.setAttribute('aria-label',(selected?'Пауза: ':'Слушать: ')+stations.find(x=>x.id===id).name);}
+  for(const [id,btn] of buttons){const selected=state?.stationId===id&&state.playing;btn.setAttribute('aria-pressed',String(!!selected));btn.innerHTML=selected?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12m6-12v12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5 18 12 9 17.5Z" fill="currentColor"/></svg>';btn.setAttribute('aria-label',(selected?'Пауза: ':'Слушать: ')+stations.find(x=>x.id===id).name);}
   status.textContent=state?.source==='radio'?(state.playing?'В эфире · ':'Выбрана станция · ')+stations.find(x=>x.id===state.stationId)?.name+' · '+(state.quality||''):'';
  }
  const countries=[...new Set(stations.map(x=>x.country))];
- const filter=document.createElement('select');filter.setAttribute('aria-label','Страна радиостанции');filter.style.cssText='display:block;width:100%;margin:12px 0;padding:11px 14px;border:1px solid rgba(128,138,150,.22);border-radius:18px;background:rgba(150,160,175,.12);color:inherit;font:inherit;';
+ const filter=document.createElement('select');filter.setAttribute('aria-label','Страна радиостанции');filter.className='sv-radio-country';
+ const filterWrap=document.createElement('div');filterWrap.className='sv-radio-country-wrap';
+ filterWrap.innerHTML='<svg class="sv-radio-country-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg><svg class="sv-radio-country-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>';
+ filterWrap.append(filter);
  for(const name of ['Все страны',...countries]){const opt=document.createElement('option');opt.value=name;opt.textContent=name;filter.append(opt)}
- list.before(filter);
+ list.before(filterWrap);
  function render(){
   list.replaceChildren();buttons.clear();
   for(const country of countries){
    if(filter.value!=='Все страны'&&filter.value!==country)continue;
-   const label=document.createElement('h3');label.className='sv-music-section-title';label.style.cssText='margin:18px 0 8px;font-size:15px;';label.textContent=country;list.append(label);
+   const label=document.createElement('h3');label.className='sv-music-section-title sv-radio-country-title';label.textContent=country;list.append(label);
    for(const station of stations.filter(x=>x.country===country)){
     const row=document.createElement('article');row.className='sv-radio-station';
     const art=document.createElement('span');art.className='sv-radio-art';art.style.backgroundColor=station.color;art.style.backgroundImage='url("'+station.artwork+'")';art.style.backgroundSize='cover';art.setAttribute('aria-hidden','true');
