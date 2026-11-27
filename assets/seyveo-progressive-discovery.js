@@ -151,6 +151,7 @@
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule()});
  schedule();
  window.SEYVEO_DISCOVERY=Object.freeze({
+  ...window.SEYVEO_DISCOVERY,
   open(type){if(['music','documents','business'].includes(type)){
    open(type,{force:true});return !sheet.hidden;
   }return false},
