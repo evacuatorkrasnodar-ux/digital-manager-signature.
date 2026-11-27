@@ -103,7 +103,7 @@
    message(canShareFile?'Отправляйте аудиофайл только если у вас есть право им делиться.':'Отправка файла не поддерживается на этом устройстве. Название можно скопировать.');
    return true;
   }
-  function restoreVolume(){if(originalVolume!==null){try{audio.volume=originalVolume}catch{}originalVolume=null}}
+  function restoreVolume(){w.SEYVEO_ADAPTIVE_SOUND?.setFade(1);if(originalVolume!==null){try{audio.volume=originalVolume}catch{}originalVolume=null}}
   function cancelSleep(){deadline=0;w.clearInterval(timer);timer=0;restoreVolume();syncSleep()}
   function syncSleep(){
    const b=$('svSmartSleepLabel');if(b)b.textContent=deadline?'Таймер сна · '+Math.max(1,Math.ceil((deadline-Date.now())/60000))+' мин':'Таймер сна';
@@ -114,8 +114,10 @@
    if(left<=0){audio.pause();cancelSleep();notify('Таймер сна: музыка остановлена.');return}
    // Safari may ignore software volume changes; pause still occurs.
    if(left<=5000&&!audio.paused){
-    if(originalVolume===null)originalVolume=audio.volume;
-    try{audio.volume=Math.max(0,originalVolume*left/5000)}catch{}
+    if(w.SEYVEO_ADAPTIVE_SOUND){w.SEYVEO_ADAPTIVE_SOUND.setFade(left/5000)}else{
+     if(originalVolume===null)originalVolume=audio.volume;
+     try{audio.volume=Math.max(0,originalVolume*left/5000)}catch{}
+    }
    }
    syncSleep();
   }
@@ -161,6 +163,33 @@
   }
   audio.addEventListener('timeupdate',updateLine);audio.addEventListener('seeking',updateLine);
   d.addEventListener('seyveo:music-state',updateLine);
+  function soundSheet(){
+   if(!show('Adaptive Sound','sound'))return;
+   const mark=d.createElement('div');mark.className='sv-adaptive-mark';mark.setAttribute('aria-hidden','true');
+   mark.innerHTML='<svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="29" stroke-width=".8"/><circle cx="32" cy="32" r="23" stroke-width=".6" opacity=".5"/><path d="M14 29v6m6-12v18m6-22v26m6-31v36m6-27v18m6-15v12m6-9v6" stroke-width="1.7" stroke-linecap="round"/></svg>';
+   body.append(mark);
+   const tagline=d.createElement('strong');tagline.className='sv-adaptive-tagline';tagline.textContent='Интеллект в каждой ноте.';body.append(tagline);
+   message('Не настраивайте музыку. Наслаждайтесь ею.');
+   const statusLine=d.createElement('p');statusLine.className='sv-adaptive-status';statusLine.setAttribute('aria-live','polite');body.append(statusLine);
+   message('Adaptive Sound бережно снижает громкость слишком громких локальных записей. Частотный баланс и динамика не изменяются. Тихие песни не усиливаются.');
+   const modeButton=action('Pure Sound · без коррекции',()=>{const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
+   modeButton.id='svAdaptivePure';
+   message('Радио, неподдерживаемые файлы и устройства звучат без нашей коррекции. Адаптация к акустике и полноценная нормализация — следующий этап.');
+   updateSound();
+  }
+  function updateSound(){
+   if(mode!=='sound'||!dialog?.open)return;
+   const s=w.SEYVEO_ADAPTIVE_SOUND?.state();
+   const el=body.querySelector('.sv-adaptive-status'),b=$('svAdaptivePure');
+   if(!el||!b)return;
+   const labels={pure:'Pure Sound · оригинал',active:s?.attenuationDb<0?'Adaptive Sound · коррекция '+s.attenuationDb+' дБ':'Adaptive Sound · коррекция не требуется',waiting:'Ожидание данных записи',analysing:'Анализ записи…',limited:'Без коррекции · формат или размер записи',unsupported:'Без коррекции · ограничение устройства',idle:'Готов к локальной музыке'};
+   el.textContent=!s?'Без коррекции · движок недоступен':labels[s.phase]||'Готов к локальной музыке';
+   b.textContent=s?.pure?'Вернуть Adaptive Sound':'Pure Sound · без коррекции';
+   b.setAttribute('aria-pressed',String(!!s?.pure));b.disabled=!s;
+  }
+  d.addEventListener('seyveo:adaptive-sound',updateSound);
+  $('svAdaptiveSoundOpen')?.addEventListener('click',soundSheet);
+  $('svAdaptiveSoundMenu')?.addEventListener('click',soundSheet);
   $('svSmartShare')?.addEventListener('click',share);
   $('svSmartSleep')?.addEventListener('click',sleepSheet);
   $('svSmartKaraoke')?.addEventListener('click',karaoke);
@@ -172,7 +201,7 @@
    if(/^(?:поделись (?:этой )?(?:песней|музыкой)|поделиться (?:песней|музыкой))$/.test(q)){const opened=share();return {status:opened?'requested':'missing',message:opened?'Выберите, как поделиться песней.':'Сначала включите песню.'}}
    return null;
   }
-  w.SEYVEO_MUSIC_SMART=Object.freeze({handle,share,sleepSheet,karaoke});
+  w.SEYVEO_MUSIC_SMART=Object.freeze({handle,share,sleepSheet,karaoke,soundSheet});
  }
  return {embeddedLyrics,activeLine,sleepMinutes,install};
 });
