@@ -1172,6 +1172,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
  </details>
  <button id="sayviVideoBack" type="button" class="sv-video-back">← Назад</button>
 </main><main id="sayviMusicPage" class="sv-music-page" hidden aria-label="Музыкальное пространство Сэйви">
+  <div class="sv-now-backdrop" aria-hidden="true"><span></span><span></span></div>
   <header class="sv-music-head">
    <div class="sv-music-lockup">
     <h1 class="sv-music-heading"><span class="sv-music-brand">SEYVEO</span><span class="sv-music-brand-sub">MUSIC</span></h1>
@@ -1245,6 +1246,15 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   <p class="sv-music-browse-caption">Музыкальные открытия Сэйви</p>
  </section>
  <div class="sv-music-cover" id="sayviMusicStage" aria-label="Обложка текущей песни">
+  <div class="sv-now-fallback" aria-hidden="true">
+   <div class="sv-music-scene-palette"><span></span><span></span><span></span></div>
+   <svg viewBox="0 -26 200 200" aria-hidden="true" focusable="false">
+    <defs><radialGradient id="svNowRingFade"><stop offset="0" stop-color="#D4F5ED" stop-opacity=".85"/><stop offset="1" stop-color="#E3D8F3" stop-opacity=".12"/></radialGradient></defs>
+    <g class="sv-music-scene-rings" fill="none" stroke="url(#svNowRingFade)" stroke-width=".58" opacity=".8"><ellipse cx="100" cy="74" rx="27" ry="37" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="35" ry="45" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="43" ry="53" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="51" ry="61" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="59" ry="69" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="67" ry="77" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="75" ry="85" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="83" ry="93" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="91" ry="101" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="99" ry="109" transform="rotate(-35 100 74)"/></g>
+    <g class="sv-music-scene-wave" stroke="#E9F9F6" stroke-width="1.25" stroke-linecap="round"><line x1="72" x2="72" y1="69" y2="79" data-rest="10"/><line x1="80" x2="80" y1="63" y2="85" data-rest="22"/><line x1="88" x2="88" y1="56" y2="92" data-rest="36"/><line x1="96" x2="96" y1="46" y2="102" data-rest="56"/><line x1="104" x2="104" y1="59" y2="89" data-rest="30"/><line x1="112" x2="112" y1="67" y2="81" data-rest="14"/><line x1="120" x2="120" y1="63" y2="85" data-rest="22"/><line x1="128" x2="128" y1="70" y2="78" data-rest="8"/></g>
+   </svg>
+   <span>SEYVEO SOUND</span>
+  </div>
   <svg class="sv-music-placeholder" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l12-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.4"/><ellipse cx="18" cy="16" rx="3" ry="2.4"/></svg>
   <span id="sayviMusicArtwork" class="sv-music-artwork" role="img" aria-label="Обложка песни" hidden></span>
  </div>
@@ -5882,7 +5892,7 @@ window.addEventListener('seyveo:cinema-opening',presentHomeLaunchLogo);
 window.addEventListener('seyveo:cinema-finished',presentHomeLaunchLogo);
 })();
 </script><script src="assets/assistant-chat-history.js?v=6"></script><script src="assets/wake-mode.js?v=7"></script><script src="assets/seyveo-permission-flow.js?v=5"></script><script src="assets/seyveo-gps-waypoint.js?v=1"></script><script src="assets/demo-mode.js?v=2"></script><script src="assets/management.js?v=69"></script><script src="assets/pulse-business-walkthrough.js?v=3"></script><script src="assets/pulse-inbox-demo.js?v=2"></script><script src="assets/onboarding.js?v=11"></script><script src="assets/context-focus.js?v=1"></script><script src="assets/contact-call-intent.js?v=1"></script><script src="assets/seyveo-task-handoff.js?v=3"></script><script src="assets/seyveo-task-commit.js?v=1"></script><script src="assets/seyveo-avatar-colors.js?v=1"></script><script src="assets/personal-tasks.js?v=20261126-personal-dock-v200"></script><script src="assets/seyveo-agenda-weather.js?v=15"></script><script src="assets/calendar-natural.js?v=2"></script><script src="assets/task-natural.js?v=2"></script><script src="assets/reminder-dialogue.js?v=1"></script><script src="assets/notebook-natural.js?v=5"></script><script src="assets/seyveo-paint-brush-renderer.js?v=7"></script><script src="assets/notebook-paper.js?v=20261124-scan-minimal-actions"></script><script src="assets/seyveo-notebook-toolbar.js?v=43"></script><script src="assets/seyveo-ocr-worker-factory.js?v=20261126-ocr-v121"></script><script src="assets/notebook-scan.js?v=20261126-pearl-scanner-v189"></script><script src="assets/seyveo-app-icons.js?v=4"></script><script src="assets/seyveo-notebook-launch.js?v=20261126-personal-docs-v221"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=20261125-shared-calendar-v1"></script><script src="assets/seyveo-sheet-navigation.js?v=20261125-shared-sheets-v2"></script><script src="assets/seyveo-wheel.js?v=20261126-wheel-v69"></script>
-<script src="assets/seyveo-calendar-pickers.js?v=20261126-date-standard-v63"></script><script src="assets/seyveo-screen-awake.js?v=2"></script><script src="assets/assistant-local-actions.js?v=11"></script><script src="assets/calendar-reminders.js?v=20261126-task-reminders-v68"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=20261126-date-standard-v63"></script><script src="assets/personal-wellness.js?v=21"></script><script src="assets/seyveo-medical-passport.js?v=8"></script><script src="assets/passport-cards.js?v=45"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/seyveo-business-ledger.js?v=1"></script><script src="assets/pulse.js?v=11"></script><script src="assets/picture.js?v=23"></script><script src="assets/home-widgets.js?v=13"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=7"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/assistant-intents.js?v=8"></script><script src="assets/business-map.js?v=21"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=6"></script><script src="assets/connection-coach.js?v=14"></script><script src="assets/seyveo-connection-prompts.js?v=20261125-home-polish-v1"></script><script src="assets/seyveo-browser.js?v=79"></script><script src="assets/seyveo-live-search-ui.js?v=1"></script><script src="assets/seyveo-rich-answer-ui.js?v=2"></script><script src="assets/sayvi-page.js?v=20261116-open-search-1"></script><script src="assets/seyveo-saved-places.js?v=1"></script><script src="assets/sayvi-onboarding.js?v=20261118-launch2"></script><script src="assets/seyveo-browser-flow.js?v=3"></script><script src="assets/seyveo-live-search-request.js?v=9"></script><script src="assets/future-presence.js?v=4"></script><script src="assets/account-demo.js?v=7"></script><script src="assets/seyveo-card-engine.js?v=20261126-card-master-v50"></script><script src="assets/living-moment.js?v=20261126-review-aligned-v48"></script><script src="assets/living-screen-core.js?v=3"></script><script src="assets/living-space.js?v=20261126-dock-response-v202"></script><script src="assets/document-vault.js?v=1"></script><script src="assets/document-vault-ui.js?v=7"></script><script src="assets/seyveo-document-flow.js?v=20261125-approval-detail-v2"></script><script src="assets/seyveo-docs-export.js?v=20261125-single-editor-v1"></script><script src="assets/seyveo-pdf-export.js?v=1"></script><script src="assets/seyveo-document-drafts.js?v=20261125-explicit-draft-edit-v3"></script><script src="assets/seyveo-document-files.js?v=20261125-simple-documents-v1"></script><script src="assets/seyveo-attachment-routing.js?v=1"></script><script src="assets/seyveo-document-icons.js?v=20261126-plus-v140"></script><script src="assets/seyveo-document-pickers.js?v=20261126-date-standard-v63"></script><script src="assets/seyveo-editor-capsule.js?v=20261125-marker-icon-v2"></script><script src="assets/seyveo-sayvi-editor-client.js?v=20261125-shared-brain-v1"></script><script src="assets/seyveo-docs-studio.js?v=20261126-draft-dock-v125"></script><script src="assets/seyveo-pdf-markup.js?v=20261125-stylus-v10"></script><script src="assets/seyveo-docs-viewer.js?v=20261125-stylus-v10"></script><script src="assets/documents-shelf.js?v=20261126-menu-v122"></script><script src="assets/documents-center.js?v=20261126-stable-doc-v115"></script><script src="assets/seyveo-smart-contacts.js?v=7"></script><script src="assets/sayvi-surfaces.js?v=20261126-doc-header-v94"></script><script src="assets/living-answers.js?v=4"></script><script src="assets/network-care.js?v=3"></script><script src="assets/music-metadata.js?v=1"></script><script src="assets/seyveo-music.js?v=59-track-covers"></script><script src="assets/seyveo-music-actions.js?v=2"></script><script src="assets/seyveo-music-dock.js?v=26-track-covers"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=5"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/orb-language.js?v=5-scene-rings"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
+<script src="assets/seyveo-calendar-pickers.js?v=20261126-date-standard-v63"></script><script src="assets/seyveo-screen-awake.js?v=2"></script><script src="assets/assistant-local-actions.js?v=11"></script><script src="assets/calendar-reminders.js?v=20261126-task-reminders-v68"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=20261126-date-standard-v63"></script><script src="assets/personal-wellness.js?v=21"></script><script src="assets/seyveo-medical-passport.js?v=8"></script><script src="assets/passport-cards.js?v=45"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/seyveo-business-ledger.js?v=1"></script><script src="assets/pulse.js?v=11"></script><script src="assets/picture.js?v=23"></script><script src="assets/home-widgets.js?v=13"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=7"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/assistant-intents.js?v=8"></script><script src="assets/business-map.js?v=21"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=6"></script><script src="assets/connection-coach.js?v=14"></script><script src="assets/seyveo-connection-prompts.js?v=20261125-home-polish-v1"></script><script src="assets/seyveo-browser.js?v=79"></script><script src="assets/seyveo-live-search-ui.js?v=1"></script><script src="assets/seyveo-rich-answer-ui.js?v=2"></script><script src="assets/sayvi-page.js?v=20261116-open-search-1"></script><script src="assets/seyveo-saved-places.js?v=1"></script><script src="assets/sayvi-onboarding.js?v=20261118-launch2"></script><script src="assets/seyveo-browser-flow.js?v=3"></script><script src="assets/seyveo-live-search-request.js?v=9"></script><script src="assets/future-presence.js?v=4"></script><script src="assets/account-demo.js?v=7"></script><script src="assets/seyveo-card-engine.js?v=20261126-card-master-v50"></script><script src="assets/living-moment.js?v=20261126-review-aligned-v48"></script><script src="assets/living-screen-core.js?v=3"></script><script src="assets/living-space.js?v=20261126-dock-response-v202"></script><script src="assets/document-vault.js?v=1"></script><script src="assets/document-vault-ui.js?v=7"></script><script src="assets/seyveo-document-flow.js?v=20261125-approval-detail-v2"></script><script src="assets/seyveo-docs-export.js?v=20261125-single-editor-v1"></script><script src="assets/seyveo-pdf-export.js?v=1"></script><script src="assets/seyveo-document-drafts.js?v=20261125-explicit-draft-edit-v3"></script><script src="assets/seyveo-document-files.js?v=20261125-simple-documents-v1"></script><script src="assets/seyveo-attachment-routing.js?v=1"></script><script src="assets/seyveo-document-icons.js?v=20261126-plus-v140"></script><script src="assets/seyveo-document-pickers.js?v=20261126-date-standard-v63"></script><script src="assets/seyveo-editor-capsule.js?v=20261125-marker-icon-v2"></script><script src="assets/seyveo-sayvi-editor-client.js?v=20261125-shared-brain-v1"></script><script src="assets/seyveo-docs-studio.js?v=20261126-draft-dock-v125"></script><script src="assets/seyveo-pdf-markup.js?v=20261125-stylus-v10"></script><script src="assets/seyveo-docs-viewer.js?v=20261125-stylus-v10"></script><script src="assets/documents-shelf.js?v=20261126-menu-v122"></script><script src="assets/documents-center.js?v=20261126-stable-doc-v115"></script><script src="assets/seyveo-smart-contacts.js?v=7"></script><script src="assets/sayvi-surfaces.js?v=20261126-doc-header-v94"></script><script src="assets/living-answers.js?v=4"></script><script src="assets/network-care.js?v=3"></script><script src="assets/music-metadata.js?v=1"></script><script src="assets/seyveo-music.js?v=60-now-playing"></script><script src="assets/seyveo-music-actions.js?v=2"></script><script src="assets/seyveo-music-dock.js?v=26-track-covers"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=5"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/orb-language.js?v=6-now-playing"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
@@ -6901,6 +6911,137 @@ html:root[data-theme="light"][data-theme] body > footer.dock.sv-shared-dock:not(
  -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
  backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
  box-shadow:var(--sv-white-pearl-circle-shadow,0 2px 8px rgba(38,48,60,.055))!important;
+}
+</style>
+
+
+<style id="svNowPlayingAtmosphere">
+/* Full-screen Now Playing only. No changes to the light browse screen or shared dock. */
+#sayviMusicPage > .sv-now-backdrop,#sayviMusicPage .sv-now-fallback{display:none}
+html:root.sv-music-screen.sv-music-player-open body > .app{
+ width:100%!important;max-width:none!important;padding:0!important;
+ background:#14232D!important;border:0!important;
+}
+html:root.sv-music-screen.sv-music-player-open body #sayviMusicPage[data-music-view="player"]{
+ --sv-player-vh:100vh;
+ --sv-music-art-size:min(calc(100vw - 32px),510px,max(160px,calc(var(--sv-player-vh) - 260px)));
+ --text:#F9FAFC;--secondary:rgba(238,245,249,.79);--soft-line:rgba(235,247,252,.24);
+ --sv-music-glass-control:rgba(230,246,250,.075);--sv-music-glass-pressed:rgba(230,246,250,.13);
+ --sv-music-glass-sheen:none;--sv-music-glass-panel:rgba(25,41,53,.96);
+ --sv-music-glass-shadow:0 6px 24px rgba(0,0,0,.16);
+ position:relative;isolation:isolate;width:100%!important;max-width:none!important;
+ flex:1 1 0;min-height:0;overflow-y:auto!important;overflow-x:hidden!important;
+ margin:0!important;box-sizing:border-box;
+ padding:calc(8px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))!important;
+ background:radial-gradient(ellipse at 68% 5%,#3B5D65 0%,transparent 60%),linear-gradient(150deg,#233D46,#14232D 72%)!important;color:var(--text)!important;
+}
+@supports(height:100dvh){html:root.sv-music-screen.sv-music-player-open body #sayviMusicPage[data-music-view="player"]{--sv-player-vh:100dvh}}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"]::before{content:none!important;display:none!important}
+#sayviMusicPage[data-music-view="player"] > .sv-now-backdrop{
+ display:block;position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+}
+#sayviMusicPage .sv-now-backdrop > span{
+ position:absolute;inset:-28px;background-position:center;background-size:cover;
+ filter:blur(32px);opacity:0;transition:opacity 1.15s ease;
+}
+#sayviMusicPage .sv-now-backdrop > span.is-current{opacity:1}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] > .sv-music-head{
+ flex:0 0 auto;align-items:center;width:100%;max-width:560px;min-height:48px;
+ margin:0 auto 0!important;padding:0!important;background:transparent!important;
+ border:0!important;box-shadow:none!important;
+}
+#sayviMusicPage[data-music-view="player"] .sv-music-heading{color:var(--text)!important}
+#sayviMusicPage[data-music-view="player"] .sv-music-technology{color:var(--secondary)!important}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-music-minimize,
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-music-minimize:active{
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ flex:0 0 44px!important;border:0!important;background:transparent!important;
+ box-shadow:none!important;color:#fff!important;transform:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"]:not(.sv-music-lyrics-mode) > .sv-music-cover{
+ width:var(--sv-music-art-size)!important;height:var(--sv-music-art-size)!important;
+ max-width:100%;flex:0 0 auto;overflow:hidden;isolation:isolate;
+ margin:10px auto 16px!important;border-radius:20px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+#sayviMusicPage[data-music-view="player"] .sv-music-placeholder{display:none!important}
+#sayviMusicPage[data-music-view="player"] .sv-music-artwork{
+ border-radius:20px!important;box-shadow:none!important;background-size:cover!important;
+}
+#sayviMusicPage[data-music-view="player"] .sv-music-cover.has-artwork .sv-music-artwork:not([hidden]){animation:svNowCoverReveal .45s ease both}
+@keyframes svNowCoverReveal{from{opacity:0}to{opacity:1}}
+/* The fallback is an actual animated cover, not a missing-image icon. */
+#sayviMusicPage[data-music-view="player"] .sv-now-fallback{
+ display:grid;place-items:center;position:absolute;inset:0;isolation:isolate;overflow:hidden;
+ border-radius:inherit;color:#E9F9F6;
+ background:radial-gradient(ellipse at 83% 0%,rgba(143,191,185,.36),transparent 58%),linear-gradient(125deg,#183F3E,#28565C 53%,#263849);
+ opacity:1;transition:opacity .42s ease;
+}
+#sayviMusicPage[data-music-view="player"] .sv-music-cover.has-artwork .sv-now-fallback{opacity:0;pointer-events:none}
+#sayviMusicPage .sv-now-fallback > svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+#sayviMusicPage .sv-now-fallback > span{position:absolute;bottom:8%;font-size:clamp(9px,2.4vw,13px);font-weight:620;letter-spacing:.18em;color:#E5F4F2}
+#sayviMusicPage .sv-now-fallback .sv-music-scene-palette{position:absolute;inset:0;z-index:-2;overflow:hidden}
+#sayviMusicPage .sv-now-fallback .sv-music-scene-palette > span{
+ position:absolute;inset:0;opacity:0;animation-duration:80s;animation-timing-function:ease-in-out;animation-iteration-count:infinite;animation-play-state:paused;
+}
+#sayviMusicPage .sv-now-fallback .sv-music-scene-palette > span:nth-child(1){
+ background:radial-gradient(ellipse at 82% 0%,rgba(144,183,224,.36),transparent 58%),linear-gradient(125deg,#20364E,#365979 53%,#26364F);animation-name:svMusicPaletteSapphire
+}
+#sayviMusicPage .sv-now-fallback .sv-music-scene-palette > span:nth-child(2){
+ background:radial-gradient(ellipse at 82% 0%,rgba(191,157,209,.36),transparent 58%),linear-gradient(125deg,#392C49,#5B496A 53%,#373447);animation-name:svMusicPalettePlum
+}
+#sayviMusicPage .sv-now-fallback .sv-music-scene-palette > span:nth-child(3){
+ background:radial-gradient(ellipse at 82% 0%,rgba(222,181,137,.32),transparent 58%),linear-gradient(125deg,#48342C,#735540 53%,#39363D);animation-name:svMusicPaletteAmber
+}
+#sayviMusicPage .sv-now-fallback.sv-scene-playing .sv-music-scene-palette > span{animation-play-state:running}
+#sayviMusicPage .sv-now-fallback::before{
+ content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:radial-gradient(ellipse at 50% 50%,rgba(168,237,221,.25),transparent 68%);
+ opacity:0;transition:opacity .55s ease;
+}
+#sayviMusicPage .sv-now-fallback.sv-scene-playing::before{opacity:var(--sv-scene-glow,.55)}
+#sayviMusicPage .sv-now-fallback.sv-scene-playing:not(.sv-scene-rhythm)::before{animation:svSceneQuietGlow 6s ease-in-out infinite alternate}
+#sayviMusicPage .sv-now-fallback .sv-music-scene-rings{
+ transform-box:view-box;transform-origin:50% 50%;transform:scale(1);transition:transform .65s ease-out,opacity .65s ease-out;
+}
+#sayviMusicPage .sv-now-fallback.sv-scene-playing .sv-music-scene-rings{animation:svMusicRingBreath 8s ease-in-out infinite}
+#sayviMusicPage .sv-now-fallback.sv-scene-playing.sv-scene-rhythm .sv-music-scene-rings{
+ animation:none;transform:scale(var(--sv-ring-scale,1)) rotate(var(--sv-ring-angle,0deg));opacity:var(--sv-ring-opacity,1);transition:transform .12s ease-out,opacity .18s ease-out;
+}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] :is(.sv-music-track-bar,.sv-music-times,.sv-music-seek,.sv-music-phrases){
+ width:var(--sv-music-art-size)!important;max-width:100%;
+}
+#sayviMusicPage[data-music-view="player"] .sv-music-track-bar{min-height:52px!important}
+#sayviMusicPage[data-music-view="player"] .sv-music-title{color:#fff!important;font-size:clamp(21px,5.6vw,29px);font-weight:620}
+#sayviMusicPage[data-music-view="player"] .sv-music-artist{color:var(--secondary)!important}
+#sayviMusicPage[data-music-view="player"] .sv-music-times{margin:10px auto 0!important}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-music-controls:not([hidden]){
+ display:flex!important;width:100%!important;max-width:420px;justify-content:center;gap:clamp(22px,8vw,42px);margin:4px auto 8px!important;
+}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-music-control{
+ background:transparent!important;border:0!important;box-shadow:none!important;color:#fff!important;
+ min-width:44px;min-height:44px;transform:none!important;
+}
+#sayviMusicPage[data-music-view="player"] .sv-music-control svg{width:29px;height:29px;stroke-width:1.55}
+#sayviMusicPage[data-music-view="player"] .sv-music-control--main{width:66px!important;height:66px!important}
+#sayviMusicPage[data-music-view="player"] .sv-music-control--main svg{width:43px!important;height:43px!important}
+#sayviMusicPage[data-music-view="player"] .sv-music-control:disabled{opacity:.30}
+#sayviMusicPage[data-music-view="player"] .sv-music-phrases{
+ grid-template-columns:repeat(4,minmax(0,1fr));margin:6px auto 0!important;background:rgba(238,248,255,.07)!important;box-shadow:none!important;
+}
+#sayviMusicPage[data-music-view="player"] .sv-music-phrases .sv-music-intent{color:var(--secondary)!important;min-height:44px;font-size:clamp(10px,2.8vw,13px)}
+#sayviMusicPage[data-music-view="player"] .sv-music-awake-control{color:var(--secondary)}
+#sayviMusicPage[data-music-view="player"] .sv-music-stop-hide{color:var(--secondary)}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] :is(.sv-music-collection,.sv-music-providers):not([hidden]){bottom:max(12px,env(safe-area-inset-bottom,0px))!important;background:var(--sv-music-glass-panel)!important}
+#sayviMusicPage[data-music-view="player"] button:focus-visible{outline:2px solid #E5F6F5!important;outline-offset:2px!important}
+@media(prefers-reduced-motion:reduce){
+ #sayviMusicPage .sv-now-backdrop > span,#sayviMusicPage .sv-now-fallback,#sayviMusicPage .sv-now-fallback::before,#sayviMusicPage .sv-now-fallback .sv-music-scene-rings{transition:none!important;animation:none!important;transform:none!important}
+ #sayviMusicPage .sv-now-fallback .sv-music-scene-palette > span{animation:none!important;opacity:0!important}
+ #sayviMusicPage[data-music-view="player"] .sv-music-artwork{animation:none!important}
+}
+@media(prefers-reduced-transparency:reduce){
+ #sayviMusicPage[data-music-view="player"] .sv-now-backdrop{display:none!important}
 }
 </style>
 

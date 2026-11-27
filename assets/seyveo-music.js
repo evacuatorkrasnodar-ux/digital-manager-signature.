@@ -416,7 +416,21 @@ function prepareTrackPreview(trackIndex){
  return task;
 }
 
+// Two background layers crossfade the decoded artwork without changing audio.
+const playerBackdropLayers=Array.from(page.querySelectorAll('.sv-now-backdrop > span'));
+let playerBackdropIndex=-1;
+function paintPlayerBackdrop(src){
+ if(!src){for(const layer of playerBackdropLayers)layer.classList.remove('is-current');return}
+ if(playerBackdropLayers.length!==2)return;
+ const next=(playerBackdropIndex+1)%2;
+ const layer=playerBackdropLayers[next];
+ layer.style.backgroundImage='linear-gradient(180deg,rgba(8,15,24,.34),rgba(8,15,24,.64) 56%,rgba(8,15,24,.89)),url("'+src+'")';
+ layer.classList.add('is-current');
+ if(playerBackdropIndex>=0)playerBackdropLayers[playerBackdropIndex].classList.remove('is-current');
+ playerBackdropIndex=next;
+}
 function clearArtwork(){
+ paintPlayerBackdrop(null);
  page.classList.remove('sv-music-player-has-art');page.style.removeProperty('--sv-music-player-art');
  stage?.classList.remove('has-artwork','is-checking-artwork');
  mini?.classList.remove('has-artwork');
@@ -442,6 +456,7 @@ function showArtwork(){
    }catch{}
   }
   page.style.setProperty('--sv-music-player-art','url("'+candidate+'")');page.classList.add('sv-music-player-has-art');
+  paintPlayerBackdrop(candidate);
   for(const [surface,holder] of [[artwork,stage],[miniArtwork,mini]]){
    if(!surface)continue;
    surface.style.backgroundImage='url("'+candidate+'")';

@@ -161,14 +161,22 @@
 
  // The Music scene consumes the SAME bounded analysis cache as the Home orb.
  // No second decoder, audio node, microphone, or change to the playback path.
- const scene=musicPage?.querySelector('.sv-music-scene');
- const sceneBars=Array.from(scene?.querySelectorAll('.sv-music-scene-wave line')||[]);
- let sceneFrame=0,sceneLast=0,sceneFile=null,sceneVisible=true,sceneWaiting=false,ringEnergy=0;
- const sceneLevels=new Float32Array(sceneBars.length);
+ const homeScene=musicPage?.querySelector('.sv-music-scene');
+ const playerStage=musicPage?.querySelector('#sayviMusicStage');
+ const playerScene=playerStage?.querySelector('.sv-now-fallback');
+ let scene=null,sceneBars=[];
+ const visibleScenes=new Map([[homeScene,true],[playerScene,true]]);
+ let sceneFrame=0,sceneLast=0,sceneFile=null,sceneWaiting=false,ringEnergy=0;
+ const sceneLevels=new Float32Array(8);
+ function sceneTarget(){
+  if(musicPage?.dataset.musicView==='home')return homeScene;
+  if(musicPage?.dataset.musicView==='player'&&!playerStage?.classList.contains('has-artwork'))return playerScene;
+  return null;
+ }
  function sceneAllowed(){
   return !!scene&&!!audio&&!document.hidden&&!musicPage.hidden&&
-   musicPage.dataset.musicView==='home'&&location.hash==='#sayvi-music'&&
-   sceneVisible&&!audio.paused&&!audio.ended&&!audio.error&&!sceneWaiting&&!audio.seeking&&audio.readyState>=2;
+   scene===sceneTarget()&&location.hash==='#sayvi-music'&&
+   visibleScenes.get(scene)!==false&&!audio.paused&&!audio.ended&&!audio.error&&!sceneWaiting&&!audio.seeking&&audio.readyState>=2;
  }
  function resetSceneWave(){
   if(sceneFrame)cancelAnimationFrame(sceneFrame);
@@ -206,6 +214,11 @@
   sceneFrame=requestAnimationFrame(tickScene);
  }
  function syncScene(){
+  const target=sceneTarget();
+  if(scene!==target){
+   scene?.classList.remove('sv-scene-playing');resetSceneWave();
+   scene=target;sceneBars=Array.from(scene?.querySelectorAll('.sv-music-scene-wave line')||[]);
+  }
   if(!scene)return;
   const allowed=sceneAllowed();
   scene.classList.toggle('sv-scene-playing',allowed);
@@ -218,17 +231,21 @@
   scene.classList.add('sv-scene-rhythm');
   if(!sceneFrame)sceneFrame=requestAnimationFrame(tickScene);
  }
- if(scene&&audio){
+ if((homeScene||playerScene)&&audio){
   for(const name of ['waiting','stalled','seeking','emptied','error'])audio.addEventListener(name,()=>{sceneWaiting=true;syncScene()});
   for(const name of ['playing','canplay','seeked'])audio.addEventListener(name,()=>{sceneWaiting=false;syncScene()});
   for(const name of ['pause','ended','loadedmetadata','durationchange'])audio.addEventListener(name,syncScene);
   for(const name of ['seyveo:music-view','seyveo:music-state','visibilitychange'])document.addEventListener(name,syncScene);
   for(const name of ['hashchange','seyveo:route-changed','pageshow'])window.addEventListener(name,syncScene);
   if(reduce?.addEventListener)reduce.addEventListener('change',syncScene);else reduce?.addListener?.(syncScene);
-  if(typeof IntersectionObserver==='function')new IntersectionObserver(entries=>{
-   sceneVisible=entries.some(entry=>entry.isIntersecting);syncScene();
-  },{threshold:0}).observe(scene);
+  if(typeof IntersectionObserver==='function'){
+   const observer=new IntersectionObserver(entries=>{
+    for(const entry of entries)visibleScenes.set(entry.target,entry.isIntersecting);syncScene();
+   },{threshold:0});
+   for(const node of [homeScene,playerScene])if(node)observer.observe(node);
+  }
   new MutationObserver(syncScene).observe(musicPage,{attributes:true,attributeFilter:['hidden','data-music-view']});
+  if(playerStage)new MutationObserver(syncScene).observe(playerStage,{attributes:true,attributeFilter:['class']});
  }
 
  function sync(){
