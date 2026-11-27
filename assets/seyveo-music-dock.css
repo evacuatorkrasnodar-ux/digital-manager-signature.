@@ -191,27 +191,17 @@ html.seyveo-conversation:has(#question:focus) #sayviMusicMini{display:none!impor
  }
 }
 
-/* SEYVEO mini-player / 2026-11-10.
-   Match the LEFT capsule of the Home dock, excluding the Search circle.
-   Reuse the same width token and aligned x-coordinate, including iPhone X.
-   Leave the music player controls and the chat composer untouched. */
-html:not(.seyveo-conversation) #sayviMusicMini{
- left:calc(50% - 138.25px)!important;
- right:auto!important;
- transform:none!important;
- width:var(--sv-split-capsule,226px)!important;
- max-width:var(--sv-split-capsule,226px)!important;
+/* One full-width remote: align to both outer dock edges on ordinary routes.
+   Keep the chat's keyboard avoidance and the Home sphere player intact. */
+html:root:not(.seyveo-conversation) body #sayviMusicMini{
+ left:max(clamp(14px,5vw,22px),env(safe-area-inset-left,0px))!important;
+ right:max(clamp(14px,5vw,22px),env(safe-area-inset-right,0px))!important;
+ width:auto!important;max-width:none!important;transform:none!important;
 }
-@media(max-width:389px){
- html:not(.seyveo-conversation) #sayviMusicMini{
-  left:calc(50% - 35.714286vw + .857143px)!important;
- }
-}
-
 
 /* SEYVEO Silver Mist mini-player v32 · white-theme visual only.
    Exact shared dock frosted material, sharp graphite artwork/controls,
-   edge-aligned with the left capsule. Keep original player IDs, 44px
+   aligned with both outer dock edges. Keep original player IDs, 44px
    touch targets, progress state, swipe gestures and audio session.
    No extra pseudo-surface or changes to full-size music player / dark mode.
  */
@@ -231,12 +221,7 @@ html:not(.seyveo-conversation) #sayviMusicMini{
   color:#0B0B0D!important;
 }
 :root[data-theme="light"]:not(.seyveo-conversation) #sayviMusicMini {
-  left:max(clamp(14px,5vw,22px),env(safe-area-inset-left,0px))!important;
-  right:auto!important;
-  transform:none!important;
-  width:clamp(176px,calc(100vw - 2 * clamp(14px,5vw,22px) - 71px),264px)!important;
-  max-width:clamp(176px,calc(100vw - 2 * clamp(14px,5vw,22px) - 71px),264px)!important;
-  bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 63px + 8px)!important;
+  bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 68px)!important;
 }
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-open {
   flex:1 1 0%!important;
@@ -276,14 +261,14 @@ html:not(.seyveo-conversation) #sayviMusicMini{
 }
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-title{
   color:#0B0B0D!important;
-  font-size:12.6px!important;
+  font-size:14px!important;
   font-weight:630!important;
   line-height:1.13!important;
   letter-spacing:-.02em!important;
 }
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-artist{
   color:#5D6773!important;
-  font-size:10px!important;
+  font-size:12px!important;
   font-weight:485!important;
   line-height:1.2!important;
   letter-spacing:0!important;
@@ -331,8 +316,8 @@ html:not(.seyveo-conversation) #sayviMusicMini{
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-progress{
   left:18px!important;
   right:18px!important;
-  bottom:2px!important;
-  height:1.5px!important;
+  bottom:3px!important;
+  height:1px!important;
   opacity:.72!important;
   border-radius:999px!important;
   background:linear-gradient(to right,#25303B 0 var(--sv-mini-progress),rgba(52,65,78,.16) var(--sv-mini-progress) 100%)!important;
@@ -385,7 +370,7 @@ html.sv-music-screen[data-theme="dark"] body footer.dock.sv-shared-dock.sv-music
 html.sv-music-screen.sv-music-player-open body footer.dock.sv-shared-dock.sv-music-navigation-only{display:none!important}
 
 /* Same physical mini-player, placed in the Listen page instead of its old CTA.
-   Scope the geometry change to this slot only; other routes retain the dock remote. */
+   The same remote is full-width on other ordinary routes. */
 #svMusicHomeMiniSlot{width:100%;margin:12px 0 0;min-height:56px}
 html.sv-music-screen #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline{
  position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
