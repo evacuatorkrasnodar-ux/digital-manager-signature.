@@ -80,6 +80,58 @@ const providers=Object.freeze({
 });
 let tracks=[],localTracks=[],index=-1,url=null,selectVersion=0,queueOpen=false,collectionMode='tracks',radioFallback=false;
  const isRadio=()=>!!tracks[index]?.radio;
+// One transport for full player, mini-player, swipe and Media Session.
+const shuffleButton=$('sayviMusicShuffle'),repeatButton=$('sayviMusicRepeat');
+const MODE_KEY='seyveo-music-playback-modes-v1';
+let shuffle=false,repeat='off',shuffleOrder=[],shufflePosition=-1;
+try{const saved=JSON.parse(localStorage.getItem(MODE_KEY)||'null');shuffle=saved?.shuffle===true;repeat=['all','one'].includes(saved?.repeat)?saved.repeat:'off'}catch{}
+function persistModes(){try{localStorage.setItem(MODE_KEY,JSON.stringify({shuffle,repeat}))}catch{}}
+function syncModes(){
+ const loaded=index>=0&&tracks.length>0,radio=isRadio();
+ if(shuffleButton){
+  shuffleButton.disabled=!loaded||tracks.length<2||radio;shuffleButton.hidden=radio;
+  shuffleButton.setAttribute('aria-pressed',String(shuffle));
+  shuffleButton.setAttribute('aria-label',shuffle?'Выключить перемешивание':'Включить перемешивание');
+  shuffleButton.title=shuffle?'Перемешивание включено':'Перемешать';
+ }
+ if(repeatButton){
+  repeatButton.disabled=!loaded||radio;repeatButton.hidden=radio;
+  repeatButton.dataset.repeat=repeat;repeatButton.setAttribute('aria-pressed',String(repeat!=='off'));
+  const label=repeat==='one'?'Повтор одной песни':repeat==='all'?'Повтор очереди':'Повтор выключен';
+  repeatButton.setAttribute('aria-label',label+'. Изменить режим');repeatButton.title=label;
+ }
+}
+function resetShuffle(current=tracks[index]){
+ const rest=tracks.filter(file=>file!==current);
+ for(let i=rest.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[rest[i],rest[j]]=[rest[j],rest[i]]}
+ shuffleOrder=current?[current,...rest]:rest;shufflePosition=current?0:-1;
+}
+function ensureShuffle(){
+ if(shuffleOrder.length!==tracks.length||shuffleOrder[shufflePosition]!==tracks[index]||shuffleOrder.some(file=>!tracks.includes(file)))resetShuffle();
+}
+function navigateTrack(direction,automatic=false){
+ if(!tracks.length||index<0)return false;
+ if(isRadio())return automatic?false:tracks.length>1&&switchTrack(index+direction,true);
+ if(automatic&&repeat==='one')return switchTrack(index,true,true);
+ if(shuffle&&tracks.length>1){
+  ensureShuffle();
+  const target=shufflePosition+direction;
+  if(target>=0&&target<shuffleOrder.length){
+   shufflePosition=target;return switchTrack(tracks.indexOf(shuffleOrder[target]),true,true);
+  }
+  if(direction<0){if(!automatic){try{audio.currentTime=0}catch{}}return false}
+  if(automatic&&repeat==='off')return false;
+  // Start another randomized cycle, with no immediate duplicate.
+  resetShuffle();shufflePosition=1;return switchTrack(tracks.indexOf(shuffleOrder[1]),true,true);
+ }
+ const target=index+direction;
+ if(automatic&&(target>=tracks.length||target<0)&&repeat==='off')return false;
+ if(tracks.length===1&&!automatic)return false;
+ return switchTrack(target,true,true);
+}
+shuffleButton?.addEventListener('click',()=>{if(shuffleButton.disabled)return;shuffle=!shuffle;resetShuffle();persistModes();syncModes()});
+repeatButton?.addEventListener('click',()=>{if(repeatButton.disabled)return;repeat=repeat==='off'?'all':repeat==='all'?'one':'off';persistModes();syncModes()});
+
 
 /* Saved favorites are track fingerprints, not copied audio or subscriptions. */
 const FAVORITES_KEY='seyveo-music-favorites-v1';
@@ -300,6 +352,7 @@ function updatePlay(){
  syncResume();
 }
 function syncResume(){
+ syncModes();
  const loaded=tracks.length>0&&index>=0;
  // Empty-state visuals must never resemble a broken, disabled progress bar.
  page.classList.toggle('sv-music-empty',!loaded);
@@ -599,8 +652,8 @@ function mediaSession(){
   }
   navigator.mediaSession.setActionHandler('play',()=>play());
   navigator.mediaSession.setActionHandler('pause',()=>audio.pause());
-  navigator.mediaSession.setActionHandler('previoustrack',()=>switchTrack(index-1,true));
-  navigator.mediaSession.setActionHandler('nexttrack',()=>switchTrack(index+1,true));
+  navigator.mediaSession.setActionHandler('previoustrack',()=>navigateTrack(-1));
+  navigator.mediaSession.setActionHandler('nexttrack',()=>navigateTrack(1));
   navigator.mediaSession.setActionHandler('seekto',details=>{
    if(!isRadio()&&Number.isFinite(details.seekTime))audio.currentTime=Math.min(Math.max(0,details.seekTime),audio.duration||0);
   });
@@ -680,10 +733,11 @@ function collectionRender(){
  });
  syncQueueToggle();
 }
-function switchTrack(i,autoplay=false){
+function switchTrack(i,autoplay=false,fromNavigation=false){
  if(!tracks.length)return false;
  const newIndex=((i%tracks.length)+tracks.length)%tracks.length;
  const file=tracks[newIndex];const version=++selectVersion;
+ if(!fromNavigation)resetShuffle(file);
  audio.pause();audio.removeAttribute('src');audio.load();safeRelease();
  radioFallback=false;
   if(file.radio){
@@ -904,7 +958,7 @@ if(miniOpen){
   event.preventDefault();
   suppressMiniClickUntil=Date.now()+400;
   if(tracks.length>1){
-   switchTrack(index+(dx>0?-1:1),true);
+   navigateTrack(dx>0?-1:1);
   }
  },{passive:false});
 }
@@ -920,7 +974,7 @@ miniPlay?.addEventListener('click',()=>{
  if(!wasPlaying)window.SEYVEO_MUSIC_DOCK?.openPlayer?.();
 });
 document.addEventListener('seyveo:radio-history',()=>{if(miniOnMusicHome())syncResume()});
-miniNext?.addEventListener('click',()=>{if(tracks.length>1)switchTrack(index+1,true)});
+miniNext?.addEventListener('click',()=>navigateTrack(1));
 // Now Playing stays in one stable position above the dock or chat composer.
 // The fixed mini rests ABOVE the native chat writer, including multiline drafts.
 // ResizeObserver reads layout changes instead of adding scroll/keyboard timers.
@@ -966,8 +1020,8 @@ window.addEventListener('hashchange',syncMusicRoute);
 window.addEventListener('seyveo:route-changed',syncMusicRoute);
 importBtn.addEventListener('click',()=>fileInput.click());
 player.addEventListener('click',play);
-previous.addEventListener('click',()=>switchTrack(index-1,true));
-next.addEventListener('click',()=>switchTrack(index+1,true));
+previous.addEventListener('click',()=>navigateTrack(-1));
+next.addEventListener('click',()=>navigateTrack(1));
 fileInput.addEventListener('change',()=>{ingest(fileInput.files);fileInput.value=''});
 seek.addEventListener('input',()=>{
  const duration=audio.duration;
@@ -982,7 +1036,7 @@ audio.addEventListener('durationchange',updateTime);
 audio.addEventListener('loadedmetadata',updateTime);
 audio.addEventListener('playing',()=>{homeMusicSession=true;const file=tracks[index];if(file&&!file.radio){recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);recentPlayedAt.set(file,Date.now());for(const item of recentPlayedAt.keys())if(!recentFiles.includes(item))recentPlayedAt.delete(item);rememberRecent()}updatePlay();sayviMessage('');qualifyDiscoveryListen()});
 audio.addEventListener('pause',()=>{stopDiscoveryListen();updatePlay()});
-audio.addEventListener('ended',()=>{stopDiscoveryListen();if(isRadio()){updatePlay();sayviMessage('Эфир прервался. Нажмите Play для повторного подключения.');return}if(tracks.length>1)switchTrack(index+1,true);else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
+audio.addEventListener('ended',()=>{stopDiscoveryListen();if(isRadio()){updatePlay();sayviMessage('Эфир прервался. Нажмите Play для повторного подключения.');return}if(!navigateTrack(1,true)){updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
 audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(isRadio()){const station=tracks[index],version=selectVersion;if(!radioFallback&&station.fallback){radioFallback=true;audio.src=station.fallback;artist.textContent=station.country+' · '+station.fallbackQuality;audio.play().catch(()=>{if(version===selectVersion)sayviMessage('Резервный эфир недоступен.')});return}sayviMessage('Эфир недоступен. Попробуйте другую станцию.');return}if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
 /* Screen lock/background can dispatch lifecycle changes.
  * Never stop an actively playing track on pagehide: the OS decides if WebKit
@@ -1065,7 +1119,7 @@ window.SEYVEO_MUSIC=Object.freeze({
  recentTracks:()=>recentFiles.filter(file=>localTracks.includes(file)).map(file=>({index:localTracks.indexOf(file),artKey:favoriteId(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null,playedAt:recentPlayedAt.get(file)||0})),
  state:()=>Object.freeze({
   libraryLoading,libraryCount:localTracks.length,librarySaving:librarySaving>0,savedCount:savedTrackIds.size,
-  loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
+  loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,shuffle,repeat,
   homeSession:homeMusicSession,
   source:isRadio()?'radio':'local-file',stationId:isRadio()?tracks[index].id:null,quality:isRadio()?(radioFallback?tracks[index].fallbackQuality:tracks[index].quality):null,connectedServices:0
  })
