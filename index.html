@@ -1273,7 +1273,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   <div id="svMusicLibraryTracks" class="sv-music-library-tracks"></div>
  </section>
  <section id="svMusicNew" class="sv-music-browse-panel" hidden aria-labelledby="svMusicNewTitle">
-  <h2 id="svMusicNewTitle" class="sv-music-page-title">Новинки</h2>
+  <h2 id="svMusicNewTitle" hidden>Новинки</h2>
  </section>
  <div class="sv-music-cover" id="sayviMusicStage" aria-label="Обложка текущей песни">
   <div class="sv-now-fallback" aria-hidden="true">
@@ -1326,8 +1326,8 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   <p class="sv-discovery-consent">При включении имена исполнителей отправляются в каталог iTunes (США). Аудиофайлы остаются на устройстве.</p>
   <details class="sv-discovery-info">
    <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8v.1" stroke-linecap="round"/></svg>Подробнее и настройки<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
-   <p>Сэйви запоминает исполнителя после трёх прослушиваний от 30 секунд. Интересы хранятся на устройстве. Имена исполнителей передаются в публичный каталог iTunes только при включённой функции. Проверка выполняется при открытом приложении, не чаще раза в сутки автоматически. Можно выключить функцию или очистить интересы.</p>
-   <button type="button" id="sayviDiscoveryForget" hidden>Очистить интересы и выключить</button>
+   <p>После трёх прослушиваний от 30 секунд Сэйви запоминает исполнителя на устройстве. Автоматическая проверка новинок — раз в сутки или реже, при открытом приложении. Вы можете выключить открытия или удалить сохранённые интересы.</p>
+   <button type="button" id="sayviDiscoveryForget" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v7m4-7v7"/></svg><span>Очистить интересы и выключить</span></button>
   </details>
  </div>
  <div class="sv-discovery-feed-head"><h3>Для вас</h3><button type="button" id="sayviDiscoveryCheck" aria-label="Проверить новинки" title="Проверить новинки" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.2 6M20 5v6h-6"/></svg></button></div>
@@ -7539,11 +7539,11 @@ html[data-theme="dark"] #svMusicWelcome .sv-music-welcome-icon{color:#B0D1DB}
 })();
 </script>
 <style id="svMusicDiscoveryEditorial">
-#sayviMusicPage #svMusicNew{padding-bottom:0!important}
-#sayviMusicPage #svMusicNewTitle{margin:0 0 8px!important;font-size:clamp(26px,7vw,32px)!important;font-weight:650!important;letter-spacing:-.04em}
+#sayviMusicPage #svMusicNew{padding:0!important;margin:0!important;min-height:0!important;height:0!important;flex:0 0 0!important}
+#sayviMusicPage #svMusicNewTitle[hidden]{display:none!important}
 html.sv-music-browse #sayviMusicPage #sayviDiscoveryPanel:not([hidden]){
  display:flex;flex-direction:column;gap:12px;flex-shrink:0;box-sizing:border-box;
- width:100%;margin:0 auto!important;padding:0 16px 14px!important;
+ width:100%;margin:0 auto!important;padding:12px 16px 14px!important;
  border:0;background:transparent;box-shadow:none;
 }
 #sayviDiscoveryPanel .sv-discovery-feature{padding:15px 14px 8px;border-radius:20px;background:linear-gradient(140deg,rgba(137,169,215,.19),rgba(189,165,216,.10) 65%,rgba(167,197,195,.10));border:.5px solid rgba(126,149,179,.14)}
@@ -7568,8 +7568,9 @@ html.sv-music-browse #sayviMusicPage #sayviDiscoveryPanel:not([hidden]){
 #sayviDiscoveryPanel .sv-discovery-info summary svg:last-child{margin-left:auto;transition:transform .16s ease}
 #sayviDiscoveryPanel .sv-discovery-info[open] summary svg:last-child{transform:rotate(90deg)}
 #sayviDiscoveryPanel .sv-discovery-info p{margin:0 0 8px;font-size:12px!important;line-height:1.5;color:var(--secondary)}
-#sayviDiscoveryPanel #sayviDiscoveryForget:not([hidden]){display:block;min-height:44px;padding:0;border:0;background:transparent!important;box-shadow:none!important;color:var(--text);font-size:12px!important;text-align:left}
-#sayviDiscoveryPanel .sv-discovery-feed-head{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding-left:3px}
+#sayviDiscoveryPanel #sayviDiscoveryForget:not([hidden]){display:flex;align-items:center;gap:8px;min-height:44px;width:100%;padding:0;border:0;border-top:1px solid rgba(127,140,155,.12);background:transparent!important;box-shadow:none!important;color:var(--text);font-size:12px!important;text-align:left}
+#sayviDiscoveryPanel #sayviDiscoveryForget svg{width:17px;height:17px;flex:0 0 17px}
+#sayviDiscoveryPanel .sv-discovery-feed-head{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding-left:0}
 #sayviDiscoveryPanel .sv-discovery-feed-head h3{margin:0;font-size:19px!important;font-weight:600;letter-spacing:-.025em}
 #sayviDiscoveryPanel #sayviDiscoveryCheck:not([hidden]){display:grid!important;place-items:center;width:44px!important;height:44px!important;min-height:44px!important;border:0;background:transparent!important;box-shadow:none!important;padding:0!important;color:var(--secondary);transform:none!important}
 #sayviDiscoveryPanel #sayviDiscoveryCheck svg{width:22px;height:22px}
