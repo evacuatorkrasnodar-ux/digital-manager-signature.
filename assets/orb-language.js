@@ -171,6 +171,8 @@
  // Liquid Sound: bounded, locally rendered ribbons, no external graphics or audio path.
  const liquidCanvas=playerScene?.querySelector('#svLiquidSoundCanvas');
  const liquidLabel=playerScene?.querySelector('#svLiquidSoundLabel');
+ const liquidToggle=playerScene?.querySelector('#svLiquidSoundToggle');
+ let liquidPearl=true;try{liquidPearl=localStorage.getItem('sv-liquid-glass')!=='dark'}catch{}
  let liquidContext=null;
  let liquidGPU=null,liquidGPUAttempted=false;
  try{liquidContext=liquidCanvas?.getContext('2d',{alpha:true})||null}catch{}
@@ -278,6 +280,15 @@
   ctx.setTransform(pixels/400,0,0,pixels/400,0,0);
   ctx.clearRect(0,0,400,400);
   ctx.lineJoin='round';ctx.lineCap='round';
+  if(!liquidGradient&&liquidPearl){
+   liquidGradient=ctx.createRadialGradient(200,181,12,200,200,164);
+   liquidGradient.addColorStop(0,'rgba(250,255,255,.99)');
+   liquidGradient.addColorStop(.52,'rgba(222,239,239,.98)');
+   liquidGradient.addColorStop(.80,'rgba(196,222,223,.98)');
+   liquidGradient.addColorStop(.96,'rgba(174,207,208,.98)');
+   liquidGradient.addColorStop(.985,'rgba(174,207,208,.84)');
+   liquidGradient.addColorStop(1,'rgba(174,207,208,0)');
+  }
   if(!liquidGradient){
    liquidGradient=ctx.createRadialGradient(200,192,18,200,200,198);
    liquidGradient.addColorStop(0,'rgba(0,13,19,.83)');
@@ -294,7 +305,7 @@
   }
   if(liquidGPU){
    try{
-    const frame=liquidGPU.render(pixels,p,b,m,h,liquidIdleMix);
+    const frame=liquidGPU.render(pixels,p,b,m,h,liquidIdleMix,liquidPearl);
     if(frame){ctx.drawImage(frame,0,0,400,400);liquidRenderCost=force?0:performance.now()-renderStarted;return}
    }catch{}
    try{liquidGPU.dispose?.()}catch{}liquidGPU=null;
@@ -308,8 +319,10 @@
   musicPage?.classList.toggle('sv-liquid-visualizer',enabled);
   if(musicPage){if(enabled)delete musicPage.dataset.liquidFallback;else musicPage.dataset.liquidFallback=liquidAutoReason||"canvas-unavailable"}
   if(liquidLabel)liquidLabel.textContent=enabled?'SEYVEO LIQUID SOUND':'SEYVEO SOUND';
+  if(liquidToggle){liquidToggle.hidden=!enabled;liquidToggle.setAttribute('aria-pressed',String(liquidPearl));liquidToggle.setAttribute('aria-label',liquidPearl?'Переключить на тёмное стекло':'Переключить на жемчужное стекло');liquidToggle.title=liquidToggle.getAttribute('aria-label')}
   if(enabled)paintLiquid(performance.now(),0,0,0,true);else releaseLiquid();
  }
+ liquidToggle?.addEventListener('click',()=>{if(!liquidMode)return;liquidPearl=!liquidPearl;liquidGradient=null;try{localStorage.setItem('sv-liquid-glass',liquidPearl?'pearl':'dark')}catch{}syncLiquidMode()});
  window.addEventListener('resize',()=>{if(liquidVisible())paintLiquid(performance.now(),...liquidEnergy,true)});
  window.addEventListener('pagehide',releaseLiquid);
  syncLiquidMode();
