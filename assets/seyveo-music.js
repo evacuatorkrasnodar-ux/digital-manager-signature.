@@ -90,6 +90,113 @@ const providers=Object.freeze({
 });
 let tracks=[],localTracks=[],index=-1,url=null,selectVersion=0,queueOpen=false,collectionMode='tracks',radioFallback=false;
  const isRadio=()=>!!tracks[index]?.radio;
+const chapterAPI=window.SEYVEO_MUSIC_CHAPTERS;
+let chapterFile=null,chapterRows=[],chapterSource='',chapterIndex=-1,chapterJob=0,chapterTimer=0,chapterBusy=false,chapterProgress='',chapterLastTime=-1,chapterScanned=false,chapterReadBusy=false,chapterReadDone=false;
+const chapterCandidate=()=>!!chapterAPI&&!isRadio()&&!!tracks[index]&&Number.isFinite(audio.duration)&&audio.duration>=600;
+const chapterLabel=i=>chapterRows[i]?.title||'Композиция '+(i+1);
+const chapterAt=time=>{let at=-1;for(let i=0;i<chapterRows.length;i++){if(chapterRows[i].start>time+.025)break;at=i}return at};
+function resetChapters(file){
+ ++chapterJob;clearTimeout(chapterTimer);chapterFile=file?.radio?null:file;chapterRows=[];chapterSource='';chapterIndex=-1;chapterBusy=false;chapterProgress='';chapterLastTime=-1;chapterScanned=false;chapterReadBusy=false;chapterReadDone=false;
+}
+function paintChapter(force=false){
+ if(!chapterRows.length||chapterFile!==tracks[index])return;
+ const at=chapterAt(audio.currentTime||0);
+ if(!force&&at===chapterIndex)return;
+ chapterIndex=at;
+ if(at<0)return;
+ const info=infoFor(chapterFile);
+ setPlayerTitle(chapterLabel(at),false);
+ heading.dataset.fullTitle=info.title;heading.title=info.title;
+ artist.textContent='Сборник · '+(at+1)+' из '+chapterRows.length;
+ if(queueOpen&&collectionMode==='tracks')collection.querySelectorAll('[data-chapter-index]').forEach(btn=>{if(Number(btn.dataset.chapterIndex)===at)btn.setAttribute('aria-current','true');else btn.removeAttribute('aria-current')});
+ syncResume();mediaSession();
+}
+function acceptChapters(rows,source,persist=true){
+ if(chapterFile!==tracks[index]||rows.length<2)return false;
+ ++chapterJob;chapterBusy=false;chapterRows=rows;chapterSource=source;chapterIndex=-1;chapterProgress='';chapterLastTime=-1;
+ if(persist&&!chapterAPI.save(favoriteId(chapterFile),rows,source))chapterProgress='Метки сохранены только до закрытия страницы.';
+ paintChapter(true);if(queueOpen&&collectionMode==='tracks')collectionRender();return true;
+}
+async function loadChapters(){
+ if(!chapterAPI||isRadio()||chapterFile!==tracks[index]||!Number.isFinite(audio.duration)||audio.duration<=0||chapterReadBusy||chapterReadDone)return;
+ const file=chapterFile,version=selectVersion;chapterReadBusy=true;
+ try{
+  const stored=chapterAPI.read(favoriteId(file),audio.duration);
+  if(stored){if(version===selectVersion&&chapterFile===file)acceptChapters(stored.rows,stored.source,false);return}
+  const rows=await chapterAPI.embedded(file,audio.duration);
+  if(version===selectVersion&&chapterFile===file&&!chapterRows.length&&rows.length>1)acceptChapters(rows,'embedded');
+ }catch{}finally{if(version===selectVersion&&chapterFile===file){chapterReadBusy=false;chapterReadDone=true;scheduleChapterScan()}}
+}
+function updateChapterStatus(){
+ const el=collection.querySelector('[data-chapter-status]');
+ if(el)el.textContent=chapterProgress||chapterSummary();
+}
+function chapterSummary(){
+ if(chapterRows.length)return (chapterSource==='auto'?'Найдены возможные границы · проверьте переходы':chapterSource==='embedded'?'Главы из аудиофайла':'Сохранённые временные метки')+' · '+chapterRows.length+' комп.';
+ return 'Можно добавить временные метки или найти паузы между песнями.';
+}
+function scheduleChapterScan(){
+ clearTimeout(chapterTimer);
+ if(!chapterCandidate()||!chapterReadDone||chapterRows.length||chapterScanned||chapterBusy||!audio.paused||document.hidden)return;
+ if(!/\.mp3$/i.test(chapterFile?.name||''))return;
+ chapterTimer=setTimeout(startChapterScan,1500);
+}
+async function startChapterScan(){
+ if(!chapterCandidate()||chapterRows.length||chapterBusy||!audio.paused||document.hidden||!chapterReadDone)return;
+ const file=chapterFile,job=++chapterJob;
+ const valid=()=>job===chapterJob&&chapterFile===file&&tracks[index]===file&&audio.paused&&!document.hidden;
+ chapterBusy=true;chapterProgress='Ищем паузы между песнями…';updateChapterStatus();
+ try{
+  const rows=await chapterAPI.scan(file,audio.duration,valid,p=>{if(valid()){chapterProgress='Анализ сборника · '+p+'%';updateChapterStatus()}});
+  if(!valid())return;
+  chapterScanned=true;
+  if(rows.length>1){acceptChapters(rows,'auto');return}
+  chapterProgress='Уверенные границы не найдены. Можно добавить метки вручную.';
+ }catch{if(valid()){chapterScanned=true;chapterProgress='Не удалось разобрать MP3. Можно добавить метки вручную.'}}
+ finally{if(job===chapterJob){chapterBusy=false;updateChapterStatus()}}
+}
+function stopChapterScan(){
+ clearTimeout(chapterTimer);
+ if(chapterBusy){++chapterJob;chapterBusy=false;chapterProgress='Анализ продолжится при следующей паузе.';updateChapterStatus()}
+}
+function jumpChapter(i,autoplay=true){
+ const row=chapterRows[i];if(!row||chapterFile!==tracks[index])return false;
+ try{audio.currentTime=row.start;chapterLastTime=-1;paintChapter(true);updateTime();savePosition(true);
+  if(autoplay&&audio.paused)audio.play().catch(()=>sayviMessage('Нажмите Play для воспроизведения.'));
+  return true;
+ }catch{return false}
+}
+function chapterTick(){
+ if(!chapterRows.length||chapterFile!==tracks[index])return;
+ const time=audio.currentTime,at=chapterAt(time),old=chapterIndex;
+ if(repeat==='one'&&!audio.paused&&!audio.seeking&&old>=0&&at>old&&chapterLastTime>=0&&time>=chapterLastTime&&time-chapterLastTime<3){jumpChapter(old);return}
+ chapterLastTime=time;paintChapter();
+}
+function renderChapters(list){
+ if(!chapterCandidate()&&!chapterRows.length)return;
+ const section=document.createElement('section');section.className='sv-chapters';
+ const label=document.createElement('strong');label.textContent='Композиции сборника';section.append(label);
+ const note=document.createElement('p');note.className='sv-chapters-note';note.dataset.chapterStatus='';note.textContent=chapterProgress||chapterSummary();section.append(note);
+ for(let i=0;i<chapterRows.length;i++){
+  const row=chapterRows[i],btn=document.createElement('button');btn.type='button';btn.className='sv-chapter-row';btn.dataset.chapterIndex=String(i);
+  if(i===chapterIndex)btn.setAttribute('aria-current','true');
+  const number=document.createElement('span');number.textContent=String(i+1).padStart(2,'0');
+  const name=document.createElement('span');name.textContent=chapterLabel(i);
+  const time=document.createElement('small');time.textContent=fmt(row.start);
+  btn.append(number,name,time);btn.addEventListener('click',()=>jumpChapter(i));section.append(btn);
+ }
+ const edit=document.createElement('details');edit.className='sv-chapters-edit';const summary=document.createElement('summary');summary.textContent=chapterRows.length?'Изменить временные метки':'Добавить временные метки';
+ const area=document.createElement('textarea');area.setAttribute('aria-label','Временные метки композиций');area.placeholder='0:00 Первая песня\n3:42 Вторая песня\n7:18 Третья песня';
+ area.value=chapterRows.map(row=>{const t=Math.floor(row.start),h=Math.floor(t/3600),m=Math.floor(t/60)%60,s=t%60;return (h?h+':'+String(m).padStart(2,'0'):String(m))+':'+String(s).padStart(2,'0')+(row.title?' '+row.title:'')}).join('\n');
+ const actions=document.createElement('div');actions.className='sv-chapters-edit-actions';
+ const save=document.createElement('button');save.type='button';save.textContent='Сохранить';
+ save.addEventListener('click',()=>{const rows=chapterAPI.parse(area.value,audio.duration);if(!rows){note.textContent='Нужны хотя бы две возрастающие метки в пределах записи (мин:сек).';return}acceptChapters(rows,'manual')});actions.append(save);
+ if(chapterRows.length){const reset=document.createElement('button');reset.type='button';reset.textContent='Удалить метки';reset.addEventListener('click',()=>{chapterAPI.clear(favoriteId(chapterFile));chapterRows=[];chapterIndex=-1;chapterScanned=true;chapterProgress='Метки удалены.';const info=infoFor(chapterFile);setPlayerTitle(info.title);artist.textContent=info.artist||'Моя музыка';syncResume();mediaSession();collectionRender()});actions.append(reset)}
+ edit.append(summary,area,actions);section.append(edit);
+ if(!chapterRows.length&&!chapterBusy){const scan=document.createElement('button');scan.type='button';scan.className='sv-chapter-row';scan.textContent='Найти границы песен';scan.addEventListener('click',()=>{if(!audio.paused){note.textContent='Поставьте музыку на паузу для анализа.';return}if(!/\.mp3$/i.test(chapterFile?.name||'')){note.textContent='Автопоиск доступен для MP3; добавьте метки вручную.';return}chapterScanned=false;startChapterScan()});section.append(scan)}
+ list.append(section);
+}
+
 // One transport for full player, mini-player, swipe and Media Session.
 const shuffleButton=$('sayviMusicShuffle'),repeatButton=$('sayviMusicRepeat');
 const MODE_KEY='seyveo-music-playback-modes-v1';
@@ -122,6 +229,7 @@ function ensureShuffle(){
 function navigateTrack(direction,automatic=false){
  if(!tracks.length||index<0)return false;
  if(isRadio())return automatic?false:tracks.length>1&&switchTrack(index+direction,true);
+ if(chapterRows.length>1){const at=Math.max(0,chapterAt(audio.currentTime));if(automatic&&repeat==='one')return jumpChapter(at);if(!automatic){const target=at+direction;if(target>=0&&target<chapterRows.length)return jumpChapter(target);if(tracks.length===1)return jumpChapter(direction>0?0:chapterRows.length-1)}}
  if(automatic&&repeat==='one')return switchTrack(index,true,true);
  if(shuffle&&tracks.length>1){
   ensureShuffle();
@@ -399,6 +507,7 @@ function updatePlay(){
 function syncResume(){
  syncModes();
  const loaded=tracks.length>0&&index>=0;
+ if(loaded)previous.disabled=next.disabled=tracks.length<2&&chapterRows.length<2;
  // Empty-state visuals must never resemble a broken, disabled progress bar.
  page.classList.toggle('sv-music-empty',!loaded);
  const playing=loaded&&!audio.paused&&!audio.ended;
@@ -414,7 +523,7 @@ function syncResume(){
    const file=tracks[index];
    const info=infoFor(file);
    renderMiniCover(file.radio?String(file.id||file.name):favoriteId(file),file.radio?file.artwork:trackThumbnails.get(file));
-   if(miniTitle)miniTitle.textContent=info.title||safeName(file);
+   if(miniTitle)miniTitle.textContent=chapterRows.length&&chapterIndex>=0?chapterLabel(chapterIndex):info.title||safeName(file);
    if(miniArtist)miniArtist.textContent=isRadio()&&radioFallback?file.country+' · '+file.fallbackQuality:info.artist||'Моя музыка';
    if(miniOpen)miniOpen.setAttribute('aria-label','Открыть плеер: '+safeName(file));
    if(miniPlay){
@@ -422,7 +531,7 @@ function syncResume(){
     miniPlay.setAttribute('aria-pressed',String(playing));
    }
    miniIcon?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
-   const canSkip=tracks.length>1;
+   const canSkip=tracks.length>1||chapterRows.length>1;
    if(miniNext)miniNext.disabled=!canSkip;
   }else if(inline){
    const last=window.SEYVEO_RADIO?.recent?.()[0];
@@ -684,7 +793,7 @@ function mediaSession(){
   if(typeof MediaMetadata==='function'&&index>=0){
    const info=infoFor(tracks[index]);
    navigator.mediaSession.metadata=new MediaMetadata({
-    title:info.title,
+    title:chapterRows.length&&chapterIndex>=0?chapterLabel(chapterIndex):info.title,
     artist:info.artist||'Моя музыка · SEYVEO',
     album:info.album||'SEYVEO SOUND',
     // Only the real embedded cover (CSP-approved data URL) is used by MediaSession.
@@ -750,6 +859,7 @@ function collectionRender(){
  dismiss.setAttribute('aria-label','Закрыть список');dismiss.addEventListener('click',hidePanels);
  header.append(title,dismiss);collection.append(header);
  const list=document.createElement('div');list.className='sv-collection-list';collection.append(list);
+ if(!favoriteView&&queueOpen)renderChapters(list);
  if(favoriteView&&!entries.length){
   const note=document.createElement('p');note.className='sv-music-favorites-note';
   note.textContent='Добавьте любимую песню сердечком.';list.append(note);
@@ -796,7 +906,7 @@ function switchTrack(i,autoplay=false,fromNavigation=false,resumeSeconds=0){
  const newIndex=((i%tracks.length)+tracks.length)%tracks.length;
  const file=tracks[newIndex];const version=++selectVersion;
  if(!fromNavigation)resetShuffle(file);
- savePosition(true);positionFile=null;positionSource='';positionPending=null;
+ savePosition(true);resetChapters(file);positionFile=null;positionSource='';positionPending=null;
  audio.pause();audio.removeAttribute('src');audio.load();safeRelease();
  radioFallback=false;
   if(file.radio){
@@ -830,8 +940,7 @@ function switchTrack(i,autoplay=false,fromNavigation=false,resumeSeconds=0){
    updateFavorite();
    if(info.artwork)loadArtwork(info.artwork,version,file);
    else stage?.classList.remove('is-checking-artwork');
-   setPlayerTitle(info.title);
-   artist.textContent=info.artist||'Моя музыка';
+   if(chapterRows.length)paintChapter(true);else{setPlayerTitle(info.title);artist.textContent=info.artist||'Моя музыка'}
    collectionRender();mediaSession();syncResume();
   }).catch(()=>{if(version===selectVersion)stage?.classList.remove('is-checking-artwork')});
  }
@@ -1021,7 +1130,7 @@ if(miniOpen){
   // The swipe is a deliberate transport gesture, not a click to open.
   event.preventDefault();
   suppressMiniClickUntil=Date.now()+400;
-  if(tracks.length>1){
+  if(tracks.length>1||chapterRows.length>1){
    navigateTrack(dx>0?-1:1);
   }
  },{passive:false});
@@ -1095,21 +1204,22 @@ options.addEventListener('click',event=>{
  const btn=event.target.closest('[data-music-provider]');
  if(btn&&options.contains(btn))providerChoose(btn.dataset.musicProvider);
 });
-audio.addEventListener('timeupdate',()=>{updateTime();savePosition()});
-audio.addEventListener('seeked',()=>{updateTime();savePosition(true)});
+audio.addEventListener('timeupdate',()=>{chapterTick();updateTime();savePosition()});
+audio.addEventListener('seeking',()=>{chapterLastTime=-1});
+audio.addEventListener('seeked',()=>{chapterLastTime=-1;paintChapter();updateTime();savePosition(true)});
 audio.addEventListener('durationchange',updateTime);
-audio.addEventListener('loadedmetadata',()=>{restorePosition();updateTime()});
+audio.addEventListener('loadedmetadata',()=>{restorePosition();updateTime();loadChapters()});
 audio.addEventListener('canplay',()=>{restorePosition();updateTime()});
-audio.addEventListener('playing',()=>{homeMusicSession=true;const file=tracks[index];if(file&&!file.radio){recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);recentPlayedAt.set(file,Date.now());for(const item of recentPlayedAt.keys())if(!recentFiles.includes(item))recentPlayedAt.delete(item);rememberRecent()}updatePlay();sayviMessage('');qualifyDiscoveryListen()});
-audio.addEventListener('pause',()=>{stopDiscoveryListen();savePosition(true);updatePlay()});
+audio.addEventListener('playing',()=>{stopChapterScan();homeMusicSession=true;const file=tracks[index];if(file&&!file.radio){recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);recentPlayedAt.set(file,Date.now());for(const item of recentPlayedAt.keys())if(!recentFiles.includes(item))recentPlayedAt.delete(item);rememberRecent()}updatePlay();sayviMessage('');qualifyDiscoveryListen()});
+audio.addEventListener('pause',()=>{stopDiscoveryListen();savePosition(true);updatePlay();scheduleChapterScan()});
 audio.addEventListener('ended',()=>{stopDiscoveryListen();if(isRadio()){updatePlay();sayviMessage('Эфир прервался. Нажмите Play для повторного подключения.');return}if(!navigateTrack(1,true)){savePosition(true);updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
 audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(isRadio()){const station=tracks[index],version=selectVersion;if(!radioFallback&&station.fallback){radioFallback=true;audio.src=station.fallback;artist.textContent=station.country+' · '+station.fallbackQuality;audio.play().catch(()=>{if(version===selectVersion)sayviMessage('Резервный эфир недоступен.')});return}sayviMessage('Эфир недоступен. Попробуйте другую станцию.');return}if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
 /* Screen lock/background can dispatch lifecycle changes.
  * Never stop an actively playing track on pagehide: the OS decides if WebKit
  * can continue. A full browser termination remains outside PWA control. */
 window.addEventListener('beforeunload',event=>{if(librarySaving){event.preventDefault();event.returnValue=''}});
-window.addEventListener('pagehide',()=>savePosition(true));
-document.addEventListener('visibilitychange',()=>{if(document.hidden)savePosition(true)});
+window.addEventListener('pagehide',()=>{savePosition(true);stopChapterScan()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){savePosition(true);stopChapterScan()}else scheduleChapterScan()});
 // Keep object URLs intact in back-forward cache; document teardown frees them.
 window.addEventListener('pageshow',event=>{
  if(event.persisted&&tracks.length&&index>=0&&!audio.getAttribute('src')){
