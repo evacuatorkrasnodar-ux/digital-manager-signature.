@@ -135,8 +135,8 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
  padding:0;color:var(--text);
 }
 #sayviMusicMini .sv-music-mini-transport svg{
- display:block;width:21px;height:21px;fill:none;
- stroke:currentColor;stroke-width:1.45;
+ display:block;width:24px;height:24px;fill:currentColor;
+ stroke:none;
  stroke-linecap:round;stroke-linejoin:round;
 }
 #sayviMusicMini .sv-music-mini-skip:disabled{
@@ -292,11 +292,10 @@ html:root:not(.seyveo-conversation) body #sayviMusicMini{
   opacity:1!important;
 }
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport svg{
-  width:22px!important;
-  height:22px!important;
-  stroke:currentColor!important;
-  stroke-width:1.85!important;
-  fill:none!important;
+  width:24px!important;
+  height:24px!important;
+  stroke:none!important;
+  fill:#000!important;
   opacity:1!important;
   filter:none!important;
   shape-rendering:geometricPrecision!important;
@@ -304,12 +303,13 @@ html:root:not(.seyveo-conversation) body #sayviMusicMini{
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-skip:disabled{
   opacity:1!important;
 }
-/* Always paint the actual SVG glyphs solid black, including disabled Next. */
+/* Filled transport glyphs: black in the light theme, no legacy outline. */
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport button svg,
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport button svg path,
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport button:disabled svg,
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport button:disabled svg path{
-  stroke:#000000!important;
+  fill:#000000!important;
+  stroke:none!important;
   opacity:1!important;
   filter:none!important;
 }
