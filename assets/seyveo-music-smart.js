@@ -215,21 +215,47 @@
   async function karaoke(){
    const file=music()?.rhythmFile?.();
    if(!show('Караоке','lyrics'))return;
-   if(!file){message('Текст доступен для песен из медиатеки, если он встроен в файл.');return}
-   const version=generation;message('Ищем текст в аудиофайле…');
-   let result=null;try{result=await readEmbedded(file)}catch{}
-   if(version!==generation||!dialog.open||mode!=='lyrics')return;
-   if(music()?.rhythmFile?.()!==file){close();return}
+   if(!file){message('Текст доступен для песен из медиатеки.');return}
+   const version=generation,valid=()=>version===generation&&dialog.open&&mode==='lyrics'&&music()?.rhythmFile?.()===file;
+   const engine=w.SEYVEO_LYRICS,id=music()?.recognitionLibrary?.().find(x=>x.file===file)?.id;
+   message('Ищем текст песни…');
+   let result=null,attached=false;
+   try{result=await engine?.get(id);attached=!!result;if(!result)result=await readEmbedded(file)}catch{}
+   if(!valid())return;
    body.replaceChildren();
-   if(!result){message('В этой песне нет встроенного текста. Подключение каталога текстов потребуется отдельно.');return}
-   lyricData={...result,file};
-   if(!result.timed)message('Текст без временных меток — синхронизация недоступна.');
-   for(const line of result.lines){
-    const el=d.createElement(result.timed?'button':'p');el.className='sv-smart-lyric';el.textContent=line.text;
-    if(result.timed){el.type='button';el.addEventListener('click',()=>{if(Number.isFinite(audio.duration))audio.currentTime=Math.min(line.time,audio.duration)})}
-    body.append(el);
-   }
-   updateLine();
+   const render=(data,imported,saved=true)=>{
+    if(!valid())return;
+    body.replaceChildren();current=-2;lyricData=null;
+    const name=d.createElement('strong');name.className='sv-lyrics-song';name.textContent=$('sayviMusicTrack')?.textContent||'Текст песни';body.append(name);
+    if(data){
+     lyricData={...data,file};
+     message(data.timed?'Текст синхронизирован с музыкой.':'Текст без временных меток. Автосинхронизация недоступна.');
+     if(!saved)message('Текст доступен до закрытия страницы: хранилище недоступно.');
+     const controls=d.createElement('div');controls.className='sv-lyrics-actions';body.append(controls);
+     const play=d.createElement('button');play.type='button';play.className='sv-smart-music-choice';const sync=()=>{play.textContent=audio.paused?'Воспроизвести':'Пауза'};sync();
+     play.addEventListener('click',()=>{if(!valid())return;if(audio.paused)audio.play().catch(()=>notify('Не удалось воспроизвести песню.'));else audio.pause();sync()});controls.append(play);
+     for(const line of data.lines){
+      const el=d.createElement(data.timed?'button':'p');el.className='sv-smart-lyric';el.textContent=line.text||'♪';
+      if(data.timed){el.type='button';el.addEventListener('click',()=>{if(valid()&&Number.isFinite(audio.duration))audio.currentTime=Math.max(0,Math.min(line.time,audio.duration))})}
+      body.append(el);
+     }
+    }else message('Текст не найден. Добавьте файл LRC с временными метками или обычный TXT.');
+    if(engine&&id){
+     const input=d.createElement('input');input.type='file';input.accept='.lrc,.txt,text/plain';input.hidden=true;body.append(input);
+     input.addEventListener('change',async()=>{
+      const selected=input.files?.[0];if(!selected||!valid())return;
+      try{
+       const parsed=await engine.read(selected);if(!valid())return;
+       if(!parsed){message('Не удалось прочитать текст. Выберите LRC или TXT до 128 КБ.');return}
+       const saved=await engine.put(id,parsed);if(valid())render(parsed,true,saved);
+      }catch{if(valid())message('Не удалось загрузить текст.')}
+     });
+     action(data?'Заменить текст':'Добавить текст песни',()=>input.click());
+     if(imported)action('Удалить добавленный текст',async()=>{if(!valid())return;const removed=await engine.remove(id);if(valid()){if(removed)karaoke();else message('Не удалось удалить сохранённый текст.')}});
+    }
+    updateLine();
+   };
+   render(result,attached);
   }
   function updateLine(){
    if(mode!=='lyrics'||!lyricData||!dialog.open)return;
@@ -238,10 +264,10 @@
    const next=activeLine(lyricData.lines,audio.currentTime);if(next===current)return;current=next;
    const rows=body.querySelectorAll('.sv-smart-lyric');
    rows.forEach((row,i)=>row.classList.toggle('is-current',i===next));
-   const row=rows[next];if(row)body.scrollTop=Math.max(0,row.offsetTop-body.offsetTop-body.clientHeight*.35);
+   const row=rows[next];if(row)body.scrollTop=Math.max(0,row.offsetTop-body.clientHeight*.35);
   }
   audio.addEventListener('timeupdate',updateLine);audio.addEventListener('seeking',updateLine);
-  d.addEventListener('seyveo:music-state',updateLine);
+  d.addEventListener('seyveo:music-state',()=>{if(mode==='lyrics'&&lyricData&&music()?.rhythmFile?.()!==lyricData.file){karaoke();return}updateLine();const play=body.querySelector('.sv-lyrics-actions button');if(play)play.textContent=audio.paused?'Воспроизвести':'Пауза'});
   // Source quality, never a claim about the Bluetooth/DAC/output chain.
   const sourceCache=new WeakMap();
   let qualityFile=null,qualityResult=null,qualityVersion=0,qualityRadio='',qualityPending=false;
