@@ -148,52 +148,40 @@ void main(){
  float x=vUV.x,v=vUV.y,alpha;vec3 col;
  if(uKind>4.5&&uKind<5.5){
   vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
+  // Hybrid crystal: localized reflections instead of a uniform drawn outline.
+  float upper=peak(a,-2.16,.60),foot=peak(a,1.52,.40);
   if(r>1.0){
-   float glow=gauss(r-1.0,.048)*(.022+.32*peak(a,-2.16,.44)+.29*peak(a,1.30,.58));
-   float floorGlow=gauss(xy.x,.56)*gauss(xy.y-1.052,.049)*.28+gauss(xy.x,.18)*gauss(xy.y-1.036,.022)*.44;
-   glow=clamp(glow+floorGlow,0.0,.75);
-   gl_FragColor=vec4(.10,.86,.88,glow);return;
+   float glow=gauss(r-1.0,.049)*(.23*upper+.29*foot);
+   float floorGlow=gauss(xy.x,.57)*gauss(xy.y-1.052,.052)*.24+gauss(xy.x,.20)*gauss(xy.y-1.039,.028)*.39;
+   gl_FragColor=vec4(.13,.91,.86,clamp(glow+floorGlow,0.0,.68));return;
   }
   float n=sqrt(max(0.0,1.0-r*r));
-  float top=peak(a,-2.08,.61),bottom=peak(a,1.37,.57),right=peak(a,.60,.61),left=peak(a,2.85,.48);
-  float lip=.15+.82*top+.62*bottom+.64*right+.24*left;
-  float edge=gauss(r-.994,.0046),edgeSoft=gauss(r-.974,.018);
-  // Project a broad softbox onto the spherical face, rather than painting a rim.
-  // An offset circular boundary gives the inner edge a different curvature.
-  float innerArc=length(xy-vec2(.055,.175));
-  float softboxAngle=peak(a,-2.16,.76);
-  float crescent=smoothstep(.987,1.003,innerArc)*(1.0-smoothstep(.947,.977,r))*softboxAngle;
-  float reflected=gauss(r-(.953-.042*top),.022+.033*top)*pow(top,2.4);
-  float shoulder=peak(a,-1.05,.60)*gauss(r-.91,.045);
-  float base=gauss(r-(.961-.043*bottom),.058)*bottom;
-  float lowerLens=gauss(r-(.911-.022*bottom),.065)*peak(a,1.14,.80);
-  float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left);
+  float upperRight=peak(a,-.66,.35);
+  float lowerRight=peak(a,.78,.51),lowerLeft=peak(a,2.38,.40);
   float fres=pow(max(0.0,1.0-n),3.0);
-  // Subtle optical separation: neutral specular light and a quiet inner lens edge.
-  // Same analytic glass pass; no changes to cloth, geometry or animation.
-  float light=clamp(.16*reflected+1.32*edge*lip+.24*edgeSoft*lip+.35*base+.07*inner+.31*lowerLens+.09*shoulder,0.0,1.0);
-  float blueDepth=gauss(r-.91,.085)*(.30+.43*top+.27*bottom);
-  float softReflection=gauss(r-.82,.028)*peak(a,-1.03,.47);
-  float lensShade=gauss(r-.914,.033)*(1.0-.82*top)*(.65+.35*right);
-  col=mix(vec3(.015,.39,.62),vec3(.05,.87,.94),clamp(light*1.65+.15*blueDepth,0.0,1.0));
-  col=mix(col,vec3(.95,1.0,.99),smoothstep(.51,.98,light));
-  // Cyan transmitted light concentrated in the lower lens, not the whole rim.
-  col=mix(col,vec3(.09,.94,.88),.18*lowerLens);
-  alpha=clamp(.006+.085*fres+.88*light+.14*blueDepth,0.0,.98);
-  // Composite a faint dark inner edge and a neutral reflection in the existing pass.
-  float shade=.065*lensShade*(1.0-alpha);
-  col=(col*alpha+vec3(.022,.065,.09)*shade)/max(.0001,alpha+shade);
-  alpha=clamp(alpha+shade,0.0,.98);
-  // Silver softbox is a separate optical contribution in the same fragment,
-  // composited over the blue lens instead of being diluted into its color.
-  float silver=clamp(crescent*(.28+.72*peak(a,-2.12,.39))+.025*softReflection,0.0,.94);
-  vec3 reflectedWhite=mix(vec3(.55,.79,.83),vec3(.99,1.0,.99),peak(a,-2.14,.42));
+  // A soft, directional Fresnel edge: almost invisible on the side walls.
+  float rimWeight=clamp(.015+.72*upper+.68*foot+.48*lowerRight+.38*lowerLeft+.15*upperRight,0.0,1.0);
+  float rim=gauss(r-.991,.008)*rimWeight;
+  float rimTail=gauss(r-.967,.025)*rimWeight;
+  // Upper reflection follows a curved lens with a small secondary shoulder.
+  float arc=length(xy-vec2(.055,.175));
+  float band=smoothstep(.988,1.005,arc)*(1.0-smoothstep(.948,.978,r));
+  float mainReflection=band*peak(a,-2.05,.68);
+  float secondary=gauss(r-(.954-.052*upperRight),.032)*upperRight;
+  float lowerLens=gauss(r-.925,.065)*clamp(.70*foot+.45*lowerRight+.36*lowerLeft,0.0,1.0);
+  float sideDepth=gauss(r-.922,.075)*(.28*upper+.18*lowerRight+.12*lowerLeft);
+  float light=clamp(.80*rim+.23*rimTail+.39*lowerLens+.16*secondary,0.0,1.0);
+  col=mix(vec3(.035,.36,.43),vec3(.11,.88,.84),clamp(light*1.7+.20*sideDepth,0.0,1.0));
+  col=mix(col,vec3(.83,1.0,.97),smoothstep(.48,.92,light));
+  alpha=clamp(.004+.028*fres+.80*light+.14*sideDepth,0.0,.92);
+  // Silver-to-aqua light is translucent and fades along the curved surface.
+  float silver=clamp(mainReflection*(.26+.65*peak(a,-2.05,.43))+.34*secondary,0.0,.91);
+  vec3 reflectedWhite=mix(vec3(.36,.79,.78),vec3(.95,1.0,.99),peak(a,-2.05,.43));
   col=(col*alpha*(1.0-silver)+reflectedWhite*silver)/max(.0001,alpha*(1.0-silver)+silver);
   alpha=alpha*(1.0-silver)+silver;
-  // Concentrated caustic at the foot of the crystal.
-  float caustic=.66*gauss(r-.985,.020)*peak(a,1.57,.21);
-  col=(col*alpha*(1.0-caustic)+vec3(.55,1.0,.96)*caustic)/max(.0001,alpha*(1.0-caustic)+caustic);
-  alpha=clamp(alpha*(1.0-caustic)+caustic,0.0,.98);
+  float caustic=.57*gauss(r-.978,.027)*peak(a,1.57,.26);
+  col=(col*alpha*(1.0-caustic)+vec3(.52,1.0,.94)*caustic)/max(.0001,alpha*(1.0-caustic)+caustic);
+  alpha=clamp(alpha*(1.0-caustic)+caustic,0.0,.97);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.89,.16)+gauss(x-.73,.19);
