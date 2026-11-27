@@ -101,6 +101,9 @@
   if(after.covered>=before.covered*.85&&(after.largest<=before.largest+10||after.count>=before.count*1.5))return candidate;
   return {...old,autoReviewVersion:2,...(Number.isFinite(duration)?{duration}:{})};
  }
+ function adjustedLyricTime(time,offset){
+  return Math.max(0,time+Math.max(-15,Math.min(15,Number(offset)||0)));
+ }
  function sleepMinutes(q){
   const m=q.match(/^(?:выключи|останови|поставь на паузу)\s+музыку\s+через\s+(\d{1,3})\s*(?:минут[уы]?|мин\.?)$/i);
   if(!m)return null;const n=Number(m[1]);return n>=1&&n<=180?n:null;
@@ -113,7 +116,7 @@
   const notify=t=>{const el=$('sayviMusicStatus');if(el){el.textContent=t;el.hidden=false}};
   const dialog=$('svSmartMusicSheet'),body=$('svSmartMusicBody'),title=$('svSmartMusicTitle');
   const karaokePanel=$('svInlineKaraoke'),karaokeBody=$('svInlineKaraokeBody'),karaokeSettings=$('svInlineKaraokeSettings'),karaokeTools=$('svInlineKaraokeTools');
-  let lyricAbort=null,lyricFile=null,lyricGeneration=0,lyricsActive=false;
+  let lyricAbort=null,lyricFile=null,lyricGeneration=0,lyricsActive=false,lyricOffset=0;
   let activeWords=[],lyricRows=[],lastLyricTime=-1,lyricScrollTarget=null,lyricScrollDeadline=0,lyricWatch=0,lastGap='',lyricDebug=false,lyricDebugAt=0;
   function cancelLyric(){lyricAbort?.abort();lyricAbort=null}
   const close=()=>{cancelRecognition();if(dialog?.open)dialog.close();++generation;mode=''};
@@ -303,6 +306,7 @@
    if(!file){message('Текст доступен для песен из медиатеки.');return}
    const version=lyricGeneration,valid=()=>version===lyricGeneration&&lyricsActive&&music()?.rhythmFile?.()===file;
    const engine=w.SEYVEO_LYRICS,id=music()?.recognitionLibrary?.().find(x=>x.file===file)?.id;
+   lyricOffset=0;try{if(id)lyricOffset=Math.max(-15,Math.min(15,Number(w.localStorage.getItem('seyveo-lyric-offset:'+id))||0))}catch{}
    message('Ищем текст песни…');
    let result=null,attached=false;
    try{result=await engine?.get(id);attached=!!result;if(!result)result=await readEmbedded(file)}catch{}
@@ -333,6 +337,25 @@
      }
      if(data.draft&&data.timed&&data.lines.every(line=>!line.text?.trim()||wordTiming(line))&&engine&&id&&['localhost','127.0.0.1'].includes(w.location.hostname))
       action('Повторить распознавание текста',()=>{if(valid())render(null,false)},settings);
+     if(data.timed){
+      const offsetBox=d.createElement('div');offsetBox.className='sv-lyric-offset';
+      const label=d.createElement('p');label.textContent='Синхронизация этой песни';
+      const value=d.createElement('output');value.setAttribute('aria-live','polite');
+      const controls=d.createElement('div');controls.className='sv-lyric-offset-controls';
+      const setOffset=delta=>{
+       if(!valid())return;
+       lyricOffset=Math.round(Math.max(-15,Math.min(15,delta))*10)/10;
+       try{if(id)w.localStorage.setItem('seyveo-lyric-offset:'+id,String(lyricOffset))}catch{}
+       value.textContent=(lyricOffset>0?'+':'')+lyricOffset.toFixed(1)+' с';
+       updateLine(true);paintLyricDebug(true);
+      };
+      for(const [caption,aria,adjust] of [['−','Показать текст позже',()=>lyricOffset-.5],['0','Сбросить поправку',()=>0],['+','Показать текст раньше',()=>lyricOffset+.5]]){
+       const button=d.createElement('button');button.type='button';button.textContent=caption;button.setAttribute('aria-label',aria);button.addEventListener('click',()=>setOffset(adjust()));controls.append(button);
+      }
+      offsetBox.append(label,value,controls);settings.append(offsetBox);
+      message('Если текст отстаёт, нажмите «+». Если опережает — «−». Поправка запоминается для этой песни.',settings);
+      value.textContent=(lyricOffset>0?'+':'')+lyricOffset.toFixed(1)+' с';
+     }
      action(lyricDebug?'Скрыть диагностику':'Диагностика синхронизации',()=>{lyricDebug=!lyricDebug;setLyricSettings(false);paintLyricDebug(true)},settings);
      if(!saved)message('Текст доступен до закрытия страницы: хранилище недоступно.',settings);
      const save=d.createElement('button');save.type='button';save.className='sv-smart-music-choice';
@@ -385,7 +408,7 @@
         words.push({span,start,end:finish,last:-1});
        });
       }else el.textContent=line.text||'♪';
-      if(data.timed){el.type='button';el.addEventListener('click',()=>{if(valid()&&Number.isFinite(audio.duration))audio.currentTime=Math.max(0,Math.min(line.time,audio.duration))})}
+      if(data.timed){el.type='button';el.addEventListener('click',()=>{if(valid()&&Number.isFinite(audio.duration))audio.currentTime=Math.max(0,Math.min(line.time-lyricOffset,audio.duration))})}
       fragment.append(el);lyricRows.push({el,words});
      });
      body.append(fragment);
@@ -504,7 +527,7 @@
    const now=w.performance.now();if(!force&&now-lyricDebugAt<500)return;lyricDebugAt=now;
    const fmt=n=>Number.isFinite(n)?n.toFixed(1):'—';
    const lines=lyricData?.lines||[],line=lines[current],next=lines[current+1];
-   el.textContent='V29 · аудио '+fmt(audio.currentTime)+' с · '+(audio.paused?'пауза':'играет')+' · '+(lyricData?.timed?'строка '+(current+1)+'/'+lines.length:'нет меток')+' · метки '+fmt(line?.time)+' → '+fmt(next?.time)+' с · прокрутка '+Math.round(karaokeBody.scrollTop)+'/'+(lyricScrollTarget??'—')+(lastGap?' · разрыв меток':'');
+   el.textContent='V30 · ASR '+(lyricData?.recognitionVersion===2?'2':lyricData?.draft?'1':'—')+' · сдвиг '+fmt(lyricOffset)+' с · аудио '+fmt(audio.currentTime)+' с · '+(audio.paused?'пауза':'играет')+' · '+(lyricData?.timed?'строка '+(current+1)+'/'+lines.length:'нет меток')+' · метки '+fmt(line?.time)+' → '+fmt(next?.time)+' с · прокрутка '+Math.round(karaokeBody.scrollTop)+'/'+(lyricScrollTarget??'—')+(lastGap?' · разрыв меток':'');
   }
   function checkLyricClock(){
    if(!lyricsActive)return;
@@ -520,7 +543,7 @@
   }
   function updateLine(immediate=false){
    if(!lyricsActive||!lyricData?.timed||!karaokeBody||music()?.rhythmFile?.()!==lyricData.file)return;
-   const time=audio.currentTime;if(!Number.isFinite(time))return;
+   const time=adjustedLyricTime(audio.currentTime,lyricOffset);if(!Number.isFinite(time))return;
    const seek=immediate===true||Math.abs(time-lastLyricTime)>1.2;
    lastLyricTime=time;
    const next=activeLine(lyricData.lines,time);
@@ -827,5 +850,5 @@
   }
   w.SEYVEO_MUSIC_SMART=Object.freeze({handle,share,sleepSheet,karaoke,soundSheet,recognitionSheet});
  }
- return {embeddedLyrics,activeLine,lyricWindow,lyricGap,draftCoverage,needsDraftReview,needsDraftUpgrade,preferDraft,sleepMinutes,install};
+ return {embeddedLyrics,activeLine,lyricWindow,lyricGap,draftCoverage,needsDraftReview,needsDraftUpgrade,preferDraft,adjustedLyricTime,sleepMinutes,install};
 });
