@@ -170,26 +170,26 @@
  const sceneLevels=new Float32Array(8);
  // Liquid Sound: bounded, locally rendered ribbons, no external graphics or audio path.
  const liquidCanvas=playerScene?.querySelector('#svLiquidSoundCanvas');
- const liquidToggle=playerScene?.querySelector('#svLiquidSoundToggle');
  const liquidLabel=playerScene?.querySelector('#svLiquidSoundLabel');
  let liquidContext=null;
  let liquidGPU=null,liquidGPUAttempted=false;
  try{liquidContext=liquidCanvas?.getContext('2d',{alpha:true})||null}catch{}
  let liquidMode=true,liquidLast=0,liquidSize=0,liquidGradient=null,liquidPhase=0,liquidClock=-1;
- let liquidQuality=1,liquidSlowFrames=0,liquidAmbientLast=0;
+ let liquidQuality=1,liquidSlowFrames=0,liquidAmbientLast=0,liquidRenderCost=0;
+ let liquidAutoReason="";
+ // Session-only protection: never bounce between visualizers during playback.
  function liquidInterval(){return liquidQuality<.85?50:liquidMobile?40:32}
  const liquidEnergy=new Float32Array(3);
- try{liquidMode=localStorage.getItem('seyveo.music.visualizer')!=='classic'}catch{}
- const TAU=Math.PI*2;
  const liquidMobile=window.matchMedia?.('(max-width: 600px)').matches||((navigator.hardwareConcurrency||8)<=4);
- const liquidSteps=liquidMobile?120:180,liquidThreads=liquidMobile?36:64;
- const angles=Array.from({length:liquidSteps+1},(_,i)=>{const a=i/liquidSteps*TAU;return [a,Math.cos(a),Math.sin(a),Math.cos(2*a),Math.sin(2*a),Math.cos(3*a),Math.sin(3*a)]});
  function liquidVisible(){return !!liquidContext&&liquidMode&&!!audio&&!document.hidden&&location.hash==='#sayvi-music'&&musicPage?.dataset.musicView==='player'&&!musicPage.hidden&&visibleScenes.get(playerScene)!==false&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork')}
  function releaseLiquid(){
   if(liquidGPU){try{liquidGPU.dispose?.()}catch{}liquidGPU=null}
-  liquidGPUAttempted=false;liquidLast=0;liquidClock=-1;liquidSlowFrames=0;liquidAmbientLast=0;
+  liquidGPUAttempted=false;liquidLast=0;liquidClock=-1;liquidSlowFrames=0;liquidAmbientLast=0;liquidRenderCost=0;
   if(liquidSize){liquidCanvas.width=liquidCanvas.height=1;liquidSize=0;liquidGradient=null}
   liquidEnergy.fill(0);
+ }
+ function fallBackLiquid(reason){
+  liquidAutoReason=reason;liquidMode=false;syncLiquidMode();
  }
  function paintLiquid(timestamp,bass=0,mid=0,air=0,force=false){
   if(!liquidVisible()||document.hidden)return;
@@ -197,9 +197,12 @@
   if(!force&&timestamp-liquidLast<interval-1)return;
   const dt=liquidLast?clamp(timestamp-liquidLast,1,100):33;
   if(!force&&liquidLast){
-   liquidSlowFrames=dt>interval+23?liquidSlowFrames+1:Math.max(0,liquidSlowFrames-1);
-   if(liquidSlowFrames>=12&&liquidQuality>.64){liquidQuality=liquidQuality>.85?.8:.64;liquidSlowFrames=0}
+   const overloaded=dt>interval+23||liquidRenderCost>interval*.80;
+   liquidSlowFrames=overloaded?liquidSlowFrames+1:Math.max(0,liquidSlowFrames-1);
+   if(liquidQuality>.64&&liquidSlowFrames>=12){liquidQuality=liquidQuality>.85?.8:.64;liquidSlowFrames=0}
+   else if(liquidQuality<=.64&&liquidSlowFrames>=24){fallBackLiquid("slow-render");return}
   }
+  const renderStarted=performance.now();
   liquidLast=timestamp;
   const cssSize=liquidCanvas.clientWidth;
   if(!cssSize)return;
@@ -227,8 +230,7 @@
    liquidGradient.addColorStop(1,'rgba(3,22,29,0)');
   }
   ctx.globalAlpha=1;ctx.fillStyle=liquidGradient;ctx.fillRect(0,0,400,400);
-  // Render the GPU layer only when Liquid Sound is visible. The existing
-  // Canvas 2D renderer remains intact for unavailable/lost WebGL contexts.
+  // WebGL only. Unsupported/lost contexts use the original lightweight SVG.
   if(!liquidGPUAttempted){
    liquidGPUAttempted=true;
    try{liquidGPU=window.SEYVEO_LIQUID_GL?.create(liquidMobile)||null}catch{liquidGPU=null}
@@ -236,268 +238,21 @@
   if(liquidGPU){
    try{
     const frame=liquidGPU.render(pixels,p,b,m,h);
-    if(frame){ctx.drawImage(frame,0,0,400,400);return}
+    if(frame){ctx.drawImage(frame,0,0,400,400);liquidRenderCost=force?0:performance.now()-renderStarted;return}
    }catch{}
    try{liquidGPU.dispose?.()}catch{}liquidGPU=null;
   }
 
-  const radius=164*(1+.025*b),t=p*.40;
-  const rot=-.035+.065*Math.sin(t*.55),cr=Math.cos(rot),sr=Math.sin(rot);
-  // A nearly spherical shell with independently shaped turning edges.
-  // Local lobes reproduce the broad upper-left and lower-right light folds,
-  // with a shallow double fold at the upper-right shoulder.
-  const peak=(angle,center,width)=>Math.exp(-(1-Math.cos(angle-center))/(width*width));
-  const drift=.10*Math.sin(t*.58);
-  // Reference-derived polar profiles for the lit fold, rear edge and light.
-  // Independent boundaries cross naturally as the silk turns over in space.
-  const profiles=[
-   [.997,.996,.966,.982,.996,.994,.973,.981,.981,.989,.969,.965,.950,.912,.884,.872,.890,.911,.901,.832,.813,.935,.993,.996],
-   [.90,.914,.935,.947,.951,.942,.917,.927,.953,.930,.899,.997,1,1,1,1,1,1,1,1,1,.999,.930,.909],
-   [.68,1,1,1,.98,.99,1,1,1,.89,.80,.77,.56,.52,.72,.90,.98,1,1,.98,.94,1,.98,.72]
-  ];
-  const profile=(values,a)=>{
-   const n=values.length,z=((a/(Math.PI*2)*n)%n+n)%n,i=Math.floor(z),f=z-i;
-   const get=k=>values[(i+k+n)%n],A=get(-1),B=get(0),C=get(1),D=get(2);
-   return B+.5*f*(C-A+f*(2*A-5*B+4*C-D+f*(3*(B-C)+D-A)));
-  };
-  const geom=angles.map(([a,ca,sa])=>{
-   const aa=a+drift;
-   return {a,ca,sa,
-    lip:profile(profiles[0],aa),back:profile(profiles[1],aa),
-    pinch:peak(aa,-1.0,.21),
-    innerTop:peak(aa,-1.85,.54),
-    innerBottom:peak(aa,1.52,.40),
-    innerKnot:peak(aa,1.49,.12)};
-  });
-  const point=(g,kind,u)=>{
-   const {a,lip,back,pinch,innerTop,innerBottom,innerKnot}=g;
-   let r;
-   if(kind===0){
-    r=radius*(back+(lip-back)*u+(.032+.017*m)*pinch*Math.sin(Math.PI*u));
-   }else{
-    r=radius*(.753+.007*Math.sin(2*a+t)+(.052*innerTop-(.107+.012*m)*innerBottom+.045*innerKnot)*u+.016*innerKnot*Math.sin(Math.PI*u));
-   }
-   const z=a+rot+.018*Math.sin(Math.PI*u)*Math.sin(2*a+.8+t*.45);
-   return [200+r*Math.cos(z),200+r*Math.sin(z)];
-  };
-  // Smooth closed paths between sampled vertices. Straight polygon chords
-  // shared by all strands can create radial scallops on a high-DPI canvas.
-  const path=(pts,close=true)=>{
-   ctx.beginPath();
-   if(!pts.length)return;
-   if(!close){ctx.moveTo(...pts[0]);for(let i=1;i<pts.length;i++)ctx.lineTo(...pts[i]);return;}
-   const n=pts.length-1,first=pts[0],last=pts[n-1];
-   ctx.moveTo((first[0]+last[0])/2,(first[1]+last[1])/2);
-   for(let i=0;i<n;i++){
-    const q=pts[i],next=pts[(i+1)%n];
-    ctx.quadraticCurveTo(q[0],q[1],(q[0]+next[0])/2,(q[1]+next[1])/2);
-   }
-   ctx.closePath();
-  };
-  // Light follows a single turning edge, instead of drawing two complete hoops.
-  function ribbon(kind,count){
-   const rows=Array.from({length:count},(_,j)=>geom.map(g=>point(g,kind,j/(count-1))));
-   const edgeU=kind===0?1:0;
-   const intensity=a=>kind===0?clamp(profile(profiles[2],a+drift),0,1):clamp(.24+.78*peak(a+drift,-1.85,.60)+.78*peak(a+drift,1.52,.42),0,1);
-   const conic=typeof ctx.createConicGradient==='function';
-   const fallback=ctx.createLinearGradient(64,55,339,345);
-   fallback.addColorStop(0,'rgba(151,255,233,.88)');
-   fallback.addColorStop(.24,'rgba(229,255,249,1)');
-   fallback.addColorStop(.48,'rgba(73,186,174,.22)');
-   fallback.addColorStop(.77,'rgba(174,255,235,.96)');
-   fallback.addColorStop(1,'rgba(224,255,247,.86)');
-   // Continuous translucent silk, with subtle fibres rather than a luminous comb.
-   const appendLoop=pts=>{
-    const n=pts.length-1,first=pts[0],last=pts[n-1];
-    ctx.moveTo((first[0]+last[0])/2,(first[1]+last[1])/2);
-    for(let i=0;i<n;i++){
-     const q=pts[i],next=pts[(i+1)%n];
-     ctx.quadraticCurveTo(q[0],q[1],(q[0]+next[0])/2,(q[1]+next[1])/2);
-    }
-    ctx.closePath();
-   };
-   const bands=liquidMobile?20:30;
-   for(let j=0;j<bands;j++){
-    const u=(j+.5)/bands,rim=Math.exp(-Math.pow(u-edgeU,2)/.085),body=Math.sin(Math.PI*u);
-    const rowA=rows[Math.round(j/bands*(count-1))],rowB=rows[Math.round((j+1)/bands*(count-1))];
-    let color=fallback;
-    if(conic){
-     color=ctx.createConicGradient(rot,200,200);
-     for(let k=0;k<=40;k++){
-      const a=k/40*Math.PI*2,light=intensity(a);
-      const alpha=clamp(.008+Math.pow(light,1.8)*(.98*rim+.34*body),0,.98),white=.86*rim*light;
-      color.addColorStop(k/40,'rgba('+Math.round(70+175*white)+','+Math.round(232+23*white)+','+Math.round(209+42*white)+','+alpha.toFixed(3)+')');
-     }
-    }
-    ctx.beginPath();appendLoop(rowA);appendLoop(rowB);
-    ctx.fillStyle=color;ctx.globalAlpha=conic?1:.025+.81*rim+.25*body;
-    ctx.fill('evenodd');
-    ctx.strokeStyle=color;ctx.globalAlpha*=.35;ctx.lineWidth=.30;ctx.stroke();
-   }
-   for(let j=2;j<count-2;j+=4){
-    const u=j/(count-1),rim=Math.exp(-Math.pow(u-edgeU,2)/.10);
-    path(rows[j]);ctx.strokeStyle=fallback;
-    ctx.globalAlpha=.035+.075*rim;ctx.lineWidth=.20;ctx.stroke();
-   }
-   ctx.globalAlpha=1;
-   ctx.fillStyle='rgba(170,255,237,.18)';
-   ctx.beginPath();
-   for(let j=3;j<count-3;j+=3){
-    for(let i=1;i<geom.length-1;i+=2){
-     const g=geom[i];
-     if(kind===0&&Math.abs(g.lip-g.back)<.052)continue;
-     const q=point(g,kind,clamp((j+.25*Math.sin(i*2.399963+j))/(count-1),0,1));
-     const d=.27+.08*intensity(g.a);
-     ctx.rect(q[0]-d*.5,q[1]-d*.5,d,d);
-    }
-   }
-   ctx.fill();
-   let gloss=fallback;
-   if(conic){
-    gloss=ctx.createConicGradient(rot,200,200);
-    for(let k=0;k<=48;k++){
-     const a=k/48*Math.PI*2,light=kind===0?clamp(.06+.94*Math.pow(intensity(a),1.35),0,1):.95;
-     gloss.addColorStop(k/48,'rgba(232,255,249,'+light.toFixed(3)+')');
-    }
-   }
-   path(rows[kind===0?count-1:0]);ctx.strokeStyle=gloss;
-   ctx.globalAlpha=.15;ctx.lineWidth=3.8;ctx.stroke();
-   ctx.globalAlpha=.38;ctx.lineWidth=2.1;ctx.stroke();
-   ctx.globalAlpha=1;ctx.lineWidth=1.20;ctx.stroke();
-   // A narrow feathered reflection at the left turn and the lower-right rim.
-   // Short arcs keep the highlights local instead of adding a second hoop.
-   if(kind===0){
-    for(const [center,spread,strength] of [[3.52,.46,.54],[.73,.63,.40],[4.09,.55,.42]]){
-     const arc=geom.filter(g=>Math.abs(g.a-center)<spread);
-     if(arc.length<3)continue;
-     const pts=arc.map(g=>point(g,0,.98));
-     const g=ctx.createLinearGradient(...pts[0],...pts[pts.length-1]);
-     g.addColorStop(0,'rgba(103,255,225,0)');
-     g.addColorStop(.5,'rgba(134,255,231,.64)');
-     g.addColorStop(1,'rgba(103,255,225,0)');
-     path(pts,false);ctx.strokeStyle=g;ctx.globalAlpha=strength*.20;ctx.lineWidth=6;ctx.stroke();
-     ctx.globalAlpha=strength*.55;ctx.lineWidth=2.4;ctx.stroke();
-    }
-   }
-   // Short, tapering return fold on the upper-right shoulder.
-   if(kind===0){
-    const from=5.10,to=5.58,fan=geom.filter(g=>g.a>=from&&g.a<=to);
-    if(fan.length>2){
-     const first=point(fan[0],0,1),last=point(fan[fan.length-1],0,1);
-     const sheen=ctx.createLinearGradient(...first,...last);
-     sheen.addColorStop(0,'rgba(157,255,234,0)');
-     sheen.addColorStop(.45,'rgba(223,255,246,.96)');
-     sheen.addColorStop(1,'rgba(157,255,234,0)');
-     for(let j=0;j<12;j++){
-      const v=j/11;
-      const pts=fan.map(g=>point(g,0,1-(.24+.52*v)*Math.pow(Math.sin(Math.PI*(g.a-from)/(to-from)),1.6)));
-      path(pts,false);ctx.strokeStyle=sheen;ctx.globalAlpha=.10+.72*v*v;ctx.lineWidth=.22+.38*v*v;ctx.stroke();
-     }
-    }
-   }
-   ctx.globalAlpha=1;
-  }
-  // A continuous folded sheet, projected from curved material coordinates.
-  // The upper and lower edges share their tips but separate through the middle.
-  const R=radius*.753,tilt=-.27+.035*Math.sin(t*.7),mc=Math.cos(tilt),ms=Math.sin(tilt);
-  const project=(x,y)=>[200+R*(x*mc-y*ms),200+R*(x*ms+y*mc)];
-  const shape=x=>{
-   const env=Math.sqrt(Math.max(0,1-x*x));
-   const curl=Math.exp(-Math.pow((x+.73)/.30,2));
-   const wave=.025*Math.sin(t*.65+x*2.7)+.035*m*Math.sin(x*3.1+t);
-   const upper=env*(-.125-.115*curl+.028*x+wave);
-   const lower=env*(.155+.095*Math.exp(-Math.pow((x+.36)/.47,2))-.090*x+wave);
-   return {env,upper,lower};
-  };
-  const membrane=(x,u)=>{
-   const {env,upper}=shape(x);
-   const arc=-env*(.985+.005*Math.sin(t));
-   const flow=Math.sin(Math.PI*u);
-   const xx=x+.065*env*flow*Math.sin(x*1.9+t*.55);
-   const yy=arc+(upper-arc)*u+env*.12*flow*flow*Math.sin(x*2.4+.8+t*.45);
-   return project(xx,yy);
-  };
-  const fold=(x,v)=>{
-   const {env,upper,lower}=shape(x);
-   const curl=Math.sin(Math.PI*v);
-   const xx=x+env*(.10+.035*m)*curl*(.74-.26*x);
-   const yy=upper+(lower-upper)*(v+.10*curl);
-   return project(xx,yy);
-  };
-  const mesh=liquidMobile?48:78,columns=liquidMobile?94:140;
-  const memGradient=ctx.createLinearGradient(72,235,324,155);
-  memGradient.addColorStop(0,'rgba(151,252,230,.86)');
-  memGradient.addColorStop(.24,'rgba(135,226,213,.67)');
-  memGradient.addColorStop(.62,'rgba(153,244,227,.74)');
-  memGradient.addColorStop(1,'rgba(232,255,249,.95)');
-  // The upper surface is a delicate staggered grid of actual microdots.
-  for(let j=0;j<mesh;j++){
-   const u=(j+.45)/mesh,size=.40+.16*Math.pow(u,4)+.04*h;
-   ctx.beginPath();
-   for(let i=1;i<columns;i++){
-    const x=-1+2*(i+(j%2)*.34)/columns;
-    const [px,py]=membrane(x,u);
-    ctx.rect(px-size/2,py-size/2,size,size);
-   }
-   ctx.fillStyle=memGradient;ctx.globalAlpha=.54+.35*Math.pow(u,5);ctx.fill();
-  }
-  // Follow the fabric across the fold, rather than stacking horizontal waves.
-  // Thin dotted longitudinal fibres converge at both tips and curve in depth.
-  const foldCols=liquidMobile?108:168,foldCount=liquidMobile?25:38;
-  for(let j=0;j<foldCount;j++){
-   const v=(j+.5)/foldCount,size=.41+.15*Math.pow(v,3);
-   ctx.beginPath();
-   for(let i=1;i<foldCols;i++){
-    const x=-1+2*i/foldCols;
-    const [px,py]=fold(x,v);
-    ctx.rect(px-size/2,py-size/2,size,size);
-   }
-   ctx.fillStyle=memGradient;ctx.globalAlpha=.44+.49*Math.pow(v,2);ctx.fill();
-  }
-  // A narrow softly luminous turning edge, with no solid white stripe.
-  const foldEdge=Array.from({length:liquidSteps+1},(_,i)=>fold(-1+2*i/liquidSteps,1));
-  path(foldEdge,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.16;ctx.lineWidth=1.5;ctx.stroke();
-  ctx.globalAlpha=.60;ctx.lineWidth=.43;ctx.stroke();
-  // Tip reflections taper along the fabric; especially the hooked left tip.
-  for(const side of [-1,1]){
-   const [px,py]=project(side,0),glint=ctx.createRadialGradient(px,py,0,px,py,side<0?11:9);
-   const size=side<0?11:9;
-   glint.addColorStop(0,'rgba(186,255,241,.57)');
-   glint.addColorStop(.36,'rgba(108,235,217,.17)');
-   glint.addColorStop(1,'rgba(108,235,217,0)');
-   ctx.globalAlpha=1;ctx.fillStyle=glint;ctx.fillRect(px-size,py-size,size*2,size*2);
-  }
-  // The back surface follows a lower hemisphere rather than a flat vertical grid.
-  ctx.fillStyle='rgba(119,224,210,.26)';ctx.beginPath();
-  const backRows=liquidMobile?17:24,backCols=liquidMobile?44:65;
-  for(let j=1;j<=backRows;j++){
-   const v=j/(backRows+1);
-   for(let i=1;i<backCols;i++){
-    const x=-1+2*(i+(j%2)*.5)/backCols;
-    const {env,lower}=shape(x);
-    const y=lower+(env*.96-lower)*v;
-    const [px,py]=project(x,y);
-    ctx.rect(px,py,.35,.35);
-   }
-  }
-  ctx.globalAlpha=1;ctx.fill();
-  ribbon(1,liquidMobile?44:68);
-  ribbon(0,liquidMobile?56:84);
-  ctx.globalAlpha=1;
+  fallBackLiquid("webgl-unavailable");
  }
  function syncLiquidMode(){
   const enabled=!!liquidContext&&liquidMode;
   playerScene?.classList.toggle('sv-liquid-mode',enabled);
   musicPage?.classList.toggle('sv-liquid-visualizer',enabled);
-  if(liquidToggle){liquidToggle.hidden=!liquidContext;liquidToggle.setAttribute('aria-pressed',String(enabled));liquidToggle.setAttribute('aria-label',enabled?'Liquid Sound. Переключить на эквалайзер':'Эквалайзер. Переключить на Liquid Sound')}
+  if(musicPage){if(enabled)delete musicPage.dataset.liquidFallback;else musicPage.dataset.liquidFallback=liquidAutoReason||"canvas-unavailable"}
   if(liquidLabel)liquidLabel.textContent=enabled?'SEYVEO LIQUID SOUND':'SEYVEO SOUND';
   if(enabled)paintLiquid(performance.now(),0,0,0,true);else releaseLiquid();
  }
- liquidToggle?.addEventListener('click',event=>{
-  event.stopPropagation();liquidMode=!liquidMode;
-  try{localStorage.setItem('seyveo.music.visualizer',liquidMode?'liquid':'classic')}catch{}
-  syncLiquidMode();
- });
  window.addEventListener('resize',()=>{if(liquidVisible())paintLiquid(performance.now(),...liquidEnergy,true)});
  window.addEventListener('pagehide',releaseLiquid);
  syncLiquidMode();
@@ -578,7 +333,7 @@
    scene=target;sceneBars=Array.from(scene?.querySelectorAll('.sv-music-scene-wave line')||[]);
   }
   const allowed=!!scene&&sceneAllowed();
-  if(scene===playerScene&&liquidMode&&!allowed){liquidClock=-1;if(!liquidSize)paintLiquid(performance.now(),0,0,0,true)}
+  if(scene===playerScene&&liquidMode&&!allowed){liquidClock=-1;liquidLast=0;liquidSlowFrames=0;liquidRenderCost=0;if(!liquidSize)paintLiquid(performance.now(),0,0,0,true)}
   if(scene===playerScene&&liquidMode&&liquidVisible()&&!liquidSize)paintLiquid(performance.now(),0,0,0,true);
   musicPage?.classList.toggle('sv-now-ambient-playing',!!playerScene&&scene===playerScene&&allowed);
   if(!scene)return;
