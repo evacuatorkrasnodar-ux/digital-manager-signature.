@@ -6071,7 +6071,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-mus
 
 #sayviMusicPage #svMusicRecognizeHome>svg{color:#668b9e}
 #svSmartMusicBody a.sv-smart-music-choice{text-decoration:none;box-sizing:border-box}
-</style><script src="assets/seyveo-adaptive-sound.js?v=1"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=32-library-progress"></script><script src="assets/seyveo-music-dock.js?v=36-radio-polish"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=43-soft-orbits"></script><script src="assets/orb-language.js?v=48-adaptive-waves"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
+</style><script src="assets/seyveo-adaptive-sound.js?v=1"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=32-library-progress"></script><script src="assets/seyveo-music-dock.js?v=36-radio-polish"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=44-signature-finish"></script><script src="assets/orb-language.js?v=48-adaptive-waves"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
@@ -7950,9 +7950,9 @@ html.sv-music-browse #sayviMusicPage #sayviDiscoveryPanel:not([hidden]){
    Keep the existing artwork, classic visualizer and karaoke palettes intact. */
 #sayviMusicPage[data-music-view="player"].sv-liquid-visualizer:not(.sv-music-player-has-art):not(.sv-karaoke-active) > .sv-now-ambient{filter:brightness(.34) saturate(.92)}
 
-#sayviMusicPage #svLiquidSoundCanvas{display:none;position:absolute;left:50%;top:48%;width:82%;height:auto;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;z-index:1}
+#sayviMusicPage #svLiquidSoundCanvas{display:none;position:absolute;left:50%;top:48%;width:77.5%;height:auto;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;z-index:1}
 #sayviMusicPage .sv-now-fallback.sv-liquid-mode #svLiquidSoundCanvas{display:block}
-#sayviMusicPage .sv-now-fallback.sv-liquid-mode #svLiquidSoundLabel{letter-spacing:.22em;font-weight:500;bottom:7.5%;color:rgba(229,244,242,.88)}
+#sayviMusicPage .sv-now-fallback.sv-liquid-mode #svLiquidSoundLabel{letter-spacing:.20em;font-weight:450;bottom:7.5%;color:rgba(229,244,242,.84)}
 /* Reuse the original SVG orbits as a quiet static layer behind Liquid Sound.
    No extra canvas, filter, animation, or background rendering loop. */
 #sayviMusicPage .sv-now-fallback.sv-liquid-mode>svg{opacity:.72;transform:translateY(-2%);z-index:0}
@@ -7967,7 +7967,8 @@ html.sv-music-browse #sayviMusicPage #sayviDiscoveryPanel:not([hidden]){
 #sayviMusicPage #svLiquidSoundToggle[hidden],#sayviMusicPage #sayviMusicStage.has-artwork #svLiquidSoundToggle,#sayviMusicPage.sv-karaoke-active #svLiquidSoundToggle{display:none!important}
 #sayviMusicPage #svLiquidSoundToggle:focus-visible{outline:1px solid rgba(235,255,255,.8);outline-offset:3px}
 #sayviMusicPage .sv-now-fallback>svg{transition:opacity .2s ease}
-/* Signature finish: preserve the sphere diameter and the reserved two-line track height. */
+/* Signature finish: quiet proportions, unchanged track layout and touch targets. */
+#sayviMusicPage[data-music-view="player"] :is(#sayviMusicPrevious,#sayviMusicNext) svg{width:27px!important;height:27px!important;stroke-width:1.55!important}
 html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"].sv-liquid-visualizer:not(.sv-music-lyrics-mode):not(.sv-karaoke-active) > .sv-music-cover:not(.has-artwork){margin-bottom:8px!important}
 #sayviMusicPage[data-music-view="player"] .sv-now-tools > button > svg{stroke-width:1.45!important;stroke-linecap:round;stroke-linejoin:round}
 #sayviMusicPage[data-music-view="player"] .sv-now-tools > button > svg :is(path,rect){stroke-width:inherit}
