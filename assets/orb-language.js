@@ -173,6 +173,7 @@
  const liquidToggle=playerScene?.querySelector('#svLiquidSoundToggle');
  const liquidLabel=playerScene?.querySelector('#svLiquidSoundLabel');
  let liquidContext=null;
+ let liquidGPU=null,liquidGPUAttempted=false;
  try{liquidContext=liquidCanvas?.getContext('2d',{alpha:true})||null}catch{}
  let liquidMode=true,liquidLast=0,liquidSize=0,liquidGradient=null,liquidPhase=0,liquidClock=-1;
  const liquidEnergy=new Float32Array(3);
@@ -212,6 +213,20 @@
    liquidGradient.addColorStop(1,'rgba(3,22,29,0)');
   }
   ctx.globalAlpha=1;ctx.fillStyle=liquidGradient;ctx.fillRect(0,0,400,400);
+  // Render the GPU layer only when Liquid Sound is visible. The existing
+  // Canvas 2D renderer remains intact for unavailable/lost WebGL contexts.
+  if(!liquidGPUAttempted){
+   liquidGPUAttempted=true;
+   try{liquidGPU=window.SEYVEO_LIQUID_GL?.create(liquidMobile)||null}catch{liquidGPU=null}
+  }
+  if(liquidGPU){
+   try{
+    const frame=liquidGPU.render(pixels,p,b,m,h);
+    if(frame){ctx.drawImage(frame,0,0,400,400);return}
+   }catch{}
+   liquidGPU=null;
+  }
+
   const radius=164*(1+.025*b),t=p*.40;
   const rot=-.035+.065*Math.sin(t*.55),cr=Math.cos(rot),sr=Math.sin(rot);
   // A nearly spherical shell with independently shaped turning edges.
