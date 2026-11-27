@@ -13,6 +13,16 @@ const consent=$('sayviDiscoveryToggle'),checkButton=$('sayviDiscoveryCheck'),
  releasesList=$('svMusicDiscoveryReleases'),empty=$('svMusicDiscoveryEmpty'),emptyTitle=$('svMusicDiscoveryEmptyTitle');
 if(!showSettings||!panel||!consent||!checkButton||!clearButton||!info)return;
 const STORE='seyveo-discovery-music-v1';
+const CHOICE='seyveo-discovery-choice-v1';
+const offer=$('svDiscoveryOffer'),offerYes=$('svDiscoveryOfferYes'),offerNo=$('svDiscoveryOfferNo'),settings=$('svDiscoverySettings'),settingsButton=$('svDiscoverySettingsButton');
+let answered=false,settingsOpen=false;
+try{answered=localStorage.getItem(CHOICE)==='1'||localStorage.getItem(STORE)!==null}catch{}
+function rememberChoice(){answered=true;try{localStorage.setItem(CHOICE,'1')}catch{}}
+function syncChoice(){
+ if(offer)offer.hidden=answered||state.enabled||settingsOpen;
+ if(settings)settings.hidden=!settingsOpen;
+ if(settingsButton)settingsButton.setAttribute('aria-expanded',String(settingsOpen));
+}
 const DAY=24*3600*1000,LOOKBACK=21*DAY,MAX_ARTISTS=30;
 const normalize=s=>String(s||'').normalize('NFKC').toLocaleLowerCase('ru-RU')
  .replace(/\s+/g,' ').trim();
@@ -47,6 +57,7 @@ function signal(){
  window.dispatchEvent(new Event('seyveo:discovery-updated'));
 }
 function update(){
+ syncChoice();
  consent.setAttribute('aria-pressed',String(state.enabled));
  consent.setAttribute('aria-label',state.enabled?'Выключить музыкальные открытия':'Включить музыкальные открытия');
  checkButton.hidden=!state.enabled;
@@ -54,13 +65,14 @@ function update(){
  checkButton.disabled=checking;
  const qualified=state.artists.filter(a=>a.plays>=3).length;
  if(!state.enabled)status(state.artists.length?'Поиск новинок выключен. Сохранённые интересы можно очистить.':
-  'Выключено. Сэйви не запоминает прослушивания и не обращается к каталогу.');
+  'Открытия можно включить в настройках.');
  else status(checking?'Сэйви проверяет новинки…':
   qualified?'Любимых исполнителей: '+qualified+'. Проверка при открытом SEYVEO.':
   'Три прослушивания исполнителя от 30 секунд помогут Сэйви узнать ваш вкус.');
  renderReleases();
 }
 function enable(value){
+ rememberChoice();
  runId++;
  checking=false;
  state.enabled=value===true;
@@ -68,6 +80,7 @@ function enable(value){
  if(state.enabled)maybeCheck();
 }
 function clear(){
+ rememberChoice();
  runId++;
  checking=false;
  state=fresh();
@@ -231,11 +244,11 @@ function dismiss(id){
  state.releases=state.releases.filter(r=>r.id!==id);
  persist();update();signal();
 }
-showSettings.addEventListener('click',()=>{
- const next=!panel.hidden;
- panel.hidden=next;
- showSettings.setAttribute('aria-expanded',String(!next));
-});
+// Navigation to the New tab is owned by the music dock.
+settingsButton?.addEventListener('click',()=>{settingsOpen=!settingsOpen;syncChoice()});
+offerYes?.addEventListener('click',()=>enable(true));
+offerNo?.addEventListener('click',()=>{rememberChoice();syncChoice()});
+document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='new'){settingsOpen=false;syncChoice()}else syncChoice()});
 consent.addEventListener('click',()=>enable(!state.enabled));
 checkButton.addEventListener('click',()=>{if(state.enabled)void check({force:true})});
 clearButton.addEventListener('click',clear);
@@ -243,7 +256,8 @@ window.addEventListener('seyveo:music-qualified-listen',event=>listen(event.deta
 window.addEventListener('focus',maybeCheck);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)maybeCheck()});
 window.addEventListener('storage',event=>{
- if(event.key===STORE||!event.key){runId++;state=read();update();signal()}
+ if(event.key===CHOICE){try{answered=localStorage.getItem(CHOICE)==='1'||state.enabled}catch{}syncChoice()}
+ if(event.key===STORE||!event.key){runId++;state=read();if(state.enabled)answered=true;update();signal()}
 });
 window.SEYVEO_DISCOVERY=Object.freeze({
  ...window.SEYVEO_DISCOVERY,
