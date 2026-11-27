@@ -167,21 +167,21 @@ void main(){
   float arc=length(xy-vec2(.055,.175));
   // The upper-right shoulder bends the reflected light inward, as in the crystal reference.
   float bend=.060*peak(a,-.88,.37);
-  float band=smoothstep(.981-bend,1.004-bend,arc)*(1.0-smoothstep(.951,.984,r));
+  float band=smoothstep(.999-bend,1.025-bend,arc)*(1.0-smoothstep(.951,.984,r));
   float mainReflection=band*clamp(peak(a,-2.00,.70)+.37*upperRight,0.0,1.0);
   float secondary=gauss(r-(.954-.052*upperRight),.032)*upperRight;
-  float lowerLens=gauss(r-.921,.079)*clamp(.87*foot+.63*lowerRight+.50*lowerLeft,0.0,1.0);
-  float sideDepth=gauss(r-.922,.086)*(.25*upper+.32*lowerRight+.25*lowerLeft+.16*upperRight);
-  float light=clamp(.93*rim+.29*rimTail+.48*lowerLens+.18*secondary,0.0,1.0);
+  float lowerLens=gauss(r-.939,.060)*clamp(.87*foot+.63*lowerRight+.50*lowerLeft,0.0,1.0);
+  float sideDepth=gauss(r-.938,.062)*(.20*upper+.23*lowerRight+.18*lowerLeft+.12*upperRight);
+  float light=clamp(.93*rim+.23*rimTail+.43*lowerLens+.16*secondary,0.0,1.0);
   col=mix(vec3(.035,.36,.43),vec3(.11,.88,.84),clamp(light*1.7+.20*sideDepth,0.0,1.0));
   col=mix(col,vec3(.83,1.0,.97),smoothstep(.48,.92,light));
   alpha=clamp(.004+.028*fres+.80*light+.14*sideDepth,0.0,.92);
   // Silver-to-aqua light is translucent and fades along the curved surface.
-  float silver=clamp(mainReflection*(.26+.65*peak(a,-2.05,.43))+.34*secondary,0.0,.91);
+  float silver=clamp(mainReflection*(.18+.59*peak(a,-2.05,.43))+.26*secondary,0.0,.77);
   vec3 reflectedWhite=mix(vec3(.25,.91,.85),vec3(.95,1.0,.97),peak(a,-2.05,.37));
   col=(col*alpha*(1.0-silver)+reflectedWhite*silver)/max(.0001,alpha*(1.0-silver)+silver);
   alpha=alpha*(1.0-silver)+silver;
-  float caustic=.65*gauss(r-.978,.029)*peak(a,1.57,.31);
+  float caustic=.62*gauss(r-.981,.022)*peak(a,1.57,.31);
   col=(col*alpha*(1.0-caustic)+vec3(.52,1.0,.94)*caustic)/max(.0001,alpha*(1.0-caustic)+caustic);
   alpha=clamp(alpha*(1.0-caustic)+caustic,0.0,.97);
  }else if(uKind>7.5){
