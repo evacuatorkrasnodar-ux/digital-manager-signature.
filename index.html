@@ -6756,6 +6756,14 @@ html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPa
  color:var(--sv-white-pearl-ink,#0B0B0D)!important;
  transform:none!important;
 }
+/* Keep the SEYVEO MUSIC lockup exclusively on the Listen home.
+   Inner pages retain their own content titles and the right-hand minimize control. */
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view]:not([data-music-view="home"]) > .sv-music-head{
+ justify-content:flex-end!important;
+}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view]:not([data-music-view="home"]) > .sv-music-head > .sv-music-lockup{
+ display:none!important;
+}
 html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome{
  margin:12px auto 0!important;flex:0 0 auto!important;
 }
