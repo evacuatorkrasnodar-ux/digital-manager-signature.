@@ -60,6 +60,7 @@ function setPlayerTitle(value,compact=true){
  const full=String(value||'Без названия');
  const label=compact?full.replace(/^Музыка\s+(20\d{2})\s+Русские\s+хиты\s+Сборник\s+русских\s+хитов\s+\1(?=$|[\s,.:;—–-])/i,'Русские хиты $1'):full;
  heading.dataset.fullTitle=full;
+ delete heading.dataset.fullArtist;
  heading.title=full;
  heading.setAttribute('aria-label',full);
  heading.textContent=label;
@@ -106,7 +107,7 @@ function paintChapter(force=false){
  if(at<0)return;
  const info=infoFor(chapterFile);
  setPlayerTitle(chapterLabel(at),false);
- heading.dataset.fullTitle=info.title;heading.title=info.title;
+ heading.dataset.fullTitle=info.title;heading.dataset.fullArtist=info.artist||'';heading.title=info.title;
  artist.textContent='Сборник · '+(at+1)+' из '+chapterRows.length;
  if(queueOpen&&collectionMode==='tracks')collection.querySelectorAll('[data-chapter-index]').forEach(btn=>{if(Number(btn.dataset.chapterIndex)===at)btn.setAttribute('aria-current','true');else btn.removeAttribute('aria-current')});
  syncResume();mediaSession();
@@ -157,7 +158,7 @@ async function startChapterScan(){
 }
 function stopChapterScan(){
  clearTimeout(chapterTimer);
- if(chapterBusy){++chapterJob;chapterBusy=false;chapterProgress='Анализ продолжится при следующей паузе.';updateChapterStatus()}
+ if(chapterBusy){++chapterJob;chapterBusy=false;chapterProgress='Анализ начнётся снова при следующей паузе.';updateChapterStatus()}
 }
 function jumpChapter(i,autoplay=true){
  const row=chapterRows[i];if(!row||chapterFile!==tracks[index])return false;

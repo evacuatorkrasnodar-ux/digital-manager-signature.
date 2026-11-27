@@ -217,7 +217,7 @@
   function shareData(){
    if(!loaded())return null;
    const name=($('sayviMusicTrack')?.dataset.fullTitle||$('sayviMusicTrack')?.textContent)?.trim()||'Музыка';
-   const artist=$('sayviMusicArtist')?.textContent?.trim()||'';
+   const artist=($('sayviMusicTrack')?.dataset.fullArtist??$('sayviMusicArtist')?.textContent??'').trim();
    return {title:name,text:[name,artist==='Моя музыка'?'':artist].filter(Boolean).join(' — ')+'\nSEYVEO Music'};
   }
   function share(){
@@ -231,7 +231,7 @@
    else art.innerHTML=glyph('<path d="M9 18V5l12-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.4"/><ellipse cx="18" cy="16" rx="3" ry="2.4"/>');
    const meta=d.createElement('div');meta.className='sv-share-meta';
    const track=d.createElement('strong');track.textContent=data.title;meta.append(track);
-   const artist=$('sayviMusicArtist')?.textContent?.trim();if(artist&&artist!=='Моя музыка'){const el=d.createElement('span');el.textContent=artist;meta.append(el)}
+   const artist=($('sayviMusicTrack')?.dataset.fullArtist??$('sayviMusicArtist')?.textContent??'').trim();if(artist&&artist!=='Моя музыка'){const el=d.createElement('span');el.textContent=artist;meta.append(el)}
    const brand=d.createElement('small');brand.textContent='SEYVEO Music';meta.append(brand);row.append(art,meta);body.append(row);
    const choice=(label,path,fn)=>{const button=action(label,fn);const span=d.createElement('span');span.textContent=label;button.innerHTML=glyph(path);button.append(span);return button};
    if(w.navigator.share)choice('Поделиться названием','<path d="M12 15V3m-4 4 4-4 4 4M7 10H5v11h14V10h-2"/>',async()=>{try{await w.navigator.share(data);close()}catch(e){if(e.name!=='AbortError')message('Не удалось открыть системное меню.')}});
