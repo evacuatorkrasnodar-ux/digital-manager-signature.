@@ -6946,10 +6946,11 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"]::before
 }
 #sayviMusicPage .sv-now-backdrop > span.is-current{opacity:1}
 html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] > .sv-music-head{
- flex:0 0 auto;align-items:center;width:100%;max-width:560px;min-height:48px;
+ flex:0 0 auto;align-items:center;justify-content:flex-end;width:100%;max-width:560px;min-height:48px;
  margin:0 auto 0!important;padding:0!important;background:transparent!important;
  border:0!important;box-shadow:none!important;
 }
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] > .sv-music-head > .sv-music-lockup{display:none!important}
 #sayviMusicPage[data-music-view="player"] .sv-music-heading{color:var(--text)!important}
 #sayviMusicPage[data-music-view="player"] .sv-music-technology{color:var(--secondary)!important}
 html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-music-minimize,
