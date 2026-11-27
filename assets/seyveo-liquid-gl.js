@@ -150,7 +150,7 @@ void main(){
   vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
   if(r>1.0){
    float glow=gauss(r-1.0,.048)*(.022+.32*peak(a,-2.16,.44)+.29*peak(a,1.30,.58));
-   float floorGlow=gauss(xy.x,.54)*gauss(xy.y-1.052,.049)*.32+gauss(xy.x,.23)*gauss(xy.y-1.043,.023)*.29;
+   float floorGlow=gauss(xy.x,.56)*gauss(xy.y-1.052,.049)*.28+gauss(xy.x,.18)*gauss(xy.y-1.036,.022)*.44;
    glow=clamp(glow+floorGlow,0.0,.75);
    gl_FragColor=vec4(.10,.86,.88,glow);return;
   }
@@ -171,8 +171,8 @@ void main(){
   float fres=pow(max(0.0,1.0-n),3.0);
   // Subtle optical separation: neutral specular light and a quiet inner lens edge.
   // Same analytic glass pass; no changes to cloth, geometry or animation.
-  float light=clamp(.26*reflected+1.32*edge*lip+.32*edgeSoft*lip+.43*base+.10*inner+.22*crescent+.31*lowerLens+.18*shoulder,0.0,1.0);
-  float blueDepth=gauss(r-.91,.085)*(.55+.45*peak(a,-.75,.9));
+  float light=clamp(.16*reflected+1.32*edge*lip+.24*edgeSoft*lip+.35*base+.07*inner+.31*lowerLens+.09*shoulder,0.0,1.0);
+  float blueDepth=gauss(r-.91,.085)*(.30+.43*top+.27*bottom);
   float softReflection=gauss(r-.82,.028)*peak(a,-1.03,.47);
   float lensShade=gauss(r-.914,.033)*(1.0-.82*top)*(.65+.35*right);
   col=mix(vec3(.015,.39,.62),vec3(.05,.87,.94),clamp(light*1.65+.15*blueDepth,0.0,1.0));
@@ -181,10 +181,19 @@ void main(){
   col=mix(col,vec3(.09,.94,.88),.18*lowerLens);
   alpha=clamp(.006+.085*fres+.88*light+.14*blueDepth,0.0,.98);
   // Composite a faint dark inner edge and a neutral reflection in the existing pass.
-  float shade=.105*lensShade*(1.0-alpha);
-  float shine=(.058*softReflection+.53*crescent*(.28+.72*peak(a,-2.28,.43)))*(1.0-alpha);
-  col=(col*alpha+vec3(.022,.065,.09)*shade+vec3(.87,.96,1.0)*shine)/max(.0001,alpha+shade+shine);
-  alpha=clamp(alpha+shade+shine,0.0,.98);
+  float shade=.065*lensShade*(1.0-alpha);
+  col=(col*alpha+vec3(.022,.065,.09)*shade)/max(.0001,alpha+shade);
+  alpha=clamp(alpha+shade,0.0,.98);
+  // Silver softbox is a separate optical contribution in the same fragment,
+  // composited over the blue lens instead of being diluted into its color.
+  float silver=clamp(crescent*(.28+.72*peak(a,-2.12,.39))+.025*softReflection,0.0,.94);
+  vec3 reflectedWhite=mix(vec3(.55,.79,.83),vec3(.99,1.0,.99),peak(a,-2.14,.42));
+  col=(col*alpha*(1.0-silver)+reflectedWhite*silver)/max(.0001,alpha*(1.0-silver)+silver);
+  alpha=alpha*(1.0-silver)+silver;
+  // Concentrated caustic at the foot of the crystal.
+  float caustic=.66*gauss(r-.985,.020)*peak(a,1.57,.21);
+  col=(col*alpha*(1.0-caustic)+vec3(.55,1.0,.96)*caustic)/max(.0001,alpha*(1.0-caustic)+caustic);
+  alpha=clamp(alpha*(1.0-caustic)+caustic,0.0,.98);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.89,.16)+gauss(x-.73,.19);
