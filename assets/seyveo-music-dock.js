@@ -100,9 +100,25 @@ function init(){
  }
  get('svMusicReplayPeriod')?.addEventListener('change',renderReplay);
  document.getElementById('sayviMusicAudio')?.addEventListener('pause',()=>{if(view==='replay')renderReplay()});
+ const more=get('svNowMore'),menu=get('svNowMenu'),queue=get('svNowQueue');
+ function closeNowMenu(restore=false){
+  if(!menu)return;menu.hidden=true;more?.setAttribute('aria-expanded','false');
+  if(restore)more?.focus({preventScroll:true});
+ }
+ more?.addEventListener('click',()=>{
+  if(!menu)return;
+  if(!menu.hidden){closeNowMenu(true);return}
+  music()?.closePanels?.();menu.hidden=false;more.setAttribute('aria-expanded','true');
+  get('svNowMenuClose')?.focus({preventScroll:true});
+ });
+ get('svNowMenuClose')?.addEventListener('click',()=>closeNowMenu(true));
+ queue?.addEventListener('click',()=>{closeNowMenu();music()?.toggleQueue?.()});
+ menu?.addEventListener('click',e=>{if(e.target.closest('.sv-now-menu-row'))closeNowMenu()});
+ document.addEventListener('click',e=>{if(menu&&!menu.hidden&&!menu.contains(e.target)&&!more?.contains(e.target))closeNowMenu()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu&&!menu.hidden){e.preventDefault();e.stopImmediatePropagation();closeNowMenu(true)}},true);
  function show(key){
   if(!active||(!Object.hasOwn(panels,key)&&key!=='player'))return false;
-  music()?.closePanels?.();
+  closeNowMenu();music()?.closePanels?.();
   if(key==='library'&&view!=='player'&&view!=='library')libraryLimit=60;
   view=key;if(key!=='player')last=key;
   page.dataset.musicView=key;root.classList.toggle('sv-music-browse',key!=='player');root.classList.toggle('sv-music-player-open',key==='player');
@@ -120,7 +136,7 @@ function init(){
   const key=pending?'player':'home';pending=false;last='home';show(key);
  }
  function leave(){
-  if(!active)return;stopCoverObserver();active=false;nav.hidden=true;dock.classList.remove('seyveo-music-dock','sv-music-navigation-only');
+  if(!active)return;closeNowMenu();stopCoverObserver();active=false;nav.hidden=true;dock.classList.remove('seyveo-music-dock','sv-music-navigation-only');
   root.classList.remove('sv-music-browse','sv-music-player-open');delete page.dataset.musicView;
   for(const id of Object.values(panels))get(id).hidden=true;
   const discovery=get('sayviDiscoveryPanel');if(discovery)discovery.hidden=true;
