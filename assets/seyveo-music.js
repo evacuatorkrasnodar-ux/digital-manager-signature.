@@ -137,7 +137,7 @@ function updateChapterStatus(){
  const queue=$('svNowQueue');if(queue){queue.title=chapterCandidate()?(chapterProgress||chapterSummary()):'Очередь';queue.setAttribute('aria-label',queue.title);queue.dataset.chapterBusy=String(chapterBusy)}
 }
 function chapterSummary(){
- if(chapterRows.length)return (chapterSource==='auto'?'Найдены возможные границы · проверьте переходы':chapterSource==='embedded'?'Главы из аудиофайла':'Сохранённые временные метки')+' · '+chapterRows.length+' комп.';
+ if(chapterRows.length)return (chapterSource==='auto-preview'?'Предварительные метки · анализ не завершён':chapterSource==='auto'?'Возможные границы · проверьте переходы':chapterSource==='embedded'?'Главы из аудиофайла':'Сохранённые временные метки')+' · '+chapterRows.length+' комп.';
  return audio.paused?'Готов к поиску границ песен.':'Поставьте сборник на паузу для поиска границ.';
 }
 function scheduleChapterScan(){
@@ -152,11 +152,22 @@ async function startChapterScan(){
  const valid=()=>job===chapterJob&&chapterFile===file&&tracks[index]===file;
  chapterBusy=true;chapterProgress='Ищем паузы между песнями…';updateChapterStatus();
  try{
-  const rows=await chapterAPI.scan(file,audio.duration,valid,p=>{if(valid()){chapterProgress='Анализ сборника · '+p+'%';updateChapterStatus()}},chapterCanWork);
+  const rows=await chapterAPI.scan(file,audio.duration,valid,(p,candidates)=>{
+   if(!valid())return;
+   const count=Array.isArray(candidates)?candidates.length:0;
+   chapterProgress='Анализ сборника · '+p+'%'+(count>1?' · найдено границ: '+(count-1):'');
+   if(count>1&&count>chapterRows.length){
+    chapterRows=candidates;chapterSource='auto-preview';chapterIndex=-1;
+    paintChapter(true);
+    // Keep an open manual editor intact while automatic candidates arrive.
+    if(queueOpen&&collectionMode==='tracks'&&!collection.querySelector('.sv-chapters-edit[open]'))collectionRender();
+   }
+   updateChapterStatus();
+  },chapterCanWork);
   if(!valid())return;
   chapterScanned=true;
   if(rows.length>1){acceptChapters(rows,'auto');return}
-  chapterProgress='Уверенные границы не найдены. Можно добавить метки вручную.';
+  chapterProgress=chapterRows.length>1?'Анализ не подтвердил все метки. Проверьте предварительные границы.':'Уверенные границы не найдены. Можно добавить метки вручную.';
  }catch(error){if(valid()){chapterScanned=true;const reasons={'offline-unavailable':'Браузер не поддерживает локальный анализ','format':'Формат не MP3','limit':'Запись вне лимита анализа','frame-header':'Не найдены корректные заголовки MP3','frame-timing':'Время MP3-кадров не совпадает с длительностью','decode-block':'Браузер не декодировал фрагмент MP3','decode mismatch':'Длительность декодированного фрагмента не совпала'};chapterProgress=(reasons[error?.message]||'Ошибка анализа аудио')+'. Можно добавить метки вручную.'}}
  finally{if(job===chapterJob){chapterBusy=false;updateChapterStatus()}}
 }
@@ -184,7 +195,7 @@ function renderChapters(list){
  const label=document.createElement('strong');label.textContent='Композиции сборника';section.append(label);
  const mark=document.createElement('button');mark.type='button';mark.className='sv-chapter-row';mark.textContent='Отметить начало песни · '+fmt(audio.currentTime||0);
  mark.addEventListener('click',()=>{const t=audio.currentTime;if(!Number.isFinite(t)||t<1||t>=audio.duration-1){note.textContent='Выберите начало следующей песни на шкале.';return}const rows=chapterAPI.normalize([...chapterRows,{start:t,title:''}],audio.duration);if(rows.length>1)acceptChapters(rows,'manual');});
- const note=document.createElement('p');note.className='sv-chapters-note';note.dataset.chapterStatus='';note.textContent=chapterProgress||chapterSummary();section.append(note);
+ const note=document.createElement('p');note.className='sv-chapters-note';note.dataset.chapterStatus='';note.setAttribute('role','status');note.textContent=chapterProgress||chapterSummary();section.append(note);
  for(let i=0;i<chapterRows.length;i++){
   const row=chapterRows[i],btn=document.createElement('button');btn.type='button';btn.className='sv-chapter-row';btn.dataset.chapterIndex=String(i);
   if(i===chapterIndex)btn.setAttribute('aria-current','true');
@@ -199,8 +210,9 @@ function renderChapters(list){
  const actions=document.createElement('div');actions.className='sv-chapters-edit-actions';
  const save=document.createElement('button');save.type='button';save.textContent='Сохранить';
  save.addEventListener('click',()=>{const rows=chapterAPI.parse(area.value,audio.duration);if(!rows){note.textContent='Нужны хотя бы две возрастающие метки в пределах записи (мин:сек).';return}acceptChapters(rows,'manual')});actions.append(save);
- if(chapterRows.length){const reset=document.createElement('button');reset.type='button';reset.textContent='Удалить метки';reset.addEventListener('click',()=>{chapterAPI.clear(favoriteId(chapterFile));chapterRows=[];chapterIndex=-1;chapterScanned=true;chapterProgress='Метки удалены.';const info=infoFor(chapterFile);setPlayerTitle(info.title);artist.textContent=info.artist||'Моя музыка';syncResume();mediaSession();collectionRender()});actions.append(reset)}
+ if(chapterRows.length){const reset=document.createElement('button');reset.type='button';reset.textContent='Удалить метки';reset.addEventListener('click',()=>{++chapterJob;chapterBusy=false;clearTimeout(chapterTimer);chapterAPI.clear(favoriteId(chapterFile));chapterRows=[];chapterIndex=-1;chapterScanned=true;chapterProgress='Метки удалены.';const info=infoFor(chapterFile);setPlayerTitle(info.title);artist.textContent=info.artist||'Моя музыка';syncResume();mediaSession();collectionRender()});actions.append(reset)}
  edit.append(summary,area,actions);section.append(edit,mark);
+ if(chapterBusy){const resume=document.createElement('button');resume.type='button';resume.className='sv-chapter-row';resume.textContent='Продолжить анализ на паузе';resume.addEventListener('click',()=>{if(!audio.paused)smoothPause();else{note.textContent='Анализ уже выполняется.'}});section.append(resume)}
  if(!chapterRows.length&&!chapterBusy){const scan=document.createElement('button');scan.type='button';scan.className='sv-chapter-row';scan.textContent='Найти границы песен';scan.addEventListener('click',()=>{if(!audio.paused){smoothPause();note.textContent='Поиск начнётся после паузы.';chapterScanned=false;return}if(!chapterCanWork()){note.textContent='Откройте плеер и выключите караоке для анализа.';return}if(!/\.mp3$/i.test(chapterFile?.name||'')){note.textContent='Автопоиск доступен для MP3; добавьте метки вручную.';return}chapterScanned=false;startChapterScan()});section.append(scan)}
  list.append(section);
 }

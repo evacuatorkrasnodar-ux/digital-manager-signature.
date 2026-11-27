@@ -148,7 +148,7 @@ async function scan(file,duration,valid,progress,canWork=()=>true){
     loudBefore=true;quietStart=-1;quietSeconds=0;
    }else if(quietStart>=0&&time-quietEnd>.5){quietStart=-1;quietSeconds=0}
   }
-  groupStart=end;groupTime=endTime;progress?.(Math.min(99,Math.round(endTime/duration*100)));await wait();
+  groupStart=end;groupTime=endTime;progress?.(Math.min(99,Math.round(endTime/duration*100)),normalize(rows,duration));await wait();
  }
  while(pos+4<file.size&&valid()&&rows.length<max){
   if(base<0||(pos-base+4096>cache.length&&base+cache.length<file.size)){await gate();base=pos;cache=new Uint8Array(await file.slice(pos,Math.min(file.size,pos+1024*1024)).arrayBuffer())}
@@ -164,7 +164,7 @@ async function scan(file,duration,valid,progress,canWork=()=>true){
  }
  if(!valid())return [];
  if(!found||Math.abs(t-duration)>Math.max(3,duration*.015))throw Error('frame-timing');
- await decodeBlock(pos,t);progress?.(100);
+ await decodeBlock(pos,t);progress?.(100,normalize(rows,duration));
  return normalize(rows,duration);
 }
 window.SEYVEO_MUSIC_CHAPTERS=Object.freeze({normalize,parse,read,save,clear,embedded,scan,sampleLoudness});
