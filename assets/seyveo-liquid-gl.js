@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V64 · rounded silk lip · WebGL 1. */
+/* SEYVEO Liquid Sound V65 · convex silk body · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -54,8 +54,12 @@ vec3 matter(float x,float v){
   return q;
  }
  float f=sin(PI*v)*sin(PI*u),w=sin(PI*u);
- p.z+=f*(k<.5?.28:k<1.5?.20:-.16);
- p.x+=f*(.035*sin(PI*u*2.0+t*.32)+.115*sin(PI*u*1.6-.35)*(k<.5?1.0:k<1.5?-.50:-.65));
+ // Convex body: a smooth interior bulge, with zero displacement at every shared edge.
+ p.z+=f*(k<.5?.52:k<1.5?.20:-.16);
+ if(k<.5){
+  p.xy+=f*vec2(.085*sin(PI*u-.65),-.085*(.65+.35*sin(PI*u)));
+  p.x+=f*.018*sin(t*.32+PI*u);
+ }else p.x+=f*(.035*sin(PI*u*2.0+t*.32)+.115*sin(PI*u*1.6-.35)*(k<1.5?-.50:-.65));
  p.y+=w*(.010+.035*mid)*sin(u*5.5+t*.65)+.016*f*sin(u*8.0-t*.4);
  p.z+=w*.055*sin(t*.55+u*4.0)*( .30+mid);
  return p;
@@ -82,9 +86,10 @@ void main(){
   if(uKind<2.5||uKind>3.5){
    float curved=.5-.5*cos(PI*v);
    v=mix(v,curved,uKind<2.5?.37:.32);
-   float sweep=uKind<2.5?.36:uKind<4.5?-.30:.18;
+   float sweep=uKind<2.5?.18:uKind<4.5?-.30:.18;
    // A monotonic shear fans the rows out without zig-zagging the individual points.
    u+=sweep*sin(PI*u)*sin(PI*v)*(v-.24);
+   if(uKind<2.5)v+=.14*sin(PI*v)*sin(PI*u-.45);
   }else{
    u-=.07*sin(PI*u)*sin(PI*v)*(v-.36);
   }
@@ -146,9 +151,9 @@ void main(){
   float tipGlow=gauss(x+.87,.16)+gauss(x-.86,.19);
   float leftTurn=gauss(x+.94,.15);
   float facing=clamp(vLight,0.0,1.0);
-  float frontLight=.60+.40*gauss(x-.22,.82);
+  float frontLight=.70+.30*gauss(x-.10,.88);
   // Directional silk sheen: light spreads along the cloth, not just its outline.
-  float shoulderLight=gauss(x+.53,.54)*gauss(v-.53,.40);
+  float shoulderLight=gauss(x+.43,.64)*gauss(v-.48,.45);
   float highlight=clamp(vSheen,0.0,1.0);
   float silkLight=pow(v,2.4)*(.57+.43*gauss(x+.25,.70));
   float middleLight=gauss(v-.60,.44)*(.70+.30*gauss(x-.05,.8));
@@ -206,7 +211,7 @@ void main(){
  // Four distinct cloth intervals: 2=0..1, 3=1..2, 4=2..3, 6=3..4; 7 is the shoulder.
  // Back-to-front compositing keeps the lower returning silk behind the broad face.
  const parts=[6,4,7,2,3].map(kind=>{
-  const dims=kind===7?[52,20,78,30]:kind===2?[82,40,120,56]:kind===3?[110,34,152,48]:[78,35,114,48];
+  const dims=kind===7?[52,20,78,30]:kind===2?[82,44,120,62]:kind===3?[110,34,152,48]:[78,35,114,48];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   const layers=[mesh(kind,mobile?64:96,mobile?20:32,0)];
   if(kind===3)layers.push(mesh(kind,n,mobile?14:22,2));
