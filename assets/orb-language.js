@@ -163,7 +163,7 @@
  // No second decoder, audio node, microphone, or change to the playback path.
  const scene=musicPage?.querySelector('.sv-music-scene');
  const sceneBars=Array.from(scene?.querySelectorAll('.sv-music-scene-wave line')||[]);
- let sceneFrame=0,sceneLast=0,sceneFile=null,sceneVisible=true,sceneWaiting=false;
+ let sceneFrame=0,sceneLast=0,sceneFile=null,sceneVisible=true,sceneWaiting=false,ringEnergy=0;
  const sceneLevels=new Float32Array(sceneBars.length);
  function sceneAllowed(){
   return !!scene&&!!audio&&!document.hidden&&!musicPage.hidden&&
@@ -172,9 +172,10 @@
  }
  function resetSceneWave(){
   if(sceneFrame)cancelAnimationFrame(sceneFrame);
-  sceneFrame=0;sceneLast=0;sceneFile=null;sceneLevels.fill(0);
+  sceneFrame=0;sceneLast=0;sceneFile=null;sceneLevels.fill(0);ringEnergy=0;
   scene?.classList.remove('sv-scene-rhythm');
   scene?.style.removeProperty('--sv-scene-glow');
+  for(const name of ['--sv-ring-scale','--sv-ring-angle','--sv-ring-opacity'])scene?.style.removeProperty(name);
   for(const bar of sceneBars){const h=Number(bar.dataset.rest)||8;bar.setAttribute('y1',String(74-h/2));bar.setAttribute('y2',String(74+h/2))}
  }
  function tickScene(timestamp){
@@ -195,6 +196,12 @@
     sceneBars[i].setAttribute('y2',(74+height/2).toFixed(2));
    }
    scene.style.setProperty('--sv-scene-glow',(.23+.52*(bass*.55+mid*.30+air*.15)).toFixed(3));
+   // Slow breathing plus a small, smoothed bass response. No abrupt shaking.
+   ringEnergy+=(bass-ringEnergy)*(bass>ringEnergy?.32:.14);
+   const breath=(1+Math.sin(audio.currentTime*Math.PI/4))/2;
+   scene.style.setProperty('--sv-ring-scale',(1+.018*breath+.030*ringEnergy).toFixed(4));
+   scene.style.setProperty('--sv-ring-angle',(.65*Math.sin(audio.currentTime*Math.PI/5)+.28*ringEnergy).toFixed(3)+'deg');
+   scene.style.setProperty('--sv-ring-opacity',(.83+.10*breath+.07*ringEnergy).toFixed(3));
   }
   sceneFrame=requestAnimationFrame(tickScene);
  }
