@@ -1234,7 +1234,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
     </g>
     <g class="sv-music-scene-wave" stroke="#E4F6F1" stroke-width="1.5" stroke-linecap="round" opacity=".92"><line x1="259" x2="259" y1="69" y2="79" data-rest="10"/><line x1="267" x2="267" y1="63" y2="85" data-rest="22"/><line x1="275" x2="275" y1="56" y2="92" data-rest="36"/><line x1="283" x2="283" y1="46" y2="102" data-rest="56"/><line x1="291" x2="291" y1="59" y2="89" data-rest="30"/><line x1="299" x2="299" y1="67" y2="81" data-rest="14"/><line x1="307" x2="307" y1="63" y2="85" data-rest="22"/><line x1="315" x2="315" y1="70" y2="78" data-rest="8"/></g>
    </svg>
-   <div class="sv-music-scene-copy"><strong>В вашем ритме</strong><small>Музыка, которая рядом</small></div>
+   <div class="sv-music-scene-copy"><span class="sv-music-scene-signature">ADAPTIVE SOUND · <i>AI</i></span><strong>В вашем ритме</strong><small>Музыка, которая рядом</small></div>
    <div class="sv-music-scene-actions">
     <button type="button" data-music-view-action="replay" aria-label="Мой музыкальный мир"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v4m4-8v8m4-12v12m4-8v8m4-4v4"/></svg><span><strong>Мой музыкальный мир</strong><small>Ваши итоги</small></span></button>
    </div>
@@ -7007,7 +7007,9 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome .sv-
  color:#F3FAFA;
 }
 #sayviMusicPage #svMusicHome .sv-music-scene-art{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
-#sayviMusicPage #svMusicHome .sv-music-scene-copy{display:grid;gap:4px;padding:5px 3px 14px;max-width:71%;position:relative}
+#sayviMusicPage #svMusicHome .sv-music-scene-copy{display:grid;gap:4px;padding:0 3px 8px;max-width:71%;position:relative}
+#sayviMusicPage #svMusicHome .sv-music-scene-signature{display:block;font-size:clamp(9px,2.4vw,11px);font-weight:500;line-height:1.2;letter-spacing:.14em;color:#D0E4E3;white-space:nowrap;margin-bottom:3px}
+#sayviMusicPage #svMusicHome .sv-music-scene-signature i{font-style:italic;font-weight:500}
 #sayviMusicPage #svMusicHome .sv-music-scene-copy > strong{font-size:clamp(23px,6.6vw,32px);font-weight:620;letter-spacing:-.045em;line-height:1.04}
 #sayviMusicPage #svMusicHome .sv-music-scene-copy > small{font-size:12px;line-height:1.3;color:#D0E4E3}
 #sayviMusicPage #svMusicHome .sv-music-scene-actions{display:flex;justify-content:flex-start;gap:0;position:relative;width:min(64%,192px);max-width:100%}
