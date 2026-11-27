@@ -18,7 +18,7 @@
  let chosen=null,playingFrame=null,lastRoute='',lastKnownHash='';
  // The HTML is the single source of markup; no duplicate toolbar or player.
  input.addEventListener('input',()=>{
-  watch.textContent=core.videoId(input.value.trim())?'Смотреть':'Найти';
+  watch.textContent=core.videoId(input.value.trim())?'Смотреть':'Найти на YouTube';
  });
  const active=()=>location.hash==='#sayvi-video'&&!page.hidden;
  const message=(value)=>{status.textContent=value;status.hidden=!value};
@@ -74,6 +74,7 @@
    if(frame===playingFrame)message('');
   },{once:true});
   screen.hidden=false;
+  if(more)more.open=true;
   screen.append(frame);
   playingFrame=frame;
   message('');
@@ -85,7 +86,7 @@
   document.documentElement.classList.toggle('sv-video-screen',inside);
   if(!inside){
    dispose();
-   watch.textContent='Найти';
+   watch.textContent='Найти на YouTube';
    if(lastKnownHash==='#sayvi-video')message('');
   }
   lastKnownHash=location.hash;

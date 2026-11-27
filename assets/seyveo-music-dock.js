@@ -187,7 +187,7 @@ function init(){
   return ok;
  }
  nav.addEventListener('click',e=>{const btn=e.target.closest('button[data-music-nav]');if(!btn)return;e.preventDefault();e.stopPropagation();show(btn.dataset.musicNav)});
- page.addEventListener('click',e=>{const btn=e.target.closest('[data-music-view-action]');if(!btn)return;const key=btn.dataset.musicViewAction;if(key==='import')get('sayviMusicImport')?.click();else if(key==='favorites')get('sayviMusicFavoritesToggle')?.click();else if(key==='sources')get('sayviMusicSourcesToggle')?.click();else show(key)});
+ page.addEventListener('click',e=>{const btn=e.target.closest('[data-music-view-action]');if(!btn)return;const key=btn.dataset.musicViewAction;if(key==='youtube'){closeNowMenu();music()?.closePanels?.();window.SEYVEO_VIDEO?.open({from:'music'});}else if(key==='import')get('sayviMusicImport')?.click();else if(key==='favorites')get('sayviMusicFavoritesToggle')?.click();else if(key==='sources')get('sayviMusicSourcesToggle')?.click();else show(key)});
  window.addEventListener('hashchange',refresh);window.addEventListener('seyveo:route-changed',refresh);
  new MutationObserver(refresh).observe(page,{attributes:true,attributeFilter:['hidden']});
  document.addEventListener('seyveo:music-state',()=>{refresh();renderTracks()});
