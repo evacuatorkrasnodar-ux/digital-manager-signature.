@@ -204,35 +204,37 @@
   ctx.clearRect(0,0,400,400);
   ctx.lineJoin='round';ctx.lineCap='round';
   if(!liquidGradient){
-   liquidGradient=ctx.createRadialGradient(200,190,20,200,200,181);
-   liquidGradient.addColorStop(0,'rgba(1,13,20,.78)');
-   liquidGradient.addColorStop(.68,'rgba(2,17,24,.76)');
-   liquidGradient.addColorStop(.86,'rgba(3,22,29,.46)');
+   liquidGradient=ctx.createRadialGradient(195,188,12,200,200,177);
+   liquidGradient.addColorStop(0,'rgba(0,10,16,.96)');
+   liquidGradient.addColorStop(.71,'rgba(1,13,19,.94)');
+   liquidGradient.addColorStop(.91,'rgba(2,18,24,.84)');
+   liquidGradient.addColorStop(.97,'rgba(3,22,28,.32)');
    liquidGradient.addColorStop(1,'rgba(3,22,29,0)');
   }
   ctx.globalAlpha=1;ctx.fillStyle=liquidGradient;ctx.fillRect(0,0,400,400);
-  const radius=164*(1+.035*b),t=p*.40;
-  const rot=-.08+.10*Math.sin(t*.55),cr=Math.cos(rot),sr=Math.sin(rot);
+  const radius=164*(1+.025*b),t=p*.40;
+  const rot=-.035+.065*Math.sin(t*.55),cr=Math.cos(rot),sr=Math.sin(rot);
   const geom=angles.map(([a,ca,sa])=>{
    const wave=Math.sin(2*a+t),fold=Math.sin(3*a-t*.65);
    // Asymmetric broad folds on opposite sides, with an almost circular silhouette.
    const lobe=Math.pow(.5+.5*Math.cos(2*(a+2.10)+t*.72),1.25);
    const innerLobe=Math.pow(.5+.5*Math.cos(2*(a+1.30)-t*.55),1.5);
+   const kink=Math.pow(.5+.5*Math.cos(a+.9-t*.30),8);
    const ripple=Math.sin(5*a+t*.9);
-   return {a,ca,sa,wave,fold,lobe,innerLobe,ripple};
+   return {a,ca,sa,wave,fold,lobe,innerLobe,kink,ripple};
   });
   const point=(g,kind,u)=>{
-   const {ca,sa,wave,fold,lobe,innerLobe,ripple}=g;
+   const {ca,sa,wave,fold,lobe,innerLobe,kink,ripple}=g;
    let r,z;
    if(kind===0){
-    const silhouette=radius*(1+.013*wave+.009*fold);
-    const depth=radius*(.016+(.165+.04*m)*lobe);
+    const silhouette=radius*(1+.009*wave+.006*fold);
+    const depth=radius*(.018+(.205+.035*m)*lobe+.105*kink);
     const curl=radius*(.032+.028*m)*lobe*ripple;
     r=silhouette-depth*u+curl*Math.sin(Math.PI*u);
     z=radius*(.04*fold+.16*lobe*Math.sin(Math.PI*u));
    }else{
-    const opening=radius*(.747+.022*wave+.012*fold);
-    const depth=radius*(.012+(.095+.025*m)*innerLobe);
+    const opening=radius*(.753+.008*wave+.007*fold);
+    const depth=radius*(.009+(.104+.021*m)*innerLobe);
     r=opening+depth*u+radius*.023*innerLobe*ripple*Math.sin(Math.PI*u);
     z=radius*(.045*wave-.11*innerLobe*Math.sin(Math.PI*u));
    }
@@ -246,21 +248,21 @@
   function ribbon(kind,count){
    const rows=Array.from({length:count},(_,j)=>geom.map(g=>point(g,kind,j/(count-1))));
    const tint=kind===0?'120,242,219':'188,255,240';
-   const sections=16;
-   const layers=12;
+   const sections=24;
+   const layers=10;
    for(let layer=0;layer<layers;layer++){
     const j=Math.floor(layer*(count-1)/layers),next=Math.floor((layer+1)*(count-1)/layers);
     const u=(j+next)/(2*(count-1));
-    const lip=Math.exp(-Math.pow((u-.83)/.18,2));
+    const lip=Math.exp(-Math.pow((u-(kind===0?.89:.08))/.24,2));
     for(let k=0;k<sections;k++){
      const i0=Math.floor(k*liquidSteps/sections),i1=Math.floor((k+1)*liquidSteps/sections),g=geom[(i0+i1)>>1];
      const lobe=kind===0?g.lobe:g.innerLobe;
-     const facing=.20+.80*lobe;
+     const facing=.06+.94*Math.pow(lobe,.7);
      ctx.beginPath();ctx.moveTo(...rows[j][i0]);
      for(let i=i0+1;i<=i1;i++)ctx.lineTo(...rows[j][i]);
      for(let i=i1;i>=i0;i--)ctx.lineTo(...rows[next][i]);
      ctx.closePath();
-     ctx.fillStyle='rgba('+tint+','+((.035+.39*lip)*facing).toFixed(3)+')';
+     ctx.fillStyle='rgba('+tint+','+((.018+.52*lip)*facing).toFixed(3)+')';
      ctx.fill();
     }
    }
@@ -271,58 +273,57 @@
    fiber.addColorStop(.78,'rgba(206,255,241,.94)');
    fiber.addColorStop(1,'rgba(129,245,219,.48)');
    for(let j=0;j<count;j++){
-    const u=j/(count-1),lip=Math.exp(-Math.pow((u-.83)/.14,2));
-    path(rows[j]);ctx.strokeStyle=fiber;ctx.globalAlpha=.16+.55*lip;ctx.lineWidth=.25+.16*lip;ctx.stroke();
+    const u=j/(count-1),lip=Math.exp(-Math.pow((u-(kind===0?.89:.08))/.19,2));
+    path(rows[j]);ctx.strokeStyle=fiber;ctx.globalAlpha=.10+.48*lip;ctx.lineWidth=.21+.10*lip;ctx.stroke();
    }
    ctx.globalAlpha=1;
-   // Broken, smoothly weighted specular arcs rather than two uniformly bright hoops.
-   for(let k=0;k<sections;k++){
-    const i0=Math.floor(k*liquidSteps/sections),i1=Math.floor((k+1)*liquidSteps/sections);
-    const g=geom[(i0+i1)>>1],light=kind===0?g.lobe:g.innerLobe;
-    const lip=rows[Math.round((count-1)*.86)];
-    path(lip.slice(i0,i1+1),false);
-    ctx.strokeStyle='rgba(114,255,222,'+(.03+.16*light).toFixed(3)+')';ctx.lineWidth=4.2;ctx.stroke();
-    ctx.strokeStyle='rgba(225,255,248,'+(.20+.74*light).toFixed(3)+')';ctx.lineWidth=.80+.4*light;ctx.stroke();
-   }
-   path(rows[0]);ctx.strokeStyle='rgba(187,255,241,.24)';ctx.lineWidth=.50;ctx.stroke();
+   // Smooth, narrow specular edge; no broad neon halo or segmented joints.
+   const edge=rows[kind===0?count-1:0];
+   const spec=ctx.createLinearGradient(64,39,337,360);
+   spec.addColorStop(0,'rgba(128,244,221,.12)');
+   spec.addColorStop(.18,'rgba(220,255,247,.96)');
+   spec.addColorStop(.43,'rgba(111,226,211,.48)');
+   spec.addColorStop(.68,'rgba(234,255,250,.97)');
+   spec.addColorStop(.88,'rgba(166,255,235,.85)');
+   spec.addColorStop(1,'rgba(98,227,208,.16)');
+   path(edge);ctx.strokeStyle=spec;ctx.globalAlpha=.15;ctx.lineWidth=2.3;ctx.stroke();
+   ctx.globalAlpha=1;ctx.lineWidth=kind===0?.85:.95;ctx.stroke();
+   path(rows[kind===0?0:count-1]);ctx.strokeStyle='rgba(151,240,225,.15)';ctx.lineWidth=.36;ctx.stroke();
   }
   // Silk membrane: a broad fine mesh tapers into two points and folds back
   // on itself near the diagonal crest. The interior is no longer a flat S line.
-  const R=radius*.747,tilt=-.27+.045*Math.sin(t*.7),mc=Math.cos(tilt),ms=Math.sin(tilt);
+  const R=radius*.753,tilt=-.32+.045*Math.sin(t*.7),mc=Math.cos(tilt),ms=Math.sin(tilt);
   const membrane=(x,u)=>{
    const env=Math.sqrt(Math.max(0,1-x*x));
    const arc=-env*(.97+.012*Math.sin(t));
-   const crest=env*(.19*Math.sin(Math.PI*x+t*.5)+.07*Math.sin(2*Math.PI*x-t));
-   const crease=env*(.14+.055*m)*Math.pow(Math.sin(Math.PI*u),2)*Math.sin(Math.PI*x+.8+t*.45);
+   const crest=env*(.065+.135*Math.sin(Math.PI*x+t*.5)+.055*Math.sin(2*Math.PI*x-t));
+   const crease=env*(.12+.05*m)*Math.pow(Math.sin(Math.PI*u),2)*Math.sin(Math.PI*x+.8+t*.45);
    const y=arc+(crest-arc)*u+crease;
    return [200+R*(x*mc-y*ms),200+R*(x*ms+y*mc)];
   };
-  const mesh=liquidMobile?42:66,columns=liquidMobile?44:72;
+  const mesh=liquidMobile?44:72;
   const memGradient=ctx.createLinearGradient(60,220,340,155);
   memGradient.addColorStop(0,'rgba(125,245,219,.72)');
   memGradient.addColorStop(.42,'rgba(107,208,197,.34)');
   memGradient.addColorStop(.76,'rgba(168,255,237,.78)');
   memGradient.addColorStop(1,'rgba(230,255,247,.88)');
+  ctx.setLineDash([.18,1.35]);
   for(let j=0;j<mesh;j++){
    const u=j/(mesh-1),pts=[];
    for(let i=0;i<=liquidSteps;i++)pts.push(membrane(-1+2*i/liquidSteps,u));
-   path(pts,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.16+.42*Math.pow(u,6);ctx.lineWidth=.30;ctx.stroke();
+   path(pts,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.21+.32*Math.pow(u,7);ctx.lineWidth=.34;ctx.stroke();
   }
-  // Cross fibres reveal the sheet, especially close to its folded lip.
-  for(let i=1;i<columns;i++){
-   const x=-1+2*i/columns,pts=[];
-   for(let j=0;j<=18;j++)pts.push(membrane(x,j/18));
-   path(pts,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.18;ctx.lineWidth=.28;ctx.stroke();
-  }
-  const foldCount=liquidMobile?18:28;
+  // Restore solid strokes for the folded lip; no square wireframe grid.
+  ctx.setLineDash([]);
+  const foldCount=liquidMobile?23:36;
   for(let j=0;j<foldCount;j++){
    const v=j/(foldCount-1),pts=[];
    for(let i=0;i<=liquidSteps;i++){
     const x=-1+2*i/liquidSteps,[px,py]=membrane(x,1);
     const env=Math.pow(Math.max(0,1-x*x),.9);
-    pts.push([px,py+R*.15*env*Math.sin(Math.PI*v)*(.64+.36*Math.cos(Math.PI*x+t*.5))]);
+    pts.push([px,py+R*(.20+.035*m)*env*Math.sin(Math.PI*v)*(.70+.30*Math.cos(Math.PI*(x+.30)+t*.5))]);
    }
-   path(pts,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.19+.32*Math.pow(Math.sin(Math.PI*v),4);ctx.lineWidth=.31;ctx.stroke();
+   path(pts,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.10+.31*Math.pow(Math.sin(Math.PI*v),2);ctx.lineWidth=.25;ctx.stroke();
   }
   ctx.globalAlpha=1;
   ribbon(1,liquidMobile?30:46);
