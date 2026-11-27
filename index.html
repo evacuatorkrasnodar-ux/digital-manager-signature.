@@ -1274,7 +1274,6 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
  </section>
  <section id="svMusicNew" class="sv-music-browse-panel" hidden aria-labelledby="svMusicNewTitle">
   <h2 id="svMusicNewTitle" class="sv-music-page-title">Новинки</h2>
-  <p class="sv-music-browse-caption">Музыкальные открытия Сэйви</p>
  </section>
  <div class="sv-music-cover" id="sayviMusicStage" aria-label="Обложка текущей песни">
   <div class="sv-now-fallback" aria-hidden="true">
@@ -1318,12 +1317,24 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   <button type="button" id="sayviMusicStopAndHide" class="sv-now-menu-row sv-now-stop" aria-label="Остановить музыку и скрыть мини-плеер"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>Остановить и скрыть</span></button>
  </div>
 <section id="sayviDiscoveryPanel" class="sv-discovery-panel" aria-labelledby="sayviDiscoveryTitle" hidden>
- <div class="sv-discovery-head"><h2 id="sayviDiscoveryTitle" class="sv-discovery-title">Музыкальные открытия Сэйви</h2></div>
- <p class="sv-discovery-description">По желанию Сэйви запоминает на этом устройстве любимых исполнителей после нескольких настоящих прослушиваний. Для проверки новинок имя исполнителя отправляется в публичный каталог iTunes (США). Песни и файлы не передаются. Отказаться и очистить интересы можно в любой момент. Новинки проверяются при открытом приложении.</p>
- <div class="sv-discovery-actions">
-  <button type="button" id="sayviDiscoveryToggle" aria-pressed="false">Включить музыкальные открытия</button>
-  <button type="button" id="sayviDiscoveryCheck" hidden>Проверить новинки</button>
-  <button type="button" id="sayviDiscoveryForget" hidden>Очистить интересы</button>
+ <div class="sv-discovery-feature">
+  <div class="sv-discovery-feature-head">
+   <span class="sv-discovery-mark" aria-hidden="true"></span>
+   <div><h2 id="sayviDiscoveryTitle">Открывайте новое</h2><p>Новинки любимых исполнителей с Сэйви.</p></div>
+  </div>
+  <div class="sv-discovery-setting"><span id="svDiscoverySwitchLabel">Музыкальные открытия</span><button type="button" id="sayviDiscoveryToggle" aria-pressed="false" aria-labelledby="svDiscoverySwitchLabel"><span aria-hidden="true"></span></button></div>
+  <p class="sv-discovery-consent">При включении имена исполнителей отправляются в каталог iTunes (США). Аудиофайлы остаются на устройстве.</p>
+  <details class="sv-discovery-info">
+   <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8v.1" stroke-linecap="round"/></svg>Подробнее и настройки<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+   <p>Сэйви запоминает исполнителя после трёх прослушиваний от 30 секунд. Интересы хранятся на устройстве. Имена исполнителей передаются в публичный каталог iTunes только при включённой функции. Проверка выполняется при открытом приложении, не чаще раза в сутки автоматически. Можно выключить функцию или очистить интересы.</p>
+   <button type="button" id="sayviDiscoveryForget" hidden>Очистить интересы и выключить</button>
+  </details>
+ </div>
+ <div class="sv-discovery-feed-head"><h3>Для вас</h3><button type="button" id="sayviDiscoveryCheck" aria-label="Проверить новинки" title="Проверить новинки" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.2 6M20 5v6h-6"/></svg></button></div>
+ <div id="svMusicDiscoveryReleases" class="sv-discovery-releases" hidden></div>
+ <div id="svMusicDiscoveryEmpty" class="sv-discovery-empty">
+  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 26v-5a14 14 0 0 1 28 0v5"/><rect x="7" y="23" width="9" height="15" rx="4"/><rect x="32" y="23" width="9" height="15" rx="4"/></svg>
+  <h4 id="svMusicDiscoveryEmptyTitle">Открывайте новое с Сэйви</h4>
  </div>
  <p id="sayviDiscoveryStatus" class="sv-discovery-status" role="status" aria-live="polite"></p>
 </section>
@@ -6220,7 +6231,7 @@ syncManager();render();
 </div></dialog><script src="assets/seyveo-pay.js?v=20261126-jade-platinum-v222"></script><script src="assets/seyveo-wallet-currency.js?v=3"></script><script src="assets/seyveo-wallet-goals.js?v=1"></script><script src="assets/seyveo-wallet-loyalty.js?v=20261126-v212"></script><script src="assets/seyveo-chat-polls.js?v=6"></script><script src="assets/seyveo-chat-themes.js?v=6"></script><script src="assets/seyveo-family-chat.js?v=20261125-auto-scan"></script><script src="assets/seyveo-avatar-art.js?v=3"></script>
 <script src="assets/seyveo-sayvi-holidays.js?v=20261126-holiday-auto-v150"></script>
 
-<script src="assets/seyveo-business-command.js?v=20261126-attachment-grid-v2"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261126-notifications-glass-v156"></script><script src="assets/seyveo-unified-tasks.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-employee-schedule.js?v=4"></script><script src="assets/seyveo-dock-continuity.js?v=10"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=20261126-card-master-v50"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=20261126-bulk-v119"></script>
+<script src="assets/seyveo-business-command.js?v=20261126-attachment-grid-v2"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261126-notifications-glass-v156"></script><script src="assets/seyveo-unified-tasks.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-employee-schedule.js?v=4"></script><script src="assets/seyveo-dock-continuity.js?v=10"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=3-editorial"></script><script src="assets/seyveo-card-studio.js?v=20261126-card-master-v50"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=20261126-bulk-v119"></script>
 <script src="assets/seyveo-learning-lab.js?v=1" defer></script>
 <dialog id="seyveoOfflineDialog" class="seyveo-offline-dialog" aria-labelledby="seyveoOfflineHeading"><div class="seyveo-offline-shell"><header class="seyveo-offline-head"><div><span class="seyveo-offline-kicker">SEYVEO ONE · УПРАВЛЕНИЕ</span><h2 id="seyveoOfflineHeading">Сэйви офлайн</h2><p>Сэйви рядом, даже когда нет интернета</p></div><button type="button" id="seyveoOfflineClose" aria-label="Закрыть">×</button></header><div id="seyveoOfflineChoices" class="seyveo-offline-choices"></div><div class="seyveo-offline-summary"><span>Полный офлайн-комплект</span><strong id="seyveoOfflineSize">0 МБ</strong><small id="seyveoOfflineNotice">Предварительная оценка. Готовые пакеты ещё не опубликованы.</small></div><button type="button" id="seyveoOfflineConfirm" class="seyveo-offline-save">Понятно</button><p class="seyveo-offline-foot">Офлайн-комплект будет доступен для отдельной установки после публикации проверенных файлов. Личная память хранится отдельно.</p></div></dialog><script src="assets/seyveo-offline-manager.js?v=20261125-shared-sheets-v3" defer></script>
 
@@ -6423,7 +6434,7 @@ window.addEventListener('load',()=>{
 
 <script src="assets/seyveo-sayvi-handoff-demo.js?v=20261126-fast-dock-v203"></script><script src="assets/seyveo-review-cards.js?v=20261126-fast-dock-v203"></script>
 
-<script src="assets/seyveo-progressive-discovery.js?v=3"></script>
+<script src="assets/seyveo-progressive-discovery.js?v=4-preserve-music"></script>
 
 <script src="assets/seyveo-home-status-light.js?v=2"></script>
 
@@ -7517,4 +7528,55 @@ html[data-theme="dark"] #svMusicWelcome .sv-music-welcome-icon{color:#B0D1DB}
  sync();
 })();
 </script>
+<style id="svMusicDiscoveryEditorial">
+#sayviMusicPage #svMusicNew{padding-bottom:0!important}
+#sayviMusicPage #svMusicNewTitle{margin:0 0 8px!important;font-size:clamp(26px,7vw,32px)!important;font-weight:650!important;letter-spacing:-.04em}
+html.sv-music-browse #sayviMusicPage #sayviDiscoveryPanel:not([hidden]){
+ display:flex;flex-direction:column;gap:12px;flex-shrink:0;box-sizing:border-box;
+ width:100%;margin:0 auto!important;padding:0 16px 14px!important;
+ border:0;background:transparent;box-shadow:none;
+}
+#sayviDiscoveryPanel .sv-discovery-feature{padding:15px 14px 8px;border-radius:20px;background:linear-gradient(140deg,rgba(137,169,215,.19),rgba(189,165,216,.10) 65%,rgba(167,197,195,.10));border:.5px solid rgba(126,149,179,.14)}
+#sayviDiscoveryPanel .sv-discovery-feature-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+#sayviDiscoveryPanel .sv-discovery-mark{flex:0 0 39px;width:39px;height:39px;border-radius:12px;background:rgba(127,153,190,.13) url("assets/seyveo-circular-interlace-mono.svg") center/102% no-repeat}
+html[data-theme="dark"] #sayviDiscoveryPanel .sv-discovery-mark{filter:invert(1)}
+#sayviDiscoveryPanel #sayviDiscoveryTitle{margin:0;color:var(--text);font-size:18px!important;line-height:1.2;font-weight:620!important;letter-spacing:-.03em}
+#sayviDiscoveryPanel .sv-discovery-feature-head p{margin:4px 0 0;font-size:12px!important;line-height:1.4;color:var(--secondary)}
+#sayviDiscoveryPanel .sv-discovery-setting{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;border-top:1px solid rgba(127,140,155,.12)}
+#sayviDiscoveryPanel #svDiscoverySwitchLabel{font-size:14px!important;font-weight:500;color:var(--text)}
+#sayviDiscoveryPanel #sayviDiscoveryToggle{
+ display:grid!important;place-items:center!important;flex:0 0 48px;width:48px!important;height:44px!important;min-height:44px!important;padding:0!important;margin:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;transform:none!important;
+}
+#sayviDiscoveryPanel #sayviDiscoveryToggle > span{display:block;width:40px;height:24px;border-radius:999px;background:radial-gradient(circle at 12px 12px,#fff 0 8.5px,transparent 9px),rgba(127,140,155,.25);border:1px solid rgba(127,140,155,.15);transition:background .16s ease}
+#sayviDiscoveryPanel #sayviDiscoveryToggle[aria-pressed=true] > span{background:radial-gradient(circle at 28px 12px,#fff 0 8.5px,transparent 9px),#63977e;border-color:transparent}
+#sayviDiscoveryPanel .sv-discovery-consent{margin:2px 0 3px;color:var(--secondary);font-size:11px!important;line-height:1.4}
+#sayviDiscoveryPanel .sv-discovery-info{margin:0}
+#sayviDiscoveryPanel .sv-discovery-info summary{display:flex;align-items:center;gap:7px;min-height:44px;list-style:none;color:var(--secondary);font-size:12px!important;cursor:pointer}
+#sayviDiscoveryPanel .sv-discovery-info summary::-webkit-details-marker{display:none}
+#sayviDiscoveryPanel .sv-discovery-info summary svg{width:17px;height:17px;flex:0 0 17px}
+#sayviDiscoveryPanel .sv-discovery-info summary svg:last-child{margin-left:auto;transition:transform .16s ease}
+#sayviDiscoveryPanel .sv-discovery-info[open] summary svg:last-child{transform:rotate(90deg)}
+#sayviDiscoveryPanel .sv-discovery-info p{margin:0 0 8px;font-size:12px!important;line-height:1.5;color:var(--secondary)}
+#sayviDiscoveryPanel #sayviDiscoveryForget:not([hidden]){display:block;min-height:44px;padding:0;border:0;background:transparent!important;box-shadow:none!important;color:var(--text);font-size:12px!important;text-align:left}
+#sayviDiscoveryPanel .sv-discovery-feed-head{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding-left:3px}
+#sayviDiscoveryPanel .sv-discovery-feed-head h3{margin:0;font-size:19px!important;font-weight:600;letter-spacing:-.025em}
+#sayviDiscoveryPanel #sayviDiscoveryCheck:not([hidden]){display:grid!important;place-items:center;width:44px!important;height:44px!important;min-height:44px!important;border:0;background:transparent!important;box-shadow:none!important;padding:0!important;color:var(--secondary);transform:none!important}
+#sayviDiscoveryPanel #sayviDiscoveryCheck svg{width:22px;height:22px}
+#sayviDiscoveryPanel #sayviDiscoveryCheck:disabled{opacity:.35}
+#sayviDiscoveryPanel :is(#sayviDiscoveryCheck,#sayviDiscoveryForget,#svMusicDiscoveryReleases,#svMusicDiscoveryEmpty,#sayviDiscoveryStatus)[hidden]{display:none!important}
+#sayviDiscoveryPanel .sv-discovery-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:14px 12px 0;color:var(--secondary)}
+#sayviDiscoveryPanel .sv-discovery-empty svg{width:44px;height:44px;color:#8095a8}
+#sayviDiscoveryPanel .sv-discovery-empty h4{margin:0;color:var(--text);font-size:15px!important;font-weight:550}
+#sayviDiscoveryPanel #sayviDiscoveryStatus{margin:0 auto;max-width:330px;text-align:center;color:var(--secondary);font-size:12px!important;line-height:1.45}
+#sayviDiscoveryPanel .sv-discovery-releases{display:grid;gap:0}
+#sayviDiscoveryPanel .sv-discovery-release{display:flex;align-items:center;gap:11px;min-height:62px;padding:7px 3px;border-bottom:1px solid rgba(127,140,155,.10);text-decoration:none;color:var(--text)}
+#sayviDiscoveryPanel .sv-discovery-release-art{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(145deg,#8b9db6,#485c76);color:white}
+#sayviDiscoveryPanel .sv-discovery-release-art svg{width:25px;height:25px}
+#sayviDiscoveryPanel .sv-discovery-release-copy{display:grid;gap:4px;flex:1;min-width:0}
+#sayviDiscoveryPanel .sv-discovery-release-copy strong{font-size:14px;font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#sayviDiscoveryPanel .sv-discovery-release-copy small{color:var(--secondary);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#sayviDiscoveryPanel .sv-discovery-release-arrow{color:var(--secondary);width:28px;text-align:center}
+@media(prefers-reduced-motion:reduce){#sayviDiscoveryPanel #sayviDiscoveryToggle > span,#sayviDiscoveryPanel .sv-discovery-info summary svg:last-child{transition:none}}
+</style>
 </body></html>
