@@ -1,9 +1,10 @@
-/* SEYVEO Liquid Sound V70 · coherent silk microstructure · WebGL 1. */
+/* SEYVEO Liquid Sound V71 · antialiased silk microtexture · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
  const gl=canvas.getContext('webgl',{alpha:true,antialias:true,depth:false,stencil:false,premultipliedAlpha:true,preserveDrawingBuffer:true,powerPreference:'low-power'});
  if(!gl)return null;
+ const surfaceDots=!!gl.getExtension('OES_standard_derivatives')&&gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER,gl.HIGH_FLOAT).precision>0;
  let lost=false;canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();lost=true});
  const vs=`precision highp float;
 attribute vec4 aData;
@@ -34,7 +35,7 @@ vec3 contour(float k,float u){
   else p=bez(crest,crest+dCrest*(.14/3.0),vec2(.947,-.185),r,(u-.86)/.14);
   return vec3(p,(nearEdge?.38:.23)*sin(PI*u));
  }
- if(k<.5){m=vec2(.105,-.795);c1=vec2(-.695,.185);c2=vec2(-.450,-.795);c3=vec2(.660,-.795);c4=vec2(.88,-.43);z=-.13;}
+ if(k<.5){m=vec2(.105,-.795);c1=vec2(-.675,.155);c2=vec2(-.425,-.795);c3=vec2(.635,-.795);c4=vec2(.88,-.43);z=-.13;}
  else if(k<3.5){m=vec2(.40,.565);c1=vec2(-.47,.10);c2=vec2(.015,.565);c3=vec2(.785,.565);c4=vec2(1.025,.26);z=-.09;}
  else {m=vec2(-.025,.785);c1=vec2(-.91,.54);c2=vec2(-.415,.785);c3=vec2(.365,.785);c4=vec2(1.025,.33);z=-.22;}
  vec2 p=u<.5?bez(l,c1,c2,m,u*2.0):bez(m,c3,c4,r,u*2.0-1.0);
@@ -89,7 +90,7 @@ vec3 crease(float x,float v){
 void main(){
  float x=aData.x,v=aData.y;vec3 p;vSheen=0.0;
  // Reparameterize the particle lattice without changing the continuous silk surface.
- if(uMode>.5&&uKind<6.5){
+ if(uMode>.5&&uMode<2.5&&uKind<6.5){
   float u=(x+1.0)*.5;
   // Spread the broad faces, compress the rows at the turning edges.
   if(uKind<2.5||uKind>3.5){
@@ -118,7 +119,7 @@ void main(){
  vUV=vec2(x,v);
 }
 `;
- const fs=`precision mediump float;
+ const fs=(surfaceDots?'#extension GL_OES_standard_derivatives : enable\n#define SURFACE_DOTS 1\n':'')+`precision mediump float;
 uniform mediump float uKind,uMode; varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 float peak(float a,float c,float w){return exp(-(1.0-cos(a-c))/(w*w));}
 float gauss(float x,float w){float q=x/w;return exp(-q*q);}
@@ -164,7 +165,7 @@ void main(){
   float tipGlow=gauss(x+.87,.16)+gauss(x-.86,.19);
   float leftTurn=gauss(x+.94,.15);
   float facing=clamp(vLight,0.0,1.0);
-  float frontLight=.56+.44*gauss(x-.10,.88);
+  float frontLight=.65+.35*gauss(x-.10,.88);
   // Directional silk sheen: light spreads along the cloth, not just its outline.
   float shoulderLight=gauss(x+.43,.64)*gauss(v-.48,.45);
   float highlight=clamp(vSheen,0.0,1.0);
@@ -195,8 +196,25 @@ void main(){
   }
   if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*5.2)*(1.0-smoothstep(.24,.50,d));}
   // Subtle individual silk filaments, confined to the turning central fold.
-  if(uMode>1.5){float taper=pow(max(0.0,sin(3.14159265*(x+1.0)*.5)),.55);col=mix(vec3(.015,.74,.77),vec3(.55,1.0,.97),pow(v,2.0));alpha=(.035+.19*middleLight+.14*pow(v,5.0))*taper*(1.0-.65*smoothstep(.70,.90,x));}
-
+  if(uMode>1.5&&uMode<2.5){float taper=pow(max(0.0,sin(3.14159265*(x+1.0)*.5)),.55);col=mix(vec3(.015,.74,.77),vec3(.55,1.0,.97),pow(v,2.0));alpha=(.035+.19*middleLight+.14*pow(v,5.0))*taper*(1.0-.65*smoothstep(.70,.90,x));}
+#ifdef SURFACE_DOTS
+  // Continuous UV microtexture on the broad faces, with screen-space coverage antialiasing.
+  if(uMode>2.5){
+   highp float u=(x+1.0)*.5;
+   highp float w=v;
+   highp float bow=sin(3.14159265*u)*sin(3.14159265*w);
+   highp float flow=uKind<2.5?.22:-.18;
+   highp vec2 uv=vec2(u+flow*bow*(w-.42),w-.13*bow*(.35+.65*u));
+   highp vec2 cells=uv*vec2(uKind<2.5?116.0:106.0,uKind<2.5?48.0:42.0);
+   highp vec2 aa=max(fwidth(cells),vec2(.001));
+   highp vec2 delta=abs(fract(cells+.5)-.5);
+   highp vec2 core=vec2(.145,.145);
+   highp vec2 coverage=clamp((min(delta+aa*.5,core)-max(delta-aa*.5,-core))/aa,0.0,1.0);
+   highp float dotMask=coverage.x*coverage.y;
+   highp float resolved=1.0-smoothstep(.70,1.35,max(aa.x,aa.y));
+   alpha*=mix(.0841,dotMask,resolved);
+  }
+#endif
  }
  gl_FragColor=vec4(col,clamp(alpha,0.0,1.0));
 }
@@ -216,7 +234,7 @@ void main(){
    let x=kind===5?-1+2*i/n:Math.max(-.9999,Math.min(.9999,-1+2*i/n));
    values.push(x,j/m,0,0);
   }
-  if(mode===0)for(let j=0;j<m;j++)for(let i=0;i<n;i++){const k=j*(n+1)+i;indices.push(k,k+1,k+n+1,k+1,k+n+2,k+n+1)}
+  if(mode===0||mode===3)for(let j=0;j<m;j++)for(let i=0;i<n;i++){const k=j*(n+1)+i;indices.push(k,k+1,k+n+1,k+1,k+n+2,k+n+1)}
   if(mode===2)for(let i=1;i<n;i++)for(let j=0;j<m;j++){const k=j*(n+1)+i;indices.push(k,k+n+1)}
   const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.STATIC_DRAW);
   let index=null;
@@ -231,7 +249,8 @@ void main(){
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   const layers=[mesh(kind,mobile?64:96,mobile?20:32,0)];
   if(kind===3)layers.push(mesh(kind,n,mobile?14:22,2));
-  layers.push(mesh(kind,n,m,1));return layers;
+  if(surfaceDots&&!mobile&&(kind===2||kind===4))layers.push(mesh(kind,96,44,3));
+  else layers.push(mesh(kind,n,m,1));return layers;
  });
  function draw(obj){
   gl.uniform1f(uniform.uKind,obj.kind);gl.uniform1f(uniform.uMode,obj.mode);
