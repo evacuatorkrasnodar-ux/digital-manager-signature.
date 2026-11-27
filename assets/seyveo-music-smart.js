@@ -829,9 +829,13 @@
    message('Автоматическая коррекция громкости.');
    const statusLine=d.createElement('p');statusLine.className='sv-adaptive-status';statusLine.setAttribute('aria-live','polite');body.append(statusLine);
    const sourceLine=d.createElement('div');sourceLine.id='svAdaptiveSourceQuality';body.append(sourceLine);paintQuality();
-   const modeButton=action('Pure Sound',()=>{const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
+   const modeButton=action('Adaptive Sound',()=>{const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
    modeButton.id='svAdaptivePure';
-   message('Pure Sound — оригинальная запись без коррекции. Радио и неподдерживаемые источники не корректируются.');
+   modeButton.setAttribute('role','switch');
+   const modeLabel=d.createElement('span');modeLabel.textContent='Adaptive Sound';
+   const modeSwitch=d.createElement('span');modeSwitch.className='seyveo-silk-switch';modeSwitch.setAttribute('aria-hidden','true');
+   modeButton.replaceChildren(modeLabel,modeSwitch);
+   message('Выключите Adaptive Sound для Pure Sound — оригинального звучания без коррекции. Радио и неподдерживаемые источники не корректируются.');
    updateSound();
   }
   // Keep the header height constant. First tap on the collapsed symbol
@@ -899,8 +903,7 @@
    el.replaceChildren();
    const headline=d.createElement('strong');headline.textContent=s?.phase==='active'&&s.attenuationDb<0?'Звучание адаптировано':(!s?'Движок недоступен':labels[s.phase]||'Готов к локальной музыке');el.append(headline);
    if(s?.phase==='active'&&s.attenuationDb<0){const db=d.createElement('small');db.textContent='Коррекция '+s.attenuationDb+' дБ'+(s.sampled?' · выборочная оценка сборника':'');el.append(db)}
-   b.textContent='Pure Sound';
-   b.setAttribute('aria-pressed',String(!!s?.pure));b.disabled=!s;
+   b.setAttribute('aria-checked',String(!!s&&!s.pure));b.disabled=!s;
   }
   d.addEventListener('seyveo:adaptive-sound',updateSound);
   $('svAdaptiveSoundOpen')?.addEventListener('click',soundSheet);
