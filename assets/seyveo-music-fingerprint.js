@@ -54,7 +54,9 @@
    if(yieldWork&&t%48===0)await wait();
   }
   const pairs=[];
-  for(let i=0;i<peaks.length&&pairs.length<MAX_HASHES*2;i++){
+  // Spread the bounded index across the whole recording, not only its start.
+  const stride=Math.max(1,Math.ceil(peaks.length*6/MAX_HASHES));
+  for(let i=0;i<peaks.length&&pairs.length<MAX_HASHES*2;i+=stride){
    const a=peaks[i];let count=0,last=-1;
    for(let j=i+1;j<peaks.length;j++){
     const b=peaks[j],dt=b.t-a.t;
@@ -123,7 +125,7 @@
   for(let c=0;c<buf.numberOfChannels;c++){const a=buf.getChannelData(c);for(let i=0;i<a.length;i++)mono[i]+=a[i]/buf.numberOfChannels}
   return mono;
  }
- let dbPromise=null,records=new Map(),failed=new Set(),busy=false,ready=false,storage=true,scheduled=0,controller=null;
+ let dbPromise=null,records=new Map(),failed=new Set(),busy=false,ready=false,storage=true,scheduled=0,controller=null,dirty=true;
  const library=()=>w?.SEYVEO_MUSIC?.recognitionLibrary?.()||[];
  function openDB(){
   if(!w?.indexedDB)return Promise.reject(Error('storage'));
@@ -148,11 +150,11 @@
  }
  let initPromise;
  async function run(){
-  if(busy||!Context()||w.document.hidden||w.SEYVEO_MUSIC?.state?.().playing)return;
+  if(busy||!Context()||w.document.hidden||!w.SEYVEO_MUSIC||w.SEYVEO_MUSIC.state().libraryLoading||w.SEYVEO_MUSIC.state().playing)return;
   busy=true;emit();
   try{
    await (initPromise??=init());
-   const items=library(),ids=new Set(items.map(x=>x.id));
+   const items=library(),ids=new Set(items.map(x=>x.id));dirty=false;
    for(const id of [...records.keys(),...failed]){
     if(!ids.has(id)){records.delete(id);failed.delete(id);if(storage)try{await transaction('readwrite',s=>s.delete(id))}catch{storage=false}}
    }
@@ -172,7 +174,8 @@
   }finally{controller=null;busy=false;emit();if(library().some(i=>!records.has(i.id)&&!failed.has(i.id))&&records.size+failed.size<MAX_TRACKS)schedule()}
  }
  function schedule(){
-  if(!w||scheduled||busy||w.document.hidden||w.SEYVEO_MUSIC?.state?.().playing)return;
+  if(!w||scheduled||busy||w.document.hidden||!w.SEYVEO_MUSIC||w.SEYVEO_MUSIC.state().libraryLoading||w.SEYVEO_MUSIC.state().playing)return;
+  if(ready&&!dirty&&(records.size+failed.size>=MAX_TRACKS||!library().some(i=>!records.has(i.id)&&!failed.has(i.id))))return;
   scheduled=w.setTimeout(()=>{scheduled=0;run().catch(()=>{})},1000);
  }
  function stop(){controller?.abort();if(scheduled){w.clearTimeout(scheduled);scheduled=0}}
@@ -182,6 +185,6 @@
   const query=await fingerprint(await decode(blob),{yieldWork:true,signal});
   return match(query,[...records.values()].filter(r=>ids.has(r.id)),{yieldWork:true,signal});
  }
- if(w){w.document.addEventListener('seyveo:music-library',schedule);w.document.addEventListener('seyveo:music-state',()=>{if(w.SEYVEO_MUSIC?.state?.().playing)stop();else schedule()});w.document.addEventListener('visibilitychange',()=>{if(w.document.hidden)stop();else schedule()});w.addEventListener('pagehide',stop);schedule()}
+ if(w){w.document.addEventListener('seyveo:music-library',()=>{dirty=true;schedule()});w.document.addEventListener('seyveo:music-state',()=>{if(w.SEYVEO_MUSIC?.state?.().playing)stop();else schedule()});w.document.addEventListener('visibilitychange',()=>{if(w.document.hidden)stop();else schedule()});w.addEventListener('pagehide',stop);schedule()}
  return Object.freeze({fingerprint,match,state,schedule,stop,recognize,VERSION,RATE});
 });
