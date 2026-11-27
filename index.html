@@ -1201,6 +1201,10 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
    </div>
    <button class="sv-music-inner-back" type="button" data-music-view-action="home" aria-label="Назад к музыке"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
    <div class="sv-music-inner-title"><span data-title-view="replay">Мой музыкальный мир</span><span data-title-view="history">Недавно слушали</span><span data-title-view="library">Медиатека</span><span data-title-view="new">Новинки</span><span data-title-view="radio">Радио</span></div>
+   <div id="svAdaptiveQuickGroup" role="group" aria-label="Режим звучания">
+    <button id="svAdaptiveQuick" type="button" aria-pressed="false" aria-label="Adaptive Sound. Включить Pure Sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M6 10v4m3-7v10m3-12v14m3-12v10m3-7v4"/></svg><span><strong id="svAdaptiveQuickName">Adaptive Sound</strong><small id="svAdaptiveQuickState">Автоматический режим</small></span></button>
+    <button id="svAdaptiveQuickInfo" type="button" aria-label="О технологии звучания" title="О технологии звучания"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5"/><circle cx="12" cy="7.5" r=".7" fill="currentColor" stroke="none"/></svg></button>
+   </div>
    <button id="sayviMusicMinimize" class="sv-music-minimize" type="button" aria-label="Свернуть музыку и вернуться в предыдущий раздел; воспроизведение продолжится, если разрешит система" title="Свернуть плеер"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 9 7 7 7-7"/></svg></button>
   </header>
  <section id="svMusicHome" class="sv-music-browse-panel" hidden aria-labelledby="svMusicHomeTitle">
@@ -5978,7 +5982,32 @@ window.addEventListener('seyveo:cinema-finished',presentHomeLaunchLogo);
 #svSmartMusicBody:has(.sv-adaptive-mark) .sv-smart-music-message{text-align:center}
 #svSmartMusicBody .sv-adaptive-status{font-size:13px;font-weight:550;text-align:center;padding:11px 6px;border-block:1px solid rgba(140,148,160,.2);color:inherit;margin:12px 0}
 #svSmartMusicBody #svAdaptivePure{text-align:center;border:1px solid rgba(140,148,160,.25);border-radius:22px;margin:8px 0;font-weight:550}
-</style><script src="assets/seyveo-adaptive-sound.js?v=1"></script><script src="assets/seyveo-music-smart.js?v=3-adaptive"></script><script src="assets/seyveo-music-dock.js?v=34-period-menu"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/orb-language.js?v=8-unified-canvas"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
+
+#svAdaptiveQuickGroup{display:none!important}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #svAdaptiveQuickGroup{display:flex!important;align-items:center;margin-right:auto;min-width:0;gap:0;max-width:calc(100% - 48px);border:1px solid rgba(233,244,249,.25);border-radius:24px;background:rgba(235,245,251,.08);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:#f7fbff}
+#sayviMusicPage #svAdaptiveQuickGroup button{border:0!important;box-shadow:none!important;background:transparent!important;color:inherit!important;transform:none!important;min-height:44px;min-width:44px;padding:0;flex-shrink:0}
+#sayviMusicPage #svAdaptiveQuickGroup #svAdaptiveQuick{display:flex;align-items:center;gap:9px;padding:3px 4px 3px 11px;text-align:left;min-width:0;flex:1 1 auto}
+#svAdaptiveQuick>svg{width:24px;height:24px;flex:0 0 24px;color:#c5e0e3}
+#svAdaptiveQuick[aria-pressed="true"]>svg{color:#f7fbff}
+#svAdaptiveQuick>span{display:flex;flex-direction:column;min-width:0;gap:2px}
+#svAdaptiveQuick strong{font-size:13px;font-weight:600;white-space:nowrap;line-height:1.15}
+#svAdaptiveQuick small{font-size:10px;font-weight:450;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15}
+#sayviMusicPage #svAdaptiveQuickInfo{display:grid;place-items:center;flex:0 0 44px}
+#svAdaptiveQuickInfo svg{width:19px;height:19px;opacity:.8}
+#svAdaptiveQuickGroup button:focus-visible{outline:2px solid currentColor;outline-offset:-3px;border-radius:22px}
+#svSmartMusicSheet[data-sound-phase]{background:rgba(32,45,57,.90);color:#f7fafb;border-color:rgba(230,242,252,.28);-webkit-backdrop-filter:blur(24px) saturate(115%);backdrop-filter:blur(24px) saturate(115%)}
+:root[data-theme="light"] #svSmartMusicSheet[data-sound-phase]{background:rgba(246,248,250,.91);color:#121518;border-color:rgba(255,255,255,.62)}
+#svSmartMusicSheet[data-sound-phase] #svSmartMusicBody .sv-adaptive-mark{width:56px;height:56px;margin:2px auto 8px}
+#svSmartMusicSheet[data-sound-phase] #svSmartMusicBody .sv-smart-music-message{margin:6px 0 10px;font-size:13px}
+#svSmartMusicBody .sv-adaptive-status strong,#svSmartMusicBody .sv-adaptive-status small{display:block}
+#svSmartMusicBody .sv-adaptive-status small{font-size:11px;font-weight:450;opacity:.7;margin-top:3px}
+#svSmartMusicBody #svAdaptivePure{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 12px}
+#svSmartMusicBody #svAdaptivePure::after{content:"";width:42px;height:24px;flex:0 0 42px;border-radius:99px;border:1px solid rgba(140,148,160,.45);background:radial-gradient(circle at 12px center,#fff 0 8px,transparent 9px),rgba(130,140,151,.22)}
+#svSmartMusicBody #svAdaptivePure[aria-pressed="true"]::after{background:radial-gradient(circle at 30px center,#fff 0 8px,transparent 9px),#547f8c}
+#svSmartMusicSheet[data-sound-phase="analysing"] .sv-adaptive-mark{animation:svAdaptiveBreath 1.8s ease-in-out infinite}
+@keyframes svAdaptiveBreath{50%{opacity:.5;transform:scale(.97)}}
+@media(prefers-reduced-motion:reduce){#svSmartMusicSheet[data-sound-phase="analysing"] .sv-adaptive-mark{animation:none}}
+</style><script src="assets/seyveo-adaptive-sound.js?v=1"></script><script src="assets/seyveo-music-smart.js?v=4-quick-sound"></script><script src="assets/seyveo-music-dock.js?v=34-period-menu"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/orb-language.js?v=8-unified-canvas"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
