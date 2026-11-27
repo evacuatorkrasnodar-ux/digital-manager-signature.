@@ -178,14 +178,32 @@
  let liquidQuality=1,liquidSlowFrames=0,liquidAmbientLast=0,liquidRenderCost=0;
  let liquidAutoReason="";
  const longAmbient=()=>Number.isFinite(audio?.duration)&&audio.duration>MAX_RHYTHM_SECONDS;
- // Session-only protection: never bounce between visualizers during playback.
- function liquidInterval(){return musicPage?.dataset.liquidRhythm==='ambient'?65:liquidQuality<.85?50:liquidMobile?40:32}
+ // Frame budget adapts to actual render cost, independently of screen width.
+ // Once reduced for overload, stay at the safe ceiling for this session.
+ const liquidCores=navigator.hardwareConcurrency||4;
+ let liquidFPS=liquidCores>=6?60:30,liquidFPSCeiling=60,liquidFastFrames=0;
+ function liquidInterval(){return 1000/(musicPage?.dataset.liquidRhythm==='ambient'?Math.min(30,liquidFPS):liquidFPS)}
+ function liquidFrameDue(timestamp){return !liquidLast||timestamp-liquidLast>=liquidInterval()-2}
+ function adjustLiquidBudget(dt,interval){
+  const overloaded=dt>interval*1.55||liquidRenderCost>interval*.80;
+  liquidSlowFrames=overloaded?liquidSlowFrames+1:Math.max(0,liquidSlowFrames-1);
+  if(liquidSlowFrames>=12){
+   if(liquidFPS>20){
+    liquidFPS=liquidFPS>30?30:20;liquidFPSCeiling=liquidFPS;
+   }else if(liquidQuality>.64){liquidQuality=liquidQuality>.85?.8:.64}
+   else{fallBackLiquid("slow-render");return false}
+   liquidSlowFrames=0;liquidFastFrames=0;
+  }else if(musicPage?.dataset.liquidRhythm==='audio'&&liquidFPS<liquidFPSCeiling&&dt<=interval*1.12&&liquidRenderCost<7){
+   if(++liquidFastFrames>=90){liquidFPS=liquidFPS<30?30:60;liquidFastFrames=0;liquidSlowFrames=0}
+  }else liquidFastFrames=0;
+  return true;
+ }
  const liquidEnergy=new Float32Array(3);
  const liquidMobile=window.matchMedia?.('(max-width: 600px)').matches||((navigator.hardwareConcurrency||8)<=4);
  function liquidVisible(){return !!liquidContext&&liquidMode&&!!audio&&!document.hidden&&location.hash==='#sayvi-music'&&musicPage?.dataset.musicView==='player'&&!musicPage.hidden&&visibleScenes.get(playerScene)!==false&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork')}
  function releaseLiquid(){
   if(liquidGPU){try{liquidGPU.dispose?.()}catch{}liquidGPU=null}
-  liquidGPUAttempted=false;liquidLast=0;liquidClock=-1;liquidSlowFrames=0;liquidAmbientLast=0;liquidRenderCost=0;
+  liquidGPUAttempted=false;liquidLast=0;liquidClock=-1;liquidSlowFrames=0;liquidFastFrames=0;liquidAmbientLast=0;liquidRenderCost=0;
   if(liquidSize){liquidCanvas.width=liquidCanvas.height=1;liquidSize=0;liquidGradient=null}
   liquidEnergy.fill(0);
  }
@@ -196,14 +214,9 @@
   if(!liquidVisible()||document.hidden)return;
   const interval=liquidInterval();
   if(!force&&longAmbient())return;
-  if(!force&&timestamp-liquidLast<interval-1)return;
+  if(!force&&!liquidFrameDue(timestamp))return;
   const dt=liquidLast?clamp(timestamp-liquidLast,1,100):33;
-  if(!force&&liquidLast){
-   const overloaded=dt>interval+23||liquidRenderCost>interval*.80;
-   liquidSlowFrames=overloaded?liquidSlowFrames+1:Math.max(0,liquidSlowFrames-1);
-   if(liquidQuality>.64&&liquidSlowFrames>=12){liquidQuality=liquidQuality>.85?.8:.64;liquidSlowFrames=0}
-   else if(liquidQuality<=.64&&liquidSlowFrames>=24){fallBackLiquid("slow-render");return}
-  }
+  if(!force&&liquidLast&&!adjustLiquidBudget(dt,interval))return;
   const renderStarted=performance.now();
   liquidLast=timestamp;
   const cssSize=liquidCanvas.clientWidth;
@@ -285,8 +298,8 @@
   if(!data?.length&&!full){resetSceneWave();return}
   const liquidActive=full&&liquidMode&&liquidVisible();
   // Avoid sampling and DOM updates between actual Liquid Sound frames.
-  if(liquidActive&&timestamp-liquidLast<liquidInterval()-1){sceneFrame=requestAnimationFrame(tickScene);return}
-  if(timestamp-sceneLast>=(full?(data?.length?0:50):50)){
+  if(liquidActive&&!liquidFrameDue(timestamp)){sceneFrame=requestAnimationFrame(tickScene);return}
+  if(liquidActive||timestamp-sceneLast>=(full?(data?.length?0:50):50)){
    const dt=sceneLast?clamp(timestamp-sceneLast,1,80):16.7;
    sceneLast=timestamp;
    let bass=0,mid=0,air=0;
@@ -341,7 +354,7 @@
   }
   const allowed=!!scene&&sceneAllowed();
   if(musicPage)musicPage.dataset.longAmbient=String(longAmbient());
-  if(scene===playerScene&&liquidMode&&!allowed){liquidClock=-1;liquidLast=0;liquidSlowFrames=0;liquidRenderCost=0;if(!liquidSize)paintLiquid(performance.now(),0,0,0,true)}
+  if(scene===playerScene&&liquidMode&&!allowed){liquidClock=-1;liquidLast=0;liquidSlowFrames=0;liquidFastFrames=0;liquidRenderCost=0;if(!liquidSize)paintLiquid(performance.now(),0,0,0,true)}
   if(scene===playerScene&&liquidMode&&liquidVisible()&&!liquidSize)paintLiquid(performance.now(),0,0,0,true);
   musicPage?.classList.toggle('sv-now-ambient-playing',!!playerScene&&scene===playerScene&&allowed);
   if(!scene)return;
