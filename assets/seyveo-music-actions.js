@@ -10,6 +10,12 @@ function handle(raw){
  let q=raw.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').replace(/\s+/g,' ').trim()
   .replace(/^(?:сэйви|сейви|сэйва|сейва|сэй|сей|seyveo)[,.!:\s]+/,'').replace(/[!?]+$/,'').trim();
  if(!q)return null;
+ const addressed=/^(?:сэйви|сейви|сэйва|сейва|сэй|сей|seyveo)[,.!:\s]+/iu.test(raw.trim());
+ const shortListen=/^слушай[.]?$/.test(q)&&(addressed||location.hash==='#sayvi-music');
+ if(shortListen||/^(?:слушай (?:музыку|песню|что играет)|(?:распознай|узнай|определи) (?:эту )?(?:песню|музыку|мелодию|трек)|что за песня(?: играет)?|какая песня (?:сейчас )?звучит)[.]?$/.test(q)){
+  const open=window.SEYVEO_MUSIC_SMART?.recognitionSheet;
+  if(open)return {status:'recognition-request',message:'Готова распознать музыку. Подтверди короткую запись.',open};
+ }
  const smart=window.SEYVEO_MUSIC_SMART?.handle?.(q);if(smart){msg(smart.message);return smart}
  const music=window.SEYVEO_MUSIC,audio=$('sayviMusicAudio');
  if(!music||!audio)return null;
