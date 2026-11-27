@@ -311,7 +311,9 @@ function replaySummary(period){
  for(const month of months){const b=replayMonths[month];seconds+=Number(b.seconds)||0;for(const [key,item] of Object.entries(b.items||{})){const old=rows.get(key);rows.set(key,{...item,key,seconds:(old?.seconds||0)+(Number(item.seconds)||0)});}}
  const all=[...rows.values()].sort((a,b)=>b.seconds-a.seconds);
  const artists=new Map();for(const t of all.filter(t=>!t.radio&&t.artist)){const old=artists.get(t.artist);artists.set(t.artist,{title:t.artist,seconds:(old?.seconds||0)+t.seconds});}
- return {seconds,tracks:all.filter(t=>!t.radio).slice(0,5),stations:all.filter(t=>t.radio).slice(0,5),artists:[...artists.values()].sort((a,b)=>b.seconds-a.seconds).slice(0,5)};
+ const radioSeconds=all.filter(t=>t.radio).reduce((sum,t)=>sum+t.seconds,0);
+ const musicSeconds=all.filter(t=>!t.radio).reduce((sum,t)=>sum+t.seconds,0);
+ return {seconds,musicSeconds,radioSeconds,tracks:all.filter(t=>!t.radio).slice(0,5),stations:all.filter(t=>t.radio).slice(0,5),artists:[...artists.values()].sort((a,b)=>b.seconds-a.seconds).slice(0,5)};
 }
 function isFavorite(file){return !!file&&favorites.has(favoriteId(file))}
 function updateFavorite(){
@@ -925,15 +927,9 @@ function minimizeMusic(){
  location.hash=MUSIC_RETURN_ROUTES.has(musicReturnRoute)?musicReturnRoute:'#home';
  return true;
 }
-minimize?.addEventListener('click',event=>{
- const dock=window.SEYVEO_MUSIC_DOCK;
- // Replay/history are nested inside Music, not separate app routes.
- if(['replay','history'].includes(page.dataset.musicView)&&location.hash==='#sayvi-music'){
-  event.preventDefault();event.stopPropagation();
-  dock?.show?.('home');
-  return;
- }
- if(!dock?.closePlayer?.())minimizeMusic();
+minimize?.addEventListener('click',()=>{
+ // The left header arrow handles nested Back; this control only collapses.
+ if(!window.SEYVEO_MUSIC_DOCK?.closePlayer?.())minimizeMusic();
 });
 /* An explicit close lives in the full Music screen, not on Home.
    Pause the real audio session and hide the small remote; preserve
