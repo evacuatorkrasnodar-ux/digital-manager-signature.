@@ -297,6 +297,9 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    finally{recognitionBusy=false}
    return;
   }
+  if(req.method==='GET'&&path==='/api/seyveo-music-lyrics-status'){
+   send(res,200,{protocol:1,engine:'local-whisper',pythonConfigured:!!pythonForNoteAudio(),busy:noteAudioBusy});return;
+  }
   if(req.method==='POST'&&path==='/api/seyveo-music-lyrics'){
    if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
    if(!pythonForNoteAudio()){send(res,503,{error:'Локальный Whisper не установлен. Запустите server/install-note-transcription.cmd.'});return}
