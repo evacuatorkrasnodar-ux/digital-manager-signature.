@@ -58,6 +58,20 @@
   while(low<=high){const mid=(low+high)>>1;if(lines[mid].time<=time){answer=mid;low=mid+1}else high=mid-1}
   return answer;
  }
+ function lyricWindow(lines,index,duration){
+  const line=lines[index];if(!line)return null;
+  const next=lines[index+1]?.time;
+  const wordEnd=Array.isArray(line.words)?line.words.reduce((end,v)=>Number.isFinite(v?.end)?Math.max(end,v.end):end,0):0;
+  let end=Number.isFinite(line.end)&&line.end>line.time?Math.max(line.end,wordEnd):wordEnd>line.time?wordEnd:Math.min(line.time+8,Number.isFinite(next)?next:Infinity);
+  if(Number.isFinite(next)&&next>line.time)end=Math.min(end,next);
+  if(Number.isFinite(duration)&&duration>line.time)end=Math.min(end,duration);
+  return {start:line.time,end:Math.max(line.time+.1,end)};
+ }
+ function lyricGap(lines,time,duration,index=activeLine(lines,time)){
+  if(index<0)return lines[0]?.time>time+1?'intro':'';
+  const window=lyricWindow(lines,index,duration),next=lines[index+1]?.time;
+  return window&&time>window.end+1.25&&(!Number.isFinite(next)||time<next-.15)?'gap':'';
+ }
  function sleepMinutes(q){
   const m=q.match(/^(?:выключи|останови|поставь на паузу)\s+музыку\s+через\s+(\d{1,3})\s*(?:минут[уы]?|мин\.?)$/i);
   if(!m)return null;const n=Number(m[1]);return n>=1&&n<=180?n:null;
@@ -71,7 +85,7 @@
   const dialog=$('svSmartMusicSheet'),body=$('svSmartMusicBody'),title=$('svSmartMusicTitle');
   const karaokePanel=$('svInlineKaraoke'),karaokeBody=$('svInlineKaraokeBody'),karaokeSettings=$('svInlineKaraokeSettings'),karaokeTools=$('svInlineKaraokeTools');
   let lyricAbort=null,lyricFile=null,lyricGeneration=0,lyricsActive=false;
-  let lyricFrame=0,activeWords=[],lyricRows=[],lastLyricTime=-1,lyricScrollTarget=null,lyricScrollStamp=0;
+  let lyricFrame=0,activeWords=[],lyricRows=[],lastLyricTime=-1,lyricScrollTarget=null,lyricScrollStamp=0,lyricWatch=0,lastGap='';
   function cancelLyric(){lyricAbort?.abort();lyricAbort=null}
   const close=()=>{cancelRecognition();if(dialog?.open)dialog.close();++generation;mode=''};
   let generation=0,mode='',lyricData=null,current=-2,deadline=0,timer=0,originalVolume=null;
@@ -224,6 +238,7 @@
    karaokeBody.inert=open;
   }
   function exitKaraoke(){
+   w.clearInterval(lyricWatch);lyricWatch=0;lastGap='';
    cancelLyric();++lyricGeneration;lyricsActive=false;lyricData=null;lyricFile=null;current=-2;
    stopLyricFrame();activeWords=[];lyricRows=[];lastLyricTime=-1;
    page.classList.remove('sv-karaoke-active');if(karaokePanel){karaokePanel.inert=true;karaokePanel.hidden=true;}
@@ -242,14 +257,15 @@
   async function karaoke(){
    if(!karaokePanel||!karaokeBody||!karaokeSettings||page.dataset.musicView!=='player')return;
    const file=music()?.rhythmFile?.();
-   pauseLibraryLyrics();cancelLyric();++lyricGeneration;lyricsActive=true;lyricData=null;current=-2;lyricFile=file;
-   stopLyricFrame();activeWords=[];lyricRows=[];lastLyricTime=-1;
+   cancelLyric();++lyricGeneration;lyricsActive=true;lyricData=null;current=-2;lyricFile=file;
+   stopLyricFrame();activeWords=[];lyricRows=[];lastLyricTime=-1;lastGap='';
+   if(!lyricWatch)lyricWatch=w.setInterval(checkLyricClock,250);
    page.classList.add('sv-karaoke-active');karaokePanel.hidden=false;karaokePanel.inert=false;
    $('svNowKaraoke')?.setAttribute('aria-pressed','true');
    $('sayviMusicStage')?.setAttribute('aria-label','Текст текущей песни');
    setLyricSettings(false);
    const body=karaokeBody,settings=$('svInlineKaraokeOptions');
-   body.replaceChildren();settings.replaceChildren();body.classList.remove('has-timed-lyrics');body.scrollTop=0;
+   body.replaceChildren();settings.replaceChildren();body.classList.remove('has-timed-lyrics','is-lyric-gap');body.scrollTop=0;
    if(karaokeTools)karaokeTools.disabled=true;
    $('svInlineKaraokeLabel').textContent='ТЕКСТ ПЕСНИ';
    const message=(t,target=body)=>{const p=d.createElement('p');p.className='sv-smart-music-message';p.textContent=t;target.append(p);return p};
@@ -265,12 +281,17 @@
    const render=(data,imported,saved=true)=>{
     if(!valid())return;
     body.replaceChildren();settings.replaceChildren();setLyricSettings(false);current=-2;lyricData=null;activeWords=[];lyricRows=[];lastLyricTime=-1;stopLyricFrame();
-    body.classList.toggle('has-timed-lyrics',!!data?.timed);
+    body.classList.toggle('has-timed-lyrics',!!data?.timed);body.classList.remove('is-lyric-gap');lastGap='';
     if(karaokeTools)karaokeTools.disabled=!data;
     $('svInlineKaraokeLabel').textContent=data?.draft?'ТЕКСТ · ЧЕРНОВИК':'ТЕКСТ ПЕСНИ';
     let autoStart=null;
     if(data){
-     lyricData={...data,file};
+     if(data.timed){
+      const lines=data.lines.filter(line=>Number.isFinite(line?.time)&&line.time>=0).slice().sort((a,b)=>a.time-b.time);
+      if(lines.length)data={...data,lines};else data={...data,timed:false};
+     }
+     lyricData={...data,file};lastGap='';
+     if(data.draft&&data.timed)message('Если во время вокала появляются паузы без текста, часть слов могла не распознаться.',settings);
      if(data.draft)message('Черновик Сэйви · возможны ошибки',settings);
      if(!data.timed)message('Текст без временных меток.',settings);
      if(data.timed&&data.lines.some(line=>line.text?.trim()&&!wordTiming(line))){
@@ -278,6 +299,8 @@
       if(data.draft&&engine&&id&&['localhost','127.0.0.1'].includes(w.location.hostname))
        action('Уточнить синхронизацию слов',()=>{if(valid())render(null,false)},settings);
      }
+     if(data.draft&&data.timed&&data.lines.every(line=>!line.text?.trim()||wordTiming(line))&&engine&&id&&['localhost','127.0.0.1'].includes(w.location.hostname))
+      action('Повторить распознавание текста',()=>{if(valid())render(null,false)},settings);
      if(!saved)message('Текст доступен до закрытия страницы: хранилище недоступно.',settings);
      const save=d.createElement('button');save.type='button';save.className='sv-smart-music-choice';
      save.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="15" height="18" rx="2"/><path d="M8 3v18M3 7h4M3 12h4M3 17h4M11 8h6M11 12h6M11 16h4"/></svg><span>В блокнот</span>';
@@ -310,15 +333,14 @@
       action('Отмена',()=>{if(valid()){render(data,imported,saved);setLyricSettings(true)}},settings);
       editor.focus({preventScroll:true});
      },settings);
+     const fragment=d.createDocumentFragment();
      data.lines.forEach((line,i)=>{
       const el=d.createElement(data.timed?'button':'p');el.className='sv-smart-lyric';
       const words=[];
       if(data.timed&&line.text?.trim()){
        const exact=wordTiming(line);
        const parts=exact?exact.map(v=>v.text):line.text.trim().split(/\s+/);
-       let end=Number.isFinite(line.end)?line.end:data.lines[i+1]?.time;
-       if(!Number.isFinite(end))end=Number.isFinite(audio.duration)?audio.duration:line.time+4;
-       end=Math.max(line.time+.1,Math.min(end,line.time+12));
+       const end=lyricWindow(data.lines,i,audio.duration)?.end||line.time+4;
        const length=parts.reduce((sum,v)=>sum+Math.max(1,v.length),0);let cursor=0;
        parts.forEach((part,j)=>{
         if(j)el.append(d.createTextNode(' '));
@@ -331,8 +353,9 @@
        });
       }else el.textContent=line.text||'♪';
       if(data.timed){el.type='button';el.addEventListener('click',()=>{if(valid()&&Number.isFinite(audio.duration))audio.currentTime=Math.max(0,Math.min(line.time,audio.duration))})}
-      body.append(el);lyricRows.push({el,words});
+      fragment.append(el);lyricRows.push({el,words});
      });
+     body.append(fragment);
     }else {
      const local=['localhost','127.0.0.1'].includes(w.location.hostname);
      if(local&&engine&&id){
@@ -441,16 +464,32 @@
    const step=delta*(1-Math.exp(-elapsed/105));
    karaokeBody.scrollTop=now+(Math.abs(step)<1?Math.sign(delta):step);
   }
+  function checkLyricClock(){
+   if(!lyricsActive)return;
+   if(music()?.rhythmFile?.()!==lyricFile){void karaoke();return}
+   if(!lyricData?.timed)return;
+   updateLine();
+   if(!audio.paused&&!audio.ended){
+    if(lyricScrollTarget!==null)advanceLyricScroll(w.performance.now());
+    startLyricFrame();
+   }
+  }
   function startLyricFrame(){
    if(lyricFrame||!lyricsActive||!lyricData?.timed||audio.paused||audio.ended)return;
    lyricFrame=w.requestAnimationFrame(stamp=>{lyricFrame=0;updateLine();advanceLyricScroll(stamp);startLyricFrame()});
   }
   function updateLine(immediate=false){
    if(!lyricsActive||!lyricData?.timed||!karaokeBody||music()?.rhythmFile?.()!==lyricData.file)return;
-   const time=audio.currentTime;
+   const time=audio.currentTime;if(!Number.isFinite(time))return;
    const seek=immediate===true||Math.abs(time-lastLyricTime)>1.2;
    lastLyricTime=time;
    const next=activeLine(lyricData.lines,time);
+   const gap=lyricGap(lyricData.lines,time,audio.duration,next);
+   if(gap!==lastGap){
+    lastGap=gap;
+    $('svInlineKaraokeLabel').textContent=gap==='intro'?'ОЖИДАНИЕ ТЕКСТА':gap==='gap'?'ПАУЗА В ТЕКСТЕ':lyricData.draft?'ТЕКСТ · ЧЕРНОВИК':'ТЕКСТ ПЕСНИ';
+    karaokeBody.classList.toggle('is-lyric-gap',!!gap);
+   }
    if(next!==current||seek){
     current=next;
     lyricRows.forEach(({el,words},i)=>{
@@ -729,5 +768,5 @@
   }
   w.SEYVEO_MUSIC_SMART=Object.freeze({handle,share,sleepSheet,karaoke,soundSheet,recognitionSheet});
  }
- return {embeddedLyrics,activeLine,sleepMinutes,install};
+ return {embeddedLyrics,activeLine,lyricWindow,lyricGap,sleepMinutes,install};
 });
