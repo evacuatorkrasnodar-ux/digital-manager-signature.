@@ -382,7 +382,7 @@ function updatePlay(){
  }
  player.setAttribute('aria-label',playing?'Пауза':'Воспроизвести');
  player.setAttribute('aria-pressed',String(playing));
- $('sayviMusicPlayIcon')?.setAttribute('d',playing?'M7.25 3h1a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 8.25 21h-1A2.25 2.25 0 0 1 5 18.75V5.25A2.25 2.25 0 0 1 7.25 3ZM15.75 3h1A2.25 2.25 0 0 1 19 5.25v13.5A2.25 2.25 0 0 1 16.75 21h-1a2.25 2.25 0 0 1-2.25-2.25V5.25A2.25 2.25 0 0 1 15.75 3Z':'M8.4 4.2Q5.5 2.6 5.5 5.85v12.3q0 3.25 2.9 1.65l11.5-6.2q2.9-1.6 0-3.2Z');
+ $('sayviMusicPlayIcon')?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
  syncResume();
 }
 function syncResume(){
@@ -410,7 +410,7 @@ function syncResume(){
     miniPlay.setAttribute('aria-label',playing?'Пауза':'Продолжить воспроизведение');
     miniPlay.setAttribute('aria-pressed',String(playing));
    }
-   miniIcon?.setAttribute('d',playing?'M7.25 3h1a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 8.25 21h-1A2.25 2.25 0 0 1 5 18.75V5.25A2.25 2.25 0 0 1 7.25 3ZM15.75 3h1A2.25 2.25 0 0 1 19 5.25v13.5A2.25 2.25 0 0 1 16.75 21h-1a2.25 2.25 0 0 1-2.25-2.25V5.25A2.25 2.25 0 0 1 15.75 3Z':'M8.4 4.2Q5.5 2.6 5.5 5.85v12.3q0 3.25 2.9 1.65l11.5-6.2q2.9-1.6 0-3.2Z');
+   miniIcon?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
    const canSkip=tracks.length>1;
    if(miniNext)miniNext.disabled=!canSkip;
   }else if(inline){
@@ -419,7 +419,7 @@ function syncResume(){
    if(miniArtist)miniArtist.textContent=last?.artist||'Выберите музыку или радио';
    if(miniOpen)miniOpen.setAttribute('aria-label',last?'Открыть плеер':'Выбрать музыку или радио');
    if(miniPlay){miniPlay.setAttribute('aria-label',last?'Включить '+last.title:'Выбрать музыку или радио');miniPlay.setAttribute('aria-pressed','false')}
-   miniIcon?.setAttribute('d','M8.4 4.2Q5.5 2.6 5.5 5.85v12.3q0 3.25 2.9 1.65l11.5-6.2q2.9-1.6 0-3.2Z');
+   miniIcon?.setAttribute('d','M8 5.5 18 12 8 18.5z');
    if(miniNext)miniNext.disabled=true;
    renderMiniCover(last?String(last.id||last.title):null,last?.artwork);
   }
