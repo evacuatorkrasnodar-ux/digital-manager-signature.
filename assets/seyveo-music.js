@@ -51,6 +51,7 @@ const fallbackInfo=file=>metadata?.filenameParts(file?.name)||{
 };
 let trackDescriptions=new WeakMap(),trackThumbnails=new WeakMap(),coverDataURL=null,coverReader=null;
 let recentFiles=[];
+const recentPlayedAt=new Map();
 const infoFor=file=>file?.radio?{title:file.name,artist:file.country+' · '+file.quality,display:file.name,album:'SEYVEO RADIO'}:file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
 const safeName=file=>infoFor(file).display;
 const extensions=/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i;
@@ -211,7 +212,7 @@ function syncResume(){
   if(inline){if(mini.parentNode!==miniHomeSlot)miniHomeSlot.append(mini)}
   else if(miniOrigin.parentNode&&mini.parentNode!==miniOrigin.parentNode)miniOrigin.parentNode.insertBefore(mini,miniOrigin.nextSibling);
   mini.classList.toggle('sv-music-mini-inline',inline);
-  mini.hidden=!inline&&(!loaded||!hasPlayed||audio.ended||(location.hash==='#sayvi-music'&&page.dataset.musicView!=='home'&&page.dataset.musicView!=='new'&&page.dataset.musicView!=='radio'&&page.dataset.musicView!=='library'&&page.dataset.musicView!=='replay')||miniDismissed);
+  mini.hidden=!inline&&(!loaded||!hasPlayed||audio.ended||(location.hash==='#sayvi-music'&&page.dataset.musicView!=='home'&&page.dataset.musicView!=='new'&&page.dataset.musicView!=='radio'&&page.dataset.musicView!=='library'&&page.dataset.musicView!=='replay'&&page.dataset.musicView!=='history')||miniDismissed);
   mini.classList.toggle('is-playing',playing);
   if(loaded){
    const file=tracks[index];
@@ -727,7 +728,7 @@ options.addEventListener('click',event=>{
 audio.addEventListener('timeupdate',updateTime);
 audio.addEventListener('durationchange',updateTime);
 audio.addEventListener('loadedmetadata',updateTime);
-audio.addEventListener('playing',()=>{homeMusicSession=true;const file=tracks[index];if(file&&!file.radio)recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);updatePlay();sayviMessage('');qualifyDiscoveryListen()});
+audio.addEventListener('playing',()=>{homeMusicSession=true;const file=tracks[index];if(file&&!file.radio){recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);recentPlayedAt.set(file,Date.now());for(const item of recentPlayedAt.keys())if(!recentFiles.includes(item))recentPlayedAt.delete(item)}updatePlay();sayviMessage('');qualifyDiscoveryListen()});
 audio.addEventListener('pause',()=>{stopDiscoveryListen();updatePlay()});
 audio.addEventListener('ended',()=>{stopDiscoveryListen();if(isRadio()){updatePlay();sayviMessage('Эфир прервался. Нажмите Play для повторного подключения.');return}if(tracks.length>1)switchTrack(index+1,true);else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
 audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(isRadio()){const station=tracks[index],version=selectVersion;if(!radioFallback&&station.fallback){radioFallback=true;audio.src=station.fallback;artist.textContent=station.country+' · '+station.fallbackQuality;audio.play().catch(()=>{if(version===selectVersion)sayviMessage('Резервный эфир недоступен.')});return}sayviMessage('Эфир недоступен. Попробуйте другую станцию.');return}if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
@@ -808,7 +809,7 @@ window.SEYVEO_MUSIC=Object.freeze({
  // Read-only access to the selected local File for optional visual analysis.
  rhythmFile:()=>isRadio()?null:tracks[index]||null,
  browseTracks:()=>localTracks.map((file,i)=>({index:i,title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null})),
- recentTracks:()=>recentFiles.filter(file=>localTracks.includes(file)).map(file=>({index:localTracks.indexOf(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null})),
+ recentTracks:()=>recentFiles.filter(file=>localTracks.includes(file)).map(file=>({index:localTracks.indexOf(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null,playedAt:recentPlayedAt.get(file)||0})),
  state:()=>Object.freeze({
   loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
   homeSession:homeMusicSession,
