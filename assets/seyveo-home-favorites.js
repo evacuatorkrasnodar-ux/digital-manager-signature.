@@ -46,7 +46,7 @@ const businessApps=[
  {id:'business-pulse',name:'Пульс бизнеса',shortName:'Пульс',hub:'pulse'},
  {id:'business-chats',name:'Чаты команды',shortName:'Чаты',hub:'chats'},
  {id:'business-mail',name:'Рабочая почта',shortName:'Почта',hub:'mail'},
- {id:'business-documents',name:'Документы бизнеса',shortName:'Документы',hub:'documents'},
+ {id:'business-documents',name:'Документы бизнеса',shortName:'Раб. док.',hub:'documents'},
  {id:'business-company',name:'Моя компания',shortName:'Компания',hub:'company'},
  {id:'business-people',name:'Сотрудники и кадры',shortName:'Команда',hub:'people'}
 ].map(app=>({...app,action:()=>{
@@ -348,7 +348,7 @@ function openCustomize(){
    b.setAttribute('aria-pressed',String(chosen));
    b.innerHTML=app.id==='smart'?icon('cards'):icon(app.id);
    const t=document.createElement('span');
-   t.textContent=app.id==='business-documents'?'Документы':app.id==='business-people'?'Сотрудники':app.name;
+   t.textContent=app.id==='business-people'?'Сотрудники':app.name;
    b.setAttribute('aria-label',app.name+(app.planned?' — в разработке':''));b.title=app.name+(app.planned?' · в разработке':'');
    const mark=document.createElement('small');mark.textContent=chosen?'✓':'';
    b.append(t,mark);
