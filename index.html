@@ -8054,4 +8054,53 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"].sv-liqu
 #sayviMusicPage[data-music-view="player"][data-long-ambient="true"].sv-music-playing:not(.sv-karaoke-active):not(.sv-music-player-has-art) .sv-now-fallback.sv-liquid-mode #svLiquidSoundCanvas{animation:svCompilationBreath 5s ease-in-out infinite}
 @media(prefers-reduced-motion:reduce){#sayviMusicPage[data-long-ambient="true"] #svLiquidSoundCanvas{animation:none!important}}
 </style>
+<style id="svMusicAdaptiveMenuMaterial">
+/* Music alone borrows its current ambient/cover colors through real frosted glass.
+   All other light-theme music browsing sheets use the shared White Pearl material.
+   Do not modify the player background, artwork, sphere or transport controls. */
+html[data-theme="light"]:not(.sv-music-player-open) #svSmartMusicSheet,
+html[data-theme="light"]:not(.sv-music-player-open) #sayviMusicPage :is(#sayviMusicSourcesPanel,#sayviMusicCollection):not([hidden]){
+ --sv-sheet-ink:var(--sv-white-pearl-ink,#0b0b0d);--sv-sheet-muted:#626873;
+ --sv-sheet-edge:rgba(120,130,145,.16);--sv-sheet-bg:var(--sv-white-pearl-menu-face,#f9fafb);
+ --text:var(--sv-sheet-ink);--secondary:var(--sv-sheet-muted);
+ color:var(--sv-sheet-ink)!important;background:var(--sv-sheet-bg)!important;
+ border:var(--sv-white-pearl-edge,1px solid #fff)!important;color-scheme:light;
+ box-shadow:var(--sv-menu-shadow,0 9px 24px rgba(38,48,60,.10))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-menu-blur,blur(20px));backdrop-filter:var(--sv-white-pearl-menu-blur,blur(20px));
+}
+html[data-theme="light"]:not(.sv-music-player-open) #svSmartMusicBody :is(.sv-smart-music-message,.sv-share-meta span,.sv-share-meta small,.sv-sleep-info small,.sv-sleep-unit){color:#626873}
+html.sv-music-player-open #svSmartMusicSheet,
+html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel,#sayviMusicCollection,#svInlineKaraokeSettings):not([hidden]){
+ --sv-sheet-ink:#f7fafb;--sv-sheet-muted:#cbd5df;--sv-sheet-edge:rgba(245,250,255,.19);
+ --sv-sheet-bg:rgba(17,26,34,.86);
+ --text:var(--sv-sheet-ink);--secondary:var(--sv-sheet-muted);
+ color:var(--sv-sheet-ink)!important;background:var(--sv-sheet-bg)!important;
+ border:1px solid var(--sv-sheet-edge)!important;
+ color-scheme:dark;box-shadow:0 6px 20px rgba(0,0,0,.10)!important;
+}
+@supports ((-webkit-backdrop-filter:blur(20px)) or (backdrop-filter:blur(20px))){
+ html.sv-music-player-open #svSmartMusicSheet,
+ html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel,#sayviMusicCollection,#svInlineKaraokeSettings):not([hidden]){
+  --sv-sheet-bg:rgba(12,21,28,.46);
+  -webkit-backdrop-filter:blur(24px) saturate(130%);backdrop-filter:blur(24px) saturate(130%);
+ }
+}
+html.sv-music-player-open #svSmartMusicSheet::backdrop{background:rgba(0,0,0,.12);-webkit-backdrop-filter:none;backdrop-filter:none}
+html.sv-music-player-open #svSmartMusicBody :is(.sv-smart-music-message,.sv-share-meta span,.sv-share-meta small,.sv-sleep-info small,.sv-sleep-unit){color:#cbd5df}
+html.sv-music-player-open #svSmartMusicBody :is(.sv-share-track,.sv-sleep-summary,.sv-smart-music-choice){border-bottom-color:rgba(245,250,255,.13)}
+html.sv-music-player-open #svSmartMusicBody .sv-sleep-cancel{color:#f4a8aa}
+#svSmartMusicSheet[open]{gap:6px;max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);overflow:hidden}
+#svSmartMusicSheet>header{flex:0 0 auto}
+#svSmartMusicSheet #svSmartMusicBody{min-height:0;max-height:none;overflow:auto;-webkit-overflow-scrolling:touch}
+#svSmartMusicSheet[data-music-sheet="sound"] #svSmartMusicBody{display:grid;gap:8px}
+#svSmartMusicSheet[data-music-sheet="sound"] .sv-smart-music-message{margin:0;font-size:13px;line-height:1.4}
+#svSmartMusicSheet[data-music-sheet="sound"] :is(.sv-adaptive-status,#svAdaptiveSourceQuality){margin:0;padding:10px 0}
+#svSmartMusicSheet[data-music-sheet="sound"] #svAdaptivePure{min-height:48px;margin:0;padding:8px 12px;font-size:15px}
+@media(prefers-reduced-transparency:reduce){
+ html.sv-music-player-open #svSmartMusicSheet,
+ html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel,#sayviMusicCollection,#svInlineKaraokeSettings):not([hidden]){
+  --sv-sheet-bg:#25353e;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
+</style>
 </body></html>
