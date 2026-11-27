@@ -234,6 +234,19 @@
      const controls=d.createElement('div');controls.className='sv-lyrics-actions';body.append(controls);
      const play=d.createElement('button');play.type='button';play.className='sv-smart-music-choice';const sync=()=>{play.textContent=audio.paused?'Воспроизвести':'Пауза'};sync();
      play.addEventListener('click',()=>{if(!valid())return;if(audio.paused)audio.play().catch(()=>notify('Не удалось воспроизвести песню.'));else audio.pause();sync()});controls.append(play);
+     const save=d.createElement('button');save.type='button';save.className='sv-smart-music-choice';
+     save.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="15" height="18" rx="2"/><path d="M8 3v18M3 7h4M3 12h4M3 17h4M11 8h6M11 12h6M11 16h4"/></svg><span>В блокнот</span>';
+     controls.append(save);
+     const feedback=d.createElement('p');feedback.className='sv-lyrics-feedback';feedback.setAttribute('role','status');feedback.hidden=true;body.append(feedback);
+     save.addEventListener('click',()=>{
+      if(!valid())return;
+      const title=$('sayviMusicTrack')?.textContent?.trim()||'Текст песни';
+      const artist=$('sayviMusicArtist')?.textContent?.trim();
+      const text=[title,artist&&artist!=='Моя музыка'?artist:'',data.lines.map(line=>line.text).join('\n')].filter(Boolean).join('\n\n');
+      const saved=w.SEYVEO_MUSIC_NOTE?.save(text);
+      feedback.hidden=false;
+      feedback.textContent=saved?.ok?(saved.existing?'Этот текст уже есть в блокноте.':'Текст сохранён в блокноте. Музыка продолжает играть.'):(saved?.reason==='length'?'Текст длиннее лимита одной заметки (8000 символов).':saved?.reason==='limit'?'Блокнот заполнен. Освободите место для новой записи.':'Не удалось сохранить текст в блокноте.');
+     });
      for(const line of data.lines){
       const el=d.createElement(data.timed?'button':'p');el.className='sv-smart-lyric';el.textContent=line.text||'♪';
       if(data.timed){el.type='button';el.addEventListener('click',()=>{if(valid()&&Number.isFinite(audio.duration))audio.currentTime=Math.max(0,Math.min(line.time,audio.duration))})}
@@ -389,6 +402,7 @@
   $('svSmartShare')?.addEventListener('click',share);
   $('svSmartSleep')?.addEventListener('click',sleepSheet);
   $('svSmartKaraoke')?.addEventListener('click',karaoke);
+  $('svNowKaraoke')?.addEventListener('click',karaoke);
   function handle(q){
    const pure=/^(?:включи|верни) (?:pure sound|пьюр саунд|чистый звук|оригинальное звучание)$/.test(q);
    const adaptive=/^(?:включи|верни) (?:adaptive sound|адаптив саунд|адаптивный звук|автоматический звук)$/.test(q);
