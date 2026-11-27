@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V60 · reference fold highlights · WebGL 1. */
+/* SEYVEO Liquid Sound V61 · perspective silk lattice · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -65,9 +65,15 @@ void main(){
  // Reparameterize the particle lattice without changing the continuous silk surface.
  if(uMode>.5&&uKind<6.5){
   float u=(x+1.0)*.5;
-  float bend=uKind<2.5?.14:uKind<3.5?-.09:uKind<4.5?.18:.10;
-  u+=bend*sin(PI*u)*sin(PI*v)*(v-.36);
-  v+=.055*sin(PI*v)*sin(2.0*PI*u+.35);
+  // Spread the broad faces, compress the rows at the turning edges.
+  if(uKind<2.5||uKind>3.5){
+   float curved=.5-.5*cos(PI*v);
+   v=mix(v,curved,uKind<2.5?.48:.40);
+   float sweep=uKind<2.5?.30:uKind<4.5?-.23:.14;
+   u+=sweep*sin(PI*u)*sin(PI*v)*(v-.24);
+  }else{
+   u-=.07*sin(PI*u)*sin(PI*v)*(v-.36);
+  }
   x=clamp(2.0*u-1.0,-.9999,.9999);
  }
  if(uKind>4.5&&uKind<5.5){p=vec3(x*1.10,(2.0*v-1.0)*1.10,0.0);vLight=1.0;}
@@ -76,7 +82,7 @@ void main(){
  float glass=step(4.5,uKind)*(1.0-step(5.5,uKind));
  float scale=.82*mix(.985,1.0,glass)*(1.0+mix(.015,.003,glass)*uMusic.y)*(1.0+.020*p.z);
  gl_Position=vec4(scale*vec2(p.x+.012*p.z,-p.y+.012*p.z),p.z*.3,1.0);
- gl_PointSize=clamp(uSize*(uKind>3.5?.0020:uKind<2.5?.0022:.0025+.00030*uMusic.w),1.4,3.3);
+ gl_PointSize=clamp(uSize*(uKind>3.5?.0020:uKind<2.5?.00215:.0025+.00030*uMusic.w),1.3,3.3);
  vUV=vec2(x,v);
 }
 `;
@@ -134,7 +140,7 @@ void main(){
   // Translucent absorption masks rear particles under the near-facing silk.
   float bodyMask=smoothstep(0.0,.13,v)*smoothstep(0.0,.13,1.0-v)*smoothstep(0.0,.18,1.0-abs(x));
   col=mix(vec3(.08,.88,.88),vec3(.84,1.0,.98),clamp(.24*turn+.22*fres+.30*tip,0.0,1.0));
-  if(uKind<2.5){float upperRim=pow(1.0-v,12.0);alpha=(.70+.16*v*v+.14*fres+.20*shoulderLight+.22*highlight+.12*upperRim)*frontLight*(1.0-.25*tip);col=mix(col,vec3(.62,1.0,.98),clamp(.24*shoulderLight+.16*silkLight+.50*highlight+.18*upperRim,0.0,1.0));}
+  if(uKind<2.5){float upperRim=pow(1.0-v,12.0);alpha=(.76+.14*v*v+.14*fres+.20*shoulderLight+.22*highlight+.12*upperRim)*frontLight*(1.0-.25*tip);col=mix(col,vec3(.62,1.0,.98),clamp(.24*shoulderLight+.16*silkLight+.50*highlight+.18*upperRim,0.0,1.0));}
   else if(uKind<3.5){alpha=(.84+.16*turn+.16*fres)*(1.0-.12*tip);col=mix(col,vec3(.83,1.0,.97),clamp(.24+.63*silkLight+.25*turn+.18*middleLight,0.0,1.0));}
   else if(uKind<4.5){alpha=(.36+.14*fres+.24*facing*gauss(x-.27,.71)+.20*highlight)*(1.0-.40*tip);col=mix(col,vec3(.32,1.0,.98),.28*highlight);}
   else alpha=(.31+.23*turn+.30*pow(v,2.3)*gauss(x+.10,.48)+.14*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.44*tip);
@@ -153,7 +159,7 @@ void main(){
    col=mix(vec3(.015,.78,.79),vec3(.73,1.0,.96),clamp(.48*foldLight+.70*hem+.55*join,0.0,1.0));
    alpha=(uMode<.5?(.013+.22*foldLight+.46*hem+.62*join):(.38+.45*foldLight+.40*hem))*taper;
   }
-  if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*4.5)*(1.0-smoothstep(.26,.50,d));}
+  if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*5.2)*(1.0-smoothstep(.24,.50,d));}
   // Subtle individual silk filaments, confined to the turning central fold.
   if(uMode>1.5){float taper=pow(max(0.0,sin(3.14159265*(x+1.0)*.5)),.55);col=mix(vec3(.015,.74,.77),vec3(.55,1.0,.97),pow(v,2.0));alpha=(.045+.15*middleLight+.16*pow(v,5.0))*taper;}
 
@@ -171,7 +177,8 @@ void main(){
   const values=[],indices=[];
   for(let j=0;j<=m;j++)for(let i=0;i<=n;i++){
    if(mode===1&&j>0&&(i===0||i===n))continue;
-   let x=kind===5?-1+2*i/n:Math.max(-.9999,Math.min(.9999,-1+2*i/n));
+   const stagger=mode===1&&kind!==3&&i>0&&i<n?.36*(j%2):0;
+   let x=kind===5?-1+2*i/n:Math.max(-.9999,Math.min(.9999,-1+2*(i+stagger)/n));
    values.push(x,j/m,0,0);
   }
   if(mode===0)for(let j=0;j<m;j++)for(let i=0;i<n;i++){const k=j*(n+1)+i;indices.push(k,k+1,k+n+1,k+1,k+n+2,k+n+1)}
@@ -185,7 +192,7 @@ void main(){
  // Four distinct cloth intervals: 2=0..1, 3=1..2, 4=2..3, 6=3..4; 7 is the shoulder.
  // Back-to-front compositing keeps the lower returning silk behind the broad face.
  const parts=[6,4,7,2,3].map(kind=>{
-  const dims=kind===7?[52,20,78,30]:kind===2?[92,46,132,64]:kind===3?[110,34,152,48]:[84,36,128,54];
+  const dims=kind===7?[52,20,78,30]:kind===2?[76,38,108,52]:kind===3?[110,34,152,48]:[74,33,106,46];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   const layers=[mesh(kind,mobile?64:96,mobile?20:32,0)];
   if(kind===3)layers.push(mesh(kind,mobile?70:108,mobile?14:22,2));
