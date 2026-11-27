@@ -217,25 +217,27 @@
   const geom=angles.map(([a,ca,sa])=>{
    const wave=Math.sin(2*a+t),fold=Math.sin(3*a-t*.65);
    // Asymmetric broad folds on opposite sides, with an almost circular silhouette.
-   const lobe=Math.pow(.5+.5*Math.cos(2*(a+2.35)+.28*Math.sin(t*.52)),1.65);
-   const innerLobe=Math.pow(.5+.5*Math.cos(2*(a+1.48)-.32*Math.sin(t*.45)),1.5);
-   const kink=Math.pow(.5+.5*Math.cos(a+.99-.18*Math.sin(t*.30)),19);
+   const lobe=Math.pow(.5+.5*Math.cos(2*(a+2.12)+.20*Math.sin(t*.52)),1.18);
+   const innerLobe=Math.pow(.5+.5*Math.cos(2*(a+1.49)-.22*Math.sin(t*.45)),2.2);
+   const kink=Math.pow(.5+.5*Math.cos(a+.89-.16*Math.sin(t*.30)),12);
+   const shoulder=Math.pow(.5+.5*Math.cos(a+1.17+.12*Math.sin(t*.37)),26);
+   const bottomKnot=Math.pow(.5+.5*Math.cos(a-1.42+.14*Math.sin(t*.42)),24);
    const ripple=Math.sin(5*a+t*.9);
-   return {a,ca,sa,wave,fold,lobe,innerLobe,kink,ripple};
+   return {a,ca,sa,wave,fold,lobe,innerLobe,kink,shoulder,bottomKnot,ripple};
   });
   const point=(g,kind,u)=>{
-   const {ca,sa,wave,fold,lobe,innerLobe,kink,ripple}=g;
+   const {ca,sa,wave,fold,lobe,innerLobe,kink,shoulder,bottomKnot,ripple}=g;
    let r,z;
    if(kind===0){
     const silhouette=radius*(1+.009*wave+.006*fold);
-    const depth=radius*(.005+(.127+.024*m)*lobe+.120*kink);
-    const curl=radius*((.025+.015*m)*lobe*ripple+.033*kink*Math.sin(8*g.a+t*.7));
+    const depth=radius*(.008+(.142+.025*m)*lobe+.155*kink-.070*shoulder);
+    const curl=radius*((.026+.014*m)*lobe*ripple+.072*shoulder-.034*kink);
     r=silhouette-depth*u+curl*Math.sin(Math.PI*u);
     z=radius*(.04*fold+.16*lobe*Math.sin(Math.PI*u));
    }else{
     const opening=radius*(.753+.008*wave+.007*fold);
-    const depth=radius*(.009+(.104+.021*m)*innerLobe);
-    r=opening+depth*u+radius*.023*innerLobe*ripple*Math.sin(Math.PI*u);
+    const depth=radius*(.008+(.085+.020*m)*innerLobe+.035*bottomKnot);
+    r=opening+depth*u+radius*(.020*innerLobe*ripple+.050*bottomKnot)*Math.sin(Math.PI*u);
     z=radius*(.045*wave-.11*innerLobe*Math.sin(Math.PI*u));
    }
    // The fibres travel tangentially as well as radially, like a twisted silk sheet.
@@ -252,17 +254,17 @@
   function ribbon(kind,count){
    const rows=Array.from({length:count},(_,j)=>geom.map(g=>point(g,kind,j/(count-1))));
    const fiber=ctx.createLinearGradient(64,55,339,345);
-   fiber.addColorStop(0,'rgba(124,251,226,.82)');
-   fiber.addColorStop(.24,'rgba(191,255,240,.97)');
-   fiber.addColorStop(.48,'rgba(73,186,174,.22)');
+   fiber.addColorStop(0,'rgba(140,255,231,.92)');
+   fiber.addColorStop(.24,'rgba(168,255,235,1)');
+   fiber.addColorStop(.48,'rgba(73,186,174,.32)');
    fiber.addColorStop(.73,'rgba(156,255,232,.94)');
    fiber.addColorStop(1,'rgba(213,255,247,.82)');
    for(let j=0;j<count;j++){
     const u=j/(count-1);
     const lip=Math.exp(-Math.pow((u-(kind===0?.89:.08))/.22,2));
     path(rows[j]);ctx.strokeStyle=fiber;
-    ctx.globalAlpha=.055+.63*lip;
-    ctx.lineWidth=.20+.22*lip;ctx.stroke();
+    ctx.globalAlpha=.035+.80*lip;
+    ctx.lineWidth=.18+.24*lip;ctx.stroke();
    }
    ctx.globalAlpha=1;
    const edge=rows[kind===0?count-1:0];
@@ -280,11 +282,11 @@
   }
   // Silk membrane: a broad fine mesh tapers into two points and folds back
   // on itself near the diagonal crest. The interior is no longer a flat S line.
-  const R=radius*.753,tilt=-.27+.045*Math.sin(t*.7),mc=Math.cos(tilt),ms=Math.sin(tilt);
+  const R=radius*.753,tilt=-.25+.045*Math.sin(t*.7),mc=Math.cos(tilt),ms=Math.sin(tilt);
   const membrane=(x,u)=>{
    const env=Math.sqrt(Math.max(0,1-x*x));
    const arc=-env*(.97+.012*Math.sin(t));
-   const crest=env*(.012-.060*Math.sin(Math.PI*x+t*.45)+.018*Math.sin(2*Math.PI*x-t));
+   const crest=env*(-.035-.045*Math.sin(Math.PI*x+t*.45)+.010*Math.sin(2*Math.PI*x-t));
    const crease=env*(.12+.05*m)*Math.pow(Math.sin(Math.PI*u),2)*Math.sin(Math.PI*x+.8+t*.45);
    const y=arc+(crest-arc)*u+crease;
    return [200+R*(x*mc-y*ms),200+R*(x*ms+y*mc)];
@@ -300,7 +302,7 @@
   const columns=liquidMobile?94:140;
   for(let j=0;j<mesh;j++){
    const u=(j+.45)/mesh;
-   const size=.42+.17*Math.pow(u,4)+.04*h;
+   const size=.43+.19*Math.pow(u,4)+.04*h;
    ctx.beginPath();
    for(let i=1;i<columns;i++){
     const x=-1+2*(i+(j%2)*.34)/columns;
@@ -308,21 +310,28 @@
     ctx.rect(px-size/2,py-size/2,size,size);
    }
    ctx.fillStyle=memGradient;
-   ctx.globalAlpha=.43+.42*Math.pow(u,5);
+   ctx.globalAlpha=.48+.40*Math.pow(u,5);
    ctx.fill();
   }
   ctx.globalAlpha=1;
-  const foldCount=liquidMobile?26:40;
+  // A single twisted leaf of silk, widest left of centre, tapering at both tips.
+  // Microdots follow the surface rather than drawing a second heavy S-shaped rim.
+  const foldCount=liquidMobile?28:44,foldCols=liquidMobile?100:156;
   for(let j=0;j<foldCount;j++){
-   const v=j/(foldCount-1),pts=[];
-   for(let i=0;i<=liquidSteps;i++){
-    const x=-1+2*i/liquidSteps,[px,py]=membrane(x,1);
-    const env=Math.pow(Math.max(0,1-x*x),.85);
-    const bend=Math.sin(v*Math.PI*.85);
-    pts.push([px+R*.035*env*bend,py+R*(.26+.035*m)*env*bend*(.72+.28*Math.cos(Math.PI*(x+.38)+t*.5))]);
+   const v=(j+.45)/foldCount;
+   const bend=Math.sin(v*Math.PI*.5);
+   ctx.beginPath();
+   for(let i=1;i<foldCols;i++){
+    const x=-1+2*(i+(j%2)*.34)/foldCols,[px,py]=membrane(x,1);
+    const env=Math.pow(Math.max(0,1-x*x),.78);
+    const width=R*(.23+.035*m)*env*(.78+.22*Math.cos(Math.PI*(x+.48)+t*.5));
+    const dx=R*.045*env*Math.sin(Math.PI*v);
+    const size=.38+.21*Math.pow(v,2);
+    ctx.rect(px+dx-size/2,py+width*bend-size/2,size,size);
    }
-   path(pts,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.12+.52*Math.pow(v,3);ctx.lineWidth=.29;ctx.stroke();
+   ctx.fillStyle=memGradient;ctx.globalAlpha=.37+.48*Math.pow(v,2);ctx.fill();
   }
+  ctx.globalAlpha=1;
   // Sparse back-surface pearls make the lower hemisphere read as a volume.
   ctx.fillStyle='rgba(119,224,210,.17)';
   ctx.beginPath();
