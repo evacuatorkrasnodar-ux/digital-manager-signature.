@@ -595,7 +595,19 @@
   const libraryLyricStatus=$('svMusicLyricsQueueStatus');
   let libraryLyricTimer=0,libraryLyricJob=null,libraryLyricRunning=false,libraryLyricClosed=false;
   const lyricReady=new Set(),lyricSkipped=new Set(),lyricFailures=new Map(),lyricReview=new Set();
-  const queueStatus=text=>{if(libraryLyricStatus){libraryLyricStatus.hidden=!text;if(libraryLyricStatus.textContent!==text)libraryLyricStatus.textContent=text}};
+  const queueStatus=text=>{
+   if(!libraryLyricStatus)return;
+   libraryLyricStatus.hidden=!text;
+   if(libraryLyricStatus.textContent!==text)libraryLyricStatus.textContent=text;
+   const row=$('svMusicLyricsStatusRow'),bar=$('svMusicLyricsLibraryProgress');
+   if(row)row.hidden=!text;
+   if(bar){
+    const m=text.match(/Караоке · (\d+) из (\d+) готово/);
+    const total=m?Number(m[2]):0,ready=m?Number(m[1]):0;
+    bar.hidden=!total||ready>=total;
+    if(total){bar.max=total;bar.value=Math.min(total,ready)}
+   }
+  };
   function pauseLibraryLyrics(){
    w.clearTimeout(libraryLyricTimer);libraryLyricTimer=0;
    libraryLyricJob?.abort();
