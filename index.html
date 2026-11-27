@@ -1284,6 +1284,11 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   </div>
   <svg class="sv-music-placeholder" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l12-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.4"/><ellipse cx="18" cy="16" rx="3" ry="2.4"/></svg>
   <span id="sayviMusicArtwork" class="sv-music-artwork" role="img" aria-label="Обложка песни" hidden></span>
+  <section id="svInlineKaraoke" class="sv-inline-karaoke" aria-label="Караоке" hidden>
+   <div class="sv-inline-karaoke-head"><span>ТЕКСТ ПЕСНИ</span><button id="svInlineKaraokeTools" type="button" aria-label="Настройки текста" aria-expanded="false" aria-controls="svInlineKaraokeSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg></button></div>
+   <div id="svInlineKaraokeBody" class="sv-inline-karaoke-body"></div>
+   <section id="svInlineKaraokeSettings" aria-label="Настройки текста" hidden><div class="sv-inline-karaoke-head"><strong>Текст песни</strong><button id="svInlineKaraokeCloseSettings" type="button" aria-label="Закрыть настройки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div><div id="svInlineKaraokeOptions"></div></section>
+  </section>
  </div>
  <div class="sv-music-track-bar" aria-label="Текущая песня и избранное">
   <div class="sv-music-track-copy">
@@ -1303,7 +1308,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
  </div>
  <div class="sv-now-tools" aria-label="Действия плеера">
   <button type="button" data-music-view-action="library" aria-label="Медиатека" title="Медиатека"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5v14M9 5v14M13 5v14M16.5 5.5l4 13"/></svg></button>
-  <button type="button" id="svNowKaraoke" aria-label="Караоке и текст песни" title="Караоке"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 10v2a6.5 6.5 0 0 0 13 0v-2M12 18.5V22m-4 0h8"/></svg></button>
+  <button type="button" id="svNowKaraoke" aria-label="Караоке и текст песни" aria-pressed="false" aria-controls="svInlineKaraoke" title="Караоке"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 10v2a6.5 6.5 0 0 0 13 0v-2M12 18.5V22m-4 0h8"/></svg></button>
   <button type="button" id="svNowQueue" aria-label="Очередь воспроизведения" title="Очередь"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 10h16M4 15h8M4 20h8m4-6 4.5 3-4.5 3z"/></svg></button>
   <button type="button" id="svNowMore" aria-label="Другие действия" aria-expanded="false" aria-controls="svNowMenu" title="Ещё"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="4.5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19.5" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
  </div>
@@ -6062,7 +6067,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-mus
 
 #sayviMusicPage #svMusicRecognizeHome>svg{color:#668b9e}
 #svSmartMusicBody a.sv-smart-music-choice{text-decoration:none;box-sizing:border-box}
-</style><script src="assets/seyveo-adaptive-sound.js?v=1"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=17-lyrics-progress"></script><script src="assets/seyveo-music-dock.js?v=34-period-menu"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/orb-language.js?v=8-unified-canvas"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
+</style><script src="assets/seyveo-adaptive-sound.js?v=1"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=18-inline-karaoke"></script><script src="assets/seyveo-music-dock.js?v=34-period-menu"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/orb-language.js?v=8-unified-canvas"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
@@ -7355,6 +7360,36 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-now
  #sayviMusicPage .sv-now-ambient > span{animation:none!important;opacity:0!important}
  #sayviMusicPage > .sv-now-ambient{transition:none!important}
 }
+</style>
+<style id="svInlineKaraokeStyle">
+#sayviMusicPage #svInlineKaraoke[hidden],#sayviMusicPage #svInlineKaraokeSettings[hidden]{display:none!important}
+#sayviMusicPage.sv-karaoke-active #sayviMusicStage{overflow:hidden!important;isolation:isolate}
+#sayviMusicPage.sv-karaoke-active #sayviMusicStage>.sv-now-fallback,#sayviMusicPage.sv-karaoke-active #sayviMusicStage>.sv-music-artwork{visibility:hidden!important;pointer-events:none!important;opacity:0!important;animation:none!important}
+#sayviMusicPage #svInlineKaraoke{position:absolute;inset:0;display:flex;flex-direction:column;min-width:0;min-height:0;z-index:5;color:#f5f8fa;text-align:left;background:transparent;animation:svInlineKaraokeReveal .24s ease both}
+@keyframes svInlineKaraokeReveal{from{opacity:0}to{opacity:1}}
+#sayviMusicPage .sv-inline-karaoke-head{display:flex;align-items:center;justify-content:space-between;flex:0 0 44px;min-height:44px;padding:0 4px 0 12px;gap:8px;color:rgba(255,255,255,.82)}
+#sayviMusicPage .sv-inline-karaoke-head>span{font-size:10px;font-weight:600;letter-spacing:.13em}
+#sayviMusicPage .sv-inline-karaoke-head>strong{font-size:15px;font-weight:600}
+#sayviMusicPage .sv-inline-karaoke-head>button{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;padding:0;background:transparent!important;border:0!important;box-shadow:none!important;color:inherit;transform:none!important}
+#sayviMusicPage .sv-inline-karaoke-head svg{width:20px;height:20px}
+#sayviMusicPage #svInlineKaraokeBody{position:relative;flex:1 1 0;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:none;padding:8px 12px 20px;box-sizing:border-box}
+#sayviMusicPage #svInlineKaraokeBody::-webkit-scrollbar,#sayviMusicPage #svInlineKaraokeOptions::-webkit-scrollbar{display:none}
+#sayviMusicPage #svInlineKaraokeBody:has(.sv-smart-lyric){padding-bottom:35%}
+#sayviMusicPage #svInlineKaraokeBody .sv-smart-lyric{display:block;width:100%;margin:0;padding:10px 0;color:rgba(255,255,255,.90);background:transparent!important;border:0!important;box-shadow:none!important;text-align:left;font-family:inherit;font-size:clamp(20px,5.6vw,32px);font-weight:650;line-height:1.26;white-space:pre-wrap;overflow-wrap:anywhere;transform:none!important}
+#sayviMusicPage #svInlineKaraokeBody button.sv-smart-lyric{min-height:44px;color:rgba(255,255,255,.60);transition:color .25s ease}
+#sayviMusicPage #svInlineKaraokeBody button.sv-smart-lyric.is-current{color:#fff;font-weight:650}
+#sayviMusicPage #svInlineKaraokeSettings{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,.19);border-radius:20px;background:rgba(22,39,48,.94);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-sizing:border-box;overflow:hidden}
+#sayviMusicPage #svInlineKaraokeOptions{flex:1 1 0;min-height:0;overflow:auto;scrollbar-width:none;padding:0 12px 10px}
+#sayviMusicPage #svInlineKaraoke .sv-smart-music-message,#sayviMusicPage #svInlineKaraoke .sv-lyrics-feedback{font-size:13px;line-height:1.45;color:rgba(255,255,255,.78);margin:7px 0 12px}
+#sayviMusicPage #svInlineKaraoke .sv-smart-music-choice{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:9px 0;background:transparent!important;border:0;border-bottom:1px solid rgba(255,255,255,.14);box-shadow:none!important;color:#fff;text-align:left;font:inherit;font-size:14px;transform:none!important}
+#sayviMusicPage #svInlineKaraoke .sv-smart-music-choice:disabled{opacity:.5}
+#sayviMusicPage #svInlineKaraoke .sv-smart-music-choice svg{width:18px;height:18px;flex:0 0 18px}
+#sayviMusicPage #svInlineKaraoke .sv-lyrics-progress{display:block;width:100%;height:4px;margin:6px 0 12px;appearance:none;-webkit-appearance:none;border:0;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.20);accent-color:#c4e3e8}
+#sayviMusicPage #svInlineKaraoke .sv-lyrics-progress::-webkit-progress-bar{background:rgba(255,255,255,.20)}
+#sayviMusicPage #svInlineKaraoke .sv-lyrics-progress::-webkit-progress-value{background:#c4e3e8;border-radius:4px}
+#sayviMusicPage #svInlineKaraoke .sv-lyrics-progress::-moz-progress-bar{background:#c4e3e8;border-radius:4px}
+#sayviMusicPage[data-music-view="player"] #svNowKaraoke[aria-pressed="true"]{color:#bce5ef!important}
+@media(prefers-reduced-motion:reduce){#sayviMusicPage #svInlineKaraoke,#sayviMusicPage #svInlineKaraokeBody button.sv-smart-lyric{animation:none;transition:none}}
 </style>
 <style id="svNowRingContinuity">
 /* Only the transparent live artwork can overflow its old square.
