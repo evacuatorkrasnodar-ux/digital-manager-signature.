@@ -60,6 +60,58 @@ function frame(a,p){
  const len=Math.floor((v===3?144000:72000)*kb/rate)+((a[p+2]>>1)&1);
  return len>=24?{len,sec:(v===3?1152:576)/rate,rate}:null;
 }
+// Serialize long-recording decodes; never allocate a whole compilation.
+let decodeTail=Promise.resolve();
+function decodeWindow(bytes,valid){
+ const job=decodeTail.then(async()=>{
+  if(!valid())throw Error('cancel');
+  const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+  if(!Offline)throw Error('offline-unavailable');
+  const ctx=new Offline(1,1,16000);
+  return new Promise((resolve,reject)=>{try{const fail=()=>reject(Error('decode-block'));const p=ctx.decodeAudioData(bytes,resolve,fail);if(p?.then)p.then(resolve,fail)}catch{reject(Error('decode-block'))}});
+ });
+ decodeTail=job.then(()=>{},()=>{});return job;
+}
+async function sampleLoudness(file,duration,valid){
+ if(!/\.mp3$/i.test(file.name)||!Number.isFinite(duration)||duration<=0||file.size>180*1024*1024)return null;
+ const header=new Uint8Array(await file.slice(0,10).arrayBuffer());
+ const start=header.length>=10&&str(header,0,3)==='ID3'?10+syn(header,6)+(header[3]===4&&header[5]&16?10:0):0;
+ if(start>=file.size)return null;
+ const powers=[];
+ for(const fraction of [.10,.30,.50,.70,.90]){
+  if(!valid())return null;
+  const from=Math.floor(start+(file.size-start)*fraction);
+  // 512 KiB is enough for eight seconds even at 320 kbps.
+  const a=new Uint8Array(await file.slice(from,Math.min(file.size,from+512*1024)).arrayBuffer());
+  let begin=-1,end=0,seconds=0,rate=0;
+  for(let p=0;p+4<a.length&&p<65536;p++){
+   const first=frame(a,p);if(!first)continue;
+   const second=frame(a,p+first.len),third=second&&frame(a,p+first.len+second.len);
+   if(!second||!third||first.rate!==second.rate||first.rate!==third.rate)continue;
+   begin=p;end=p;rate=first.rate;break;
+  }
+  if(begin<0)continue;
+  while(end+4<a.length&&seconds<8){
+   const f=frame(a,end);if(!f||f.rate!==rate||end+f.len>a.length)break;
+   seconds+=f.sec;end+=f.len;
+  }
+  if(seconds<4)continue;
+  try{
+   const pcm=await decodeWindow(a.slice(begin,end).buffer,valid);
+   if(!valid())return null;
+   if(!pcm||pcm.duration<3||pcm.duration>12||!pcm.sampleRate)continue;
+   let sum=0,count=0;
+   for(let c=0;c<Math.min(2,pcm.numberOfChannels);c++){
+    const data=pcm.getChannelData(c),edge=Math.round(pcm.sampleRate*.5);
+    for(let i=edge;i<data.length-edge;i+=4){const x=data[i];if(Number.isFinite(x)){sum+=x*x;count++}}
+   }
+   if(count&&sum>0)powers.push(sum/count);
+  }catch{if(!valid())return null}
+  await new Promise(resolve=>setTimeout(resolve,220));
+ }
+ if(powers.length<3)return null;
+ return 10*Math.log10(powers.reduce((a,b)=>a+b,0)/powers.length);
+}
 async function scan(file,duration,valid,progress,canWork=()=>true){
  const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
  if(!Offline)throw Error('offline-unavailable');
@@ -76,8 +128,7 @@ async function scan(file,duration,valid,progress,canWork=()=>true){
   if(end<=groupStart||endTime-groupTime<2)return;
   await gate();
   const bytes=await file.slice(groupStart,end).arrayBuffer();
-  const ctx=new Offline(1,1,16000);
-  const buffer=await new Promise((resolve,reject)=>{try{const fail=()=>reject(Error('decode-block'));const job=ctx.decodeAudioData(bytes,resolve,fail);if(job?.then)job.then(resolve,fail)}catch{reject(Error('decode-block'))}});
+  const buffer=await decodeWindow(bytes,valid);
   if(!valid())throw Error('cancel');
   const expected=endTime-groupTime;
   if(!buffer||Math.abs(buffer.duration-expected)>Math.max(.9,expected*.08))throw Error('decode mismatch');
@@ -116,5 +167,5 @@ async function scan(file,duration,valid,progress,canWork=()=>true){
  await decodeBlock(pos,t);progress?.(100);
  return normalize(rows,duration);
 }
-window.SEYVEO_MUSIC_CHAPTERS=Object.freeze({normalize,parse,read,save,clear,embedded,scan});
+window.SEYVEO_MUSIC_CHAPTERS=Object.freeze({normalize,parse,read,save,clear,embedded,scan,sampleLoudness});
 })();

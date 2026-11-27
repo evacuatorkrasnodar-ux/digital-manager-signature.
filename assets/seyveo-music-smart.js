@@ -899,7 +899,7 @@
    const labels={pure:'Pure Sound · оригинал',active:s?.attenuationDb<0?'Adaptive Sound · коррекция '+s.attenuationDb+' дБ':'Adaptive Sound · коррекция не требуется',waiting:'Ожидание данных записи',analysing:'Анализ записи…',limited:'Без коррекции · формат или размер записи',unsupported:'Без коррекции · ограничение устройства',idle:'Готов к локальной музыке'};
    el.replaceChildren();
    const headline=d.createElement('strong');headline.textContent=s?.phase==='active'&&s.attenuationDb<0?'Звучание адаптировано':(!s?'Движок недоступен':labels[s.phase]||'Готов к локальной музыке');el.append(headline);
-   if(s?.phase==='active'&&s.attenuationDb<0){const db=d.createElement('small');db.textContent='Коррекция '+s.attenuationDb+' дБ';el.append(db)}
+   if(s?.phase==='active'&&s.attenuationDb<0){const db=d.createElement('small');db.textContent='Коррекция '+s.attenuationDb+' дБ'+(s.sampled?' · выборочная оценка сборника':'');el.append(db)}
    b.textContent=s?.pure?'Вернуть Adaptive Sound':'Pure Sound · без коррекции';
    b.setAttribute('aria-pressed',String(!!s?.pure));b.disabled=!s;
   }

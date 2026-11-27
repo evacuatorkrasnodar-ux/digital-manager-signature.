@@ -33,7 +33,7 @@
   const cache=new WeakMap();
   const file=()=>w.SEYVEO_MUSIC?.rhythmFile?.()||null;
   const emit=()=>d.dispatchEvent(new w.CustomEvent('seyveo:adaptive-sound'));
-  const state=()=>({pure,phase,gain:factor,attenuationDb:result?Math.round(20*Math.log10(result.gain)*10)/10:null,supported:!ios&&!!Offline});
+  const state=()=>({pure,phase,gain:factor,attenuationDb:result?Math.round(20*Math.log10(result.gain)*10)/10:null,sampled:!!result?.sampled,supported:!ios&&!!Offline});
   function apply(){
    if(ios)return false;
    const target=clamp(base*factor*fade*transport);
@@ -111,12 +111,22 @@
    const selected=file(),version=generation;
    if(pure||ios||!Offline||!selected||selected!==lastFile)return;
    if(!Number.isFinite(audio.duration)||audio.duration<=0)return;
-   if(audio.duration>MAX_SECONDS||selected.size>MAX_BYTES){phase='limited';emit();return}
+   const long=audio.duration>MAX_SECONDS||selected.size>MAX_BYTES;
+   const sampler=w.SEYVEO_MUSIC_CHAPTERS?.sampleLoudness;
+   if(long&&(!sampler||!/\.mp3$/i.test(selected.name)||selected.size>180*1024*1024)){phase='limited';emit();return}
+   if(long&&d.hidden)return;
    const cached=cache.get(selected);
    if(cached!==undefined){finish(cached,selected,version);return}
    busy=true;phase='analysing';emit();
    let data=null;
    try{
+    if(long){
+     const valid=()=>version===generation&&!pure&&file()===selected&&!d.hidden;
+     const rmsDb=await sampler(selected,audio.duration,valid);
+     if(!valid()){if(version===generation&&!pure&&file()===selected){phase='waiting';emit()}return}
+     if(Number.isFinite(rmsDb))data={rmsDb,gain:10**(clamp(TARGET-rmsDb,MIN_DB,0)/20),sampled:true};
+     cache.set(selected,data);
+    }else{
     const context=new Offline(1,1,16000);
     const bytes=await selected.arrayBuffer();
     if(version===generation&&!pure&&file()===selected){
@@ -124,9 +134,9 @@
       try{const p=context.decodeAudioData(bytes,resolve,reject);if(p?.then)p.then(resolve,reject)}catch(e){reject(e)}
      });
      data=estimate(decoded);cache.set(selected,data);
-    }
+    }}
    }catch{if(version===generation)cache.set(selected,null)}
-   finally{busy=false;finish(data,selected,version);if(pending){pending=false;analyse()}}
+   finally{busy=false;if(phase!=='waiting'||version!==generation)finish(data,selected,version);if(pending){pending=false;analyse()}}
   }
   function finish(data,selected,version){
    if(version!==generation||pure||file()!==selected)return;
@@ -149,6 +159,7 @@
   d.addEventListener('seyveo:music-state',()=>sync());
   audio.addEventListener('loadedmetadata',()=>sync());
   audio.addEventListener('playing',()=>sync());
+  d.addEventListener('visibilitychange',()=>{if(!d.hidden)sync()});
   w.SEYVEO_ADAPTIVE_SOUND=Object.freeze({state,setPure,baseVolume:()=>base,setBaseVolume,setFade,playSmooth,pauseSmooth,isPausing:()=>pausing});
   sync(true);
  }
