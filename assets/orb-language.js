@@ -238,21 +238,32 @@
     const silhouette=radius*(1+.007*Math.sin(2*a+t)+.004*Math.sin(3*a-t*.5));
     const depth=radius*(.004+(.129+.018*m)*topLeft+.103*rightFold+.073*bottomFold+.146*shoulder-.057*pinch);
     // Opposed bending produces a bright turning edge without deforming the silhouette.
-    const curl=radius*(.068*pinch-.030*shoulder+.010*rightFold*Math.sin(4*a+t));
+    const curl=radius*(.038*pinch-.016*shoulder+.007*rightFold*Math.sin(4*a+t));
     r=silhouette-depth*u+curl*Math.sin(Math.PI*u);
    }else{
     const opening=radius*(.753+.009*Math.sin(2*a+t)+.005*Math.sin(3*a-t*.65));
     // At the bottom the membrane turns inward rather than forming another external hoop.
     const depth=radius*(.003+.066*innerTop-.104*innerBottom+.031*innerKnot);
-    r=opening+depth*u+radius*.037*innerKnot*Math.sin(Math.PI*u);
+    r=opening+depth*u+radius*.016*innerKnot*Math.sin(Math.PI*u);
    }
-   const shear=(kind===0?.035:.024)*Math.sin(Math.PI*u)*Math.sin(2*a+.8+t*.45);
+   const shear=(kind===0?.018:.012)*Math.sin(Math.PI*u)*Math.sin(2*a+.8+t*.45);
    const cs=Math.cos(shear),ss=Math.sin(shear);
    const x=r*(ca*cs-sa*ss),y=r*(sa*cs+ca*ss)*.995;
    return [200+x*cr-y*sr,200+x*sr+y*cr];
   };
+  // Smooth closed paths between sampled vertices. Straight polygon chords
+  // shared by all strands can create radial scallops on a high-DPI canvas.
   const path=(pts,close=true)=>{
-   ctx.beginPath();for(let i=0;i<pts.length;i++){const [x,y]=pts[i];if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}if(close)ctx.closePath();
+   ctx.beginPath();
+   if(!pts.length)return;
+   if(!close){ctx.moveTo(...pts[0]);for(let i=1;i<pts.length;i++)ctx.lineTo(...pts[i]);return;}
+   const n=pts.length-1,first=pts[0],last=pts[n-1];
+   ctx.moveTo((first[0]+last[0])/2,(first[1]+last[1])/2);
+   for(let i=0;i<n;i++){
+    const q=pts[i],next=pts[(i+1)%n];
+    ctx.quadraticCurveTo(q[0],q[1],(q[0]+next[0])/2,(q[1]+next[1])/2);
+   }
+   ctx.closePath();
   };
   // Fine continuous filaments, not polygon tiles: light accumulates where the
   // folded surface turns toward its edge, while the wider shell stays transparent.
@@ -279,29 +290,15 @@
    const far=rows[count-1];
    for(let i=far.length-1;i>=0;i--){const [x,y]=far[i];if(i===far.length-1)ctx.moveTo(x,y);else ctx.lineTo(x,y)}
    ctx.closePath();
-   ctx.fillStyle=veil;ctx.globalAlpha=kind===0?.17:.12;ctx.fill('evenodd');
+   ctx.fillStyle=veil;ctx.globalAlpha=kind===0?.21:.14;ctx.fill('evenodd');
    for(let j=0;j<count;j++){
     const u=j/(count-1),edgeU=kind===0?.89:.08;
     const lip=Math.exp(-Math.pow((u-edgeU)/.23,2));
     const body=Math.exp(-Math.pow((u-(kind===0?.57:.42))/.31,2));
     path(rows[j]);ctx.strokeStyle=fiber;
-    ctx.globalAlpha=.035+.39*lip+.17*body;
-    ctx.lineWidth=.15+.19*lip+.08*body;ctx.stroke();
+    ctx.globalAlpha=.045+.53*lip+.20*body;
+    ctx.lineWidth=.22+.17*lip+.07*body;ctx.stroke();
    }
-   // Sparse subpixel glints articulate the depth without opaque shading.
-   ctx.fillStyle=kind===0?'rgba(147,255,231,.38)':'rgba(186,255,242,.30)';
-   ctx.globalAlpha=1;ctx.beginPath();
-   for(let j=2;j<count-2;j+=3){
-    const u=j/(count-1);
-    for(let i=1;i<liquidSteps;i+=2){
-     const g=geom[i];
-     const light=kind===0?Math.max(g.topLeft,g.rightFold,g.bottomFold,g.shoulder):Math.max(g.innerTop,g.innerBottom);
-     if(light<.25)continue;
-     const [x,y]=rows[j][i],d=.21+.15*light;
-     ctx.rect(x-d/2,y-d/2,d,d);
-    }
-   }
-   ctx.fill();
    ctx.globalAlpha=1;
    const edge=rows[kind===0?count-1:0];
    const spec=ctx.createLinearGradient(64,39,337,360);
@@ -338,7 +335,7 @@
   const columns=liquidMobile?94:140;
   for(let j=0;j<mesh;j++){
    const u=(j+.45)/mesh;
-   const size=.44+.20*Math.pow(u,4)+.04*h;
+   const size=.47+.16*Math.pow(u,4)+.04*h;
    ctx.beginPath();
    for(let i=1;i<columns;i++){
     const x=-1+2*(i+(j%2)*.34)/columns;
@@ -346,7 +343,7 @@
     ctx.rect(px-size/2,py-size/2,size,size);
    }
    ctx.fillStyle=memGradient;
-   ctx.globalAlpha=.54+.40*Math.pow(u,5);
+   ctx.globalAlpha=.61+.34*Math.pow(u,5);
    ctx.fill();
   }
   ctx.globalAlpha=1;
@@ -382,8 +379,8 @@
    }
   }
   ctx.globalAlpha=1;ctx.fill();
-  ribbon(1,liquidMobile?64:100);
-  ribbon(0,liquidMobile?78:124);
+  ribbon(1,liquidMobile?52:80);
+  ribbon(0,liquidMobile?64:96);
   ctx.globalAlpha=1;
  }
  function syncLiquidMode(){
