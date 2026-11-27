@@ -224,7 +224,7 @@
   const profiles=[
    [.997,.995,.982,.993,.997,.997,.976,.981,.986,.935,.90,.86,.85,.85,.91,.93,.912,.911,.905,.84,.81,.938,.995,.997],
    [.89,.875,.87,.88,.90,.91,.91,.91,.90,.94,.98,1,1,1,1,1,1,1,1,1,.98,.99,.94,.90],
-   [.59,.88,1,.97,.94,.90,1,.94,.90,.70,.42,.26,.23,.22,.38,.84,1,1,1,.94,.80,1,.88,.59]
+   [.70,.93,1,1,.99,1,1,1,.98,.89,.79,.74,.53,.52,.96,.94,.99,1,1,.99,.96,1,.99,.74]
   ];
   const profile=(values,a)=>{
    const n=values.length,z=((a/(Math.PI*2)*n)%n+n)%n,i=Math.floor(z),f=z-i;
@@ -296,21 +296,33 @@
      color=ctx.createConicGradient(rot,200,200);
      for(let k=0;k<=40;k++){
       const a=k/40*Math.PI*2,light=intensity(a);
-      const alpha=clamp(.015+Math.pow(light,1.35)*(.72*rim+.25*body),0,.87),white=.55*rim*light;
-      color.addColorStop(k/40,'rgba('+Math.round(75+160*white)+','+Math.round(225+30*white)+','+Math.round(199+49*white)+','+alpha.toFixed(3)+')');
+      const alpha=clamp(.012+Math.pow(light,2.1)*(.94*rim+.43*body),0,.98),white=.78*rim*light;
+      color.addColorStop(k/40,'rgba('+Math.round(70+175*white)+','+Math.round(232+23*white)+','+Math.round(209+42*white)+','+alpha.toFixed(3)+')');
      }
     }
     ctx.beginPath();appendLoop(rowA);appendLoop(rowB);
-    ctx.fillStyle=color;ctx.globalAlpha=conic?1:.035+.60*rim+.18*body;
+    ctx.fillStyle=color;ctx.globalAlpha=conic?1:.025+.81*rim+.25*body;
     ctx.fill('evenodd');
     ctx.strokeStyle=color;ctx.globalAlpha*=.35;ctx.lineWidth=.30;ctx.stroke();
    }
    for(let j=2;j<count-2;j+=4){
     const u=j/(count-1),rim=Math.exp(-Math.pow(u-edgeU,2)/.10);
     path(rows[j]);ctx.strokeStyle=fallback;
-    ctx.globalAlpha=.025+.045*rim;ctx.lineWidth=.19;ctx.stroke();
+    ctx.globalAlpha=.035+.075*rim;ctx.lineWidth=.20;ctx.stroke();
    }
    ctx.globalAlpha=1;
+   ctx.fillStyle='rgba(170,255,237,.18)';
+   ctx.beginPath();
+   for(let j=3;j<count-3;j+=3){
+    for(let i=1;i<geom.length-1;i+=2){
+     const g=geom[i];
+     if(kind===0&&Math.abs(g.lip-g.back)<.052)continue;
+     const q=point(g,kind,clamp((j+.25*Math.sin(i*2.399963+j))/(count-1),0,1));
+     const d=.27+.08*intensity(g.a);
+     ctx.rect(q[0]-d*.5,q[1]-d*.5,d,d);
+    }
+   }
+   ctx.fill();
    let gloss=fallback;
    if(conic){
     gloss=ctx.createConicGradient(rot,200,200);
@@ -320,8 +332,9 @@
     }
    }
    path(rows[kind===0?count-1:0]);ctx.strokeStyle=gloss;
-   ctx.globalAlpha=.19;ctx.lineWidth=2.6;ctx.stroke();
-   ctx.globalAlpha=1;ctx.lineWidth=1.12;ctx.stroke();
+   ctx.globalAlpha=.15;ctx.lineWidth=3.0;ctx.stroke();
+   ctx.globalAlpha=.38;ctx.lineWidth=1.9;ctx.stroke();
+   ctx.globalAlpha=1;ctx.lineWidth=1.20;ctx.stroke();
    // Short, tapering return fold on the upper-right shoulder.
    if(kind===0){
     const from=5.10,to=5.58,fan=geom.filter(g=>g.a>=from&&g.a<=to);
@@ -329,12 +342,12 @@
      const first=point(fan[0],0,1),last=point(fan[fan.length-1],0,1);
      const sheen=ctx.createLinearGradient(...first,...last);
      sheen.addColorStop(0,'rgba(157,255,234,0)');
-     sheen.addColorStop(.45,'rgba(223,255,246,.72)');
+     sheen.addColorStop(.45,'rgba(223,255,246,.96)');
      sheen.addColorStop(1,'rgba(157,255,234,0)');
      for(let j=0;j<12;j++){
       const v=j/11;
       const pts=fan.map(g=>point(g,0,1-(.24+.52*v)*Math.pow(Math.sin(Math.PI*(g.a-from)/(to-from)),1.6)));
-      path(pts,false);ctx.strokeStyle=sheen;ctx.globalAlpha=.12+.48*v*v;ctx.lineWidth=.24+.25*v*v;ctx.stroke();
+      path(pts,false);ctx.strokeStyle=sheen;ctx.globalAlpha=.10+.72*v*v;ctx.lineWidth=.22+.38*v*v;ctx.stroke();
      }
     }
    }
@@ -370,7 +383,7 @@
     ctx.rect(px-size/2,py-size/2,size,size);
    }
    ctx.fillStyle=memGradient;
-   ctx.globalAlpha=.53+.42*Math.pow(u,5);
+   ctx.globalAlpha=.57+.38*Math.pow(u,5);
    ctx.fill();
   }
   ctx.globalAlpha=1;
@@ -389,7 +402,7 @@
     const size=.45+.16*Math.pow(v,2);
     ctx.rect(px+dx-size/2,py+width*bend-size/2,size,size);
    }
-   ctx.fillStyle=memGradient;ctx.globalAlpha=.48+.49*Math.pow(v,2);ctx.fill();
+   ctx.fillStyle=memGradient;ctx.globalAlpha=.46+.51*Math.pow(v,2);ctx.fill();
   }
   // A faint, continuous reflected edge defines the lower turn of the leaf.
   const foldEdge=[];
@@ -404,8 +417,8 @@
   for(const side of [-1,1]){
    const [px,py]=membrane(side*.97,1);
    const glint=ctx.createRadialGradient(px,py,0,px,py,8);
-   glint.addColorStop(0,'rgba(183,255,240,.38)');
-   glint.addColorStop(.36,'rgba(108,235,217,.10)');
+   glint.addColorStop(0,'rgba(183,255,240,.63)');
+   glint.addColorStop(.36,'rgba(108,235,217,.18)');
    glint.addColorStop(1,'rgba(108,235,217,0)');
    ctx.fillStyle=glint;ctx.fillRect(px-8,py-8,16,16);
   }
