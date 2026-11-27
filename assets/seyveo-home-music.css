@@ -29,8 +29,8 @@ html:root body #homePage #svSayviHomeWeather.sv-home-music-weather-replaced{visi
 #homePage #svHomeInlineMusic .sv-home-music-times{display:flex;justify-content:space-between;font-size:10px;line-height:1;color:var(--sv-home-player-sub);font-variant-numeric:tabular-nums}
 #homePage #svHomeInlineMusic .sv-home-music-controls{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:3px}
 #homePage #svHomeInlineMusic .sv-home-music-controls button{display:grid;place-items:center;width:44px;height:44px;border-radius:50%}
-#homePage #svHomeInlineMusic .sv-home-music-controls svg{display:block;width:21px;height:21px;fill:currentColor;stroke:none}
-#homePage #svHomeInlineMusic .sv-home-music-controls [data-home-music=play] svg{width:30px;height:30px}
+#homePage #svHomeInlineMusic .sv-home-music-controls svg{display:block;width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#homePage #svHomeInlineMusic .sv-home-music-controls [data-home-music=play] svg{width:30px;height:30px;stroke-width:1.8}
 #homePage #svHomeInlineMusic .sv-home-music-controls button:disabled{opacity:.26;cursor:default}
 #homePage #svHomeInlineMusic button:active:not(:disabled){opacity:.62}
 #homePage #svHomeInlineMusic button:focus-visible,#homePage #svHomeMusicReturn:focus-visible{outline:2px solid currentColor;outline-offset:1px}
