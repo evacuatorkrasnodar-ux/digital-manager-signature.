@@ -846,7 +846,10 @@
    quickButton.setAttribute('aria-expanded',String(!quickCollapsed));
    if(quickInfo){quickInfo.tabIndex=quickCollapsed?-1:0;quickInfo.setAttribute('aria-hidden',String(quickCollapsed))}
    const s=w.SEYVEO_ADAPTIVE_SOUND?.state();
-   quickButton.setAttribute('aria-label',quickCollapsed?'Показать управление звуком':s?.pure?'Pure Sound. Включить Adaptive Sound':'Adaptive Sound. Включить Pure Sound');
+   const description=$('svAdaptiveQuickState')?.textContent||'';
+   const label=(s?.pure?'Pure Sound':'Adaptive Sound')+(description?'. '+description:'');
+   quickButton.title=label;
+   quickButton.setAttribute('aria-label',label+'. '+(quickCollapsed?'Показать управление звуком':s?.pure?'Включить Adaptive Sound':'Включить Pure Sound'));
   }
   function stopQuickTimer(){if(quickTimer){w.clearTimeout(quickTimer);quickTimer=0}}
   function revealQuick(){
@@ -879,9 +882,12 @@
    const quick=$('svAdaptiveQuick'),name=$('svAdaptiveQuickName'),sub=$('svAdaptiveQuickState');
    if(quick&&name&&sub){
     name.textContent=s?.pure?'Pure Sound':'Adaptive Sound';
-    const states={active:s?.attenuationDb<0?'Звучание адаптировано':'Без коррекции',analysing:'Анализ записи…',waiting:'Ожидание записи',idle:'Автоматический режим',limited:'Без коррекции',unsupported:'Без коррекции',pure:'Оригинальное звучание'};
-    sub.textContent=s?states[s.phase]||'Автоматический режим':'Недоступно';
-    quick.dataset.soundPhase=s?.phase||'unsupported';
+    const phase=s?.phase||'unsupported';
+    const correcting=phase==='active'&&s.attenuationDb<0;
+    const states={active:correcting?'Коррекция '+s.attenuationDb+' дБ':'Коррекция не нужна',analysing:'Анализ записи…',waiting:'Ожидание записи',idle:'Готов к музыке',limited:'Запись без коррекции',unsupported:'Недоступно на устройстве',pure:'Оригинальное звучание'};
+    sub.textContent=states[phase]||'Автоматический режим';
+    quick.dataset.soundPhase=phase;
+    quick.dataset.soundIndicator=correcting?'correcting':phase==='analysing'?'analysing':['pure','limited','unsupported'].includes(phase)?'inactive':'ready';
     quick.setAttribute('aria-pressed',String(!!s?.pure));
     paintQuick();
     quick.disabled=!s;
