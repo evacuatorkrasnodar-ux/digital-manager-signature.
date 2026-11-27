@@ -156,26 +156,26 @@ void main(){
   }
   float n=sqrt(max(0.0,1.0-r*r));
   float top=peak(a,-2.08,.61),bottom=peak(a,1.37,.57),right=peak(a,.60,.61),left=peak(a,2.85,.48);
-  float lip=.21+.78*top+.77*bottom+.72*right+.29*left;
+  float lip=.15+.82*top+.62*bottom+.64*right+.24*left;
   float edge=gauss(r-.994,.0046),edgeSoft=gauss(r-.974,.018);
   float reflected=gauss(r-(.957-.071*top),.014+.039*top)*pow(top,1.65);
   // Broad curved softbox reflection: a distinct inner edge with a translucent tail.
   float innerArc=.949-.205*top;
   float crescent=smoothstep(innerArc-.009,innerArc+.009,r)*(1.0-smoothstep(.925,.975,r))*pow(top,1.28);
   float shoulder=peak(a,-1.05,.60)*gauss(r-.91,.045);
-  float base=gauss(r-(.952-.048*bottom),.044)*bottom;
-  float lowerLens=gauss(r-(.927-.035*bottom),.044)*peak(a,1.14,.80);
+  float base=gauss(r-(.961-.043*bottom),.058)*bottom;
+  float lowerLens=gauss(r-(.911-.022*bottom),.065)*peak(a,1.14,.80);
   float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left);
   float fres=pow(max(0.0,1.0-n),3.0);
   // Subtle optical separation: neutral specular light and a quiet inner lens edge.
   // Same analytic glass pass; no changes to cloth, geometry or animation.
-  float light=clamp(.57*reflected+1.38*edge*lip+.44*edgeSoft*lip+.48*base+.21*inner+.63*crescent+.35*lowerLens+.18*shoulder,0.0,1.0);
+  float light=clamp(.41*reflected+1.32*edge*lip+.32*edgeSoft*lip+.36*base+.10*inner+.52*crescent+.25*lowerLens+.18*shoulder,0.0,1.0);
   float blueDepth=gauss(r-.91,.085)*(.55+.45*peak(a,-.75,.9));
   float softReflection=gauss(r-.82,.028)*peak(a,-1.03,.47);
   float lensShade=gauss(r-.914,.033)*(1.0-.82*top)*(.65+.35*right);
   col=mix(vec3(.015,.39,.62),vec3(.05,.87,.94),clamp(light*1.65+.15*blueDepth,0.0,1.0));
-  col=mix(col,vec3(.95,1.0,.99),smoothstep(.44,.96,light));
-  alpha=clamp(.006+.085*fres+.95*light+.11*blueDepth,0.0,.98);
+  col=mix(col,vec3(.95,1.0,.99),smoothstep(.51,.98,light));
+  alpha=clamp(.006+.085*fres+.88*light+.14*blueDepth,0.0,.98);
   // Composite a faint dark inner edge and a neutral reflection in the existing pass.
   float shade=.105*lensShade*(1.0-alpha);
   float shine=.058*softReflection*(1.0-alpha);
