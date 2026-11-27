@@ -796,7 +796,7 @@
    if(chip){chip.hidden=!label;chip.textContent=label;chip.title=q?'Параметры исходного файла: '+q.format+' · '+q.detail:qualityRadio?'Заявленное качество радиостанции: '+qualityRadio:qualityPending?'Анализ исходного файла':'Параметры качества не определены';chip.dataset.quality=q?.hiRes?'hires':q?'file':qualityRadio?'radio':'unknown'}
    if(detail){
     detail.replaceChildren();
-    const top=d.createElement('strong');top.textContent=q?label+' · '+q.format:qualityRadio?'Радио':qualityPending?'Анализ исходного файла…':'Качество файла не определено';detail.append(top);
+    const top=d.createElement('strong');top.textContent=q?(label===q.format?label:label+' · '+q.format):qualityRadio?'Радио':qualityPending?'Анализ исходного файла…':'Качество файла не определено';detail.append(top);
     if(q||qualityRadio){const sub=d.createElement('small');sub.textContent=q?(q.format==='MP3'?q.bitrateKbps+' кбит/с (первый кадр) · '+q.sampleRate/1000+' кГц':q.bits+' бит · '+q.sampleRate/1000+' кГц'):'Заявлено станцией: '+qualityRadio;detail.append(sub)}
     const note=d.createElement('small');note.textContent='Параметры источника, не качество выхода Bluetooth или ЦАП.';detail.append(note);
    }
@@ -826,13 +826,12 @@
    mark.innerHTML='<svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="29" stroke-width=".8"/><circle cx="32" cy="32" r="23" stroke-width=".6" opacity=".5"/><path d="M14 29v6m6-12v18m6-22v26m6-31v36m6-27v18m6-15v12m6-9v6" stroke-width="1.7" stroke-linecap="round"/></svg>';
    body.append(mark);
    const tagline=d.createElement('strong');tagline.className='sv-adaptive-tagline';tagline.textContent='Интеллект в каждой ноте.';body.append(tagline);
-   message('Не настраивайте музыку. Наслаждайтесь ею.');
+   message('Автоматическая коррекция громкости.');
    const statusLine=d.createElement('p');statusLine.className='sv-adaptive-status';statusLine.setAttribute('aria-live','polite');body.append(statusLine);
    const sourceLine=d.createElement('div');sourceLine.id='svAdaptiveSourceQuality';body.append(sourceLine);paintQuality();
-   message('Бережная коррекция громкости. Характер записи сохраняется.');
-   const modeButton=action('Pure Sound · без коррекции',()=>{const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
+   const modeButton=action('Pure Sound',()=>{const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
    modeButton.id='svAdaptivePure';
-   message('Работает с поддерживаемыми локальными песнями. Радио и другие источники — без коррекции.');
+   message('Pure Sound — оригинальная запись без коррекции. Радио и неподдерживаемые источники не корректируются.');
    updateSound();
   }
   // Keep the header height constant. First tap on the collapsed symbol
@@ -900,7 +899,7 @@
    el.replaceChildren();
    const headline=d.createElement('strong');headline.textContent=s?.phase==='active'&&s.attenuationDb<0?'Звучание адаптировано':(!s?'Движок недоступен':labels[s.phase]||'Готов к локальной музыке');el.append(headline);
    if(s?.phase==='active'&&s.attenuationDb<0){const db=d.createElement('small');db.textContent='Коррекция '+s.attenuationDb+' дБ'+(s.sampled?' · выборочная оценка сборника':'');el.append(db)}
-   b.textContent=s?.pure?'Вернуть Adaptive Sound':'Pure Sound · без коррекции';
+   b.textContent='Pure Sound';
    b.setAttribute('aria-pressed',String(!!s?.pure));b.disabled=!s;
   }
   d.addEventListener('seyveo:adaptive-sound',updateSound);
