@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound · glass vessel and suspended matter · WebGL 1. */
+/* SEYVEO Liquid Sound V47 · volumetric silk light · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -55,7 +55,7 @@ vec3 crease(float x,float v){
  p.z+=w*.055*sin(t*.55+u*4.0)*(.30+mid);
  vec2 tangent=contour(k,min(1.0,u+.004)).xy-contour(k,max(0.0,u-.004)).xy;
  vec2 normal=normalize(vec2(-tangent.y,tangent.x)+vec2(.000001,0.0));
- float width=uKind<8.5?.115:uKind<9.5?.115:.055;
+ float width=uKind<8.5?.158:uKind<9.5?.156:.065;
  p.xy+=normal*(v*2.0-1.0)*width*(.72+.28*w);
  return p;
 }
@@ -104,27 +104,30 @@ void main(){
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.91,.20)+gauss(x-.91,.20);
-  float strength=uKind<8.5?(.27+.52*tips+.12*gauss(x+.30,.48)):uKind<9.5?(.70*gauss(x+.10,.29)+.15*gauss(x-.26,.46)):(.09+.26*tips);
-  float g=gauss(v-.5,.068),soft=gauss(v-.5,.27);
+  float strength=uKind<8.5?(.32+.45*tips+.18*gauss(x+.30,.55)):uKind<9.5?(.72*gauss(x+.10,.38)+.22*gauss(x-.26,.52)):(.10+.24*tips);
+  float g=gauss(v-.5,.056),soft=gauss(v-.5,.32);
   col=mix(vec3(.02,.91,.88),vec3(.88,1.0,.98),g*.78);
   float taper=smoothstep(0.0,.08,w);
-  alpha=strength*(.42*g+.58*soft)*taper*(1.0-smoothstep(.46,.50,abs(v-.5)));
+  alpha=strength*(.29*g+.71*soft)*taper*(1.0-smoothstep(.46,.50,abs(v-.5)));
  }else{
   float tip=pow(abs(x),6.0),turn=pow(v,5.0),fres=1.0-vLight;
   float focus=gauss(x+.20,.78),edge=pow(v,20.0),start=pow(1.0-v,20.0);
   float tipGlow=gauss(x+.91,.18)+gauss(x-.92,.18);
   float facing=clamp(vLight,0.0,1.0);
-  float frontLight=.57+.43*gauss(x-.22,.82);
+  float frontLight=.60+.40*gauss(x-.22,.82);
+  // Directional silk sheen: light spreads along the cloth, not just its outline.
+  float shoulderLight=gauss(x+.53,.54)*gauss(v-.53,.40);
+  float silkLight=pow(v,2.4)*(.57+.43*gauss(x+.25,.70));
   col=mix(vec3(.08,.88,.88),vec3(.84,1.0,.98),clamp(.24*turn+.22*fres+.30*tip,0.0,1.0));
-  if(uKind<2.5)alpha=(.36+.31*v*v+.18*fres)*frontLight*(1.0-.46*tip);
-  else if(uKind<3.5){alpha=(.64+.40*turn+.16*fres)*(1.0-.14*tip);col=mix(col,vec3(.80,1.0,.97),turn*.85);}
+  if(uKind<2.5){alpha=(.38+.28*v*v+.16*fres+.23*shoulderLight)*frontLight*(1.0-.36*tip);col=mix(col,vec3(.30,1.0,.96),.32*shoulderLight+.17*silkLight);}
+  else if(uKind<3.5){alpha=(.72+.28*turn+.16*fres)*(1.0-.12*tip);col=mix(col,vec3(.83,1.0,.97),clamp(.24+.63*silkLight+.25*turn,0.0,1.0));}
   else if(uKind<4.5)alpha=(.12+.10*fres+.12*facing*gauss(x-.28,.62))*(1.0-.60*tip);
-  else alpha=(.10+.22*turn+.23*turn*gauss(x+.10,.42)+.10*gauss(x-.25,.52)*v*v+.12*fres)*(1.0-.60*tip);
+  else alpha=(.13+.24*turn+.29*pow(v,2.3)*gauss(x+.10,.45)+.13*gauss(x-.25,.52)*v*v+.12*fres)*(1.0-.54*tip);
   if(uMode<.5){
-   if(uKind<2.5)alpha=.009+.025*fres+.09*start*focus+.09*pow(v,5.0)*tipGlow;
-   else if(uKind<3.5){alpha=clamp(.035+.86*edge+.40*start+.30*pow(v,4.0)+.32*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
+   if(uKind<2.5)alpha=.010+.025*fres+.09*start*focus+.10*pow(v,4.0)*tipGlow+.055*shoulderLight;
+   else if(uKind<3.5){alpha=clamp(.055+.65*edge+.29*start+.42*silkLight+.29*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
    else if(uKind<4.5)alpha=.009+.019*fres+.17*edge*gauss(x-.35,.66)+.16*pow(1.0-v,12.0)*(.55+.45*focus);
-   else {float low=gauss(x+.10,.29),sweep=gauss(x-.22,.48);float seam=pow(1.0-v,12.0)*gauss(x-.46,.48);alpha=clamp(.012+.95*edge*low+.53*pow(v,4.0)*low+.27*start*gauss(x-.25,.76)+.18*pow(v,3.0)*sweep+.16*seam,0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),clamp(edge*(.90*low+.24*sweep)+.24*seam,0.0,1.0));}
+   else {float low=gauss(x+.10,.38),sweep=gauss(x-.22,.52);float seam=pow(1.0-v,12.0)*gauss(x-.46,.48);alpha=clamp(.012+.79*edge*low+.67*pow(v,2.8)*low+.27*start*gauss(x-.25,.76)+.18*pow(v,3.0)*sweep+.16*seam,0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),clamp(edge*(.90*low+.24*sweep)+.24*seam,0.0,1.0));}
   }
   if(uKind>6.5&&uKind<7.5){
    float taper=sin(3.14159265*(x+1.0)*.5);
@@ -161,7 +164,7 @@ void main(){
  }
  const glass=mesh(5,2,2,0),glowMid=mesh(8,96,12,0),glowBottom=mesh(9,96,12,0),glowSeam=mesh(10,96,8,0);
  const parts=[4,6,7,2,3].map(kind=>{
-  const dims=kind===7?[52,20,78,28]:kind===2?[105,52,158,78]:kind===3?[112,30,170,44]:kind===4?[68,28,100,40]:[88,26,140,38];
+  const dims=kind===7?[58,22,92,34]:kind===2?[105,52,158,78]:kind===3?[112,36,170,56]:kind===4?[72,32,110,48]:[92,30,146,46];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   return [mesh(kind,mobile?64:96,mobile?20:32,0),mesh(kind,n,m,1)];
  });
