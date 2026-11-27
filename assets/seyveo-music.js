@@ -145,6 +145,34 @@ const favoriteId=file=>file?[
  String(file.lastModified||0)
 ].join('|'):'';
 
+// Remember the exact local file and playback position, not a transient URL.
+const POSITION_KEY='seyveo-music-position-v1';
+let positionFile=null,positionSource='',positionPending=null,positionLastSave=0;
+function readPosition(){
+ try{
+  const v=JSON.parse(localStorage.getItem(POSITION_KEY)||'null');
+  if(v&&typeof v.id==='string'&&Number.isFinite(v.seconds)&&v.seconds>=0)return v;
+ }catch{}
+ return null;
+}
+function writePosition(file,seconds){
+ if(!file||file.radio||!Number.isFinite(seconds)||seconds<0)return;
+ try{localStorage.setItem(POSITION_KEY,JSON.stringify({id:favoriteId(file),seconds,at:Date.now()}));positionLastSave=Date.now()}catch{}
+}
+function savePosition(force=false){
+ if(!positionFile||!positionSource||audio.getAttribute('src')!==positionSource||positionPending!==null)return;
+ if(!force&&Date.now()-positionLastSave<2000)return;
+ if(audio.readyState<1&&!audio.ended)return;
+ writePosition(positionFile,audio.ended?0:Math.max(0,audio.currentTime||0));
+}
+function restorePosition(){
+ if(positionPending===null||!positionFile||audio.getAttribute('src')!==positionSource||audio.readyState<1)return;
+ const total=audio.duration;
+ if(!Number.isFinite(total)||total<=0)return;
+ const target=Math.min(positionPending,Math.max(0,total-.1));
+ try{audio.currentTime=target;positionPending=null;writePosition(positionFile,target)}catch{}
+}
+
 // Offline audio library: store owned audio bytes and original file identity.
 const LIBRARY_DB='seyveo-music-library-v1',LIBRARY_STORE='tracks';
 const savedTrackIds=new Set();
@@ -210,7 +238,11 @@ async function restoreLibrary(){
   }
   restoreRecent();
   libraryLoading=false;
-  if(localTracks.length&&!tracks.length){tracks=localTracks;switchTrack(Math.max(0,localTracks.indexOf(recentFiles[0])),false)}
+  if(localTracks.length&&!tracks.length){
+   const saved=readPosition(),found=saved?localTracks.findIndex(file=>favoriteId(file)===saved.id):-1;
+   tracks=localTracks;
+   switchTrack(found>=0?found:Math.max(0,localTracks.indexOf(recentFiles[0])),false,false,found>=0?saved.seconds:0);
+  }
   libraryRefresh();
   libraryMessage(libraryCount()+'. '+(failed?'Не удалось восстановить файлов: '+failed+'. Добавьте их повторно.':'Доступно без повторной загрузки.'));
  }catch(error){
@@ -733,11 +765,12 @@ function collectionRender(){
  });
  syncQueueToggle();
 }
-function switchTrack(i,autoplay=false,fromNavigation=false){
+function switchTrack(i,autoplay=false,fromNavigation=false,resumeSeconds=0){
  if(!tracks.length)return false;
  const newIndex=((i%tracks.length)+tracks.length)%tracks.length;
  const file=tracks[newIndex];const version=++selectVersion;
  if(!fromNavigation)resetShuffle(file);
+ savePosition(true);positionFile=null;positionSource='';positionPending=null;
  audio.pause();audio.removeAttribute('src');audio.load();safeRelease();
  radioFallback=false;
   if(file.radio){
@@ -753,6 +786,8 @@ function switchTrack(i,autoplay=false,fromNavigation=false){
   updatePlay();return false;
  }
  index=newIndex;
+ positionFile=file;positionSource=url;positionPending=resumeSeconds>0?resumeSeconds:null;
+ writePosition(file,Math.max(0,resumeSeconds));
  audio.src=url;
  updateFavorite();
  const visible=infoFor(file);
@@ -1010,7 +1045,7 @@ function syncMusicRoute(){
  musicPreviousRoute=current;
  if(inside)miniDismissed=false;
  document.documentElement.classList.toggle('sv-music-screen',inside);
- if(!inside)hidePanels();
+ if(!inside){savePosition(true);hidePanels()}
  else syncQueueToggle();
  syncResume();
 }
@@ -1031,26 +1066,26 @@ options.addEventListener('click',event=>{
  const btn=event.target.closest('[data-music-provider]');
  if(btn&&options.contains(btn))providerChoose(btn.dataset.musicProvider);
 });
-audio.addEventListener('timeupdate',updateTime);
+audio.addEventListener('timeupdate',()=>{updateTime();savePosition()});
+audio.addEventListener('seeked',()=>{updateTime();savePosition(true)});
 audio.addEventListener('durationchange',updateTime);
-audio.addEventListener('loadedmetadata',updateTime);
+audio.addEventListener('loadedmetadata',()=>{restorePosition();updateTime()});
+audio.addEventListener('canplay',()=>{restorePosition();updateTime()});
 audio.addEventListener('playing',()=>{homeMusicSession=true;const file=tracks[index];if(file&&!file.radio){recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);recentPlayedAt.set(file,Date.now());for(const item of recentPlayedAt.keys())if(!recentFiles.includes(item))recentPlayedAt.delete(item);rememberRecent()}updatePlay();sayviMessage('');qualifyDiscoveryListen()});
-audio.addEventListener('pause',()=>{stopDiscoveryListen();updatePlay()});
-audio.addEventListener('ended',()=>{stopDiscoveryListen();if(isRadio()){updatePlay();sayviMessage('Эфир прервался. Нажмите Play для повторного подключения.');return}if(!navigateTrack(1,true)){updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
+audio.addEventListener('pause',()=>{stopDiscoveryListen();savePosition(true);updatePlay()});
+audio.addEventListener('ended',()=>{stopDiscoveryListen();if(isRadio()){updatePlay();sayviMessage('Эфир прервался. Нажмите Play для повторного подключения.');return}if(!navigateTrack(1,true)){savePosition(true);updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
 audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(isRadio()){const station=tracks[index],version=selectVersion;if(!radioFallback&&station.fallback){radioFallback=true;audio.src=station.fallback;artist.textContent=station.country+' · '+station.fallbackQuality;audio.play().catch(()=>{if(version===selectVersion)sayviMessage('Резервный эфир недоступен.')});return}sayviMessage('Эфир недоступен. Попробуйте другую станцию.');return}if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
 /* Screen lock/background can dispatch lifecycle changes.
  * Never stop an actively playing track on pagehide: the OS decides if WebKit
  * can continue. A full browser termination remains outside PWA control. */
 window.addEventListener('beforeunload',event=>{if(librarySaving){event.preventDefault();event.returnValue=''}});
-window.addEventListener('pagehide',event=>{
- if(event.persisted||!audio.paused)return;
- safeRelease();
-});
-// Safari may return from back-forward cache after the ephemeral URL was revoked.
-// Restore the selection WITHOUT starting playback or asking for permissions.
+window.addEventListener('pagehide',()=>savePosition(true));
+document.addEventListener('visibilitychange',()=>{if(document.hidden)savePosition(true)});
+// Keep object URLs intact in back-forward cache; document teardown frees them.
 window.addEventListener('pageshow',event=>{
- if(event.persisted&&tracks.length&&index>=0&&!audio.getAttribute('src'))
-  switchTrack(index,false);
+ if(event.persisted&&tracks.length&&index>=0&&!audio.getAttribute('src')){
+  const saved=readPosition();switchTrack(index,false,false,saved?.id===favoriteId(tracks[index])?saved.seconds:0);
+ }
 });
 $('sayviMusicFromComposer')?.addEventListener('click',()=>{
  $('hideInput')?.click();open();
