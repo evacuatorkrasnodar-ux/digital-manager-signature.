@@ -90,16 +90,16 @@
   const c=draftCoverage(data,duration);
   return c.count<=2||c.largest>=45||(Number.isFinite(duration)&&duration>=90&&c.count<8)||(!Number.isFinite(duration)&&c.count<8);
  }
- function needsDraftUpgrade(data){
-  return !!(data?.draft&&data.timed&&!data.userEdited&&data.recognitionVersion!==2&&data.autoReviewVersion!==2);
+ function needsDraftUpgrade(data,target=2){
+  return !!(data?.draft&&data.timed&&!data.userEdited&&(data.recognitionVersion||1)<target&&(data.autoReviewVersion||0)<target);
  }
  function preferDraft(old,candidate){
   if(!old?.lines?.length)return candidate;
   if(!old.draft||old.userEdited)return old;
   const duration=candidate?.duration||old.duration;
   const before=draftCoverage(old,duration),after=draftCoverage(candidate,duration);
-  if(after.covered>=before.covered*.85&&(after.largest<=before.largest+10||after.count>=before.count*1.5))return candidate;
-  return {...old,autoReviewVersion:2,...(Number.isFinite(duration)?{duration}:{})};
+  if(after.covered>=before.covered*.85&&(after.largest<=before.largest+10||after.count>=before.count*1.5))return candidate.vocalAttempted&&candidate.recognitionVersion!==3?{...candidate,autoReviewVersion:3}:candidate;
+  return {...old,autoReviewVersion:candidate.vocalAttempted?3:candidate.recognitionVersion||2,...(Number.isFinite(duration)?{duration}:{})};
  }
  function adjustedLyricTime(time,offset){
   return Math.max(0,time+Math.max(-15,Math.min(15,Number(offset)||0)));
@@ -329,6 +329,7 @@
      if(data.draft)message('Черновик Сэйви · возможны ошибки',settings);
      if(!data.timed)message('Текст без временных меток.',settings);
      if(needsDraftReview(data,audio.duration))message('Текст неполный: есть большие промежутки без распознанных слов.',settings);
+     if(data.vocalMode==='separated')message('Вокал отделён локально перед распознаванием.',settings);
      if(needsDraftUpgrade(data))message('Сэйви автоматически уточнит старый черновик, когда музыка будет на паузе.',settings);
      if(data.timed&&data.lines.some(line=>line.text?.trim()&&!wordTiming(line))){
       message('Для строк без меток слов подсветка приблизительная.',settings);
@@ -430,7 +431,7 @@
        start.disabled=true;start.hidden=true;progress('Сэйви готовит текст песни…');
        const meter=d.createElement('progress');meter.className='sv-lyrics-progress';meter.max=100;meter.setAttribute('aria-label','Обработанная часть песни');status.after(meter);
        const showProgress=(phase,percent)=>{
-        const labels={receiving:'Подготавливаю песню…',checking:'Проверяю аудиофайл…',loading:'Загружаю локальную модель…',decoding:'Разбираю вокал',finishing:'Подготавливаю текст…',complete:'Распознавание завершено'};
+        const labels={receiving:'Подготавливаю песню…',checking:'Проверяю аудиофайл…',loading:'Загружаю локальную модель…',separating:'Отделяю голос от музыки',decoding:'Разбираю вокал',finishing:'Подготавливаю текст…',complete:'Распознавание завершено'};
         if(Number.isFinite(percent)){meter.value=percent;progress((labels[phase]||'Анализ песни')+' · '+percent+'%')}else{meter.removeAttribute('value');progress(labels[phase]||'Сэйви готовит песню…')}
        };
        const poll=async()=>{
@@ -467,6 +468,7 @@
         if(previous&&candidate.covered<previous.covered*.85){
          if(valid())render(old,true);return;
         }
+        if(data.vocalAttempted&&data.recognitionVersion!==3)data.autoReviewVersion=3;
         const saved=await engine.put(id,data);
         lyricReview.delete(id);lyricReady.delete(id);
         if(needsDraftReview(data,audio.duration))lyricReview.add(id);else lyricReady.add(id);
@@ -527,7 +529,7 @@
    const now=w.performance.now();if(!force&&now-lyricDebugAt<500)return;lyricDebugAt=now;
    const fmt=n=>Number.isFinite(n)?n.toFixed(1):'—';
    const lines=lyricData?.lines||[],line=lines[current],next=lines[current+1];
-   el.textContent='V30 · ASR '+(lyricData?.recognitionVersion===2?'2':lyricData?.draft?'1':'—')+' · сдвиг '+fmt(lyricOffset)+' с · аудио '+fmt(audio.currentTime)+' с · '+(audio.paused?'пауза':'играет')+' · '+(lyricData?.timed?'строка '+(current+1)+'/'+lines.length:'нет меток')+' · метки '+fmt(line?.time)+' → '+fmt(next?.time)+' с · прокрутка '+Math.round(karaokeBody.scrollTop)+'/'+(lyricScrollTarget??'—')+(lastGap?' · разрыв меток':'');
+   el.textContent='V31 · ASR '+(lyricData?.draft?String(lyricData.recognitionVersion||1):'—')+(lyricData?.vocalMode==='separated'?' · вокал':'')+' · сдвиг '+fmt(lyricOffset)+' с · аудио '+fmt(audio.currentTime)+' с · '+(audio.paused?'пауза':'играет')+' · '+(lyricData?.timed?'строка '+(current+1)+'/'+lines.length:'нет меток')+' · метки '+fmt(line?.time)+' → '+fmt(next?.time)+' с · прокрутка '+Math.round(karaokeBody.scrollTop)+'/'+(lyricScrollTarget??'—')+(lastGap?' · разрыв меток':'');
   }
   function checkLyricClock(){
    if(!lyricsActive)return;
@@ -623,13 +625,19 @@
     queueStatus(summary()+' · '+(count>=2?'пропущена песня, продолжаю':'повторю позже'));
    };
    try{
+    deadline=w.setTimeout(()=>controller.abort(),15000);
+    const capability=await w.fetch('/api/seyveo-music-lyrics-status',{cache:'no-store',signal:controller.signal});
+    const config=await capability.json().catch(()=>null);
+    w.clearTimeout(deadline);deadline=0;
+    if(!capability.ok||config?.protocol!==2||!config.pythonConfigured){queueStatus(summary()+' · ожидает локальный движок');nextDelay=30000;return}
+    const target=config.vocalConfigured?3:2;
     for(const entry of ordered){
      if(controller.signal.aborted)return;
      if(!entry.id||lyricReady.has(entry.id)||lyricSkipped.has(entry.id)||lyricReview.has(entry.id))continue;
      const existing=await engine.get(entry.id);
      if(controller.signal.aborted)return;
      if(existing?.lines?.length){
-      if(needsDraftUpgrade(existing)){item=entry;upgrade=true;break}
+      if(needsDraftUpgrade(existing,target)){item=entry;upgrade=true;break}
       if(needsDraftReview(existing))lyricReview.add(entry.id);else lyricReady.add(entry.id);continue
      }
      let embedded=null;try{embedded=await readEmbedded(entry.file)}catch{}
@@ -655,7 +663,7 @@
     if(controller.signal.aborted||lyricAbort||(lyricsActive&&!lyricData)||(!audio.paused&&!audio.ended))return;
     queueStatus(summary()+(upgrade?' · уточняю старый текст':' · анализ песни'));
     const job=Array.from(w.crypto.getRandomValues(new Uint8Array(16)),v=>v.toString(16).padStart(2,'0')).join('');
-    deadline=w.setTimeout(()=>{expired=true;controller.abort()},660000);
+    deadline=w.setTimeout(()=>{expired=true;controller.abort()},target===3?1260000:660000);
     const poll=async()=>{
      if(finished||controller.signal.aborted)return;
      // A separate short-lived request must not keep the main queue waiting.
@@ -666,7 +674,7 @@
       const info=await res.json();
       if(!finished&&!controller.signal.aborted&&res.ok&&info.progress){
        const p=info.progress;
-       const labels={receiving:'подготовка',checking:'проверка файла',loading:'загрузка модели',decoding:'распознавание',finishing:'сохранение',complete:'готово'};
+       const labels={receiving:'подготовка',checking:'проверка файла',loading:'загрузка модели',separating:'отделение вокала',decoding:'распознавание',finishing:'сохранение',complete:'готово'};
        queueStatus(summary()+' · '+(labels[p.phase]||'анализ')+(Number.isFinite(p.percent)?' '+p.percent+'%':''));
       }
      }catch{}finally{w.clearTimeout(limit)}
@@ -684,11 +692,12 @@
     if(!(music()?.recognitionLibrary?.()||[]).some(x=>x.id===item.id))return;
     const existing=await engine.get(item.id);
     if(controller.signal.aborted)return;
-    if(data.recognitionVersion!==2){
+    if(![2,3].includes(data.recognitionVersion)){
      queueStatus(summary()+' · обновите и перезапустите локальный сервер');
      nextDelay=30000;return;
     }
-    const selected=!existing?data:needsDraftUpgrade(existing)?preferDraft(existing,data):existing;
+    const candidate=data.vocalAttempted&&data.recognitionVersion!==3?{...data,autoReviewVersion:3}:data;
+    const selected=!existing?candidate:needsDraftUpgrade(existing,target)?preferDraft(existing,candidate):existing;
     if(selected!==existing)await engine.put(item.id,selected);
     if(needsDraftReview(selected))lyricReview.add(item.id);else lyricReady.add(item.id);
     lyricFailures.delete(item.id);
