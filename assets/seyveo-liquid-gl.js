@@ -183,10 +183,6 @@ void main(){
   vec3 reflected=mix(vec3(.19,.88,.84),vec3(.96,1.0,.97),clamp(.12+.88*whiteFocus+.25*innerLight,0.0,1.0));
   col=(col*alpha*(1.0-reflection)+reflected*reflection)/max(.0001,alpha*(1.0-reflection)+reflection);
   alpha=alpha*(1.0-reflection)+reflection;
-  // A fine glancing highlight restores the upper optical edge without drawing a full circle.
-  float crown=.82*gauss(r-.994,.009)*peak(a,-2.14,.55);
-  col=(col*alpha*(1.0-crown)+vec3(.69,1.0,.97)*crown)/max(.0001,alpha*(1.0-crown)+crown);
-  alpha=alpha*(1.0-crown)+crown;
   // Broad, transparent aqua light transmitted through the lower glass, separate from the rim.
   float transmitted=.29*gauss(r-.936,.053)*lower;
   col=(col*alpha*(1.0-transmitted)+vec3(.17,.95,.89)*transmitted)/max(.0001,alpha*(1.0-transmitted)+transmitted);
