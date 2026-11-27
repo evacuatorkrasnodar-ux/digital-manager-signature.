@@ -458,7 +458,7 @@
   const libraryLyricsLocal=['localhost','127.0.0.1'].includes(w.location.hostname);
   const libraryLyricStatus=$('svMusicLyricsQueueStatus');
   let libraryLyricTimer=0,libraryLyricJob=null,libraryLyricRunning=false,libraryLyricClosed=false;
-  const lyricReady=new Set(),lyricSkipped=new Set();
+  const lyricReady=new Set(),lyricSkipped=new Set(),lyricFailures=new Map();
   const queueStatus=text=>{if(libraryLyricStatus){libraryLyricStatus.hidden=!text;if(libraryLyricStatus.textContent!==text)libraryLyricStatus.textContent=text}};
   function pauseLibraryLyrics(){
    w.clearTimeout(libraryLyricTimer);libraryLyricTimer=0;
@@ -480,9 +480,15 @@
    const summary=()=> 'Караоке · '+items.filter(x=>lyricReady.has(x.id)).length+' из '+items.length+' готово';
    libraryLyricRunning=true;
    const controller=new AbortController();libraryLyricJob=controller;
-   let nextDelay=1200;
+   let nextDelay=1600,deadline=0,pollTimer=0,item=null,expired=false,finished=false;
+   const failItem=()=>{
+    if(!item)return;
+    const count=(lyricFailures.get(item.id)||0)+1;
+    lyricFailures.set(item.id,count);
+    if(count>=2)lyricSkipped.add(item.id);
+    queueStatus(summary()+' · '+(count>=2?'пропущена песня, продолжаю':'повторю позже'));
+   };
    try{
-    let item=null;
     for(const entry of ordered){
      if(controller.signal.aborted)return;
      if(!entry.id||lyricReady.has(entry.id)||lyricSkipped.has(entry.id))continue;
@@ -499,34 +505,65 @@
      queueStatus(summary()+(count?' · не удалось: '+count:''));
      nextDelay=0;return;
     }
+    if(!audio.paused&&!audio.ended){queueStatus(summary()+' · продолжу на паузе');nextDelay=0;return}
     const ext=(item.file.name.match(/\.([^.]+)$/)||[])[1]?.toLowerCase();
     const type=({mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',flac:'audio/flac',ogg:'audio/ogg',opus:'audio/opus',aiff:'audio/aiff',aif:'audio/aiff'})[ext]||item.file.type;
     if(item.file.size>25*1024*1024||!type?.startsWith('audio/')){lyricSkipped.add(item.id);return}
+    deadline=w.setTimeout(()=>{expired=true;controller.abort()},20000);
     const check=await w.fetch('/api/seyveo-music-lyrics-status',{cache:'no-store',signal:controller.signal});
     const readiness=await check.json().catch(()=>null);
     if(!check.ok||readiness?.protocol!==2||!readiness.pythonConfigured){queueStatus(summary()+' · ожидает локальный движок');nextDelay=30000;return}
-    if(readiness.busy){nextDelay=3500;return}
-    if(controller.signal.aborted||lyricAbort||(lyricsActive&&!lyricData))return;
-    queueStatus(summary()+' · Сэйви готовит следующую песню');
+    w.clearTimeout(deadline);deadline=0;
+    if(readiness.busy){queueStatus(summary()+' · ожидаю освобождения движка');nextDelay=5000;return}
+    if(controller.signal.aborted||lyricAbort||(lyricsActive&&!lyricData)||(!audio.paused&&!audio.ended))return;
+    queueStatus(summary()+' · анализ песни');
     const job=Array.from(w.crypto.getRandomValues(new Uint8Array(16)),v=>v.toString(16).padStart(2,'0')).join('');
+    deadline=w.setTimeout(()=>{expired=true;controller.abort()},660000);
+    const poll=async()=>{
+     if(finished||controller.signal.aborted)return;
+     // A separate short-lived request must not keep the main queue waiting.
+     const statusController=new AbortController();
+     const limit=w.setTimeout(()=>statusController.abort(),5000);
+     try{
+      const res=await w.fetch('/api/seyveo-music-lyrics-status?job='+job,{cache:'no-store',signal:statusController.signal});
+      const info=await res.json();
+      if(!finished&&!controller.signal.aborted&&res.ok&&info.progress){
+       const p=info.progress;
+       const labels={receiving:'подготовка',checking:'проверка файла',loading:'загрузка модели',decoding:'распознавание',finishing:'сохранение',complete:'готово'};
+       queueStatus(summary()+' · '+(labels[p.phase]||'анализ')+(Number.isFinite(p.percent)?' '+p.percent+'%':''));
+      }
+     }catch{}finally{w.clearTimeout(limit)}
+     if(!finished&&!controller.signal.aborted)pollTimer=w.setTimeout(poll,2500);
+    };
+    pollTimer=w.setTimeout(poll,1000);
     const response=await w.fetch('/api/seyveo-music-lyrics',{method:'POST',headers:{'content-type':type,'x-seyveo-lyric-job':job},body:item.file,signal:controller.signal});
     const data=await response.json().catch(()=>null);
     if(controller.signal.aborted)return;
     if(!response.ok||!data?.lines?.length){
-     if(response.status===409||response.status===429||response.status>=500){nextDelay=15000;return}
+     if(response.status===409||response.status===429){nextDelay=10000;return}
+     if(response.status>=500){failItem();nextDelay=8000;return}
      lyricSkipped.add(item.id);return;
     }
     if(!(music()?.recognitionLibrary?.()||[]).some(x=>x.id===item.id))return;
     if(!(await engine.get(item.id)))await engine.put(item.id,data);
-    lyricReady.add(item.id);
+    lyricReady.add(item.id);lyricFailures.delete(item.id);
     queueStatus(summary());
    }catch(error){
-    if(!controller.signal.aborted){queueStatus(summary()+' · очередь ожидает соединение');nextDelay=15000}
+    if(expired){failItem();nextDelay=8000}
+    else if(!controller.signal.aborted){queueStatus(summary()+' · очередь ожидает соединение');nextDelay=15000}
    }finally{
+    finished=true;w.clearTimeout(deadline);w.clearTimeout(pollTimer);
     libraryLyricRunning=false;if(libraryLyricJob===controller)libraryLyricJob=null;
     if(nextDelay)scheduleLibraryLyrics(nextDelay);
    }
   }
+  audio.addEventListener('play',()=>{
+   pauseLibraryLyrics();
+   if(libraryLyricStatus&&!libraryLyricStatus.hidden)
+    queueStatus(libraryLyricStatus.textContent.split(' · ').slice(0,2).join(' · ')+' · продолжу на паузе');
+  });
+  audio.addEventListener('pause',()=>scheduleLibraryLyrics(2000));
+  audio.addEventListener('ended',()=>scheduleLibraryLyrics(2000));
   d.addEventListener('seyveo:music-library',()=>scheduleLibraryLyrics(1500));
   w.addEventListener('pagehide',()=>{libraryLyricClosed=true;pauseLibraryLyrics()});
   w.addEventListener('pageshow',()=>{libraryLyricClosed=false;scheduleLibraryLyrics(1500)});
