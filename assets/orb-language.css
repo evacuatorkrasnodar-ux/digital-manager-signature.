@@ -108,20 +108,3 @@ html[data-theme="light"] #homePage #orb #signal.svl-live.svl-equalizer .svl-bars
   animation:none!important;transition:none!important;transform:none!important;height:32%!important;
  }
 }
-
-/* SEYVEO idle Liquid Sound breathing */
-/* Keep the glass rim fixed; only the inner rendered matter breathes.
-   No WebGL redraws or audio analysis while playback is stopped. */
-#sayviMusicPage[data-music-view="player"]:not([hidden]) .sv-now-fallback.sv-liquid-mode:not(.sv-scene-playing) #svLiquidSoundCanvas {
-  animation:sv-liquid-idle-breathe 6s ease-in-out infinite;
-  transform-origin:center;
-}
-@keyframes sv-liquid-idle-breathe {
-  0%,100% { scale:1; opacity:.92; }
-  50% { scale:1.025; opacity:1; }
-}
-@media (prefers-reduced-motion:reduce) {
-  #sayviMusicPage[data-music-view="player"]:not([hidden]) .sv-now-fallback.sv-liquid-mode:not(.sv-scene-playing) #svLiquidSoundCanvas {
-    animation:none!important;
-  }
-}
