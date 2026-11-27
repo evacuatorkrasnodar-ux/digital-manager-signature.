@@ -500,5 +500,78 @@
  window.SEYVEO_ORB_LANGUAGE=Object.freeze({show,sync,state:()=>({
   voice:voice||'idle',musicPlaying:!!audio&&!audio.paused&&!audio.ended,signal:signal.dataset.svlKind||'idle'
  })});
- sync();syncScene();
+
+ // Home only: place living silk over the original glass artwork, without replacing
+ // its body, inner currents, rim, theme asset or interaction. No second glass layer.
+ const homeMatter=document.createElement('canvas');
+ homeMatter.id='svHomeMatter';
+ homeMatter.width=homeMatter.height=1;
+ homeMatter.hidden=true;
+ homeMatter.setAttribute('aria-hidden','true');
+ orb.insertBefore(homeMatter,signal);
+ let homeMatterGPU=null,homeMatterTimer=0,homeMatterVisible=true,homeMatterFailed=false,homeMatterDrawn=false,homeMatterPhase=0;
+ let homeMatterCtx=null;
+ const homeMatterRoot=document.documentElement;
+ function homeMatterAllowed(){
+  return !document.hidden&&!home.hidden&&home.contains(orb)&&homeMatterVisible&&homeMatterRoot.dataset.theme==='light'
+   &&!homeMatterRoot.classList.contains('seyveo-conversation')
+   &&!homeMatterRoot.classList.contains('sv-home-launch-pending')
+   &&!homeMatterRoot.classList.contains('sv-home-launch-logo-visible')
+   &&!homeMatterRoot.classList.contains('sv-sayvi-handoff-inflight')
+   &&!protectedState()&&!voice&&!oneShot;
+ }
+ function releaseHomeMatter(){
+  if(homeMatterTimer)clearTimeout(homeMatterTimer);
+  homeMatterTimer=0;homeMatter.hidden=true;homeMatterDrawn=false;
+  if(homeMatterGPU){try{homeMatterGPU.dispose()}catch{}homeMatterGPU=null}
+  if(homeMatter.width!==1)homeMatter.width=homeMatter.height=1;
+ }
+ function paintHomeMatter(){
+  homeMatterTimer=0;
+  if(!homeMatterAllowed()){releaseHomeMatter();return}
+  if(homeMatterFailed)return;
+  // Do not create a second active WebGL context when moving out of the player.
+  if(liquidGPU)releaseLiquid();
+  if(!homeMatterGPU){
+   try{
+    homeMatterCtx=homeMatterCtx||homeMatter.getContext('2d',{alpha:true});
+    homeMatterGPU=homeMatterCtx&&window.SEYVEO_LIQUID_GL?.create(true);
+   }catch{}
+   if(!homeMatterGPU){homeMatterFailed=true;releaseHomeMatter();return}
+  }
+  const size=Math.max(128,Math.min(240,Math.round(orb.clientWidth*.76*Math.min(1.25,window.devicePixelRatio||1))));
+  let b=0,m=0,h=0;
+  const playing=audio&&!audio.paused&&!audio.ended;
+  if(playing){
+   const file=window.SEYVEO_MUSIC?.rhythmFile?.(),data=file&&rhythmCache.get(file);
+   if(data?.length){const i=clamp(Math.floor(audio.currentTime/RHYTHM_STEP),0,data.length/3-1)*3;b=data[i]*.32;m=data[i+1]*.32;h=data[i+2]*.32}
+  }
+  if(!reduce?.matches)homeMatterPhase=(homeMatterPhase+.11) % 600;
+  try{
+   const frame=homeMatterGPU.render(size,homeMatterPhase,b,m,h,1,true);
+   if(!frame)throw Error('Home silk unavailable');
+   if(homeMatter.width!==size)homeMatter.width=homeMatter.height=size;
+   homeMatterCtx.clearRect(0,0,size,size);
+   homeMatterCtx.drawImage(frame,0,0,size,size);
+   homeMatter.hidden=false;homeMatterDrawn=true;
+  }catch{homeMatterFailed=true;releaseHomeMatter();return}
+  if(!reduce?.matches)homeMatterTimer=setTimeout(paintHomeMatter,100);
+ }
+ function syncHomeMatter(){
+  if(!homeMatterAllowed()){releaseHomeMatter();homeMatterFailed=false;return}
+  if(!homeMatterTimer&&!homeMatterFailed&&(!homeMatterDrawn||!reduce?.matches))paintHomeMatter();
+  if(reduce?.matches&&homeMatterTimer){clearTimeout(homeMatterTimer);homeMatterTimer=0}
+ }
+ if(typeof IntersectionObserver==='function'){
+  new IntersectionObserver(entries=>{homeMatterVisible=entries[0]?.isIntersecting===true;syncHomeMatter()},{threshold:.1}).observe(orb);
+ }
+ const homeMatterObserver=new MutationObserver(syncHomeMatter);
+ homeMatterObserver.observe(home,{attributes:true,attributeFilter:['hidden']});
+ homeMatterObserver.observe(homeMatterRoot,{attributes:true,attributeFilter:['class','data-theme']});
+ homeMatterObserver.observe(signal,{attributes:true,attributeFilter:['class']});
+ for(const name of ['seyveo:assistant-presence','seyveo:music-state','visibilitychange'])document.addEventListener(name,syncHomeMatter);
+ for(const name of ['hashchange','seyveo:route-changed','pageshow'])window.addEventListener(name,syncHomeMatter);
+ window.addEventListener('pagehide',releaseHomeMatter);
+ if(reduce?.addEventListener)reduce.addEventListener('change',syncHomeMatter);else reduce?.addListener?.(syncHomeMatter);
+ sync();syncScene();syncHomeMatter();
 })();
