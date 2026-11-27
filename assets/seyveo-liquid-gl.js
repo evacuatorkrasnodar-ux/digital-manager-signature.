@@ -158,10 +158,12 @@ void main(){
   float top=peak(a,-2.08,.61),bottom=peak(a,1.37,.57),right=peak(a,.60,.61),left=peak(a,2.85,.48);
   float lip=.15+.82*top+.62*bottom+.64*right+.24*left;
   float edge=gauss(r-.994,.0046),edgeSoft=gauss(r-.974,.018);
-  float reflected=gauss(r-(.957-.071*top),.014+.039*top)*pow(top,1.65);
-  // Broad curved softbox reflection: a distinct inner edge with a translucent tail.
-  float innerArc=.949-.205*top;
-  float crescent=smoothstep(innerArc-.004,innerArc+.004,r)*(1.0-smoothstep(.925,.975,r))*pow(top,1.15);
+  // Project a broad softbox onto the spherical face, rather than painting a rim.
+  // An offset circular boundary gives the inner edge a different curvature.
+  float innerArc=length(xy-vec2(.055,.175));
+  float softboxAngle=peak(a,-2.16,.76);
+  float crescent=smoothstep(.987,1.003,innerArc)*(1.0-smoothstep(.947,.977,r))*softboxAngle;
+  float reflected=gauss(r-(.953-.042*top),.022+.033*top)*pow(top,2.4);
   float shoulder=peak(a,-1.05,.60)*gauss(r-.91,.045);
   float base=gauss(r-(.961-.043*bottom),.058)*bottom;
   float lowerLens=gauss(r-(.911-.022*bottom),.065)*peak(a,1.14,.80);
@@ -169,7 +171,7 @@ void main(){
   float fres=pow(max(0.0,1.0-n),3.0);
   // Subtle optical separation: neutral specular light and a quiet inner lens edge.
   // Same analytic glass pass; no changes to cloth, geometry or animation.
-  float light=clamp(.43*reflected+1.32*edge*lip+.32*edgeSoft*lip+.43*base+.10*inner+.59*crescent+.31*lowerLens+.18*shoulder,0.0,1.0);
+  float light=clamp(.26*reflected+1.32*edge*lip+.32*edgeSoft*lip+.43*base+.10*inner+.22*crescent+.31*lowerLens+.18*shoulder,0.0,1.0);
   float blueDepth=gauss(r-.91,.085)*(.55+.45*peak(a,-.75,.9));
   float softReflection=gauss(r-.82,.028)*peak(a,-1.03,.47);
   float lensShade=gauss(r-.914,.033)*(1.0-.82*top)*(.65+.35*right);
@@ -180,7 +182,7 @@ void main(){
   alpha=clamp(.006+.085*fres+.88*light+.14*blueDepth,0.0,.98);
   // Composite a faint dark inner edge and a neutral reflection in the existing pass.
   float shade=.105*lensShade*(1.0-alpha);
-  float shine=.058*softReflection*(1.0-alpha);
+  float shine=(.058*softReflection+.53*crescent*(.28+.72*peak(a,-2.28,.43)))*(1.0-alpha);
   col=(col*alpha+vec3(.022,.065,.09)*shade+vec3(.87,.96,1.0)*shine)/max(.0001,alpha+shade+shine);
   alpha=clamp(alpha+shade+shine,0.0,.98);
  }else if(uKind>7.5){
