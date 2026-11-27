@@ -1331,18 +1331,17 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
  <input id="sayviMusicFiles" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.opus,.flac,.alac,.aiff" multiple hidden aria-label="Выбрать аудиофайлы"/>
  <audio id="sayviMusicAudio" preload="metadata"></audio>
  <div id="sayviMusicCollection" class="sv-music-collection" hidden role="region" aria-label="Музыкальная коллекция"></div>
- <section id="sayviMusicSourcesPanel" class="sv-music-providers" hidden role="region" aria-label="Музыкальные источники"><button id="sayviMusicSourcesClose" type="button" class="sv-music-panel-close" aria-label="Закрыть источники музыки">Закрыть</button>
-  <h2 class="sv-music-providers-title">Музыка из любимых сервисов</h2>
-  <p class="sv-music-providers-desc">В будущем нативном SEYVEO — официальные подключения. Пока можно узнать, что планируется.</p>
-  <div class="sv-music-provider-actions" id="sayviMusicProviders" role="group" aria-label="Источники музыки">
-   <button type="button" class="sv-music-intent" data-music-provider="apple" aria-pressed="false">Apple Music</button>
-   <button type="button" class="sv-music-intent" data-music-provider="spotify" aria-pressed="false">Spotify</button>
-   <button type="button" class="sv-music-intent" data-music-provider="yandex" aria-pressed="false">Яндекс Музыка</button>
-   <button type="button" class="sv-music-intent" data-music-provider="vk" aria-pressed="false">VK Музыка</button>
-   <button type="button" class="sv-music-intent" data-music-provider="local" aria-pressed="false">Мои записи</button>
+ <section id="sayviMusicSourcesPanel" class="sv-music-providers" hidden role="region" aria-labelledby="svMusicSourcesTitle">
+  <header class="sv-sources-head"><h2 id="svMusicSourcesTitle" class="sv-music-providers-title">Источники музыки</h2><button id="sayviMusicSourcesClose" type="button" class="sv-music-panel-close" aria-label="Закрыть источники музыки" title="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg></button></header>
+  <div class="sv-music-provider-list" id="sayviMusicProviders" role="group" aria-label="Музыкальные сервисы">
+   <button type="button" class="sv-music-provider-row" data-music-provider="apple" aria-pressed="false"><svg class="sv-source-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.4 3.2c.8-.9 1.1-1.6 1-2.2-1 .1-2 .6-2.7 1.4-.7.8-1 1.6-1 2.4 1 .1 2-.6 2.7-1.6ZM17.6 12.5c0-2 1.1-3.1 2.3-3.8-1.1-1.5-2.6-2-4-2-1.6 0-2.2.7-3.4.7-1.2 0-2-.7-3.5-.7-2.2 0-4.4 1.9-4.4 5.2 0 3.3 2.5 8.6 4.8 8.6 1.1 0 1.9-.7 3.2-.7 1.4 0 2.1.7 3.3.7 2 0 3.9-3.2 4.5-5.2-1.7-.7-2.8-1.7-2.8-2.8Z" fill="currentColor" stroke="none"/></svg><span class="sv-source-name">Apple Music</span><small>В планах</small><svg class="sv-source-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+   <button type="button" class="sv-music-provider-row" data-music-provider="spotify" aria-pressed="false"><svg class="sv-source-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M6.7 9.5c3.4-1.1 7.7-.7 10.6.9M7.8 12.5c2.8-.8 5.8-.5 8.3.8M9 15.4c2.1-.6 4.2-.3 6 .6"/></svg><span class="sv-source-name">Spotify</span><small>В планах</small><svg class="sv-source-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+   <button type="button" class="sv-music-provider-row" data-music-provider="yandex" aria-pressed="false"><svg class="sv-source-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4" stroke-width="1.8"/></svg><span class="sv-source-name">Яндекс Музыка</span><small>В планах</small><svg class="sv-source-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+   <button type="button" class="sv-music-provider-row" data-music-provider="vk" aria-pressed="false"><svg class="sv-source-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5h3c.4 4.2 2.3 6 3.8 6.4V7.5h2.8v3.7c1.8-.2 3.4-1.8 4.1-3.7H20c-.6 2-1.9 3.6-3.5 4.7 1.7.9 3.2 2.5 4 4.3h-3.2c-.7-1.4-2.1-2.6-4.2-2.9v2.9H12C6.5 16.5 3.8 12.6 3.5 7.5Z" fill="currentColor" stroke="none"/></svg><span class="sv-source-name">VK Музыка</span><small>В планах</small><svg class="sv-source-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+   <button type="button" class="sv-music-provider-row" data-music-provider="local" aria-pressed="false"><svg class="sv-source-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17V6l11-3v11"/><ellipse cx="6" cy="17.5" rx="3" ry="2.3"/><ellipse cx="17" cy="14.5" rx="3" ry="2.3"/></svg><span class="sv-source-name">Мои записи</span><small>На устройстве</small><svg class="sv-source-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
   </div>
   <div id="sayviMusicProviderText" class="sv-music-provider-explain" hidden aria-live="polite"></div>
- <p class="sv-music-note">Ваши файлы остаются на устройстве и не загружаются в SEYVEO. Подписки не подключены. Работа в фоне зависит от правил iOS/Android и будет отдельно реализована в нативных приложениях.</p>
+  <p class="sv-music-providers-desc">Подписки пока не подключены. Ваши записи остаются на устройстве.</p>
  </section>
 </main><main id="sayviSurfacePage" class="sv-deep-page" hidden aria-labelledby="sayviSurfaceTitle">
  <header class="sv-deep-top">
@@ -7042,7 +7041,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-mus
 #sayviMusicPage[data-music-view="player"] .sv-music-phrases .sv-music-intent{color:var(--secondary)!important;min-height:44px;font-size:clamp(10px,2.8vw,13px)}
 #sayviMusicPage[data-music-view="player"] .sv-music-awake-control{color:var(--secondary)}
 #sayviMusicPage[data-music-view="player"] .sv-music-stop-hide{color:var(--secondary)}
-html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] :is(.sv-music-collection,.sv-music-providers):not([hidden]){bottom:max(12px,env(safe-area-inset-bottom,0px))!important;background:var(--sv-music-glass-panel)!important}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-music-collection:not([hidden]){bottom:max(12px,env(safe-area-inset-bottom,0px))!important;background:var(--sv-music-glass-panel)!important}
 #sayviMusicPage[data-music-view="player"] button:focus-visible{outline:2px solid #E5F6F5!important;outline-offset:2px!important}
 @media(prefers-reduced-motion:reduce){
  #sayviMusicPage .sv-now-backdrop > span,#sayviMusicPage .sv-now-fallback,#sayviMusicPage .sv-now-fallback::before,#sayviMusicPage .sv-now-fallback .sv-music-scene-rings{transition:none!important;animation:none!important;transform:none!important}
@@ -7177,6 +7176,69 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-now
 }
 #sayviMusicPage .sv-now-wake-row small{display:block;color:rgba(238,245,249,.69);font-size:11px;line-height:1.3;padding:0 0 3px}
 #sayviMusicPage .sv-now-stop{border:0;color:#F1A9A9}
+</style>
+<style id="svMusicSourcesFinish">
+/* Sources share the Now Playing glass; the library/queue and other routes stay unchanged. */
+html.sv-music-screen #sayviMusicSourcesPanel:not([hidden]){
+ --sv-source-ink:var(--text);--sv-source-muted:var(--secondary);
+ --sv-source-edge:var(--soft-line);--sv-source-press:rgba(127,140,155,.10);
+ --sv-source-bg:var(--card);
+ z-index:46;box-sizing:border-box;width:min(420px,calc(100vw - 28px));
+ max-height:calc(100vh - 110px);max-height:calc(100dvh - 110px);
+ padding:8px 14px 12px;border-radius:22px;border:1px solid var(--sv-source-edge);
+ background:var(--sv-source-bg)!important;color:var(--sv-source-ink);
+ box-shadow:0 6px 20px rgba(0,0,0,.12);
+ -webkit-backdrop-filter:blur(24px) saturate(115%);backdrop-filter:blur(24px) saturate(115%);
+}
+html.sv-music-player-open #sayviMusicSourcesPanel:not([hidden]){
+ --sv-source-ink:#F9FAFC;--sv-source-muted:rgba(238,245,249,.79);
+ --sv-source-edge:rgba(236,246,255,.16);--sv-source-press:rgba(255,255,255,.08);
+ --sv-source-bg:#19242F;
+ bottom:max(14px,env(safe-area-inset-bottom,0px))!important;
+ max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);
+}
+@supports ((-webkit-backdrop-filter:blur(24px)) or (backdrop-filter:blur(24px))){
+ html.sv-music-player-open #sayviMusicSourcesPanel:not([hidden]){--sv-source-bg:rgba(25,36,47,.70)}
+ html[data-theme="light"].sv-music-browse #sayviMusicSourcesPanel:not([hidden]){--sv-source-bg:rgba(248,250,252,.90)}
+}
+#sayviMusicSourcesPanel .sv-sources-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-left:4px}
+#sayviMusicSourcesPanel #svMusicSourcesTitle{margin:0;font-size:17px;font-weight:630;line-height:1.2;letter-spacing:-.025em;color:var(--sv-source-ink)}
+#sayviMusicSourcesPanel #sayviMusicSourcesClose{
+ display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;
+ margin:0;padding:0;border:0;border-radius:0;background:transparent!important;box-shadow:none!important;
+ color:var(--sv-source-ink);transform:none!important;
+}
+#sayviMusicSourcesClose svg{width:20px;height:20px}
+#sayviMusicSourcesPanel .sv-music-provider-list{display:grid;gap:0}
+#sayviMusicSourcesPanel .sv-music-provider-row{
+ appearance:none;-webkit-appearance:none;display:flex;align-items:center;gap:10px;width:100%;min-height:48px;
+ box-sizing:border-box;padding:5px 4px;margin:0;border:0;border-bottom:1px solid var(--sv-source-edge);
+ border-radius:0;background:transparent!important;box-shadow:none!important;color:var(--sv-source-ink);
+ text-align:left;transform:none!important;
+}
+#sayviMusicSourcesPanel .sv-music-provider-row:active,#sayviMusicSourcesPanel .sv-music-provider-row[aria-pressed=true]{background:var(--sv-source-press)!important}
+#sayviMusicSourcesPanel .sv-source-icon{width:22px;height:22px;flex:0 0 22px}
+#sayviMusicSourcesPanel .sv-source-name{flex:1;min-width:0;font-size:14px;line-height:1.2;font-weight:550}
+#sayviMusicSourcesPanel .sv-music-provider-row small{flex:0 0 auto;font-size:10px;color:var(--sv-source-muted);white-space:nowrap}
+#sayviMusicSourcesPanel .sv-source-chevron{width:16px;height:16px;flex:0 0 16px;color:var(--sv-source-muted)}
+#sayviMusicSourcesPanel .sv-music-providers-desc{margin:10px 4px 2px;font-size:11px;line-height:1.4;color:var(--sv-source-muted)}
+#sayviMusicSourcesPanel .sv-music-provider-explain{margin:8px 0 0;padding:9px 5px 0;border:0;color:var(--sv-source-muted);font-size:12px;line-height:1.45}
+#sayviMusicSourcesPanel .sv-music-provider-explain strong{color:var(--sv-source-ink)}
+/* Retain the real Connections destination, but remove the bulky graphite card. */
+html body #sayviMusicSourcesPanel > .sv-connect-prompt:not([hidden]){
+ min-height:44px;margin:2px 0 0;padding:4px;gap:10px;border:0;border-radius:0;
+ background:transparent!important;box-shadow:none!important;color:var(--sv-source-ink);transform:none!important;
+}
+#sayviMusicSourcesPanel .sv-connect-prompt-icon{width:22px;height:22px;min-width:22px;flex:0 0 22px;background:transparent;color:var(--sv-source-ink)}
+#sayviMusicSourcesPanel .sv-connect-prompt-icon svg{width:22px;height:22px}
+#sayviMusicSourcesPanel .sv-connect-prompt-title{color:var(--sv-source-ink);font-size:13px;font-weight:550}
+#sayviMusicSourcesPanel .sv-connect-prompt-caption{display:none}
+#sayviMusicSourcesPanel .sv-connect-prompt-arrow{color:var(--sv-source-muted);width:16px;min-width:16px;flex:0 0 16px}
+#sayviMusicSourcesPanel .sv-connect-prompt-arrow svg{width:16px;height:16px}
+@media(prefers-reduced-transparency:reduce){
+ html.sv-music-screen #sayviMusicSourcesPanel:not([hidden]){--sv-source-bg:var(--card);-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ html.sv-music-player-open #sayviMusicSourcesPanel:not([hidden]){--sv-source-bg:#19242F}
+}
 </style>
 <style id="svNowFinePolish">
 /* Optical alignment only: retain the original 44px hit areas and row positions. */
