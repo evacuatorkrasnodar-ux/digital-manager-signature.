@@ -222,9 +222,9 @@
   // Reference-derived polar profiles for the lit fold, rear edge and light.
   // Independent boundaries cross naturally as the silk turns over in space.
   const profiles=[
-   [.997,.995,.982,.993,.997,.997,.976,.981,.986,.935,.90,.86,.85,.85,.91,.93,.912,.911,.905,.84,.81,.938,.995,.997],
-   [.89,.875,.87,.88,.90,.91,.91,.91,.90,.94,.98,1,1,1,1,1,1,1,1,1,.98,.99,.94,.90],
-   [.70,.93,1,1,.99,1,1,1,.98,.89,.79,.74,.53,.52,.96,.94,.99,1,1,.99,.96,1,.99,.74]
+   [.997,.996,.966,.982,.996,.994,.973,.981,.981,.989,.969,.965,.950,.912,.884,.872,.890,.911,.901,.832,.813,.935,.993,.996],
+   [.90,.914,.935,.947,.951,.942,.917,.927,.953,.930,.899,.997,1,1,1,1,1,1,1,1,1,.999,.930,.909],
+   [.68,1,1,1,.98,.99,1,1,1,.89,.80,.77,.56,.52,.72,.90,.98,1,1,.98,.94,1,.98,.72]
   ];
   const profile=(values,a)=>{
    const n=values.length,z=((a/(Math.PI*2)*n)%n+n)%n,i=Math.floor(z),f=z-i;
@@ -244,7 +244,7 @@
    const {a,lip,back,pinch,innerTop,innerBottom,innerKnot}=g;
    let r;
    if(kind===0){
-    r=radius*(back+(lip-back)*u+(.028+.017*m)*pinch*Math.sin(Math.PI*u));
+    r=radius*(back+(lip-back)*u+(.032+.017*m)*pinch*Math.sin(Math.PI*u));
    }else{
     r=radius*(.753+.007*Math.sin(2*a+t)+(.052*innerTop-(.107+.012*m)*innerBottom+.045*innerKnot)*u+.016*innerKnot*Math.sin(Math.PI*u));
    }
@@ -296,7 +296,7 @@
      color=ctx.createConicGradient(rot,200,200);
      for(let k=0;k<=40;k++){
       const a=k/40*Math.PI*2,light=intensity(a);
-      const alpha=clamp(.012+Math.pow(light,2.1)*(.94*rim+.43*body),0,.98),white=.78*rim*light;
+      const alpha=clamp(.008+Math.pow(light,1.8)*(.98*rim+.34*body),0,.98),white=.86*rim*light;
       color.addColorStop(k/40,'rgba('+Math.round(70+175*white)+','+Math.round(232+23*white)+','+Math.round(209+42*white)+','+alpha.toFixed(3)+')');
      }
     }
@@ -332,9 +332,24 @@
     }
    }
    path(rows[kind===0?count-1:0]);ctx.strokeStyle=gloss;
-   ctx.globalAlpha=.15;ctx.lineWidth=3.0;ctx.stroke();
-   ctx.globalAlpha=.38;ctx.lineWidth=1.9;ctx.stroke();
+   ctx.globalAlpha=.15;ctx.lineWidth=3.8;ctx.stroke();
+   ctx.globalAlpha=.38;ctx.lineWidth=2.1;ctx.stroke();
    ctx.globalAlpha=1;ctx.lineWidth=1.20;ctx.stroke();
+   // A narrow feathered reflection at the left turn and the lower-right rim.
+   // Short arcs keep the highlights local instead of adding a second hoop.
+   if(kind===0){
+    for(const [center,spread,strength] of [[3.52,.46,.54],[.73,.63,.40],[4.09,.55,.42]]){
+     const arc=geom.filter(g=>Math.abs(g.a-center)<spread);
+     if(arc.length<3)continue;
+     const pts=arc.map(g=>point(g,0,.98));
+     const g=ctx.createLinearGradient(...pts[0],...pts[pts.length-1]);
+     g.addColorStop(0,'rgba(103,255,225,0)');
+     g.addColorStop(.5,'rgba(134,255,231,.64)');
+     g.addColorStop(1,'rgba(103,255,225,0)');
+     path(pts,false);ctx.strokeStyle=g;ctx.globalAlpha=strength*.20;ctx.lineWidth=6;ctx.stroke();
+     ctx.globalAlpha=strength*.55;ctx.lineWidth=2.4;ctx.stroke();
+    }
+   }
    // Short, tapering return fold on the upper-right shoulder.
    if(kind===0){
     const from=5.10,to=5.58,fan=geom.filter(g=>g.a>=from&&g.a<=to);
@@ -375,7 +390,7 @@
   const columns=liquidMobile?94:140;
   for(let j=0;j<mesh;j++){
    const u=(j+.45)/mesh;
-   const size=.43+.19*Math.pow(u,4)+.04*h;
+   const size=.44+.18*Math.pow(u,4)+.04*h;
    ctx.beginPath();
    for(let i=1;i<columns;i++){
     const x=-1+2*(i+(j%2)*.34)/columns;
@@ -397,27 +412,27 @@
    for(let i=1;i<foldCols;i++){
     const x=-1+2*(i+(j%2)*.34)/foldCols,[px,py]=membrane(x,1);
     const env=Math.pow(Math.max(0,1-x*x),.78);
-    const width=R*(.36+.035*m)*env*(.80+.20*Math.cos(Math.PI*(x+.26)+t*.5));
+    const width=R*(.38+.035*m)*env*(.80+.20*Math.cos(Math.PI*(x+.26)+t*.5));
     const dx=R*.045*env*Math.sin(Math.PI*v);
     const size=.45+.16*Math.pow(v,2);
     ctx.rect(px+dx-size/2,py+width*bend-size/2,size,size);
    }
-   ctx.fillStyle=memGradient;ctx.globalAlpha=.46+.51*Math.pow(v,2);ctx.fill();
+   ctx.fillStyle=memGradient;ctx.globalAlpha=.50+.47*Math.pow(v,2);ctx.fill();
   }
   // A faint, continuous reflected edge defines the lower turn of the leaf.
   const foldEdge=[];
   for(let i=0;i<=liquidSteps;i++){
    const x=-1+2*i/liquidSteps,[px,py]=membrane(x,1);
    const env=Math.pow(Math.max(0,1-x*x),.78);
-   const width=R*(.36+.035*m)*env*(.80+.20*Math.cos(Math.PI*(x+.26)+t*.5));
+   const width=R*(.38+.035*m)*env*(.80+.20*Math.cos(Math.PI*(x+.26)+t*.5));
    foldEdge.push([px,py+width]);
   }
-  path(foldEdge,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.44;ctx.lineWidth=.42;ctx.stroke();
+  path(foldEdge,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.50;ctx.lineWidth=.42;ctx.stroke();
   ctx.globalAlpha=1;
   for(const side of [-1,1]){
    const [px,py]=membrane(side*.97,1);
    const glint=ctx.createRadialGradient(px,py,0,px,py,8);
-   glint.addColorStop(0,'rgba(183,255,240,.63)');
+   glint.addColorStop(0,'rgba(190,255,242,.73)');
    glint.addColorStop(.36,'rgba(108,235,217,.18)');
    glint.addColorStop(1,'rgba(108,235,217,0)');
    ctx.fillStyle=glint;ctx.fillRect(px-8,py-8,16,16);
