@@ -882,21 +882,23 @@
   if(inPlayer())revealQuick();else paintQuick();
   function updateSound(){
    const s=w.SEYVEO_ADAPTIVE_SOUND?.state();
+   const phase=s?.phase||'unsupported';
+   const correcting=phase==='active'&&s.attenuationDb<0;
+   const indicator=correcting?'correcting':phase==='analysing'?'analysing':['pure','limited','unsupported'].includes(phase)?'inactive':'ready';
    const quick=$('svAdaptiveQuick'),name=$('svAdaptiveQuickName'),sub=$('svAdaptiveQuickState');
    if(quick&&name&&sub){
     name.textContent=s?.pure?'Pure Sound':'Adaptive Sound';
-    const phase=s?.phase||'unsupported';
-    const correcting=phase==='active'&&s.attenuationDb<0;
     const states={active:correcting?'Коррекция '+s.attenuationDb+' дБ':'Коррекция не нужна',analysing:'Анализ записи…',waiting:'Ожидание записи',idle:'Готов к музыке',limited:'Запись без коррекции',unsupported:'Недоступно на устройстве',pure:'Оригинальное звучание'};
     sub.textContent=states[phase]||'Автоматический режим';
     quick.dataset.soundPhase=phase;
-    quick.dataset.soundIndicator=correcting?'correcting':phase==='analysing'?'analysing':['pure','limited','unsupported'].includes(phase)?'inactive':'ready';
+    quick.dataset.soundIndicator=indicator;
     quick.setAttribute('aria-pressed',String(!!s?.pure));
     paintQuick();
     quick.disabled=!s;
    }
    if(mode!=='sound'||!dialog?.open)return;
-   dialog.dataset.soundPhase=s?.phase||'unsupported';
+   dialog.dataset.soundPhase=phase;
+   dialog.dataset.soundIndicator=indicator;
    const el=body.querySelector('.sv-adaptive-status'),b=$('svAdaptivePure');
    if(!el||!b)return;
    const labels={pure:'Pure Sound · оригинал',active:s?.attenuationDb<0?'Adaptive Sound · коррекция '+s.attenuationDb+' дБ':'Adaptive Sound · коррекция не требуется',waiting:'Ожидание данных записи',analysing:'Анализ записи…',limited:'Без коррекции · формат или размер записи',unsupported:'Без коррекции · ограничение устройства',idle:'Готов к локальной музыке'};
@@ -909,7 +911,7 @@
   $('svAdaptiveSoundOpen')?.addEventListener('click',soundSheet);
   quickButton?.addEventListener('click',()=>{if(quickCollapsed){revealQuick();return}revealQuick();const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
   $('svAdaptiveQuickInfo')?.addEventListener('click',soundSheet);
-  dialog?.addEventListener('close',()=>{delete dialog.dataset.soundPhase});
+  dialog?.addEventListener('close',()=>{delete dialog.dataset.soundPhase;delete dialog.dataset.soundIndicator});
   updateSound();syncQuality();
   $('svSmartShare')?.addEventListener('click',share);
   $('svSmartSleep')?.addEventListener('click',sleepSheet);
