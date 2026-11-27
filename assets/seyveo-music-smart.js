@@ -69,11 +69,13 @@
   const loaded=()=>!!music()?.state?.().loaded&&music().state().trackIndex>=0;
   const notify=t=>{const el=$('sayviMusicStatus');if(el){el.textContent=t;el.hidden=false}};
   const dialog=$('svSmartMusicSheet'),body=$('svSmartMusicBody'),title=$('svSmartMusicTitle');
-  const close=()=>{cancelRecognition();if(dialog?.open)dialog.close();++generation;mode='';lyricData=null;current=-2};
+  let lyricAbort=null;
+  function cancelLyric(){lyricAbort?.abort();lyricAbort=null}
+  const close=()=>{cancelLyric();cancelRecognition();if(dialog?.open)dialog.close();++generation;mode='';lyricData=null;current=-2};
   let generation=0,mode='',lyricData=null,current=-2,deadline=0,timer=0,originalVolume=null;
   function show(label,kind){
    if(!dialog||!body)return false;
-   if(kind!=='recognize')cancelRecognition();
+   cancelLyric();if(kind!=='recognize')cancelRecognition();
    ++generation;mode=kind;lyricData=null;current=-2;title.textContent=label;body.replaceChildren();
    if(!dialog.open){try{dialog.showModal()}catch{return false}}return true;
   }
@@ -86,6 +88,8 @@
   let recognitionCancel=null;
   function cancelRecognition(){const cancel=recognitionCancel;recognitionCancel=null;cancel?.()}
   dialog?.addEventListener('close',cancelRecognition);
+  dialog?.addEventListener('close',cancelLyric);
+  w.addEventListener('pagehide',cancelLyric);
   w.addEventListener('pagehide',cancelRecognition);
   d.addEventListener('visibilitychange',()=>{if(d.hidden&&mode==='recognize'){cancelRecognition();close()}});
   function updateRecognitionIndex(){
@@ -229,7 +233,7 @@
     const name=d.createElement('strong');name.className='sv-lyrics-song';name.textContent=$('sayviMusicTrack')?.textContent||'Текст песни';body.append(name);
     if(data){
      lyricData={...data,file};
-     message(data.timed?'Текст синхронизирован с музыкой.':'Текст без временных меток. Автосинхронизация недоступна.');
+     message(data.draft?'Черновик Сэйви: слова и время строк определены приблизительно, возможны ошибки.':data.timed?'Текст синхронизирован с музыкой.':'Текст без временных меток. Автосинхронизация недоступна.');
      if(!saved)message('Текст доступен до закрытия страницы: хранилище недоступно.');
      const controls=d.createElement('div');controls.className='sv-lyrics-actions';body.append(controls);
      const play=d.createElement('button');play.type='button';play.className='sv-smart-music-choice';const sync=()=>{play.textContent=audio.paused?'Воспроизвести':'Пауза'};sync();
@@ -252,7 +256,29 @@
       if(data.timed){el.type='button';el.addEventListener('click',()=>{if(valid()&&Number.isFinite(audio.duration))audio.currentTime=Math.max(0,Math.min(line.time,audio.duration))})}
       body.append(el);
      }
-    }else message('Текст не найден. Добавьте файл LRC с временными метками или обычный TXT.');
+    }else {
+     message('Готовый текст не найден. Сэйви может попробовать разобрать вокал на вашем компьютере.');
+     const local=['localhost','127.0.0.1'].includes(w.location.hostname);
+     if(local&&engine&&id){
+      const start=action('Распознать текст автоматически',async()=>{
+       if(!valid()||lyricAbort)return;
+       const ext=(file.name.match(/\.([^.]+)$/)||[])[1]?.toLowerCase();
+       const type=({mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',flac:'audio/flac',ogg:'audio/ogg',opus:'audio/opus',aiff:'audio/aiff',aif:'audio/aiff'})[ext]||file.type;
+       if(file.size>25*1024*1024){message('Для автоматического анализа нужна песня до 25 МБ.');return}
+       if(!type?.startsWith('audio/')){message('Формат песни не поддерживается.');return}
+       const controller=new AbortController();lyricAbort=controller;
+       start.disabled=true;const status=message('Сэйви разбирает вокал… Музыка может продолжать играть.');
+       const cancel=action('Отменить анализ',()=>controller.abort());
+       try{
+        const response=await w.fetch('/api/seyveo-music-lyrics',{method:'POST',headers:{'content-type':type},body:file,signal:controller.signal});
+        const data=await response.json();if(!valid()||controller.signal.aborted)return;
+        if(!response.ok||!data.lines?.length)throw Error(data.error||'Текст не определён.');
+        const saved=await engine.put(id,data);if(valid()&&!controller.signal.aborted)render(data,true,saved);
+       }catch(error){if(valid())status.textContent=controller.signal.aborted?'Анализ отменён.':String(error.message||'Анализ недоступен.')}
+       finally{if(lyricAbort===controller)lyricAbort=null;if(valid()){start.disabled=false;cancel.remove()}}
+      });
+     }else message('Автоматическое распознавание пока доступно в локальной версии на компьютере.');
+    }
     if(engine&&id){
      const input=d.createElement('input');input.type='file';input.accept='.lrc,.txt,text/plain';input.hidden=true;body.append(input);
      input.addEventListener('change',async()=>{
