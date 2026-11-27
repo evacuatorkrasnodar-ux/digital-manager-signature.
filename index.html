@@ -1182,6 +1182,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
  <section id="svMusicHome" class="sv-music-browse-panel" hidden aria-labelledby="svMusicHomeTitle">
   <h2 id="svMusicHomeTitle" class="sv-music-page-title">Слушать</h2>
   <div class="sv-music-scene">
+   <div class="sv-music-scene-palette" aria-hidden="true"><span></span><span></span><span></span></div>
    <svg class="sv-music-scene-art" viewBox="0 0 360 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
     <defs>
      <linearGradient id="svMusicSceneWave" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#D1EEE1" stop-opacity=".85"/><stop offset=".58" stop-color="#87B9BF" stop-opacity=".45"/><stop offset="1" stop-color="#C3B4D9" stop-opacity=".07"/></linearGradient>
@@ -6750,6 +6751,36 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome .sv-
 #sayviMusicPage #svMusicHome .sv-music-scene-actions > button i{font-style:normal;font-size:19px;line-height:1;margin-left:auto;opacity:.8}
 #sayviMusicPage #svMusicHome .sv-music-scene-actions > button:active{background:rgba(222,246,247,.18);transform:none}
 #sayviMusicPage #svMusicHome .sv-music-scene-actions > button:focus-visible{outline:2px solid #E1F7F1!important;outline-offset:-3px!important}
+
+/* Slow crossfades between four deep, readable palettes.
+   Only opacity changes; preserve the waveform, text and hit targets. */
+#sayviMusicPage #svMusicHome .sv-music-scene-palette{
+ position:absolute;inset:0;z-index:-3;pointer-events:none;border-radius:inherit;overflow:hidden;
+}
+#sayviMusicPage #svMusicHome .sv-music-scene-palette > span{
+ position:absolute;inset:0;border-radius:inherit;opacity:0;
+ animation-duration:80s;animation-timing-function:ease-in-out;
+ animation-iteration-count:infinite;animation-play-state:paused;
+}
+#sayviMusicPage #svMusicHome .sv-music-scene-palette > span:nth-child(1){
+ background:radial-gradient(ellipse at 82% 0%,rgba(144,183,224,.36),transparent 58%),linear-gradient(125deg,#20364E 0%,#365979 53%,#26364F 100%);
+ animation-name:svMusicPaletteSapphire;
+}
+#sayviMusicPage #svMusicHome .sv-music-scene-palette > span:nth-child(2){
+ background:radial-gradient(ellipse at 82% 0%,rgba(191,157,209,.36),transparent 58%),linear-gradient(125deg,#392C49 0%,#5B496A 53%,#373447 100%);
+ animation-name:svMusicPalettePlum;
+}
+#sayviMusicPage #svMusicHome .sv-music-scene-palette > span:nth-child(3){
+ background:radial-gradient(ellipse at 82% 0%,rgba(222,181,137,.32),transparent 58%),linear-gradient(125deg,#48342C 0%,#735540 53%,#39363D 100%);
+ animation-name:svMusicPaletteAmber;
+}
+#sayviMusicPage #svMusicHome .sv-scene-playing .sv-music-scene-palette > span{animation-play-state:running}
+@keyframes svMusicPaletteSapphire{0%,19%{opacity:0}25%,50%{opacity:1}56%,100%{opacity:0}}
+@keyframes svMusicPalettePlum{0%,44%{opacity:0}50%,75%{opacity:1}81%,100%{opacity:0}}
+@keyframes svMusicPaletteAmber{0%,69%{opacity:0}75%,94%{opacity:1}100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){
+ #sayviMusicPage #svMusicHome .sv-music-scene-palette > span{animation:none!important;opacity:0!important}
+}
 
 /* Quiet optical accent; no new layout, no continuous paint offscreen. */
 #sayviMusicPage #svMusicHome .sv-music-scene::before{
