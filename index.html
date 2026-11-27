@@ -1316,12 +1316,17 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   <div class="sv-now-wake-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><div><button type="button" data-seyveo-screen-awake aria-pressed="false">Не гасить экран</button><small data-seyveo-screen-awake-status>Только пока SEYVEO открыт</small></div></div>
   <button type="button" id="sayviMusicStopAndHide" class="sv-now-menu-row sv-now-stop" aria-label="Остановить музыку и скрыть мини-плеер"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>Остановить и скрыть</span></button>
  </div>
-<section id="sayviDiscoveryPanel" class="sv-discovery-panel" aria-labelledby="sayviDiscoveryTitle" hidden>
- <div class="sv-discovery-feature">
+<section id="sayviDiscoveryPanel" class="sv-discovery-panel" aria-label="Музыкальные открытия" hidden>
+ <div id="svDiscoveryOffer" class="sv-discovery-feature" hidden>
   <div class="sv-discovery-feature-head">
    <span class="sv-discovery-mark sv-sayvi-avatar" aria-hidden="true"></span>
-   <div><h2 id="sayviDiscoveryTitle">Открывайте новое</h2><p>Новинки любимых исполнителей с Сэйви.</p></div>
+   <div><h2>Открывайте новое с Сэйви</h2><p>Подбирать новинки любимых исполнителей?</p></div>
   </div>
+  <p class="sv-discovery-consent">Имена исполнителей будут отправляться в каталог iTunes (США). Аудиофайлы остаются на устройстве.</p>
+  <div class="sv-discovery-offer-actions"><button type="button" id="svDiscoveryOfferNo">Не сейчас</button><button type="button" id="svDiscoveryOfferYes">Включить</button></div>
+ </div>
+ <div id="svDiscoverySettings" class="sv-discovery-feature" hidden>
+  <h2 id="sayviDiscoveryTitle">Настройки открытий</h2>
   <div class="sv-discovery-setting"><span id="svDiscoverySwitchLabel">Музыкальные открытия</span><button type="button" id="sayviDiscoveryToggle" aria-pressed="false" aria-labelledby="svDiscoverySwitchLabel"><span aria-hidden="true"></span></button></div>
   <p class="sv-discovery-consent">При включении имена исполнителей отправляются в каталог iTunes (США). Аудиофайлы остаются на устройстве.</p>
   <details class="sv-discovery-info">
@@ -1330,7 +1335,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
    <button type="button" id="sayviDiscoveryForget" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v7m4-7v7"/></svg><span>Очистить интересы и выключить</span></button>
   </details>
  </div>
- <div class="sv-discovery-feed-head"><h3>Для вас</h3><button type="button" id="sayviDiscoveryCheck" aria-label="Проверить новинки" title="Проверить новинки" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.2 6M20 5v6h-6"/></svg></button></div>
+ <div class="sv-discovery-feed-head"><h3>Для вас</h3><div class="sv-discovery-feed-actions"><button type="button" id="sayviDiscoveryCheck" aria-label="Проверить новинки" title="Проверить новинки" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.2 6M20 5v6h-6"/></svg></button><button type="button" id="svDiscoverySettingsButton" aria-label="Настройки музыкальных открытий" title="Настройки" aria-expanded="false" aria-controls="svDiscoverySettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="var(--card)"/><circle cx="15" cy="12" r="2" fill="var(--card)"/><circle cx="10" cy="17" r="2" fill="var(--card)"/></svg></button></div></div>
  <div id="svMusicDiscoveryReleases" class="sv-discovery-releases" hidden></div>
  <div id="svMusicDiscoveryEmpty" class="sv-discovery-empty">
   <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 26v-5a14 14 0 0 1 28 0v5"/><rect x="7" y="23" width="9" height="15" rx="4"/><rect x="32" y="23" width="9" height="15" rx="4"/></svg>
@@ -6231,7 +6236,7 @@ syncManager();render();
 </div></dialog><script src="assets/seyveo-pay.js?v=20261126-jade-platinum-v222"></script><script src="assets/seyveo-wallet-currency.js?v=3"></script><script src="assets/seyveo-wallet-goals.js?v=1"></script><script src="assets/seyveo-wallet-loyalty.js?v=20261126-v212"></script><script src="assets/seyveo-chat-polls.js?v=6"></script><script src="assets/seyveo-chat-themes.js?v=6"></script><script src="assets/seyveo-family-chat.js?v=20261125-auto-scan"></script><script src="assets/seyveo-avatar-art.js?v=3"></script>
 <script src="assets/seyveo-sayvi-holidays.js?v=20261126-holiday-auto-v150"></script>
 
-<script src="assets/seyveo-business-command.js?v=20261126-attachment-grid-v2"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261126-notifications-glass-v156"></script><script src="assets/seyveo-unified-tasks.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-employee-schedule.js?v=4"></script><script src="assets/seyveo-dock-continuity.js?v=10"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=3-editorial"></script><script src="assets/seyveo-card-studio.js?v=20261126-card-master-v50"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=20261126-bulk-v119"></script>
+<script src="assets/seyveo-business-command.js?v=20261126-attachment-grid-v2"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261126-notifications-glass-v156"></script><script src="assets/seyveo-unified-tasks.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-employee-schedule.js?v=4"></script><script src="assets/seyveo-dock-continuity.js?v=10"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=4-quiet-feed"></script><script src="assets/seyveo-card-studio.js?v=20261126-card-master-v50"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=20261126-bulk-v119"></script>
 <script src="assets/seyveo-learning-lab.js?v=1" defer></script>
 <dialog id="seyveoOfflineDialog" class="seyveo-offline-dialog" aria-labelledby="seyveoOfflineHeading"><div class="seyveo-offline-shell"><header class="seyveo-offline-head"><div><span class="seyveo-offline-kicker">SEYVEO ONE · УПРАВЛЕНИЕ</span><h2 id="seyveoOfflineHeading">Сэйви офлайн</h2><p>Сэйви рядом, даже когда нет интернета</p></div><button type="button" id="seyveoOfflineClose" aria-label="Закрыть">×</button></header><div id="seyveoOfflineChoices" class="seyveo-offline-choices"></div><div class="seyveo-offline-summary"><span>Полный офлайн-комплект</span><strong id="seyveoOfflineSize">0 МБ</strong><small id="seyveoOfflineNotice">Предварительная оценка. Готовые пакеты ещё не опубликованы.</small></div><button type="button" id="seyveoOfflineConfirm" class="seyveo-offline-save">Понятно</button><p class="seyveo-offline-foot">Офлайн-комплект будет доступен для отдельной установки после публикации проверенных файлов. Личная память хранится отдельно.</p></div></dialog><script src="assets/seyveo-offline-manager.js?v=20261125-shared-sheets-v3" defer></script>
 
@@ -7589,5 +7594,16 @@ html.sv-music-browse #sayviMusicPage #sayviDiscoveryPanel:not([hidden]){
 #sayviDiscoveryPanel .sv-discovery-release-copy small{color:var(--secondary);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #sayviDiscoveryPanel .sv-discovery-release-arrow{color:var(--secondary);width:28px;text-align:center}
 @media(prefers-reduced-motion:reduce){#sayviDiscoveryPanel #sayviDiscoveryToggle > span,#sayviDiscoveryPanel .sv-discovery-info summary svg:last-child{transition:none}}
+#sayviDiscoveryPanel :is(#svDiscoveryOffer,#svDiscoverySettings)[hidden]{display:none!important}
+#sayviDiscoveryPanel #svDiscoveryOffer h2{margin:0;font-size:18px!important;line-height:1.2;font-weight:600;letter-spacing:-.03em}
+#sayviDiscoveryPanel .sv-discovery-offer-actions{display:flex;gap:8px;margin-top:8px}
+#sayviDiscoveryPanel .sv-discovery-offer-actions button{flex:1;min-height:44px;padding:8px 10px;border-radius:13px;border:0;box-shadow:none!important;font-size:14px!important;font-weight:550;transform:none!important}
+#sayviDiscoveryPanel #svDiscoveryOfferNo{background:transparent!important;color:var(--secondary)}
+#sayviDiscoveryPanel #svDiscoveryOfferYes{background:#426b78!important;color:#fff!important}
+#sayviDiscoveryPanel #svDiscoverySettings > h2{margin-bottom:10px}
+#sayviDiscoveryPanel .sv-discovery-feed-actions{display:flex;align-items:center;gap:2px}
+#sayviDiscoveryPanel #svDiscoverySettingsButton{display:grid!important;place-items:center;flex:0 0 44px;width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;margin:0!important;background:transparent!important;border:0!important;box-shadow:none!important;color:var(--secondary);transform:none!important}
+#sayviDiscoveryPanel #svDiscoverySettingsButton svg{width:22px;height:22px}
+#sayviDiscoveryPanel #svDiscoverySettingsButton[aria-expanded=true]{color:var(--text)}
 </style>
 </body></html>
