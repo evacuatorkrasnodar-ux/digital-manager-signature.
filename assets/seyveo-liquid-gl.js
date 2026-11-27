@@ -35,7 +35,7 @@ vec3 matter(float x,float v){
 }
 void main(){
  float x=aData.x,v=aData.y;vec3 p;
- if(uKind>4.5&&uKind<5.5){p=vec3(x,2.0*v-1.0,0.0);vLight=1.0;}
+ if(uKind>4.5&&uKind<5.5){p=vec3(x*1.10,(2.0*v-1.0)*1.10,0.0);vLight=1.0;}
  else {p=matter(x,v);vec3 dx=matter(clamp(x+.006,-.9999,.9999),v)-matter(clamp(x-.006,-.9999,.9999),v);vec3 dy=matter(x,min(1.0,v+.006))-matter(x,max(0.0,v-.006));vec3 n=cross(dx,dy);vLight=abs(n.z)/(length(n)+.000001);}
  float glass=step(4.5,uKind)*(1.0-step(5.5,uKind));
  float scale=.82*(1.0+mix(.025,.003,glass)*uMusic.y)*(1.0+.020*p.z);
@@ -51,22 +51,26 @@ float gauss(float x,float w){float q=x/w;return exp(-q*q);}
 void main(){
  float x=vUV.x,v=vUV.y,alpha;vec3 col;
  if(uKind>4.5&&uKind<5.5){
-  vec2 xy=vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
-  if(r>1.0)discard;
+  vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
+  if(r>1.0){
+   float glow=gauss(r-1.0,.030)*(.035+.23*peak(a,-2.16,.54)+.22*peak(a,1.30,.65));
+   gl_FragColor=vec4(.10,.86,.88,glow);return;
+  }
   float n=sqrt(max(0.0,1.0-r*r));
-  float top=peak(a,-2.16,.47),bottom=peak(a,1.37,.47),right=peak(a,.60,.55),left=peak(a,2.85,.48);
+  float top=peak(a,-2.08,.61),bottom=peak(a,1.37,.57),right=peak(a,.60,.61),left=peak(a,2.85,.48);
   float lip=.13+.87*top+.95*bottom+.68*right+.22*left;
   float edge=gauss(r-.994,.007),edgeSoft=gauss(r-.977,.018);
-  float reflected=gauss(r-(.920-.076*top),.020+.032*top)*top;
-  float base=gauss(r-(.940-.055*bottom),.043)*bottom;
+  float reflected=gauss(r-(.938-.085*top),.018+.035*top)*pow(top,1.8);
+  float base=gauss(r-(.955-.047*bottom),.046)*bottom;
   float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left);
   float fres=pow(max(0.0,1.0-n),3.0);
-  float light=clamp(1.25*reflected+1.12*edge*lip+.40*edgeSoft*lip+.83*base+.21*inner,0.0,1.0);
-  col=mix(vec3(.025,.55,.65),vec3(.93,1.0,.99),smoothstep(.28,1.0,light));
+  float light=clamp(1.34*reflected+1.20*edge*lip+.58*edgeSoft*lip+.96*base+.21*inner,0.0,1.0);
+  col=mix(vec3(.025,.73,.77),vec3(.94,1.0,.99),smoothstep(.38,1.0,light));
   alpha=clamp(.008+.10*fres+.96*light,0.0,.98);
  }else{
   float tip=pow(abs(x),6.0),turn=pow(v,5.0),fres=1.0-vLight;
   float focus=gauss(x+.20,.78),edge=pow(v,20.0),start=pow(1.0-v,20.0);
+  float tipGlow=gauss(x+.91,.13)+gauss(x-.92,.14);
   col=mix(vec3(.10,.82,.83),vec3(.76,1.0,.98),clamp(.24*turn+.18*fres+.30*tip,0.0,1.0));
   if(uKind<2.5)alpha=(.33+.23*v*v+.09*fres)*(1.0-.65*tip);
   else if(uKind<3.5){alpha=(.56+.40*turn+.12*fres)*(1.0-.35*tip);col=mix(col,vec3(.80,1.0,.97),turn*.85);}
@@ -74,9 +78,9 @@ void main(){
   else alpha=(.12+.30*turn+.10*fres)*(1.0-.67*tip);
   if(uMode<.5){
    if(uKind<2.5)alpha=.009+.025*fres+.07*start*focus;
-   else if(uKind<3.5){alpha=.035+.79*edge+.32*start+.14*pow(v,5.0)+.025*fres;col=mix(vec3(.04,.77,.78),vec3(.91,1.0,.99),clamp(edge*.9+start*.38,0.0,1.0));}
-   else if(uKind<4.5)alpha=.009+.019*fres+.065*edge*focus;
-   else {alpha=.012+.76*edge*gauss(x+.10,.60)+.24*pow(v,6.0)*focus+.12*start;col=mix(vec3(.02,.66,.72),vec3(.72,1.0,.96),edge*.85);}
+   else if(uKind<3.5){alpha=clamp(.035+.80*edge+.32*start+.22*pow(v,4.0)+.13*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
+   else if(uKind<4.5)alpha=.009+.019*fres+.065*edge*focus+.16*pow(1.0-v,12.0)*(.55+.45*focus);
+   else {alpha=clamp(.012+.85*edge*gauss(x+.10,.60)+.38*pow(v,6.0)*focus+.12*start,0.0,.96);col=mix(vec3(.02,.80,.79),vec3(.82,1.0,.97),edge*.88);}
   }else if(uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*8.0)*(1.0-smoothstep(.34,.50,d));}
 
  }
