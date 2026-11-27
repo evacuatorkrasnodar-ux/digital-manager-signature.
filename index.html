@@ -1205,7 +1205,6 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
     <button id="svAdaptiveQuick" type="button" aria-pressed="false" aria-label="Adaptive Sound. Включить Pure Sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M6 10v4m3-7v10m3-12v14m3-12v10m3-7v4"/></svg><span><strong id="svAdaptiveQuickName">Adaptive Sound</strong><small id="svAdaptiveQuickState">Автоматический режим</small></span></button>
     <button id="svAdaptiveQuickInfo" type="button" aria-label="О технологии звучания" title="О технологии звучания"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5"/><circle cx="12" cy="7.5" r=".7" fill="currentColor" stroke="none"/></svg></button>
    </div>
-   <button id="svMusicRecognizeQuick" type="button" aria-label="Распознать музыку" title="Распознать музыку"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M6.8 12.9 10.6 9.1a3.2 3.2 0 0 1 4.5 0l.9.9M17.2 11.1l-3.8 3.8a3.2 3.2 0 0 1-4.5 0l-.9-.9"/></svg></button>
    <button id="sayviMusicMinimize" class="sv-music-minimize" type="button" aria-label="Свернуть музыку и вернуться в предыдущий раздел; воспроизведение продолжится, если разрешит система" title="Свернуть плеер"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 9 7 7 7-7"/></svg></button>
   </header>
  <section id="svMusicHome" class="sv-music-browse-panel" hidden aria-labelledby="svMusicHomeTitle">
@@ -1312,7 +1311,6 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
  </div>
  <div class="sv-now-tools" aria-label="Действия плеера">
   <button type="button" data-music-view-action="library" aria-label="Медиатека" title="Медиатека"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5v14M9 5v14M13 5v14M16.5 5.5l4 13"/></svg></button>
-  <button type="button" id="svNowKaraoke" aria-label="Текст песни и караоке" aria-pressed="false" aria-controls="svInlineKaraoke" title="Текст песни"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-8l-5 3v-3H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path fill="currentColor" stroke="none" d="M10.4 8.2C8.3 8.8 7 10.3 7 12.1a1.8 1.8 0 1 0 1.8-1.8h-.1c.3-.7.9-1.2 1.9-1.5l-.2-.6Zm5.4 0c-2.1.6-3.4 2.1-3.4 3.9a1.8 1.8 0 1 0 1.8-1.8h-.1c.3-.7.9-1.2 1.9-1.5l-.2-.6Z"/></svg></button>
   <button type="button" id="svNowQueue" aria-label="Очередь воспроизведения" title="Очередь"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 10h16M4 15h8M4 20h8m4-6 4.5 3-4.5 3z"/></svg></button>
   <button type="button" id="svNowMore" aria-label="Другие действия" aria-expanded="false" aria-controls="svNowMenu" title="Ещё"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="4.5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19.5" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
  </div>
@@ -1362,6 +1360,10 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   <p class="sv-music-section-caption">Прямые потоки вещателей. Качество и доступность зависят от станции и подключения.</p>
  </section>
  <p id="sayviMusicStatus" class="sv-music-status" role="status" aria-live="polite" hidden></p>
+ <div id="svNowCornerActions" aria-label="Распознавание и текст песни">
+  <button id="svMusicRecognizeQuick" type="button" aria-label="Распознать музыку" title="Распознать музыку"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M6.8 12.9 10.6 9.1a3.2 3.2 0 0 1 4.5 0l.9.9M17.2 11.1l-3.8 3.8a3.2 3.2 0 0 1-4.5 0l-.9-.9"/></svg></button>
+  <button type="button" id="svNowKaraoke" aria-label="Текст песни и караоке" aria-pressed="false" aria-controls="svInlineKaraoke" title="Текст песни"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-8l-5 3v-3H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path fill="currentColor" stroke="none" d="M10.4 8.2C8.3 8.8 7 10.3 7 12.1a1.8 1.8 0 1 0 1.8-1.8h-.1c.3-.7.9-1.2 1.9-1.5l-.2-.6Zm5.4 0c-2.1.6-3.4 2.1-3.4 3.9a1.8 1.8 0 1 0 1.8-1.8h-.1c.3-.7.9-1.2 1.9-1.5l-.2-.6Z"/></svg></button>
+ </div>
  <input id="sayviMusicFiles" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.opus,.flac,.alac,.aiff,.lrc,.txt" multiple hidden aria-label="Выбрать музыку и тексты песен"/>
  <audio id="sayviMusicAudio" preload="metadata"></audio>
  <div id="sayviMusicCollection" class="sv-music-collection" hidden role="region" aria-label="Музыкальная коллекция"></div>
@@ -8217,4 +8219,27 @@ html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel
  window.addEventListener('pageshow',sync);sync();
 })();
 </script>
+<style id="svNowCornerActionLayout">
+/* Preserve transport and artwork positions. Use the existing free bottom space. */
+#sayviMusicPage #svNowCornerActions{display:none!important}
+html.sv-music-player-open #sayviMusicPage[data-music-view="player"] #svNowCornerActions{
+ display:flex!important;flex:0 0 auto;align-items:center;justify-content:space-between;
+ box-sizing:border-box;width:100%;max-width:560px;min-height:44px;
+ margin:auto auto 0;padding:12px 0 0;gap:12px;
+}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #svNowCornerActions > button{
+ display:grid!important;place-items:center;flex:0 0 44px!important;width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;margin:0!important;padding:0!important;
+ color:rgba(249,250,252,.90)!important;background:transparent!important;
+ border:0!important;box-shadow:none!important;border-radius:0!important;transform:none!important;
+}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #svNowCornerActions > button > svg{
+ display:block;width:24px;height:24px;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round;
+}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #svNowCornerActions #svNowKaraoke[aria-pressed="true"]{color:#bce5ef!important}
+#sayviMusicPage #svNowCornerActions > button:focus-visible{outline:2px solid currentColor;outline-offset:-3px}
+#sayviMusicPage[data-music-view="player"].sv-music-sheet-open > #svNowCornerActions{opacity:.22}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #svAdaptiveQuickGroup{max-width:calc(100% - 56px)}
+@media(max-height:650px){html.sv-music-player-open #sayviMusicPage[data-music-view="player"] #svNowCornerActions{padding-top:4px}}
+</style>
 </body></html>
