@@ -164,9 +164,7 @@
  const pulse=document.getElementById('picturePage');
  const pulseContent=document.getElementById('picturePageScroll')||pulse;
  mount({host:pulseContent,after:pulseContent?.querySelector('#pictureLead'),service:'pulse'});
- // Do not obstruct offline music. Show only in the external-sources panel.
- const music=document.getElementById('sayviMusicSourcesPanel');
- mount({host:music,after:music?.querySelector('.sv-music-providers-desc'),service:'music'});
+ // Music connections remain available in the existing Settings > Connections screen.
  ['seyveo:verified-connection-changed','seyveo:auth-changed','seyveo:session-changed'].forEach(
   name=>window.addEventListener(name,refresh));
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
