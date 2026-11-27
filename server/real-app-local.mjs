@@ -231,6 +231,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
  let busy=false,minute=0,count=0;
  let taskAnalyzeBusy=false;
  let noteAudioBusy=false,noteAudioMinute=0,noteAudioCount=0;
+ let lyricProgress=null;
  let paperDraftBusy=false,paperDraftMinute=0,paperDraftCount=0;
  let routeMinute=0,routeCount=0;
  let placeMinute=0,placeCount=0,placeLast=0;
@@ -298,7 +299,9 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    return;
   }
   if(req.method==='GET'&&path==='/api/seyveo-music-lyrics-status'){
-   send(res,200,{protocol:1,engine:'local-whisper',pythonConfigured:!!pythonForNoteAudio(),busy:noteAudioBusy});return;
+   const job=new URL(req.url,ORIGIN).searchParams.get('job');
+   const progress=job&&lyricProgress?.job===job?{phase:lyricProgress.phase,percent:lyricProgress.percent}:null;
+   send(res,200,{protocol:2,engine:'local-whisper',pythonConfigured:!!pythonForNoteAudio(),busy:noteAudioBusy,progress});return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-music-lyrics'){
    if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
@@ -307,19 +310,22 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    if(!lyricFormat(type)){send(res,415,{error:'Формат песни не поддерживается.'});return}
    if(Number(req.headers['content-length'])>MAX_LYRIC_BYTES){send(res,413,{error:'Песня больше 25 МБ.'});return}
    if(noteAudioBusy){send(res,429,{error:'Распознавание уже выполняется.'});return}
-   noteAudioBusy=true;
+   const job=String(req.headers['x-seyveo-lyric-job']||'');
+   if(!/^[a-zA-Z0-9-]{16,80}$/.test(job)){send(res,400,{error:'Обновите страницу для запуска анализа.'});return}
+   noteAudioBusy=true;lyricProgress={job,phase:'receiving',percent:null};
    const controller=new AbortController();
    res.once('close',()=>controller.abort());
    try{
     const chunks=[];let size=0;
     for await(const chunk of req){size+=chunk.length;if(size<=MAX_LYRIC_BYTES)chunks.push(chunk)}
     if(size>MAX_LYRIC_BYTES){send(res,413,{error:'Песня больше 25 МБ.'});return}
-    const result=await transcribeLyrics(Buffer.concat(chunks),type,{signal:controller.signal});
+    lyricProgress={job,phase:'checking',percent:null};
+    const result=await transcribeLyrics(Buffer.concat(chunks),type,{signal:controller.signal,onProgress:progress=>{if(lyricProgress?.job===job)lyricProgress={job,...progress}}});
     if(!res.destroyed)send(res,200,result);
    }catch(error){
     const labels={'engine-missing':'Локальный Whisper не установлен.','dependency-missing':'Установите локальный Whisper через server/install-note-transcription.cmd.','model-unavailable':'Модель Whisper не найдена. Запустите установщик распознавания.','too-long':'Поддерживаются песни до 10 минут.','no-speech':'Не удалось уверенно разобрать вокал.','timeout':'Анализ не завершился. Попробуйте более короткую песню.'};
     if(!res.destroyed)send(res,422,{error:labels[error.message]||'Не удалось разобрать песню.'});
-   }finally{noteAudioBusy=false}
+   }finally{noteAudioBusy=false;if(lyricProgress?.job===job)lyricProgress=null}
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-note-transcribe'){
