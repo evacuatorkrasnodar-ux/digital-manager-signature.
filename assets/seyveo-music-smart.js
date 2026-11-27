@@ -260,18 +260,30 @@
      message('Готовый текст не найден. Сэйви может попробовать разобрать вокал на вашем компьютере.');
      const local=['localhost','127.0.0.1'].includes(w.location.hostname);
      if(local&&engine&&id){
+      let status=null;
+      function progress(text){if(!status){status=message(text);status.setAttribute('role','status')}else status.textContent=text;return status}
       const start=action('Распознать текст автоматически',async()=>{
        if(!valid()||lyricAbort)return;
        const ext=(file.name.match(/\.([^.]+)$/)||[])[1]?.toLowerCase();
        const type=({mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',flac:'audio/flac',ogg:'audio/ogg',opus:'audio/opus',aiff:'audio/aiff',aif:'audio/aiff'})[ext]||file.type;
-       if(file.size>25*1024*1024){message('Для автоматического анализа нужна песня до 25 МБ.');return}
-       if(!type?.startsWith('audio/')){message('Формат песни не поддерживается.');return}
+       if(file.size>25*1024*1024){progress('Для автоматического анализа нужна песня до 25 МБ.');return}
+       if(!type?.startsWith('audio/')){progress('Формат песни не поддерживается.');return}
        const controller=new AbortController();lyricAbort=controller;
-       start.disabled=true;const status=message('Сэйви разбирает вокал… Музыка может продолжать играть.');
+       start.disabled=true;progress('Проверяю локальный движок…');
        const cancel=action('Отменить анализ',()=>controller.abort());
        try{
+        const upgrade='Запущена старая версия сервера. Обновите проект из GitHub, остановите сервер (Ctrl+C) и снова запустите server/start-real-seyveo.cmd. Затем обновите страницу.';
+        const check=await w.fetch('/api/seyveo-music-lyrics-status',{cache:'no-store',signal:controller.signal});
+        if(check.status===404)throw Error(upgrade);
+        const readiness=await check.json().catch(()=>null);
+        if(!check.ok||readiness?.protocol!==1)throw Error(upgrade);
+        if(!readiness.pythonConfigured)throw Error('Локальный Whisper не установлен. Запустите server/install-note-transcription.cmd, затем перезапустите SEYVEO.');
+        if(readiness.busy)throw Error('Сэйви уже распознаёт запись. Повторите после завершения.');
+        if(!valid()||controller.signal.aborted)return;
+        progress('Сэйви разбирает вокал… Музыка может продолжать играть.');
         const response=await w.fetch('/api/seyveo-music-lyrics',{method:'POST',headers:{'content-type':type},body:file,signal:controller.signal});
-        const data=await response.json();if(!valid()||controller.signal.aborted)return;
+        if(response.status===404)throw Error(upgrade);
+        const data=await response.json().catch(()=>({}));if(!valid()||controller.signal.aborted)return;
         if(!response.ok||!data.lines?.length)throw Error(data.error||'Текст не определён.');
         const saved=await engine.put(id,data);if(valid()&&!controller.signal.aborted)render(data,true,saved);
        }catch(error){if(valid())status.textContent=controller.signal.aborted?'Анализ отменён.':String(error.message||'Анализ недоступен.')}
