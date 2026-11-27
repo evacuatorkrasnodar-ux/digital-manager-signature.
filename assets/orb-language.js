@@ -277,36 +277,51 @@
    fallback.addColorStop(.48,'rgba(73,186,174,.22)');
    fallback.addColorStop(.77,'rgba(174,255,235,.96)');
    fallback.addColorStop(1,'rgba(224,255,247,.86)');
-   const gradients=[];
-   if(conic){
-    for(let j=0;j<=16;j++){
-     const u=j/16,g=ctx.createConicGradient(rot,200,200);
-     const rim=Math.exp(-Math.pow(u-edgeU,2)/.08),body=Math.sin(Math.PI*u);
-     for(let k=0;k<=48;k++){
-      const a=k/48*Math.PI*2,light=intensity(a);
-      const opacity=clamp(.025+light*(.66*rim+.25*body),0,.95),w=light*rim;
-      g.addColorStop(k/48,'rgba('+Math.round(104+138*w)+','+Math.round(230+25*w)+','+Math.round(214+35*w)+','+opacity.toFixed(3)+')');
-     }
-     gradients.push(g);
+   // Continuous translucent silk, with subtle fibres rather than a luminous comb.
+   const appendLoop=pts=>{
+    const n=pts.length-1,first=pts[0],last=pts[n-1];
+    ctx.moveTo((first[0]+last[0])/2,(first[1]+last[1])/2);
+    for(let i=0;i<n;i++){
+     const q=pts[i],next=pts[(i+1)%n];
+     ctx.quadraticCurveTo(q[0],q[1],(q[0]+next[0])/2,(q[1]+next[1])/2);
     }
+    ctx.closePath();
+   };
+   const bands=liquidMobile?20:30;
+   for(let j=0;j<bands;j++){
+    const u=(j+.5)/bands,rim=Math.exp(-Math.pow(u-edgeU,2)/.085),body=Math.sin(Math.PI*u);
+    const rowA=rows[Math.round(j/bands*(count-1))],rowB=rows[Math.round((j+1)/bands*(count-1))];
+    let color=fallback;
+    if(conic){
+     color=ctx.createConicGradient(rot,200,200);
+     for(let k=0;k<=40;k++){
+      const a=k/40*Math.PI*2,light=intensity(a);
+      const alpha=clamp(.015+Math.pow(light,1.35)*(.72*rim+.25*body),0,.87),white=.55*rim*light;
+      color.addColorStop(k/40,'rgba('+Math.round(75+160*white)+','+Math.round(225+30*white)+','+Math.round(199+49*white)+','+alpha.toFixed(3)+')');
+     }
+    }
+    ctx.beginPath();appendLoop(rowA);appendLoop(rowB);
+    ctx.fillStyle=color;ctx.globalAlpha=conic?1:.035+.60*rim+.18*body;
+    ctx.fill('evenodd');
+    ctx.strokeStyle=color;ctx.globalAlpha*=.35;ctx.lineWidth=.30;ctx.stroke();
    }
-   for(let j=0;j<count;j++){
-    const u=j/(count-1),rim=Math.exp(-Math.pow(u-edgeU,2)/.08);
-    path(rows[j]);ctx.strokeStyle=conic?gradients[Math.round(u*16)]:fallback;
-    ctx.globalAlpha=conic?1:.04+.60*rim+.19*Math.sin(Math.PI*u);
-    ctx.lineWidth=.27+.15*rim;ctx.stroke();
+   for(let j=2;j<count-2;j+=4){
+    const u=j/(count-1),rim=Math.exp(-Math.pow(u-edgeU,2)/.10);
+    path(rows[j]);ctx.strokeStyle=fallback;
+    ctx.globalAlpha=.025+.045*rim;ctx.lineWidth=.19;ctx.stroke();
    }
+   ctx.globalAlpha=1;
    let gloss=fallback;
    if(conic){
     gloss=ctx.createConicGradient(rot,200,200);
     for(let k=0;k<=48;k++){
-     const a=k/48*Math.PI*2,light=kind===0?intensity(a):.95;
+     const a=k/48*Math.PI*2,light=kind===0?clamp(.06+.94*Math.pow(intensity(a),1.35),0,1):.95;
      gloss.addColorStop(k/48,'rgba(232,255,249,'+light.toFixed(3)+')');
     }
    }
    path(rows[kind===0?count-1:0]);ctx.strokeStyle=gloss;
-   ctx.globalAlpha=.16;ctx.lineWidth=2.8;ctx.stroke();
-   ctx.globalAlpha=1;ctx.lineWidth=1.05;ctx.stroke();
+   ctx.globalAlpha=.19;ctx.lineWidth=2.6;ctx.stroke();
+   ctx.globalAlpha=1;ctx.lineWidth=1.12;ctx.stroke();
    // Short, tapering return fold on the upper-right shoulder.
    if(kind===0){
     const from=5.10,to=5.58,fan=geom.filter(g=>g.a>=from&&g.a<=to);
@@ -347,7 +362,7 @@
   const columns=liquidMobile?94:140;
   for(let j=0;j<mesh;j++){
    const u=(j+.45)/mesh;
-   const size=.40+.18*Math.pow(u,4)+.04*h;
+   const size=.43+.19*Math.pow(u,4)+.04*h;
    ctx.beginPath();
    for(let i=1;i<columns;i++){
     const x=-1+2*(i+(j%2)*.34)/columns;
@@ -355,7 +370,7 @@
     ctx.rect(px-size/2,py-size/2,size,size);
    }
    ctx.fillStyle=memGradient;
-   ctx.globalAlpha=.51+.44*Math.pow(u,5);
+   ctx.globalAlpha=.53+.42*Math.pow(u,5);
    ctx.fill();
   }
   ctx.globalAlpha=1;
@@ -374,7 +389,7 @@
     const size=.45+.16*Math.pow(v,2);
     ctx.rect(px+dx-size/2,py+width*bend-size/2,size,size);
    }
-   ctx.fillStyle=memGradient;ctx.globalAlpha=.44+.53*Math.pow(v,2);ctx.fill();
+   ctx.fillStyle=memGradient;ctx.globalAlpha=.48+.49*Math.pow(v,2);ctx.fill();
   }
   // A faint, continuous reflected edge defines the lower turn of the leaf.
   const foldEdge=[];
