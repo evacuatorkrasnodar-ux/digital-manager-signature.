@@ -30,9 +30,10 @@ vec3 matter(float x,float v){
  if(uKind>6.5&&uKind<7.5){
   float h=u;u*=.50;vec3 q=contour(0.0,u);
   // The return has its own outer contour, joining the same cloth at both ends.
-  vec2 outer=bez(contour(0.0,0.0).xy,vec2(-1.10,-.17),vec2(-.40,-.43),contour(0.0,.50).xy,h);
-  q.xy=mix(q.xy,outer,v);
+  vec2 outer=bez(contour(0.0,0.0).xy,vec2(-1.12,-.27),vec2(-.28,-.48),contour(0.0,.50).xy,h);
   float flap=sin(PI*h);
+  q.xy=mix(q.xy,outer,v);
+  q.xy+=vec2(-.025,.045)*flap*sin(PI*v);
   q.z-=.24*flap*v;
   q.y+=sin(PI*u)*(.010+.035*mid)*sin(u*5.5+t*.65);
   q.z+=sin(PI*u)*.055*sin(t*.55+u*4.0)*(.30+mid);
@@ -103,7 +104,7 @@ void main(){
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.91,.20)+gauss(x-.91,.20);
-  float strength=uKind<8.5?(.28+.52*tips+.12*gauss(x+.30,.48)):uKind<9.5?.70*gauss(x+.10,.29):(.09+.26*tips);
+  float strength=uKind<8.5?(.27+.52*tips+.12*gauss(x+.30,.48)):uKind<9.5?(.70*gauss(x+.10,.29)+.15*gauss(x-.26,.46)):(.09+.26*tips);
   float g=gauss(v-.5,.068),soft=gauss(v-.5,.27);
   col=mix(vec3(.02,.91,.88),vec3(.88,1.0,.98),g*.78);
   float taper=smoothstep(0.0,.08,w);
@@ -115,21 +116,24 @@ void main(){
   float facing=clamp(vLight,0.0,1.0);
   float frontLight=.57+.43*gauss(x-.22,.82);
   col=mix(vec3(.08,.88,.88),vec3(.84,1.0,.98),clamp(.24*turn+.22*fres+.30*tip,0.0,1.0));
-  if(uKind<2.5)alpha=(.34+.31*v*v+.18*fres)*frontLight*(1.0-.46*tip);
+  if(uKind<2.5)alpha=(.36+.31*v*v+.18*fres)*frontLight*(1.0-.46*tip);
   else if(uKind<3.5){alpha=(.64+.40*turn+.16*fres)*(1.0-.14*tip);col=mix(col,vec3(.80,1.0,.97),turn*.85);}
   else if(uKind<4.5)alpha=(.12+.10*fres+.12*facing*gauss(x-.28,.62))*(1.0-.60*tip);
-  else alpha=(.10+.26*turn+.19*turn*gauss(x+.10,.42)+.12*fres)*(1.0-.60*tip);
+  else alpha=(.10+.22*turn+.23*turn*gauss(x+.10,.42)+.10*gauss(x-.25,.52)*v*v+.12*fres)*(1.0-.60*tip);
   if(uMode<.5){
    if(uKind<2.5)alpha=.009+.025*fres+.09*start*focus+.09*pow(v,5.0)*tipGlow;
    else if(uKind<3.5){alpha=clamp(.035+.86*edge+.40*start+.30*pow(v,4.0)+.32*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
    else if(uKind<4.5)alpha=.009+.019*fres+.17*edge*gauss(x-.35,.66)+.16*pow(1.0-v,12.0)*(.55+.45*focus);
-   else {float low=gauss(x+.10,.29);alpha=clamp(.012+.95*edge*low+.65*pow(v,4.0)*low+.27*start*gauss(x-.25,.76),0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),edge*.90*low);}
+   else {float low=gauss(x+.10,.29),sweep=gauss(x-.22,.48);float seam=pow(1.0-v,12.0)*gauss(x-.46,.48);alpha=clamp(.012+.95*edge*low+.53*pow(v,4.0)*low+.27*start*gauss(x-.25,.76)+.18*pow(v,3.0)*sweep+.16*seam,0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),clamp(edge*(.90*low+.24*sweep)+.24*seam,0.0,1.0));}
   }
   if(uKind>6.5&&uKind<7.5){
    float taper=sin(3.14159265*(x+1.0)*.5);
-   float foldLight=gauss(v-.78,.30)*gauss(x+.28,.75);
-   col=mix(vec3(.015,.66,.72),vec3(.53,1.0,.98),clamp(.65*foldLight+.22*pow(v,8.0),0.0,1.0));
-   alpha=(uMode<.5?(.018+.30*foldLight+.25*pow(v,15.0)):(.22+.40*foldLight))*taper;
+   // The returning silk catches light across its width, with a bright fine fold.
+   float foldLight=gauss(v-.48,.36)*gauss(x+.36,.70);
+   float hem=gauss(v-.96,.10)*gauss(x+.25,.66);
+   float join=gauss(v-.05,.10)*gauss(x+.52,.50);
+   col=mix(vec3(.015,.78,.79),vec3(.73,1.0,.96),clamp(.48*foldLight+.70*hem+.55*join,0.0,1.0));
+   alpha=(uMode<.5?(.018+.39*foldLight+.30*hem+.25*join):(.24+.46*foldLight+.35*hem))*taper;
   }
   if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*8.0)*(1.0-smoothstep(.34,.50,d));}
 
