@@ -79,6 +79,42 @@ function init(){
   }
  }
  document.addEventListener('seyveo:radio-history',renderTracks);
+ const periodSelect=get('svMusicReplayPeriod'),periodTrigger=get('svReplayPeriodTrigger'),periodMenu=get('svReplayPeriodMenu'),periodLabel=get('svReplayPeriodLabel');
+ function closePeriod(restore=false){
+  if(!periodMenu||!periodTrigger)return;
+  periodMenu.hidden=true;periodTrigger.setAttribute('aria-expanded','false');
+  if(restore)periodTrigger.focus({preventScroll:true});
+ }
+ function syncPeriod(){
+  if(!periodSelect||!periodLabel||!periodMenu)return;
+  periodLabel.textContent=periodSelect.selectedOptions[0]?.textContent||'Выбрать период';
+  for(const button of periodMenu.querySelectorAll('button'))button.setAttribute('aria-checked',String(button.dataset.period===periodSelect.value));
+ }
+ function openPeriod(){
+  if(!periodMenu||!periodSelect||!periodTrigger)return;
+  periodMenu.replaceChildren();
+  for(const option of periodSelect.options){
+   const button=document.createElement('button');button.type='button';button.dataset.period=option.value;button.setAttribute('role','menuitemradio');
+   const title=document.createElement('span');title.textContent=option.textContent;
+   button.innerHTML='<svg class="sv-period-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4m8-4v4M4 10h16"/></svg>';
+   button.append(title);
+   const check=document.createElement('span');check.className='sv-period-check';check.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4 10-10"/></svg>';button.append(check);
+   button.addEventListener('click',()=>{periodSelect.value=option.value;closePeriod(true);periodSelect.dispatchEvent(new Event('change',{bubbles:true}))});
+   periodMenu.append(button);
+  }
+  syncPeriod();periodMenu.hidden=false;periodTrigger.setAttribute('aria-expanded','true');
+  periodMenu.querySelector('[aria-checked="true"]')?.focus({preventScroll:true});
+  periodMenu.querySelector('[aria-checked="true"]')?.scrollIntoView({block:'nearest'});
+ }
+ periodTrigger?.addEventListener('click',()=>{if(periodMenu?.hidden)openPeriod();else closePeriod(true)});
+ document.addEventListener('click',event=>{if(periodMenu&&!periodMenu.hidden&&!periodMenu.contains(event.target)&&!periodTrigger?.contains(event.target))closePeriod()});
+ periodMenu?.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closePeriod(true);return}
+  if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
+  event.preventDefault();const buttons=Array.from(periodMenu.querySelectorAll('button'));const i=buttons.indexOf(document.activeElement);
+  const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(i+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length;
+  buttons[next]?.focus();
+ });
  function renderReplay(){
   const select=get('svMusicReplayPeriod'),out=get('svMusicReplayResults');if(!select||!out)return;
   if(!select.options.length){
@@ -86,6 +122,7 @@ function init(){
    for(let i=0;i<24;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1),option=document.createElement('option');option.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');option.textContent=format.format(d);select.append(option)}
    for(let i=0;i<3;i++){const y=now.getFullYear()-i,option=document.createElement('option');option.value=String(y);option.textContent='Итоги '+y+' года';select.append(option)}
   }
+  syncPeriod();
   const data=music()?.replaySummary?.(select.value);out.replaceChildren();if(!data)return;
   const total=document.createElement('div');total.className='sv-replay-total';
   const minutes=Math.floor(data.seconds/60),value=document.createElement('strong');value.textContent=minutes.toLocaleString('ru-RU');
@@ -151,7 +188,7 @@ function init(){
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu&&!menu.hidden){e.preventDefault();e.stopImmediatePropagation();closeNowMenu(true)}},true);
  function show(key){
   if(!active||(!Object.hasOwn(panels,key)&&key!=='player'))return false;
-  closeNowMenu();music()?.closePanels?.();
+  closePeriod();closeNowMenu();music()?.closePanels?.();
   if(key==='library'&&view!=='player'&&view!=='library')libraryLimit=60;
   view=key;if(key!=='player')last=key;
   page.dataset.musicView=key;root.classList.toggle('sv-music-browse',key!=='player');root.classList.toggle('sv-music-player-open',key==='player');
@@ -169,7 +206,7 @@ function init(){
   const key=pending?'player':'home';pending=false;last='home';show(key);
  }
  function leave(){
-  if(!active)return;closeNowMenu();stopCoverObserver();active=false;nav.hidden=true;dock.classList.remove('seyveo-music-dock','sv-music-navigation-only');
+  if(!active)return;closePeriod();closeNowMenu();stopCoverObserver();active=false;nav.hidden=true;dock.classList.remove('seyveo-music-dock','sv-music-navigation-only');
   root.classList.remove('sv-music-browse','sv-music-player-open');delete page.dataset.musicView;
   for(const id of Object.values(panels))get(id).hidden=true;
   const discovery=get('sayviDiscoveryPanel');if(discovery)discovery.hidden=true;
