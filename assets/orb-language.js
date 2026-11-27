@@ -223,7 +223,7 @@
    // next tier has spare render time. 60 Hz displays cannot qualify for 90/120.
    const canPromote=musicPage?.dataset.liquidRhythm==='audio'&&next&&next<=liquidFPSCeiling&&
     liquidRefreshSamples>=30&&liquidRefreshMs<=1000/next*1.09&&
-    dt<=interval*1.45&&liquidRenderCost<1000/next*.55;
+    dt<=Math.max(interval*1.65,interval+liquidRefreshMs*.85)&&liquidRenderCost<1000/next*.55;
    if(canPromote){
     if(++liquidFastFrames>=90){liquidFPS=next;liquidFastFrames=0;liquidSlowFrames=0}
    }else liquidFastFrames=0;
