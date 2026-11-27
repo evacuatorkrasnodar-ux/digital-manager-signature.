@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V88 · audio-driven living silk, quiet ground reflection · WebGL 1. */
+/* SEYVEO Liquid Sound V89 · audio-driven living silk, quiet ground reflection · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -165,9 +165,9 @@ void main(){
    vec2 q=vec2(.78*xy.x+.625*xy.y,-.625*xy.x+.78*xy.y);
    float curve=gauss(length(vec2(q.x,q.y*1.52))-.91,.014)*smoothstep(-.8,.2,-q.y)*(1.0-smoothstep(.84,.99,r));
    float white=clamp(.72*reflection+.45*lower,0.0,1.0);
-   float lens=.24*edge+.09*pow(1.0-n,2.0)+.07*curve;
+   float lens=.24*edge+.06*pow(1.0-n,2.0)+.025*curve;
    col=mix(vec3(.35,.64,.65),vec3(.99,1.0,1.0),white/(white+lens+.001));
-   gl_FragColor=vec4(col,clamp(.018+white+lens,0.0,.90));return;
+   gl_FragColor=vec4(col,clamp(white+lens,0.0,.90));return;
   }
   // Original V36 glass (27 Nov 14:08 Moscow), independent of today's silk.
   float n=sqrt(max(0.0,1.0-r*r));
@@ -258,11 +258,12 @@ void main(){
    // A colored penumbra makes the white luminous crease visible on pale glass.
    float core=gauss(v-.5,.067);
    col=mix(vec3(.035,.57,.60),vec3(.80,1.0,.98),core);
-   alpha=clamp(alpha*1.35,0.0,1.0);
+   alpha=clamp(alpha*(.24+1.24*core),0.0,1.0);
   }else if(uMode<.5){
    float shine=smoothstep(.38,.86,col.r);
    col=mix(vec3(.095,.38,.42),vec3(.10,.74,.72),shine);
-   alpha*=1.20;
+   // Let the existing particles and narrow creases define the silk; no cloudy solid fill.
+   alpha*=uKind>2.5&&uKind<3.5?.80:.42;
   }else {
    col=mix(vec3(.045,.32,.36),vec3(.16,.66,.65),smoothstep(.40,.94,col.r));
    alpha*=1.65;
