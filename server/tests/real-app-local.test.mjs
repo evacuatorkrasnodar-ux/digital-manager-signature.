@@ -78,6 +78,8 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   assert.match(csp,/img-src 'self' data: blob: https:\/\/tile\.openstreetmap\.org https:\/\/commons\.wikimedia\.org https:\/\/upload\.wikimedia\.org https:\/\/planetary\.s3\.amazonaws\.com;/);
   const connect=csp.split(';').find(x=>x.trim().startsWith('connect-src ')).trim().split(/\s+/);
   assert.ok(connect.includes('https://www.cbr-xml-daily.ru/daily_json.js'));
+  assert.ok(connect.includes('https://itunes.apple.com/search'));
+  assert.ok(!connect.includes('https://itunes.apple.com'));
   assert.ok(connect.includes("'self'"));
   for(const source of ['https://nominatim.openstreetmap.org','https://www.wikidata.org','https://commons.wikimedia.org','https://ru.wikipedia.org'])assert.ok(connect.includes(source));
   assert.ok(!connect.includes('*')&&!connect.includes('https:'));
