@@ -1274,13 +1274,15 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   <h2 id="svMusicNewTitle" hidden>Новинки</h2>
  </section>
  <div class="sv-music-cover" id="sayviMusicStage" aria-label="Обложка текущей песни">
-  <div class="sv-now-fallback" aria-hidden="true">
+  <div class="sv-now-fallback">
    <svg viewBox="0 -26 200 200" aria-hidden="true" focusable="false">
     <defs><radialGradient id="svNowRingFade"><stop offset="0" stop-color="#D4F5ED" stop-opacity=".85"/><stop offset="1" stop-color="#E3D8F3" stop-opacity=".25"/></radialGradient><radialGradient id="svNowOuterDissolve" gradientUnits="userSpaceOnUse" cx="100" cy="74" r="104"><stop offset=".50" stop-color="white"/><stop offset=".72" stop-color="white" stop-opacity=".72"/><stop offset=".91" stop-color="white" stop-opacity=".15"/><stop offset="1" stop-color="white" stop-opacity="0"/></radialGradient><mask id="svNowOuterMask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="-30" y="-56" width="260" height="260"><rect x="-30" y="-56" width="260" height="260" fill="url(#svNowOuterDissolve)"/></mask></defs>
     <g mask="url(#svNowOuterMask)"><g class="sv-music-scene-rings" fill="none" stroke="url(#svNowRingFade)" stroke-width=".72" opacity=".9"><ellipse cx="100" cy="74" rx="27" ry="37" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="35" ry="45" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="43" ry="53" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="51" ry="61" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="59" ry="69" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="67" ry="77" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="75" ry="85" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="83" ry="93" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="91" ry="101" transform="rotate(-35 100 74)"/><ellipse cx="100" cy="74" rx="99" ry="109" transform="rotate(-35 100 74)"/></g></g>
     <g class="sv-music-scene-wave" stroke="#E9F9F6" stroke-width=".92" stroke-linecap="round" opacity=".9"><line x1="72" x2="72" y1="69" y2="79" data-rest="10"/><line x1="80" x2="80" y1="63" y2="85" data-rest="22"/><line x1="88" x2="88" y1="56" y2="92" data-rest="36"/><line x1="96" x2="96" y1="46" y2="102" data-rest="56"/><line x1="104" x2="104" y1="59" y2="89" data-rest="30"/><line x1="112" x2="112" y1="67" y2="81" data-rest="14"/><line x1="120" x2="120" y1="63" y2="85" data-rest="22"/><line x1="128" x2="128" y1="70" y2="78" data-rest="8"/></g>
    </svg>
-   <span>SEYVEO SOUND</span>
+   <canvas id="svLiquidSoundCanvas" aria-hidden="true"></canvas>
+   <button id="svLiquidSoundToggle" type="button" aria-pressed="false" aria-label="Переключить визуализацию музыки" hidden></button>
+   <span id="svLiquidSoundLabel" aria-hidden="true">SEYVEO SOUND</span>
   </div>
   <svg class="sv-music-placeholder" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l12-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.4"/><ellipse cx="18" cy="16" rx="3" ry="2.4"/></svg>
   <span id="sayviMusicArtwork" class="sv-music-artwork" role="img" aria-label="Обложка песни" hidden></span>
@@ -6069,7 +6071,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-mus
 
 #sayviMusicPage #svMusicRecognizeHome>svg{color:#668b9e}
 #svSmartMusicBody a.sv-smart-music-choice{text-decoration:none;box-sizing:border-box}
-</style><script src="assets/seyveo-adaptive-sound.js?v=1"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=32-library-progress"></script><script src="assets/seyveo-music-dock.js?v=36-radio-polish"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/orb-language.js?v=10-smooth-player-equalizer"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
+</style><script src="assets/seyveo-adaptive-sound.js?v=1"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=32-library-progress"></script><script src="assets/seyveo-music-dock.js?v=36-radio-polish"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/orb-language.js?v=11-liquid-sound"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
@@ -7942,5 +7944,14 @@ html.sv-music-browse #sayviMusicPage #sayviDiscoveryPanel:not([hidden]){
 <style id="svUnifiedTransport">
 #sayviMusicPage[data-music-view="player"] :is(#sayviMusicPrevious,#sayviMusicNext,#sayviMusicPlay) svg{fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;stroke-linecap:round;stroke-linejoin:round}
 #sayviMusicPage[data-music-view="player"] #sayviMusicPlay svg{stroke-width:1.55!important}
+</style>
+<style id="svLiquidSoundStyle">
+#sayviMusicPage #svLiquidSoundCanvas{display:none;position:absolute;left:50%;top:50%;width:88%;height:auto;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;z-index:0}
+#sayviMusicPage .sv-now-fallback.sv-liquid-mode #svLiquidSoundCanvas{display:block}
+#sayviMusicPage .sv-now-fallback.sv-liquid-mode>svg{opacity:0}
+#sayviMusicPage #svLiquidSoundToggle{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)!important;width:68%;height:68%;border:0!important;background:transparent!important;box-shadow:none!important;border-radius:50%;z-index:2;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#sayviMusicPage #svLiquidSoundToggle[hidden],#sayviMusicPage #sayviMusicStage.has-artwork #svLiquidSoundToggle,#sayviMusicPage.sv-karaoke-active #svLiquidSoundToggle{display:none!important}
+#sayviMusicPage #svLiquidSoundToggle:focus-visible{outline:1px solid rgba(235,255,255,.8);outline-offset:3px}
+#sayviMusicPage .sv-now-fallback>svg{transition:opacity .2s ease}
 </style>
 </body></html>
