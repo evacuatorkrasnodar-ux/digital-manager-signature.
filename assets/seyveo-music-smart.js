@@ -113,7 +113,8 @@
   if(!audio||!page||w.SEYVEO_MUSIC_SMART)return;
   const music=()=>w.SEYVEO_MUSIC;
   const loaded=()=>!!music()?.state?.().loaded&&music().state().trackIndex>=0;
-  const notify=t=>{const el=$('sayviMusicStatus');if(el){el.textContent=t;el.hidden=false}};
+  let notifyTimer=0;
+  const notify=t=>{const el=$('sayviMusicStatus');if(!el)return;w.clearTimeout(notifyTimer);el.textContent=t;el.hidden=false;notifyTimer=w.setTimeout(()=>{if(el.textContent===t){el.textContent='';el.hidden=true}},3500)};
   const dialog=$('svSmartMusicSheet'),body=$('svSmartMusicBody'),title=$('svSmartMusicTitle');
   const karaokePanel=$('svInlineKaraoke'),karaokeBody=$('svInlineKaraokeBody'),karaokeSettings=$('svInlineKaraokeSettings'),karaokeTools=$('svInlineKaraokeTools');
   let lyricAbort=null,lyricFile=null,lyricGeneration=0,lyricsActive=false,lyricOffset=0;
@@ -463,7 +464,8 @@
      body.append(fragment);
     }else {
      const local=['localhost','127.0.0.1'].includes(w.location.hostname);
-     if(local&&engine&&id){
+     if(file.size>25*1024*1024){message('Это большая запись. Добавьте готовый текст песни или выберите отдельную композицию.');}
+     else if(local&&engine&&id){
       let status=null;
       function progress(text){if(!status){status=message(text);status.setAttribute('role','status')}else status.textContent=text;return status}
       const start=action('Повторить распознавание',async()=>{

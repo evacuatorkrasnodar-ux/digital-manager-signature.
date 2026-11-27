@@ -138,14 +138,14 @@ function chapterSummary(){
 }
 function scheduleChapterScan(){
  clearTimeout(chapterTimer);
- if(!chapterCandidate()||!chapterReadDone||chapterRows.length||chapterScanned||chapterBusy||!audio.paused||document.hidden)return;
+ if(!chapterCandidate()||!chapterReadDone||chapterRows.length||chapterScanned||chapterBusy||!audio.paused||document.hidden||page.classList.contains('sv-karaoke-active'))return;
  if(!/\.mp3$/i.test(chapterFile?.name||''))return;
  chapterTimer=setTimeout(startChapterScan,1500);
 }
 async function startChapterScan(){
- if(!chapterCandidate()||chapterRows.length||chapterBusy||!audio.paused||document.hidden||!chapterReadDone)return;
+ if(!chapterCandidate()||chapterRows.length||chapterBusy||!audio.paused||document.hidden||!chapterReadDone||page.classList.contains('sv-karaoke-active'))return;
  const file=chapterFile,job=++chapterJob;
- const valid=()=>job===chapterJob&&chapterFile===file&&tracks[index]===file&&audio.paused&&!document.hidden;
+ const valid=()=>job===chapterJob&&chapterFile===file&&tracks[index]===file&&audio.paused&&!document.hidden&&!page.classList.contains('sv-karaoke-active');
  chapterBusy=true;chapterProgress='Ищем паузы между песнями…';updateChapterStatus();
  try{
   const rows=await chapterAPI.scan(file,audio.duration,valid,p=>{if(valid()){chapterProgress='Анализ сборника · '+p+'%';updateChapterStatus()}});
@@ -1211,6 +1211,7 @@ audio.addEventListener('seeked',()=>{chapterLastTime=-1;paintChapter();updateTim
 audio.addEventListener('durationchange',updateTime);
 audio.addEventListener('loadedmetadata',()=>{restorePosition();updateTime();loadChapters()});
 audio.addEventListener('canplay',()=>{restorePosition();updateTime()});
+audio.addEventListener('play',stopChapterScan);
 audio.addEventListener('playing',()=>{stopChapterScan();homeMusicSession=true;const file=tracks[index];if(file&&!file.radio){recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);recentPlayedAt.set(file,Date.now());for(const item of recentPlayedAt.keys())if(!recentFiles.includes(item))recentPlayedAt.delete(item);rememberRecent()}updatePlay();sayviMessage('');qualifyDiscoveryListen()});
 audio.addEventListener('pause',()=>{stopDiscoveryListen();savePosition(true);updatePlay();scheduleChapterScan()});
 audio.addEventListener('ended',()=>{stopDiscoveryListen();if(isRadio()){updatePlay();sayviMessage('Эфир прервался. Нажмите Play для повторного подключения.');return}if(!navigateTrack(1,true)){savePosition(true);updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});

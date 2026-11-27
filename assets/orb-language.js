@@ -278,20 +278,25 @@
  function tickScene(timestamp){
   sceneFrame=0;
   if(!sceneAllowed()||reduce?.matches||window.SEYVEO_MUSIC?.rhythmFile?.()!==sceneFile){syncScene();return}
-  const data=rhythmCache.get(sceneFile);
-  if(!data?.length){resetSceneWave();return}
+  const data=sceneFile?rhythmCache.get(sceneFile):null;
   const full=scene===playerScene;
+  if(!data?.length&&!full){resetSceneWave();return}
   const liquidActive=full&&liquidMode&&liquidVisible();
   // Avoid sampling and DOM updates between actual Liquid Sound frames.
   if(liquidActive&&timestamp-liquidLast<liquidInterval()-1){sceneFrame=requestAnimationFrame(tickScene);return}
   if(timestamp-sceneLast>=(full?0:50)){
    const dt=sceneLast?clamp(timestamp-sceneLast,1,80):16.7;
    sceneLast=timestamp;
-   const position=clamp(audio.currentTime/RHYTHM_STEP,0,data.length/3-1);
-   const frame=Math.floor(position)*3;
-   const following=Math.min(frame+3,data.length-3),fraction=position-Math.floor(position);
-   const band=i=>full?data[frame+i]+(data[following+i]-data[frame+i])*fraction:data[frame+i];
-   const bass=band(0),mid=band(1),air=band(2);
+   let bass=0,mid=0,air=0;
+   if(data?.length){
+    const position=clamp(audio.currentTime/RHYTHM_STEP,0,data.length/3-1);
+    const frame=Math.floor(position)*3;
+    const following=Math.min(frame+3,data.length-3),fraction=position-Math.floor(position);
+    const band=i=>full?data[frame+i]+(data[following+i]-data[frame+i])*fraction:data[frame+i];
+    bass=band(0);mid=band(1);air=band(2);
+   }
+   // Neutral ambient motion until measured audio energy is available.
+   if(full&&musicPage.dataset.liquidRhythm!==(data?.length?'audio':'ambient'))musicPage.dataset.liquidRhythm=data?.length?'audio':'ambient';
    if(liquidActive){
     paintLiquid(timestamp,bass,mid,air);
     // The classic SVG bars are hidden and the orbits are static in Liquid mode.
@@ -343,8 +348,9 @@
   if(!file){if(sceneFile||sceneFrame)resetSceneWave();return}
   if(sceneFile!==file){resetSceneWave();sceneFile=file}
   prepareRhythm(file);
-  if(!rhythmCache.get(file)?.length)return;
-  scene.classList.add('sv-scene-rhythm');
+  const measured=!!(file&&rhythmCache.get(file)?.length);
+  if(!measured&&scene!==playerScene)return;
+  scene.classList.toggle('sv-scene-rhythm',measured);
   if(!sceneFrame)sceneFrame=requestAnimationFrame(tickScene);
  }
  if((homeScene||playerScene)&&audio){
