@@ -219,6 +219,7 @@
   function setLyricSettings(open){
    if(!karaokeSettings||!lyricsActive)return;
    karaokeSettings.hidden=!open;karaokeTools?.setAttribute('aria-expanded',String(open));
+   if(open)$('svInlineKaraokeCloseSettings')?.focus({preventScroll:true});
    karaokeBody.inert=open;
   }
   function exitKaraoke(){
@@ -245,6 +246,8 @@
    setLyricSettings(false);
    const body=karaokeBody,settings=$('svInlineKaraokeOptions');
    body.replaceChildren();settings.replaceChildren();
+   if(karaokeTools)karaokeTools.disabled=true;
+   $('svInlineKaraokeLabel').textContent='ТЕКСТ ПЕСНИ';
    const message=(t,target=body)=>{const p=d.createElement('p');p.className='sv-smart-music-message';p.textContent=t;target.append(p);return p};
    const action=(label,fn,target=body)=>{const b=d.createElement('button');b.type='button';b.className='sv-smart-music-choice';b.textContent=label;b.addEventListener('click',fn);target.append(b);return b};
    if(!file){message('Текст доступен для песен из медиатеки.');return}
@@ -258,6 +261,8 @@
    const render=(data,imported,saved=true)=>{
     if(!valid())return;
     body.replaceChildren();settings.replaceChildren();setLyricSettings(false);current=-2;lyricData=null;
+    if(karaokeTools)karaokeTools.disabled=!data;
+    $('svInlineKaraokeLabel').textContent=data?.draft?'ТЕКСТ · ЧЕРНОВИК':'ТЕКСТ ПЕСНИ';
     if(data){
      lyricData={...data,file};
      if(data.draft)message('Черновик Сэйви · возможны ошибки',settings);
@@ -276,6 +281,24 @@
       feedback.hidden=false;
       feedback.textContent=saved?.ok?(saved.existing?'Этот текст уже есть в блокноте.':'Текст сохранён в блокноте. Музыка продолжает играть.'):(saved?.reason==='length'?'Текст длиннее лимита одной заметки (8000 символов).':saved?.reason==='limit'?'Блокнот заполнен. Освободите место для новой записи.':'Не удалось сохранить текст в блокноте.');
      });
+     if(engine&&id)action('Исправить текст',()=>{
+      if(!valid())return;
+      settings.replaceChildren();
+      message(data.timed?'Исправьте слова, не меняя количество строк: время каждой строки сохранится.':'Исправьте текст песни.',settings);
+      const editor=d.createElement('textarea');editor.className='sv-inline-lyrics-editor';editor.setAttribute('aria-label','Текст песни');editor.value=data.lines.map(line=>line.text).join('\n');settings.append(editor);
+      const status=message('',settings);status.setAttribute('role','status');
+      const commit=action('Сохранить изменения',async()=>{
+       if(!valid())return;
+       const lines=editor.value.replace(/\r/g,'').split('\n');
+       if(editor.value.length>128*1024||!lines.some(line=>line.trim())||lines.length>3000){status.textContent='Проверьте размер и содержимое текста.';return}
+       if(data.timed&&lines.length!==data.lines.length){status.textContent='Для сохранения синхронизации оставьте прежнее количество строк.';return}
+       const corrected={...data,lines:data.timed?data.lines.map((line,i)=>({...line,text:lines[i]})):lines.map(text=>({text}))};
+       commit.disabled=true;
+       try{const saved=await engine.put(id,corrected);if(valid())render(corrected,true,saved)}catch{if(valid()){status.textContent='Не удалось сохранить исправления.';commit.disabled=false}}
+      },settings);
+      action('Отмена',()=>{if(valid()){render(data,imported,saved);setLyricSettings(true)}},settings);
+      editor.focus({preventScroll:true});
+     },settings);
      for(const line of data.lines){
       const el=d.createElement(data.timed?'button':'p');el.className='sv-smart-lyric';el.textContent=line.text||'♪';
       if(data.timed){el.type='button';el.addEventListener('click',()=>{if(valid()&&Number.isFinite(audio.duration))audio.currentTime=Math.max(0,Math.min(line.time,audio.duration))})}
@@ -477,7 +500,7 @@
   $('svAdaptiveSoundMenu')?.addEventListener('click',soundSheet);
   $('svSmartShare')?.addEventListener('click',share);
   $('svSmartSleep')?.addEventListener('click',sleepSheet);
-  $('svSmartKaraoke')?.addEventListener('click',()=>{if(lyricsActive)setLyricSettings(true);else karaoke()});
+  $('svSmartKaraoke')?.addEventListener('click',()=>{if(lyricsActive){if(lyricData)setLyricSettings(true)}else karaoke()});
   $('svNowKaraoke')?.addEventListener('click',toggleKaraoke);
   function handle(q){
    const pure=/^(?:включи|верни) (?:pure sound|пьюр саунд|чистый звук|оригинальное звучание)$/.test(q);
