@@ -2,6 +2,7 @@
 import json
 import os
 import sys
+from pathlib import Path
 
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
@@ -11,6 +12,46 @@ def respond(**data):
 
 def progress(phase, percent=None):
     print(json.dumps({"phase": phase, "percent": percent}), file=sys.stderr, flush=True)
+
+def separate_vocals(path, decode_audio):
+    """Use only the locally installed checkpoint. No network or audio export."""
+    checkpoint = Path(__file__).resolve().parent / ".venv-seyveo-asr" / "seyveo-vocals.pt"
+    if not checkpoint.is_file():
+        return None
+    import numpy as np
+    import torch
+    import torchaudio
+    from torchaudio.models import hdemucs_high
+    torch.set_num_threads(3)
+    model = hdemucs_high(sources=["drums", "bass", "other", "vocals"])
+    model.load_state_dict(torch.load(checkpoint, map_location="cpu", weights_only=True))
+    model.eval()
+    left, right = decode_audio(path, sampling_rate=44100, split_stereo=True)
+    stereo = torch.from_numpy(np.stack((left, right))).float()
+    if stereo.shape[-1] == 0:
+        return None
+    # Short chunks with context keep memory bounded and preserve exact timing.
+    rate = 44100
+    core = 8 * rate
+    context = rate
+    ref = stereo.mean(0)
+    mean, std = ref.mean(), ref.std().clamp_min(1e-5)
+    stereo = (stereo - mean) / std
+    output = torch.empty(stereo.shape[-1], dtype=torch.float32)
+    vocal_index = model.sources.index("vocals")
+    with torch.inference_mode():
+        for start in range(0, stereo.shape[-1], core):
+            end = min(start + core, stereo.shape[-1])
+            lo, hi = max(0, start - context), min(stereo.shape[-1], end + context)
+            chunk = stereo[:, lo:hi].unsqueeze(0)
+            pred = model(chunk)[0, vocal_index].mean(0)
+            output[start:end] = pred[start-lo:end-lo] * std
+            progress("separating", min(35, int(end / stereo.shape[-1] * 35)))
+        output = torchaudio.functional.resample(output, rate, 16000)
+        peak = output.abs().max().item()
+        if peak < 1e-4 or not torch.isfinite(output).all():
+            return None
+        return (output / max(peak, .1)).numpy()
 
 def main():
     if len(sys.argv) != 3 or sys.argv[2] not in {"tiny", "base", "small", "medium"}:
@@ -42,10 +83,24 @@ def main():
     except Exception:
         respond(error="model-unavailable")
         return 5
-    progress("decoding", 0)
     try:
-        audio = decode_audio(path, sampling_rate=16000)
-        duration = min(duration, len(audio) / 16000)
+        mix = decode_audio(path, sampling_rate=16000)
+        audio = mix
+        separated = False
+        attempted = False
+        if (Path(__file__).resolve().parent / ".venv-seyveo-asr" / "seyveo-vocals.pt").is_file():
+            progress("separating", 0)
+            attempted = True
+            try:
+                vocals = separate_vocals(path, decode_audio)
+                if vocals is not None and abs(len(vocals) - len(mix)) <= 1600:
+                    audio = vocals
+                    separated = True
+            except Exception:
+                # The standard engine stays usable if the optional model fails.
+                pass
+        progress("decoding", 35 if attempted else 0)
+        duration = min(duration, len(mix) / 16000)
         lines = []
         last_percent = 0
 
@@ -58,7 +113,8 @@ def main():
             found = []
             for segment in segments:
                 if report:
-                    percent = min(74, max(0, int((offset + segment.end) / duration * 75)))
+                    base = 35 if attempted else 0
+                    percent = min(74, max(base, base + int((offset + segment.end) / duration * (75 - base))))
                     if percent > last_percent:
                         last_percent = percent
                         progress("decoding", percent)
@@ -85,6 +141,10 @@ def main():
             return found, getattr(info, "language", None)
 
         lines, language = decode_part(audio, 0, report=True)
+        if separated and not lines:
+            audio = mix
+            separated = False
+            lines, language = decode_part(audio, 0, report=True)
         # Re-decode uncovered intervals independently, rather than assuming
         # that a long instrumental passage means all remaining vocals are absent.
         gaps = []
@@ -107,7 +167,9 @@ def main():
         # Bound the repair pass on long tracks; leave remaining gaps explicit.
         windows = windows[:10]
         for i, (left, right) in enumerate(windows):
-            found, _ = decode_part(audio[int(left * 16000):int(right * 16000)], left, language)
+            # Recover words missed by separation from the original mix.
+            samples = mix if separated else audio
+            found, _ = decode_part(samples[int(left * 16000):int(right * 16000)], left, language)
             for line in found:
                 if not any(min(line["end"], old["end"]) - max(line["time"], old["time"]) > .35
                            for old in lines):
@@ -118,7 +180,8 @@ def main():
             respond(error="no-speech")
             return 7
         progress("finishing", 99)
-        respond(timed=True, lines=lines, draft=True, recognitionVersion=2, duration=round(duration, 3))
+        respond(timed=True, lines=lines, draft=True, recognitionVersion=3 if separated else 2,
+                vocalAttempted=attempted, vocalMode='separated' if separated else 'mix', duration=round(duration, 3))
         return 0
     except Exception:
         respond(error="bad-audio")
