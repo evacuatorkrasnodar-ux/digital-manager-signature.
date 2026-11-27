@@ -176,29 +176,41 @@
  let liquidGPU=null,liquidGPUAttempted=false;
  try{liquidContext=liquidCanvas?.getContext('2d',{alpha:true})||null}catch{}
  let liquidMode=true,liquidLast=0,liquidSize=0,liquidGradient=null,liquidPhase=0,liquidClock=-1;
+ let liquidQuality=1,liquidSlowFrames=0;
  const liquidEnergy=new Float32Array(3);
  try{liquidMode=localStorage.getItem('seyveo.music.visualizer')!=='classic'}catch{}
  const TAU=Math.PI*2;
  const liquidMobile=window.matchMedia?.('(max-width: 600px)').matches||((navigator.hardwareConcurrency||8)<=4);
  const liquidSteps=liquidMobile?120:180,liquidThreads=liquidMobile?36:64;
  const angles=Array.from({length:liquidSteps+1},(_,i)=>{const a=i/liquidSteps*TAU;return [a,Math.cos(a),Math.sin(a),Math.cos(2*a),Math.sin(2*a),Math.cos(3*a),Math.sin(3*a)]});
- function liquidVisible(){return !!liquidContext&&liquidMode&&musicPage?.dataset.musicView==='player'&&!musicPage.hidden&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork')}
+ function liquidVisible(){return !!liquidContext&&liquidMode&&!!audio&&!document.hidden&&location.hash==='#sayvi-music'&&musicPage?.dataset.musicView==='player'&&!musicPage.hidden&&visibleScenes.get(playerScene)!==false&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork')}
+ function releaseLiquid(){
+  if(liquidGPU){try{liquidGPU.dispose?.()}catch{}liquidGPU=null}
+  liquidGPUAttempted=false;liquidLast=0;liquidClock=-1;liquidSlowFrames=0;
+  if(liquidSize){liquidCanvas.width=liquidCanvas.height=1;liquidSize=0;liquidGradient=null}
+  liquidEnergy.fill(0);
+ }
  function paintLiquid(timestamp,bass=0,mid=0,air=0,force=false){
   if(!liquidVisible()||document.hidden)return;
-  if(!force&&timestamp-liquidLast<(liquidMobile?40:32))return;
+  const interval=liquidQuality<.85?50:liquidMobile?40:32;
+  if(!force&&timestamp-liquidLast<interval-1)return;
   const dt=liquidLast?clamp(timestamp-liquidLast,1,100):33;
+  if(!force&&liquidLast){
+   liquidSlowFrames=dt>interval+23?liquidSlowFrames+1:Math.max(0,liquidSlowFrames-1);
+   if(liquidSlowFrames>=12&&liquidQuality>.64){liquidQuality=liquidQuality>.85?.8:.64;liquidSlowFrames=0}
+  }
   liquidLast=timestamp;
   const cssSize=liquidCanvas.clientWidth;
   if(!cssSize)return;
   const pixelRatio=liquidMobile?Math.min(window.devicePixelRatio||1,1.8):Math.max(1.75,Math.min(window.devicePixelRatio||1,2));
-  const pixels=Math.max(160,Math.min(liquidMobile?620:850,Math.round(cssSize*pixelRatio)));
+  const pixels=Math.max(160,Math.min(Math.round((liquidMobile?620:850)*liquidQuality),Math.round(cssSize*pixelRatio*liquidQuality)));
   if(liquidSize!==pixels){liquidCanvas.width=liquidCanvas.height=pixels;liquidSize=pixels;liquidGradient=null}
   const playing=!audio.paused&&!audio.ended&&!reduce?.matches;
   if(playing){
    const t=audio.currentTime;
    const elapsed=liquidClock<0?0:clamp(t-liquidClock,0,.12);
    liquidClock=t;
-   liquidPhase+=elapsed*(.42+liquidEnergy[0]*.44);
+   liquidPhase+=elapsed*(1.10+liquidEnergy[0]*.65);
    for(let i=0;i<3;i++){const v=[bass,mid,air][i];liquidEnergy[i]+=(v-liquidEnergy[i])*(1-Math.exp(-dt/(v>liquidEnergy[i]?110:260)))}
   }else liquidClock=-1;
   const ctx=liquidContext,b=liquidEnergy[0],m=liquidEnergy[1],h=liquidEnergy[2],p=liquidPhase;
@@ -225,7 +237,7 @@
     const frame=liquidGPU.render(pixels,p,b,m,h);
     if(frame){ctx.drawImage(frame,0,0,400,400);return}
    }catch{}
-   liquidGPU=null;
+   try{liquidGPU.dispose?.()}catch{}liquidGPU=null;
   }
 
   const radius=164*(1+.025*b),t=p*.40;
@@ -478,7 +490,7 @@
   musicPage?.classList.toggle('sv-liquid-visualizer',enabled);
   if(liquidToggle){liquidToggle.hidden=!liquidContext;liquidToggle.setAttribute('aria-pressed',String(enabled));liquidToggle.setAttribute('aria-label',enabled?'Liquid Sound. Переключить на эквалайзер':'Эквалайзер. Переключить на Liquid Sound')}
   if(liquidLabel)liquidLabel.textContent=enabled?'SEYVEO LIQUID SOUND':'SEYVEO SOUND';
-  if(enabled)paintLiquid(performance.now(),0,0,0,true);
+  if(enabled)paintLiquid(performance.now(),0,0,0,true);else releaseLiquid();
  }
  liquidToggle?.addEventListener('click',event=>{
   event.stopPropagation();liquidMode=!liquidMode;
@@ -486,6 +498,7 @@
   syncLiquidMode();
  });
  window.addEventListener('resize',()=>{if(liquidVisible())paintLiquid(performance.now(),...liquidEnergy,true)});
+ window.addEventListener('pagehide',releaseLiquid);
  syncLiquidMode();
  function sceneTarget(){
   if(musicPage?.dataset.musicView==='home')return homeScene;
@@ -545,6 +558,7 @@
   sceneFrame=requestAnimationFrame(tickScene);
  }
  function syncScene(){
+  if(!liquidVisible()&&(liquidGPU||liquidSize||liquidGPUAttempted))releaseLiquid();
   const target=sceneTarget();
   if(scene!==target){
    scene?.classList.remove('sv-scene-playing');resetSceneWave();
