@@ -93,10 +93,21 @@ const favoriteId=file=>file?[
  String(file.lastModified||0)
 ].join('|'):'';
 
-// Offline audio library: store Blob and original file identity separately.
+// Offline audio library: store owned audio bytes and original file identity.
 const LIBRARY_DB='seyveo-music-library-v1',LIBRARY_STORE='tracks';
 const savedTrackIds=new Set();
-let libraryLoading=true,libraryQueue=Promise.resolve();
+let libraryLoading=true,libraryQueue=Promise.resolve(),librarySaving=0;
+const RECENT_KEY='seyveo-music-recent-local-v1';
+function rememberRecent(){
+ try{localStorage.setItem(RECENT_KEY,JSON.stringify(recentFiles.slice(0,12).map(file=>({id:favoriteId(file),at:recentPlayedAt.get(file)||0}))))}catch{}
+}
+function restoreRecent(){
+ try{
+  const saved=JSON.parse(localStorage.getItem(RECENT_KEY)||'[]');if(!Array.isArray(saved))return;
+  const byId=new Map(localTracks.map(file=>[favoriteId(file),file]));
+  for(const entry of saved.slice(0,12)){const file=byId.get(entry?.id);if(!file||recentFiles.includes(file))continue;recentFiles.push(file);recentPlayedAt.set(file,Number(entry.at)||0)}
+ }catch{}
+}
 const libraryNote=$('svMusicStorageStatus');
 function libraryMessage(message){if(libraryNote)libraryNote.textContent=message;}
 function libraryRefresh(){
@@ -126,30 +137,58 @@ async function libraryTransaction(mode,operation){
 }
 async function restoreLibrary(){
  try{
-  const records=await libraryTransaction('readonly',store=>store.getAll());
-  for(const record of records.sort((a,b)=>(a.addedAt||0)-(b.addedAt||0))){
-   if(!(record.blob instanceof Blob)||!record.blob.size||typeof record.name!=='string')continue;
-   const file=new File([record.blob],record.name,{type:record.type||record.blob.type,lastModified:record.lastModified||0});
+  const keys=await libraryTransaction('readonly',store=>store.getAllKeys());
+  const restored=[];let failed=0;
+  // Read records one at a time rather than allocating the entire library at once.
+  for(const key of keys){
+   try{
+    const record=await libraryTransaction('readonly',store=>store.get(key));
+    if(!record||typeof record.name!=='string'){failed++;continue}
+    const parts=Array.isArray(record.bytes)&&record.bytes.length&&record.bytes.every(part=>part instanceof ArrayBuffer)
+     ?record.bytes:record.blob instanceof Blob&&record.blob.size?[record.blob]:null;
+    if(!parts){failed++;continue}
+    const file=new File(parts,record.name,{type:record.type||record.blob?.type||'',lastModified:record.lastModified||0});
+    if(!file.size||(Number.isFinite(record.size)&&file.size!==record.size)){failed++;continue}
+    restored.push({file,addedAt:record.addedAt||0});
+   }catch{failed++}
+  }
+  for(const {file} of restored.sort((a,b)=>a.addedAt-b.addedAt)){
    const id=favoriteId(file);if(savedTrackIds.has(id))continue;
    localTracks.push(file);savedTrackIds.add(id);
   }
+  restoreRecent();
   libraryLoading=false;
-  if(localTracks.length&&!tracks.length){tracks=localTracks;switchTrack(0,false)}
+  if(localTracks.length&&!tracks.length){tracks=localTracks;switchTrack(Math.max(0,localTracks.indexOf(recentFiles[0])),false)}
   libraryRefresh();
-  libraryMessage(libraryCount()+'. Музыка остаётся в этом браузере.');
+  libraryMessage(libraryCount()+'. '+(failed?'Не удалось восстановить файлов: '+failed+'. Добавьте их повторно.':'Доступно без повторной загрузки.'));
  }catch(error){
   libraryLoading=false;libraryMessage('Не удалось открыть хранилище. Музыку можно слушать, но её сохранение может быть недоступно.');
   libraryRefresh();
  }
 }
+function readOwnedBytes(blob){
+ if(typeof blob.arrayBuffer==='function')return blob.arrayBuffer();
+ return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(reader.error);reader.onabort=()=>reject(Error('Read cancelled'));reader.readAsArrayBuffer(blob)});
+}
 async function saveLibraryFiles(files){
  const pending=files.filter(file=>!savedTrackIds.has(favoriteId(file)));
  if(!pending.length)return;
- const addedAt=Date.now();
- await libraryTransaction('readwrite',store=>{
-  pending.forEach((file,i)=>store.put({id:favoriteId(file),name:file.name,type:file.type,lastModified:file.lastModified,addedAt:addedAt+i,blob:file.slice(0,file.size,file.type)}));
- });
- for(const file of pending)savedTrackIds.add(favoriteId(file));
+ const addedAt=Date.now();let failures=0;
+ // Copy the actual bytes from iOS/Android file picker references. One track
+ // per committed transaction, so a failed import never rolls back the others.
+ const chunkSize=4*1024*1024;
+ for(const [i,file] of pending.entries()){
+  try{
+   const bytes=[];
+   for(let offset=0;offset<file.size;offset+=chunkSize)bytes.push(await readOwnedBytes(file.slice(offset,offset+chunkSize)));
+   if(bytes.reduce((sum,part)=>sum+part.byteLength,0)!==file.size)throw Error('Incomplete file');
+   const record={id:favoriteId(file),name:file.name,type:file.type,lastModified:file.lastModified,addedAt:addedAt+i,size:file.size,bytes};
+   await libraryTransaction('readwrite',store=>store.put(record));
+   savedTrackIds.add(record.id);
+  }catch{failures++}
+  libraryMessage('Сохранение на устройстве: '+(i+1)+' из '+pending.length+' · '+libraryCount());
+ }
+ if(failures)throw Error('Unsaved files: '+failures);
 }
 
 /* Replay: count actual advancing playback, never pauses, buffering or seeks.
@@ -658,6 +697,8 @@ function ingest(list){
   sayviMessage(message);libraryMessage(message);return false;
  }
  try{navigator.storage?.persist?.()?.catch(()=>{})}catch{}
+ librarySaving++;
+ libraryMessage('Сохранение музыки на устройстве… Не закрывайте приложение до завершения.');
  libraryQueue=libraryQueue.then(async()=>{
   const existing=new Map(localTracks.map(file=>[favoriteId(file),file]));
   const selected=new Map();let added=0;
@@ -676,10 +717,10 @@ function ingest(list){
    const message=(added?'Добавлено '+added+'. ':'Новых файлов нет. ')+libraryCount()+'.'+suffix;
    libraryMessage(message);sayviMessage(message);
   }catch(error){
-   const message='Не удалось сохранить новые файлы. Они доступны до закрытия страницы. Проверьте свободное место или разрешения браузера.'+suffix;
+   const message=libraryCount()+'. Не все файлы сохранены. Несохранённые доступны до закрытия страницы. Проверьте свободное место и добавьте их повторно.'+suffix;
    libraryMessage(message);sayviMessage(message);
   }
- }).catch(()=>libraryMessage('Не удалось добавить музыку. Повторите попытку.'));
+ }).catch(()=>libraryMessage('Не удалось добавить музыку. Повторите попытку.')).finally(()=>{librarySaving=Math.max(0,librarySaving-1);syncResume()});
  return true;
 }
 function providerChoose(name){
@@ -873,13 +914,14 @@ options.addEventListener('click',event=>{
 audio.addEventListener('timeupdate',updateTime);
 audio.addEventListener('durationchange',updateTime);
 audio.addEventListener('loadedmetadata',updateTime);
-audio.addEventListener('playing',()=>{homeMusicSession=true;const file=tracks[index];if(file&&!file.radio){recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);recentPlayedAt.set(file,Date.now());for(const item of recentPlayedAt.keys())if(!recentFiles.includes(item))recentPlayedAt.delete(item)}updatePlay();sayviMessage('');qualifyDiscoveryListen()});
+audio.addEventListener('playing',()=>{homeMusicSession=true;const file=tracks[index];if(file&&!file.radio){recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);recentPlayedAt.set(file,Date.now());for(const item of recentPlayedAt.keys())if(!recentFiles.includes(item))recentPlayedAt.delete(item);rememberRecent()}updatePlay();sayviMessage('');qualifyDiscoveryListen()});
 audio.addEventListener('pause',()=>{stopDiscoveryListen();updatePlay()});
 audio.addEventListener('ended',()=>{stopDiscoveryListen();if(isRadio()){updatePlay();sayviMessage('Эфир прервался. Нажмите Play для повторного подключения.');return}if(tracks.length>1)switchTrack(index+1,true);else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
 audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(isRadio()){const station=tracks[index],version=selectVersion;if(!radioFallback&&station.fallback){radioFallback=true;audio.src=station.fallback;artist.textContent=station.country+' · '+station.fallbackQuality;audio.play().catch(()=>{if(version===selectVersion)sayviMessage('Резервный эфир недоступен.')});return}sayviMessage('Эфир недоступен. Попробуйте другую станцию.');return}if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
 /* Screen lock/background can dispatch lifecycle changes.
  * Never stop an actively playing track on pagehide: the OS decides if WebKit
  * can continue. A full browser termination remains outside PWA control. */
+window.addEventListener('beforeunload',event=>{if(librarySaving){event.preventDefault();event.returnValue=''}});
 window.addEventListener('pagehide',event=>{
  if(event.persisted||!audio.paused)return;
  safeRelease();
@@ -956,7 +998,7 @@ window.SEYVEO_MUSIC=Object.freeze({
  browseTracks:()=>localTracks.map((file,i)=>({index:i,artKey:favoriteId(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null})),
  recentTracks:()=>recentFiles.filter(file=>localTracks.includes(file)).map(file=>({index:localTracks.indexOf(file),artKey:favoriteId(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null,playedAt:recentPlayedAt.get(file)||0})),
  state:()=>Object.freeze({
-  libraryLoading,libraryCount:localTracks.length,
+  libraryLoading,libraryCount:localTracks.length,librarySaving:librarySaving>0,savedCount:savedTrackIds.size,
   loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
   homeSession:homeMusicSession,
   source:isRadio()?'radio':'local-file',stationId:isRadio()?tracks[index].id:null,quality:isRadio()?(radioFallback?tracks[index].fallbackQuality:tracks[index].quality):null,connectedServices:0
