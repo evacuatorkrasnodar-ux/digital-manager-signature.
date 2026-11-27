@@ -364,6 +364,58 @@ function updateTime(){
 }
 /* Data images are already permitted by the app's CSP; blob: images are not.
    Keep MP3 cover art local, capped, and do not expand the security policy. */
+// Decode only the rows requested by the visible list, one at a time.
+// The original file and its full-size player artwork remain untouched.
+const trackPreviewJobs=new WeakMap();
+let trackPreviewQueue=Promise.resolve();
+function makeTrackThumbnail(blob){
+ return new Promise(resolve=>{
+  if(!blob||!['image/jpeg','image/png'].includes(blob.type)||blob.size>1800000){resolve(null);return}
+  const reader=new FileReader();
+  reader.onerror=reader.onabort=()=>resolve(null);
+  reader.onload=()=>{
+   const value=reader.result;
+   if(typeof value!=='string'||!/^data:image\/(?:png|jpeg);base64,/i.test(value)){resolve(null);return}
+   const probe=new Image();
+   probe.onerror=()=>resolve(null);
+   probe.onload=()=>{
+    try{
+     const side=Math.min(probe.naturalWidth,probe.naturalHeight);
+     if(!side){resolve(null);return}
+     const canvas=document.createElement('canvas');canvas.width=112;canvas.height=112;
+     const ctx=canvas.getContext('2d');if(!ctx){resolve(null);return}
+     ctx.drawImage(probe,(probe.naturalWidth-side)/2,(probe.naturalHeight-side)/2,side,side,0,0,112,112);
+     resolve(canvas.toDataURL('image/jpeg',.84));
+    }catch{resolve(null)}
+   };
+   probe.src=value;
+  };
+  try{reader.readAsDataURL(blob)}catch{resolve(null)}
+ });
+}
+function prepareTrackPreview(trackIndex){
+ const file=localTracks[Number(trackIndex)];
+ if(!file||file.radio)return Promise.resolve(null);
+ const result=()=>{const info=infoFor(file);return {title:info.title||safeName(file),artist:info.artist||'Моя музыка',artwork:trackThumbnails.get(file)||null}};
+ if(trackThumbnails.has(file))return Promise.resolve(result());
+ if(trackPreviewJobs.has(file))return trackPreviewJobs.get(file);
+ if(!metadata?.describe)return Promise.resolve(result());
+ const task=trackPreviewQueue.then(async()=>{
+  if(trackThumbnails.has(file))return result();
+  const info=trackDescriptions.get(file)?.artwork?trackDescriptions.get(file):await metadata.describe(file);
+  if(!info)return result();
+  if(!trackDescriptions.has(file)){const {artwork,...details}=info;trackDescriptions.set(file,details)}
+  if(info.artwork&&!trackThumbnails.has(file)){
+   const thumb=await makeTrackThumbnail(info.artwork);
+   if(thumb&&!trackThumbnails.has(file))trackThumbnails.set(file,thumb);
+  }
+  return result();
+ }).catch(()=>result());
+ trackPreviewJobs.set(file,task);
+ trackPreviewQueue=task.then(()=>{},()=>{});
+ return task;
+}
+
 function clearArtwork(){
  page.classList.remove('sv-music-player-has-art');page.style.removeProperty('--sv-music-player-art');
  stage?.classList.remove('has-artwork','is-checking-artwork');
@@ -883,11 +935,11 @@ function playRadio(stations,id){
 window.SEYVEO_MUSIC=Object.freeze({
  playRadio,replaySummary,
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
- searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,
+ searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,prepareTrackPreview,
  // Read-only access to the selected local File for optional visual analysis.
  rhythmFile:()=>isRadio()?null:tracks[index]||null,
- browseTracks:()=>localTracks.map((file,i)=>({index:i,title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null})),
- recentTracks:()=>recentFiles.filter(file=>localTracks.includes(file)).map(file=>({index:localTracks.indexOf(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null,playedAt:recentPlayedAt.get(file)||0})),
+ browseTracks:()=>localTracks.map((file,i)=>({index:i,artKey:favoriteId(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null})),
+ recentTracks:()=>recentFiles.filter(file=>localTracks.includes(file)).map(file=>({index:localTracks.indexOf(file),artKey:favoriteId(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null,playedAt:recentPlayedAt.get(file)||0})),
  state:()=>Object.freeze({
   loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
   homeSession:homeMusicSession,

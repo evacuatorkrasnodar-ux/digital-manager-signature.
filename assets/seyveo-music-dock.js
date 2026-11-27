@@ -15,7 +15,44 @@ function init(){
  let active=false,view='home',last='home',pending=false,libraryLimit=60;
  const inside=()=>location.hash==='#sayvi-music'&&!page.hidden;
  const music=()=>window.SEYVEO_MUSIC;
+ // Palette is a stable hash of the local track identity, not a random color.
+ const coverPalettes=[['#77969B','#315759'],['#8299B8','#354D73'],['#A091B3','#55446F'],['#BA9A81','#74513D'],['#819D8E','#3C6555'],['#B18F9E','#754C61'],['#8D9FAE','#465A71'],['#A9A17D','#6D633F']];
+ const fallbackNote='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17.2V5.6l11-2.3v11.6M9 9l11-2.3"/><ellipse cx="5.9" cy="17.6" rx="3.1" ry="2.35" transform="rotate(-12 5.9 17.6)"/><ellipse cx="16.9" cy="15.3" rx="3.1" ry="2.35" transform="rotate(-12 16.9 15.3)"/></svg>';
+ let coverObserver=null,coverGeneration=0;
+ function stopCoverObserver(){coverObserver?.disconnect();coverObserver=null;coverGeneration++}
+ function paintCover(art,src){
+  if(!src)return false;
+  art.classList.remove('sv-track-fallback');art.classList.add('sv-track-cover');
+  art.replaceChildren();art.style.backgroundImage='url("'+src+'")';return true;
+ }
+ function fallbackCover(art,item){
+  let hash=2166136261;
+  for(const char of String(item.artKey||item.id||item.title||'music')){hash=Math.imul(hash^char.charCodeAt(0),16777619)}
+  const [light,deep]=coverPalettes[(hash>>>0)%coverPalettes.length];
+  art.classList.add('sv-track-fallback');
+  art.style.setProperty('--sv-track-light',light);art.style.setProperty('--sv-track-deep',deep);
+  art.innerHTML=fallbackNote;
+ }
+ function watchCover(row,item,art,title,artist,generation){
+  if(item.radio||!music()?.prepareTrackPreview)return;
+  const load=()=>{if(generation!==coverGeneration||!row.isConnected)return;
+   music().prepareTrackPreview(item.index).then(info=>{
+    if(!info||generation!==coverGeneration||!row.isConnected)return;
+    title.textContent=info.title;artist.textContent=info.artist;
+    if(info.artwork)paintCover(art,info.artwork);
+   }).catch(()=>{});
+  };
+  if(typeof IntersectionObserver!=='function'){load();return}
+  if(!coverObserver)coverObserver=new IntersectionObserver(entries=>{
+   for(const entry of entries)if(entry.isIntersecting){
+    coverObserver?.unobserve(entry.target);
+    entry.target.svLoadCover?.();delete entry.target.svLoadCover;
+   }
+  },{root:page,rootMargin:'100px 0px'});
+  row.svLoadCover=load;coverObserver.observe(row);
+ }
  function renderTracks(){
+  stopCoverObserver();const generation=coverGeneration;
   if(!active)return;
   if(!['home','history','library'].includes(view))return;
   const recentRadio=window.SEYVEO_RADIO?.recent?.()||[];
@@ -29,11 +66,12 @@ function init(){
    for(const item of items){
     const button=document.createElement('button');button.type='button';button.className=recent?'sv-music-recent-card':'sv-music-library-track';
     const art=document.createElement('span');art.className='sv-music-track-tile';art.setAttribute('aria-hidden','true');
-    if(item.artwork){art.style.backgroundImage='url("'+item.artwork+'")';art.style.backgroundSize='cover'}else{art.innerHTML='<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l11-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.2"/><ellipse cx="17" cy="16" rx="3" ry="2.2"/></svg>'}
+    if(!paintCover(art,item.artwork))fallbackCover(art,item);
     const title=document.createElement('strong');title.textContent=item.title;const artist=document.createElement('small');artist.textContent=item.artist;
     const copy=document.createElement('span');copy.className='sv-music-track-tile-copy';copy.append(title,artist);button.append(art,copy);
     if(recent){const icon=document.createElement('span');icon.className='sv-music-recent-play';icon.setAttribute('aria-hidden','true');icon.innerHTML='<svg viewBox="0 0 24 24"><path d="M8 5.5v13L19 12z"/></svg>';button.append(icon)}
     button.addEventListener('click',()=>{if(item.radio){if(window.SEYVEO_RADIO?.play?.(item.id))show('player')}else if(music()?.playIndexFromSearch?.(item.index))show('player')});el.append(button);
+    watchCover(button,item,art,title,artist,generation);
    }
    if(view==='library'&&library.length>libraryLimit){
     const more=document.createElement('button');more.type='button';more.className='sv-replay-back';more.style.cssText='display:block;width:100%;min-height:44px;text-align:center';more.textContent='Показать ещё · '+Math.min(60,library.length-libraryLimit);more.addEventListener('click',()=>{libraryLimit+=60;renderTracks()});el.append(more);
@@ -82,7 +120,7 @@ function init(){
   const key=pending?'player':'home';pending=false;last='home';show(key);
  }
  function leave(){
-  if(!active)return;active=false;nav.hidden=true;dock.classList.remove('seyveo-music-dock','sv-music-navigation-only');
+  if(!active)return;stopCoverObserver();active=false;nav.hidden=true;dock.classList.remove('seyveo-music-dock','sv-music-navigation-only');
   root.classList.remove('sv-music-browse','sv-music-player-open');delete page.dataset.musicView;
   for(const id of Object.values(panels))get(id).hidden=true;
   const discovery=get('sayviDiscoveryPanel');if(discovery)discovery.hidden=true;
