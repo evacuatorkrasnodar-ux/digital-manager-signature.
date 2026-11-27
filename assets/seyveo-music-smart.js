@@ -88,14 +88,20 @@
    const artist=$('sayviMusicArtist')?.textContent?.trim()||'';
    return {title:name,text:[name,artist==='Моя музыка'?'':artist].filter(Boolean).join(' — ')+'\nSEYVEO Music'};
   }
-  async function share(){
-   const data=shareData();if(!data){notify('Сначала включите песню или радио.');return}
-   // Do not pretend a local blob or filename is a publicly playable link.
-   if(w.navigator.share){try{await w.navigator.share(data);return}catch(e){if(e.name==='AbortError')return}}
-   if(!show('Поделиться музыкой','share'))return;
+  function share(){
+   const data=shareData();if(!data){notify('Сначала включите песню или радио.');return false}
+   if(!show('Поделиться музыкой','share'))return false;
    message(data.text);
-   message('Название и исполнитель. Локальный аудиофайл не отправляется.');
-   action('Копировать',async()=>{try{await w.navigator.clipboard.writeText(data.text);close();notify('Название скопировано.')}catch{message('Не удалось скопировать. Выделите текст вручную.')}});
+   if(w.navigator.share)action('Отправить название',async()=>{try{await w.navigator.share(data);close()}catch(e){if(e.name!=='AbortError')message('Не удалось открыть системное меню.')}});
+   action('Копировать название',async()=>{try{await w.navigator.clipboard.writeText(data.text);close();notify('Название скопировано.')}catch{message('Не удалось скопировать. Выделите текст вручную.')}});
+   const file=music()?.rhythmFile?.();let canShareFile=false;
+   try{canShareFile=!!file&&!!w.navigator.share&&!!w.navigator.canShare?.({files:[file]})}catch{}
+   if(canShareFile)action('Отправить аудиофайл',async()=>{
+    if(music()?.rhythmFile?.()!==file){message('Песня изменилась. Откройте меню заново.');return}
+    try{await w.navigator.share({files:[file],title:data.title});close()}catch(e){if(e.name!=='AbortError')message('Не удалось отправить файл.')}
+   });
+   message(canShareFile?'Отправляйте аудиофайл только если у вас есть право им делиться.':'Отправка файла не поддерживается на этом устройстве. Название можно скопировать.');
+   return true;
   }
   function restoreVolume(){if(originalVolume!==null){try{audio.volume=originalVolume}catch{}originalVolume=null}}
   function cancelSleep(){deadline=0;w.clearInterval(timer);timer=0;restoreVolume();syncSleep()}
@@ -163,6 +169,7 @@
    if(minutes!==null){setSleep(minutes);return {status:'scheduled',message:'Музыка остановится через '+minutes+' мин. Если браузер не приостановит работу приложения.'}}
    if(/^(?:отмени|отключи)\s+таймер сна$/.test(q)){cancelSleep();return {status:'changed',message:'Таймер сна отключён.'}}
    if(/^(?:что (?:сейчас )?играет|какая песня играет)$/.test(q)){const data=shareData();return {status:data?'found':'missing',message:data?data.text.split('\n')[0]:'Сейчас песня не выбрана.'}}
+   if(/^(?:поделись (?:этой )?(?:песней|музыкой)|поделиться (?:песней|музыкой))$/.test(q)){const opened=share();return {status:opened?'requested':'missing',message:opened?'Выберите, как поделиться песней.':'Сначала включите песню.'}}
    return null;
   }
   w.SEYVEO_MUSIC_SMART=Object.freeze({handle,share,sleepSheet,karaoke});
