@@ -1230,16 +1230,10 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
    </svg>
    <div class="sv-music-scene-copy"><strong>В вашем ритме</strong><small>Музыка, которая рядом</small></div>
    <div class="sv-music-scene-actions">
-    <button type="button" data-music-view-action="library"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.2"/><ellipse cx="17" cy="16" rx="3" ry="2.2"/></svg><span><strong>Моя музыка</strong><small>Ваша коллекция</small></span><i aria-hidden="true">›</i></button>
+    <button type="button" data-music-view-action="replay" aria-label="Мой музыкальный мир"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v4m4-8v8m4-12v12m4-8v8m4-4v4"/></svg><span><strong>Мой музыкальный мир</strong><small>Ваши итоги</small></span></button>
    </div>
   </div>
   <button type="button" class="sv-music-youtube-entry" data-music-view-action="youtube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"/></svg><span><strong>YouTube</strong><small>Клипы и концерты</small></span><i aria-hidden="true">›</i></button>
-  <div class="sv-music-personal-grid">
-   <button type="button" class="sv-music-personal-card sv-music-personal-replay" data-music-view-action="replay">
-    <span class="sv-music-personal-meta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v4m4-8v8m4-12v12m4-8v8m4-4v4"/></svg><small>Ваши итоги</small><span class="sv-music-personal-chevron" aria-hidden="true">›</span></span>
-    <strong>Мой музыкальный мир</strong>
-   </button>
-  </div>
   <div class="sv-music-section-heading"><h3 class="sv-music-section-title">Недавно слушали</h3><button type="button" data-music-view-action="history" aria-label="Вся история прослушивания">›</button></div>
   <div id="svMusicRecent" class="sv-music-recent"></div>
  </section>
@@ -6795,7 +6789,7 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome .sv-
 #sayviMusicPage #svMusicHome .sv-music-scene-copy{display:grid;gap:4px;padding:5px 3px 14px;max-width:71%;position:relative}
 #sayviMusicPage #svMusicHome .sv-music-scene-copy > strong{font-size:clamp(23px,6.6vw,32px);font-weight:620;letter-spacing:-.045em;line-height:1.04}
 #sayviMusicPage #svMusicHome .sv-music-scene-copy > small{font-size:12px;line-height:1.3;color:#D0E4E3}
-#sayviMusicPage #svMusicHome .sv-music-scene-actions{display:grid;grid-template-columns:minmax(0,1fr);gap:0;position:relative}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions{display:flex;justify-content:flex-start;gap:0;position:relative;width:min(64%,192px);max-width:100%}
 #sayviMusicPage #svMusicHome .sv-music-scene-actions > button{
  appearance:none;-webkit-appearance:none;display:flex;align-items:center;gap:8px;
  min-width:0;min-height:55px;box-sizing:border-box;padding:8px 9px;
@@ -6804,6 +6798,8 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome .sv-
 }
 #sayviMusicPage #svMusicHome .sv-music-scene-actions > button > svg{width:24px;height:24px;flex:0 0 24px;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
 #sayviMusicPage #svMusicHome .sv-music-scene-actions > button > span{min-width:0;display:grid;gap:3px}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions > button[data-music-view-action="replay"]{width:100%;max-width:192px;min-height:55px;gap:8px}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions > button[data-music-view-action="replay"] strong{white-space:normal;overflow-wrap:normal;font-weight:580;line-height:1.16}
 #sayviMusicPage #svMusicHome .sv-music-scene-actions > button strong{font-size:13px;font-weight:620;line-height:1.12;letter-spacing:-.025em}
 #sayviMusicPage #svMusicHome .sv-music-scene-actions > button small{font-size:10px;line-height:1.15;color:#CDE0E2}
 #sayviMusicPage #svMusicHome .sv-music-scene-actions > button i{font-style:normal;font-size:19px;line-height:1;margin-left:auto;opacity:.8}
@@ -6898,32 +6894,15 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome .sv-
 }
 #sayviMusicPage .sv-music-track-tile.sv-track-cover{background-size:cover!important;background-position:center!important}
 
-/* Personal shortcuts read as one small journal, not another stack of tiles. */
-#sayviMusicPage #svMusicHome .sv-music-personal-grid{
- display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin:11px 0 0;
- border-radius:17px;overflow:hidden;
- background:linear-gradient(110deg,rgba(142,127,185,.12),rgba(145,171,210,.10) 65%,rgba(155,191,188,.08));
-}
-#sayviMusicPage #svMusicHome .sv-music-personal-card{
- appearance:none;-webkit-appearance:none;display:flex;flex-direction:column;justify-content:center;align-items:stretch;
- gap:5px;min-width:0;min-height:72px;padding:10px 12px;box-sizing:border-box;
- border:0;border-radius:0;box-shadow:none;text-align:left;color:var(--text);background:transparent;
-}
-#sayviMusicPage #svMusicHome .sv-music-personal-replay{--sv-personal-accent:#5275A9;border-left:0}
-#sayviMusicPage #svMusicHome .sv-music-personal-meta{display:flex;align-items:center;gap:6px;min-width:0}
-#sayviMusicPage #svMusicHome .sv-music-personal-meta svg{width:20px;height:20px;flex:0 0 20px;fill:none;stroke:var(--sv-personal-accent);stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
-#sayviMusicPage #svMusicHome .sv-music-personal-meta small{font-size:11px;line-height:1.15;color:var(--secondary);min-width:0;overflow-wrap:anywhere}
-#sayviMusicPage #svMusicHome .sv-music-personal-chevron{margin-left:auto;color:var(--secondary);font-size:19px;line-height:1;flex:none}
-#sayviMusicPage #svMusicHome .sv-music-personal-card strong{font-size:13px;font-weight:620;line-height:1.2;letter-spacing:-.02em;overflow-wrap:normal}
-#sayviMusicPage #svMusicHome .sv-music-personal-card:active{background:rgba(128,142,163,.08);transform:none}
+
 @media(max-width:350px){
  #sayviMusicPage #svMusicHome .sv-music-scene{padding-inline:10px}
  #sayviMusicPage #svMusicHome .sv-music-scene-actions > button{gap:5px;padding-inline:6px}
  #sayviMusicPage #svMusicHome .sv-music-scene-actions > button > svg{width:19px;height:19px;flex-basis:19px}
  #sayviMusicPage #svMusicHome .sv-music-scene-actions > button small{font-size:9px}
- #sayviMusicPage #svMusicHome .sv-music-personal-card{padding:9px;min-height:75px}
- #sayviMusicPage #svMusicHome .sv-music-personal-meta{gap:4px}
- #sayviMusicPage #svMusicHome .sv-music-personal-meta svg{width:18px;height:18px;flex-basis:18px}
+ 
+ 
+ 
 }
 /* The same mini-player moves into a body-level slot, outside the scrollport.
    No duplicate control, no white backing sheet. Match both outer dock edges. */
