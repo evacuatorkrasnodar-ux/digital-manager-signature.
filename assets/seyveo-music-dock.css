@@ -453,7 +453,7 @@ html.sv-music-screen[data-theme="dark"] body footer.dock.sv-shared-dock.sv-music
  box-shadow:inset 0 1.5px 3px rgba(0,0,0,.24),inset 0 -1px 1px rgba(255,255,255,.07)!important;
 }
 
-/* Individual accents: only the selected destination is colored. Preserve inset geometry. */
+/* Individual accents: color the selected SVG glyph only. Keep labels and inset glass neutral. */
 html.sv-music-screen[data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button{color:var(--text);transition:color 140ms ease;}
 html.sv-music-screen[data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button > span{color:inherit!important}
 html.sv-music-screen[data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button > svg{color:inherit!important;stroke:currentColor!important}
@@ -465,6 +465,8 @@ html.sv-music-screen[data-theme] body footer.dock.sv-shared-dock.seyveo-music-do
 html.sv-music-screen[data-theme="dark"] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button[data-music-nav="radio"]{--sv-music-tab-ink:#C1B5FF;--sv-music-tab-rgb:167,146,255}
 html.sv-music-screen[data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button[data-music-nav="library"]{--sv-music-tab-ink:#936014;--sv-music-tab-rgb:173,116,29}
 html.sv-music-screen[data-theme="dark"] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button[data-music-nav="library"]{--sv-music-tab-ink:#F3C77F;--sv-music-tab-rgb:228,177,93}
-html.sv-music-screen[data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:var(--sv-music-tab-ink)!important}
-html.sv-music-screen[data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]::before{background:radial-gradient(ellipse at 50% 25%,rgba(var(--sv-music-tab-rgb),.19),rgba(var(--sv-music-tab-rgb),.075))!important}
+html.sv-music-screen[data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]{color:var(--text,#111214)!important}
+html.sv-music-screen[data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"] > svg{color:var(--sv-music-tab-ink)!important;stroke:currentColor!important}
+html.sv-music-screen[data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]::before{background:rgba(94,117,149,.12)!important}
+html.sv-music-screen[data-theme="dark"] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button[aria-pressed="true"]::before{background:rgba(174,194,225,.15)!important}
 @media(prefers-reduced-motion:reduce){html.sv-music-screen[data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button{transition:none!important}}
