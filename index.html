@@ -1282,7 +1282,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   <button type="button" id="sayviMusicImport" class="sv-now-menu-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Добавить музыку</span></button>
   <button type="button" id="sayviMusicFavoritesToggle" class="sv-now-menu-row sv-music-favorites-toggle" aria-controls="sayviMusicCollection" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 5.5a5 5 0 0 0-7 0L12 7l-1.5-1.5a5 5 0 0 0-7 7L12 21l8.5-8.5a5 5 0 0 0 0-7Z"/></svg><span>Избранное</span></button>
   <button type="button" id="sayviMusicSourcesToggle" class="sv-now-menu-row" aria-expanded="false" aria-controls="sayviMusicSourcesPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8m-9 5-2 2a4 4 0 0 0 6 6l4-4a4 4 0 0 0 0-6m2 0 2-2a4 4 0 0 0-6-6L9 7a4 4 0 0 0 0 6"/></svg><span>Источники</span></button>
-  <button type="button" id="sayviMusicDiscoveryToggle" class="sv-now-menu-row" aria-controls="sayviDiscoveryPanel" aria-expanded="false" data-music-view-action="new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2c0 6-4 10-10 10 6 0 10 4 10 10 0-6 4-10 10-10-6 0-10-4-10-10Z"/></svg><span>Открытия</span></button>
+  <button type="button" id="sayviMusicDiscoveryToggle" class="sv-now-menu-row" aria-controls="sayviDiscoveryPanel" aria-expanded="false" data-music-view-action="new"><span class="sv-now-sayvi-mark" aria-hidden="true"></span><span>Открытия</span></button>
   <div class="sv-now-wake-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><div><button type="button" data-seyveo-screen-awake aria-pressed="false">Не гасить экран</button><small data-seyveo-screen-awake-status>Только пока SEYVEO открыт</small></div></div>
   <button type="button" id="sayviMusicStopAndHide" class="sv-now-menu-row sv-now-stop" aria-label="Остановить музыку и скрыть мини-плеер"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>Остановить и скрыть</span></button>
  </div>
@@ -7118,6 +7118,12 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-now
  background:rgba(25,36,47,.96);color:#F9FAFC;
  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
  box-shadow:0 10px 24px rgba(0,0,0,.19);
+}
+/* Approved monochrome Sayvi silhouette, optically sized like the adjacent icons. */
+#sayviMusicPage .sv-now-menu .sv-now-sayvi-mark{
+ display:block;flex:0 0 22px;width:22px;height:22px;
+ background:transparent url("assets/seyveo-circular-interlace-mono.svg") center/158% no-repeat;
+ filter:brightness(0) invert(1);opacity:.94;pointer-events:none;
 }
 #sayviMusicPage .sv-now-menu-head{display:flex;align-items:center;justify-content:space-between;padding-left:9px}
 #sayviMusicPage .sv-now-menu-head strong{font-size:15px;font-weight:620}
