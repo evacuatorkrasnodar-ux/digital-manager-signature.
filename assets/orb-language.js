@@ -166,7 +166,7 @@
  const playerScene=playerStage?.querySelector('.sv-now-fallback');
  let scene=null,sceneBars=[];
  const visibleScenes=new Map([[homeScene,true],[playerScene,true]]);
- let sceneFrame=0,sceneLast=0,sceneFile=null,sceneWaiting=false,ringEnergy=0;
+ let sceneFrame=0,sceneLast=0,sceneFile=null,sceneWaiting=false,ringEnergy=0,sceneAudioTime=-1;
  const sceneLevels=new Float32Array(8);
  // Liquid Sound: bounded, locally rendered ribbons, no external graphics or audio path.
  const liquidCanvas=playerScene?.querySelector('#svLiquidSoundCanvas');
@@ -178,7 +178,7 @@
  let liquidQuality=1,liquidSlowFrames=0,liquidAmbientLast=0,liquidRenderCost=0;
  let liquidAutoReason="";
  // Session-only protection: never bounce between visualizers during playback.
- function liquidInterval(){return liquidQuality<.85?50:liquidMobile?40:32}
+ function liquidInterval(){return musicPage?.dataset.liquidRhythm==='ambient'?65:liquidQuality<.85?50:liquidMobile?40:32}
  const liquidEnergy=new Float32Array(3);
  const liquidMobile=window.matchMedia?.('(max-width: 600px)').matches||((navigator.hardwareConcurrency||8)<=4);
  function liquidVisible(){return !!liquidContext&&liquidMode&&!!audio&&!document.hidden&&location.hash==='#sayvi-music'&&musicPage?.dataset.musicView==='player'&&!musicPage.hidden&&visibleScenes.get(playerScene)!==false&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork')}
@@ -284,7 +284,7 @@
   const liquidActive=full&&liquidMode&&liquidVisible();
   // Avoid sampling and DOM updates between actual Liquid Sound frames.
   if(liquidActive&&timestamp-liquidLast<liquidInterval()-1){sceneFrame=requestAnimationFrame(tickScene);return}
-  if(timestamp-sceneLast>=(full?0:50)){
+  if(timestamp-sceneLast>=(full?(data?.length?0:50):50)){
    const dt=sceneLast?clamp(timestamp-sceneLast,1,80):16.7;
    sceneLast=timestamp;
    let bass=0,mid=0,air=0;
@@ -354,7 +354,12 @@
   if(!sceneFrame)sceneFrame=requestAnimationFrame(tickScene);
  }
  if((homeScene||playerScene)&&audio){
-  for(const name of ['waiting','stalled','seeking','emptied','error'])audio.addEventListener(name,()=>{sceneWaiting=true;syncScene()});
+  for(const name of ['waiting','seeking','emptied','error'])audio.addEventListener(name,()=>{sceneWaiting=true;sceneAudioTime=-1;syncScene()});
+  audio.addEventListener('timeupdate',()=>{
+   const t=audio.currentTime,advancing=sceneAudioTime>=0&&t>sceneAudioTime+.015;
+   sceneAudioTime=t;
+   if(advancing&&!audio.paused&&!audio.ended&&!audio.seeking&&audio.readyState>=2&&(sceneWaiting||!sceneFrame)){sceneWaiting=false;syncScene()}
+  });
   for(const name of ['playing','canplay','seeked'])audio.addEventListener(name,()=>{sceneWaiting=false;syncScene()});
   for(const name of ['pause','ended','loadedmetadata','durationchange'])audio.addEventListener(name,syncScene);
   for(const name of ['seyveo:music-view','seyveo:music-state','visibilitychange'])document.addEventListener(name,syncScene);

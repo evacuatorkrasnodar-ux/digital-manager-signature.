@@ -60,42 +60,45 @@ function frame(a,p){
  const len=Math.floor((v===3?144000:72000)*kb/rate)+((a[p+2]>>1)&1);
  return len>=24?{len,sec:(v===3?1152:576)/rate,rate}:null;
 }
-async function scan(file,duration,valid,progress){
+async function scan(file,duration,valid,progress,canWork=()=>true){
  const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
  if(!Offline||!/\.mp3$/i.test(file.name)||duration<600||file.size>180*1024*1024)return [];
  const header=new Uint8Array(await file.slice(0,10).arrayBuffer());
  let pos=0;if(header.length>=10&&str(header,0,3)==='ID3')pos=10+syn(header,6)+(header[5]&16?10:0);
  let cache=new Uint8Array(),base=-1,t=0,groupStart=pos,groupTime=0,rate=0,found=false;
  let quietStart=-1,loudBefore=false,lastBoundary=0,quietSeconds=0,rows=[{start:0,title:''}];
- const wait=()=>new Promise(r=>setTimeout(r,25));
+ const wait=(ms=180)=>new Promise(r=>setTimeout(r,ms));
+ async function gate(){while(valid()&&!canWork())await wait(700);if(!valid())throw Error('cancel')}
+ let peak=.04,quietEnd=-1;
  async function decodeBlock(end,endTime){
   if(end<=groupStart||endTime-groupTime<2)return;
-  if(!valid())throw Error('cancel');
+  await gate();
   const bytes=await file.slice(groupStart,end).arrayBuffer();
   const ctx=new Offline(1,1,16000);
   const buffer=await new Promise((resolve,reject)=>{const job=ctx.decodeAudioData(bytes,resolve,reject);if(job?.then)job.then(resolve,reject)});
   if(!valid())throw Error('cancel');
   const expected=endTime-groupTime;
-  if(!buffer||Math.abs(buffer.duration-expected)>Math.max(.35,expected*.05))throw Error('decode mismatch');
+  if(!buffer||Math.abs(buffer.duration-expected)>Math.max(.9,expected*.08))throw Error('decode mismatch');
   const left=buffer.getChannelData(0),right=buffer.numberOfChannels>1?buffer.getChannelData(1):null,step=Math.max(1,Math.round(buffer.sampleRate*.1));
   // Ignore decoder startup/ending samples; require quiet surrounded by real sound.
   for(let i=step*2;i+step<left.length-step*2;i+=step){
    let power=0;for(let j=i;j<i+step;j++){power+=right?(left[j]*left[j]+right[j]*right[j])*.5:left[j]*left[j]}
    const rms=Math.sqrt(power/step),time=groupTime+i/buffer.sampleRate;
-   if(rms<.003){if(quietStart<0)quietStart=time;quietSeconds+=.1}
-   else if(rms>.018){
-    if(loudBefore&&quietSeconds>=1.2&&quietSeconds<=12&&quietStart-lastBoundary>=65&&duration-time>=45){
+   peak=Math.max(rms,peak*.999);
+   const quiet=Math.max(.0025,Math.min(.012,peak*.045)),loud=Math.max(.012,peak*.14);
+   if(rms<quiet){if(quietStart<0||time-quietEnd>.65){quietStart=time;quietSeconds=0}quietEnd=time;quietSeconds+=.1}
+   else if(rms>loud){
+    if(loudBefore&&quietSeconds>=.7&&quietSeconds<=12&&time-quietEnd<.85&&quietStart-lastBoundary>=55&&duration-time>=35){
      const boundary=Math.round((quietStart+time)/2*10)/10;
      rows.push({start:boundary,title:''});lastBoundary=boundary;
     }
     loudBefore=true;quietStart=-1;quietSeconds=0;
-   }else{quietStart=-1;quietSeconds=0}
+   }else if(quietStart>=0&&time-quietEnd>.5){quietStart=-1;quietSeconds=0}
   }
-  // Do not infer a gap across independently decoded block boundaries.
-  quietStart=-1;quietSeconds=0;groupStart=end;groupTime=endTime;progress?.(Math.min(99,Math.round(endTime/duration*100)));await wait();
+  groupStart=end;groupTime=endTime;progress?.(Math.min(99,Math.round(endTime/duration*100)));await wait();
  }
  while(pos+4<file.size&&valid()&&rows.length<max){
-  if(base<0||pos-base+4096>cache.length){base=pos;cache=new Uint8Array(await file.slice(pos,Math.min(file.size,pos+1024*1024)).arrayBuffer())}
+  if(base<0||(pos-base+4096>cache.length&&base+cache.length<file.size)){await gate();base=pos;cache=new Uint8Array(await file.slice(pos,Math.min(file.size,pos+1024*1024)).arrayBuffer())}
   const offset=pos-base,f=frame(cache,offset);
   if(!found){
    const next=f&&frame(cache,offset+f.len);
@@ -107,7 +110,7 @@ async function scan(file,duration,valid,progress){
   if(t-groupTime>=24){await decodeBlock(pos,t);if(!valid())return []}
  }
  if(!valid()||!found||Math.abs(t-duration)>Math.max(3,duration*.015))return [];
- await decodeBlock(pos,t);
+ await decodeBlock(pos,t);progress?.(100);
  return normalize(rows,duration);
 }
 window.SEYVEO_MUSIC_CHAPTERS=Object.freeze({normalize,parse,read,save,clear,embedded,scan});
