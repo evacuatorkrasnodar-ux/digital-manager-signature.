@@ -383,7 +383,7 @@ function updatePlay(){
  }
  player.setAttribute('aria-label',playing?'Пауза':'Воспроизвести');
  player.setAttribute('aria-pressed',String(playing));
- $('sayviMusicPlayIcon')?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
+ $('sayviMusicPlayIcon')?.setAttribute('d',playing?'M8 5v14M16 5v14':'M8 5.5 18 12 8 18.5z');
  syncResume();
 }
 function syncResume(){
