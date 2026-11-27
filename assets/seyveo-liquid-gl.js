@@ -129,7 +129,8 @@ void main(){
  else if(uKind>7.5){p=crease(x,v);vLight=1.0;}
  else {p=matter(x,v);vec3 dx=matter(clamp(x+.006,-.9999,.9999),v)-matter(clamp(x-.006,-.9999,.9999),v);vec3 dy=matter(x,min(1.0,v+.006))-matter(x,max(0.0,v-.006));vec3 n=cross(dx,dy);n/=length(n)+.000001;n*=n.z<0.0?-1.0:1.0;vLight=abs(n.z);vec3 lightDir=normalize(vec3(-.72,-.55,.65));vSheen=pow(max(0.0,dot(n,lightDir)),2.0);}
  float glass=step(4.5,uKind)*(1.0-step(5.5,uKind));
- float scale=.82*mix(.985,1.0,glass)*(1.0+mix(.015,0.0,glass)*uMusic.y)*(1.0+.020*p.z);
+ // Leave an optical gap between the glass and every cloth/crease layer.
+ float scale=.82*mix(.940,1.0,glass)*(1.0+mix(.015,0.0,glass)*uMusic.y)*(1.0+.020*p.z);
  gl_Position=vec4(scale*vec2(p.x+.012*p.z,-p.y+.012*p.z),p.z*.3,1.0);
  gl_PointSize=clamp(uSize*(uKind>3.5?.00205:uKind<2.5?.00215:.00215+.00020*uMusic.w),1.25,3.3);
  vUV=vec2(x,v);
@@ -148,19 +149,19 @@ void main(){
  if(uKind>4.5&&uKind<5.5){
   vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
   if(r>1.0){
-   float glow=gauss(r-1.0,.045)*(.025+.38*peak(a,-2.16,.44)+.35*peak(a,1.30,.58));
-   float floorGlow=gauss(xy.x,.43)*gauss(xy.y-1.041,.038)*.19+gauss(xy.x,.21)*gauss(xy.y-1.033,.017)*.16;
+   float glow=gauss(r-1.0,.048)*(.022+.32*peak(a,-2.16,.44)+.29*peak(a,1.30,.58));
+   float floorGlow=gauss(xy.x,.54)*gauss(xy.y-1.052,.049)*.23+gauss(xy.x,.23)*gauss(xy.y-1.043,.023)*.19;
    glow=clamp(glow+floorGlow,0.0,.75);
    gl_FragColor=vec4(.10,.86,.88,glow);return;
   }
   float n=sqrt(max(0.0,1.0-r*r));
   float top=peak(a,-2.08,.61),bottom=peak(a,1.37,.57),right=peak(a,.60,.61),left=peak(a,2.85,.48);
   float lip=.21+.78*top+.77*bottom+.72*right+.29*left;
-  float edge=gauss(r-.993,.0055),edgeSoft=gauss(r-.973,.021);
-  float reflected=gauss(r-(.957-.064*top),.014+.030*top)*pow(top,1.8);
+  float edge=gauss(r-.994,.0046),edgeSoft=gauss(r-.974,.018);
+  float reflected=gauss(r-(.957-.071*top),.014+.039*top)*pow(top,1.65);
   // Broad curved softbox reflection: a distinct inner edge with a translucent tail.
-  float innerArc=.945-.185*top;
-  float crescent=smoothstep(innerArc-.008,innerArc+.008,r)*(1.0-smoothstep(.929,.975,r))*pow(top,1.35);
+  float innerArc=.949-.205*top;
+  float crescent=smoothstep(innerArc-.009,innerArc+.009,r)*(1.0-smoothstep(.925,.975,r))*pow(top,1.28);
   float shoulder=peak(a,-1.05,.60)*gauss(r-.91,.045);
   float base=gauss(r-(.952-.048*bottom),.044)*bottom;
   float lowerLens=gauss(r-(.927-.035*bottom),.044)*peak(a,1.14,.80);
@@ -168,15 +169,15 @@ void main(){
   float fres=pow(max(0.0,1.0-n),3.0);
   // Subtle optical separation: neutral specular light and a quiet inner lens edge.
   // Same analytic glass pass; no changes to cloth, geometry or animation.
-  float light=clamp(.64*reflected+1.43*edge*lip+.50*edgeSoft*lip+.55*base+.22*inner+.62*crescent+.38*lowerLens+.18*shoulder,0.0,1.0);
+  float light=clamp(.57*reflected+1.38*edge*lip+.44*edgeSoft*lip+.48*base+.21*inner+.63*crescent+.35*lowerLens+.18*shoulder,0.0,1.0);
   float blueDepth=gauss(r-.91,.085)*(.55+.45*peak(a,-.75,.9));
   float softReflection=gauss(r-.82,.028)*peak(a,-1.03,.47);
-  float lensShade=gauss(r-.936,.019)*(1.0-.82*top)*(.65+.35*right);
+  float lensShade=gauss(r-.914,.033)*(1.0-.82*top)*(.65+.35*right);
   col=mix(vec3(.015,.39,.62),vec3(.05,.87,.94),clamp(light*1.65+.15*blueDepth,0.0,1.0));
   col=mix(col,vec3(.95,1.0,.99),smoothstep(.44,.96,light));
   alpha=clamp(.006+.085*fres+.95*light+.11*blueDepth,0.0,.98);
   // Composite a faint dark inner edge and a neutral reflection in the existing pass.
-  float shade=.075*lensShade*(1.0-alpha);
+  float shade=.105*lensShade*(1.0-alpha);
   float shine=.058*softReflection*(1.0-alpha);
   col=(col*alpha+vec3(.022,.065,.09)*shade+vec3(.87,.96,1.0)*shine)/max(.0001,alpha+shade+shine);
   alpha=clamp(alpha+shade+shine,0.0,.98);
