@@ -46,7 +46,7 @@ const businessApps=[
  {id:'business-pulse',name:'Пульс бизнеса',shortName:'Пульс',hub:'pulse'},
  {id:'business-chats',name:'Чаты команды',shortName:'Чаты',hub:'chats'},
  {id:'business-mail',name:'Рабочая почта',shortName:'Почта',hub:'mail'},
- {id:'business-documents',name:'Документы бизнеса',shortName:'Раб. док.',hub:'documents'},
+ {id:'business-documents',name:'Документы бизнеса',shortName:'Бизнес-док.',hub:'documents'},
  {id:'business-company',name:'Моя компания',shortName:'Компания',hub:'company'},
  {id:'business-people',name:'Сотрудники и кадры',shortName:'Команда',hub:'people'}
 ].map(app=>({...app,action:()=>{
@@ -265,7 +265,7 @@ function renderItems(){
   button.setAttribute('aria-label','Открыть '+app.name);
   button.title=app.name+' · удерживай, чтобы изменить главную';
   const surface=document.createElement('span');surface.className='sv-home-favorite-icon';surface.innerHTML=icon(id);
-  const label=document.createElement('span');label.className='sv-home-favorite-label';label.textContent=app.shortName||app.name;
+  const label=document.createElement('span');label.className='sv-home-favorite-label';label.textContent=(firstIds.includes('documents')&&secondIds.includes('business-documents')&&id==='documents')?'Личные док.':(app.shortName||app.name);
   button.append(surface,label);button.addEventListener('click',e=>{
    if(editing||suppressClick){suppressClick=false;e.preventDefault();return}
    launch(id);
