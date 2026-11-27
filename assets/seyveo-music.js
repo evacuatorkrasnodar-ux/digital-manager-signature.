@@ -848,12 +848,19 @@ function play(){
   sayviMessage('Не удалось начать воспроизведение. Возможно, формат файла не поддерживается этим устройством.');
  });
 }
+function wLyrics(){return window.SEYVEO_LYRICS}
 function ingest(list){
- const candidates=Array.from(list||[]);
+ const files=Array.from(list||[]),lyrics=wLyrics();
+ const texts=files.filter(file=>lyrics?.isText(file));
+ const candidates=files.filter(file=>!lyrics?.isText(file));
  const chosen=candidates.filter(file=>{
   const name=String(file.name||'');
   return (file.type.startsWith('audio/')||extensions.test(name))&&file.size>0&&file.size<=MAX_FILE_SIZE;
  }).slice(0,MAX_TRACKS);
+ if(!chosen.length&&texts.length){
+  libraryQueue=libraryQueue.then(async()=>{const result=await lyrics.attach(texts,window.SEYVEO_MUSIC.recognitionLibrary());const message='Тексты: сохранено '+result.attached+(result.temporary?', временно '+result.temporary:'')+(result.skipped?', не сопоставлено '+result.skipped:'')+'.';libraryMessage(message);sayviMessage(message)}).catch(()=>libraryMessage('Не удалось добавить тексты песен.'));
+  return true;
+ }
  if(!chosen.length){
   const message='Не нашла подходящие аудиофайлы. Выберите MP3, M4A, AAC, WAV или другой поддерживаемый формат.';
   sayviMessage(message);libraryMessage(message);return false;
@@ -876,7 +883,9 @@ function ingest(list){
   const suffix=skipped?' Пропущено: '+skipped+' (до 40 файлов за раз, до 180 МБ каждый).':'';
   try{
    await saveLibraryFiles([...selected.values()]);
-   const message=(added?'Добавлено '+added+'. ':'Новых файлов нет. ')+libraryCount()+'.'+suffix;
+   const result=texts.length?await lyrics.attach(texts,window.SEYVEO_MUSIC.recognitionLibrary()):null;
+   const lyricSuffix=result?' Тексты: сохранено '+result.attached+(result.temporary?', временно '+result.temporary:'')+(result.skipped?', не сопоставлено '+result.skipped:'')+'.':'';
+   const message=(added?'Добавлено '+added+'. ':'Новых файлов нет. ')+libraryCount()+'.'+suffix+lyricSuffix;
    libraryMessage(message);sayviMessage(message);
   }catch(error){
    const message=libraryCount()+'. Не все файлы сохранены. Несохранённые доступны до закрытия страницы. Проверьте свободное место и добавьте их повторно.'+suffix;
