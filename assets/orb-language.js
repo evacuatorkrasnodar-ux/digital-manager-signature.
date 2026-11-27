@@ -179,7 +179,7 @@
  try{liquidMode=localStorage.getItem('seyveo.music.visualizer')!=='classic'}catch{}
  const TAU=Math.PI*2;
  const liquidMobile=window.matchMedia?.('(max-width: 600px)').matches||((navigator.hardwareConcurrency||8)<=4);
- const liquidSteps=liquidMobile?96:144,liquidThreads=liquidMobile?28:48;
+ const liquidSteps=liquidMobile?120:180,liquidThreads=liquidMobile?36:64;
  const angles=Array.from({length:liquidSteps+1},(_,i)=>{const a=i/liquidSteps*TAU;return [a,Math.cos(a),Math.sin(a),Math.cos(2*a),Math.sin(2*a),Math.cos(3*a),Math.sin(3*a)]});
  function liquidVisible(){return !!liquidContext&&liquidMode&&musicPage?.dataset.musicView==='player'&&!musicPage.hidden&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork')}
  function paintLiquid(timestamp,bass=0,mid=0,air=0,force=false){
@@ -196,7 +196,7 @@
    const t=audio.currentTime;
    const elapsed=liquidClock<0?0:clamp(t-liquidClock,0,.12);
    liquidClock=t;
-   liquidPhase=(liquidPhase+elapsed*(.62+liquidEnergy[0]*.35))%TAU;
+   liquidPhase+=elapsed*(.42+liquidEnergy[0]*.44);
    for(let i=0;i<3;i++){const v=[bass,mid,air][i];liquidEnergy[i]+=(v-liquidEnergy[i])*(1-Math.exp(-dt/(v>liquidEnergy[i]?110:260)))}
   }else liquidClock=-1;
   const ctx=liquidContext,b=liquidEnergy[0],m=liquidEnergy[1],h=liquidEnergy[2],p=liquidPhase;
@@ -204,56 +204,84 @@
   ctx.clearRect(0,0,400,400);
   ctx.lineJoin='round';ctx.lineCap='round';
   if(!liquidGradient){
-   liquidGradient=ctx.createLinearGradient(36,36,357,355);
-   liquidGradient.addColorStop(0,'rgba(215,255,248,.26)');
-   liquidGradient.addColorStop(.24,'rgba(227,255,251,.98)');
-   liquidGradient.addColorStop(.53,'rgba(102,208,198,.65)');
-   liquidGradient.addColorStop(.78,'rgba(222,255,247,.94)');
-   liquidGradient.addColorStop(1,'rgba(143,226,222,.32)');
+   liquidGradient=ctx.createRadialGradient(200,190,20,200,200,186);
+   liquidGradient.addColorStop(0,'rgba(3,27,34,.40)');
+   liquidGradient.addColorStop(.67,'rgba(5,35,43,.34)');
+   liquidGradient.addColorStop(1,'rgba(5,35,43,0)');
   }
-  const radius=144*(1+.045*b);
+  ctx.globalAlpha=1;ctx.fillStyle=liquidGradient;ctx.fillRect(0,0,400,400);
+  const radius=164*(1+.035*b);
   const c1=Math.cos(p*.82),s1=Math.sin(p*.82),c2=Math.cos(p*1.35),s2=Math.sin(p*1.35);
-  const ribbon=(kind,count)=>{
-   // Three folded membranes: outer shell, inner rim, and an inclined internal wave.
-   for(let j=0;j<count;j++){
-    const u=count===1?0:j/(count-1),v=2*u-1;
-    const edge=Math.pow(Math.abs(v),5);
-    ctx.beginPath();
-    for(let i=0;i<=liquidSteps;i++){
-     const [a,ca,sa,c2a,s2a,c3a,s3a]=angles[i];
-     const wave=s2a*c1+c2a*s1,fold=s3a*c2+c3a*s2;
-     let x,y,z;
-     if(kind===0){
-      const base=radius*(1+.022*wave+(.024+.018*m)*fold);
-      const width=(.025+(.085+.045*m)*Math.pow(.5+.5*wave,2))*radius;
-      const r=base+v*width;
-      x=r*ca;y=r*sa*.96;z=radius*(.12*fold+v*(.12+.10*h));
-     }else if(kind===1){
-      const base=radius*(.76+.045*wave-.03*fold);
-      const width=radius*(.012+(.044+.036*m)*Math.pow(.5-.5*wave,2));
-      const r=base+v*width;
-      x=r*ca;y=r*sa*.98;z=radius*(.16*wave+v*.12);
-     }else{
-      const longitude=radius*.81;
-      x=longitude*ca;
-      y=radius*(.18*sa+.17*wave+v*(.10+.05*m)*Math.pow(Math.abs(sa),1.2));
-      z=radius*(.36*sa+.08*fold+v*.17*sa);
-     }
-     const rotation=kind===2?-.40+.09*Math.sin(p):-.12+.08*Math.sin(p*.7);
-     const cr=Math.cos(rotation),sr=Math.sin(rotation);
-     const perspective=1+z*.00058;
-     const px=200+(x*cr-y*sr)*perspective,py=200+(x*sr+y*cr)*perspective;
-     if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+  const pearl=ctx.createLinearGradient(46,45,346,351);
+  pearl.addColorStop(0,'rgba(115,236,215,.36)');
+  pearl.addColorStop(.22,'rgba(224,255,247,1)');
+  pearl.addColorStop(.45,'rgba(89,213,196,.56)');
+  pearl.addColorStop(.68,'rgba(232,255,249,1)');
+  pearl.addColorStop(.86,'rgba(98,222,204,.83)');
+  pearl.addColorStop(1,'rgba(196,255,240,.42)');
+  const edgeLight=ctx.createLinearGradient(30,75,355,335);
+  edgeLight.addColorStop(0,'rgba(139,247,222,.05)');
+  edgeLight.addColorStop(.19,'rgba(213,255,244,.98)');
+  edgeLight.addColorStop(.36,'rgba(244,255,251,1)');
+  edgeLight.addColorStop(.52,'rgba(86,222,201,.24)');
+  edgeLight.addColorStop(.76,'rgba(213,255,239,.94)');
+  edgeLight.addColorStop(1,'rgba(112,229,205,.14)');
+  function trace(kind,v){
+   ctx.beginPath();
+   for(let i=0;i<=liquidSteps;i++){
+    const [a,ca,sa,c2a,s2a,c3a,s3a]=angles[i];
+    const wave=s2a*c1+c2a*s1,fold=s3a*c2+c3a*s2;
+    let x,y,z;
+    if(kind===0){
+     // Near-circular shell, whose folded surface pinches to a thin rim.
+     const shell=radius*(1+.012*wave+.012*fold);
+     const width=radius*(.010+(.11+.035*m)*Math.pow(.5+.5*wave,2));
+     const r=shell-(1-v)*width;
+     x=r*ca;y=r*sa*.995;z=radius*(.045*fold+v*.035);
+    }else if(kind===1){
+     const shell=radius*(.765+.025*wave+.018*fold);
+     const width=radius*(.007+(.061+.024*m)*Math.pow(.5-.5*wave,2));
+     const r=shell+(1-v)*width;
+     x=r*ca;y=r*sa*.99;z=radius*(.06*wave-v*.035);
+    }else{
+     // One continuous membrane spanning the inner opening, not another ellipse.
+     const t=i/liquidSteps,xx=2*t-1;
+     const envelope=Math.pow(Math.max(0,1-xx*xx),.70);
+     const bend=Math.sin(t*Math.PI*2+p*.55);
+     x=radius*.765*xx;
+     y=radius*(-.10*xx+envelope*(.07*bend+v*(.15+.09*m)+.035*v*v));
+     z=radius*envelope*(.18*Math.sin(t*Math.PI+p*.34)+v*.10);
     }
-    ctx.strokeStyle=liquidGradient;
-    ctx.globalAlpha=kind===2?(.10+.20*edge):(.17+.53*edge);
-    ctx.lineWidth=kind===2?.44:.45+.32*edge;
+    const rotation=kind===2?-.40+.045*Math.sin(p*.6):-.08+.05*Math.sin(p*.7);
+    const cr=Math.cos(rotation),sr=Math.sin(rotation);
+    const perspective=1+z*.0005;
+    const px=200+(x*cr-y*sr)*perspective,py=200+(x*sr+y*cr)*perspective;
+    if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+   }
+   if(kind!==2)ctx.closePath();
+  }
+  function ribbon(kind,count){
+   for(let j=0;j<count;j++){
+    const v=j/(count-1),edge=Math.pow(v,6);
+    trace(kind,v);
+    ctx.strokeStyle=pearl;
+    ctx.globalAlpha=kind===2?(.10+.20*edge):(.18+.45*edge);
+    ctx.lineWidth=kind===2?.33:.38+.18*edge;
     ctx.stroke();
    }
-  };
+   // Layered soft light and a precise pearl edge; no expensive per-thread shadows.
+   trace(kind,1);
+   ctx.strokeStyle=edgeLight;
+   ctx.globalAlpha=kind===2?.16:.23+.12*h;
+   ctx.lineWidth=kind===2?2.0:4.2;
+   ctx.stroke();
+   ctx.globalAlpha=kind===2?.45:.74+.18*h;
+   ctx.lineWidth=kind===2?.62:1.35;
+   ctx.stroke();
+  }
   ctx.globalCompositeOperation='source-over';
-  ribbon(2,Math.max(14,Math.round(liquidThreads*.75)));
-  ribbon(1,Math.max(18,Math.round(liquidThreads*.8)));
+  ribbon(2,Math.max(20,Math.round(liquidThreads*.85)));
+  ribbon(1,Math.max(24,Math.round(liquidThreads*.83)));
   ribbon(0,liquidThreads);
   ctx.globalAlpha=1;
  }
