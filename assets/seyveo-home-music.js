@@ -57,14 +57,21 @@ function init(){
   if(weather!==target){replaceWeather(false);weather=target;if(weather&&observer)observer.observe(weather)}
   const session=!!window.SEYVEO_MUSIC?.state?.().homeSession;
   const playing=session&&!audio.paused&&!audio.ended;
-  if(!route||!session||!weather||weather.hidden||!root.classList.contains('sv-home-empty-sphere')||root.classList.contains('sv-home-empty-arriving')||root.classList.contains('sv-home-empty-route-exit')||root.classList.contains('sv-home-weather-preview')||getComputedStyle(weather).display==='none'){hide();return}
-  const stageRect=stage.getBoundingClientRect(),row=weather.getBoundingClientRect(),orb=$('orb')?.getBoundingClientRect(),rail=$('svHomeFavorites'),railRect=rail&&!rail.hidden?rail.getBoundingClientRect():null,dock=document.querySelector('body > footer.dock.sv-shared-dock')?.getBoundingClientRect();
-  if(!row.height||!stageRect.height){hide();return}
-  const topLimit=orb?orb.bottom-Math.min(45,orb.height*.135)+5:stageRect.top;
+  // Ambient music deliberately hides the weather and replaces the empty-sphere
+  // state. The embedded player must work in either sphere state, independently
+  // of whether the forecast is loaded or painted.
+  const sphereMode=root.classList.contains('sv-home-empty-sphere')||root.classList.contains('sv-music-ambient');
+  if(!route||!session||!sphereMode||root.classList.contains('sv-home-empty-arriving')||root.classList.contains('sv-home-empty-route-exit')||root.classList.contains('sv-home-weather-preview')){hide();return}
+  const stageRect=stage.getBoundingClientRect(),orb=$('orb')?.getBoundingClientRect(),rail=$('svHomeFavorites'),railRect=rail&&!rail.hidden?rail.getBoundingClientRect():null,dock=document.querySelector('body > footer.dock.sv-shared-dock')?.getBoundingClientRect();
+  if(!stageRect.height||!orb?.height){hide();return}
+  const topLimit=orb.bottom-Math.min(45,orb.height*.135)+5;
   const bottomLimit=Math.min(dock?.top||innerHeight,railRect?.height?railRect.top:Infinity)-8;
   const room=bottomLimit-topLimit;
+  const measured=weather?.getBoundingClientRect();
+  const row=measured?.height&&measured?.width?measured:{top:topLimit+Math.max(0,(room-52)/2),height:52,right:stageRect.left+stageRect.width/2};
   panel.classList.toggle('sv-home-music-compact',room<130);
-  if(room>=105){
+  panel.classList.toggle('sv-home-music-tight',room<105);
+  if(room>=85){
    title.textContent=$('sayviMusicTrack')?.textContent||'Моя музыка';artist.textContent=$('sayviMusicArtist')?.textContent||'';
    panel.querySelector('[data-home-music="previous"]').disabled=!!$('sayviMusicPrevious')?.disabled;
    panel.querySelector('[data-home-music="next"]').disabled=!!$('sayviMusicNext')?.disabled;
