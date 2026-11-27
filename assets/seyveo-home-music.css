@@ -43,3 +43,11 @@ html:root body #homePage #svSayviHomeWeather.sv-home-music-weather-replaced{visi
 
 /* Hide both faces as well as their container; retain the weather row's geometry. */
 html:root body #homePage #svSayviHomeWeather.sv-home-music-weather-replaced > :is(.sv-home-weather-today-face,.sv-home-weather-week-face){opacity:0!important;visibility:hidden!important;pointer-events:none!important;animation:none!important;}
+
+/* Preserve the same embedded controls when the sphere has a short lower gap. */
+#homePage #svHomeInlineMusic.sv-home-music-tight .sv-home-music-heading{min-height:26px}
+#homePage #svHomeInlineMusic.sv-home-music-tight .sv-home-music-meta{gap:0}
+#homePage #svHomeInlineMusic.sv-home-music-tight .sv-home-music-meta strong{font-size:13px}
+#homePage #svHomeInlineMusic.sv-home-music-tight .sv-home-music-meta small{font-size:10px}
+#homePage #svHomeInlineMusic.sv-home-music-tight input[type=range]{height:12px}
+#homePage #svHomeInlineMusic.sv-home-music-tight .sv-home-music-times{font-size:9px}
