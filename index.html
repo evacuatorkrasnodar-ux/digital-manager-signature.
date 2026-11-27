@@ -7194,18 +7194,21 @@ html.sv-music-screen #sayviMusicPage :is(#sayviMusicSourcesPanel,#sayviMusicColl
  --sv-source-edge:var(--sv-sheet-edge);--sv-source-press:rgba(127,140,155,.09);
  --sv-collection-ink:var(--sv-sheet-ink);--sv-collection-muted:var(--sv-sheet-muted);
  --sv-collection-line:var(--sv-sheet-edge);
- z-index:46;box-sizing:border-box;width:min(420px,calc(100vw - 28px));
+ z-index:46;box-sizing:border-box;
+ position:fixed!important;left:50%!important;right:auto!important;top:auto!important;
+ transform:translateX(-50%)!important;width:calc(100vw - 28px)!important;max-width:420px!important;min-width:0!important;
+ margin:0!important;
  max-height:calc(100vh - 110px);max-height:calc(100dvh - 110px);
- border-radius:22px;border:.5px solid var(--sv-sheet-edge);
+ border-radius:22px!important;border:.5px solid var(--sv-sheet-edge)!important;
  background:var(--sv-sheet-bg)!important;color:var(--sv-sheet-ink);
  box-shadow:0 6px 20px rgba(0,0,0,.09);
  -webkit-backdrop-filter:blur(24px) saturate(115%);backdrop-filter:blur(24px) saturate(115%);
 }
-html.sv-music-screen #sayviMusicPage #sayviMusicSourcesPanel:not([hidden]){padding:8px 14px 12px}
-html.sv-music-screen #sayviMusicPage #sayviMusicCollection:not([hidden]){display:flex;flex-direction:column;overflow:hidden;padding:0 12px 9px}
+html.sv-music-screen #sayviMusicPage #sayviMusicSourcesPanel:not([hidden]){padding:4px 12px 12px!important}
+html.sv-music-screen #sayviMusicPage #sayviMusicCollection:not([hidden]){display:flex;flex-direction:column;overflow:hidden;padding:4px 12px 12px!important}
 html.sv-music-player-open #sayviMusicPage :is(#sayviMusicSourcesPanel,#sayviMusicCollection):not([hidden]){
  --sv-sheet-ink:#F9FAFC;--sv-sheet-muted:rgba(238,245,249,.77);
- --sv-sheet-edge:rgba(236,246,255,.10);--sv-sheet-bg:#19242F;
+ --sv-sheet-edge:rgba(236,246,255,.13);--sv-sheet-bg:#19242F;
  --sv-source-press:rgba(255,255,255,.07);
  bottom:max(14px,env(safe-area-inset-bottom,0px))!important;
  max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);
@@ -7217,8 +7220,8 @@ html.sv-music-player-open #sayviMusicPage #sayviMusicCollection:not([hidden]){
  html.sv-music-player-open #sayviMusicPage :is(#sayviMusicSourcesPanel,#sayviMusicCollection):not([hidden]){--sv-sheet-bg:rgba(25,36,47,.57)}
  html[data-theme="light"].sv-music-browse #sayviMusicPage :is(#sayviMusicSourcesPanel,#sayviMusicCollection):not([hidden]){--sv-sheet-bg:rgba(248,250,252,.90)}
 }
-#sayviMusicSourcesPanel .sv-sources-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-left:4px}
-#sayviMusicSourcesPanel #svMusicSourcesTitle{margin:0;font-size:17px;font-weight:590;line-height:1.2;letter-spacing:-.025em;color:var(--sv-source-ink)}
+#sayviMusicSourcesPanel .sv-sources-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0;padding:4px 0 3px 4px;min-height:51px;box-sizing:border-box;background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+#sayviMusicSourcesPanel #svMusicSourcesTitle{margin:0;font-size:17px!important;font-weight:570!important;line-height:1.2;letter-spacing:-.025em;color:var(--sv-source-ink)}
 #sayviMusicSourcesPanel #sayviMusicSourcesClose{
  display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;
  margin:0;padding:0;border:0;border-radius:0;background:transparent!important;box-shadow:none!important;
@@ -7228,16 +7231,17 @@ html.sv-music-player-open #sayviMusicPage #sayviMusicCollection:not([hidden]){
 #sayviMusicSourcesPanel .sv-music-provider-list{display:grid;gap:0}
 #sayviMusicSourcesPanel .sv-music-provider-row{
  appearance:none;-webkit-appearance:none;display:flex;align-items:center;gap:10px;width:100%;min-height:48px;
- box-sizing:border-box;padding:5px 4px;margin:0;border:0;border-bottom:.5px solid var(--sv-source-edge);
+ box-sizing:border-box;padding:5px 4px;margin:0;border:0;border-bottom:1px solid rgba(148,163,175,.075);
  border-radius:0;background:transparent!important;box-shadow:none!important;color:var(--sv-source-ink);
  text-align:left;transform:none!important;
 }
 #sayviMusicSourcesPanel .sv-music-provider-row:active,#sayviMusicSourcesPanel .sv-music-provider-row[aria-pressed=true]{background:var(--sv-source-press)!important}
 #sayviMusicSourcesPanel .sv-source-icon{width:22px;height:22px;flex:0 0 22px}
-#sayviMusicSourcesPanel .sv-source-name{flex:1;min-width:0;font-size:14px;line-height:1.2;font-weight:520}
-#sayviMusicSourcesPanel .sv-music-provider-row small{flex:0 0 auto;font-size:10px;opacity:.86;color:var(--sv-source-muted);white-space:nowrap}
+#sayviMusicSourcesPanel .sv-source-name{flex:1;min-width:0;font-size:14px!important;line-height:1.25;font-weight:480!important}
+#sayviMusicSourcesPanel .sv-music-provider-row:last-child{border-bottom:0}
+#sayviMusicSourcesPanel .sv-music-provider-row small{flex:0 0 auto;font-size:10px!important;font-weight:400!important;opacity:.86;color:var(--sv-source-muted);white-space:nowrap}
 #sayviMusicSourcesPanel .sv-source-chevron{width:16px;height:16px;flex:0 0 16px;color:var(--sv-source-muted)}
-#sayviMusicSourcesPanel .sv-music-providers-desc{margin:8px 4px 0;font-size:11px;line-height:1.35;color:var(--sv-source-muted)}
+#sayviMusicSourcesPanel .sv-music-providers-desc{margin:7px 4px 0;font-size:11px!important;font-weight:400!important;line-height:1.4;color:var(--sv-source-muted)}
 #sayviMusicSourcesPanel .sv-music-provider-explain{margin:8px 0 0;padding:9px 5px 0;border:0;color:var(--sv-source-muted);font-size:12px;line-height:1.45}
 #sayviMusicSourcesPanel .sv-music-provider-explain strong{color:var(--sv-source-ink)}
 
@@ -7254,7 +7258,7 @@ html.sv-music-player-open #sayviMusicPage #sayviMusicCollection:not([hidden]){
  scrollbar-width:thin;
 }
 #sayviMusicPage #sayviMusicCollection .sv-music-collection-label{
- margin:0;color:var(--sv-collection-ink);font-size:17px;font-weight:590;letter-spacing:-.025em;
+ margin:0;color:var(--sv-collection-ink);font-size:17px!important;font-weight:570!important;line-height:1.2;letter-spacing:-.025em;
 }
 #sayviMusicPage #sayviMusicCollection .sv-music-panel-close{
  display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;
@@ -7276,19 +7280,27 @@ html.sv-music-player-open #sayviMusicPage #sayviMusicCollection:not([hidden]){
 #sayviMusicCollection .sv-collection-art svg{width:21px;height:21px}
 #sayviMusicCollection .sv-collection-copy{display:grid;gap:3px;flex:1;min-width:0}
 #sayviMusicPage #sayviMusicCollection .sv-music-row-title{
- display:block;color:var(--sv-collection-ink);font-size:14px;font-weight:500;line-height:1.25;
+ display:block;color:var(--sv-collection-ink);font-size:14px!important;font-weight:480!important;line-height:1.25;
  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal;
 }
 #sayviMusicCollection .sv-collection-copy small{color:var(--sv-collection-muted);font-size:11px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #sayviMusicCollection .sv-collection-action{display:grid;place-items:center;flex:0 0 25px;width:25px;height:36px;color:var(--sv-collection-muted)}
 #sayviMusicCollection .sv-collection-action svg{width:17px;height:17px}
-#sayviMusicPage #sayviMusicCollection .sv-music-track-row[aria-current=true] .sv-music-row-title{font-weight:570}
+#sayviMusicPage #sayviMusicCollection .sv-music-track-row[aria-current=true] .sv-music-row-title{font-weight:520!important}
 #sayviMusicPage #sayviMusicCollection .sv-music-favorites-unavailable .sv-music-row-title{color:var(--sv-collection-muted)}
 #sayviMusicPage #sayviMusicCollection .sv-music-favorites-note{margin:8px 4px 2px;color:var(--sv-collection-muted);font-size:11px;line-height:1.4}
 
 @media(prefers-reduced-transparency:reduce){
  html.sv-music-screen #sayviMusicPage :is(#sayviMusicSourcesPanel,#sayviMusicCollection):not([hidden]){--sv-sheet-bg:var(--card);-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
  html.sv-music-player-open #sayviMusicPage :is(#sayviMusicSourcesPanel,#sayviMusicCollection):not([hidden]){--sv-sheet-bg:#19242F}
+}
+
+/* Leave the animated cover untouched. Subdue only player metadata/controls
+   so the title never visually competes with the open sheet. No layout shifts. */
+#sayviMusicPage[data-music-view="player"] > :is(.sv-music-track-bar,.sv-music-times,.sv-music-seek,.sv-music-controls,.sv-now-tools,.sv-music-phrases){transition:opacity 160ms ease}
+#sayviMusicPage[data-music-view="player"].sv-music-sheet-open > :is(.sv-music-track-bar,.sv-music-times,.sv-music-seek,.sv-music-controls,.sv-now-tools,.sv-music-phrases){opacity:.22!important}
+@media(prefers-reduced-motion:reduce){
+ #sayviMusicPage[data-music-view="player"] > :is(.sv-music-track-bar,.sv-music-times,.sv-music-seek,.sv-music-controls,.sv-now-tools,.sv-music-phrases){transition:none!important}
 }
 </style>
 <style id="svNowFinePolish">
@@ -7477,6 +7489,19 @@ html[data-theme="dark"] #svMusicWelcome .sv-music-welcome-icon{color:#B0D1DB}
  window.addEventListener('hashchange',refresh);
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh,{once:true});
  else refresh();
+})();
+</script>
+<script id="svMusicSheetState">
+/* Observe visibility only. Works on older iPhone Safari without :has(). */
+(()=>{
+ const page=document.getElementById('sayviMusicPage');
+ const sheets=['sayviMusicSourcesPanel','sayviMusicCollection','svNowMenu'].map(id=>document.getElementById(id)).filter(Boolean);
+ if(!page)return;
+ const sync=()=>page.classList.toggle('sv-music-sheet-open',page.dataset.musicView==='player'&&sheets.some(sheet=>!sheet.hidden));
+ const observer=new MutationObserver(sync);
+ sheets.forEach(sheet=>observer.observe(sheet,{attributes:true,attributeFilter:['hidden']}));
+ observer.observe(page,{attributes:true,attributeFilter:['data-music-view','hidden']});
+ sync();
 })();
 </script>
 </body></html>
