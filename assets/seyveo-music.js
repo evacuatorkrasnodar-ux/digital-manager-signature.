@@ -823,7 +823,16 @@ function minimizeMusic(){
  location.hash=MUSIC_RETURN_ROUTES.has(musicReturnRoute)?musicReturnRoute:'#home';
  return true;
 }
-minimize?.addEventListener('click',()=>{if(!window.SEYVEO_MUSIC_DOCK?.closePlayer?.())minimizeMusic()});
+minimize?.addEventListener('click',event=>{
+ const dock=window.SEYVEO_MUSIC_DOCK;
+ // Replay/history are nested inside Music, not separate app routes.
+ if(['replay','history'].includes(page.dataset.musicView)&&location.hash==='#sayvi-music'){
+  event.preventDefault();event.stopPropagation();
+  dock?.show?.('home');
+  return;
+ }
+ if(!dock?.closePlayer?.())minimizeMusic();
+});
 /* An explicit close lives in the full Music screen, not on Home.
    Pause the real audio session and hide the small remote; preserve
    the selected local tracks so the user can return to Music later. */
