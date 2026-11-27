@@ -9,26 +9,30 @@
  'use strict';
  const EXT=/\.(?:mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff?|mp4)$/i;
  const BRACKET_JUNK=/^(?:official(?:\s+music)?\s+(?:audio|video|visualizer|lyrics?|clip)|(?:lyrics?|text)\s*(?:video)?|visualizer|audio\s*only|(?:free\s*)?download(?:\s*(?:mp3|audio))?|скачать(?:\s*(?:mp3|бесплатно|песн\w*))?|слушать\s*онлайн|\d{2,4}\s*(?:kbps|кбит\/с|kbs|khz)|(?:mp3|aac|flac|wav)\s*\d{2,4})$/i;
- const DOMAIN=/(?:https?:\/\/|www\.)?\b(?:[a-z0-9-]+\.)+(?:com|net|org|ru|su|me|info|music|site|io|top|cc|fun|pro)\b/gi;
+ const DOMAIN=/(?:https?:\/\/|www\.)?\b(?:[a-z0-9-]+\.)+(?:com|net|org|ru|su|me|info|music|site|io|top|cc|fun|pro|kz|fm|by|ua|uz|club|online|xyz)\b/gi;
+ const DOMAIN_ONLY=/^(?:https?:\/\/|www\.)?(?:[a-z0-9-]+\.)+(?:com|net|org|ru|su|me|info|music|site|io|top|cc|fun|pro|kz|fm|by|ua|uz|club|online|xyz)$/i;
  const QUALITY=/^(?:\d{2,4}(?:\s*(?:kbps|кбит\/с|kbs|khz))?|(?:mp3|aac|flac|wav)\s*\d{2,4}|(?:audio\s*)?download|free\s*music)$/i;
  const trimPunct=s=>s.replace(/^[\s·_.\-–—|]+|[\s·_.\-–—|]+$/g,'').replace(/\s{2,}/g,' ').trim();
+ function cleanLabel(value,filename=false){
+  let s=String(value||'').replace(EXT,'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/_+/g,' ').trim();
+  s=s.replace(/\s*[\[(]([^\])\r\n]{1,100})[\])]/g,(part,inside)=>BRACKET_JUNK.test(inside.trim())||DOMAIN_ONLY.test(inside.trim())||/^\d{7,}$/.test(inside.trim())?'':part);
+  s=s.replace(DOMAIN,' ').replace(/\b(?:https?|downloaded|скачано)[-\s]+(?:from|с)\b/gi,' ');
+  s=s.replace(/\s*[\[(]\s*[\])]/g,' ');
+  if(filename)s=s.replace(/^\d{1,3}[\s._–-]+(?=[^\d])/,'');
+  s=s.replace(/(?:[\s._–—|-]+)\d{7,}\s*$/,'');
+  s=s.replace(/\s*(?:[-–—|]\s*)?(?:\d{3}\s*kbps|320k|192k|256k|128k|download\s*mp3|скачать\s*mp3)\s*$/i,'');
+  s=trimPunct(s);
+  // A lowercase download filename gets a readable initial, not invented metadata.
+  if(s&&s===s.toLocaleLowerCase('ru-RU'))s=s.charAt(0).toLocaleUpperCase('ru-RU')+s.slice(1);
+  return s;
+ }
  function filenameParts(name){
-  let title=String(name||'').split(/[\\/]/).pop().replace(EXT,'').replace(/[\u0000-\u001f\u007f]/g,' ');
-  title=title.replace(/[_]+/g,' ').replace(/\s{2,}/g,' ').trim();
-  title=title.replace(DOMAIN,' ').replace(/\b(?:https?|downloaded|скачано)[-\s]+(?:from|с)\b/gi,' ');
-  title=title.replace(/(?:\s*\[(?:[^\]\r\n]{1,80})\]|\s*\((?:[^)\r\n]{1,80})\))/g,(part)=>{
-   const inner=part.slice(part.indexOf('[')>=0?part.indexOf('[')+1:part.indexOf('(')+1,-1).trim();
-   return BRACKET_JUNK.test(inner)?'':part;
-  });
-  title=title.replace(/^(?:\d{1,3}[\s._–-]+)(?=[^\d])/,'');
-  title=title.replace(/\s*(?:[-–—|]\s*)?(?:\d{3}\s*kbps|320k|192k|256k|128k)\s*$/i,'');
-  title=title.replace(/\s*(?:[-–—|]\s*)?(?:download\s*mp3|скачать\s*mp3)\s*$/i,'');
-  title=trimPunct(title);
-  const chunks=title.split(/\s+[-–—]\s+/).map(trimPunct).filter(Boolean);
-  // Preserve artist - title when present. Do not guess from hyphens within names.
+  const cleaned=cleanLabel(String(name||'').split(/[\\/]/).pop(),true);
+  const chunks=cleaned.split(/\s+[-–—]\s+/).map(s=>cleanLabel(s)).filter(Boolean);
   const artist=chunks.length>=2&&!QUALITY.test(chunks[0])?chunks[0]:'';
-  const song=chunks.length>=2?trimPunct(chunks.slice(1).join(' — ')):title;
-  return {title:song||title||'Без названия',artist,display:artist?(artist+' — '+(song||title)):title||'Без названия'};
+  const song=artist?chunks.slice(1).join(' — '):cleaned;
+  const title=song||'Без названия';
+  return {title,artist,display:artist?artist+' — '+title:title};
  }
  const decoder=(enc,bytes)=>{
   try{
@@ -104,8 +108,8 @@
  async function describe(file){
   const fallback=filenameParts(file?.name);
   const tags=await readId3(file);
-  const title=tags.title||fallback.title;
-  const artist=tags.artist||fallback.artist;
+  const title=cleanLabel(tags.title)||fallback.title;
+  const artist=cleanLabel(tags.artist)||fallback.artist;
   return {
    title,artist,album:tags.album||'',
    display:artist?artist+' — '+title:title,
