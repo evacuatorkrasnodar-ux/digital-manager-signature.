@@ -365,7 +365,7 @@
    if(/^(?:поделись (?:этой )?(?:песней|музыкой)|поделиться (?:песней|музыкой))$/.test(q)){const opened=share();return {status:opened?'requested':'missing',message:opened?'Выберите, как поделиться песней.':'Сначала включите песню.'}}
    return null;
   }
-  w.SEYVEO_MUSIC_SMART=Object.freeze({handle,share,sleepSheet,karaoke,soundSheet});
+  w.SEYVEO_MUSIC_SMART=Object.freeze({handle,share,sleepSheet,karaoke,soundSheet,recognitionSheet});
  }
  return {embeddedLyrics,activeLine,sleepMinutes,install};
 });
