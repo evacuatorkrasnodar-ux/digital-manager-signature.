@@ -14,11 +14,11 @@ const float PI=3.14159265;
 vec2 bez(vec2 a,vec2 b,vec2 c,vec2 d,float t){float q=1.0-t;return q*q*q*a+3.0*q*q*t*b+3.0*q*t*t*c+t*t*t*d;}
 vec3 contour(float k,float u){
  vec2 l=vec2(-.864,.174),r=vec2(.920,-.151),m,c1,c2,c3,c4;float z;
- if(k<.5){m=vec2(-.04,-.794);c1=vec2(-1.09,-.09);c2=vec2(-.51,-.793);c3=vec2(.38,-.805);c4=vec2(.75,-.53);z=-.13;}
+ if(k<.5){m=vec2(-.04,-.794);c1=vec2(-1.04,-.10);c2=vec2(-.49,-.80);c3=vec2(.41,-.788);c4=vec2(.75,-.53);z=-.13;}
  else if(k<1.5){m=vec2(-.08,.055);c1=vec2(-.72,.026);c2=vec2(-.40,.11);c3=vec2(.32,-.010);c4=vec2(.72,-.29);z=.23;}
- else if(k<2.5){m=vec2(-.08,.245);c1=vec2(-.70,.086);c2=vec2(-.43,.34);c3=vec2(.32,.13);c4=vec2(.70,-.31);z=.38;}
- else if(k<3.5){m=vec2(.02,.475);c1=vec2(-.68,.37);c2=vec2(-.33,.43);c3=vec2(.49,.57);c4=vec2(.92,.24);z=-.09;}
- else {m=vec2(-.04,.785);c1=vec2(-.90,.40);c2=vec2(-.43,.79);c3=vec2(.37,.79);c4=vec2(.91,.40);z=-.22;}
+ else if(k<2.5){m=vec2(-.08,.255);c1=vec2(-.70,.086);c2=vec2(-.43,.32);c3=vec2(.27,.190);c4=vec2(.70,-.31);z=.38;}
+ else if(k<3.5){m=vec2(.13,.478);c1=vec2(-.55,.29);c2=vec2(-.25,.43);c3=vec2(.51,.526);c4=vec2(.96,.30);z=-.09;}
+ else {m=vec2(-.04,.785);c1=vec2(-.90,.40);c2=vec2(-.43,.79);c3=vec2(.35,.78);c4=vec2(.91,.40);z=-.22;}
  vec2 p=u<.5?bez(l,c1,c2,m,u*2.0):bez(m,c3,c4,r,u*2.0-1.0);
  return vec3(p,z*sin(PI*u));
 }
@@ -55,28 +55,28 @@ void main(){
   if(r>1.0)discard;
   float n=sqrt(max(0.0,1.0-r*r));
   float top=peak(a,-2.16,.47),bottom=peak(a,1.37,.47),right=peak(a,.60,.55),left=peak(a,2.85,.48);
-  float lip=.22+.78*top+.95*bottom+.68*right+.32*left;
+  float lip=.13+.87*top+.95*bottom+.68*right+.22*left;
   float edge=gauss(r-.994,.007),edgeSoft=gauss(r-.977,.018);
-  float reflected=gauss(r-(.925-.065*top),.026+.024*top)*top;
-  float base=gauss(r-(.940-.035*bottom),.035)*bottom;
+  float reflected=gauss(r-(.920-.076*top),.020+.032*top)*top;
+  float base=gauss(r-(.940-.055*bottom),.043)*bottom;
   float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left);
   float fres=pow(max(0.0,1.0-n),3.0);
   float light=clamp(1.25*reflected+1.12*edge*lip+.40*edgeSoft*lip+.83*base+.21*inner,0.0,1.0);
-  col=mix(vec3(.07,.53,.57),vec3(.91,1.0,.99),clamp(light*1.12,0.0,1.0));
-  alpha=clamp(.010+.16*fres+.90*light,0.0,.97);
+  col=mix(vec3(.025,.55,.65),vec3(.93,1.0,.99),smoothstep(.28,1.0,light));
+  alpha=clamp(.008+.10*fres+.96*light,0.0,.98);
  }else{
   float tip=pow(abs(x),6.0),turn=pow(v,5.0),fres=1.0-vLight;
   float focus=gauss(x+.20,.78),edge=pow(v,20.0),start=pow(1.0-v,20.0);
   col=mix(vec3(.10,.82,.83),vec3(.76,1.0,.98),clamp(.24*turn+.18*fres+.30*tip,0.0,1.0));
-  if(uKind<2.5)alpha=(.27+.19*v*v+.09*fres)*(1.0-.65*tip);
-  else if(uKind<3.5){alpha=(.42+.45*turn+.12*fres)*(1.0-.50*tip);col=mix(col,vec3(.80,1.0,.97),turn*.85);}
-  else if(uKind<4.5)alpha=(.12+.10*fres)*(1.0-.70*tip);
-  else alpha=(.15+.34*turn+.10*fres)*(1.0-.60*tip);
+  if(uKind<2.5)alpha=(.33+.23*v*v+.09*fres)*(1.0-.65*tip);
+  else if(uKind<3.5){alpha=(.56+.40*turn+.12*fres)*(1.0-.35*tip);col=mix(col,vec3(.80,1.0,.97),turn*.85);}
+  else if(uKind<4.5)alpha=(.10+.08*fres)*(1.0-.75*tip);
+  else alpha=(.12+.30*turn+.10*fres)*(1.0-.67*tip);
   if(uMode<.5){
    if(uKind<2.5)alpha=.009+.025*fres+.07*start*focus;
-   else if(uKind<3.5){alpha=.025+.57*edge+.17*start+.025*fres;col=mix(col,vec3(.80,1.0,.98),edge*.75);}
+   else if(uKind<3.5){alpha=.035+.79*edge+.32*start+.14*pow(v,5.0)+.025*fres;col=mix(vec3(.04,.77,.78),vec3(.91,1.0,.99),clamp(edge*.9+start*.38,0.0,1.0));}
    else if(uKind<4.5)alpha=.009+.019*fres+.065*edge*focus;
-   else {alpha=.015+.52*edge*gauss(x+.10,.60)+.14*start;col=mix(col,vec3(.64,1.0,.95),edge*.65);}
+   else {alpha=.012+.76*edge*gauss(x+.10,.60)+.24*pow(v,6.0)*focus+.12*start;col=mix(vec3(.02,.66,.72),vec3(.72,1.0,.96),edge*.85);}
   }else if(uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*8.0)*(1.0-smoothstep(.34,.50,d));}
 
  }
