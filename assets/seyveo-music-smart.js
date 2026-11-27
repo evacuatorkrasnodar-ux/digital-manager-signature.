@@ -124,13 +124,13 @@
   function show(label,kind){
    if(!dialog||!body)return false;
    if(kind!=='recognize')cancelRecognition();
-   ++generation;mode=kind;title.textContent=label;body.replaceChildren();
+   ++generation;mode=kind;dialog.dataset.musicSheet=kind;title.textContent=label;body.replaceChildren();
    if(!dialog.open){try{dialog.showModal()}catch{return false}}return true;
   }
   function message(t){const p=d.createElement('p');p.className='sv-smart-music-message';p.textContent=t;body.append(p);return p}
   function action(label,fn){const b=d.createElement('button');b.type='button';b.className='sv-smart-music-choice';b.textContent=label;b.addEventListener('click',fn);body.append(b);return b}
   $('svSmartMusicClose')?.addEventListener('click',close);
-  dialog?.addEventListener('close',()=>{++generation;mode=''});
+  dialog?.addEventListener('close',()=>{++generation;mode='';delete dialog.dataset.musicSheet});
   dialog?.addEventListener('click',e=>{if(e.target===dialog)close()});
   d.addEventListener('seyveo:music-view',e=>{if(e.detail?.view!=='player'&&dialog?.open)close()});
   let recognitionCancel=null,recognitionApproved=false;
@@ -223,16 +223,26 @@
   function share(){
    const data=shareData();if(!data){notify('Сначала включите песню или радио.');return false}
    if(!show('Поделиться музыкой','share'))return false;
-   message(data.text);
-   if(w.navigator.share)action('Отправить название',async()=>{try{await w.navigator.share(data);close()}catch(e){if(e.name!=='AbortError')message('Не удалось открыть системное меню.')}});
-   action('Копировать название',async()=>{try{await w.navigator.clipboard.writeText(data.text);close();notify('Название скопировано.')}catch{message('Не удалось скопировать. Выделите текст вручную.')}});
+   const glyph=path=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+path+'</svg>';
+   const row=d.createElement('div');row.className='sv-share-track';
+   const art=d.createElement('div');art.className='sv-share-art';art.setAttribute('aria-hidden','true');
+   const original=$('sayviMusicArtwork'),image=original&&!original.hidden?w.getComputedStyle(original).backgroundImage:'none';
+   if(image&&image!=='none'&&image.startsWith('url('))art.style.backgroundImage=image;
+   else art.innerHTML=glyph('<path d="M9 18V5l12-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.4"/><ellipse cx="18" cy="16" rx="3" ry="2.4"/>');
+   const meta=d.createElement('div');meta.className='sv-share-meta';
+   const track=d.createElement('strong');track.textContent=data.title;meta.append(track);
+   const artist=$('sayviMusicArtist')?.textContent?.trim();if(artist&&artist!=='Моя музыка'){const el=d.createElement('span');el.textContent=artist;meta.append(el)}
+   const brand=d.createElement('small');brand.textContent='SEYVEO Music';meta.append(brand);row.append(art,meta);body.append(row);
+   const choice=(label,path,fn)=>{const button=action(label,fn);const span=d.createElement('span');span.textContent=label;button.innerHTML=glyph(path);button.append(span);return button};
+   if(w.navigator.share)choice('Поделиться названием','<path d="M12 15V3m-4 4 4-4 4 4M7 10H5v11h14V10h-2"/>',async()=>{try{await w.navigator.share(data);close()}catch(e){if(e.name!=='AbortError')message('Не удалось открыть системное меню.')}});
+   choice('Копировать название','<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"/>',async()=>{try{await w.navigator.clipboard.writeText(data.text);close();notify('Название скопировано.')}catch{message('Не удалось скопировать. Выделите текст вручную.')}});
    const file=music()?.rhythmFile?.();let canShareFile=false;
    try{canShareFile=!!file&&!!w.navigator.share&&!!w.navigator.canShare?.({files:[file]})}catch{}
-   if(canShareFile)action('Отправить аудиофайл',async()=>{
+   if(canShareFile)choice('Отправить аудиофайл','<path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10l-7-7Zm0 0v7h7M12 16v-4l4-1v4"/><ellipse cx="10.5" cy="16.5" rx="1.5" ry="1.2"/><ellipse cx="14.5" cy="15.5" rx="1.5" ry="1.2"/>',async()=>{
     if(music()?.rhythmFile?.()!==file){message('Песня изменилась. Откройте меню заново.');return}
     try{await w.navigator.share({files:[file],title:data.title});close()}catch(e){if(e.name!=='AbortError')message('Не удалось отправить файл.')}
    });
-   message(canShareFile?'Отправляйте аудиофайл только если у вас есть право им делиться.':'Отправка файла не поддерживается на этом устройстве. Название можно скопировать.');
+   message(canShareFile?'Отправляйте только файлы, которыми имеете право делиться.':'Отправка файла не поддерживается на этом устройстве. Название можно скопировать.');
    return true;
   }
   function restoreVolume(){w.SEYVEO_ADAPTIVE_SOUND?.setFade(1);if(originalVolume!==null){try{audio.volume=originalVolume}catch{}originalVolume=null}}
