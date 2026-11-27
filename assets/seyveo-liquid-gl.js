@@ -48,13 +48,14 @@ vec3 matter(float x,float v){
 // Soft emissive strips follow the animated crease positions, not the glass.
 vec3 crease(float x,float v){
  float u=(x+1.0)*.5,t=uMusic.x,mid=uMusic.z,w=sin(PI*u);
- float k=uKind<8.5?2.0:4.0;
+ float k=uKind<8.5?2.0:uKind<9.5?4.0:1.0;
  vec3 p=contour(k,u);
  p.y+=w*(.010+.035*mid)*sin(u*5.5+t*.65);
  p.z+=w*.055*sin(t*.55+u*4.0)*(.30+mid);
  vec2 tangent=contour(k,min(1.0,u+.004)).xy-contour(k,max(0.0,u-.004)).xy;
  vec2 normal=normalize(vec2(-tangent.y,tangent.x)+vec2(.000001,0.0));
- p.xy+=normal*(v*2.0-1.0)*(.052+.016*w);
+ float width=uKind<8.5?.090:uKind<9.5?.095:.043;
+ p.xy+=normal*(v*2.0-1.0)*width*(.72+.28*w);
  return p;
 }
 void main(){
@@ -97,26 +98,28 @@ void main(){
   alpha=clamp(.008+.10*fres+.96*light,0.0,.98);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
-  float strength=uKind<8.5?(.25+.27*gauss(x-.85,.24)+.25*gauss(x+.87,.24)):.40*gauss(x+.10,.38);
-  float g=gauss(v-.5,.17),soft=gauss(v-.5,.30);
-  col=mix(vec3(.02,.81,.81),vec3(.63,1.0,.96),g*.55);
-  alpha=strength*(.54*g+.46*soft)*(.44+.56*w);
+  float tips=gauss(x+.91,.20)+gauss(x-.91,.20);
+  float strength=uKind<8.5?(.34+.36*tips):uKind<9.5?.60*gauss(x+.10,.36):(.08+.18*tips);
+  float g=gauss(v-.5,.085),soft=gauss(v-.5,.22);
+  col=mix(vec3(.02,.91,.88),vec3(.88,1.0,.98),g*.78);
+  float taper=smoothstep(0.0,.08,w);
+  alpha=strength*(.50*g+.50*soft)*taper;
  }else{
   float tip=pow(abs(x),6.0),turn=pow(v,5.0),fres=1.0-vLight;
   float focus=gauss(x+.20,.78),edge=pow(v,20.0),start=pow(1.0-v,20.0);
   float tipGlow=gauss(x+.91,.18)+gauss(x-.92,.18);
   float facing=clamp(vLight,0.0,1.0);
   float frontLight=.57+.43*gauss(x-.22,.82);
-  col=mix(vec3(.10,.82,.83),vec3(.76,1.0,.98),clamp(.24*turn+.18*fres+.30*tip,0.0,1.0));
-  if(uKind<2.5)alpha=(.30+.29*v*v+.18*fres)*frontLight*(1.0-.55*tip);
+  col=mix(vec3(.08,.88,.88),vec3(.84,1.0,.98),clamp(.24*turn+.22*fres+.30*tip,0.0,1.0));
+  if(uKind<2.5)alpha=(.34+.31*v*v+.18*fres)*frontLight*(1.0-.46*tip);
   else if(uKind<3.5){alpha=(.64+.40*turn+.16*fres)*(1.0-.14*tip);col=mix(col,vec3(.80,1.0,.97),turn*.85);}
-  else if(uKind<4.5)alpha=(.11+.10*fres+.07*facing*gauss(x-.28,.62))*(1.0-.70*tip);
+  else if(uKind<4.5)alpha=(.15+.12*fres+.09*facing*gauss(x-.28,.62))*(1.0-.60*tip);
   else alpha=(.10+.26*turn+.19*turn*gauss(x+.10,.42)+.12*fres)*(1.0-.60*tip);
   if(uMode<.5){
    if(uKind<2.5)alpha=.009+.025*fres+.09*start*focus+.09*pow(v,5.0)*tipGlow;
    else if(uKind<3.5){alpha=clamp(.035+.86*edge+.40*start+.30*pow(v,4.0)+.32*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
    else if(uKind<4.5)alpha=.009+.019*fres+.17*edge*gauss(x-.35,.66)+.16*pow(1.0-v,12.0)*(.55+.45*focus);
-   else {float low=gauss(x+.10,.34);alpha=clamp(.012+.95*edge*low+.43*pow(v,5.0)*low+.19*start*gauss(x-.25,.76),0.0,.98);col=mix(vec3(.02,.80,.79),vec3(.82,1.0,.97),edge*.88*low);}
+   else {float low=gauss(x+.10,.34);alpha=clamp(.012+.95*edge*low+.55*pow(v,4.0)*low+.23*start*gauss(x-.25,.76),0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),edge*.90*low);}
   }
   if(uKind>6.5&&uKind<7.5){
    float taper=sin(3.14159265*(x+1.0)*.5);
@@ -148,7 +151,7 @@ void main(){
   if(indices.length){index=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,index);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(indices),gl.STATIC_DRAW)}
   return {kind,mode,buffer,index,count:index?indices.length:values.length/4};
  }
- const glass=mesh(5,2,2,0),glowMid=mesh(8,96,10,0),glowBottom=mesh(9,96,10,0);
+ const glass=mesh(5,2,2,0),glowMid=mesh(8,96,12,0),glowBottom=mesh(9,96,12,0),glowSeam=mesh(10,96,8,0);
  const parts=[4,6,7,2,3].map(kind=>{
   const dims=kind===7?[52,20,78,28]:kind===2?[105,52,158,78]:kind===3?[112,30,170,44]:kind===4?[68,28,100,40]:[88,26,140,38];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
@@ -161,6 +164,6 @@ void main(){
   else gl.drawArrays(gl.POINTS,0,obj.count);
  }
  gl.disable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
- return {render(size,phase,bass,mid,air){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uSize,size);draw(glowBottom);draw(glowMid);for(const pair of parts){draw(pair[0]);draw(pair[1]);}draw(glass);return gl.isContextLost()?null:canvas}};
+ return {render(size,phase,bass,mid,air){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uSize,size);for(const pair of parts){draw(pair[0]);draw(pair[1]);}gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
 }};
 })();
