@@ -1199,6 +1199,8 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
     <h1 class="sv-music-heading"><span class="sv-music-brand">SEYVEO</span><span class="sv-music-brand-sub">MUSIC</span></h1>
     <p class="sv-music-technology">SOUND · <span class="sv-music-ai">ai</span> · TECHNOLOGY</p>
    </div>
+   <button class="sv-music-inner-back" type="button" data-music-view-action="home" aria-label="Назад к музыке"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
+   <div class="sv-music-inner-title"><span data-title-view="replay">Мой музыкальный мир</span><span data-title-view="history">Недавно слушали</span><span data-title-view="library">Медиатека</span><span data-title-view="new">Новинки</span><span data-title-view="radio">Радио</span></div>
    <button id="sayviMusicMinimize" class="sv-music-minimize" type="button" aria-label="Свернуть музыку и вернуться в предыдущий раздел; воспроизведение продолжится, если разрешит система" title="Свернуть плеер"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 9 7 7 7-7"/></svg></button>
   </header>
  <section id="svMusicHome" class="sv-music-browse-panel" hidden aria-labelledby="svMusicHomeTitle">
@@ -6756,13 +6758,34 @@ html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPa
  color:var(--sv-white-pearl-ink,#0B0B0D)!important;
  transform:none!important;
 }
-/* Keep the SEYVEO MUSIC lockup exclusively on the Listen home.
-   Inner pages retain their own content titles and the right-hand minimize control. */
+/* Music home keeps the brand; inner pages use the common glass title axis. */
+#sayviMusicPage .sv-music-inner-back,#sayviMusicPage .sv-music-inner-title,#sayviMusicPage .sv-music-inner-title > span{display:none!important}
 html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view]:not([data-music-view="home"]) > .sv-music-head{
- justify-content:flex-end!important;
+ display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px;gap:4px;
+ align-items:center!important;justify-content:initial!important;
 }
-html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view]:not([data-music-view="home"]) > .sv-music-head > .sv-music-lockup{
- display:none!important;
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view]:not([data-music-view="home"]) > .sv-music-head > .sv-music-lockup{display:none!important}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view]:not([data-music-view="home"]) .sv-music-inner-title{
+ display:block!important;grid-column:2;grid-row:1;text-align:center;min-width:0;
+ color:var(--text);font-size:clamp(13px,3.8vw,17px);font-weight:600;letter-spacing:-.025em;line-height:1.2;
+}
+#sayviMusicPage[data-music-view="replay"] [data-title-view="replay"],
+#sayviMusicPage[data-music-view="history"] [data-title-view="history"],
+#sayviMusicPage[data-music-view="library"] [data-title-view="library"],
+#sayviMusicPage[data-music-view="new"] [data-title-view="new"],
+#sayviMusicPage[data-music-view="radio"] [data-title-view="radio"]{display:block!important}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view]:not([data-music-view="home"]) #sayviMusicMinimize{grid-column:3;grid-row:1;justify-self:end}
+#sayviMusicPage:is([data-music-view="replay"],[data-music-view="history"]) .sv-music-inner-back{
+ display:grid!important;grid-column:1;grid-row:1;place-items:center;
+ width:44px;height:44px;padding:0;border:0;background:transparent;box-shadow:none;
+ color:var(--text);border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#sayviMusicPage .sv-music-inner-back svg{width:24px;height:24px;display:block}
+#sayviMusicPage :is(#svMusicReplay,#svMusicHistory) .sv-replay-back{display:none!important}
+/* Keep semantic panel headings for aria-labelledby, without duplicate display. */
+#sayviMusicPage :is(#svMusicReplayTitle,#svMusicHistoryTitle,#svMusicLibraryTitle,#svMusicRadioTitle){
+ position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+ overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;
 }
 html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome{
  margin:12px auto 0!important;flex:0 0 auto!important;
