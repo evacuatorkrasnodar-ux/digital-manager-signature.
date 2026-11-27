@@ -176,7 +176,8 @@
  let liquidGPU=null,liquidGPUAttempted=false;
  try{liquidContext=liquidCanvas?.getContext('2d',{alpha:true})||null}catch{}
  let liquidMode=true,liquidLast=0,liquidSize=0,liquidGradient=null,liquidPhase=0,liquidClock=-1;
- let liquidQuality=1,liquidSlowFrames=0;
+ let liquidQuality=1,liquidSlowFrames=0,liquidAmbientLast=0;
+ function liquidInterval(){return liquidQuality<.85?50:liquidMobile?40:32}
  const liquidEnergy=new Float32Array(3);
  try{liquidMode=localStorage.getItem('seyveo.music.visualizer')!=='classic'}catch{}
  const TAU=Math.PI*2;
@@ -186,13 +187,13 @@
  function liquidVisible(){return !!liquidContext&&liquidMode&&!!audio&&!document.hidden&&location.hash==='#sayvi-music'&&musicPage?.dataset.musicView==='player'&&!musicPage.hidden&&visibleScenes.get(playerScene)!==false&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork')}
  function releaseLiquid(){
   if(liquidGPU){try{liquidGPU.dispose?.()}catch{}liquidGPU=null}
-  liquidGPUAttempted=false;liquidLast=0;liquidClock=-1;liquidSlowFrames=0;
+  liquidGPUAttempted=false;liquidLast=0;liquidClock=-1;liquidSlowFrames=0;liquidAmbientLast=0;
   if(liquidSize){liquidCanvas.width=liquidCanvas.height=1;liquidSize=0;liquidGradient=null}
   liquidEnergy.fill(0);
  }
  function paintLiquid(timestamp,bass=0,mid=0,air=0,force=false){
   if(!liquidVisible()||document.hidden)return;
-  const interval=liquidQuality<.85?50:liquidMobile?40:32;
+  const interval=liquidInterval();
   if(!force&&timestamp-liquidLast<interval-1)return;
   const dt=liquidLast?clamp(timestamp-liquidLast,1,100):33;
   if(!force&&liquidLast){
@@ -202,8 +203,8 @@
   liquidLast=timestamp;
   const cssSize=liquidCanvas.clientWidth;
   if(!cssSize)return;
-  const pixelRatio=liquidMobile?Math.min(window.devicePixelRatio||1,1.8):Math.max(1.75,Math.min(window.devicePixelRatio||1,2));
-  const pixels=Math.max(160,Math.min(Math.round((liquidMobile?620:850)*liquidQuality),Math.round(cssSize*pixelRatio*liquidQuality)));
+  const pixelRatio=liquidMobile?Math.min(window.devicePixelRatio||1,1.5):Math.max(1.75,Math.min(window.devicePixelRatio||1,2));
+  const pixels=Math.max(160,Math.min(Math.round((liquidMobile?540:850)*liquidQuality),Math.round(cssSize*pixelRatio*liquidQuality)));
   if(liquidSize!==pixels){liquidCanvas.width=liquidCanvas.height=pixels;liquidSize=pixels;liquidGradient=null}
   const playing=!audio.paused&&!audio.ended&&!reduce?.matches;
   if(playing){
@@ -211,7 +212,7 @@
    const elapsed=liquidClock<0?0:clamp(t-liquidClock,0,.12);
    liquidClock=t;
    liquidPhase+=elapsed*(1.10+liquidEnergy[0]*.65);
-   for(let i=0;i<3;i++){const v=[bass,mid,air][i];liquidEnergy[i]+=(v-liquidEnergy[i])*(1-Math.exp(-dt/(v>liquidEnergy[i]?110:260)))}
+   for(let i=0;i<3;i++){const v=i===0?bass:i===1?mid:air;liquidEnergy[i]+=(v-liquidEnergy[i])*(1-Math.exp(-dt/(v>liquidEnergy[i]?110:260)))}
   }else liquidClock=-1;
   const ctx=liquidContext,b=liquidEnergy[0],m=liquidEnergy[1],h=liquidEnergy[2],p=liquidPhase;
   ctx.setTransform(pixels/400,0,0,pixels/400,0,0);
@@ -525,6 +526,9 @@
   const data=rhythmCache.get(sceneFile);
   if(!data?.length){resetSceneWave();return}
   const full=scene===playerScene;
+  const liquidActive=full&&liquidMode&&liquidVisible();
+  // Avoid sampling and DOM updates between actual Liquid Sound frames.
+  if(liquidActive&&timestamp-liquidLast<liquidInterval()-1){sceneFrame=requestAnimationFrame(tickScene);return}
   if(timestamp-sceneLast>=(full?0:50)){
    const dt=sceneLast?clamp(timestamp-sceneLast,1,80):16.7;
    sceneLast=timestamp;
@@ -533,7 +537,16 @@
    const following=Math.min(frame+3,data.length-3),fraction=position-Math.floor(position);
    const band=i=>full?data[frame+i]+(data[following+i]-data[frame+i])*fraction:data[frame+i];
    const bass=band(0),mid=band(1),air=band(2);
-   if(full&&liquidMode)paintLiquid(timestamp,bass,mid,air);
+   if(liquidActive){
+    paintLiquid(timestamp,bass,mid,air);
+    // The classic SVG bars are hidden and the orbits are static in Liquid mode.
+    // Only the subtle background glow still needs a slow update.
+    if(!liquidAmbientLast||timestamp-liquidAmbientLast>=125){
+     liquidAmbientLast=timestamp;
+     musicPage?.style.setProperty('--sv-now-glow',(.15+.24*(bass*.55+mid*.30+air*.15)).toFixed(3));
+    }
+    sceneFrame=requestAnimationFrame(tickScene);return;
+   }
    const targets=[air*.65+mid*.15,mid*.72+air*.16,bass*.48+mid*.42,bass*.92,mid*.67+bass*.24,air*.66+mid*.16,mid*.47+air*.36,air*.59];
    for(let i=0;i<sceneBars.length;i++){
     const target=full?clamp(.06+.94*targets[i],0,1):.12+.88*targets[i];
