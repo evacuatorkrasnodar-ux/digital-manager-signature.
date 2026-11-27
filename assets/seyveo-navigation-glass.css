@@ -1283,3 +1283,46 @@ html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="tr
   -webkit-mask-image:var(--sv-header-glass-mask)!important;mask-image:var(--sv-header-glass-mask)!important;
  }
 }
+
+/* Notebook / Documents continuity: one optical rectangle, one header axis.
+   Both pages are siblings in .app. Use the same available canvas rather
+   than the legacy route-specific inner width or its scrollbar. */
+html:root body .app:has(> #svWorkShell[data-shared-work="true"][data-active="notes"]),
+html:root body .app:has(> #sayviSurfacePage[data-sv-subject="contract"]:not([hidden])){
+ padding-inline:0!important;
+}
+html:root body #svWorkShell#svWorkShell[data-shared-work="true"][data-active="notes"],
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]):not([hidden]){
+ box-sizing:border-box!important;width:100%!important;max-width:100%!important;
+ min-width:0!important;margin-inline:auto!important;align-self:center!important;
+}
+html:root body #svWorkShell#svWorkShell[data-shared-work="true"][data-active="notes"] > seyveo-work-head[data-work-tabs="true"],
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > .sv-deep-top{
+ box-sizing:border-box!important;flex:0 0 var(--sv-header-work-tabs-row,74px)!important;
+ height:var(--sv-header-work-tabs-row,74px)!important;min-height:var(--sv-header-work-tabs-row,74px)!important;
+ max-height:var(--sv-header-work-tabs-row,74px)!important;margin:0!important;
+}
+html:root body #svWorkShell#svWorkShell[data-shared-work="true"][data-active="notes"] > #svWorkTabs#svWorkTabs:not([hidden]),
+html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope#svDocArchiveScope > .sv-doc-switch{
+ box-sizing:border-box!important;width:min(404px,calc(100% - 24px))!important;max-width:404px!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;
+ grid-template-rows:30px!important;grid-auto-rows:30px!important;
+ margin-inline:auto!important;margin-top:4px!important;padding:3px!important;gap:3px!important;
+ transform:none!important;translate:none!important;transition:none!important;
+}
+@media(max-width:720px),(orientation:landscape) and (max-height:540px){
+ html:root body #svWorkShell#svWorkShell[data-shared-work="true"][data-active="notes"] > #svWorkTabs#svWorkTabs:not([hidden]),
+ html:root body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope#svDocArchiveScope > .sv-doc-switch{margin-top:2px!important}
+}
+html:root[data-theme="light"] body #svWorkShell#svWorkShell[data-shared-work="true"][data-active="notes"] > #svWorkTabs#svWorkTabs:not([hidden]),
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope#svDocArchiveScope > .sv-doc-switch{
+ border:var(--sv-white-pearl-edge)!important;background:var(--sv-segment-track)!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope#svDocArchiveScope > .sv-doc-switch > .sv-doc-tab{
+ position:relative!important;top:auto!important;inset:auto!important;margin:0!important;
+ font:530 12.5px/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ transform:none!important;transition:none!important;
+}
+html:root[data-theme="light"] body #sayviSurfacePage#sayviSurfacePage[data-sv-subject="contract"]:is([data-sv-doc-view="archive"],[data-sv-doc-view="flow"]) > #svDocArchiveScope#svDocArchiveScope > .sv-doc-switch > .sv-doc-tab[aria-pressed="true"]{
+ font-weight:640!important;
+}
