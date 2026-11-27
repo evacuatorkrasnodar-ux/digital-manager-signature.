@@ -192,16 +192,22 @@
   if(!sceneAllowed()||reduce?.matches||window.SEYVEO_MUSIC?.rhythmFile?.()!==sceneFile){syncScene();return}
   const data=rhythmCache.get(sceneFile);
   if(!data?.length){resetSceneWave();return}
-  if(timestamp-sceneLast>=50){
+  const full=scene===playerScene;
+  if(timestamp-sceneLast>=(full?0:50)){
+   const dt=sceneLast?clamp(timestamp-sceneLast,1,80):16.7;
    sceneLast=timestamp;
-   const frame=clamp(Math.floor(audio.currentTime/RHYTHM_STEP),0,data.length/3-1)*3;
-   const bass=data[frame],mid=data[frame+1],air=data[frame+2];
+   const position=clamp(audio.currentTime/RHYTHM_STEP,0,data.length/3-1);
+   const frame=Math.floor(position)*3;
+   const following=Math.min(frame+3,data.length-3),fraction=position-Math.floor(position);
+   const band=i=>full?data[frame+i]+(data[following+i]-data[frame+i])*fraction:data[frame+i];
+   const bass=band(0),mid=band(1),air=band(2);
    const targets=[air*.65+mid*.15,mid*.72+air*.16,bass*.48+mid*.42,bass*.92,mid*.67+bass*.24,air*.66+mid*.16,mid*.47+air*.36,air*.59];
    for(let i=0;i<sceneBars.length;i++){
-    const target=.12+.88*targets[i];
-    sceneLevels[i]+=(target-sceneLevels[i])*(target>sceneLevels[i]?.69:.31);
+    const target=full?clamp(.06+.94*targets[i],0,1):.12+.88*targets[i];
+    const smooth=full?1-Math.exp(-dt/(target>sceneLevels[i]?95:180)):(target>sceneLevels[i]?.69:.31);
+    sceneLevels[i]+=(target-sceneLevels[i])*smooth;
     const rest=Number(sceneBars[i].dataset.rest)||8;
-    const height=scene===playerScene?Math.min(43,rest*(.46+.34*sceneLevels[i])+5*sceneLevels[i]):5+51*sceneLevels[i];
+    const height=full?Math.min(53,5+rest*.23+(17+rest*.48)*sceneLevels[i]):5+51*sceneLevels[i];
     sceneBars[i].setAttribute('y1',(74-height/2).toFixed(2));
     sceneBars[i].setAttribute('y2',(74+height/2).toFixed(2));
    }
@@ -210,11 +216,11 @@
    scene.style.setProperty('--sv-scene-glow',glow);
    if(scene===playerScene)musicPage?.style.setProperty('--sv-now-glow',glow);
    // Slow breathing plus a small, smoothed bass response. No abrupt shaking.
-   ringEnergy+=(bass-ringEnergy)*(bass>ringEnergy?.32:.14);
+   ringEnergy+=(bass-ringEnergy)*(full?1-Math.exp(-dt/(bass>ringEnergy?160:350)):(bass>ringEnergy?.32:.14));
    const breath=(1+Math.sin(audio.currentTime*Math.PI/4))/2;
-   scene.style.setProperty('--sv-ring-scale',(scene===playerScene?1+.008*breath+.012*ringEnergy:1+.018*breath+.030*ringEnergy).toFixed(4));
+   scene.style.setProperty('--sv-ring-scale',(full?1+.012*breath+.035*ringEnergy:1+.018*breath+.030*ringEnergy).toFixed(4));
    scene.style.setProperty('--sv-ring-angle',(.65*Math.sin(audio.currentTime*Math.PI/5)+.28*ringEnergy).toFixed(3)+'deg');
-   scene.style.setProperty('--sv-ring-opacity',(scene===playerScene?.46+.07*breath+.06*ringEnergy:.83+.10*breath+.07*ringEnergy).toFixed(3));
+   scene.style.setProperty('--sv-ring-opacity',(full?.76+.10*breath+.12*ringEnergy:.83+.10*breath+.07*ringEnergy).toFixed(3));
   }
   sceneFrame=requestAnimationFrame(tickScene);
  }
