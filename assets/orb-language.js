@@ -290,14 +290,47 @@
    const far=rows[count-1];
    for(let i=far.length-1;i>=0;i--){const [x,y]=far[i];if(i===far.length-1)ctx.moveTo(x,y);else ctx.lineTo(x,y)}
    ctx.closePath();
-   ctx.fillStyle=veil;ctx.globalAlpha=kind===0?.19:.14;ctx.fill('evenodd');
+   ctx.fillStyle=veil;ctx.globalAlpha=kind===0?.12:.10;ctx.fill('evenodd');
+   // Angular material lighting: the illuminated lip changes from the inner
+   // side at upper left to the outer side at lower right. This makes the
+   // ribbon read as a turning surface, not a uniformly lit tube.
+   const lightBands=[];
+   if(typeof ctx.createConicGradient==='function'){
+    for(let k=0;k<=10;k++){
+     const u=k/10;
+     const gradient=ctx.createConicGradient(rot,200,200);
+     for(let q=0;q<=32;q++){
+      const a=q/32*Math.PI*2;
+      const upper=peak(a+drift,-2.16,.60);
+      const right=peak(a+drift,.60,.69);
+      const bottom=peak(a+drift,1.52,.46);
+      const left=peak(a+drift,2.72,.33);
+      const shoulderLight=peak(a+drift,-.83,.24);
+      const innerTop=peak(a+drift,-1.80,.65);
+      const innerBottom=peak(a+drift,1.49,.46);
+      const lip=kind===0?clamp(.86-.68*right-.35*bottom,.12,.92):.12+.67*innerBottom;
+      const rim=Math.exp(-Math.pow((u-lip)/.21,2));
+      const body=Math.exp(-Math.pow((u-.50)/.36,2));
+      const light=kind===0?clamp(.05+.92*upper+.91*right+.40*bottom+.22*left+.21*shoulderLight,0,1):clamp(.09+.79*innerTop+.69*innerBottom,0,1);
+      const opacity=clamp(.018+light*(.63*rim+.17*body),0,.86);
+      const white=clamp(rim*.75*light,0,1);
+      gradient.addColorStop(q/32,'rgba('+Math.round(92+126*white)+','+Math.round(230+25*white)+','+Math.round(211+36*white)+','+opacity.toFixed(3)+')');
+     }
+     lightBands.push(gradient);
+    }
+   }
    for(let j=0;j<count;j++){
     const u=j/(count-1),edgeU=kind===0?.89:.08;
     const lip=Math.exp(-Math.pow((u-edgeU)/.23,2));
     const body=Math.exp(-Math.pow((u-(kind===0?.57:.42))/.31,2));
-    path(rows[j]);ctx.strokeStyle=fiber;
-    ctx.globalAlpha=.021+.54*lip+.10*body;
-    ctx.lineWidth=.25+.16*lip+.06*body;ctx.stroke();
+    path(rows[j]);
+    if(lightBands.length){
+     ctx.strokeStyle=lightBands[Math.round(u*10)];ctx.globalAlpha=.91;
+     ctx.lineWidth=.25+.10*body;ctx.stroke();
+    }else{
+     ctx.strokeStyle=fiber;ctx.globalAlpha=.021+.54*lip+.10*body;
+     ctx.lineWidth=.25+.16*lip+.06*body;ctx.stroke();
+    }
    }
    // A local curled crest, independent of the closed ring. The fine strands
    // turn back across the shoulder, then merge smoothly into the main lip.
@@ -321,23 +354,23 @@
        return point(g,0,1-(.34+.52*v)*turn);
       });
       path(pts,false);ctx.strokeStyle=sheen;
-      ctx.globalAlpha=.10+.46*Math.pow(v,5);ctx.lineWidth=.23+.38*Math.pow(v,6);ctx.stroke();
+      ctx.globalAlpha=.13+.63*Math.pow(v,4);ctx.lineWidth=.24+.50*Math.pow(v,5);ctx.stroke();
      }
     }
    }
    ctx.globalAlpha=1;
    const edge=rows[kind===0?count-1:0];
    const spec=ctx.createLinearGradient(64,39,337,360);
-   spec.addColorStop(0,'rgba(164,255,232,.68)');
+   spec.addColorStop(0,kind===0?'rgba(164,255,232,.35)':'rgba(229,255,249,.95)');
    spec.addColorStop(.20,'rgba(229,255,249,1)');
    spec.addColorStop(.44,kind===0?'rgba(100,219,206,.30)':'rgba(220,255,247,.88)');
-   spec.addColorStop(.69,'rgba(241,255,252,1)');
-   spec.addColorStop(.88,'rgba(182,255,237,.94)');
+   spec.addColorStop(.69,kind===0?'rgba(156,247,229,.55)':'rgba(241,255,252,1)');
+   spec.addColorStop(.88,kind===0?'rgba(182,255,237,.48)':'rgba(224,255,247,.94)');
    spec.addColorStop(1,kind===0?'rgba(105,235,213,.28)':'rgba(225,255,247,.91)');
    path(edge);ctx.strokeStyle=spec;ctx.globalAlpha=.13;ctx.lineWidth=2.5;ctx.stroke();
    ctx.globalAlpha=.30;ctx.lineWidth=1.6;ctx.stroke();
    ctx.globalAlpha=1;ctx.lineWidth=kind===0?.92:1.04;ctx.stroke();
-   path(rows[kind===0?0:count-1]);ctx.strokeStyle='rgba(151,240,225,.19)';ctx.lineWidth=.32;ctx.stroke();
+   path(rows[kind===0?0:count-1]);ctx.strokeStyle=kind===0&&lightBands.length?lightBands[0]:'rgba(151,240,225,.19)';ctx.lineWidth=kind===0?.65:.32;ctx.stroke();
   }
   // Silk membrane: a broad fine mesh tapers into two points and folds back
   // on itself near the diagonal crest. The interior is no longer a flat S line.
@@ -398,12 +431,12 @@
    const width=R*(.36+.035*m)*env*(.80+.20*Math.cos(Math.PI*(x+.26)+t*.5));
    foldEdge.push([px,py+width]);
   }
-  path(foldEdge,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.23;ctx.lineWidth=.46;ctx.stroke();
+  path(foldEdge,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.33;ctx.lineWidth=.42;ctx.stroke();
   ctx.globalAlpha=1;
   for(const side of [-1,1]){
    const [px,py]=membrane(side*.97,1);
    const glint=ctx.createRadialGradient(px,py,0,px,py,8);
-   glint.addColorStop(0,'rgba(167,255,237,.24)');
+   glint.addColorStop(0,'rgba(183,255,240,.38)');
    glint.addColorStop(.36,'rgba(108,235,217,.10)');
    glint.addColorStop(1,'rgba(108,235,217,0)');
    ctx.fillStyle=glint;ctx.fillRect(px-8,py-8,16,16);
