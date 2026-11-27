@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V75 · audio-driven living silk · WebGL 1. */
+/* SEYVEO Liquid Sound V76 · audio-driven living silk, softened ground glow · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -145,7 +145,7 @@ void main(){
   vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
   if(r>1.0){
    float glow=gauss(r-1.0,.045)*(.025+.38*peak(a,-2.16,.44)+.35*peak(a,1.30,.58));
-   float floorGlow=gauss(xy.x,.43)*gauss(xy.y-1.041,.034)*.42+gauss(xy.x,.21)*gauss(xy.y-1.033,.013)*.40;
+   float floorGlow=gauss(xy.x,.43)*gauss(xy.y-1.041,.038)*.27+gauss(xy.x,.21)*gauss(xy.y-1.033,.017)*.24;
    glow=clamp(glow+floorGlow,0.0,.75);
    gl_FragColor=vec4(.10,.86,.88,glow);return;
   }
