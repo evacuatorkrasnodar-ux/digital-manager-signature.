@@ -150,7 +150,7 @@ void main(){
   vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
   if(r>1.0){
    float glow=gauss(r-1.0,.048)*(.022+.32*peak(a,-2.16,.44)+.29*peak(a,1.30,.58));
-   float floorGlow=gauss(xy.x,.54)*gauss(xy.y-1.052,.049)*.23+gauss(xy.x,.23)*gauss(xy.y-1.043,.023)*.19;
+   float floorGlow=gauss(xy.x,.54)*gauss(xy.y-1.052,.049)*.32+gauss(xy.x,.23)*gauss(xy.y-1.043,.023)*.29;
    glow=clamp(glow+floorGlow,0.0,.75);
    gl_FragColor=vec4(.10,.86,.88,glow);return;
   }
@@ -161,7 +161,7 @@ void main(){
   float reflected=gauss(r-(.957-.071*top),.014+.039*top)*pow(top,1.65);
   // Broad curved softbox reflection: a distinct inner edge with a translucent tail.
   float innerArc=.949-.205*top;
-  float crescent=smoothstep(innerArc-.009,innerArc+.009,r)*(1.0-smoothstep(.925,.975,r))*pow(top,1.28);
+  float crescent=smoothstep(innerArc-.004,innerArc+.004,r)*(1.0-smoothstep(.925,.975,r))*pow(top,1.15);
   float shoulder=peak(a,-1.05,.60)*gauss(r-.91,.045);
   float base=gauss(r-(.961-.043*bottom),.058)*bottom;
   float lowerLens=gauss(r-(.911-.022*bottom),.065)*peak(a,1.14,.80);
@@ -169,12 +169,14 @@ void main(){
   float fres=pow(max(0.0,1.0-n),3.0);
   // Subtle optical separation: neutral specular light and a quiet inner lens edge.
   // Same analytic glass pass; no changes to cloth, geometry or animation.
-  float light=clamp(.41*reflected+1.32*edge*lip+.32*edgeSoft*lip+.36*base+.10*inner+.52*crescent+.25*lowerLens+.18*shoulder,0.0,1.0);
+  float light=clamp(.43*reflected+1.32*edge*lip+.32*edgeSoft*lip+.43*base+.10*inner+.59*crescent+.31*lowerLens+.18*shoulder,0.0,1.0);
   float blueDepth=gauss(r-.91,.085)*(.55+.45*peak(a,-.75,.9));
   float softReflection=gauss(r-.82,.028)*peak(a,-1.03,.47);
   float lensShade=gauss(r-.914,.033)*(1.0-.82*top)*(.65+.35*right);
   col=mix(vec3(.015,.39,.62),vec3(.05,.87,.94),clamp(light*1.65+.15*blueDepth,0.0,1.0));
   col=mix(col,vec3(.95,1.0,.99),smoothstep(.51,.98,light));
+  // Cyan transmitted light concentrated in the lower lens, not the whole rim.
+  col=mix(col,vec3(.09,.94,.88),.18*lowerLens);
   alpha=clamp(.006+.085*fres+.88*light+.14*blueDepth,0.0,.98);
   // Composite a faint dark inner edge and a neutral reflection in the existing pass.
   float shade=.105*lensShade*(1.0-alpha);
