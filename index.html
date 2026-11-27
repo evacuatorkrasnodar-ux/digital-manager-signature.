@@ -1181,11 +1181,23 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   </header>
  <section id="svMusicHome" class="sv-music-browse-panel" hidden aria-labelledby="svMusicHomeTitle">
   <h2 id="svMusicHomeTitle" class="sv-music-page-title">Слушать</h2>
-  <h3 class="sv-music-section-title">Для вас</h3>
-  <p class="sv-music-browse-caption">Музыка на каждый день</p>
-  <div class="sv-music-feature-scroll">
-   <button type="button" class="sv-music-feature sv-music-feature-jade" data-music-view-action="library"><span class="sv-music-feature-brand">SEYVEO MUSIC</span><span class="sv-music-feature-art"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l11-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.2"/><ellipse cx="17" cy="16" rx="3" ry="2.2"/></svg></span><span class="sv-music-feature-caption"><strong>Моя музыка</strong><small>Ваша коллекция</small></span></button>
-   <button type="button" class="sv-music-feature sv-music-feature-blue" data-music-view-action="radio"><span class="sv-music-feature-brand">SEYVEO RADIO</span><span class="sv-music-feature-art"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M8.2 8.2a5.4 5.4 0 0 0 0 7.6m7.6-7.6a5.4 5.4 0 0 1 0 7.6M5.2 5.2a9.6 9.6 0 0 0 0 13.6m13.6-13.6a9.6 9.6 0 0 1 0 13.6"/></svg></span><span class="sv-music-feature-caption"><strong>Радио</strong><small>Станции мира</small></span></button>
+  <div class="sv-music-scene">
+   <svg class="sv-music-scene-art" viewBox="0 0 360 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+    <defs>
+     <linearGradient id="svMusicSceneWave" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#D1EEE1" stop-opacity=".85"/><stop offset=".58" stop-color="#87B9BF" stop-opacity=".45"/><stop offset="1" stop-color="#C3B4D9" stop-opacity=".07"/></linearGradient>
+     <radialGradient id="svMusicSceneAura"><stop stop-color="#A7DCD1" stop-opacity=".28"/><stop offset="1" stop-color="#A7DCD1" stop-opacity="0"/></radialGradient>
+    </defs>
+    <circle cx="298" cy="73" r="115" fill="url(#svMusicSceneAura)"/>
+    <g fill="none" stroke="url(#svMusicSceneWave)" stroke-width=".8" opacity=".8">
+     <ellipse cx="288" cy="74" rx="33" ry="55" transform="rotate(-35 288 74)"/><ellipse cx="288" cy="74" rx="41" ry="63" transform="rotate(-35 288 74)"/><ellipse cx="288" cy="74" rx="49" ry="71" transform="rotate(-35 288 74)"/><ellipse cx="288" cy="74" rx="57" ry="79" transform="rotate(-35 288 74)"/><ellipse cx="288" cy="74" rx="65" ry="87" transform="rotate(-35 288 74)"/><ellipse cx="288" cy="74" rx="73" ry="95" transform="rotate(-35 288 74)"/><ellipse cx="288" cy="74" rx="81" ry="103" transform="rotate(-35 288 74)"/><ellipse cx="288" cy="74" rx="89" ry="111" transform="rotate(-35 288 74)"/><ellipse cx="288" cy="74" rx="97" ry="119" transform="rotate(-35 288 74)"/>
+    </g>
+    <g stroke="#E4F6F1" stroke-width="1.5" stroke-linecap="round" opacity=".92"><path d="M259 69v10m8-16v22m8-29v36m8-46v56m8-43v30m8-22v14m8-18v22m8-15v8"/></g>
+   </svg>
+   <div class="sv-music-scene-copy"><span>SEYVEO SOUND</span><strong>В вашем ритме</strong><small>Музыка, которая рядом</small></div>
+   <div class="sv-music-scene-actions">
+    <button type="button" data-music-view-action="library"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.2"/><ellipse cx="17" cy="16" rx="3" ry="2.2"/></svg><span><strong>Моя музыка</strong><small>Ваша коллекция</small></span><i aria-hidden="true">›</i></button>
+    <button type="button" data-music-view-action="radio"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M8.2 8.2a5.4 5.4 0 0 0 0 7.6m7.6-7.6a5.4 5.4 0 0 1 0 7.6M5.2 5.2a9.6 9.6 0 0 0 0 13.6m13.6-13.6a9.6 9.6 0 0 1 0 13.6"/></svg><span><strong>Радио</strong><small>Станции мира</small></span><i aria-hidden="true">›</i></button>
+   </div>
   </div>
   <div class="sv-music-personal-grid">
    <button type="button" class="sv-music-personal-card sv-music-personal-discovery" data-music-view-action="new">
@@ -6706,29 +6718,59 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome .sv-
 #sayviMusicPage #svMusicHome .sv-music-section-heading button{font-size:23px!important}
 #sayviMusicPage #svMusicHome .sv-music-recent{gap:4px!important;padding:0!important;margin:0!important}
 #sayviMusicPage #svMusicHome .sv-music-recent-empty{grid-column:1/-1;margin:0!important;padding:2px 0 5px!important;font-size:13px!important;line-height:1.45!important}
-/* Two quiet personal shortcuts, visible before the listening history. */
+/* SEYVEO Sound: one editorial canvas, with two real navigation targets. */
+#sayviMusicPage #svMusicHome .sv-music-scene{
+ position:relative;isolation:isolate;overflow:hidden;box-sizing:border-box;
+ display:flex;flex-direction:column;justify-content:space-between;
+ min-height:176px;padding:17px 13px 12px;border-radius:22px;
+ background:radial-gradient(ellipse at 82% 0%,rgba(143,191,185,.36),transparent 58%),linear-gradient(125deg,#183F3E 0%,#28565C 53%,#263849 100%);
+ color:#F3FAFA;
+}
+#sayviMusicPage #svMusicHome .sv-music-scene-art{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+#sayviMusicPage #svMusicHome .sv-music-scene-copy{display:grid;gap:4px;padding:0 3px 14px;max-width:71%;position:relative}
+#sayviMusicPage #svMusicHome .sv-music-scene-copy > span{font-size:9px;font-weight:650;letter-spacing:.13em;color:#C4E1DC}
+#sayviMusicPage #svMusicHome .sv-music-scene-copy > strong{font-size:clamp(23px,6.6vw,32px);font-weight:620;letter-spacing:-.045em;line-height:1.04}
+#sayviMusicPage #svMusicHome .sv-music-scene-copy > small{font-size:12px;line-height:1.3;color:#D0E4E3}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;position:relative}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions > button{
+ appearance:none;-webkit-appearance:none;display:flex;align-items:center;gap:8px;
+ min-width:0;min-height:55px;box-sizing:border-box;padding:8px 9px;
+ border:1px solid rgba(236,255,255,.19);border-radius:14px;
+ background:rgba(222,246,247,.095);color:#F3FAFA;text-align:left;box-shadow:none;
+}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions > button > svg{width:24px;height:24px;flex:0 0 24px;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions > button > span{min-width:0;display:grid;gap:3px}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions > button strong{font-size:13px;font-weight:620;line-height:1.12;letter-spacing:-.025em}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions > button small{font-size:10px;line-height:1.15;color:#CDE0E2}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions > button i{font-style:normal;font-size:19px;line-height:1;margin-left:auto;opacity:.8}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions > button:active{background:rgba(222,246,247,.18);transform:none}
+#sayviMusicPage #svMusicHome .sv-music-scene-actions > button:focus-visible{outline:2px solid #E1F7F1!important;outline-offset:-3px!important}
+
+/* Personal shortcuts read as one small journal, not another stack of tiles. */
 #sayviMusicPage #svMusicHome .sv-music-personal-grid{
- display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0 0;
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:11px 0 0;
+ border-radius:17px;overflow:hidden;
+ background:linear-gradient(110deg,rgba(142,127,185,.12),rgba(145,171,210,.10) 65%,rgba(155,191,188,.08));
 }
 #sayviMusicPage #svMusicHome .sv-music-personal-card{
  appearance:none;-webkit-appearance:none;display:flex;flex-direction:column;justify-content:center;align-items:stretch;
- gap:6px;min-width:0;min-height:76px;padding:10px 12px;box-sizing:border-box;
- border:0;border-radius:17px;box-shadow:none;text-align:left;color:var(--text);background:var(--sv-music-glass-control);
+ gap:5px;min-width:0;min-height:72px;padding:10px 12px;box-sizing:border-box;
+ border:0;border-radius:0;box-shadow:none;text-align:left;color:var(--text);background:transparent;
 }
-#sayviMusicPage #svMusicHome .sv-music-personal-discovery{
- background:linear-gradient(125deg,rgba(131,117,185,.19),rgba(189,165,216,.10),rgba(207,187,190,.07));--sv-personal-accent:#77689E;
-}
-#sayviMusicPage #svMusicHome .sv-music-personal-replay{
- background:linear-gradient(125deg,rgba(110,153,209,.16),rgba(171,183,224,.09),rgba(167,197,195,.06));--sv-personal-accent:#5275A9;
-}
+#sayviMusicPage #svMusicHome .sv-music-personal-discovery{--sv-personal-accent:#77689E}
+#sayviMusicPage #svMusicHome .sv-music-personal-replay{--sv-personal-accent:#5275A9;border-left:1px solid rgba(116,128,153,.13)}
 #sayviMusicPage #svMusicHome .sv-music-personal-meta{display:flex;align-items:center;gap:6px;min-width:0}
 #sayviMusicPage #svMusicHome .sv-music-personal-meta svg{width:20px;height:20px;flex:0 0 20px;fill:none;stroke:var(--sv-personal-accent);stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
 #sayviMusicPage #svMusicHome .sv-music-personal-meta small{font-size:11px;line-height:1.15;color:var(--secondary);min-width:0;overflow-wrap:anywhere}
 #sayviMusicPage #svMusicHome .sv-music-personal-chevron{margin-left:auto;color:var(--secondary);font-size:19px;line-height:1;flex:none}
 #sayviMusicPage #svMusicHome .sv-music-personal-card strong{font-size:13px;font-weight:620;line-height:1.2;letter-spacing:-.02em;overflow-wrap:normal}
-#sayviMusicPage #svMusicHome .sv-music-personal-card:active{opacity:.76;transform:none}
+#sayviMusicPage #svMusicHome .sv-music-personal-card:active{background:rgba(128,142,163,.08);transform:none}
 @media(max-width:350px){
- #sayviMusicPage #svMusicHome .sv-music-personal-card{padding:9px;min-height:80px}
+ #sayviMusicPage #svMusicHome .sv-music-scene{padding-inline:10px}
+ #sayviMusicPage #svMusicHome .sv-music-scene-actions > button{gap:5px;padding-inline:6px}
+ #sayviMusicPage #svMusicHome .sv-music-scene-actions > button > svg{width:19px;height:19px;flex-basis:19px}
+ #sayviMusicPage #svMusicHome .sv-music-scene-actions > button small{font-size:9px}
+ #sayviMusicPage #svMusicHome .sv-music-personal-card{padding:9px;min-height:75px}
  #sayviMusicPage #svMusicHome .sv-music-personal-meta{gap:4px}
  #sayviMusicPage #svMusicHome .sv-music-personal-meta svg{width:18px;height:18px;flex-basis:18px}
 }
