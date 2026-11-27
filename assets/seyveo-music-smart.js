@@ -97,7 +97,9 @@
    if(!w.isSecureContext||!w.navigator.mediaDevices?.getUserMedia||!w.MediaRecorder){message('Микрофон недоступен в этом браузере.');return}
    const status=message('Проверка подключения…');
    let configured=false;
-   try{const response=await w.fetch('/api/seyveo-music-recognition-status',{cache:'no-store',signal:AbortSignal.timeout(6000)});configured=response.ok&&(await response.json()).configured===true}catch{}
+   const checkController=new AbortController(),checkTimer=w.setTimeout(()=>checkController.abort(),6000);
+   recognitionCancel=()=>checkController.abort();
+   try{const response=await w.fetch('/api/seyveo-music-recognition-status',{cache:'no-store',signal:checkController.signal});configured=response.ok&&(await response.json()).configured===true}catch{}finally{w.clearTimeout(checkTimer);if(valid())recognitionCancel=null}
    if(!valid())return;
    status.textContent=configured?'Готово к распознаванию':'Сервис пока не подключён. Нужен ключ AudD на локальном сервере.';
    if(!configured)return;
