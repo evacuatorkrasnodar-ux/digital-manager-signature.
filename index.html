@@ -6664,15 +6664,23 @@ html:root[data-theme="light"].sv-music-screen.sv-global-search-open body footer.
  position:absolute;right:0;top:calc(100% + 7px);width:min(252px,calc(100vw - 42px));max-height:min(340px,45vh);
  overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:5px;box-sizing:border-box;
  border-radius:20px;border:var(--sv-white-pearl-edge,1px solid rgba(112,127,146,.18));
- background:var(--card,#24272c);box-shadow:0 8px 26px rgba(24,35,49,.12);z-index:11;
+ background:#292c32;box-shadow:0 5px 18px rgba(24,35,49,.10);z-index:11;
+ -webkit-backdrop-filter:blur(18px) saturate(115%);backdrop-filter:blur(18px) saturate(115%);
+ isolation:isolate;
 }
-html[data-theme="light"] #sayviMusicPage #svReplayPeriodMenu{background:rgba(248,249,251,.97)}
+html:root[data-theme="light"] body #sayviMusicPage #svReplayPeriodMenu{
+ background:rgba(247,248,250,.995)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(110%)!important;
+ backdrop-filter:blur(18px) saturate(110%)!important;
+ opacity:1!important;
+}
 #sayviMusicPage #svReplayPeriodMenu button{
  display:grid;grid-template-columns:20px minmax(0,1fr) 18px;align-items:center;gap:9px;text-align:left;
- width:100%;min-height:44px;padding:6px 10px;border:0;border-radius:12px;background:transparent;
- color:var(--text);font:inherit;box-shadow:none;cursor:pointer;appearance:none;-webkit-appearance:none;
+ width:100%;min-height:44px;height:44px;padding:3px 10px;border:0;border-radius:12px;background:transparent;
+ color:var(--text);font:inherit;line-height:1.2;box-shadow:none;cursor:pointer;appearance:none;-webkit-appearance:none;
 }
-#sayviMusicPage #svReplayPeriodMenu button[aria-checked="true"]{background:rgba(112,143,184,.13);color:var(--text)}
+@media(pointer:fine){#sayviMusicPage #svReplayPeriodMenu button{min-height:40px;height:40px}}
+#sayviMusicPage #svReplayPeriodMenu button[aria-checked="true"]{background:rgba(112,143,184,.075);color:var(--text)}
 #sayviMusicPage #svReplayPeriodMenu svg{width:18px;height:18px;display:block}
 #sayviMusicPage #svReplayPeriodMenu .sv-period-icon{opacity:.72}
 #sayviMusicPage #svReplayPeriodMenu .sv-period-check{visibility:hidden;color:#6689B7}
