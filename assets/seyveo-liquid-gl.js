@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V50 · directional glass and silk optics · WebGL 1. */
+/* SEYVEO Liquid Sound V51 · coherent curved particle weave · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -15,7 +15,7 @@ vec2 bez(vec2 a,vec2 b,vec2 c,vec2 d,float t){float q=1.0-t;return q*q*q*a+3.0*q
 vec3 contour(float k,float u){
  vec2 l=vec2(-.864,.174),r=vec2(.920,-.205),m,c1,c2,c3,c4;float z;
  if(k<.5){m=vec2(.105,-.795);c1=vec2(-.56,.075);c2=vec2(-.59,-.795);c3=vec2(.49,-.795);c4=vec2(.79,-.53);z=-.13;}
- else if(k<1.5){m=vec2(-.13,.072);c1=vec2(-.77,.070);c2=vec2(-.43,.125);c3=vec2(.26,.003);c4=vec2(.68,-.285);z=.23;}
+ else if(k<1.5){m=vec2(-.13,.064);c1=vec2(-.77,.048);c2=vec2(-.43,.084);c3=vec2(.26,-.022);c4=vec2(.68,-.285);z=.23;}
  else if(k<2.5){m=vec2(-.25,.270);c1=vec2(-.73,.085);c2=vec2(-.54,.270);c3=vec2(.19,.270);c4=vec2(.67,-.31);z=.38;}
  else if(k<3.5){m=vec2(.40,.55);c1=vec2(-.49,.20);c2=vec2(.04,.55);c3=vec2(.82,.55);c4=vec2(1.08,-.035);z=-.09;}
  else {m=vec2(-.045,.785);c1=vec2(-.93,.36);c2=vec2(-.49,.785);c3=vec2(.37,.785);c4=vec2(1.075,.18);z=-.22;}
@@ -62,6 +62,14 @@ vec3 crease(float x,float v){
 }
 void main(){
  float x=aData.x,v=aData.y;vec3 p;vSheen=0.0;
+ // Reparameterize the particle lattice without changing the continuous silk surface.
+ if(uMode>.5&&uMode<1.5&&uKind<6.5){
+  float u=(x+1.0)*.5;
+  float bend=uKind<2.5?.22:uKind<3.5?-.15:uKind<4.5?.28:.18;
+  u+=bend*sin(PI*u)*sin(PI*v)*(v-.36);
+  v+=.13*sin(PI*v)*sin(2.0*PI*u+.35);
+  x=clamp(2.0*u-1.0,-.9999,.9999);
+ }
  if(uKind>4.5&&uKind<5.5){p=vec3(x*1.10,(2.0*v-1.0)*1.10,0.0);vLight=1.0;}
  else if(uKind>7.5){p=crease(x,v);vLight=1.0;}
  else {p=matter(x,v);vec3 dx=matter(clamp(x+.006,-.9999,.9999),v)-matter(clamp(x-.006,-.9999,.9999),v);vec3 dy=matter(x,min(1.0,v+.006))-matter(x,max(0.0,v-.006));vec3 n=cross(dx,dy);n/=length(n)+.000001;n*=n.z<0.0?-1.0:1.0;vLight=abs(n.z);vec3 lightDir=normalize(vec3(-.72,-.55,.65));vSheen=pow(max(0.0,dot(n,lightDir)),2.0);}
@@ -106,10 +114,10 @@ void main(){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.91,.20)+gauss(x-.91,.20);
   float strength=uKind<8.5?(.32+.45*tips+.18*gauss(x+.30,.55)):uKind<9.5?(.76*gauss(x+.02,.25)+.14*gauss(x-.26,.48)):(.10+.24*tips);
-  float g=gauss(v-.5,.056),soft=gauss(v-.5,.32);
+  float g=gauss(v-.5,.045),soft=gauss(v-.5,.27);
   col=mix(vec3(.02,.91,.88),vec3(.88,1.0,.98),g*.78);
   float taper=smoothstep(0.0,.08,w);
-  alpha=strength*(.29*g+.71*soft)*taper*(1.0-smoothstep(.46,.50,abs(v-.5)));
+  alpha=strength*(.36*g+.64*soft)*taper*(1.0-smoothstep(.46,.50,abs(v-.5)));
  }else{
   float tip=pow(abs(x),6.0),turn=pow(v,5.0),fres=1.0-vLight;
   float focus=gauss(x+.20,.78),edge=pow(v,20.0),start=pow(1.0-v,20.0);
@@ -122,7 +130,7 @@ void main(){
   float silkLight=pow(v,2.4)*(.57+.43*gauss(x+.25,.70));
   col=mix(vec3(.08,.88,.88),vec3(.84,1.0,.98),clamp(.24*turn+.22*fres+.30*tip,0.0,1.0));
   if(uKind<2.5){alpha=(.42+.26*v*v+.13*fres+.18*shoulderLight+.24*highlight)*frontLight*(1.0-.30*tip);col=mix(col,vec3(.62,1.0,.98),.22*shoulderLight+.13*silkLight+.45*highlight);}
-  else if(uKind<3.5){alpha=(.72+.28*turn+.16*fres)*(1.0-.12*tip);col=mix(col,vec3(.83,1.0,.97),clamp(.24+.63*silkLight+.25*turn,0.0,1.0));}
+  else if(uKind<3.5){alpha=(.84+.16*turn+.16*fres)*(1.0-.12*tip);col=mix(col,vec3(.83,1.0,.97),clamp(.24+.63*silkLight+.25*turn,0.0,1.0));}
   else if(uKind<4.5){alpha=(.24+.12*fres+.20*facing*gauss(x-.27,.71)+.20*highlight)*(1.0-.44*tip);col=mix(col,vec3(.32,1.0,.98),.28*highlight);}
   else alpha=(.16+.19*turn+.23*pow(v,2.3)*gauss(x+.10,.42)+.14*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.48*tip);
   if(uMode<.5){
@@ -140,7 +148,7 @@ void main(){
    col=mix(vec3(.015,.78,.79),vec3(.73,1.0,.96),clamp(.48*foldLight+.70*hem+.55*join,0.0,1.0));
    alpha=(uMode<.5?(.013+.19*foldLight+.37*hem+.44*join):(.30+.43*foldLight+.43*hem))*taper;
   }
-  if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*8.0)*(1.0-smoothstep(.34,.50,d));}
+  if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*5.0)*(1.0-smoothstep(.30,.49,d));}
 
  }
  gl_FragColor=vec4(col,clamp(alpha,0.0,1.0));
@@ -155,7 +163,7 @@ void main(){
  function mesh(kind,n,m,mode){
   const values=[],indices=[];
   for(let j=0;j<=m;j++)for(let i=0;i<=n;i++){
-   let x=kind===5?-1+2*i/n:Math.max(-.9999,Math.min(.9999,-1+2*(i+(mode===1?.22*(j%2):0))/(n+(mode===1?.22:0))));
+   let x=kind===5?-1+2*i/n:Math.max(-.9999,Math.min(.9999,-1+2*i/n));
    values.push(x,j/m,0,0);
   }
   if(mode===0)for(let j=0;j<m;j++)for(let i=0;i<n;i++){const k=j*(n+1)+i;indices.push(k,k+1,k+n+1,k+1,k+n+2,k+n+1)}
@@ -166,7 +174,7 @@ void main(){
  }
  const glass=mesh(5,2,2,0),glowMid=mesh(8,96,12,0),glowBottom=mesh(9,96,12,0),glowSeam=mesh(10,96,8,0);
  const parts=[4,6,7,2,3].map(kind=>{
-  const dims=kind===7?[58,22,92,34]:kind===2?[100,48,144,69]:kind===3?[112,36,170,56]:kind===4?[72,32,110,48]:[92,30,146,46];
+  const dims=kind===7?[58,22,92,34]:kind===2?[92,46,132,64]:kind===3?[120,38,172,54]:kind===4?[72,32,110,48]:[92,30,146,46];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   return [mesh(kind,mobile?64:96,mobile?20:32,0),mesh(kind,n,m,1)];
  });
