@@ -72,6 +72,24 @@
   const window=lyricWindow(lines,index,duration),next=lines[index+1]?.time;
   return window&&time>window.end+1.25&&(!Number.isFinite(next)||time<next-.15)?'gap':'';
  }
+ function draftCoverage(data,duration){
+  const lines=Array.isArray(data?.lines)?data.lines:[];
+  const sorted=lines.filter(x=>Number.isFinite(x?.time)).slice().sort((a,b)=>a.time-b.time);
+  let largest=0,cursor=0,covered=0;
+  for(let i=0;i<sorted.length;i++){
+   const line=sorted[i],end=lyricWindow(sorted,i,duration)?.end||line.time;
+   largest=Math.max(largest,line.time-cursor);
+   covered+=Math.max(0,end-Math.max(cursor,line.time));
+   cursor=Math.max(cursor,end);
+  }
+  if(Number.isFinite(duration)&&duration>0)largest=Math.max(largest,duration-cursor);
+  return {count:sorted.length,covered,largest};
+ }
+ function needsDraftReview(data,duration=data?.duration){
+  if(!data?.draft||!data.timed||data.userEdited)return false;
+  const c=draftCoverage(data,duration);
+  return c.largest>=45||(Number.isFinite(duration)&&duration>=90&&c.count<8);
+ }
  function sleepMinutes(q){
   const m=q.match(/^(?:выключи|останови|поставь на паузу)\s+музыку\s+через\s+(\d{1,3})\s*(?:минут[уы]?|мин\.?)$/i);
   if(!m)return null;const n=Number(m[1]);return n>=1&&n<=180?n:null;
@@ -295,6 +313,7 @@
      if(data.draft&&data.timed)message('Если во время вокала появляются паузы без текста, часть слов могла не распознаться.',settings);
      if(data.draft)message('Черновик Сэйви · возможны ошибки',settings);
      if(!data.timed)message('Текст без временных меток.',settings);
+     if(needsDraftReview(data,audio.duration))message('Текст неполный: есть большие промежутки без распознанных слов. Можно повторить анализ.',settings);
      if(data.timed&&data.lines.some(line=>line.text?.trim()&&!wordTiming(line))){
       message('Для строк без меток слов подсветка приблизительная.',settings);
       if(data.draft&&engine&&id&&['localhost','127.0.0.1'].includes(w.location.hostname))
@@ -328,7 +347,7 @@
        const lines=editor.value.replace(/\r/g,'').split('\n');
        if(editor.value.length>128*1024||!lines.some(line=>line.trim())||lines.length>3000){status.textContent='Проверьте размер и содержимое текста.';return}
        if(data.timed&&lines.length!==data.lines.length){status.textContent='Для сохранения синхронизации оставьте прежнее количество строк.';return}
-       const corrected={...data,lines:data.timed?data.lines.map((line,i)=>({...line,text:lines[i],words:lines[i]===line.text?line.words:undefined})):lines.map(text=>({text}))};
+       const corrected={...data,userEdited:true,lines:data.timed?data.lines.map((line,i)=>({...line,text:lines[i],words:lines[i]===line.text?line.words:undefined})):lines.map(text=>({text}))};
        commit.disabled=true;
        try{const saved=await engine.put(id,corrected);if(valid())render(corrected,true,saved)}catch{if(valid()){status.textContent='Не удалось сохранить исправления.';commit.disabled=false}}
       },settings);
@@ -407,7 +426,16 @@
         const data=await response.json().catch(()=>({}));if(!valid()||controller.signal.aborted)return;
         if(!response.ok||!data.lines?.length)throw Error(data.error||'Текст не определён.');
         done=true;showProgress('complete',100);
-        const saved=await engine.put(id,data);if(valid()&&!controller.signal.aborted)render(data,true,saved);
+        const old=await engine.get(id);
+        const previous=old?.draft?draftCoverage(old,audio.duration):null;
+        const candidate=draftCoverage(data,audio.duration);
+        if(previous&&candidate.covered<previous.covered*.85){
+         if(valid())render(old,true);return;
+        }
+        const saved=await engine.put(id,data);
+        lyricReview.delete(id);lyricReady.delete(id);
+        if(needsDraftReview(data,audio.duration))lyricReview.add(id);else lyricReady.add(id);
+        if(valid()&&!controller.signal.aborted)render(data,true,saved);
        }catch(error){if(valid())status.textContent=controller.signal.aborted?'Анализ отменён.':String(error.message||'Анализ недоступен.')}
        finally{done=true;w.clearTimeout(pollTimer);meter.remove();if(lyricAbort===controller)lyricAbort=null;if(valid()){start.disabled=false;start.hidden=false;cancel.remove()}}
       });
@@ -464,7 +492,7 @@
    const now=w.performance.now();if(!force&&now-lyricDebugAt<500)return;lyricDebugAt=now;
    const fmt=n=>Number.isFinite(n)?n.toFixed(1):'—';
    const lines=lyricData?.lines||[],line=lines[current],next=lines[current+1];
-   el.textContent='V27 · аудио '+fmt(audio.currentTime)+' с · '+(audio.paused?'пауза':'играет')+' · '+(lyricData?.timed?'строка '+(current+1)+'/'+lines.length:'нет меток')+' · метки '+fmt(line?.time)+' → '+fmt(next?.time)+' с · прокрутка '+Math.round(karaokeBody.scrollTop)+'/'+(lyricScrollTarget??'—')+(lastGap?' · разрыв меток':'');
+   el.textContent='V28 · аудио '+fmt(audio.currentTime)+' с · '+(audio.paused?'пауза':'играет')+' · '+(lyricData?.timed?'строка '+(current+1)+'/'+lines.length:'нет меток')+' · метки '+fmt(line?.time)+' → '+fmt(next?.time)+' с · прокрутка '+Math.round(karaokeBody.scrollTop)+'/'+(lyricScrollTarget??'—')+(lastGap?' · разрыв меток':'');
   }
   function checkLyricClock(){
    if(!lyricsActive)return;
@@ -529,7 +557,7 @@
   const libraryLyricsLocal=['localhost','127.0.0.1'].includes(w.location.hostname);
   const libraryLyricStatus=$('svMusicLyricsQueueStatus');
   let libraryLyricTimer=0,libraryLyricJob=null,libraryLyricRunning=false,libraryLyricClosed=false;
-  const lyricReady=new Set(),lyricSkipped=new Set(),lyricFailures=new Map();
+  const lyricReady=new Set(),lyricSkipped=new Set(),lyricFailures=new Map(),lyricReview=new Set();
   const queueStatus=text=>{if(libraryLyricStatus){libraryLyricStatus.hidden=!text;if(libraryLyricStatus.textContent!==text)libraryLyricStatus.textContent=text}};
   function pauseLibraryLyrics(){
    w.clearTimeout(libraryLyricTimer);libraryLyricTimer=0;
@@ -548,7 +576,7 @@
    if(!items.length){queueStatus('');return}
    const current=player.rhythmFile?.();
    const ordered=items.slice().sort((a,b)=>Number(b.file===current)-Number(a.file===current));
-   const summary=()=> 'Караоке · '+items.filter(x=>lyricReady.has(x.id)).length+' из '+items.length+' готово';
+   const summary=()=> 'Караоке · '+items.filter(x=>lyricReady.has(x.id)).length+' из '+items.length+' готово'+(items.some(x=>lyricReview.has(x.id))?' · уточнить: '+items.filter(x=>lyricReview.has(x.id)).length:'');
    libraryLyricRunning=true;
    const controller=new AbortController();libraryLyricJob=controller;
    let nextDelay=1600,deadline=0,pollTimer=0,item=null,expired=false,finished=false;
@@ -562,10 +590,10 @@
    try{
     for(const entry of ordered){
      if(controller.signal.aborted)return;
-     if(!entry.id||lyricReady.has(entry.id)||lyricSkipped.has(entry.id))continue;
+     if(!entry.id||lyricReady.has(entry.id)||lyricSkipped.has(entry.id)||lyricReview.has(entry.id))continue;
      const existing=await engine.get(entry.id);
      if(controller.signal.aborted)return;
-     if(existing?.lines?.length){lyricReady.add(entry.id);continue}
+     if(existing?.lines?.length){if(needsDraftReview(existing))lyricReview.add(entry.id);else lyricReady.add(entry.id);continue}
      let embedded=null;try{embedded=await readEmbedded(entry.file)}catch{}
      if(controller.signal.aborted)return;
      if(embedded?.lines?.length){if(!(await engine.get(entry.id)))await engine.put(entry.id,embedded);lyricReady.add(entry.id);continue}
@@ -617,7 +645,7 @@
     }
     if(!(music()?.recognitionLibrary?.()||[]).some(x=>x.id===item.id))return;
     if(!(await engine.get(item.id)))await engine.put(item.id,data);
-    lyricReady.add(item.id);lyricFailures.delete(item.id);
+    if(needsDraftReview(data))lyricReview.add(item.id);else lyricReady.add(item.id);lyricFailures.delete(item.id);
     queueStatus(summary());
    }catch(error){
     if(expired){failItem();nextDelay=8000}
@@ -775,5 +803,5 @@
   }
   w.SEYVEO_MUSIC_SMART=Object.freeze({handle,share,sleepSheet,karaoke,soundSheet,recognitionSheet});
  }
- return {embeddedLyrics,activeLine,lyricWindow,lyricGap,sleepMinutes,install};
+ return {embeddedLyrics,activeLine,lyricWindow,lyricGap,draftCoverage,needsDraftReview,sleepMinutes,install};
 });
