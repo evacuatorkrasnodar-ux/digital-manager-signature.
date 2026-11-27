@@ -135,7 +135,7 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
  padding:0;color:var(--text);
 }
 #sayviMusicMini .sv-music-mini-transport svg{
- display:block;width:24px;height:24px;fill:currentColor;
+ display:block;width:20px;height:20px;fill:currentColor;
  stroke:none;
  stroke-linecap:round;stroke-linejoin:round;
 }
@@ -292,8 +292,8 @@ html:root:not(.seyveo-conversation) body #sayviMusicMini{
   opacity:1!important;
 }
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport svg{
-  width:24px!important;
-  height:24px!important;
+  width:20px!important;
+  height:20px!important;
   stroke:none!important;
   fill:#000!important;
   opacity:1!important;
