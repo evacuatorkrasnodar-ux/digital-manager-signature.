@@ -93,7 +93,9 @@ function mapHomeHeaders(){
  const data=sdk+' https://*.maps.yandex.net';
  // Wallet rates are public reference data. Permit only the JSON endpoint on Home.
  const walletRates='https://www.cbr-xml-daily.ru/daily_json.js';
- const extra={'script-src':sdk+" 'unsafe-eval'",'connect-src':data+' '+walletRates,
+ // Discovery uses only the public iTunes Search API after opt-in.
+ const musicCatalog='https://itunes.apple.com/search';
+ const extra={'script-src':sdk+" 'unsafe-eval'",'connect-src':data+' '+walletRates+' '+musicCatalog,
   'style-src':sdk,'img-src':data,'worker-src':'data: '+sdk};
  const policy=HEADERS['content-security-policy'].split(';').map(part=>{
   const directive=part.trim().split(/\s+/)[0];
