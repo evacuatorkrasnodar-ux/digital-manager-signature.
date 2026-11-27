@@ -513,7 +513,7 @@
  let homeMatterCtx=null;
  const homeMatterRoot=document.documentElement;
  function homeMatterAllowed(){
-  return !document.hidden&&!home.hidden&&home.contains(orb)&&homeMatterVisible&&homeMatterRoot.dataset.theme==='light'
+  return !document.hidden&&!home.hidden&&musicPage?.hidden!==false&&location.hash!=='#sayvi-music'&&home.contains(orb)&&homeMatterVisible&&homeMatterRoot.dataset.theme==='light'
    &&!homeMatterRoot.classList.contains('seyveo-conversation')
    &&!homeMatterRoot.classList.contains('sv-home-launch-pending')
    &&!homeMatterRoot.classList.contains('sv-home-launch-logo-visible')
