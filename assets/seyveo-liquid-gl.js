@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V74 · traced shoulder and luminous return · WebGL 1. */
+/* SEYVEO Liquid Sound V75 · audio-driven living silk · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -8,7 +8,7 @@ window.SEYVEO_LIQUID_GL={create(mobile){
  let lost=false;canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();lost=true});
  const vs=`precision highp float;
 attribute vec4 aData;
-uniform vec4 uMusic; uniform mediump float uKind,uMode; uniform float uSize;
+uniform mediump vec4 uMusic; uniform mediump float uKind,uMode; uniform float uSize;
 varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 const float PI=3.14159265;
 // Shared cubic contours with continuous tangents at each join.
@@ -41,6 +41,17 @@ vec3 contour(float k,float u){
  vec2 p=u<.5?bez(l,c1,c2,m,u*2.0):bez(m,c3,c4,r,u*2.0-1.0);
  return vec3(p,z*sin(PI*u));
 }
+// The same travelling displacement is used for every cloth strip and its glow.
+vec3 soundWave(vec3 p,float u){
+ float envelope=sin(PI*u);
+ float t=uMusic.x, bass=uMusic.y, mid=uMusic.z, air=uMusic.w;
+ float low=sin(2.0*PI*u-t*5.2);
+ float body=sin(4.0*PI*u-t*8.0+p.y*2.0);
+ float fine=sin(8.0*PI*u-t*11.0+p.y*3.0);
+ p.y+=envelope*(.075*bass*low+.045*mid*body+.009*air*fine);
+ p.z+=envelope*(.055*bass*low+.025*mid*body);
+ return p;
+}
 vec3 matter(float x,float v){
  float u=(x+1.0)*.5,t=uMusic.x,mid=uMusic.z;
  float k=uKind<2.5?0.0:uKind<3.5?1.0:uKind<4.5?2.0:3.0;
@@ -57,7 +68,7 @@ vec3 matter(float x,float v){
   q.z-=.24*flap*v;
   q.y+=sin(PI*u)*(.010+.035*mid)*sin(u*5.5+t*.65);
   q.z+=sin(PI*u)*.055*sin(t*.55+u*4.0)*(.30+mid);
-  return q;
+  return soundWave(q,u);
  }
  float f=sin(PI*v)*sin(PI*u),w=sin(PI*u);
  // Convex body: a smooth interior bulge, with zero displacement at every shared edge.
@@ -72,7 +83,7 @@ vec3 matter(float x,float v){
  }else p.x+=f*(.035*sin(PI*u*2.0+t*.32)+.115*sin(PI*u*1.6-.35)*(k<1.5?-.50:-.65));
  p.y+=w*(.010+.035*mid)*sin(u*5.5+t*.65)+.016*f*sin(u*8.0-t*.4);
  p.z+=w*.055*sin(t*.55+u*4.0)*( .30+mid);
- return p;
+ return soundWave(p,u);
 }
 // Soft emissive strips follow the animated crease positions, not the glass.
 vec3 crease(float x,float v){
@@ -81,7 +92,8 @@ vec3 crease(float x,float v){
  vec3 p=contour(k,u);
  p.y+=w*(.010+.035*mid)*sin(u*5.5+t*.65);
  p.z+=w*.055*sin(t*.55+u*4.0)*(.30+mid);
- vec2 tangent=contour(k,min(1.0,u+.004)).xy-contour(k,max(0.0,u-.004)).xy;
+ p=soundWave(p,u);
+ vec2 tangent=soundWave(contour(k,min(1.0,u+.004)),min(1.0,u+.004)).xy-soundWave(contour(k,max(0.0,u-.004)),max(0.0,u-.004)).xy;
  vec2 normal=normalize(vec2(-tangent.y,tangent.x)+vec2(.000001,0.0));
  float width=uKind<8.5?(.115+.018*sin(PI*u)):uKind<9.5?.085:.065;
  p.xy+=normal*(v*2.0-1.0)*width*(.72+.28*w);
@@ -113,14 +125,14 @@ void main(){
  else if(uKind>7.5){p=crease(x,v);vLight=1.0;}
  else {p=matter(x,v);vec3 dx=matter(clamp(x+.006,-.9999,.9999),v)-matter(clamp(x-.006,-.9999,.9999),v);vec3 dy=matter(x,min(1.0,v+.006))-matter(x,max(0.0,v-.006));vec3 n=cross(dx,dy);n/=length(n)+.000001;n*=n.z<0.0?-1.0:1.0;vLight=abs(n.z);vec3 lightDir=normalize(vec3(-.72,-.55,.65));vSheen=pow(max(0.0,dot(n,lightDir)),2.0);}
  float glass=step(4.5,uKind)*(1.0-step(5.5,uKind));
- float scale=.82*mix(.985,1.0,glass)*(1.0+mix(.015,.003,glass)*uMusic.y)*(1.0+.020*p.z);
+ float scale=.82*mix(.985,1.0,glass)*(1.0+mix(.015,0.0,glass)*uMusic.y)*(1.0+.020*p.z);
  gl_Position=vec4(scale*vec2(p.x+.012*p.z,-p.y+.012*p.z),p.z*.3,1.0);
  gl_PointSize=clamp(uSize*(uKind>3.5?.00205:uKind<2.5?.00215:.00215+.00020*uMusic.w),1.25,3.3);
  vUV=vec2(x,v);
 }
 `;
  const fs=(surfaceDots?'#extension GL_OES_standard_derivatives : enable\n#define SURFACE_DOTS 1\n':'')+`precision mediump float;
-uniform mediump float uKind,uMode; varying mediump vec2 vUV; varying mediump float vLight,vSheen;
+uniform mediump float uKind,uMode; uniform mediump vec4 uMusic; varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 float peak(float a,float c,float w){return exp(-(1.0-cos(a-c))/(w*w));}
 float gauss(float x,float w){float q=x/w;return exp(-q*q);}
 #ifdef SURFACE_DOTS
@@ -224,6 +236,7 @@ void main(){
   }
 #endif
  }
+ if(uKind<4.5||uKind>5.5&&uKind<7.5){float shimmer=.5+.5*sin(18.0*x+9.0*v-uMusic.x*12.0);alpha*=1.0+(.12*uMusic.w)*shimmer;}
  gl_FragColor=vec4(col,clamp(alpha,0.0,1.0));
 }
 `;
@@ -267,6 +280,7 @@ void main(){
   else gl.drawArrays(gl.POINTS,0,obj.count);
  }
  gl.disable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
- return {render(size,phase,bass,mid,air){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
+ const resources=[glass,glowMid,glowBottom,glowSeam,...parts.flat()];
+ return {dispose(){if(lost)return;lost=true;for(const obj of resources){gl.deleteBuffer(obj.buffer);if(obj.index)gl.deleteBuffer(obj.index)}gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();canvas.width=canvas.height=1;},render(size,phase,bass,mid,air){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
 }};
 })();
