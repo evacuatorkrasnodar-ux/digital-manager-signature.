@@ -6613,4 +6613,20 @@ html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-sh
  box-shadow:inset 0 1px 2px rgba(31,42,58,.07),inset 0 -1px 1px rgba(255,255,255,.40)!important;
 }
 </style>
+
+<style id="svMainDockMusicPearlTrial">
+/* Home / Tasks material trial: exactly the same optical finish as Music.
+   Existing pseudo surfaces stay in place to preserve the review underlay,
+   sphere handoff, selected indicator, shape, coordinates and transitions. */
+html:root[data-theme="light"][data-theme] body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock):not(.sv-music-navigation-only)::before,
+html:root[data-theme="light"][data-theme] body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock):not(.sv-music-navigation-only)::after{
+ background:var(--sv-white-pearl-floating-dock,rgba(235,237,240,.62))!important;
+ background-image:none!important;
+ border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.94))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 2px 8px rgba(38,48,60,.055))!important;
+}
+</style>
+
 </body></html>
