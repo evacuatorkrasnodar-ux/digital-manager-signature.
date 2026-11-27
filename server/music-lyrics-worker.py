@@ -35,7 +35,9 @@ def main():
         return 4
     progress("loading")
     try:
-        model = WhisperModel(model_name, device="cpu", compute_type="int8", local_files_only=True)
+        # Keep CPU resources free for the UI and audio playback.
+        model = WhisperModel(model_name, device="cpu", compute_type="int8",
+                             cpu_threads=3, num_workers=1, local_files_only=True)
     except Exception:
         respond(error="model-unavailable")
         return 5
