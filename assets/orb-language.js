@@ -168,9 +168,112 @@
  const visibleScenes=new Map([[homeScene,true],[playerScene,true]]);
  let sceneFrame=0,sceneLast=0,sceneFile=null,sceneWaiting=false,ringEnergy=0;
  const sceneLevels=new Float32Array(8);
+ // Liquid Sound: bounded, locally rendered ribbons, no external graphics or audio path.
+ const liquidCanvas=playerScene?.querySelector('#svLiquidSoundCanvas');
+ const liquidToggle=playerScene?.querySelector('#svLiquidSoundToggle');
+ const liquidLabel=playerScene?.querySelector('#svLiquidSoundLabel');
+ let liquidContext=null;
+ try{liquidContext=liquidCanvas?.getContext('2d',{alpha:true})||null}catch{}
+ let liquidMode=true,liquidLast=0,liquidSize=0,liquidGradient=null,liquidPhase=0,liquidClock=-1;
+ const liquidEnergy=new Float32Array(3);
+ try{liquidMode=localStorage.getItem('seyveo.music.visualizer')!=='classic'}catch{}
+ const TAU=Math.PI*2;
+ const liquidMobile=window.matchMedia?.('(max-width: 600px)').matches||((navigator.hardwareConcurrency||8)<=4);
+ const liquidSteps=liquidMobile?96:144,liquidThreads=liquidMobile?28:48;
+ const angles=Array.from({length:liquidSteps+1},(_,i)=>{const a=i/liquidSteps*TAU;return [a,Math.cos(a),Math.sin(a),Math.cos(2*a),Math.sin(2*a),Math.cos(3*a),Math.sin(3*a)]});
+ function liquidVisible(){return !!liquidContext&&liquidMode&&musicPage?.dataset.musicView==='player'&&!musicPage.hidden&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork')}
+ function paintLiquid(timestamp,bass=0,mid=0,air=0,force=false){
+  if(!liquidVisible()||document.hidden)return;
+  if(!force&&timestamp-liquidLast<(liquidMobile?40:32))return;
+  const dt=liquidLast?clamp(timestamp-liquidLast,1,100):33;
+  liquidLast=timestamp;
+  const cssSize=liquidCanvas.clientWidth;
+  if(!cssSize)return;
+  const pixels=Math.max(160,Math.min(liquidMobile?620:850,Math.round(cssSize*Math.min(window.devicePixelRatio||1,1.8))));
+  if(liquidSize!==pixels){liquidCanvas.width=liquidCanvas.height=pixels;liquidSize=pixels;liquidGradient=null}
+  const playing=!audio.paused&&!audio.ended&&!reduce?.matches;
+  if(playing){
+   const t=audio.currentTime;
+   const elapsed=liquidClock<0?0:clamp(t-liquidClock,0,.12);
+   liquidClock=t;
+   liquidPhase=(liquidPhase+elapsed*(.62+liquidEnergy[0]*.35))%TAU;
+   for(let i=0;i<3;i++){const v=[bass,mid,air][i];liquidEnergy[i]+=(v-liquidEnergy[i])*(1-Math.exp(-dt/(v>liquidEnergy[i]?110:260)))}
+  }else liquidClock=-1;
+  const ctx=liquidContext,b=liquidEnergy[0],m=liquidEnergy[1],h=liquidEnergy[2],p=liquidPhase;
+  ctx.setTransform(pixels/400,0,0,pixels/400,0,0);
+  ctx.clearRect(0,0,400,400);
+  ctx.lineJoin='round';ctx.lineCap='round';
+  if(!liquidGradient){
+   liquidGradient=ctx.createLinearGradient(36,36,357,355);
+   liquidGradient.addColorStop(0,'rgba(215,255,248,.26)');
+   liquidGradient.addColorStop(.24,'rgba(227,255,251,.98)');
+   liquidGradient.addColorStop(.53,'rgba(102,208,198,.65)');
+   liquidGradient.addColorStop(.78,'rgba(222,255,247,.94)');
+   liquidGradient.addColorStop(1,'rgba(143,226,222,.32)');
+  }
+  const radius=144*(1+.045*b);
+  const c1=Math.cos(p*.82),s1=Math.sin(p*.82),c2=Math.cos(p*1.35),s2=Math.sin(p*1.35);
+  const ribbon=(kind,count)=>{
+   // Three folded membranes: outer shell, inner rim, and an inclined internal wave.
+   for(let j=0;j<count;j++){
+    const u=count===1?0:j/(count-1),v=2*u-1;
+    const edge=Math.pow(Math.abs(v),5);
+    ctx.beginPath();
+    for(let i=0;i<=liquidSteps;i++){
+     const [a,ca,sa,c2a,s2a,c3a,s3a]=angles[i];
+     const wave=s2a*c1+c2a*s1,fold=s3a*c2+c3a*s2;
+     let x,y,z;
+     if(kind===0){
+      const base=radius*(1+.022*wave+(.024+.018*m)*fold);
+      const width=(.025+(.085+.045*m)*Math.pow(.5+.5*wave,2))*radius;
+      const r=base+v*width;
+      x=r*ca;y=r*sa*.96;z=radius*(.12*fold+v*(.12+.10*h));
+     }else if(kind===1){
+      const base=radius*(.76+.045*wave-.03*fold);
+      const width=radius*(.012+(.044+.036*m)*Math.pow(.5-.5*wave,2));
+      const r=base+v*width;
+      x=r*ca;y=r*sa*.98;z=radius*(.16*wave+v*.12);
+     }else{
+      const longitude=radius*.81;
+      x=longitude*ca;
+      y=radius*(.18*sa+.17*wave+v*(.10+.05*m)*Math.pow(Math.abs(sa),1.2));
+      z=radius*(.36*sa+.08*fold+v*.17*sa);
+     }
+     const rotation=kind===2?-.40+.09*Math.sin(p):-.12+.08*Math.sin(p*.7);
+     const cr=Math.cos(rotation),sr=Math.sin(rotation);
+     const perspective=1+z*.00058;
+     const px=200+(x*cr-y*sr)*perspective,py=200+(x*sr+y*cr)*perspective;
+     if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+    }
+    ctx.strokeStyle=liquidGradient;
+    ctx.globalAlpha=kind===2?(.10+.20*edge):(.17+.53*edge);
+    ctx.lineWidth=kind===2?.44:.45+.32*edge;
+    ctx.stroke();
+   }
+  };
+  ctx.globalCompositeOperation='source-over';
+  ribbon(2,Math.max(14,Math.round(liquidThreads*.75)));
+  ribbon(1,Math.max(18,Math.round(liquidThreads*.8)));
+  ribbon(0,liquidThreads);
+  ctx.globalAlpha=1;
+ }
+ function syncLiquidMode(){
+  const enabled=!!liquidContext&&liquidMode;
+  playerScene?.classList.toggle('sv-liquid-mode',enabled);
+  if(liquidToggle){liquidToggle.hidden=!liquidContext;liquidToggle.setAttribute('aria-pressed',String(enabled));liquidToggle.setAttribute('aria-label',enabled?'Liquid Sound. Переключить на эквалайзер':'Эквалайзер. Переключить на Liquid Sound')}
+  if(liquidLabel)liquidLabel.textContent=enabled?'SEYVEO LIQUID SOUND':'SEYVEO SOUND';
+  if(enabled)paintLiquid(performance.now(),0,0,0,true);
+ }
+ liquidToggle?.addEventListener('click',event=>{
+  event.stopPropagation();liquidMode=!liquidMode;
+  try{localStorage.setItem('seyveo.music.visualizer',liquidMode?'liquid':'classic')}catch{}
+  syncLiquidMode();
+ });
+ window.addEventListener('resize',()=>{if(liquidVisible())paintLiquid(performance.now(),...liquidEnergy,true)});
+ syncLiquidMode();
  function sceneTarget(){
   if(musicPage?.dataset.musicView==='home')return homeScene;
-  if(musicPage?.dataset.musicView==='player'&&!playerStage?.classList.contains('has-artwork'))return playerScene;
+  if(musicPage?.dataset.musicView==='player'&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork'))return playerScene;
   return null;
  }
  function sceneAllowed(){
@@ -201,6 +304,7 @@
    const following=Math.min(frame+3,data.length-3),fraction=position-Math.floor(position);
    const band=i=>full?data[frame+i]+(data[following+i]-data[frame+i])*fraction:data[frame+i];
    const bass=band(0),mid=band(1),air=band(2);
+   if(full&&liquidMode)paintLiquid(timestamp,bass,mid,air);
    const targets=[air*.65+mid*.15,mid*.72+air*.16,bass*.48+mid*.42,bass*.92,mid*.67+bass*.24,air*.66+mid*.16,mid*.47+air*.36,air*.59];
    for(let i=0;i<sceneBars.length;i++){
     const target=full?clamp(.06+.94*targets[i],0,1):.12+.88*targets[i];
@@ -231,6 +335,8 @@
    scene=target;sceneBars=Array.from(scene?.querySelectorAll('.sv-music-scene-wave line')||[]);
   }
   const allowed=!!scene&&sceneAllowed();
+  if(scene===playerScene&&liquidMode&&!allowed){liquidClock=-1;if(!liquidSize)paintLiquid(performance.now(),0,0,0,true)}
+  if(scene===playerScene&&liquidMode&&liquidVisible()&&!liquidSize)paintLiquid(performance.now(),0,0,0,true);
   musicPage?.classList.toggle('sv-now-ambient-playing',!!playerScene&&scene===playerScene&&allowed);
   if(!scene)return;
   scene.classList.toggle('sv-scene-playing',allowed);
@@ -258,6 +364,7 @@
   }
   new MutationObserver(syncScene).observe(musicPage,{attributes:true,attributeFilter:['hidden','data-music-view']});
   if(playerStage)new MutationObserver(syncScene).observe(playerStage,{attributes:true,attributeFilter:['class']});
+  if(musicPage){let wasKaraoke=musicPage.classList.contains('sv-karaoke-active');new MutationObserver(()=>{const active=musicPage.classList.contains('sv-karaoke-active');if(active!==wasKaraoke){wasKaraoke=active;syncScene()}}).observe(musicPage,{attributes:true,attributeFilter:['class']})}
  }
 
  function sync(){
