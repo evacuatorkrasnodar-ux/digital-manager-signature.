@@ -222,11 +222,11 @@
   const geom=angles.map(([a,ca,sa])=>{
    const aa=a+drift;
    return {a,ca,sa,
-    topLeft:peak(aa,-2.20,.53),
-    rightFold:peak(aa,.46,.58),
+    topLeft:peak(aa,-2.24,.57),
+    rightFold:peak(aa,.52,.56),
     bottomFold:peak(aa,1.72,.45),
-    shoulder:peak(aa,-.76,.31),
-    pinch:peak(aa,-1.03,.15),
+    shoulder:peak(aa,-.77,.35),
+    pinch:peak(aa,-1.09,.17),
     innerTop:peak(aa,-1.85,.54),
     innerBottom:peak(aa,1.52,.40),
     innerKnot:peak(aa,1.49,.12)};
@@ -236,14 +236,14 @@
    let r;
    if(kind===0){
     const silhouette=radius*(1+.007*Math.sin(2*a+t)+.004*Math.sin(3*a-t*.5));
-    const depth=radius*clamp(.004+(.145+.018*m)*topLeft+.126*rightFold+.084*bottomFold+.160*shoulder-.083*pinch,.003,.195);
+    const depth=radius*clamp(.004+(.145+.018*m)*topLeft+.132*rightFold+.078*bottomFold+.155*shoulder-.064*pinch,.003,.195);
     // Opposed bending produces a bright turning edge without deforming the silhouette.
     const curl=radius*(.064*pinch-.028*shoulder+.007*rightFold*Math.sin(4*a+t));
     r=silhouette-depth*u+curl*Math.sin(Math.PI*u);
    }else{
     const opening=radius*(.753+.009*Math.sin(2*a+t)+.005*Math.sin(3*a-t*.65));
     // At the bottom the membrane turns inward rather than forming another external hoop.
-    const depth=radius*(.003+.066*innerTop-.104*innerBottom+.031*innerKnot);
+    const depth=radius*(.003+.052*innerTop-.107*innerBottom+.045*innerKnot);
     r=opening+depth*u+radius*.016*innerKnot*Math.sin(Math.PI*u);
    }
    const shear=(kind===0?.018:.012)*Math.sin(Math.PI*u)*Math.sin(2*a+.8+t*.45);
@@ -274,7 +274,7 @@
    const fiber=ctx.createLinearGradient(64,55,339,345);
    fiber.addColorStop(0,'rgba(142,255,233,.94)');
    fiber.addColorStop(.21,'rgba(143,255,232,1)');
-   fiber.addColorStop(.47,'rgba(71,181,173,.14)');
+   fiber.addColorStop(.47,'rgba(71,181,173,.10)');
    fiber.addColorStop(.76,'rgba(131,255,230,.98)');
    fiber.addColorStop(1,'rgba(187,255,240,.92)');
    const veil=ctx.createLinearGradient(45,76,350,326);
@@ -296,8 +296,34 @@
     const lip=Math.exp(-Math.pow((u-edgeU)/.23,2));
     const body=Math.exp(-Math.pow((u-(kind===0?.57:.42))/.31,2));
     path(rows[j]);ctx.strokeStyle=fiber;
-    ctx.globalAlpha=.027+.54*lip+.13*body;
-    ctx.lineWidth=.28+.16*lip+.06*body;ctx.stroke();
+    ctx.globalAlpha=.021+.54*lip+.10*body;
+    ctx.lineWidth=.25+.16*lip+.06*body;ctx.stroke();
+   }
+   // A local curled crest, independent of the closed ring. The fine strands
+   // turn back across the shoulder, then merge smoothly into the main lip.
+   if(kind===0){
+    const from=5.02,to=5.73;
+    const fan=geom.filter(g=>g.a>=from&&g.a<=to);
+    if(fan.length>2){
+     const first=point(fan[0],0,1),last=point(fan[fan.length-1],0,1);
+     const sheen=ctx.createLinearGradient(first[0],first[1],last[0],last[1]);
+     sheen.addColorStop(0,'rgba(157,255,234,0)');
+     sheen.addColorStop(.25,'rgba(157,255,234,.48)');
+     sheen.addColorStop(.48,'rgba(223,255,246,.90)');
+     sheen.addColorStop(.73,'rgba(151,255,234,.48)');
+     sheen.addColorStop(1,'rgba(157,255,234,0)');
+     const threads=liquidMobile?13:19;
+     for(let j=0;j<threads;j++){
+      const v=j/(threads-1);
+      const pts=fan.map(g=>{
+       const q=clamp((g.a-from)/(to-from),0,1);
+       const turn=Math.pow(Math.sin(Math.PI*q),1.6);
+       return point(g,0,1-(.34+.52*v)*turn);
+      });
+      path(pts,false);ctx.strokeStyle=sheen;
+      ctx.globalAlpha=.10+.46*Math.pow(v,5);ctx.lineWidth=.23+.38*Math.pow(v,6);ctx.stroke();
+     }
+    }
    }
    ctx.globalAlpha=1;
    const edge=rows[kind===0?count-1:0];
@@ -319,7 +345,7 @@
   const membrane=(x,u)=>{
    const env=Math.sqrt(Math.max(0,1-x*x));
    const arc=-env*(.97+.012*Math.sin(t));
-   const crest=env*(-.085+.045*Math.sin(Math.PI*x+t*.45)+.008*Math.sin(2*Math.PI*x-t));
+   const crest=env*(-.105+.025*Math.sin(Math.PI*x+t*.45)+.008*Math.sin(2*Math.PI*x-t));
    const crease=env*(.12+.05*m)*Math.pow(Math.sin(Math.PI*u),2)*Math.sin(Math.PI*x+.8+t*.45);
    const y=arc+(crest-arc)*u+crease;
    return [200+R*(x*mc-y*ms),200+R*(x*ms+y*mc)];
@@ -357,13 +383,22 @@
    for(let i=1;i<foldCols;i++){
     const x=-1+2*(i+(j%2)*.34)/foldCols,[px,py]=membrane(x,1);
     const env=Math.pow(Math.max(0,1-x*x),.78);
-    const width=R*(.34+.035*m)*env*(.78+.22*Math.cos(Math.PI*(x+.35)+t*.5));
+    const width=R*(.36+.035*m)*env*(.80+.20*Math.cos(Math.PI*(x+.26)+t*.5));
     const dx=R*.045*env*Math.sin(Math.PI*v);
     const size=.45+.16*Math.pow(v,2);
     ctx.rect(px+dx-size/2,py+width*bend-size/2,size,size);
    }
-   ctx.fillStyle=memGradient;ctx.globalAlpha=.47+.47*Math.pow(v,2);ctx.fill();
+   ctx.fillStyle=memGradient;ctx.globalAlpha=.44+.53*Math.pow(v,2);ctx.fill();
   }
+  // A faint, continuous reflected edge defines the lower turn of the leaf.
+  const foldEdge=[];
+  for(let i=0;i<=liquidSteps;i++){
+   const x=-1+2*i/liquidSteps,[px,py]=membrane(x,1);
+   const env=Math.pow(Math.max(0,1-x*x),.78);
+   const width=R*(.36+.035*m)*env*(.80+.20*Math.cos(Math.PI*(x+.26)+t*.5));
+   foldEdge.push([px,py+width]);
+  }
+  path(foldEdge,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.23;ctx.lineWidth=.46;ctx.stroke();
   ctx.globalAlpha=1;
   for(const side of [-1,1]){
    const [px,py]=membrane(side*.97,1);
