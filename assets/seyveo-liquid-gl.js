@@ -27,8 +27,8 @@ vec3 matter(float x,float v){
  float k=uKind<2.5?0.0:uKind<3.5?1.0:uKind<4.5?2.0:3.0;
  vec3 p=mix(contour(k,u),contour(k+1.0,u),v);
  float f=sin(PI*v)*sin(PI*u),w=sin(PI*u);
- p.z+=f*(k<.5?.22:k<1.5?.15:-.11);
- p.x+=f*(.035*sin(PI*u*2.0+t*.32)+.075*sin(PI*u*1.6-.35)*(k<.5?1.0:-.6));
+ p.z+=f*(k<.5?.28:k<1.5?.20:-.16);
+ p.x+=f*(.035*sin(PI*u*2.0+t*.32)+.115*sin(PI*u*1.6-.35)*(k<.5?1.0:-.6));
  p.y+=w*(.010+.035*mid)*sin(u*5.5+t*.65)+.016*f*sin(u*8.0-t*.4);
  p.z+=w*.055*sin(t*.55+u*4.0)*( .30+mid);
  return p;
@@ -66,44 +66,49 @@ void main(){
  if(uKind>4.5&&uKind<5.5){
   vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
   if(r>1.0){
-   float glow=gauss(r-1.0,.030)*(.035+.23*peak(a,-2.16,.54)+.22*peak(a,1.30,.65));
+   float glow=gauss(r-1.0,.033)*(.025+.24*peak(a,-2.16,.54)+.25*peak(a,1.30,.65));
+   float floorGlow=gauss(xy.x,.28)*gauss(xy.y-1.025,.025)*.25;
+   glow=clamp(glow+floorGlow,0.0,.75);
    gl_FragColor=vec4(.10,.86,.88,glow);return;
   }
   float n=sqrt(max(0.0,1.0-r*r));
   float top=peak(a,-2.08,.61),bottom=peak(a,1.37,.57),right=peak(a,.60,.61),left=peak(a,2.85,.48);
   float lip=.14+.85*top+.54*bottom+.57*right+.22*left;
   float edge=gauss(r-.993,.0055),edgeSoft=gauss(r-.973,.021);
-  float reflected=gauss(r-(.936-.085*top),.015+.043*top)*pow(top,1.6);
+  float reflected=gauss(r-(.936-.085*top),.017+.043*top)*pow(top,1.6);
+  float crescent=smoothstep(.79,.83,r)* (1.0-smoothstep(.91,.967,r))*pow(top,1.6);
   float base=gauss(r-(.950-.047*bottom),.048)*bottom;
   float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left);
   float fres=pow(max(0.0,1.0-n),3.0);
-  float light=clamp(1.34*reflected+1.20*edge*lip+.58*edgeSoft*lip+.96*base+.21*inner,0.0,1.0);
+  float light=clamp(1.14*reflected+1.16*edge*lip+.50*edgeSoft*lip+.85*base+.21*inner+.30*crescent,0.0,1.0);
   col=mix(vec3(.025,.78,.85),vec3(.94,1.0,.99),smoothstep(.48,1.0,light));
   alpha=clamp(.008+.10*fres+.96*light,0.0,.98);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
-  float strength=uKind<8.5?.24:.19*gauss(x+.10,.60);
+  float strength=uKind<8.5?(.28+.13*gauss(x-.85,.24)+.10*gauss(x+.87,.24)):.28*gauss(x+.10,.60);
   float g=gauss(v-.5,.17),soft=gauss(v-.5,.30);
   col=mix(vec3(.02,.81,.81),vec3(.63,1.0,.96),g*.55);
-  alpha=strength*(.60*g+.40*soft)*(.10+.90*w);
+  alpha=strength*(.54*g+.46*soft)*(.44+.56*w);
  }else{
   float tip=pow(abs(x),6.0),turn=pow(v,5.0),fres=1.0-vLight;
   float focus=gauss(x+.20,.78),edge=pow(v,20.0),start=pow(1.0-v,20.0);
-  float tipGlow=gauss(x+.91,.13)+gauss(x-.92,.14);
+  float tipGlow=gauss(x+.91,.18)+gauss(x-.92,.18);
+  float facing=clamp(vLight,0.0,1.0);
+  float frontLight=.55+.45*gauss(x-.35,.70);
   col=mix(vec3(.10,.82,.83),vec3(.76,1.0,.98),clamp(.24*turn+.18*fres+.30*tip,0.0,1.0));
-  if(uKind<2.5)alpha=(.30+.24*v*v+.14*fres)*(1.0-.65*tip);
-  else if(uKind<3.5){alpha=(.56+.40*turn+.12*fres)*(1.0-.35*tip);col=mix(col,vec3(.80,1.0,.97),turn*.85);}
-  else if(uKind<4.5)alpha=(.10+.08*fres)*(1.0-.75*tip);
-  else alpha=(.10+.32*turn+.10*fres)*(1.0-.67*tip);
+  if(uKind<2.5)alpha=(.30+.29*v*v+.18*fres)*frontLight*(1.0-.55*tip);
+  else if(uKind<3.5){alpha=(.58+.40*turn+.16*fres)*(1.0-.22*tip);col=mix(col,vec3(.80,1.0,.97),turn*.85);}
+  else if(uKind<4.5)alpha=(.11+.10*fres+.07*facing*gauss(x-.28,.62))*(1.0-.70*tip);
+  else alpha=(.10+.36*turn+.12*fres)*(1.0-.60*tip);
   if(uMode<.5){
-   if(uKind<2.5)alpha=.009+.025*fres+.07*start*focus;
-   else if(uKind<3.5){alpha=clamp(.035+.80*edge+.32*start+.22*pow(v,4.0)+.13*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
+   if(uKind<2.5)alpha=.009+.025*fres+.09*start*focus+.09*pow(v,5.0)*tipGlow;
+   else if(uKind<3.5){alpha=clamp(.035+.86*edge+.36*start+.27*pow(v,4.0)+.20*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
    else if(uKind<4.5)alpha=.009+.019*fres+.065*edge*focus+.16*pow(1.0-v,12.0)*(.55+.45*focus);
-   else {alpha=clamp(.012+.85*edge*gauss(x+.10,.60)+.38*pow(v,6.0)*focus+.12*start,0.0,.96);col=mix(vec3(.02,.80,.79),vec3(.82,1.0,.97),edge*.88);}
+   else {alpha=clamp(.012+.88*edge*gauss(x+.10,.60)+.43*pow(v,6.0)*focus+.12*start,0.0,.96);col=mix(vec3(.02,.80,.79),vec3(.82,1.0,.97),edge*.88);}
   }else if(uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*8.0)*(1.0-smoothstep(.34,.50,d));}
 
  }
- gl_FragColor=vec4(col,alpha);
+ gl_FragColor=vec4(col,clamp(alpha,0.0,1.0));
 }
 `;
  function shader(type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){const log=gl.getShaderInfoLog(s);gl.deleteShader(s);throw Error(log)}return s}
