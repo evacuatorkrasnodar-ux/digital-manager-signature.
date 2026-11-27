@@ -308,12 +308,12 @@
       const shoulderLight=peak(a+drift,-.83,.24);
       const innerTop=peak(a+drift,-1.80,.65);
       const innerBottom=peak(a+drift,1.49,.46);
-      const lip=kind===0?clamp(.86-.68*right-.35*bottom,.12,.92):.12+.67*innerBottom;
-      const rim=Math.exp(-Math.pow((u-lip)/.21,2));
+      const lip=kind===0?clamp(.93-.78*right-.56*bottom,.06,.96):.06+.70*innerBottom;
+      const rim=Math.exp(-Math.pow((u-lip)/.25,2));
       const body=Math.exp(-Math.pow((u-.50)/.36,2));
-      const light=kind===0?clamp(.05+.92*upper+.91*right+.40*bottom+.22*left+.21*shoulderLight,0,1):clamp(.09+.79*innerTop+.69*innerBottom,0,1);
-      const opacity=clamp(.018+light*(.63*rim+.17*body),0,.86);
-      const white=clamp(rim*.75*light,0,1);
+      const light=kind===0?clamp(.025+.98*upper+.98*right+.74*bottom+.10*left+.35*shoulderLight,0,1):clamp(.08+.92*innerTop+.82*innerBottom,0,1);
+      const opacity=clamp(.008+Math.pow(light,1.25)*(.91*rim+.28*body),0,.98);
+      const white=clamp(rim*.96*light,0,1);
       gradient.addColorStop(q/32,'rgba('+Math.round(92+126*white)+','+Math.round(230+25*white)+','+Math.round(211+36*white)+','+opacity.toFixed(3)+')');
      }
      lightBands.push(gradient);
@@ -325,12 +325,26 @@
     const body=Math.exp(-Math.pow((u-(kind===0?.57:.42))/.31,2));
     path(rows[j]);
     if(lightBands.length){
-     ctx.strokeStyle=lightBands[Math.round(u*10)];ctx.globalAlpha=.91;
-     ctx.lineWidth=.25+.10*body;ctx.stroke();
+     ctx.strokeStyle=lightBands[Math.round(u*10)];ctx.globalAlpha=1;
+     ctx.lineWidth=.28+.13*body;ctx.stroke();
     }else{
-     ctx.strokeStyle=fiber;ctx.globalAlpha=.021+.54*lip+.10*body;
-     ctx.lineWidth=.25+.16*lip+.06*body;ctx.stroke();
+     ctx.strokeStyle=fiber;ctx.globalAlpha=.021+.68*lip+.16*body;
+     ctx.lineWidth=.25+.19*lip+.08*body;ctx.stroke();
     }
+   }
+   if(kind===0&&lightBands.length){
+    const crest=geom.map(g=>{
+     const right=peak(g.a+drift,.60,.69),bottom=peak(g.a+drift,1.52,.46);
+     return point(g,0,clamp(.93-.78*right-.56*bottom,.06,.96));
+    });
+    const gloss=ctx.createConicGradient(rot,200,200);
+    for(let k=0;k<=48;k++){
+     const a=k/48*Math.PI*2;
+     const l=clamp(.93*peak(a+drift,-2.16,.49)+.96*peak(a+drift,.60,.54)+.78*peak(a+drift,1.52,.43),0,1);
+     gloss.addColorStop(k/48,'rgba(226,255,248,'+(l*.92).toFixed(3)+')');
+    }
+    path(crest);ctx.strokeStyle=gloss;ctx.globalAlpha=.12;ctx.lineWidth=3.0;ctx.stroke();
+    ctx.globalAlpha=.94;ctx.lineWidth=.92;ctx.stroke();
    }
    // A local curled crest, independent of the closed ring. The fine strands
    // turn back across the shoulder, then merge smoothly into the main lip.
@@ -354,7 +368,7 @@
        return point(g,0,1-(.34+.52*v)*turn);
       });
       path(pts,false);ctx.strokeStyle=sheen;
-      ctx.globalAlpha=.13+.63*Math.pow(v,4);ctx.lineWidth=.24+.50*Math.pow(v,5);ctx.stroke();
+      ctx.globalAlpha=.12+.80*Math.pow(v,4);ctx.lineWidth=.23+.66*Math.pow(v,5);ctx.stroke();
      }
     }
    }
@@ -367,9 +381,9 @@
    spec.addColorStop(.69,kind===0?'rgba(156,247,229,.55)':'rgba(241,255,252,1)');
    spec.addColorStop(.88,kind===0?'rgba(182,255,237,.48)':'rgba(224,255,247,.94)');
    spec.addColorStop(1,kind===0?'rgba(105,235,213,.28)':'rgba(225,255,247,.91)');
-   path(edge);ctx.strokeStyle=spec;ctx.globalAlpha=.13;ctx.lineWidth=2.5;ctx.stroke();
-   ctx.globalAlpha=.30;ctx.lineWidth=1.6;ctx.stroke();
-   ctx.globalAlpha=1;ctx.lineWidth=kind===0?.92:1.04;ctx.stroke();
+   path(edge);ctx.strokeStyle=spec;ctx.globalAlpha=.18;ctx.lineWidth=2.5;ctx.stroke();
+   ctx.globalAlpha=.40;ctx.lineWidth=1.6;ctx.stroke();
+   ctx.globalAlpha=kind===0?.86:1;ctx.lineWidth=kind===0?1.02:1.16;ctx.stroke();
    path(rows[kind===0?0:count-1]);ctx.strokeStyle=kind===0&&lightBands.length?lightBands[0]:'rgba(151,240,225,.19)';ctx.lineWidth=kind===0?.65:.32;ctx.stroke();
   }
   // Silk membrane: a broad fine mesh tapers into two points and folds back
@@ -394,7 +408,7 @@
   const columns=liquidMobile?94:140;
   for(let j=0;j<mesh;j++){
    const u=(j+.45)/mesh;
-   const size=.42+.14*Math.pow(u,4)+.04*h;
+   const size=.40+.18*Math.pow(u,4)+.04*h;
    ctx.beginPath();
    for(let i=1;i<columns;i++){
     const x=-1+2*(i+(j%2)*.34)/columns;
@@ -402,7 +416,7 @@
     ctx.rect(px-size/2,py-size/2,size,size);
    }
    ctx.fillStyle=memGradient;
-   ctx.globalAlpha=.54+.38*Math.pow(u,5);
+   ctx.globalAlpha=.51+.44*Math.pow(u,5);
    ctx.fill();
   }
   ctx.globalAlpha=1;
@@ -431,7 +445,7 @@
    const width=R*(.36+.035*m)*env*(.80+.20*Math.cos(Math.PI*(x+.26)+t*.5));
    foldEdge.push([px,py+width]);
   }
-  path(foldEdge,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.33;ctx.lineWidth=.42;ctx.stroke();
+  path(foldEdge,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.44;ctx.lineWidth=.42;ctx.stroke();
   ctx.globalAlpha=1;
   for(const side of [-1,1]){
    const [px,py]=membrane(side*.97,1);
