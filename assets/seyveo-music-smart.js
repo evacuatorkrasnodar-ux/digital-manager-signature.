@@ -88,31 +88,40 @@
   dialog?.addEventListener('close',cancelRecognition);
   w.addEventListener('pagehide',cancelRecognition);
   d.addEventListener('visibilitychange',()=>{if(d.hidden&&mode==='recognize'){cancelRecognition();close()}});
-  async function recognitionSheet(){
+  function updateRecognitionIndex(){
+   const status=$('svRecognitionIndexStatus'),button=$('svRecognitionStart'),engine=w.SEYVEO_MUSIC_FINGERPRINT;
+   if(!status||!button||mode!=='recognize')return;
+   const s=engine?.state();
+   status.textContent=!s?.supported?'Анализ звука недоступен на этом устройстве.':
+    !s.total?'Добавьте песни в свою медиатеку.':
+    'Изучено '+s.indexed+' из '+s.total+' · '+(s.busy?'Анализирую музыку…':'Индекс на устройстве')+(s.failed?' · Не прочитано: '+s.failed:'')+(s.total>s.limit?' · Лимит первой версии: '+s.limit:'')+(!s.storage?' · Без сохранения индекса':'');
+   button.disabled=!s?.indexed;
+  }
+  d.addEventListener('seyveo:music-fingerprint',updateRecognitionIndex);
+  d.addEventListener('seyveo:music-library',updateRecognitionIndex);
+  function recognitionSheet(){
    cancelRecognition();
    if(!show('Распознать музыку','recognize'))return;
-   const version=generation,valid=()=>version===generation&&mode==='recognize'&&dialog?.open;
-   message('Сэйви определит исполнителя и название песни.');
-   message('После вашего разрешения записывается до 10 секунд звука и отправляется в сервис AudD. Запись не сохраняется в SEYVEO.');
+   const version=generation;
+   message('Сэйви узнаёт композиции из вашей медиатеки.');
+   message('До 10 секунд звука с вашего разрешения. Анализ на устройстве, без передачи записи в интернет.');
+   const engine=w.SEYVEO_MUSIC_FINGERPRINT;
    if(!w.isSecureContext||!w.navigator.mediaDevices?.getUserMedia||!w.MediaRecorder){message('Микрофон недоступен в этом браузере.');return}
-   const status=message('Проверка подключения…');
-   let configured=false;
-   const checkController=new AbortController(),checkTimer=w.setTimeout(()=>checkController.abort(),6000);
-   recognitionCancel=()=>checkController.abort();
-   try{const response=await w.fetch('/api/seyveo-music-recognition-status',{cache:'no-store',signal:checkController.signal});configured=response.ok&&(await response.json()).configured===true}catch{}finally{w.clearTimeout(checkTimer);if(valid())recognitionCancel=null}
-   if(!valid())return;
-   status.textContent=configured?'Готово к распознаванию':'Сервис пока не подключён. Нужен ключ AudD на локальном сервере.';
-   if(!configured)return;
-   action('Начать распознавание',()=>recordRecognition(version));
+   const status=message('Готовлю музыкальный индекс…');status.id='svRecognitionIndexStatus';
+   const startButton=action('Начать распознавание',()=>recordRecognition(version));startButton.id='svRecognitionStart';
+   updateRecognitionIndex();engine?.schedule();
+   message('Новые песни изучаются автоматически, пока музыка на паузе и приложение открыто.');
   }
   async function recordRecognition(version){
    if(version!==generation||mode!=='recognize')return;
    cancelRecognition();body.replaceChildren();
+   const engine=w.SEYVEO_MUSIC_FINGERPRINT;if(!engine?.state().indexed){message('Сначала дождитесь создания музыкального индекса.');action('Назад',recognitionSheet);return}
+   engine.setListening(true);
    const valid=()=>version===generation&&mode==='recognize'&&dialog?.open&&!cancelled;
    let stream=null,recorder=null,timer=0,cancelled=false;
    const controller=new AbortController();
    function release(){if(timer){w.clearTimeout(timer);timer=0}stream?.getTracks().forEach(t=>t.stop());stream=null}
-   recognitionCancel=()=>{cancelled=true;controller.abort();if(recorder&&recorder.state!=='inactive'){try{recorder.stop()}catch{}}release()};
+   recognitionCancel=()=>{cancelled=true;controller.abort();if(recorder&&recorder.state!=='inactive'){try{recorder.stop()}catch{}}release();engine.setListening(false)};
    // Explicit start also stops our own audio, so the microphone can hear
    // the external source. Never automatically resume or restart the mic.
    if(!audio.paused)audio.pause();
@@ -132,25 +141,23 @@
      try{
       const blob=new Blob(chunks,{type:recorder.mimeType||chunks[0]?.type||'audio/webm'});
       if(!blob.size||size>2*1024*1024)throw Error('clip');
-      const response=await w.fetch('/api/seyveo-music-recognize',{method:'POST',headers:{'content-type':blob.type},body:blob,signal:controller.signal});
-      const data=await response.json();if(!valid())return;
+      const data={result:await engine.recognize(blob,{signal:controller.signal})};if(!valid())return;
       body.replaceChildren();
-      if(!response.ok){message(data.error||'Распознавание недоступно.')}
-      else if(!data.result){message('Песня не найдена. Попробуйте ближе к источнику музыки.')}
+      if(!data.result){message('Не нашла уверенного совпадения в вашей медиатеке. Попробуйте ближе к источнику музыки.')}
       else{
        const name=d.createElement('strong');name.className='sv-adaptive-tagline';name.textContent=data.result.title;body.append(name);message(data.result.artist);
        if(data.result.album)message(data.result.album);
-       if(data.result.link){try{const u=new URL(data.result.link);if(u.protocol==='https:'&&u.hostname==='song.link'){const link=d.createElement('a');link.className='sv-smart-music-choice';link.textContent='Открыть песню';link.href=u.href;link.target='_blank';link.rel='noopener noreferrer';body.append(link)}}catch{}}
+       action('Включить песню',()=>{const items=music()?.recognitionLibrary?.()||[];const i=items.findIndex(x=>x.id===data.result.id);if(i<0){message('Песня удалена из медиатеки.');return}close();music()?.playIndexFromSearch?.(i)});
        action('Копировать название',async()=>{try{await w.navigator.clipboard.writeText(data.result.artist+' — '+data.result.title);message('Скопировано.')}catch{message('Не удалось скопировать.')}});
       }
       action('Распознать ещё',recognitionSheet);
-     }catch{if(valid()){body.replaceChildren();message('Не удалось связаться с каталогом.');action('Повторить',recognitionSheet)}}
-     finally{if(valid())recognitionCancel=null}
+     }catch{if(valid()){body.replaceChildren();message('Не удалось прочитать или сравнить запись.');action('Повторить',recognitionSheet)}}
+     finally{if(valid()){recognitionCancel=null;engine.setListening(false)}}
     };
     recorder.start();body.replaceChildren();message('Слушаю музыку… До 10 секунд.');
     action('Отменить',()=>{cancelRecognition();close()});
     timer=w.setTimeout(()=>{if(recorder.state!=='inactive')recorder.stop();release()},10000);
-   }catch{release();if(valid()){body.replaceChildren();message('Нет доступа к микрофону или формат записи не поддерживается.');action('Повторить',recognitionSheet)}}
+   }catch{release();if(valid()){engine.setListening(false);recognitionCancel=null;body.replaceChildren();message('Нет доступа к микрофону или формат записи не поддерживается.');action('Повторить',recognitionSheet)}}
   }
   $('svMusicRecognizeHome')?.addEventListener('click',recognitionSheet);
   $('svMusicRecognizeMenu')?.addEventListener('click',recognitionSheet);
