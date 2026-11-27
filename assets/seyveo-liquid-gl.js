@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V80 · audio-driven living silk, quiet ground reflection · WebGL 1. */
+/* SEYVEO Liquid Sound V81 · audio-driven living silk, quiet ground reflection · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -152,13 +152,13 @@ void main(){
    float glow=gauss(r-1.0,.045)*(.018+.15*peak(a,-2.16,.44)+.28*peak(a,1.30,.58));
    float floorGlow=gauss(xy.x,.43)*gauss(xy.y-1.041,.038)*.15+gauss(xy.x,.21)*gauss(xy.y-1.033,.017)*.12;
    glow=clamp(glow+floorGlow,0.0,.75);
-   gl_FragColor=vec4(.52,.75,.77,glow*.70);return;
+   gl_FragColor=vec4(.27,.75,.77,glow*.66);return;
   }
   float n=sqrt(max(0.0,1.0-r*r));
   float top=peak(a,-2.08,.61),bottom=peak(a,1.37,.57),right=peak(a,.60,.61),left=peak(a,2.85,.48);
   float lip=.21+.78*top+.77*bottom+.72*right+.29*left;
-  // V80: neutral clear glass; the upper surface has only a faint optical edge.
-  float lowerRim=smoothstep(-.10,.28,xy.y); float edge=gauss(r-.993,.0055)*mix(.13,1.0,lowerRim),edgeSoft=gauss(r-.973,.021)*lowerRim;
+  // V81: thin optical edge, localized neutral highlights and transmitted silk color.
+  float lowerRim=smoothstep(-.10,.28,xy.y); float edge=gauss(r-.995,.0038)*(.17+.37*bottom+.28*right+.12*left),edgeSoft=gauss(r-.977,.018)*(.14+.45*bottom+.22*right);
   float reflected=gauss(r-(.957-.064*top),.014+.030*top)*pow(top,1.8);
   // Broad curved softbox reflection: a distinct inner edge with a translucent tail.
   float innerArc=.945-.185*top;
@@ -166,13 +166,15 @@ void main(){
   float shoulder=peak(a,-1.05,.60)*gauss(r-.91,.045);
   float base=gauss(r-(.952-.048*bottom),.044)*bottom;
   float lowerLens=gauss(r-(.927-.035*bottom),.044)*peak(a,1.14,.80);
-  float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left)*lowerRim;
+  float inner=gauss(r-.960,.019)*(.10+.25*right+.20*left)*lowerRim;
   float fres=pow(max(0.0,1.0-n),3.0);
-  float light=clamp(.53*reflected+1.38*edge*lip+.48*edgeSoft*lip+.55*base+.22*inner+.54*crescent+.38*lowerLens+.16*shoulder,0.0,1.0);
+  // Direct reflection stays white; weak transmitted color appears only at the lens.
+  float direct=.58*reflected+.50*crescent+.83*edge*lip;
+  float transmitted=.22*edgeSoft*lip+.32*base+.10*inner+.27*lowerLens+.14*shoulder;
+  float light=clamp(direct+transmitted,0.0,1.0);
   float blueDepth=gauss(r-.91,.085)*(.55+.45*peak(a,-.75,.9));
-  col=mix(vec3(.24,.36,.39),vec3(.65,.82,.83),smoothstep(.04,.60,light));
-  col=mix(col,vec3(.94,.99,1.0),smoothstep(.42,.93,light));
-  alpha=clamp(.003+.043*fres+.88*light+.042*blueDepth,0.0,.94);
+  col=mix(vec3(.25,.57,.60),vec3(.94,.99,1.0),clamp(direct/(light+.001),0.0,1.0));
+  alpha=clamp(.002+.026*fres+.90*light+.025*blueDepth,0.0,.90);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.89,.16)+gauss(x-.73,.19);
