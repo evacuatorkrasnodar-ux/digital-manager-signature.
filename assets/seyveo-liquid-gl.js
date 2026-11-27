@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V68 · transverse silk weave and returning light · WebGL 1. */
+/* SEYVEO Liquid Sound V69 · sculpted lower silk return · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -35,8 +35,8 @@ vec3 contour(float k,float u){
   return vec3(p,(nearEdge?.38:.23)*sin(PI*u));
  }
  if(k<.5){m=vec2(.105,-.795);c1=vec2(-.695,.185);c2=vec2(-.450,-.795);c3=vec2(.660,-.795);c4=vec2(.88,-.43);z=-.13;}
- else if(k<3.5){m=vec2(.43,.55);c1=vec2(-.48,.19);c2=vec2(.060,.55);c3=vec2(.800,.55);c4=vec2(1.035,.20);z=-.09;}
- else {m=vec2(-.045,.785);c1=vec2(-.92,.47);c2=vec2(-.475,.785);c3=vec2(.385,.785);c4=vec2(1.02,.32);z=-.22;}
+ else if(k<3.5){m=vec2(.40,.565);c1=vec2(-.47,.10);c2=vec2(.015,.565);c3=vec2(.785,.565);c4=vec2(1.025,.26);z=-.09;}
+ else {m=vec2(-.025,.785);c1=vec2(-.91,.54);c2=vec2(-.415,.785);c3=vec2(.365,.785);c4=vec2(1.025,.33);z=-.22;}
  vec2 p=u<.5?bez(l,c1,c2,m,u*2.0):bez(m,c3,c4,r,u*2.0-1.0);
  return vec3(p,z*sin(PI*u));
 }
@@ -64,6 +64,10 @@ vec3 matter(float x,float v){
  if(k<.5){
   p.xy+=f*vec2(.085*sin(PI*u-.65),-.085*(.65+.35*sin(PI*u)));
   p.x+=f*.018*sin(t*.32+PI*u);
+ }else if(k>2.5){
+  // The return rolls underneath the front face; the shared edges remain fixed.
+  p.z-=.18*f;
+  p.xy+=f*vec2(-.075,.035*sin(PI*u));
  }else p.x+=f*(.035*sin(PI*u*2.0+t*.32)+.115*sin(PI*u*1.6-.35)*(k<1.5?-.50:-.65));
  p.y+=w*(.010+.035*mid)*sin(u*5.5+t*.65)+.016*f*sin(u*8.0-t*.4);
  p.z+=w*.055*sin(t*.55+u*4.0)*( .30+mid);
@@ -78,7 +82,7 @@ vec3 crease(float x,float v){
  p.z+=w*.055*sin(t*.55+u*4.0)*(.30+mid);
  vec2 tangent=contour(k,min(1.0,u+.004)).xy-contour(k,max(0.0,u-.004)).xy;
  vec2 normal=normalize(vec2(-tangent.y,tangent.x)+vec2(.000001,0.0));
- float width=uKind<8.5?(.115+.018*sin(PI*u)):uKind<9.5?.125:.065;
+ float width=uKind<8.5?(.115+.018*sin(PI*u)):uKind<9.5?.085:.065;
  p.xy+=normal*(v*2.0-1.0)*width*(.72+.28*w);
  return p;
 }
@@ -149,7 +153,7 @@ void main(){
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.87,.19)+gauss(x-.86,.20);
-  float strength=uKind<8.5?(.25+.68*tips+.20*gauss(x-.05,.65)):uKind<9.5?(.79*gauss(x+.01,.19)+.10*gauss(x-.26,.40)):(.10+.24*tips);
+  float strength=uKind<8.5?(.25+.68*tips+.20*gauss(x-.05,.65)):uKind<9.5?(.63*gauss(x+.01,.145)+.10*gauss(x-.26,.35)):(.10+.24*tips);
   float g=gauss(v-.5,.055),soft=gauss(v-.5,.29);
   col=mix(vec3(.02,.91,.88),vec3(.88,1.0,.98),g*.78);
   float taper=smoothstep(0.0,.08,w);
@@ -172,12 +176,12 @@ void main(){
   if(uKind<2.5){float upperRim=pow(1.0-v,12.0);alpha=(.76+.14*v*v+.14*fres+.20*shoulderLight+.22*highlight+.12*upperRim)*frontLight*(1.0-.25*tip);col=mix(col,vec3(.62,1.0,.98),clamp(.24*shoulderLight+.16*silkLight+.50*highlight+.18*upperRim,0.0,1.0));}
   else if(uKind<3.5){alpha=(.84+.16*turn+.16*fres)*(1.0-.12*tip);col=mix(col,vec3(.83,1.0,.97),clamp(.24+.63*silkLight+.25*turn+.18*middleLight,0.0,1.0));}
   else if(uKind<4.5){alpha=(.36+.14*fres+.24*facing*gauss(x-.27,.71)+.20*highlight)*(1.0-.40*tip);col=mix(col,vec3(.32,1.0,.98),.28*highlight);}
-  else alpha=(.31+.23*turn+.30*pow(v,2.3)*gauss(x+.10,.48)+.14*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.44*tip);
+  else alpha=(.30+.18*turn+.36*pow(v,1.8)*gauss(x-.05,.52)+.16*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.44*tip);
   if(uMode<.5){
    if(uKind<2.5){float rimLight=.20*pow(1.0-v,32.0)*(.55+.45*focus);alpha=.010+.025*fres+rimLight+.10*pow(v,4.0)*tipGlow+.035*shoulderLight;col=mix(col,vec3(.008,.045,.065),.84*bodyMask);alpha+=.16*bodyMask;}
    else if(uKind<3.5){alpha=clamp(.055+.64*edge+.30*start+.35*silkLight+.26*tipGlow+.14*leftTurn+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30+.24*leftTurn,0.0,1.0));}
    else if(uKind<4.5){float rim=.29*edge*gauss(x-.35,.78)+.16*pow(1.0-v,12.0)*(.55+.45*focus);alpha=.009+.019*fres+rim+.29*bodyMask;col=mix(vec3(.006,.045,.065),vec3(.07,.92,.89),clamp(rim*2.7+.12*highlight,0.0,1.0));}
-   else {float low=gauss(x-.06,.21),sweep=gauss(x-.27,.49);float seam=pow(1.0-v,32.0)*(.25+.75*gauss(x-.40,.66));alpha=clamp(.016+.90*edge*low+.65*pow(v,2.4)*low+.27*start*gauss(x-.25,.76)+.28*pow(v,2.5)*sweep+.62*seam,0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),clamp(edge*(.90*low+.24*sweep)+.44*seam,0.0,1.0));}
+   else {float low=gauss(x-.02,.18),sweep=gauss(x-.27,.42);float seam=pow(1.0-v,38.0)*(.18+.82*gauss(x-.40,.60));float broad=.12*gauss(v-.67,.33)*gauss(x-.13,.68);alpha=clamp(.015+.76*edge*low+.63*pow(v,2.1)*low+.15*start*gauss(x-.25,.76)+.24*pow(v,2.5)*sweep+.47*seam+broad,0.0,.98);col=mix(vec3(.025,.80,.79),vec3(.88,1.0,.98),clamp(edge*(.90*low+.16*sweep)+.35*seam,0.0,1.0));}
   }
   if(uKind>6.5&&uKind<7.5){
    float taper=sin(3.14159265*(x+1.0)*.5);
