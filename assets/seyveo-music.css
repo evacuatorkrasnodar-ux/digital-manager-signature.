@@ -721,3 +721,39 @@ html.sv-music-screen.sv-music-player-open .app{padding-bottom:env(safe-area-inse
 @media(prefers-reduced-transparency:reduce){
  #sayviMusicPage[data-music-view="player"].sv-music-player-has-art::before{display:none}
 }
+
+/* Adaptive Sound: compact, stable typography and scrolling on small screens. */
+#svSmartMusicSheet[data-music-sheet="sound"]{
+ box-sizing:border-box;max-width:calc(100vw - 24px);
+ max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);
+ overflow-y:auto;overscroll-behavior:contain;
+}
+#svSmartMusicSheet[data-music-sheet="sound"] #svSmartMusicTitle{
+ font-size:clamp(18px,4.6vw,22px);font-weight:650;letter-spacing:-.025em;
+}
+#svSmartMusicSheet[data-music-sheet="sound"] #svSmartMusicBody{
+ display:grid;gap:12px;min-width:0;max-height:none;overflow:visible;
+}
+#svSmartMusicSheet[data-music-sheet="sound"] .sv-adaptive-mark{
+ width:58px;height:58px;margin:2px auto 0;
+}
+#svSmartMusicSheet[data-music-sheet="sound"] .sv-adaptive-tagline{
+ font-size:clamp(17px,4.2vw,21px);line-height:1.25;font-weight:600;
+ text-wrap:balance;margin:0;
+}
+#svSmartMusicSheet[data-music-sheet="sound"] .sv-smart-music-message{
+ font-size:13px;line-height:1.45;margin:0;text-wrap:pretty;
+}
+#svSmartMusicSheet[data-music-sheet="sound"] .sv-adaptive-status,
+#svSmartMusicSheet[data-music-sheet="sound"] #svAdaptiveSourceQuality{
+ padding:12px 0;margin:0;line-height:1.4;
+}
+#svSmartMusicSheet[data-music-sheet="sound"] .sv-adaptive-status strong,
+#svSmartMusicSheet[data-music-sheet="sound"] #svAdaptiveSourceQuality strong{font-size:15px;font-weight:600}
+#svSmartMusicSheet[data-music-sheet="sound"] .sv-adaptive-status small,
+#svSmartMusicSheet[data-music-sheet="sound"] #svAdaptiveSourceQuality small{font-size:12px;line-height:1.4}
+#svSmartMusicSheet[data-music-sheet="sound"] #svAdaptivePure{
+ box-sizing:border-box;width:100%;min-height:48px;height:auto;
+ font-size:16px;line-height:1.3;font-weight:560;
+ padding-block:12px;margin:0;text-align:left;
+}
