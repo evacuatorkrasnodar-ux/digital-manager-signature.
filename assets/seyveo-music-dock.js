@@ -137,9 +137,9 @@ function init(){
    const rect=stage.getBoundingClientRect();
    if(rect.width>40&&rect.height>40&&rect.top>=0&&rect.bottom<=innerHeight+1){
     const real=art&&!art.hidden;
-    const fallback=stage.querySelector('.sv-now-fallback');
-    const palette=fallback?Array.from(fallback.querySelectorAll('.sv-music-scene-palette > span')).reverse().find(node=>Number(getComputedStyle(node).opacity)>.6):null;
-    const source=real?art:(palette||fallback);
+    const ambient=page.querySelector('.sv-now-ambient');
+    const palette=ambient?Array.from(ambient.querySelectorAll(':scope > span')).reverse().find(node=>Number(getComputedStyle(node).opacity)>.6):null;
+    const source=real?art:(palette||ambient);
     if(source)snapshot={rect,background:getComputedStyle(source).backgroundImage,real};
    }
   }

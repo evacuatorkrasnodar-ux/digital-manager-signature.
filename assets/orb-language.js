@@ -183,6 +183,7 @@
   sceneFrame=0;sceneLast=0;sceneFile=null;sceneLevels.fill(0);ringEnergy=0;
   scene?.classList.remove('sv-scene-rhythm');
   scene?.style.removeProperty('--sv-scene-glow');
+  musicPage?.style.removeProperty('--sv-now-glow');
   for(const name of ['--sv-ring-scale','--sv-ring-angle','--sv-ring-opacity'])scene?.style.removeProperty(name);
   for(const bar of sceneBars){const h=Number(bar.dataset.rest)||8;bar.setAttribute('y1',String(74-h/2));bar.setAttribute('y2',String(74+h/2))}
  }
@@ -203,7 +204,9 @@
     sceneBars[i].setAttribute('y1',(74-height/2).toFixed(2));
     sceneBars[i].setAttribute('y2',(74+height/2).toFixed(2));
    }
-   scene.style.setProperty('--sv-scene-glow',(.23+.52*(bass*.55+mid*.30+air*.15)).toFixed(3));
+   const glow=(.23+.52*(bass*.55+mid*.30+air*.15)).toFixed(3);
+   scene.style.setProperty('--sv-scene-glow',glow);
+   if(scene===playerScene)musicPage?.style.setProperty('--sv-now-glow',glow);
    // Slow breathing plus a small, smoothed bass response. No abrupt shaking.
    ringEnergy+=(bass-ringEnergy)*(bass>ringEnergy?.32:.14);
    const breath=(1+Math.sin(audio.currentTime*Math.PI/4))/2;
