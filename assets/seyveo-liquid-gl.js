@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V72 · unified silk filaments · WebGL 1. */
+/* SEYVEO Liquid Sound V73 · soft continuous silk · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -115,7 +115,7 @@ void main(){
  float glass=step(4.5,uKind)*(1.0-step(5.5,uKind));
  float scale=.82*mix(.985,1.0,glass)*(1.0+mix(.015,.003,glass)*uMusic.y)*(1.0+.020*p.z);
  gl_Position=vec4(scale*vec2(p.x+.012*p.z,-p.y+.012*p.z),p.z*.3,1.0);
- gl_PointSize=clamp(uSize*(uKind>3.5?.00215:uKind<2.5?.00245:.0025+.00030*uMusic.w),1.35,3.3);
+ gl_PointSize=clamp(uSize*(uKind>3.5?.00215:uKind<2.5?.00245:.00215+.00020*uMusic.w),1.25,3.3);
  vUV=vec2(x,v);
 }
 `;
@@ -174,7 +174,7 @@ void main(){
   float shoulderLight=gauss(x+.43,.64)*gauss(v-.48,.45);
   float highlight=clamp(vSheen,0.0,1.0);
   float silkLight=pow(v,2.4)*(.57+.43*gauss(x+.25,.70));
-  float foldApproach=pow(v,3.0)*(.62+.38*gauss(x-.25,.65));
+  float foldApproach=pow(v,2.1)*(.62+.38*gauss(x-.25,.65));
   float middleLight=gauss(v-.60,.44)*(.68+.32*gauss(x-.36,.52));
   // Translucent absorption masks rear particles under the near-facing silk.
   float bodyMask=smoothstep(0.0,.13,v)*smoothstep(0.0,.13,1.0-v)*smoothstep(0.0,.18,1.0-abs(x));
@@ -185,7 +185,7 @@ void main(){
   else alpha=(.30+.18*turn+.36*pow(v,1.8)*gauss(x-.05,.52)+.16*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.44*tip);
   if(uMode<.5){
    if(uKind<2.5){float rimLight=.20*pow(1.0-v,32.0)*(.55+.45*focus);alpha=.010+.025*fres+rimLight+.10*pow(v,4.0)*tipGlow+.035*shoulderLight+.075*foldApproach;col=mix(col,vec3(.008,.045,.065),.84*bodyMask);alpha+=.16*bodyMask;}
-   else if(uKind<3.5){alpha=clamp(.035+.57*edge+.15*start+.35*silkLight+.26*tipGlow+.14*leftTurn+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.20+tipGlow*.30+.24*leftTurn,0.0,1.0));}
+   else if(uKind<3.5){alpha=clamp(.045+.51*edge+.12*start+.40*silkLight+.26*tipGlow+.14*leftTurn+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.20+tipGlow*.30+.24*leftTurn,0.0,1.0));}
    else if(uKind<4.5){float rim=.29*edge*gauss(x-.35,.78)+.16*pow(1.0-v,12.0)*(.55+.45*focus);alpha=.009+.019*fres+rim+.29*bodyMask;col=mix(vec3(.006,.045,.065),vec3(.07,.92,.89),clamp(rim*2.7+.12*highlight,0.0,1.0));}
    else {float low=gauss(x-.02,.18),sweep=gauss(x-.27,.42);float seam=pow(1.0-v,38.0)*(.18+.82*gauss(x-.40,.60));float broad=.12*gauss(v-.67,.33)*gauss(x-.13,.68);alpha=clamp(.015+.76*edge*low+.63*pow(v,2.1)*low+.15*start*gauss(x-.25,.76)+.24*pow(v,2.5)*sweep+.47*seam+broad,0.0,.98);col=mix(vec3(.025,.80,.79),vec3(.88,1.0,.98),clamp(edge*(.90*low+.16*sweep)+.35*seam,0.0,1.0));}
   }
@@ -211,14 +211,14 @@ void main(){
    highp float flow=uKind<2.5?.22:ribbon?-.07:-.18;
    highp vec2 uv=vec2(u+flow*bow*(w-.42),w-(ribbon?.035:.13)*bow*(.35+.65*u));
    // Dots and central filaments share one lattice; no overlaid line mesh.
-   highp vec2 cells=uv*vec2(ribbon?132.0:uKind<2.5?116.0:106.0,ribbon?34.0:uKind<2.5?48.0:42.0)+.5;
+   highp vec2 cells=uv*vec2(ribbon?114.0:uKind<2.5?116.0:106.0,ribbon?40.0:uKind<2.5?48.0:42.0)+.5;
    highp vec2 aa=max(fwidth(cells),vec2(.001));
-   highp vec2 core=ribbon?vec2(.105,.18):vec2(.145);
+   highp vec2 core=ribbon?vec2(.12,.22):vec2(.145);
    highp vec2 coverage=clamp((pulseIntegral(cells+aa*.5,core)-pulseIntegral(cells-aa*.5,core))/aa,0.0,1.0);
    highp float dotMask=coverage.x*coverage.y;
-   highp float filament=ribbon?coverage.x*(.24+.36*sin(3.14159265*w))*(1.0-.55*smoothstep(.82,.99,u)):0.0;
+   highp float filament=ribbon?coverage.x*(.08+.17*sin(3.14159265*w))*(1.0-.65*smoothstep(.82,.99,u)):0.0;
    highp float mask=max(dotMask,filament);
-   highp float mean=ribbon?.105:.0841;
+   highp float mean=ribbon?.1056:.0841;
    highp float resolved=1.0-smoothstep(.85,1.65,max(aa.x,aa.y));
    alpha*=mix(mean,mask,resolved);
   }
@@ -253,10 +253,10 @@ void main(){
  // Four distinct cloth intervals: 2=0..1, 3=1..2, 4=2..3, 6=3..4; 7 is the shoulder.
  // Back-to-front compositing keeps the lower returning silk behind the broad face.
  const parts=[6,4,7,2,3].map(kind=>{
-  const dims=kind===7?[58,24,88,36]:kind===2?[94,42,132,54]:kind===3?[94,36,132,52]:kind===4?[94,34,132,46]:[94,35,132,48];
+  const dims=kind===7?[58,24,88,36]:kind===2?[94,42,132,54]:kind===3?[82,40,114,48]:kind===4?[94,34,132,46]:[94,35,132,48];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   const layers=[mesh(kind,mobile?64:96,mobile?20:32,0)];
-  if(kind===3&&!surfaceDots)layers.push(mesh(kind,n,m,2));
+  // One texture pass per surface: no separate line overlay in the lightweight renderer.
   if(surfaceDots&&(kind===2||kind===3||kind===4))layers.push(mesh(kind,96,44,3));
   else layers.push(mesh(kind,n,m,1));return layers;
  });
