@@ -368,86 +368,87 @@
    }
    ctx.globalAlpha=1;
   }
-  // Silk membrane: a broad fine mesh tapers into two points and folds back
-  // on itself near the diagonal crest. The interior is no longer a flat S line.
+  // A continuous folded sheet, projected from curved material coordinates.
+  // The upper and lower edges share their tips but separate through the middle.
   const R=radius*.753,tilt=-.27+.035*Math.sin(t*.7),mc=Math.cos(tilt),ms=Math.sin(tilt);
-  const membrane=(x,u)=>{
+  const project=(x,y)=>[200+R*(x*mc-y*ms),200+R*(x*ms+y*mc)];
+  const shape=x=>{
    const env=Math.sqrt(Math.max(0,1-x*x));
-   const arc=-env*(.97+.012*Math.sin(t));
-   const crest=env*(-.105+.025*Math.sin(Math.PI*x+t*.45)+.008*Math.sin(2*Math.PI*x-t));
-   const crease=env*(.12+.05*m)*Math.pow(Math.sin(Math.PI*u),2)*Math.sin(Math.PI*x+.8+t*.45);
-   const y=arc+(crest-arc)*u+crease;
-   return [200+R*(x*mc-y*ms),200+R*(x*ms+y*mc)];
+   const curl=Math.exp(-Math.pow((x+.73)/.30,2));
+   const wave=.025*Math.sin(t*.65+x*2.7)+.035*m*Math.sin(x*3.1+t);
+   const upper=env*(-.125-.115*curl+.028*x+wave);
+   const lower=env*(.155+.095*Math.exp(-Math.pow((x+.36)/.47,2))-.090*x+wave);
+   return {env,upper,lower};
   };
-  const mesh=liquidMobile?48:78;
-  const memGradient=ctx.createLinearGradient(60,220,340,155);
-  memGradient.addColorStop(0,'rgba(125,245,219,.72)');
-  memGradient.addColorStop(.42,'rgba(135,226,213,.62)');
-  memGradient.addColorStop(.76,'rgba(168,255,237,.78)');
-  memGradient.addColorStop(1,'rgba(230,255,247,.88)');
-  // Paint discrete subpixel pearls in one batched path per row. Dashes
-  // with round caps were too dim on some high-DPI screens.
-  const columns=liquidMobile?94:140;
+  const membrane=(x,u)=>{
+   const {env,upper}=shape(x);
+   const arc=-env*(.985+.005*Math.sin(t));
+   const flow=Math.sin(Math.PI*u);
+   const xx=x+.065*env*flow*Math.sin(x*1.9+t*.55);
+   const yy=arc+(upper-arc)*u+env*.12*flow*flow*Math.sin(x*2.4+.8+t*.45);
+   return project(xx,yy);
+  };
+  const fold=(x,v)=>{
+   const {env,upper,lower}=shape(x);
+   const curl=Math.sin(Math.PI*v);
+   const xx=x+env*(.10+.035*m)*curl*(.74-.26*x);
+   const yy=upper+(lower-upper)*(v+.10*curl);
+   return project(xx,yy);
+  };
+  const mesh=liquidMobile?48:78,columns=liquidMobile?94:140;
+  const memGradient=ctx.createLinearGradient(72,235,324,155);
+  memGradient.addColorStop(0,'rgba(151,252,230,.86)');
+  memGradient.addColorStop(.24,'rgba(135,226,213,.67)');
+  memGradient.addColorStop(.62,'rgba(153,244,227,.74)');
+  memGradient.addColorStop(1,'rgba(232,255,249,.95)');
+  // The upper surface is a delicate staggered grid of actual microdots.
   for(let j=0;j<mesh;j++){
-   const u=(j+.45)/mesh;
-   const size=.44+.18*Math.pow(u,4)+.04*h;
+   const u=(j+.45)/mesh,size=.40+.16*Math.pow(u,4)+.04*h;
    ctx.beginPath();
    for(let i=1;i<columns;i++){
     const x=-1+2*(i+(j%2)*.34)/columns;
     const [px,py]=membrane(x,u);
     ctx.rect(px-size/2,py-size/2,size,size);
    }
-   ctx.fillStyle=memGradient;
-   ctx.globalAlpha=.57+.38*Math.pow(u,5);
-   ctx.fill();
+   ctx.fillStyle=memGradient;ctx.globalAlpha=.54+.35*Math.pow(u,5);ctx.fill();
   }
-  ctx.globalAlpha=1;
-  // A single twisted leaf of silk, widest left of centre, tapering at both tips.
-  // Microdots follow the surface rather than drawing a second heavy S-shaped rim.
-  const foldCount=liquidMobile?28:44,foldCols=liquidMobile?100:156;
+  // Follow the fabric across the fold, rather than stacking horizontal waves.
+  // Thin dotted longitudinal fibres converge at both tips and curve in depth.
+  const foldCols=liquidMobile?108:168,foldCount=liquidMobile?25:38;
   for(let j=0;j<foldCount;j++){
-   const v=(j+.45)/foldCount;
-   const bend=v+.10*Math.sin(Math.PI*v);
+   const v=(j+.5)/foldCount,size=.41+.15*Math.pow(v,3);
    ctx.beginPath();
    for(let i=1;i<foldCols;i++){
-    const x=-1+2*(i+(j%2)*.34)/foldCols,[px,py]=membrane(x,1);
-    const env=Math.pow(Math.max(0,1-x*x),.78);
-    const width=R*(.38+.035*m)*env*(.80+.20*Math.cos(Math.PI*(x+.26)+t*.5));
-    const dx=R*.045*env*Math.sin(Math.PI*v);
-    const size=.45+.16*Math.pow(v,2);
-    ctx.rect(px+dx-size/2,py+width*bend-size/2,size,size);
+    const x=-1+2*i/foldCols;
+    const [px,py]=fold(x,v);
+    ctx.rect(px-size/2,py-size/2,size,size);
    }
-   ctx.fillStyle=memGradient;ctx.globalAlpha=.50+.47*Math.pow(v,2);ctx.fill();
+   ctx.fillStyle=memGradient;ctx.globalAlpha=.44+.49*Math.pow(v,2);ctx.fill();
   }
-  // A faint, continuous reflected edge defines the lower turn of the leaf.
-  const foldEdge=[];
-  for(let i=0;i<=liquidSteps;i++){
-   const x=-1+2*i/liquidSteps,[px,py]=membrane(x,1);
-   const env=Math.pow(Math.max(0,1-x*x),.78);
-   const width=R*(.38+.035*m)*env*(.80+.20*Math.cos(Math.PI*(x+.26)+t*.5));
-   foldEdge.push([px,py+width]);
-  }
-  path(foldEdge,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.50;ctx.lineWidth=.42;ctx.stroke();
-  ctx.globalAlpha=1;
+  // A narrow softly luminous turning edge, with no solid white stripe.
+  const foldEdge=Array.from({length:liquidSteps+1},(_,i)=>fold(-1+2*i/liquidSteps,1));
+  path(foldEdge,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.16;ctx.lineWidth=1.5;ctx.stroke();
+  ctx.globalAlpha=.60;ctx.lineWidth=.43;ctx.stroke();
+  // Tip reflections taper along the fabric; especially the hooked left tip.
   for(const side of [-1,1]){
-   const [px,py]=membrane(side*.97,1);
-   const glint=ctx.createRadialGradient(px,py,0,px,py,8);
-   glint.addColorStop(0,'rgba(190,255,242,.73)');
-   glint.addColorStop(.36,'rgba(108,235,217,.18)');
+   const [px,py]=project(side,0),glint=ctx.createRadialGradient(px,py,0,px,py,side<0?11:9);
+   const size=side<0?11:9;
+   glint.addColorStop(0,'rgba(186,255,241,.57)');
+   glint.addColorStop(.36,'rgba(108,235,217,.17)');
    glint.addColorStop(1,'rgba(108,235,217,0)');
-   ctx.fillStyle=glint;ctx.fillRect(px-8,py-8,16,16);
+   ctx.globalAlpha=1;ctx.fillStyle=glint;ctx.fillRect(px-size,py-size,size*2,size*2);
   }
-  // Sparse back-surface pearls make the lower hemisphere read as a volume.
-  ctx.fillStyle='rgba(119,224,210,.28)';
-  ctx.beginPath();
+  // The back surface follows a lower hemisphere rather than a flat vertical grid.
+  ctx.fillStyle='rgba(119,224,210,.26)';ctx.beginPath();
   const backRows=liquidMobile?17:24,backCols=liquidMobile?44:65;
   for(let j=1;j<=backRows;j++){
    const v=j/(backRows+1);
    for(let i=1;i<backCols;i++){
-    const x=-1+2*(i+(j%2)*.5)/backCols,env=Math.sqrt(Math.max(0,1-x*x));
-    const [px,py]=membrane(x,1);
-    const y=py+R*env*v*.83;
-    if((px-200)*(px-200)+(y-200)*(y-200)<R*R*.94)ctx.rect(px,y,.38,.38);
+    const x=-1+2*(i+(j%2)*.5)/backCols;
+    const {env,lower}=shape(x);
+    const y=lower+(env*.96-lower)*v;
+    const [px,py]=project(x,y);
+    ctx.rect(px,py,.35,.35);
    }
   }
   ctx.globalAlpha=1;ctx.fill();
