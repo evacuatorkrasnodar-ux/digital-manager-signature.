@@ -64,13 +64,15 @@ function handle(raw){
    const message='На iPhone системная громкость управляется боковыми кнопками. Сэйви не может менять её из Safari.';
    msg(message);return {status:'unsupported',message};
   }
-  const old=audio.volume,target=Math.max(0,Math.min(1,Math.round((old+(up?.15:-.15))*100)/100));
+  const adaptive=window.SEYVEO_ADAPTIVE_SOUND;
+  const old=adaptive?.baseVolume()??audio.volume,target=Math.max(0,Math.min(1,Math.round((old+(up?.15:-.15))*100)/100));
   if(target===old){
    const message=up?'Громкость плеера уже на максимуме.':'Громкость плеера уже на минимуме.';
    msg(message);return {status:'limit',message};
   }
-  try{audio.volume=target}catch{}
-  if(Math.abs(audio.volume-target)>.025){
+  let applied=false;
+  if(adaptive)applied=adaptive.setBaseVolume(target);else{try{audio.volume=target;applied=Math.abs(audio.volume-target)<=.025}catch{}}
+  if(!applied){
    const message='iPhone не разрешает менять системную громкость из браузера. Используй боковые кнопки. В мобильном SEYVEO сделаем отдельное управление.';
    msg(message);return {status:'unsupported',message};
   }
