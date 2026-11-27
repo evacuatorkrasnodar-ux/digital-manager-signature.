@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V49 · asymmetric liquid volume · WebGL 1. */
+/* SEYVEO Liquid Sound V50 · directional glass and silk optics · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -8,7 +8,7 @@ window.SEYVEO_LIQUID_GL={create(mobile){
  const vs=`precision highp float;
 attribute vec4 aData;
 uniform vec4 uMusic; uniform mediump float uKind,uMode; uniform float uSize;
-varying mediump vec2 vUV; varying mediump float vLight;
+varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 const float PI=3.14159265;
 // Five shared cubic contours traced from the approved matter silhouette.
 vec2 bez(vec2 a,vec2 b,vec2 c,vec2 d,float t){float q=1.0-t;return q*q*q*a+3.0*q*q*t*b+3.0*q*t*t*c+t*t*t*d;}
@@ -61,19 +61,19 @@ vec3 crease(float x,float v){
  return p;
 }
 void main(){
- float x=aData.x,v=aData.y;vec3 p;
+ float x=aData.x,v=aData.y;vec3 p;vSheen=0.0;
  if(uKind>4.5&&uKind<5.5){p=vec3(x*1.10,(2.0*v-1.0)*1.10,0.0);vLight=1.0;}
  else if(uKind>7.5){p=crease(x,v);vLight=1.0;}
- else {p=matter(x,v);vec3 dx=matter(clamp(x+.006,-.9999,.9999),v)-matter(clamp(x-.006,-.9999,.9999),v);vec3 dy=matter(x,min(1.0,v+.006))-matter(x,max(0.0,v-.006));vec3 n=cross(dx,dy);vLight=abs(n.z)/(length(n)+.000001);}
+ else {p=matter(x,v);vec3 dx=matter(clamp(x+.006,-.9999,.9999),v)-matter(clamp(x-.006,-.9999,.9999),v);vec3 dy=matter(x,min(1.0,v+.006))-matter(x,max(0.0,v-.006));vec3 n=cross(dx,dy);n/=length(n)+.000001;n*=n.z<0.0?-1.0:1.0;vLight=abs(n.z);vec3 lightDir=normalize(vec3(-.72,-.55,.65));vSheen=pow(max(0.0,dot(n,lightDir)),2.0);}
  float glass=step(4.5,uKind)*(1.0-step(5.5,uKind));
  float scale=.82*mix(.985,1.0,glass)*(1.0+mix(.015,.003,glass)*uMusic.y)*(1.0+.020*p.z);
  gl_Position=vec4(scale*vec2(p.x+.012*p.z,-p.y+.012*p.z),p.z*.3,1.0);
- gl_PointSize=clamp(uSize*(uKind>3.5?.0018:uKind<2.5?.0021:.0027+.00030*uMusic.w),1.20,3.1);
+ gl_PointSize=clamp(uSize*(uKind>3.5?.0020:uKind<2.5?.0023:.0027+.00030*uMusic.w),1.35,3.1);
  vUV=vec2(x,v);
 }
 `;
  const fs=`precision mediump float;
-uniform mediump float uKind,uMode; varying mediump vec2 vUV; varying mediump float vLight;
+uniform mediump float uKind,uMode; varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 float peak(float a,float c,float w){return exp(-(1.0-cos(a-c))/(w*w));}
 float gauss(float x,float w){float q=x/w;return exp(-q*q);}
 void main(){
@@ -81,8 +81,8 @@ void main(){
  if(uKind>4.5&&uKind<5.5){
   vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
   if(r>1.0){
-   float glow=gauss(r-1.0,.033)*(.025+.24*peak(a,-2.16,.54)+.25*peak(a,1.30,.65));
-   float floorGlow=gauss(xy.x,.30)*gauss(xy.y-1.045,.024)*.33+gauss(xy.x,.14)*gauss(xy.y-1.036,.010)*.29;
+   float glow=gauss(r-1.0,.045)*(.025+.38*peak(a,-2.16,.44)+.35*peak(a,1.30,.58));
+   float floorGlow=gauss(xy.x,.43)*gauss(xy.y-1.041,.034)*.42+gauss(xy.x,.21)*gauss(xy.y-1.033,.013)*.40;
    glow=clamp(glow+floorGlow,0.0,.75);
    gl_FragColor=vec4(.10,.86,.88,glow);return;
   }
@@ -90,17 +90,17 @@ void main(){
   float top=peak(a,-2.08,.61),bottom=peak(a,1.37,.57),right=peak(a,.60,.61),left=peak(a,2.85,.48);
   float lip=.14+.85*top+.54*bottom+.57*right+.22*left;
   float edge=gauss(r-.993,.0055),edgeSoft=gauss(r-.973,.021);
-  float reflected=gauss(r-(.945-.080*top),.014+.037*top)*pow(top,1.8);
+  float reflected=gauss(r-(.957-.064*top),.014+.030*top)*pow(top,1.8);
   // Broad curved softbox reflection: a distinct inner edge with a translucent tail.
-  float innerArc=.945-.145*top;
-  float crescent=smoothstep(innerArc-.012,innerArc+.010,r)*(1.0-smoothstep(.929,.975,r))*pow(top,1.5);
+  float innerArc=.945-.175*top;
+  float crescent=smoothstep(innerArc-.008,innerArc+.008,r)*(1.0-smoothstep(.929,.975,r))*pow(top,1.35);
   float shoulder=peak(a,-1.05,.60)*gauss(r-.91,.045);
   float base=gauss(r-(.952-.048*bottom),.051)*bottom;
   float lowerLens=gauss(r-(.927-.035*bottom),.037)*peak(a,1.14,.66);
   float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left);
   float fres=pow(max(0.0,1.0-n),3.0);
-  float light=clamp(.82*reflected+1.09*edge*lip+.45*edgeSoft*lip+.76*base+.21*inner+.64*crescent+.19*lowerLens+.12*shoulder,0.0,1.0);
-  col=mix(vec3(.02,.73,.85),vec3(.95,1.0,.99),smoothstep(.38,1.0,light));
+  float light=clamp(.67*reflected+1.24*edge*lip+.48*edgeSoft*lip+.57*base+.22*inner+.68*crescent+.34*lowerLens+.16*shoulder,0.0,1.0);
+  col=mix(vec3(.01,.76,.87),vec3(.95,1.0,.99),smoothstep(.42,.98,light));
   alpha=clamp(.006+.085*fres+.95*light,0.0,.98);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
@@ -118,11 +118,12 @@ void main(){
   float frontLight=.60+.40*gauss(x-.22,.82);
   // Directional silk sheen: light spreads along the cloth, not just its outline.
   float shoulderLight=gauss(x+.53,.54)*gauss(v-.53,.40);
+  float highlight=clamp(vSheen,0.0,1.0);
   float silkLight=pow(v,2.4)*(.57+.43*gauss(x+.25,.70));
   col=mix(vec3(.08,.88,.88),vec3(.84,1.0,.98),clamp(.24*turn+.22*fres+.30*tip,0.0,1.0));
-  if(uKind<2.5){alpha=(.38+.28*v*v+.16*fres+.23*shoulderLight)*frontLight*(1.0-.36*tip);col=mix(col,vec3(.30,1.0,.96),.32*shoulderLight+.17*silkLight);}
+  if(uKind<2.5){alpha=(.42+.26*v*v+.13*fres+.18*shoulderLight+.24*highlight)*frontLight*(1.0-.30*tip);col=mix(col,vec3(.62,1.0,.98),.22*shoulderLight+.13*silkLight+.45*highlight);}
   else if(uKind<3.5){alpha=(.72+.28*turn+.16*fres)*(1.0-.12*tip);col=mix(col,vec3(.83,1.0,.97),clamp(.24+.63*silkLight+.25*turn,0.0,1.0));}
-  else if(uKind<4.5)alpha=(.19+.13*fres+.17*facing*gauss(x-.27,.71))*(1.0-.48*tip);
+  else if(uKind<4.5){alpha=(.24+.12*fres+.20*facing*gauss(x-.27,.71)+.20*highlight)*(1.0-.44*tip);col=mix(col,vec3(.32,1.0,.98),.28*highlight);}
   else alpha=(.16+.19*turn+.23*pow(v,2.3)*gauss(x+.10,.42)+.14*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.48*tip);
   if(uMode<.5){
    if(uKind<2.5)alpha=.010+.025*fres+.09*start*focus+.10*pow(v,4.0)*tipGlow+.055*shoulderLight;
@@ -137,7 +138,7 @@ void main(){
    float hem=gauss(v-.96,.10)*gauss(x+.25,.66);
    float join=gauss(v-.05,.10)*gauss(x+.52,.50);
    col=mix(vec3(.015,.78,.79),vec3(.73,1.0,.96),clamp(.48*foldLight+.70*hem+.55*join,0.0,1.0));
-   alpha=(uMode<.5?(.020+.25*foldLight+.31*hem+.36*join):(.27+.51*foldLight+.40*hem))*taper;
+   alpha=(uMode<.5?(.013+.19*foldLight+.37*hem+.44*join):(.30+.43*foldLight+.43*hem))*taper;
   }
   if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*8.0)*(1.0-smoothstep(.34,.50,d));}
 
@@ -165,7 +166,7 @@ void main(){
  }
  const glass=mesh(5,2,2,0),glowMid=mesh(8,96,12,0),glowBottom=mesh(9,96,12,0),glowSeam=mesh(10,96,8,0);
  const parts=[4,6,7,2,3].map(kind=>{
-  const dims=kind===7?[58,22,92,34]:kind===2?[100,48,142,67]:kind===3?[112,36,170,56]:kind===4?[72,32,110,48]:[92,30,146,46];
+  const dims=kind===7?[58,22,92,34]:kind===2?[100,48,144,69]:kind===3?[112,36,170,56]:kind===4?[72,32,110,48]:[92,30,146,46];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   return [mesh(kind,mobile?64:96,mobile?20:32,0),mesh(kind,n,m,1)];
  });
