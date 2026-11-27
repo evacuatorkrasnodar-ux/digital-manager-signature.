@@ -80,8 +80,12 @@ function init(){
    panel.hidden=false;back.hidden=true;
    const height=panel.offsetHeight;
    if(height<=room+1){
-    const extraAir=Math.min(10,Math.max(0,room-height));
-    const y=Math.min(bottomLimit-height-extraAir,Math.max(topLimit,row.top+row.height/2-height/2));
+    // Prioritize breathing room under the sphere, without hiding controls
+    // or overlapping the shortcut rail on short mobile viewports.
+    const free=Math.max(0,room-height);
+    const sphereAir=Math.min(14,free);
+    const extraAir=Math.min(10,Math.max(0,free-sphereAir));
+    const y=Math.min(bottomLimit-height-extraAir,Math.max(topLimit+sphereAir,row.top+row.height/2-height/2));
     const parent=panel.offsetParent?.getBoundingClientRect()||stageRect;
     panel.style.top=Math.round(y-parent.top)+'px';
     panel.style.left=Math.round(stageRect.left+stageRect.width/2-parent.left)+'px';
