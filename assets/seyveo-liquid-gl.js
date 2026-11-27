@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V53 · translucent layered silk · WebGL 1. */
+/* SEYVEO Liquid Sound V54 · unified silk surface · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -17,8 +17,8 @@ vec3 contour(float k,float u){
  if(k<.5){m=vec2(.105,-.795);c1=vec2(-.53,.018);c2=vec2(-.51,-.795);c3=vec2(.49,-.795);c4=vec2(.83,-.47);z=-.13;}
  else if(k<1.5){m=vec2(-.13,.064);c1=vec2(-.77,.048);c2=vec2(-.43,.084);c3=vec2(.32,.048);c4=vec2(.74,-.39);z=.23;}
  else if(k<2.5){m=vec2(-.25,.270);c1=vec2(-.73,.085);c2=vec2(-.54,.270);c3=vec2(.34,.32);c4=vec2(.77,-.39);z=.38;}
- else if(k<3.5){m=vec2(.40,.55);c1=vec2(-.49,.20);c2=vec2(.04,.55);c3=vec2(.86,.55);c4=vec2(1.045,.075);z=-.09;}
- else {m=vec2(-.045,.785);c1=vec2(-.93,.36);c2=vec2(-.49,.785);c3=vec2(.37,.785);c4=vec2(1.02,.28);z=-.22;}
+ else if(k<3.5){m=vec2(.39,.55);c1=vec2(-.46,.21);c2=vec2(.04,.55);c3=vec2(.78,.55);c4=vec2(1.045,.12);z=-.09;}
+ else {m=vec2(-.045,.785);c1=vec2(-.92,.47);c2=vec2(-.49,.785);c3=vec2(.37,.785);c4=vec2(1.02,.28);z=-.22;}
  vec2 p=u<.5?bez(l,c1,c2,m,u*2.0):bez(m,c3,c4,r,u*2.0-1.0);
  return vec3(p,z*sin(PI*u));
 }
@@ -134,12 +134,12 @@ void main(){
   if(uKind<2.5){alpha=(.42+.26*v*v+.13*fres+.18*shoulderLight+.24*highlight)*frontLight*(1.0-.30*tip);col=mix(col,vec3(.62,1.0,.98),.22*shoulderLight+.13*silkLight+.45*highlight);}
   else if(uKind<3.5){alpha=(.84+.16*turn+.16*fres)*(1.0-.12*tip);col=mix(col,vec3(.83,1.0,.97),clamp(.24+.63*silkLight+.25*turn,0.0,1.0));}
   else if(uKind<4.5){alpha=(.28+.12*fres+.24*facing*gauss(x-.27,.71)+.20*highlight)*(1.0-.44*tip);col=mix(col,vec3(.32,1.0,.98),.28*highlight);}
-  else alpha=(.16+.19*turn+.23*pow(v,2.3)*gauss(x+.10,.42)+.14*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.48*tip);
+  else alpha=(.25+.23*turn+.27*pow(v,2.3)*gauss(x+.10,.42)+.14*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.48*tip);
   if(uMode<.5){
    if(uKind<2.5){alpha=.010+.025*fres+.09*start*focus+.10*pow(v,4.0)*tipGlow+.055*shoulderLight;col=mix(col,vec3(.008,.045,.065),.76*bodyMask);alpha+=.20*bodyMask;}
    else if(uKind<3.5){alpha=clamp(.055+.64*edge+.30*start+.35*silkLight+.26*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
    else if(uKind<4.5){float rim=.29*edge*gauss(x-.35,.78)+.16*pow(1.0-v,12.0)*(.55+.45*focus);alpha=.009+.019*fres+rim+.29*bodyMask;col=mix(vec3(.006,.045,.065),vec3(.07,.92,.89),clamp(rim*2.7+.12*highlight,0.0,1.0));}
-   else {float low=gauss(x-.06,.24),sweep=gauss(x-.22,.57);float seam=pow(1.0-v,20.0)*gauss(x-.46,.65);alpha=clamp(.012+.86*edge*low+.41*pow(v,3.3)*low+.27*start*gauss(x-.25,.76)+.18*pow(v,3.0)*sweep+.36*seam,0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),clamp(edge*(.90*low+.24*sweep)+.24*seam,0.0,1.0));}
+   else {float low=gauss(x-.06,.24),sweep=gauss(x-.22,.57);float seam=pow(1.0-v,32.0)*(.28+.72*gauss(x-.32,.60));alpha=clamp(.012+.86*edge*low+.41*pow(v,3.3)*low+.27*start*gauss(x-.25,.76)+.18*pow(v,3.0)*sweep+.62*seam,0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),clamp(edge*(.90*low+.24*sweep)+.44*seam,0.0,1.0));}
   }
   if(uKind>6.5&&uKind<7.5){
    float taper=sin(3.14159265*(x+1.0)*.5);
@@ -148,7 +148,7 @@ void main(){
    float hem=gauss(v-.96,.10)*gauss(x+.25,.66);
    float join=gauss(v-.05,.10)*gauss(x+.52,.50);
    col=mix(vec3(.015,.78,.79),vec3(.73,1.0,.96),clamp(.48*foldLight+.70*hem+.55*join,0.0,1.0));
-   alpha=(uMode<.5?(.013+.19*foldLight+.37*hem+.44*join):(.30+.43*foldLight+.43*hem))*taper;
+   alpha=(uMode<.5?(.013+.25*foldLight+.37*hem+.54*join):(.30+.43*foldLight+.43*hem))*taper;
   }
   if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*5.8)*(1.0-smoothstep(.22,.50,d));}
 
@@ -176,8 +176,9 @@ void main(){
   return {kind,mode,buffer,index,count:index?indices.length:values.length/4};
  }
  const glass=mesh(5,2,2,0),glowMid=mesh(8,96,12,0),glowBottom=mesh(9,96,12,0),glowSeam=mesh(10,96,8,0);
- const parts=[4,6,7,2,3].map(kind=>{
-  const dims=kind===7?[58,22,92,34]:kind===2?[92,46,132,64]:kind===3?[110,34,152,48]:kind===4?[72,32,110,48]:[92,30,146,46];
+ // Draw each distinct surface once. Kind 6 previously duplicated kind 4.
+ const parts=[4,7,2,3].map(kind=>{
+  const dims=kind===7?[58,22,92,34]:kind===2?[92,46,132,64]:kind===3?[110,34,152,48]:[84,36,128,54];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   return [mesh(kind,mobile?64:96,mobile?20:32,0),mesh(kind,n,m,1)];
  });
