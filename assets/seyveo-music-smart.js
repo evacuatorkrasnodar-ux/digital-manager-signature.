@@ -69,7 +69,7 @@
   const loaded=()=>!!music()?.state?.().loaded&&music().state().trackIndex>=0;
   const notify=t=>{const el=$('sayviMusicStatus');if(el){el.textContent=t;el.hidden=false}};
   const dialog=$('svSmartMusicSheet'),body=$('svSmartMusicBody'),title=$('svSmartMusicTitle');
-  let lyricAbort=null;
+  let lyricAbort=null,lyricFile=null;
   function cancelLyric(){lyricAbort?.abort();lyricAbort=null}
   const close=()=>{cancelLyric();cancelRecognition();if(dialog?.open)dialog.close();++generation;mode='';lyricData=null;current=-2};
   let generation=0,mode='',lyricData=null,current=-2,deadline=0,timer=0,originalVolume=null;
@@ -219,6 +219,7 @@
   async function karaoke(){
    const file=music()?.rhythmFile?.();
    if(!show('Караоке','lyrics'))return;
+   lyricFile=file;
    if(!file){message('Текст доступен для песен из медиатеки.');return}
    const version=generation,valid=()=>version===generation&&dialog.open&&mode==='lyrics'&&music()?.rhythmFile?.()===file;
    const engine=w.SEYVEO_LYRICS,id=music()?.recognitionLibrary?.().find(x=>x.file===file)?.id;
@@ -331,7 +332,7 @@
    const row=rows[next];if(row)body.scrollTop=Math.max(0,row.offsetTop-body.clientHeight*.35);
   }
   audio.addEventListener('timeupdate',updateLine);audio.addEventListener('seeking',updateLine);
-  d.addEventListener('seyveo:music-state',()=>{if(mode==='lyrics'&&lyricData&&music()?.rhythmFile?.()!==lyricData.file){karaoke();return}updateLine();const play=body.querySelector('.sv-lyrics-actions button');if(play)play.textContent=audio.paused?'Воспроизвести':'Пауза'});
+  d.addEventListener('seyveo:music-state',()=>{if(mode==='lyrics'&&music()?.rhythmFile?.()!==lyricFile){karaoke();return}updateLine();const play=body.querySelector('.sv-lyrics-actions button');if(play)play.textContent=audio.paused?'Воспроизвести':'Пауза'});
   // Source quality, never a claim about the Bluetooth/DAC/output chain.
   const sourceCache=new WeakMap();
   let qualityFile=null,qualityResult=null,qualityVersion=0,qualityRadio='',qualityPending=false;
