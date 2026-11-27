@@ -193,6 +193,7 @@ function libraryMessage(message){if(libraryNote)libraryNote.textContent=message;
 function libraryRefresh(){
  previous.disabled=next.disabled=tracks.length<2;
  collectionRender();syncResume();
+ document.dispatchEvent(new Event('seyveo:music-library'));
 }
 function libraryCount(){return savedTrackIds.size+' сохранено на этом устройстве';}
 function openLibraryDB(){
@@ -1159,6 +1160,7 @@ window.SEYVEO_MUSIC=Object.freeze({
  searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,prepareTrackPreview,
  // Read-only access to the selected local File for optional visual analysis.
  rhythmFile:()=>isRadio()?null:tracks[index]||null,
+ recognitionLibrary:()=>localTracks.map(file=>{const info=infoFor(file);return {id:favoriteId(file),file,title:info.title||safeName(file),artist:info.artist||'Моя музыка',album:info.album||''}}),
  browseTracks:()=>localTracks.map((file,i)=>({index:i,artKey:favoriteId(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null})),
  recentTracks:()=>recentFiles.filter(file=>localTracks.includes(file)).map(file=>({index:localTracks.indexOf(file),artKey:favoriteId(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null,playedAt:recentPlayedAt.get(file)||0})),
  state:()=>Object.freeze({
