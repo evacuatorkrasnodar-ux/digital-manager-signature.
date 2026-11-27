@@ -7208,4 +7208,60 @@ html.sv-video-screen #sayviVideoPage{flex:1 1 0;min-height:0;overflow-y:auto;ove
 #sayviVideoPage .sv-video-player{border-radius:12px}
 #sayviVideoPage #sayviVideoExternal{font-size:13px}
 </style>
+<style id="svNowStableMetadata">
+/* Now Playing: reserve exactly two title lines and one artist line.
+   Keep the transport in normal flow; neither late metadata nor a missing
+   favorite action may change its geometry. Only the expanded player. */
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] > .sv-music-track-bar{
+ flex:0 0 auto!important;
+ min-height:0!important;
+ align-items:center;
+}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-music-track-copy{
+ flex:1 1 0;min-width:0;gap:4px;
+}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #sayviMusicTrack{
+ box-sizing:border-box;display:-webkit-box!important;
+ -webkit-box-orient:vertical;-webkit-line-clamp:2;
+ line-height:1.18!important;height:2.36em!important;
+ min-height:2.36em!important;max-height:2.36em!important;
+ flex:0 0 auto;overflow:hidden;text-overflow:ellipsis;
+ white-space:normal;overflow-wrap:anywhere;margin:0!important;padding:0!important;
+}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #sayviMusicArtist{
+ box-sizing:border-box;display:block!important;line-height:1.42!important;
+ height:1.42em!important;min-height:1.42em!important;max-height:1.42em!important;
+ flex:0 0 auto;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+ margin:0!important;padding:0!important;
+}
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #sayviMusicFavorite:disabled{
+ display:grid!important;visibility:hidden;pointer-events:none;
+}
+</style>
+<script>
+/* Fade only changed metadata; never animate layout or replay on time updates.
+   The full title remains available to assistive technology and desktop hover. */
+(()=>{
+ const page=document.getElementById('sayviMusicPage');
+ const title=document.getElementById('sayviMusicTrack');
+ const artist=document.getElementById('sayviMusicArtist');
+ if(!page||!title||!artist||!window.MutationObserver)return;
+ const nodes=[title,artist],last=nodes.map(node=>node.textContent);
+ const animations=new Map();
+ nodes.forEach(node=>node.title=node.textContent);
+ const observer=new MutationObserver(()=>{
+  const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  nodes.forEach((node,i)=>{
+   const value=node.textContent;
+   if(last[i]===value)return;
+   last[i]=value;node.title=value;
+   const previous=animations.get(node);if(previous)previous.cancel();
+   if(page.dataset.musicView==='player'&&!reduced&&typeof node.animate==='function'){
+    animations.set(node,node.animate([{opacity:.35},{opacity:1}],{duration:200,easing:'ease-out'}));
+   }
+  });
+ });
+ nodes.forEach(node=>observer.observe(node,{childList:true,characterData:true,subtree:true}));
+})();
+</script>
 </body></html>
