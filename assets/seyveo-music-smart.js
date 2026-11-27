@@ -133,7 +133,7 @@
   dialog?.addEventListener('close',()=>{++generation;mode=''});
   dialog?.addEventListener('click',e=>{if(e.target===dialog)close()});
   d.addEventListener('seyveo:music-view',e=>{if(e.detail?.view!=='player'&&dialog?.open)close()});
-  let recognitionCancel=null;
+  let recognitionCancel=null,recognitionApproved=false;
   function cancelRecognition(){const cancel=recognitionCancel;recognitionCancel=null;cancel?.()}
   dialog?.addEventListener('close',cancelRecognition);
   w.addEventListener('pagehide',cancelLyric);
@@ -150,7 +150,7 @@
   }
   d.addEventListener('seyveo:music-fingerprint',updateRecognitionIndex);
   d.addEventListener('seyveo:music-library',updateRecognitionIndex);
-  function recognitionSheet(){
+  function recognitionSheet(quick=false){
    cancelRecognition();
    if(!show('Распознать музыку','recognize'))return;
    const version=generation;
@@ -158,8 +158,10 @@
    message('До 10 секунд звука с вашего разрешения. Анализ на устройстве, без передачи записи в интернет.');
    const engine=w.SEYVEO_MUSIC_FINGERPRINT;
    if(!w.isSecureContext||!w.navigator.mediaDevices?.getUserMedia||!w.MediaRecorder){message('Микрофон недоступен в этом браузере.');return}
+   // First use keeps explicit consent; subsequent quick taps can start immediately.
+   if(quick===true&&recognitionApproved&&engine?.state().indexed){recordRecognition(version);return}
    const status=message('Готовлю музыкальный индекс…');status.id='svRecognitionIndexStatus';
-   const startButton=action('Начать распознавание',()=>recordRecognition(version));startButton.id='svRecognitionStart';
+   const startButton=action('Начать распознавание',()=>{recognitionApproved=true;recordRecognition(version)});startButton.id='svRecognitionStart';
    updateRecognitionIndex();engine?.schedule();
    message('Новые песни изучаются автоматически, пока музыка на паузе и приложение открыто.');
   }
@@ -211,7 +213,7 @@
    }catch{release();if(valid()){engine.setListening(false);recognitionCancel=null;body.replaceChildren();message('Нет доступа к микрофону или формат записи не поддерживается.');action('Повторить',recognitionSheet)}}
   }
   $('svMusicRecognizeHome')?.addEventListener('click',recognitionSheet);
-  $('svMusicRecognizeMenu')?.addEventListener('click',recognitionSheet);
+  $('svMusicRecognizeQuick')?.addEventListener('click',()=>recognitionSheet(true));
   function shareData(){
    if(!loaded())return null;
    const name=$('sayviMusicTrack')?.textContent?.trim()||'Музыка';
@@ -853,10 +855,8 @@
   $('svAdaptiveQuickInfo')?.addEventListener('click',soundSheet);
   dialog?.addEventListener('close',()=>{delete dialog.dataset.soundPhase});
   updateSound();syncQuality();
-  $('svAdaptiveSoundMenu')?.addEventListener('click',soundSheet);
   $('svSmartShare')?.addEventListener('click',share);
   $('svSmartSleep')?.addEventListener('click',sleepSheet);
-  $('svSmartKaraoke')?.addEventListener('click',()=>{if(lyricsActive){if(lyricData)setLyricSettings(true)}else karaoke()});
   $('svNowKaraoke')?.addEventListener('click',toggleKaraoke);
   function handle(q){
    const pure=/^(?:включи|верни) (?:pure sound|пьюр саунд|чистый звук|оригинальное звучание)$/.test(q);
