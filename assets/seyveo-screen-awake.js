@@ -18,10 +18,18 @@ const send=(state,message)=>{
 function syncUI(){
  for(const button of document.querySelectorAll('[data-seyveo-screen-awake]')){
   button.setAttribute('aria-pressed',String(wanted));
+  if(button.closest('.sv-now-wake-row'))button.dataset.svAwakeActive=String(!!lock&&!lock.released);
   button.textContent=wanted?(lock&&!lock.released?'Экран включён':'Пробую удержать'):'Не гасить экран';
   button.title=wanted?'Выключить удержание экрана':'Оставить экран включённым, пока SEYVEO открыт';
  }
  for(const node of document.querySelectorAll('[data-seyveo-screen-awake-status]')){
+  if(node.closest('.sv-now-wake-row')){
+   node.textContent=!supported()?'Недоступно в этом браузере.':
+    lock&&!lock.released?'Пока приложение открыто.':
+    wanted?(lastState==='denied'?'Система не разрешила удержание.':'Ожидает разрешения системы.'):
+    'Пока приложение открыто.';
+   continue;
+  }
   node.textContent=!supported()?'В этом браузере удержание экрана недоступно.':
    lock&&!lock.released?'Экран не будет автоматически гаснуть, пока SEYVEO открыт.':
    wanted?(lastState==='denied'?'iOS не разрешила удерживать экран. Попробуй ещё раз касанием кнопки.':'Ожидаю разрешения iOS. Проверь экран или нажми кнопку ещё раз.'):
