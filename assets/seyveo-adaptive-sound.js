@@ -29,13 +29,14 @@
   const Offline=w.OfflineAudioContext||w.webkitOfflineAudioContext;
   let pure=false;try{pure=w.localStorage.getItem(key)==='pure'}catch{}
   let base=audio.volume,fade=1,factor=1,expected=audio.volume,lastFile=null,phase='idle',result=null,generation=0,busy=false,pending=false,ramp=0;
+  let transport=1,transportRamp=0,transportEpoch=0,pausing=false,startPending=false;
   const cache=new WeakMap();
   const file=()=>w.SEYVEO_MUSIC?.rhythmFile?.()||null;
   const emit=()=>d.dispatchEvent(new w.CustomEvent('seyveo:adaptive-sound'));
   const state=()=>({pure,phase,gain:factor,attenuationDb:result?Math.round(20*Math.log10(result.gain)*10)/10:null,supported:!ios&&!!Offline});
   function apply(){
    if(ios)return false;
-   const target=clamp(base*factor*fade);
+   const target=clamp(base*factor*fade*transport);
    expected=target;
    try{audio.volume=target}catch{return false}
    if(Math.abs(audio.volume-target)>.025){expected=audio.volume;return false}return true;
@@ -52,6 +53,55 @@
   }
   function setBaseVolume(v){if(!Number.isFinite(v)||ios)return false;base=clamp(v);return apply()}
   function setFade(v){if(!Number.isFinite(v)||ios)return false;fade=clamp(v);return apply()}
+  // Independent transport envelope: never overwrite the sleep fade or base volume.
+  function cancelTransport(){
+   ++transportEpoch;if(transportRamp){w.clearInterval(transportRamp);transportRamp=0}
+   pausing=false;startPending=false;
+  }
+  function rampTransport(target,ms,done){
+   if(transportRamp){w.clearInterval(transportRamp);transportRamp=0}
+   const version=++transportEpoch,from=transport,at=Date.now();
+   if(ios||!apply()){transport=1;apply();done?.();return}
+   transportRamp=w.setInterval(()=>{
+    if(version!==transportEpoch)return;
+    const t=clamp((Date.now()-at)/ms),ease=t*t*(3-2*t);
+    transport=from+(target-from)*ease;
+    const ok=apply();
+    if(t===1||!ok){w.clearInterval(transportRamp);transportRamp=0;if(!ok){transport=1;apply()}done?.()}
+   },25);
+  }
+  function playSmooth(){
+   if(ios)return audio.play();
+   const reversing=pausing&&!audio.paused;
+   cancelTransport();
+   if(reversing){rampTransport(1,280);return Promise.resolve()}
+   if(!audio.paused&&!audio.ended){transport=1;apply();return Promise.resolve()}
+   transport=0;
+   if(!apply()){transport=1;apply();return audio.play()}
+   startPending=true;
+   const version=transportEpoch;
+   try{
+    const p=audio.play();
+    if(p?.catch)return p.catch(error=>{if(version===transportEpoch){cancelTransport();transport=1;apply()}throw error});
+    return p;
+   }catch(error){cancelTransport();transport=1;apply();throw error}
+  }
+  function pauseSmooth(){
+   if(audio.paused||audio.ended){cancelTransport();transport=1;apply();return}
+   if(ios||w.document.hidden){cancelTransport();audio.pause();transport=1;apply();return}
+   cancelTransport();pausing=true;
+   rampTransport(0,220,()=>{pausing=false;audio.pause();transport=1;apply()});
+  }
+  audio.addEventListener('playing',()=>{
+   if(ios||pausing||!startPending)return;
+   startPending=false;rampTransport(1,380);
+  });
+  const resetTransport=()=>{if(!audio.paused&&!audio.ended&&!audio.error)return;cancelTransport();transport=1;apply()};
+  for(const name of ['pause','ended','error'])audio.addEventListener(name,resetTransport);
+  d.addEventListener('visibilitychange',()=>{
+   if(!d.hidden)return;
+   const stop=pausing;cancelTransport();if(stop)audio.pause();transport=1;apply();
+  });
   audio.addEventListener('volumechange',()=>{
    if(ios||Math.abs(audio.volume-expected)<.00001)return;
    base=audio.volume;apply();
@@ -99,7 +149,7 @@
   d.addEventListener('seyveo:music-state',()=>sync());
   audio.addEventListener('loadedmetadata',()=>sync());
   audio.addEventListener('playing',()=>sync());
-  w.SEYVEO_ADAPTIVE_SOUND=Object.freeze({state,setPure,baseVolume:()=>base,setBaseVolume,setFade});
+  w.SEYVEO_ADAPTIVE_SOUND=Object.freeze({state,setPure,baseVolume:()=>base,setBaseVolume,setFade,playSmooth,pauseSmooth,isPausing:()=>pausing});
   sync(true);
  }
  return {estimate,install};

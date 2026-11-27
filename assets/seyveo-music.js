@@ -54,6 +54,8 @@ let recentFiles=[];
 const recentPlayedAt=new Map();
 const infoFor=file=>file?.radio?{title:file.name,artist:file.country+' · '+file.quality,display:file.name,album:'SEYVEO RADIO'}:file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
 const safeName=file=>infoFor(file).display;
+const smoothPlay=()=>window.SEYVEO_ADAPTIVE_SOUND?.playSmooth?.()??audio.play();
+const smoothPause=()=>{const engine=window.SEYVEO_ADAPTIVE_SOUND;if(engine?.pauseSmooth)engine.pauseSmooth();else audio.pause()};
 // Shorten only unambiguous repeated compilation phrases in the player.
 // The original title remains in metadata, collection and media session.
 function setPlayerTitle(value,compact=true){
@@ -163,7 +165,7 @@ function stopChapterScan(){
 function jumpChapter(i,autoplay=true){
  const row=chapterRows[i];if(!row||chapterFile!==tracks[index])return false;
  try{audio.currentTime=row.start;chapterLastTime=-1;paintChapter(true);updateTime();savePosition(true);
-  if(autoplay&&audio.paused)audio.play().catch(()=>sayviMessage('Нажмите Play для воспроизведения.'));
+  if(autoplay&&audio.paused)smoothPlay().catch(()=>sayviMessage('Нажмите Play для воспроизведения.'));
   return true;
  }catch{return false}
 }
@@ -801,8 +803,8 @@ function mediaSession(){
     artwork:page.classList.contains('sv-music-player-has-art')&&coverDataURL&&info.artwork?[{src:coverDataURL,type:info.artwork.type||'image/jpeg',sizes:''}]:[]
    });
   }
-  navigator.mediaSession.setActionHandler('play',()=>play());
-  navigator.mediaSession.setActionHandler('pause',()=>audio.pause());
+  navigator.mediaSession.setActionHandler('play',()=>{if(audio.paused||window.SEYVEO_ADAPTIVE_SOUND?.isPausing?.())play()});
+  navigator.mediaSession.setActionHandler('pause',smoothPause);
   navigator.mediaSession.setActionHandler('previoustrack',()=>navigateTrack(-1));
   navigator.mediaSession.setActionHandler('nexttrack',()=>navigateTrack(1));
   navigator.mediaSession.setActionHandler('seekto',details=>{
@@ -915,7 +917,7 @@ function switchTrack(i,autoplay=false,fromNavigation=false,resumeSeconds=0){
    coverDataURL=file.artwork||null;if(coverDataURL)showArtwork();
    setPlayerTitle(file.name,false);artist.textContent=file.country+' · '+file.quality;
    previous.disabled=next.disabled=tracks.length<2;updateFavorite();collectionRender();mediaSession();updatePlay();updateTime();
-   if(autoplay){sayviMessage('Подключение к '+file.name+'…');audio.play().catch(()=>{if(version===selectVersion&&!audio.error)sayviMessage('Не удалось начать эфир. Нажмите Play ещё раз.')});}
+   if(autoplay){sayviMessage('Подключение к '+file.name+'…');smoothPlay().catch(()=>{if(version===selectVersion&&!audio.error)sayviMessage('Не удалось начать эфир. Нажмите Play ещё раз.')});}
    return true;
   }
   try{url=URL.createObjectURL(file)}catch{
@@ -946,7 +948,7 @@ function switchTrack(i,autoplay=false,fromNavigation=false,resumeSeconds=0){
   }).catch(()=>{if(version===selectVersion)stage?.classList.remove('is-checking-artwork')});
  }
  if(autoplay){
-  const playing=audio.play();
+  const playing=smoothPlay();
   if(playing&&typeof playing.catch==='function')playing.catch(()=>{
    if(version!==selectVersion)return;
    sayviMessage('Для воспроизведения коснитесь значка Play. Система могла остановить автоматический запуск.');
@@ -961,9 +963,9 @@ function play(){
   sayviMessage('Выберите свои аудиофайлы — Сэйви откроет их здесь.');
   return;
  }
- if(!audio.paused&&!audio.ended){audio.pause();return}
+ if(!audio.paused&&!audio.ended&&!window.SEYVEO_ADAPTIVE_SOUND?.isPausing?.()){smoothPause();return}
  if(isRadio()&&!audio.getAttribute('src'))audio.src=radioFallback?tracks[index].fallback:tracks[index].stream;
- const p=audio.play();
+ const p=smoothPlay();
  if(p&&typeof p.catch==='function')p.catch(()=>{
   sayviMessage('Не удалось начать воспроизведение. Возможно, формат файла не поддерживается этим устройством.');
  });
