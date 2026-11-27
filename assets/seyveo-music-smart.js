@@ -353,7 +353,7 @@
      }else message('Автоматическое распознавание пока доступно в локальной версии на компьютере.');
     }
     if(engine&&id){
-     const input=d.createElement('input');input.type='file';input.accept='.lrc,.txt,text/plain';input.hidden=true;body.append(input);
+     const input=d.createElement('input');input.type='file';input.accept='.lrc,.txt,text/plain';input.hidden=true;(data?settings:body).append(input);
      input.addEventListener('change',async()=>{
       const selected=input.files?.[0];if(!selected||!valid())return;
       try{
