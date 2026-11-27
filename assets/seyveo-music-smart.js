@@ -248,7 +248,17 @@
   function restoreVolume(){w.SEYVEO_ADAPTIVE_SOUND?.setFade(1);if(originalVolume!==null){try{audio.volume=originalVolume}catch{}originalVolume=null}}
   function cancelSleep(){deadline=0;w.clearInterval(timer);timer=0;restoreVolume();syncSleep()}
   function syncSleep(){
-   const b=$('svSmartSleepLabel');if(b)b.textContent=deadline?'Таймер сна · '+Math.max(1,Math.ceil((deadline-Date.now())/60000))+' мин':'Таймер сна';
+   const remaining=deadline?Math.max(0,Math.ceil((deadline-Date.now())/1000)):0;
+   const b=$('svSmartSleepLabel'),menu=$('svSmartSleep');
+   const label=deadline?'Таймер сна · '+Math.max(1,Math.ceil(remaining/60))+' мин':'Таймер сна';
+   if(b&&b.textContent!==label)b.textContent=label;
+   if(menu){const active=String(!!deadline);if(menu.dataset.sleepActive!==active)menu.dataset.sleepActive=active}
+   if(mode==='sleep'&&dialog?.open){
+    const status=$('svSleepCountdown'),cancel=$('svSleepCancel');
+    const text=deadline?'Осталось '+Math.floor(remaining/60)+':'+String(remaining%60).padStart(2,'0'):'Таймер выключен';
+    if(status&&status.textContent!==text)status.textContent=text;
+    if(cancel)cancel.hidden=!deadline;
+   }
   }
   function tick(){
    if(!deadline)return;
@@ -269,9 +279,25 @@
   }
   function sleepSheet(){
    if(!show('Таймер сна','sleep'))return;
-   message(deadline?'Осталось '+Math.max(1,Math.ceil((deadline-Date.now())/60000))+' мин.':'Музыка остановится автоматически. В фоне работа зависит от браузера.');
-   for(const n of [15,30,45,60,90])action(n+' мин',()=>{setSleep(n);close();notify('Музыка остановится через '+n+' мин.')});
-   if(deadline)action('Отменить таймер',()=>{cancelSleep();close();notify('Таймер сна отключён.')});
+   const glyph=path=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+path+'</svg>';
+   const summary=d.createElement('div');summary.className='sv-sleep-summary';
+   const mark=d.createElement('div');mark.className='sv-sleep-mark';mark.innerHTML=glyph('<path d="M20.5 15.5A9 9 0 0 1 8.5 3.5a9.1 9.1 0 1 0 12 12Z"/><path d="M16 3v4m-2-2h4M20 8v3m-1.5-1.5h3"/>');
+   const info=d.createElement('div');info.className='sv-sleep-info';
+   const status=d.createElement('strong');status.id='svSleepCountdown';
+   const sub=d.createElement('small');sub.textContent='Музыка остановится автоматически';
+   info.append(status,sub);summary.append(mark,info);body.append(summary);
+   for(const n of [15,30,45,60,90]){
+    const button=action(n+' мин',()=>{setSleep(n);close();notify('Музыка остановится через '+n+' мин.')});
+    button.innerHTML=glyph('<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>');
+    const label=d.createElement('span');label.className='sv-sleep-time-label';label.textContent=String(n);
+    const unit=d.createElement('span');unit.className='sv-sleep-unit';unit.textContent='мин';
+    button.append(label,unit);button.setAttribute('aria-label',n+' минут');
+   }
+   const cancel=action('Отменить таймер',()=>{cancelSleep();close();notify('Таймер сна отключён.')});
+   cancel.id='svSleepCancel';cancel.classList.add('sv-sleep-cancel');
+   cancel.innerHTML=glyph('<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6m0-6-6 6"/>')+'<span>Отменить таймер</span>';
+   message('В фоне остановка музыки зависит от возможностей браузера.');
+   syncSleep();
   }
   d.addEventListener('visibilitychange',tick);w.addEventListener('pageshow',tick);
   $('sayviMusicStopAndHide')?.addEventListener('click',cancelSleep);
