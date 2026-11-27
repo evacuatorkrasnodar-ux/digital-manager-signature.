@@ -1273,9 +1273,9 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   <button type="button" id="sayviMusicNext" class="sv-music-control" aria-label="Следующий трек" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 5v14M5 5l11 7-11 7z"/></svg></button>
  </div>
  <div class="sv-now-tools" aria-label="Действия плеера">
-  <button type="button" data-music-view-action="library" aria-label="Медиатека" title="Медиатека"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="13" height="15" rx="2"/><path d="M8 2h11a2 2 0 0 1 2 2v12M8 10h5m-5 4h5"/></svg></button>
-  <button type="button" id="svNowQueue" aria-label="Очередь воспроизведения" title="Очередь"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 10h16M4 15h8M4 20h8m4-6 5 3-5 3z"/></svg></button>
-  <button type="button" id="svNowMore" aria-label="Другие действия" aria-expanded="false" aria-controls="svNowMenu" title="Ещё"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="19" cy="12" r="1.4" fill="currentColor"/></svg></button>
+  <button type="button" data-music-view-action="library" aria-label="Медиатека" title="Медиатека"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="13" height="14" rx="2"/><path d="M8 3.5h11a1.5 1.5 0 0 1 1.5 1.5v11M8 10h5m-5 4h5"/></svg></button>
+  <button type="button" id="svNowQueue" aria-label="Очередь воспроизведения" title="Очередь"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 10h16M4 15h8M4 20h8m4-6 4.5 3-4.5 3z"/></svg></button>
+  <button type="button" id="svNowMore" aria-label="Другие действия" aria-expanded="false" aria-controls="svNowMenu" title="Ещё"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="4.5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19.5" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
  </div>
  <div id="svNowMenu" class="sv-now-menu" hidden role="region" aria-label="Действия и настройки плеера">
   <div class="sv-now-menu-head"><strong>Плеер</strong><button id="svNowMenuClose" type="button" aria-label="Закрыть меню"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
@@ -7143,5 +7143,29 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-now
 #sayviMusicPage .sv-now-wake-row button[aria-pressed="true"]::after{background:radial-gradient(circle at 24px 10px,#fff 0 7px,transparent 7.5px),#3B986C}
 #sayviMusicPage .sv-now-wake-row small{display:block;color:rgba(238,245,249,.69);font-size:11px;line-height:1.35;padding:0 0 4px}
 #sayviMusicPage .sv-now-stop{border:0;color:#F1A9A9}
+</style>
+<style id="svNowFinePolish">
+/* Optical alignment only: retain the original 44px hit areas and row positions. */
+#sayviMusicPage[data-music-view="player"] .sv-now-tools > button{
+ color:rgba(249,250,252,.90)!important;
+}
+#sayviMusicPage[data-music-view="player"] .sv-now-tools > button > svg{
+ width:22px!important;height:22px!important;flex:0 0 22px;
+ stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round;
+}
+#sayviMusicPage[data-music-view="player"] #svNowMore > svg{width:24px!important;height:24px!important}
+#sayviMusicPage[data-music-view="player"] .sv-music-seek::-webkit-slider-runnable-track{
+ height:2px!important;border-radius:2px;
+}
+#sayviMusicPage[data-music-view="player"] .sv-music-seek::-webkit-slider-thumb{
+ margin-top:-4px!important;
+}
+#sayviMusicPage[data-music-view="player"] .sv-music-seek::-moz-range-track,
+#sayviMusicPage[data-music-view="player"] .sv-music-seek::-moz-range-progress{
+ height:2px!important;border-radius:2px;
+}
+#sayviMusicPage[data-music-view="player"] .sv-now-fallback .sv-music-scene-wave{
+ filter:drop-shadow(0 0 1.3px rgba(235,255,255,.55)) drop-shadow(0 0 3px rgba(195,237,249,.25));
+}
 </style>
 </body></html>
