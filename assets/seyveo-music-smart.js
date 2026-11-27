@@ -177,6 +177,45 @@
    message('Работает с поддерживаемыми локальными песнями. Радио и другие источники — без коррекции.');
    updateSound();
   }
+  // Keep the header height constant. First tap on the collapsed symbol
+  // reveals the controls only; never change sound mode by accident.
+  const quickGroup=$('svAdaptiveQuickGroup'),quickButton=$('svAdaptiveQuick'),quickInfo=$('svAdaptiveQuickInfo');
+  let quickTimer=0,quickCollapsed=false;
+  const inPlayer=()=>page.dataset.musicView==='player'&&!page.hidden;
+  function paintQuick(){
+   if(!quickGroup||!quickButton)return;
+   quickGroup.classList.toggle('is-collapsed',quickCollapsed);
+   quickButton.setAttribute('aria-expanded',String(!quickCollapsed));
+   if(quickInfo){quickInfo.tabIndex=quickCollapsed?-1:0;quickInfo.setAttribute('aria-hidden',String(quickCollapsed))}
+   const s=w.SEYVEO_ADAPTIVE_SOUND?.state();
+   quickButton.setAttribute('aria-label',quickCollapsed?'Показать управление звуком':s?.pure?'Pure Sound. Включить Adaptive Sound':'Adaptive Sound. Включить Pure Sound');
+  }
+  function stopQuickTimer(){if(quickTimer){w.clearTimeout(quickTimer);quickTimer=0}}
+  function revealQuick(){
+   stopQuickTimer();quickCollapsed=false;paintQuick();
+   if(!inPlayer())return;
+   quickTimer=w.setTimeout(function collapse(){
+    quickTimer=0;
+    if(!inPlayer())return;
+    if(dialog?.open||quickGroup?.querySelector(':focus-visible')){
+     quickTimer=w.setTimeout(collapse,1000);return;
+    }
+    quickCollapsed=true;paintQuick();
+   },5000);
+  }
+  d.addEventListener('seyveo:music-view',e=>{if(e.detail?.view==='player')revealQuick();else{stopQuickTimer();quickCollapsed=false;paintQuick()}});
+  const wakeQuick=e=>{
+   if(!inPlayer()||dialog?.open)return;
+   // A collapsed-symbol click is handled separately, after pointerdown.
+   if(quickCollapsed&&quickGroup?.contains(e.target))return;
+   revealQuick();
+  };
+  page.addEventListener('pointerdown',wakeQuick,{passive:true});
+  if(!w.PointerEvent)page.addEventListener('touchstart',wakeQuick,{passive:true});
+  page.addEventListener('keydown',e=>{if(!quickGroup?.contains(e.target)&&inPlayer()&&!dialog?.open)revealQuick()});
+  dialog?.addEventListener('close',()=>{if(inPlayer())revealQuick()});
+  d.addEventListener('visibilitychange',()=>{if(d.hidden)stopQuickTimer();else if(inPlayer())revealQuick()});
+  if(inPlayer())revealQuick();else paintQuick();
   function updateSound(){
    const s=w.SEYVEO_ADAPTIVE_SOUND?.state();
    const quick=$('svAdaptiveQuick'),name=$('svAdaptiveQuickName'),sub=$('svAdaptiveQuickState');
@@ -186,7 +225,7 @@
     sub.textContent=s?states[s.phase]||'Автоматический режим':'Недоступно';
     quick.dataset.soundPhase=s?.phase||'unsupported';
     quick.setAttribute('aria-pressed',String(!!s?.pure));
-    quick.setAttribute('aria-label',s?.pure?'Pure Sound. Включить Adaptive Sound':'Adaptive Sound. Включить Pure Sound');
+    paintQuick();
     quick.disabled=!s;
    }
    if(mode!=='sound'||!dialog?.open)return;
@@ -202,7 +241,7 @@
   }
   d.addEventListener('seyveo:adaptive-sound',updateSound);
   $('svAdaptiveSoundOpen')?.addEventListener('click',soundSheet);
-  $('svAdaptiveQuick')?.addEventListener('click',()=>{const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
+  quickButton?.addEventListener('click',()=>{if(quickCollapsed){revealQuick();return}revealQuick();const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
   $('svAdaptiveQuickInfo')?.addEventListener('click',soundSheet);
   dialog?.addEventListener('close',()=>{delete dialog.dataset.soundPhase});
   updateSound();
