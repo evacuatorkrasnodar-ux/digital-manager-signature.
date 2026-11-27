@@ -400,6 +400,7 @@ function syncResume(){
   if(loaded){
    const file=tracks[index];
    const info=infoFor(file);
+   renderMiniCover(file.radio?String(file.id||file.name):favoriteId(file),file.radio?file.artwork:trackThumbnails.get(file));
    if(miniTitle)miniTitle.textContent=info.title||safeName(file);
    if(miniArtist)miniArtist.textContent=isRadio()&&radioFallback?file.country+' · '+file.fallbackQuality:info.artist||'Моя музыка';
    if(miniOpen)miniOpen.setAttribute('aria-label','Открыть плеер: '+safeName(file));
@@ -418,8 +419,7 @@ function syncResume(){
    if(miniPlay){miniPlay.setAttribute('aria-label',last?'Включить '+last.title:'Выбрать музыку или радио');miniPlay.setAttribute('aria-pressed','false')}
    miniIcon?.setAttribute('d','M8 5.5 18 12 8 18.5z');
    if(miniNext)miniNext.disabled=true;
-   if(miniArtwork){miniArtwork.hidden=!last?.artwork;miniArtwork.style.backgroundImage=last?.artwork?'url("'+last.artwork+'")':'';}
-   mini.classList.toggle('has-artwork',!!last?.artwork);
+   renderMiniCover(last?String(last.id||last.title):null,last?.artwork);
   }
  }
  document.dispatchEvent(new CustomEvent('seyveo:music-state',{detail:{loaded,playing,hasPlayed}}));
@@ -557,8 +557,8 @@ function clearArtwork(){
  paintPlayerBackdrop(null);
  page.classList.remove('sv-music-player-has-art');page.style.removeProperty('--sv-music-player-art');
  stage?.classList.remove('has-artwork','is-checking-artwork');
- mini?.classList.remove('has-artwork');
- for(const surface of [artwork,miniArtwork]){
+ renderMiniCover(null,null);
+ for(const surface of [artwork]){
   if(!surface)continue;
   surface.hidden=true;
   surface.style.removeProperty('background-image');
@@ -613,11 +613,7 @@ function showArtwork(){
   }
   // Thumbnail is independent of the full cover and remains available
   // even when the candidate fails the editorial quality gate.
-  if(miniArtwork){
-   const thumb=trackThumbnails.get(file)||candidate;
-   miniArtwork.style.backgroundImage='url("'+thumb+'")';miniArtwork.hidden=false;
-   mini?.classList.add('has-artwork');
-  }
+  renderMiniCover(file?.radio?String(file.id||file.name):favoriteId(file),trackThumbnails.get(file)||candidate);
   const approved=qualifiesFullCover(probe,file);
   if(approved){
    page.style.setProperty('--sv-music-player-art','url("'+candidate+'")');page.classList.add('sv-music-player-has-art');
@@ -704,6 +700,23 @@ function collectionFallbackArt(tile,key){
 function collectionRealArt(tile,src){
  tile.classList.remove('sv-track-fallback');tile.classList.add('sv-track-cover');
  tile.replaceChildren();tile.style.backgroundImage='url("'+src+'")';
+}
+// Reuse exactly the library's note, rings and stable per-track palette.
+let miniCoverKey=null,miniCoverSource=null;
+function renderMiniCover(key,src){
+ if(!miniArtwork||!mini)return;
+ key=key||null;src=src||null;
+ if(key===miniCoverKey&&src===miniCoverSource&&miniArtwork.hidden===!(key||src))return;
+ miniCoverKey=key;miniCoverSource=src;
+ miniArtwork.classList.remove('sv-track-fallback','sv-track-cover');
+ miniArtwork.replaceChildren();
+ miniArtwork.style.removeProperty('background-image');
+ miniArtwork.style.removeProperty('--sv-track-light');
+ miniArtwork.style.removeProperty('--sv-track-deep');
+ if(src)collectionRealArt(miniArtwork,src);
+ else if(key)collectionFallbackArt(miniArtwork,key);
+ miniArtwork.hidden=!(key||src);
+ mini.classList.toggle('has-artwork',!!(key||src));
 }
 function collectionRender(){
  collection.replaceChildren();
