@@ -8,7 +8,7 @@ window.SEYVEO_LIQUID_GL={create(mobile){
  let lost=false;canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();lost=true});
  const vs=`precision highp float;
 attribute vec4 aData;
-uniform mediump vec4 uMusic; uniform mediump float uKind,uMode; uniform float uSize;
+uniform mediump vec4 uMusic; uniform mediump float uKind,uMode,uIdle; uniform float uSize;
 varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 const float PI=3.14159265;
 // Shared cubic contours with continuous tangents at each join.
@@ -50,6 +50,10 @@ vec3 soundWave(vec3 p,float u){
  float fine=sin(8.0*PI*u-t*11.0+p.y*3.0);
  p.y+=envelope*(.075*bass*low+.045*mid*body+.009*air*fine);
  p.z+=envelope*(.055*bass*low+.025*mid*body);
+ // Idle breathing deforms only cloth and its creases, never the analytic glass.
+ float breath=sin(t*.72+PI*u*.55);
+ p.y+=envelope*uIdle*.043*breath;
+ p.z+=envelope*uIdle*.035*breath;
  return p;
 }
 vec3 matter(float x,float v){
@@ -244,7 +248,7 @@ void main(){
  let vertex,fragment,program;
  try{vertex=shader(gl.VERTEX_SHADER,vs);fragment=shader(gl.FRAGMENT_SHADER,fs);program=gl.createProgram();gl.attachShader(program,vertex);gl.attachShader(program,fragment);gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));}catch(e){if(vertex)gl.deleteShader(vertex);if(fragment)gl.deleteShader(fragment);if(program)gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();throw e}
  gl.deleteShader(vertex);gl.deleteShader(fragment);gl.useProgram(program);
- const data=gl.getAttribLocation(program,'aData'),uniform={};for(const k of ['uMusic','uKind','uMode','uSize'])uniform[k]=gl.getUniformLocation(program,k);
+ const data=gl.getAttribLocation(program,'aData'),uniform={};for(const k of ['uMusic','uKind','uMode','uSize','uIdle'])uniform[k]=gl.getUniformLocation(program,k);
  // Separate parametric matter meshes and an analytic spherical glass layer.
  function mesh(kind,n,m,mode){
   const values=[],indices=[];
@@ -281,6 +285,6 @@ void main(){
  }
  gl.disable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
  const resources=[glass,glowMid,glowBottom,glowSeam,...parts.flat()];
- return {dispose(){if(lost)return;lost=true;for(const obj of resources){gl.deleteBuffer(obj.buffer);if(obj.index)gl.deleteBuffer(obj.index)}gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();canvas.width=canvas.height=1;},render(size,phase,bass,mid,air){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
+ return {dispose(){if(lost)return;lost=true;for(const obj of resources){gl.deleteBuffer(obj.buffer);if(obj.index)gl.deleteBuffer(obj.index)}gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();canvas.width=canvas.height=1;},render(size,phase,bass,mid,air,idle=0){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uIdle,idle);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
 }};
 })();
