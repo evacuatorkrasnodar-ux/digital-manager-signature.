@@ -9,7 +9,8 @@
 const $=id=>document.getElementById(id);
 const showSettings=$('sayviMusicDiscoveryToggle'),panel=$('sayviDiscoveryPanel');
 const consent=$('sayviDiscoveryToggle'),checkButton=$('sayviDiscoveryCheck'),
- clearButton=$('sayviDiscoveryForget'),info=$('sayviDiscoveryStatus');
+ clearButton=$('sayviDiscoveryForget'),info=$('sayviDiscoveryStatus'),
+ releasesList=$('svMusicDiscoveryReleases'),empty=$('svMusicDiscoveryEmpty'),emptyTitle=$('svMusicDiscoveryEmptyTitle');
 if(!showSettings||!panel||!consent||!checkButton||!clearButton||!info)return;
 const STORE='seyveo-discovery-music-v1';
 const DAY=24*3600*1000,LOOKBACK=21*DAY,MAX_ARTISTS=30;
@@ -41,21 +42,23 @@ function status(message=''){
  info.hidden=!message;
 }
 function signal(){
+ renderReleases();
  // Metadata-only event. Never attach artist interests or music history.
  window.dispatchEvent(new Event('seyveo:discovery-updated'));
 }
 function update(){
  consent.setAttribute('aria-pressed',String(state.enabled));
- consent.textContent=state.enabled?'Музыкальные открытия включены':'Включить музыкальные открытия';
+ consent.setAttribute('aria-label',state.enabled?'Выключить музыкальные открытия':'Включить музыкальные открытия');
  checkButton.hidden=!state.enabled;
  clearButton.hidden=!state.enabled&&!state.artists.length&&!state.releases.length;
  checkButton.disabled=checking;
  const qualified=state.artists.filter(a=>a.plays>=3).length;
  if(!state.enabled)status(state.artists.length?'Поиск новинок выключен. Сохранённые интересы можно очистить.':
   'Выключено. Сэйви не запоминает прослушивания и не обращается к каталогу.');
- else status(checking?'Сэйви проверяет доступные новинки…':
-  qualified?'Любимых исполнителей: '+qualified+'. Проверка — не чаще раза в сутки при открытом SEYVEO.':
-  'Сэйви заметит исполнителя после трёх прослушиваний от 30 секунд. Пока интересов недостаточно.');
+ else status(checking?'Сэйви проверяет новинки…':
+  qualified?'Любимых исполнителей: '+qualified+'. Проверка при открытом SEYVEO.':
+  'Три прослушивания исполнителя от 30 секунд помогут Сэйви узнать ваш вкус.');
+ renderReleases();
 }
 function enable(value){
  runId++;
@@ -93,6 +96,23 @@ const safeUrl=s=>{
    (u.hostname==='music.apple.com'||u.hostname==='itunes.apple.com')?u.href:'';
  }catch{return ''}
 };
+function renderReleases(){
+ if(!releasesList||!empty||!emptyTitle)return;
+ const items=state.enabled?state.releases.filter(r=>!state.ignored.includes(r.id)&&validDate(r.date)&&safeUrl(r.url)&&Date.now()>=Number(state.snoozed[r.id]||0)).slice(0,20):[];
+ releasesList.replaceChildren();
+ for(const r of items){
+  const row=document.createElement('a');row.className='sv-discovery-release';row.href=safeUrl(r.url);row.target='_blank';row.rel='noopener noreferrer';
+  const art=document.createElement('span');art.className='sv-discovery-release-art';art.setAttribute('aria-hidden','true');
+  art.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17V6l11-3v11"/><ellipse cx="6" cy="17.5" rx="3" ry="2.3"/><ellipse cx="17" cy="14.5" rx="3" ry="2.3"/></svg>';
+  const copy=document.createElement('span');copy.className='sv-discovery-release-copy';
+  const title=document.createElement('strong');title.textContent=r.title;
+  const artist=document.createElement('small');artist.textContent=r.artist+' · '+new Date(r.date+'T00:00:00Z').toLocaleDateString('ru-RU',{day:'numeric',month:'short',timeZone:'UTC'});
+  const arrow=document.createElement('span');arrow.className='sv-discovery-release-arrow';arrow.setAttribute('aria-hidden','true');arrow.textContent='↗';
+  copy.append(title,artist);row.append(art,copy,arrow);releasesList.append(row);
+ }
+ releasesList.hidden=!items.length;empty.hidden=!!items.length;
+ emptyTitle.textContent=!state.enabled?'Открывайте новое с Сэйви':checking?'Ищу новинки':state.artists.some(a=>a.plays>=3)?'Ждём новые релизы':'Пока изучаю ваш вкус';
+}
 function chooseReleases(data,artist,now=Date.now()){
  if(!data||!Array.isArray(data.results))return [];
  const matching=data.results.filter(item=>
@@ -174,7 +194,7 @@ async function check({force=false}={}){
  if(current!==runId){checking=false;update();return false;}
  checking=false;persist();update();
  status(success?
-  (found?'Найдено подтверждённых релизов: '+found+'. Показываю на Главной.':
+  (found?'Найдено подтверждённых релизов: '+found+'.':
    'Каталог проверен. Подтверждённых новых альбомов пока нет.'):
   'Проверка каталога сейчас недоступна. Сэйви ничего не придумывает.');
  return true;
@@ -226,6 +246,7 @@ window.addEventListener('storage',event=>{
  if(event.key===STORE||!event.key){runId++;state=read();update();signal()}
 });
 window.SEYVEO_DISCOVERY=Object.freeze({
+ ...window.SEYVEO_DISCOVERY,
  enabled:()=>state.enabled,artists:()=>state.artists.map(a=>({...a})),
  current,postpone,dismiss,check,listen,chooseReleases
 });
