@@ -148,42 +148,45 @@ void main(){
  float x=vUV.x,v=vUV.y,alpha;vec3 col;
  if(uKind>4.5&&uKind<5.5){
   vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
-  // Hybrid crystal: localized reflections instead of a uniform drawn outline.
-  float upper=peak(a,-2.16,.60),foot=peak(a,1.52,.40);
+  // Crystal optics: directional grazing reflection and a shaped projected light.
+  // All coordinates are fixed in the glass; audio only animates the silk.
+  float upper=peak(a,-2.14,.58),foot=peak(a,1.57,.46);
   if(r>1.0){
-   float glow=gauss(r-1.0,.049)*(.23*upper+.29*foot);
-   float floorGlow=gauss(xy.x,.60)*gauss(xy.y-1.056,.058)*.27+gauss(xy.x,.19)*gauss(xy.y-1.040,.026)*.49;
-   gl_FragColor=vec4(.13,.91,.86,clamp(glow+floorGlow,0.0,.68));return;
+   float glow=gauss(r-1.0,.045)*(.27*upper+.30*foot);
+   float ground=gauss(xy.x,.59)*gauss(xy.y-1.052,.058)*.24+gauss(xy.x,.20)*gauss(xy.y-1.041,.025)*.53;
+   gl_FragColor=vec4(.19,.95,.89,clamp(glow+ground,0.0,.76));return;
   }
-  float n=sqrt(max(0.0,1.0-r*r));
-  float upperRight=peak(a,-.66,.35);
-  float lowerRight=peak(a,.78,.51),lowerLeft=peak(a,2.38,.40);
-  float fres=pow(max(0.0,1.0-n),3.0);
-  // A soft, directional Fresnel edge: almost invisible on the side walls.
-  float rimWeight=clamp(.015+.88*upper+.88*foot+.72*lowerRight+.58*lowerLeft+.24*upperRight,0.0,1.0);
-  float rim=gauss(r-.989,.010)*rimWeight;
-  float rimTail=gauss(r-.967,.025)*rimWeight;
-  // Upper reflection follows a curved lens with a small secondary shoulder.
-  float arc=length(xy-vec2(.055,.175));
-  // The upper-right shoulder bends the reflected light inward, as in the crystal reference.
-  float bend=.060*peak(a,-.88,.37);
-  float band=smoothstep(.999-bend,1.025-bend,arc)*(1.0-smoothstep(.951,.984,r));
-  float mainReflection=band*clamp(peak(a,-2.00,.70)+.37*upperRight,0.0,1.0);
-  float secondary=gauss(r-(.954-.052*upperRight),.032)*upperRight;
-  float lowerLens=gauss(r-.939,.060)*clamp(.87*foot+.63*lowerRight+.50*lowerLeft,0.0,1.0);
-  float sideDepth=gauss(r-.938,.062)*(.20*upper+.23*lowerRight+.18*lowerLeft+.12*upperRight);
-  float light=clamp(.93*rim+.23*rimTail+.43*lowerLens+.16*secondary,0.0,1.0);
-  col=mix(vec3(.035,.36,.43),vec3(.11,.88,.84),clamp(light*1.7+.20*sideDepth,0.0,1.0));
-  col=mix(col,vec3(.83,1.0,.97),smoothstep(.48,.92,light));
-  alpha=clamp(.004+.028*fres+.80*light+.14*sideDepth,0.0,.92);
-  // Silver-to-aqua light is translucent and fades along the curved surface.
-  float silver=clamp(mainReflection*(.18+.59*peak(a,-2.05,.43))+.26*secondary,0.0,.77);
-  vec3 reflectedWhite=mix(vec3(.25,.91,.85),vec3(.95,1.0,.97),peak(a,-2.05,.37));
-  col=(col*alpha*(1.0-silver)+reflectedWhite*silver)/max(.0001,alpha*(1.0-silver)+silver);
-  alpha=alpha*(1.0-silver)+silver;
-  float caustic=.62*gauss(r-.981,.022)*peak(a,1.57,.31);
-  col=(col*alpha*(1.0-caustic)+vec3(.52,1.0,.94)*caustic)/max(.0001,alpha*(1.0-caustic)+caustic);
-  alpha=clamp(alpha*(1.0-caustic)+caustic,0.0,.97);
+  float nz=sqrt(max(0.0,1.0-r*r));
+  float grazing=pow(1.0-nz,3.0);
+  float lowerRight=peak(a,.79,.53),lowerLeft=peak(a,2.38,.46);
+  float sideRight=peak(a,.22,.33),sideLeft=peak(a,2.88,.28);
+  float lower=clamp(.95*foot+.70*lowerRight+.64*lowerLeft,0.0,1.0);
+  // Thin outer surface, broader light transmitted through the curved lower lens.
+  float directional=clamp(.77*upper+.90*lower+.14*sideRight+.13*sideLeft,0.0,1.0);
+  float edge=gauss(r-.994,.007)*directional;
+  float transmission=gauss(r-(.940-.025*lower),.047+.017*lower)*lower;
+  float sideGlass=gauss(r-.954,.037)*(.23*sideLeft+.29*sideRight);
+  float light=clamp(.78*edge+.50*transmission+.18*sideGlass,0.0,1.0);
+  col=mix(vec3(.035,.31,.37),vec3(.16,.94,.87),clamp(light*1.6,0.0,1.0));
+  col=mix(col,vec3(.76,1.0,.96),smoothstep(.48,.91,light));
+  alpha=clamp(.004+.020*grazing+.82*light,0.0,.94);
+  // The upper reflection is a curved area light, with an independent inner
+  // boundary that bends down at the right shoulder, not a concentric band.
+  float shoulder=peak(a,-.88,.30);
+  float width=.025+.145*peak(a,-1.89,.59)+.105*shoulder;
+  float innerRadius=.981-width;
+  float window=peak(a,-1.86,.94);
+  float mask=smoothstep(innerRadius-.007,innerRadius+.009,r)*(1.0-smoothstep(.954,.988,r))*window;
+  float innerLight=gauss(r-innerRadius-.010,.024)*window;
+  float whiteFocus=peak(a,-2.02,.37);
+  float reflection=clamp(mask*(.24+.52*whiteFocus)+innerLight*(.30+.24*whiteFocus),0.0,.92);
+  vec3 reflected=mix(vec3(.19,.88,.84),vec3(.96,1.0,.97),clamp(.12+.88*whiteFocus+.25*innerLight,0.0,1.0));
+  col=(col*alpha*(1.0-reflection)+reflected*reflection)/max(.0001,alpha*(1.0-reflection)+reflection);
+  alpha=alpha*(1.0-reflection)+reflection;
+  // A localized crystal caustic near the foot, fading before the side walls.
+  float caustic=.67*gauss(r-.985,.021)*peak(a,1.57,.29);
+  col=(col*alpha*(1.0-caustic)+vec3(.63,1.0,.94)*caustic)/max(.0001,alpha*(1.0-caustic)+caustic);
+  alpha=clamp(alpha*(1.0-caustic)+caustic,0.0,.98);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.89,.16)+gauss(x-.73,.19);
