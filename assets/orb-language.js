@@ -176,7 +176,7 @@
  try{liquidContext=liquidCanvas?.getContext('2d',{alpha:true})||null}catch{}
  let liquidMode=true,liquidLast=0,liquidSize=0,liquidGradient=null,liquidPhase=0,liquidClock=-1;
  let liquidQuality=1,liquidSlowFrames=0,liquidAmbientLast=0,liquidRenderCost=0;
- let liquidAutoReason="";
+ let liquidAutoReason="",liquidIdleMix=0,liquidIdleActive=false;
  const longAmbient=()=>Number.isFinite(audio?.duration)&&audio.duration>MAX_RHYTHM_SECONDS;
  // Frame budget adapts to actual render cost, independently of screen width.
  // Once reduced for overload, stay at the safe ceiling for this session.
@@ -201,22 +201,23 @@
  const liquidEnergy=new Float32Array(3);
  const liquidMobile=window.matchMedia?.('(max-width: 600px)').matches||((navigator.hardwareConcurrency||8)<=4);
  function liquidVisible(){return !!liquidContext&&liquidMode&&!!audio&&!document.hidden&&location.hash==='#sayvi-music'&&musicPage?.dataset.musicView==='player'&&!musicPage.hidden&&visibleScenes.get(playerScene)!==false&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork')}
+ function liquidResting(){return liquidVisible()&&!reduce?.matches&&(audio.paused||audio.ended)&&!audio.error}
  function releaseLiquid(){
   if(liquidGPU){try{liquidGPU.dispose?.()}catch{}liquidGPU=null}
   liquidGPUAttempted=false;liquidLast=0;liquidClock=-1;liquidSlowFrames=0;liquidFastFrames=0;liquidAmbientLast=0;liquidRenderCost=0;
   if(liquidSize){liquidCanvas.width=liquidCanvas.height=1;liquidSize=0;liquidGradient=null}
-  liquidEnergy.fill(0);
+  liquidEnergy.fill(0);liquidIdleMix=0;liquidIdleActive=false;
  }
  function fallBackLiquid(reason){
   liquidAutoReason=reason;liquidMode=false;syncLiquidMode();
  }
- function paintLiquid(timestamp,bass=0,mid=0,air=0,force=false){
+ function paintLiquid(timestamp,bass=0,mid=0,air=0,force=false,idle=liquidResting()){
   if(!liquidVisible()||document.hidden)return;
-  const interval=liquidInterval();
-  if(!force&&longAmbient())return;
-  if(!force&&!liquidFrameDue(timestamp))return;
-  const dt=liquidLast?clamp(timestamp-liquidLast,1,100):33;
-  if(!force&&liquidLast&&!adjustLiquidBudget(dt,interval))return;
+  const interval=idle?1000/(liquidRenderCost>35?8:liquidMobile?12:15):liquidInterval();
+  if(!force&&!idle&&longAmbient())return;
+  if(!force&&liquidLast&&timestamp-liquidLast<interval-2)return;
+  const dt=liquidLast?clamp(timestamp-liquidLast,1,150):33;
+  if(!force&&!idle&&liquidLast&&!adjustLiquidBudget(dt,interval))return;
   const renderStarted=performance.now();
   liquidLast=timestamp;
   const cssSize=liquidCanvas.clientWidth;
@@ -231,7 +232,14 @@
    liquidClock=t;
    liquidPhase+=elapsed*(1.10+liquidEnergy[0]*.65);
    for(let i=0;i<3;i++){const v=i===0?bass:i===1?mid:air;liquidEnergy[i]+=(v-liquidEnergy[i])*(1-Math.exp(-dt/(v>liquidEnergy[i]?110:260)))}
-  }else liquidClock=-1;
+  }else{
+   liquidClock=-1;
+   if(idle){
+    liquidPhase+=dt*.0035;
+    for(let i=0;i<3;i++)liquidEnergy[i]*=Math.exp(-dt/330);
+   }
+  }
+  liquidIdleMix+=((idle?1:0)-liquidIdleMix)*(1-Math.exp(-dt/450));
   const ctx=liquidContext,b=liquidEnergy[0],m=liquidEnergy[1],h=liquidEnergy[2],p=liquidPhase;
   ctx.setTransform(pixels/400,0,0,pixels/400,0,0);
   ctx.clearRect(0,0,400,400);
@@ -252,7 +260,7 @@
   }
   if(liquidGPU){
    try{
-    const frame=liquidGPU.render(pixels,p,b,m,h);
+    const frame=liquidGPU.render(pixels,p,b,m,h,liquidIdleMix);
     if(frame){ctx.drawImage(frame,0,0,400,400);liquidRenderCost=force?0:performance.now()-renderStarted;return}
    }catch{}
    try{liquidGPU.dispose?.()}catch{}liquidGPU=null;
@@ -292,6 +300,11 @@
  }
  function tickScene(timestamp){
   sceneFrame=0;
+  if(scene===playerScene&&liquidResting()){
+   paintLiquid(timestamp,0,0,0,false,true);
+   if(liquidResting())sceneFrame=requestAnimationFrame(tickScene);
+   return;
+  }
   if(!sceneAllowed()||reduce?.matches||window.SEYVEO_MUSIC?.rhythmFile?.()!==sceneFile){syncScene();return}
   const data=sceneFile?rhythmCache.get(sceneFile):null;
   const full=scene===playerScene;
@@ -354,11 +367,16 @@
   }
   const allowed=!!scene&&sceneAllowed();
   if(musicPage)musicPage.dataset.longAmbient=String(longAmbient());
-  if(scene===playerScene&&liquidMode&&!allowed){liquidClock=-1;liquidLast=0;liquidSlowFrames=0;liquidFastFrames=0;liquidRenderCost=0;if(!liquidSize)paintLiquid(performance.now(),0,0,0,true)}
+  const resting=scene===playerScene&&liquidResting();
+  if(resting!==liquidIdleActive){
+   resetSceneWave();liquidIdleActive=resting;liquidClock=-1;liquidLast=0;liquidSlowFrames=0;liquidFastFrames=0;liquidRenderCost=0;
+  }
+  if(scene===playerScene&&liquidMode&&!allowed&&!liquidSize)paintLiquid(performance.now(),0,0,0,true);
   if(scene===playerScene&&liquidMode&&liquidVisible()&&!liquidSize)paintLiquid(performance.now(),0,0,0,true);
   musicPage?.classList.toggle('sv-now-ambient-playing',!!playerScene&&scene===playerScene&&allowed);
   if(!scene)return;
   scene.classList.toggle('sv-scene-playing',allowed);
+  if(resting){if(!sceneFrame)sceneFrame=requestAnimationFrame(tickScene);return}
   if(!allowed||reduce?.matches||(scene===playerScene&&liquidMode&&longAmbient())){resetSceneWave();return}
   const file=window.SEYVEO_MUSIC?.rhythmFile?.();
   if(!file){if(sceneFile||sceneFrame)resetSceneWave();return}
