@@ -3,6 +3,7 @@
    production index.html, plasma, layouts, local data or public app.
  */
 import {createServer} from 'node:http';
+import {lookupMusicReleases} from './music-discovery.mjs';
 import {MAX_MUSIC_CLIP,clipFormat,recognitionConfigured,recognizeMusic} from './music-recognition.mjs';
 import {createImageAttachments} from './image-attachments.mjs';
 import {proposeLocalPaperDraft} from './paper-vision-draft.mjs';
@@ -254,9 +255,22 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
  const voiceRunner=createVoiceWorker();
  process.once('exit',()=>voiceRunner.close());
  let recognitionBusy=false,recognitionMinute=-1,recognitionCount=0;
+ let discoveryMinute=-1,discoveryCount=0;
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  if(req.method==='GET'&&path==='/api/seyveo-music-discovery'){
+   if(req.headers['sec-fetch-site']==='cross-site'){send(res,403,{error:'Недоверенная страница.'});return}
+   const artist=new URL(req.url,ORIGIN).searchParams.get('artist')||'';
+   if(!artist.trim()||artist.length>100||/[\u0000-\u001f\u007f]/.test(artist)){send(res,400,{error:'Некорректное имя исполнителя.'});return}
+   const minute=Math.floor(Date.now()/60000);
+   if(minute!==discoveryMinute){discoveryMinute=minute;discoveryCount=0}
+   if(discoveryCount>=4){send(res,429,{error:'Повторите позже.'});return}
+   discoveryCount++;
+   try{const data=await lookupMusicReleases(artist);if(!res.destroyed)send(res,200,data)}
+   catch{if(!res.destroyed)send(res,502,{error:'Каталог временно недоступен.'})}
+   return;
+  }
   if(req.method==='GET'&&path==='/api/seyveo-music-recognition-status'){
    send(res,200,{configured:recognitionConfigured(),provider:'AudD'});return;
   }
