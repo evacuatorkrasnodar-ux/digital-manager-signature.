@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V61 · perspective silk lattice · WebGL 1. */
+/* SEYVEO Liquid Sound V62 · continuous curved silk lattice · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -13,12 +13,12 @@ const float PI=3.14159265;
 // Five shared cubic contours with matched first derivatives at the midpoint.
 vec2 bez(vec2 a,vec2 b,vec2 c,vec2 d,float t){float q=1.0-t;return q*q*q*a+3.0*q*q*t*b+3.0*q*t*t*c+t*t*t*d;}
 vec3 contour(float k,float u){
- vec2 l=vec2(-.864,.174),r=vec2(.961,-.135),m,c1,c2,c3,c4;float z;
- if(k<.5){m=vec2(.105,-.795);c1=vec2(-.68,.105);c2=vec2(-.450,-.795);c3=vec2(.660,-.795);c4=vec2(.83,-.47);z=-.13;}
- else if(k<1.5){m=vec2(-.19,.060);c1=vec2(-.81,.012);c2=vec2(-.565,.120);c3=vec2(.185,0.0);c4=vec2(.72,-.40);z=.23;}
- else if(k<2.5){m=vec2(-.25,.270);c1=vec2(-.81,.065);c2=vec2(-.675,.270);c3=vec2(.175,.270);c4=vec2(.72,-.41);z=.38;}
- else if(k<3.5){m=vec2(.39,.55);c1=vec2(-.52,.23);c2=vec2(.020,.55);c3=vec2(.760,.55);c4=vec2(1.045,.12);z=-.09;}
- else {m=vec2(-.045,.785);c1=vec2(-.92,.47);c2=vec2(-.475,.785);c3=vec2(.385,.785);c4=vec2(1.02,.28);z=-.22;}
+ vec2 l=vec2(-.864,.207),r=vec2(.961,-.045),m,c1,c2,c3,c4;float z;
+ if(k<.5){m=vec2(.105,-.795);c1=vec2(-.68,.105);c2=vec2(-.450,-.795);c3=vec2(.660,-.795);c4=vec2(.88,-.43);z=-.13;}
+ else if(k<1.5){m=vec2(-.19,.060);c1=vec2(-.81,.012);c2=vec2(-.565,.120);c3=vec2(.185,0.0);c4=vec2(.78,-.47);z=.23;}
+ else if(k<2.5){m=vec2(-.25,.270);c1=vec2(-.81,.065);c2=vec2(-.675,.270);c3=vec2(.175,.270);c4=vec2(.78,-.49);z=.38;}
+ else if(k<3.5){m=vec2(.39,.55);c1=vec2(-.52,.23);c2=vec2(.020,.55);c3=vec2(.760,.55);c4=vec2(1.035,.20);z=-.09;}
+ else {m=vec2(-.045,.785);c1=vec2(-.92,.47);c2=vec2(-.475,.785);c3=vec2(.385,.785);c4=vec2(1.02,.32);z=-.22;}
  vec2 p=u<.5?bez(l,c1,c2,m,u*2.0):bez(m,c3,c4,r,u*2.0-1.0);
  return vec3(p,z*sin(PI*u));
 }
@@ -68,8 +68,9 @@ void main(){
   // Spread the broad faces, compress the rows at the turning edges.
   if(uKind<2.5||uKind>3.5){
    float curved=.5-.5*cos(PI*v);
-   v=mix(v,curved,uKind<2.5?.48:.40);
-   float sweep=uKind<2.5?.30:uKind<4.5?-.23:.14;
+   v=mix(v,curved,uKind<2.5?.37:.32);
+   float sweep=uKind<2.5?.36:uKind<4.5?-.30:.18;
+   // A monotonic shear fans the rows out without zig-zagging the individual points.
    u+=sweep*sin(PI*u)*sin(PI*v)*(v-.24);
   }else{
    u-=.07*sin(PI*u)*sin(PI*v)*(v-.36);
@@ -82,7 +83,7 @@ void main(){
  float glass=step(4.5,uKind)*(1.0-step(5.5,uKind));
  float scale=.82*mix(.985,1.0,glass)*(1.0+mix(.015,.003,glass)*uMusic.y)*(1.0+.020*p.z);
  gl_Position=vec4(scale*vec2(p.x+.012*p.z,-p.y+.012*p.z),p.z*.3,1.0);
- gl_PointSize=clamp(uSize*(uKind>3.5?.0020:uKind<2.5?.00215:.0025+.00030*uMusic.w),1.3,3.3);
+ gl_PointSize=clamp(uSize*(uKind>3.5?.0018:uKind<2.5?.00195:.0025+.00030*uMusic.w),1.3,3.3);
  vUV=vec2(x,v);
 }
 `;
@@ -177,8 +178,7 @@ void main(){
   const values=[],indices=[];
   for(let j=0;j<=m;j++)for(let i=0;i<=n;i++){
    if(mode===1&&j>0&&(i===0||i===n))continue;
-   const stagger=mode===1&&kind!==3&&i>0&&i<n?.36*(j%2):0;
-   let x=kind===5?-1+2*i/n:Math.max(-.9999,Math.min(.9999,-1+2*(i+stagger)/n));
+   let x=kind===5?-1+2*i/n:Math.max(-.9999,Math.min(.9999,-1+2*i/n));
    values.push(x,j/m,0,0);
   }
   if(mode===0)for(let j=0;j<m;j++)for(let i=0;i<n;i++){const k=j*(n+1)+i;indices.push(k,k+1,k+n+1,k+1,k+n+2,k+n+1)}
@@ -192,10 +192,10 @@ void main(){
  // Four distinct cloth intervals: 2=0..1, 3=1..2, 4=2..3, 6=3..4; 7 is the shoulder.
  // Back-to-front compositing keeps the lower returning silk behind the broad face.
  const parts=[6,4,7,2,3].map(kind=>{
-  const dims=kind===7?[52,20,78,30]:kind===2?[76,38,108,52]:kind===3?[110,34,152,48]:[74,33,106,46];
+  const dims=kind===7?[52,20,78,30]:kind===2?[82,40,120,56]:kind===3?[110,34,152,48]:[78,35,114,48];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   const layers=[mesh(kind,mobile?64:96,mobile?20:32,0)];
-  if(kind===3)layers.push(mesh(kind,mobile?70:108,mobile?14:22,2));
+  if(kind===3)layers.push(mesh(kind,n,mobile?14:22,2));
   layers.push(mesh(kind,n,m,1));return layers;
  });
  function draw(obj){
