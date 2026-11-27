@@ -479,14 +479,46 @@ function clearArtwork(){
   surface.style.removeProperty('background-image');
  }
 }
+/* Strict editorial cover gate: only sufficiently large, square, opaque
+   and detailed images are allowed on the expanded player. This is a
+   conservative image heuristic, not a guarantee of original resolution. */
+function coverDetail(pixels,w,h){
+ const gray=new Float32Array(w*h);let sum=0,square=0,transparent=0;
+ for(let i=0;i<gray.length;i++){
+  const p=i*4,v=.2126*pixels[p]+.7152*pixels[p+1]+.0722*pixels[p+2];
+  gray[i]=v;sum+=v;square+=v*v;if(pixels[p+3]<245)transparent++;
+ }
+ const n=gray.length,variance=square/n-(sum/n)**2;
+ let edges=0,sharp=0,gradient=0,laplace=0,blocks=0,blockSum=0,otherSum=0,otherCount=0;
+ for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){
+  const i=y*w+x,v=gray[i],dx=Math.abs(v-gray[i-1]),dy=Math.abs(v-gray[i-w]);
+  const g=dx+dy,l=Math.abs(4*v-gray[i-1]-gray[i+1]-gray[i-w]-gray[i+w]);
+  gradient+=g;laplace+=l;if(g>=12){edges++;if(l>=10)sharp++}
+  if(x%8===0){blockSum+=dx;blocks++}else{otherSum+=dx;otherCount++}
+  if(y%8===0){blockSum+=dy;blocks++}else{otherSum+=dy;otherCount++}
+ }
+ const count=(w-2)*(h-2),blockRatio=(blockSum/Math.max(1,blocks))/Math.max(.5,otherSum/Math.max(1,otherCount));
+ return transparent/n<=.005&&variance>=225&&edges/count>=.035&&sharp/Math.max(1,edges)>=.48&&
+  gradient/count>=2.6&&laplace/Math.max(1,gradient)>=.46&&blockRatio<2.8;
+}
+function qualifiesFullCover(probe,file){
+ const w=probe.naturalWidth,h=probe.naturalHeight;
+ if(!file||file.radio||Math.min(w,h)<900||w/h<.9||w/h>1.1||w*h>16000000)return false;
+ try{
+  const canvas=document.createElement('canvas');canvas.width=320;canvas.height=320;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});if(!ctx)return false;
+  const side=Math.min(w,h);
+  ctx.drawImage(probe,(w-side)/2,(h-side)/2,side,side,0,0,320,320);
+  return coverDetail(ctx.getImageData(0,0,320,320).data,320,320);
+ }catch{return false}
+}
 function showArtwork(){
  if(!coverDataURL)return;
- const candidate=coverDataURL;
- // Decode offscreen before revealing. Failed or CSP-blocked images stay icons.
+ const candidate=coverDataURL,version=selectVersion,file=tracks[index];
+ // Never show a candidate at full size until its decoded pixels pass.
  const probe=new Image();
  probe.onload=()=>{
-  if(coverDataURL!==candidate)return;
-  const file=tracks[index];
+  if(coverDataURL!==candidate||version!==selectVersion||tracks[index]!==file)return;
   if(file&&!file.radio&&!trackThumbnails.has(file)){
    try{
     const canvas=document.createElement('canvas');canvas.width=160;canvas.height=160;
@@ -494,18 +526,30 @@ function showArtwork(){
     if(ctx&&side>0){ctx.drawImage(probe,(probe.naturalWidth-side)/2,(probe.naturalHeight-side)/2,side,side,0,0,160,160);trackThumbnails.set(file,canvas.toDataURL('image/jpeg',.84));}
    }catch{}
   }
-  page.style.setProperty('--sv-music-player-art','url("'+candidate+'")');page.classList.add('sv-music-player-has-art');
-  paintPlayerBackdrop(candidate);
-  for(const [surface,holder] of [[artwork,stage],[miniArtwork,mini]]){
-   if(!surface)continue;
-   surface.style.backgroundImage='url("'+candidate+'")';
-   surface.hidden=false;
-   holder?.classList.add('has-artwork');
+  // Thumbnail is independent of the full cover and remains available
+  // even when the candidate fails the editorial quality gate.
+  if(miniArtwork){
+   const thumb=trackThumbnails.get(file)||candidate;
+   miniArtwork.style.backgroundImage='url("'+thumb+'")';miniArtwork.hidden=false;
+   mini?.classList.add('has-artwork');
+  }
+  const approved=qualifiesFullCover(probe,file);
+  if(approved){
+   page.style.setProperty('--sv-music-player-art','url("'+candidate+'")');page.classList.add('sv-music-player-has-art');
+   paintPlayerBackdrop(candidate);
+   if(artwork){artwork.style.backgroundImage='url("'+candidate+'")';artwork.hidden=false;stage?.classList.add('has-artwork')}
+  }else{
+   // Keep the animated rings and ambient palette; no blurred rejected cover.
+   page.classList.remove('sv-music-player-has-art');page.style.removeProperty('--sv-music-player-art');
+   stage?.classList.remove('has-artwork');
+   if(artwork){artwork.hidden=true;artwork.style.removeProperty('background-image')}
+   paintPlayerBackdrop(null);
+   coverDataURL=null;
   }
   stage?.classList.remove('is-checking-artwork');
-  syncResume();
+  mediaSession();syncResume();
  };
- probe.onerror=()=>{if(coverDataURL===candidate)stage?.classList.remove('is-checking-artwork')};
+ probe.onerror=()=>{if(version===selectVersion&&coverDataURL===candidate){coverDataURL=null;stage?.classList.remove('is-checking-artwork');mediaSession()}};
  probe.src=candidate;
 }
 function loadArtwork(blob,version,file){
@@ -523,7 +567,6 @@ function loadArtwork(blob,version,file){
   }
   coverDataURL=value;
   showArtwork();
-  mediaSession();
  };
  reader.onerror=()=>{
   if(coverReader!==reader)return;
@@ -551,7 +594,7 @@ function mediaSession(){
     artist:info.artist||'Моя музыка · SEYVEO',
     album:info.album||'SEYVEO SOUND',
     // Only the real embedded cover (CSP-approved data URL) is used by MediaSession.
-    artwork:coverDataURL&&info.artwork?[{src:coverDataURL,type:info.artwork.type||'image/jpeg',sizes:''}]:[]
+    artwork:page.classList.contains('sv-music-player-has-art')&&coverDataURL&&info.artwork?[{src:coverDataURL,type:info.artwork.type||'image/jpeg',sizes:''}]:[]
    });
   }
   navigator.mediaSession.setActionHandler('play',()=>play());
