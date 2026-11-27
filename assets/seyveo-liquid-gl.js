@@ -152,7 +152,7 @@ void main(){
   // All coordinates are fixed in the glass; audio only animates the silk.
   float upper=peak(a,-2.14,.58),foot=peak(a,1.57,.46);
   if(r>1.0){
-   float glow=gauss(r-1.0,.045)*(.27*upper+.30*foot);
+   float glow=gauss(r-1.0,.045)*(.28*upper+.30*foot);
    float ground=gauss(xy.x,.59)*gauss(xy.y-1.052,.058)*.24+gauss(xy.x,.20)*gauss(xy.y-1.041,.025)*.53;
    gl_FragColor=vec4(.19,.95,.89,clamp(glow+ground,0.0,.76));return;
   }
@@ -164,9 +164,9 @@ void main(){
   // Thin outer surface, broader light transmitted through the curved lower lens.
   float directional=clamp(.77*upper+.90*lower+.14*sideRight+.13*sideLeft,0.0,1.0);
   float edge=gauss(r-.994,.007)*directional;
-  float transmission=gauss(r-(.940-.025*lower),.047+.017*lower)*lower;
+  float transmission=gauss(r-(.940-.032*lower),.055+.018*lower)*lower;
   float sideGlass=gauss(r-.954,.037)*(.23*sideLeft+.29*sideRight);
-  float light=clamp(.78*edge+.50*transmission+.18*sideGlass,0.0,1.0);
+  float light=clamp(.74*edge+.45*transmission+.18*sideGlass,0.0,1.0);
   col=mix(vec3(.035,.31,.37),vec3(.16,.94,.87),clamp(light*1.6,0.0,1.0));
   col=mix(col,vec3(.76,1.0,.96),smoothstep(.48,.91,light));
   alpha=clamp(.004+.020*grazing+.82*light,0.0,.94);
@@ -183,6 +183,14 @@ void main(){
   vec3 reflected=mix(vec3(.19,.88,.84),vec3(.96,1.0,.97),clamp(.12+.88*whiteFocus+.25*innerLight,0.0,1.0));
   col=(col*alpha*(1.0-reflection)+reflected*reflection)/max(.0001,alpha*(1.0-reflection)+reflection);
   alpha=alpha*(1.0-reflection)+reflection;
+  // A fine glancing highlight restores the upper optical edge without drawing a full circle.
+  float crown=.82*gauss(r-.994,.009)*peak(a,-2.14,.55);
+  col=(col*alpha*(1.0-crown)+vec3(.69,1.0,.97)*crown)/max(.0001,alpha*(1.0-crown)+crown);
+  alpha=alpha*(1.0-crown)+crown;
+  // Broad, transparent aqua light transmitted through the lower glass, separate from the rim.
+  float transmitted=.29*gauss(r-.936,.053)*lower;
+  col=(col*alpha*(1.0-transmitted)+vec3(.17,.95,.89)*transmitted)/max(.0001,alpha*(1.0-transmitted)+transmitted);
+  alpha=alpha*(1.0-transmitted)+transmitted;
   // A localized crystal caustic near the foot, fading before the side walls.
   float caustic=.67*gauss(r-.985,.021)*peak(a,1.57,.29);
   col=(col*alpha*(1.0-caustic)+vec3(.63,1.0,.94)*caustic)/max(.0001,alpha*(1.0-caustic)+caustic);
