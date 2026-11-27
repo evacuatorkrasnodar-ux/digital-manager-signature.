@@ -8140,7 +8140,7 @@ html[data-theme="light"]:not(.sv-music-player-open) #svSmartMusicSheet[data-soun
 /* Explicit palette tracking: dialog top layer cannot reliably sample player backdrop. */
 html.sv-music-player-open #svSmartMusicSheet,
 html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel,#sayviMusicCollection,#svInlineKaraokeSettings):not([hidden]){
- --sv-sheet-bg:rgba(var(--sv-music-live-menu-rgb,29,65,68),.94);
+ --sv-sheet-bg:rgba(var(--sv-music-live-menu-rgb,34,42,46),.94);
  transition:background-color .45s linear;
 }
 @media(prefers-reduced-motion:reduce){
@@ -8149,7 +8149,7 @@ html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel
 }
 @media(prefers-reduced-transparency:reduce){
  html.sv-music-player-open #svSmartMusicSheet,
- html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel,#sayviMusicCollection,#svInlineKaraokeSettings):not([hidden]){--sv-sheet-bg:rgb(var(--sv-music-live-menu-rgb,29,65,68))}
+ html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel,#sayviMusicCollection,#svInlineKaraokeSettings):not([hidden]){--sv-sheet-bg:rgb(var(--sv-music-live-menu-rgb,34,42,46))}
 }
 </style>
 <script id="svMusicLiveMenuPalette">
@@ -8194,7 +8194,9 @@ html.sv-music-player-open #sayviMusicPage :is(#svNowMenu,#sayviMusicSourcesPanel
    }
   }
   if(artTint&&key)rgb=artTint;
-  const value=rgb.map(Math.round).join(',');
+  // Neutral graphite glass with only 20% of the live player palette.
+  const neutral=[35,36,41];
+  const value=rgb.map((v,k)=>Math.round(neutral[k]*.80+v*.20)).join(',');
   if(value!==previous){root.style.setProperty('--sv-music-live-menu-rgb',value);previous=value}
  }
  function sync(){
