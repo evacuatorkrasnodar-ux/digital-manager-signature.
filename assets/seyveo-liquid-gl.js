@@ -56,8 +56,8 @@ window.SEYVEO_LIQUID_GL={create(mobile){
    float n=sqrt(max(0.0,1.0-r*r));
    float fres=pow(1.0-n,2.4);
    float top=peak(ang,-2.05,.51),right=peak(ang,.65,.56),bottom=peak(ang,1.50,.50);
-   float edge=exp(-pow((r-.988)/.011,2.0));
-   float halo=exp(-pow((r-.956)/.035,2.0));
+   float e=(r-.988)/.011,h=(r-.956)/.035;
+   float edge=exp(-e*e),halo=exp(-h*h);
    float light=clamp(.17+.85*top+.80*right+.76*bottom,0.0,1.0);
    col=mix(vec3(.10,.63,.66),vec3(.86,1.0,.98),clamp(edge*.8+.20*light,0.0,1.0));
    alpha=clamp(.012+.10*fres+.30*halo*light+.75*edge*light,0.0,.96);
