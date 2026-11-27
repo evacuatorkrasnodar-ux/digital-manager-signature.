@@ -1,6 +1,6 @@
 /* SEYVEO Air · Music — native-first, PWA test drive.
  * Plays user-selected local files and curated HTTPS radio streams.
- * Does NOT fetch or stream Spotify/Apple Music/YouTube; does NOT store files.
+ * Does NOT fetch or stream Spotify/Apple Music/YouTube; stores user-imported audio locally in IndexedDB.
  * Keep the ORIGINAL Sayvi sphere and routing. Object URLs are ephemeral.
  */
 (()=>{
@@ -75,7 +75,7 @@ const providers=Object.freeze({
  },
  local:{
   name:'Мои записи',
-  copy:'Сейчас доступно настоящее прослушивание ваших собственных аудиофайлов. Они остаются на устройстве и открываются только на время работы плеера.'
+  copy:'Сейчас доступно настоящее прослушивание ваших собственных аудиофайлов. Они сохраняются в локальной медиатеке этого браузера и не отправляются на сервер.'
  }
 });
 let tracks=[],localTracks=[],index=-1,url=null,selectVersion=0,queueOpen=false,collectionMode='tracks',radioFallback=false;
@@ -92,6 +92,65 @@ const favoriteId=file=>file?[
  String(file.name||'').trim().toLocaleLowerCase('ru-RU'),String(file.size||0),
  String(file.lastModified||0)
 ].join('|'):'';
+
+// Offline audio library: store Blob and original file identity separately.
+const LIBRARY_DB='seyveo-music-library-v1',LIBRARY_STORE='tracks';
+const savedTrackIds=new Set();
+let libraryLoading=true,libraryQueue=Promise.resolve();
+const libraryNote=$('svMusicStorageStatus');
+function libraryMessage(message){if(libraryNote)libraryNote.textContent=message;}
+function libraryRefresh(){
+ previous.disabled=next.disabled=tracks.length<2;
+ collectionRender();syncResume();
+}
+function libraryCount(){return savedTrackIds.size+' сохранено на этом устройстве';}
+function openLibraryDB(){
+ return new Promise((resolve,reject)=>{
+  if(!window.indexedDB){reject(Error('IndexedDB unavailable'));return}
+  const request=indexedDB.open(LIBRARY_DB,1);
+  request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains(LIBRARY_STORE))request.result.createObjectStore(LIBRARY_STORE,{keyPath:'id'})};
+  request.onerror=()=>reject(request.error||Error('Library open failed'));
+  request.onblocked=()=>reject(Error('Library blocked'));
+  request.onsuccess=()=>{const db=request.result;db.onversionchange=()=>db.close();resolve(db)};
+ });
+}
+async function libraryTransaction(mode,operation){
+ const db=await openLibraryDB();
+ try{return await new Promise((resolve,reject)=>{
+  const tx=db.transaction(LIBRARY_STORE,mode);
+  let request;
+  tx.oncomplete=()=>resolve(request?request.result:undefined);
+  tx.onabort=tx.onerror=()=>reject(tx.error||Error('Library transaction failed'));
+  try{request=operation(tx.objectStore(LIBRARY_STORE))}catch(error){try{tx.abort()}catch{}reject(error)}
+ })}finally{db.close()}
+}
+async function restoreLibrary(){
+ try{
+  const records=await libraryTransaction('readonly',store=>store.getAll());
+  for(const record of records.sort((a,b)=>(a.addedAt||0)-(b.addedAt||0))){
+   if(!(record.blob instanceof Blob)||!record.blob.size||typeof record.name!=='string')continue;
+   const file=new File([record.blob],record.name,{type:record.type||record.blob.type,lastModified:record.lastModified||0});
+   const id=favoriteId(file);if(savedTrackIds.has(id))continue;
+   localTracks.push(file);savedTrackIds.add(id);
+  }
+  libraryLoading=false;
+  if(localTracks.length&&!tracks.length){tracks=localTracks;switchTrack(0,false)}
+  libraryRefresh();
+  libraryMessage(libraryCount()+'. Музыка остаётся в этом браузере.');
+ }catch(error){
+  libraryLoading=false;libraryMessage('Не удалось открыть хранилище. Музыку можно слушать, но её сохранение может быть недоступно.');
+  libraryRefresh();
+ }
+}
+async function saveLibraryFiles(files){
+ const pending=files.filter(file=>!savedTrackIds.has(favoriteId(file)));
+ if(!pending.length)return;
+ const addedAt=Date.now();
+ await libraryTransaction('readwrite',store=>{
+  pending.forEach((file,i)=>store.put({id:favoriteId(file),name:file.name,type:file.type,lastModified:file.lastModified,addedAt:addedAt+i,blob:file.slice(0,file.size,file.type)}));
+ });
+ for(const file of pending)savedTrackIds.add(favoriteId(file));
+}
 
 /* Replay: count actual advancing playback, never pauses, buffering or seeks.
    Local-only, no audio uploads. Keep up to 24 monthly aggregates. */
@@ -427,7 +486,7 @@ function collectionRender(){
   note.textContent=!entries.length
    ?'Пока здесь пусто. Добавьте песню сердечком рядом с названием.'
    :entries.some(entry=>!entry.match)
-    ?'Любимые песни сохранены. Чтобы слушать после перезапуска, выберите файлы снова через «Моя музыка».'
+    ?'Некоторые любимые песни отсутствуют в локальной медиатеке. Добавьте недостающие файлы.'
     :'Ваши любимые песни.';
   collection.append(note);
  }
@@ -508,6 +567,7 @@ function switchTrack(i,autoplay=false){
  return true;
 }
 function play(){
+ if(libraryLoading&&!tracks.length){sayviMessage('Медиатека загружается.');return}
  if(!tracks.length){
   fileInput.click();
   sayviMessage('Выберите свои аудиофайлы — Сэйви откроет их здесь.');
@@ -527,14 +587,32 @@ function ingest(list){
   return (file.type.startsWith('audio/')||extensions.test(name))&&file.size>0&&file.size<=MAX_FILE_SIZE;
  }).slice(0,MAX_TRACKS);
  if(!chosen.length){
-  sayviMessage('Не нашла подходящие аудиофайлы. Выберите MP3, M4A, AAC, WAV или другой поддерживаемый телефоном формат.');
-  return false;
+  const message='Не нашла подходящие аудиофайлы. Выберите MP3, M4A, AAC, WAV или другой поддерживаемый формат.';
+  sayviMessage(message);libraryMessage(message);return false;
  }
- tracks=chosen;localTracks=chosen;
- trackDescriptions=new WeakMap();trackThumbnails=new WeakMap();
- switchTrack(0,false);
- if(candidates.length>chosen.length)
-  sayviMessage('Добавлено '+chosen.length+' из '+candidates.length+' файлов. Ограничение — 40 файлов до 180 МБ каждый; неподдерживаемые пропущены.');
+ try{navigator.storage?.persist?.()?.catch(()=>{})}catch{}
+ libraryQueue=libraryQueue.then(async()=>{
+  const existing=new Map(localTracks.map(file=>[favoriteId(file),file]));
+  const selected=new Map();let added=0;
+  for(const file of chosen){
+   const id=favoriteId(file);let entry=existing.get(id);
+   if(!entry){entry=file;localTracks.push(entry);existing.set(id,entry);added++}
+   selected.set(id,entry);
+  }
+  if(!tracks.length){tracks=localTracks;switchTrack(0,false)}
+  libraryRefresh();
+  libraryMessage('Сохранение музыки на устройстве…');
+  const skipped=candidates.length-chosen.length;
+  const suffix=skipped?' Пропущено: '+skipped+' (до 40 файлов за раз, до 180 МБ каждый).':'';
+  try{
+   await saveLibraryFiles([...selected.values()]);
+   const message=(added?'Добавлено '+added+'. ':'Новых файлов нет. ')+libraryCount()+'.'+suffix;
+   libraryMessage(message);sayviMessage(message);
+  }catch(error){
+   const message='Не удалось сохранить новые файлы. Они доступны до закрытия страницы. Проверьте свободное место или разрешения браузера.'+suffix;
+   libraryMessage(message);sayviMessage(message);
+  }
+ }).catch(()=>libraryMessage('Не удалось добавить музыку. Повторите попытку.'));
  return true;
 }
 function providerChoose(name){
@@ -816,4 +894,5 @@ window.SEYVEO_MUSIC=Object.freeze({
   source:isRadio()?'radio':'local-file',stationId:isRadio()?tracks[index].id:null,quality:isRadio()?(radioFallback?tracks[index].fallbackQuality:tracks[index].quality):null,connectedServices:0
  })
 });
+libraryQueue=restoreLibrary();
 })();
