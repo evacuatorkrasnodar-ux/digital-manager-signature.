@@ -11,8 +11,10 @@ function init(){
  const next='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 5v14M5 5l11 7-11 7z"/></svg>';
  const play='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5 18 12 8 18.5z"/></svg>';
  const pause='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>';
+ const shuffleIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h2.5c5.5 0 7.5 12 13 12H21m-4-4 4 4-4 4M3 18h2.5c5.5 0 7.5-12 13-12H21m-4-4 4 4-4 4"/></svg>';
+ const repeatIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10V8a3 3 0 0 1 3-3h13m-4-4 4 4-4 4M20 14v2a3 3 0 0 1-3 3H4m4-4-4 4 4 4"/><path class="sv-repeat-one" d="m10.5 10 1.5-1.5v7"/></svg>';
  const panel=document.createElement('section');panel.id='svHomeInlineMusic';panel.hidden=true;panel.setAttribute('aria-label','Музыка на главной');
- panel.innerHTML='<div class="sv-home-music-heading"><button type="button" class="sv-home-music-meta" aria-label="Открыть музыкальный плеер"><strong></strong><small></small></button></div><div class="sv-home-music-timeline"><input type="range" min="0" max="1000" step="1" value="0" aria-label="Положение воспроизведения"><div class="sv-home-music-times"><span>0:00</span><span>0:00</span></div></div><div class="sv-home-music-controls" role="group" aria-label="Воспроизведение"><button type="button" data-home-music="previous" aria-label="Предыдущий трек">'+prev+'</button><button type="button" data-home-music="play" aria-label="Пауза">'+pause+'</button><button type="button" data-home-music="next" aria-label="Следующий трек">'+next+'</button></div>';
+ panel.innerHTML='<div class="sv-home-music-heading"><button type="button" class="sv-home-music-meta" aria-label="Открыть музыкальный плеер"><strong></strong><small></small></button></div><div class="sv-home-music-timeline"><input type="range" min="0" max="1000" step="1" value="0" aria-label="Положение воспроизведения"><div class="sv-home-music-times"><span>0:00</span><span>0:00</span></div></div><div class="sv-home-music-controls" role="group" aria-label="Воспроизведение"><button type="button" class="sv-home-music-mode" data-home-music="shuffle" aria-label="Включить перемешивание" aria-pressed="false" disabled>'+shuffleIcon+'</button><button type="button" data-home-music="previous" aria-label="Предыдущий трек">'+prev+'</button><button type="button" data-home-music="play" aria-label="Пауза">'+pause+'</button><button type="button" data-home-music="next" aria-label="Следующий трек">'+next+'</button><button type="button" class="sv-home-music-mode" data-home-music="repeat" data-repeat="off" aria-label="Повтор выключен. Изменить режим" aria-pressed="false" disabled>'+repeatIcon+'</button></div>';
  const back=document.createElement('button');back.type='button';back.id='svHomeMusicReturn';back.hidden=true;back.setAttribute('aria-label','Открыть музыкальный плеер');back.innerHTML=note;
  stage.append(panel,back);
  const title=panel.querySelector('strong'),artist=panel.querySelector('small'),seek=panel.querySelector('input'),times=panel.querySelector('.sv-home-music-times');
@@ -51,6 +53,16 @@ function init(){
   seek.disabled=!total;seek.value=String(Math.round(ratio*1000));seek.style.setProperty('--sv-home-music-progress',(ratio*100).toFixed(2)+'%');
   times.firstElementChild.textContent=fmt(now);times.lastElementChild.textContent=total?'−'+fmt(total-now):'—';
  }
+ const modes=[['shuffle','sayviMusicShuffle'],['repeat','sayviMusicRepeat']];
+ function syncModes(){
+  for(const [name,id] of modes){
+   const source=$(id),button=panel.querySelector('[data-home-music="'+name+'"]');
+   if(!source||!button)continue;
+   button.disabled=source.disabled;button.hidden=source.hidden;
+   for(const attr of ['aria-pressed','aria-label','title']){const value=source.getAttribute(attr);if(value!==null&&button.getAttribute(attr)!==value)button.setAttribute(attr,value)}
+   if(name==='repeat')button.dataset.repeat=source.dataset.repeat||'off';
+  }
+ }
  function layout(){
   frame=0;const route=onHome();root.classList.toggle('sv-home-inline-music-route',route);
   const target=$('svSayviHomeWeather');
@@ -75,6 +87,7 @@ function init(){
    title.textContent=$('sayviMusicTrack')?.textContent||'Моя музыка';artist.textContent=$('sayviMusicArtist')?.textContent||'';
    panel.querySelector('[data-home-music="previous"]').disabled=!!$('sayviMusicPrevious')?.disabled;
    panel.querySelector('[data-home-music="next"]').disabled=!!$('sayviMusicNext')?.disabled;
+   syncModes();
    const toggle=panel.querySelector('[data-home-music="play"]');
    if(toggle.dataset.playing!==String(playing)){toggle.dataset.playing=String(playing);toggle.innerHTML=playing?pause:play;toggle.setAttribute('aria-label',playing?'Пауза':'Воспроизвести');toggle.setAttribute('aria-pressed',String(playing))}
    panel.hidden=false;back.hidden=true;
@@ -104,6 +117,11 @@ function init(){
  panel.querySelector('[data-home-music="previous"]').addEventListener('click',()=>$('sayviMusicPrevious')?.click());
  panel.querySelector('[data-home-music="play"]').addEventListener('click',()=>$('sayviMusicPlay')?.click());
  panel.querySelector('[data-home-music="next"]').addEventListener('click',()=>$('sayviMusicNext')?.click());
+ for(const [name,id] of modes){
+  const button=panel.querySelector('[data-home-music="'+name+'"]'),source=$(id);
+  button.addEventListener('click',()=>{if(source&&!source.disabled){source.click();syncModes()}});
+  if(source)new MutationObserver(syncModes).observe(source,{attributes:true,attributeFilter:['disabled','hidden','aria-pressed','aria-label','title','data-repeat']});
+ }
  seek.addEventListener('input',()=>{if(Number.isFinite(audio.duration)&&audio.duration>0){audio.currentTime=audio.duration*Number(seek.value)/1000;updateTime()}});
  for(const name of ['playing','play','pause','ended','emptied','error'])audio.addEventListener(name,schedule);
  for(const name of ['timeupdate','durationchange','loadedmetadata'])audio.addEventListener(name,updateTime);
