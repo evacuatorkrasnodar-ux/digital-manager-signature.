@@ -7952,16 +7952,28 @@ html.sv-music-browse #sayviMusicPage #sayviDiscoveryPanel:not([hidden]){
 
 #sayviMusicPage #svLiquidSoundCanvas{display:none;position:absolute;left:50%;top:48%;width:82%;height:auto;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;z-index:1}
 #sayviMusicPage .sv-now-fallback.sv-liquid-mode #svLiquidSoundCanvas{display:block}
-#sayviMusicPage .sv-now-fallback.sv-liquid-mode #svLiquidSoundLabel{letter-spacing:.24em;font-weight:550;bottom:6.5%}
+#sayviMusicPage .sv-now-fallback.sv-liquid-mode #svLiquidSoundLabel{letter-spacing:.22em;font-weight:500;bottom:7.5%;color:rgba(229,244,242,.88)}
 /* Reuse the original SVG orbits as a quiet static layer behind Liquid Sound.
    No extra canvas, filter, animation, or background rendering loop. */
-#sayviMusicPage .sv-now-fallback.sv-liquid-mode>svg{opacity:.55;transform:translateY(-2%);z-index:0}
-#sayviMusicPage[data-music-view="player"] .sv-now-fallback.sv-liquid-mode .sv-music-scene-rings{opacity:.62!important;animation:none!important;transition:none!important;transform:none!important;stroke-width:.58}
+#sayviMusicPage .sv-now-fallback.sv-liquid-mode>svg{opacity:.72;transform:translateY(-2%);z-index:0}
+#sayviMusicPage[data-music-view="player"] .sv-now-fallback.sv-liquid-mode .sv-music-scene-rings{opacity:.8!important;animation:none!important;transition:none!important;transform:none!important;stroke-width:.55}
+#sayviMusicPage[data-music-view="player"] .sv-now-fallback.sv-liquid-mode .sv-music-scene-rings > ellipse{display:none}
+#sayviMusicPage[data-music-view="player"] .sv-now-fallback.sv-liquid-mode .sv-music-scene-rings > ellipse:nth-child(7){display:inline;opacity:.82}
+#sayviMusicPage[data-music-view="player"] .sv-now-fallback.sv-liquid-mode .sv-music-scene-rings > ellipse:nth-child(8){display:inline;opacity:.55}
+#sayviMusicPage[data-music-view="player"] .sv-now-fallback.sv-liquid-mode .sv-music-scene-rings > ellipse:nth-child(10){display:inline;opacity:.36}
 #sayviMusicPage[data-music-view="player"] .sv-now-fallback.sv-liquid-mode .sv-music-scene-wave{display:none}
 #sayviMusicPage .sv-now-fallback.sv-liquid-mode #svLiquidSoundLabel{z-index:2;pointer-events:none}
 #sayviMusicPage #svLiquidSoundToggle{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)!important;width:68%;height:68%;border:0!important;background:transparent!important;box-shadow:none!important;border-radius:50%;z-index:2;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #sayviMusicPage #svLiquidSoundToggle[hidden],#sayviMusicPage #sayviMusicStage.has-artwork #svLiquidSoundToggle,#sayviMusicPage.sv-karaoke-active #svLiquidSoundToggle{display:none!important}
 #sayviMusicPage #svLiquidSoundToggle:focus-visible{outline:1px solid rgba(235,255,255,.8);outline-offset:3px}
 #sayviMusicPage .sv-now-fallback>svg{transition:opacity .2s ease}
+/* Signature finish: preserve the sphere diameter and the reserved two-line track height. */
+html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"].sv-liquid-visualizer:not(.sv-music-lyrics-mode):not(.sv-karaoke-active) > .sv-music-cover:not(.has-artwork){margin-bottom:8px!important}
+#sayviMusicPage[data-music-view="player"] .sv-now-tools > button > svg{stroke-width:1.45!important;stroke-linecap:round;stroke-linejoin:round}
+#sayviMusicPage[data-music-view="player"] .sv-now-tools > button > svg :is(path,rect){stroke-width:inherit}
+#sayviMusicPage[data-music-view="player"] #sayviMusicMinimize > svg{stroke-width:1.55!important;stroke-linecap:round;stroke-linejoin:round}
+#sayviMusicPage[data-music-view="player"] .sv-music-quality{letter-spacing:.035em;border-color:rgba(233,244,249,.24)}
+#sayviMusicPage[data-music-view="player"] .sv-music-quality[data-quality="hires"]{border-color:rgba(233,222,192,.52)}
+
 </style>
 </body></html>
