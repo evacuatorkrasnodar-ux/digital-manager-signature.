@@ -69,26 +69,26 @@
   const loaded=()=>!!music()?.state?.().loaded&&music().state().trackIndex>=0;
   const notify=t=>{const el=$('sayviMusicStatus');if(el){el.textContent=t;el.hidden=false}};
   const dialog=$('svSmartMusicSheet'),body=$('svSmartMusicBody'),title=$('svSmartMusicTitle');
-  let lyricAbort=null,lyricFile=null;
+  const karaokePanel=$('svInlineKaraoke'),karaokeBody=$('svInlineKaraokeBody'),karaokeSettings=$('svInlineKaraokeSettings'),karaokeTools=$('svInlineKaraokeTools');
+  let lyricAbort=null,lyricFile=null,lyricGeneration=0,lyricsActive=false;
   function cancelLyric(){lyricAbort?.abort();lyricAbort=null}
-  const close=()=>{cancelLyric();cancelRecognition();if(dialog?.open)dialog.close();++generation;mode='';lyricData=null;current=-2};
+  const close=()=>{cancelRecognition();if(dialog?.open)dialog.close();++generation;mode=''};
   let generation=0,mode='',lyricData=null,current=-2,deadline=0,timer=0,originalVolume=null;
   function show(label,kind){
    if(!dialog||!body)return false;
-   cancelLyric();if(kind!=='recognize')cancelRecognition();
-   ++generation;mode=kind;lyricData=null;current=-2;title.textContent=label;body.replaceChildren();
+   if(kind!=='recognize')cancelRecognition();
+   ++generation;mode=kind;title.textContent=label;body.replaceChildren();
    if(!dialog.open){try{dialog.showModal()}catch{return false}}return true;
   }
   function message(t){const p=d.createElement('p');p.className='sv-smart-music-message';p.textContent=t;body.append(p);return p}
   function action(label,fn){const b=d.createElement('button');b.type='button';b.className='sv-smart-music-choice';b.textContent=label;b.addEventListener('click',fn);body.append(b);return b}
   $('svSmartMusicClose')?.addEventListener('click',close);
-  dialog?.addEventListener('close',()=>{++generation;mode='';lyricData=null;current=-2});
+  dialog?.addEventListener('close',()=>{++generation;mode=''});
   dialog?.addEventListener('click',e=>{if(e.target===dialog)close()});
   d.addEventListener('seyveo:music-view',e=>{if(e.detail?.view!=='player'&&dialog?.open)close()});
   let recognitionCancel=null;
   function cancelRecognition(){const cancel=recognitionCancel;recognitionCancel=null;cancel?.()}
   dialog?.addEventListener('close',cancelRecognition);
-  dialog?.addEventListener('close',cancelLyric);
   w.addEventListener('pagehide',cancelLyric);
   w.addEventListener('pagehide',cancelRecognition);
   d.addEventListener('visibilitychange',()=>{if(d.hidden&&mode==='recognize'){cancelRecognition();close()}});
@@ -216,12 +216,39 @@
   }
   d.addEventListener('visibilitychange',tick);w.addEventListener('pageshow',tick);
   $('sayviMusicStopAndHide')?.addEventListener('click',cancelSleep);
+  function setLyricSettings(open){
+   if(!karaokeSettings||!lyricsActive)return;
+   karaokeSettings.hidden=!open;karaokeTools?.setAttribute('aria-expanded',String(open));
+   karaokeBody.inert=open;
+  }
+  function exitKaraoke(){
+   cancelLyric();++lyricGeneration;lyricsActive=false;lyricData=null;lyricFile=null;current=-2;
+   page.classList.remove('sv-karaoke-active');if(karaokePanel)karaokePanel.hidden=true;
+   if(karaokeSettings)karaokeSettings.hidden=true;
+   if(karaokeBody)karaokeBody.inert=false;
+   karaokeTools?.setAttribute('aria-expanded','false');
+   $('svNowKaraoke')?.setAttribute('aria-pressed','false');
+   $('sayviMusicStage')?.setAttribute('aria-label','Обложка текущей песни');
+  }
+  function toggleKaraoke(){if(lyricsActive)exitKaraoke();else karaoke()}
+  karaokeTools?.addEventListener('click',()=>setLyricSettings(karaokeSettings.hidden));
+  $('svInlineKaraokeCloseSettings')?.addEventListener('click',()=>setLyricSettings(false));
+  d.addEventListener('seyveo:music-view',e=>{if(e.detail?.view!=='player'&&lyricsActive)exitKaraoke()});
+  page.addEventListener('keydown',e=>{if(e.key==='Escape'&&lyricsActive&&!dialog?.open){e.preventDefault();if(!karaokeSettings.hidden)setLyricSettings(false);else exitKaraoke()}});
   async function karaoke(){
+   if(!karaokePanel||!karaokeBody||!karaokeSettings||page.dataset.musicView!=='player')return;
    const file=music()?.rhythmFile?.();
-   if(!show('Караоке','lyrics'))return;
-   lyricFile=file;
+   cancelLyric();++lyricGeneration;lyricsActive=true;lyricData=null;current=-2;lyricFile=file;
+   page.classList.add('sv-karaoke-active');karaokePanel.hidden=false;
+   $('svNowKaraoke')?.setAttribute('aria-pressed','true');
+   $('sayviMusicStage')?.setAttribute('aria-label','Текст текущей песни');
+   setLyricSettings(false);
+   const body=karaokeBody,settings=$('svInlineKaraokeOptions');
+   body.replaceChildren();settings.replaceChildren();
+   const message=(t,target=body)=>{const p=d.createElement('p');p.className='sv-smart-music-message';p.textContent=t;target.append(p);return p};
+   const action=(label,fn,target=body)=>{const b=d.createElement('button');b.type='button';b.className='sv-smart-music-choice';b.textContent=label;b.addEventListener('click',fn);target.append(b);return b};
    if(!file){message('Текст доступен для песен из медиатеки.');return}
-   const version=generation,valid=()=>version===generation&&dialog.open&&mode==='lyrics'&&music()?.rhythmFile?.()===file;
+   const version=lyricGeneration,valid=()=>version===lyricGeneration&&lyricsActive&&music()?.rhythmFile?.()===file;
    const engine=w.SEYVEO_LYRICS,id=music()?.recognitionLibrary?.().find(x=>x.file===file)?.id;
    message('Ищем текст песни…');
    let result=null,attached=false;
@@ -230,19 +257,16 @@
    body.replaceChildren();
    const render=(data,imported,saved=true)=>{
     if(!valid())return;
-    body.replaceChildren();current=-2;lyricData=null;
-    const name=d.createElement('strong');name.className='sv-lyrics-song';name.textContent=$('sayviMusicTrack')?.textContent||'Текст песни';body.append(name);
+    body.replaceChildren();settings.replaceChildren();setLyricSettings(false);current=-2;lyricData=null;
     if(data){
      lyricData={...data,file};
-     message(data.draft?'Черновик Сэйви: слова и время строк определены приблизительно, возможны ошибки.':data.timed?'Текст синхронизирован с музыкой.':'Текст без временных меток. Автосинхронизация недоступна.');
-     if(!saved)message('Текст доступен до закрытия страницы: хранилище недоступно.');
-     const controls=d.createElement('div');controls.className='sv-lyrics-actions';body.append(controls);
-     const play=d.createElement('button');play.type='button';play.className='sv-smart-music-choice';const sync=()=>{play.textContent=audio.paused?'Воспроизвести':'Пауза'};sync();
-     play.addEventListener('click',()=>{if(!valid())return;if(audio.paused)audio.play().catch(()=>notify('Не удалось воспроизвести песню.'));else audio.pause();sync()});controls.append(play);
+     if(data.draft)message('Черновик Сэйви · возможны ошибки',settings);
+     if(!data.timed)message('Текст без временных меток.',settings);
+     if(!saved)message('Текст доступен до закрытия страницы: хранилище недоступно.',settings);
      const save=d.createElement('button');save.type='button';save.className='sv-smart-music-choice';
      save.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="15" height="18" rx="2"/><path d="M8 3v18M3 7h4M3 12h4M3 17h4M11 8h6M11 12h6M11 16h4"/></svg><span>В блокнот</span>';
-     controls.append(save);
-     const feedback=d.createElement('p');feedback.className='sv-lyrics-feedback';feedback.setAttribute('role','status');feedback.hidden=true;body.append(feedback);
+     settings.append(save);
+     const feedback=d.createElement('p');feedback.className='sv-lyrics-feedback';feedback.setAttribute('role','status');feedback.hidden=true;settings.append(feedback);
      save.addEventListener('click',()=>{
       if(!valid())return;
       const title=$('sayviMusicTrack')?.textContent?.trim()||'Текст песни';
@@ -315,24 +339,24 @@
        const saved=await engine.put(id,parsed);if(valid())render(parsed,true,saved);
       }catch{if(valid())message('Не удалось загрузить текст.')}
      });
-     action(data?'Заменить текст':'Добавить текст песни',()=>input.click());
-     if(imported)action('Удалить добавленный текст',async()=>{if(!valid())return;const removed=await engine.remove(id);if(valid()){if(removed)karaoke();else message('Не удалось удалить сохранённый текст.')}});
+     action(data?'Заменить текст':'Добавить текст песни',()=>input.click(),data?settings:body);
+     if(imported)action('Удалить добавленный текст',async()=>{if(!valid())return;const removed=await engine.remove(id);if(valid()){if(removed)karaoke();else message('Не удалось удалить сохранённый текст.',settings)}},settings);
     }
     updateLine();
    };
    render(result,attached);
   }
   function updateLine(){
-   if(mode!=='lyrics'||!lyricData||!dialog.open)return;
-   if(music()?.rhythmFile?.()!==lyricData.file){close();return}
+   if(!lyricsActive||!lyricData||!karaokeBody)return;
+   if(music()?.rhythmFile?.()!==lyricData.file)return;
    if(!lyricData.timed)return;
    const next=activeLine(lyricData.lines,audio.currentTime);if(next===current)return;current=next;
-   const rows=body.querySelectorAll('.sv-smart-lyric');
+   const rows=karaokeBody.querySelectorAll('.sv-smart-lyric');
    rows.forEach((row,i)=>row.classList.toggle('is-current',i===next));
-   const row=rows[next];if(row)body.scrollTop=Math.max(0,row.offsetTop-body.clientHeight*.35);
+   const row=rows[next];if(row){const top=Math.max(0,row.offsetTop-karaokeBody.clientHeight*.35);if(w.matchMedia?.('(prefers-reduced-motion: reduce)').matches)karaokeBody.scrollTop=top;else if(karaokeBody.scrollTo)karaokeBody.scrollTo({top,behavior:'smooth'});else karaokeBody.scrollTop=top}
   }
   audio.addEventListener('timeupdate',updateLine);audio.addEventListener('seeking',updateLine);
-  d.addEventListener('seyveo:music-state',()=>{if(mode==='lyrics'&&music()?.rhythmFile?.()!==lyricFile){karaoke();return}updateLine();const play=body.querySelector('.sv-lyrics-actions button');if(play)play.textContent=audio.paused?'Воспроизвести':'Пауза'});
+  d.addEventListener('seyveo:music-state',()=>{if(lyricsActive&&music()?.rhythmFile?.()!==lyricFile){karaoke();return}updateLine()});
   // Source quality, never a claim about the Bluetooth/DAC/output chain.
   const sourceCache=new WeakMap();
   let qualityFile=null,qualityResult=null,qualityVersion=0,qualityRadio='',qualityPending=false;
@@ -453,8 +477,8 @@
   $('svAdaptiveSoundMenu')?.addEventListener('click',soundSheet);
   $('svSmartShare')?.addEventListener('click',share);
   $('svSmartSleep')?.addEventListener('click',sleepSheet);
-  $('svSmartKaraoke')?.addEventListener('click',karaoke);
-  $('svNowKaraoke')?.addEventListener('click',karaoke);
+  $('svSmartKaraoke')?.addEventListener('click',()=>{if(lyricsActive)setLyricSettings(true);else karaoke()});
+  $('svNowKaraoke')?.addEventListener('click',toggleKaraoke);
   function handle(q){
    const pure=/^(?:включи|верни) (?:pure sound|пьюр саунд|чистый звук|оригинальное звучание)$/.test(q);
    const adaptive=/^(?:включи|верни) (?:adaptive sound|адаптив саунд|адаптивный звук|автоматический звук)$/.test(q);
