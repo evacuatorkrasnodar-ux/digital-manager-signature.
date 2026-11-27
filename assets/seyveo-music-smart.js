@@ -85,7 +85,7 @@
   const dialog=$('svSmartMusicSheet'),body=$('svSmartMusicBody'),title=$('svSmartMusicTitle');
   const karaokePanel=$('svInlineKaraoke'),karaokeBody=$('svInlineKaraokeBody'),karaokeSettings=$('svInlineKaraokeSettings'),karaokeTools=$('svInlineKaraokeTools');
   let lyricAbort=null,lyricFile=null,lyricGeneration=0,lyricsActive=false;
-  let lyricFrame=0,activeWords=[],lyricRows=[],lastLyricTime=-1,lyricScrollTarget=null,lyricScrollStamp=0,lyricWatch=0,lastGap='';
+  let activeWords=[],lyricRows=[],lastLyricTime=-1,lyricScrollTarget=null,lyricScrollDeadline=0,lyricWatch=0,lastGap='',lyricDebug=false,lyricDebugAt=0;
   function cancelLyric(){lyricAbort?.abort();lyricAbort=null}
   const close=()=>{cancelRecognition();if(dialog?.open)dialog.close();++generation;mode=''};
   let generation=0,mode='',lyricData=null,current=-2,deadline=0,timer=0,originalVolume=null;
@@ -259,7 +259,7 @@
    const file=music()?.rhythmFile?.();
    cancelLyric();++lyricGeneration;lyricsActive=true;lyricData=null;current=-2;lyricFile=file;
    stopLyricFrame();activeWords=[];lyricRows=[];lastLyricTime=-1;lastGap='';
-   if(!lyricWatch)lyricWatch=w.setInterval(checkLyricClock,250);
+   if(!lyricWatch)lyricWatch=w.setInterval(checkLyricClock,100);
    page.classList.add('sv-karaoke-active');karaokePanel.hidden=false;karaokePanel.inert=false;
    $('svNowKaraoke')?.setAttribute('aria-pressed','true');
    $('sayviMusicStage')?.setAttribute('aria-label','Текст текущей песни');
@@ -268,6 +268,7 @@
    body.replaceChildren();settings.replaceChildren();body.classList.remove('has-timed-lyrics','is-lyric-gap');body.scrollTop=0;
    if(karaokeTools)karaokeTools.disabled=true;
    $('svInlineKaraokeLabel').textContent='ТЕКСТ ПЕСНИ';
+   paintLyricDebug(true);
    const message=(t,target=body)=>{const p=d.createElement('p');p.className='sv-smart-music-message';p.textContent=t;target.append(p);return p};
    const action=(label,fn,target=body)=>{const b=d.createElement('button');b.type='button';b.className='sv-smart-music-choice';b.textContent=label;b.addEventListener('click',fn);target.append(b);return b};
    if(!file){message('Текст доступен для песен из медиатеки.');return}
@@ -301,6 +302,7 @@
      }
      if(data.draft&&data.timed&&data.lines.every(line=>!line.text?.trim()||wordTiming(line))&&engine&&id&&['localhost','127.0.0.1'].includes(w.location.hostname))
       action('Повторить распознавание текста',()=>{if(valid())render(null,false)},settings);
+     action(lyricDebug?'Скрыть диагностику':'Диагностика синхронизации',()=>{lyricDebug=!lyricDebug;setLyricSettings(false);paintLyricDebug(true)},settings);
      if(!saved)message('Текст доступен до закрытия страницы: хранилище недоступно.',settings);
      const save=d.createElement('button');save.type='button';save.className='sv-smart-music-choice';
      save.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="15" height="18" rx="2"/><path d="M8 3v18M3 7h4M3 12h4M3 17h4M11 8h6M11 12h6M11 16h4"/></svg><span>В блокнот</span>';
@@ -429,9 +431,9 @@
     if(data?.timed){
      // Use actual viewport height for the final lines, even in compact players.
      body.style.setProperty('--sv-lyric-tail',Math.ceil(body.clientHeight*.65)+'px');
-     w.requestAnimationFrame(()=>{if(valid()&&lyricData){updateLine(true);startLyricFrame()}});
+     w.requestAnimationFrame(()=>{if(valid()&&lyricData)updateLine(true)});
     }
-    updateLine(true);startLyricFrame();scheduleLibraryLyrics(1500);
+    updateLine(true);paintLyricDebug(true);scheduleLibraryLyrics(1500);
     if(autoStart&&valid()&&!lyricAbort){autoStart.click();if(!lyricAbort)autoStart.hidden=false}
    };
    render(result,attached);
@@ -443,40 +445,38 @@
    if(words.some(v=>!v?.text||!Number.isFinite(v.start)||!Number.isFinite(v.end)||v.end<=v.start)||norm(words.map(v=>v.text).join(''))!==norm(line.text))return null;
    return words;
   }
-  function stopLyricFrame(){if(lyricFrame){w.cancelAnimationFrame(lyricFrame);lyricFrame=0}lyricScrollTarget=null;lyricScrollStamp=0}
+  function stopLyricFrame(){lyricScrollTarget=null;lyricScrollDeadline=0}
   function alignLyric(row,instant){
    const height=karaokeBody.clientHeight;
    if(!row||!height)return;
-   // Measure relative to the actual scroll viewport, not offsetParent.
    const viewport=karaokeBody.getBoundingClientRect(),rect=row.getBoundingClientRect();
    const top=Math.max(0,Math.min(karaokeBody.scrollHeight-height,karaokeBody.scrollTop+rect.top-viewport.top+rect.height/2-height*.43));
-   lyricScrollTarget=top;lyricScrollStamp=0;
-   if(instant||w.matchMedia?.('(prefers-reduced-motion: reduce)').matches||audio.paused){
-    karaokeBody.scrollTop=top;lyricScrollTarget=null;
-   }
+   lyricScrollTarget=Math.round(top);
+   lyricScrollDeadline=w.performance.now()+700;
+   if(instant||w.matchMedia?.('(prefers-reduced-motion: reduce)').matches||audio.paused||!karaokeBody.scrollTo){
+    karaokeBody.scrollTop=lyricScrollTarget;lyricScrollDeadline=0;
+   }else karaokeBody.scrollTo({top:lyricScrollTarget,behavior:'smooth'});
   }
-  function advanceLyricScroll(stamp){
-   if(lyricScrollTarget===null)return;
-   const now=karaokeBody.scrollTop,delta=lyricScrollTarget-now;
-   if(Math.abs(delta)<1){karaokeBody.scrollTop=lyricScrollTarget;lyricScrollTarget=null;return}
-   const elapsed=lyricScrollStamp?Math.min(50,Math.max(1,stamp-lyricScrollStamp)):16;
-   lyricScrollStamp=stamp;
-   const step=delta*(1-Math.exp(-elapsed/105));
-   karaokeBody.scrollTop=now+(Math.abs(step)<1?Math.sign(delta):step);
+  function paintLyricDebug(force=false){
+   const el=$('svInlineKaraokeDebug');if(!el)return;
+   el.hidden=!lyricDebug;
+   if(!lyricDebug)return;
+   const now=w.performance.now();if(!force&&now-lyricDebugAt<500)return;lyricDebugAt=now;
+   const fmt=n=>Number.isFinite(n)?n.toFixed(1):'—';
+   const lines=lyricData?.lines||[],line=lines[current],next=lines[current+1];
+   el.textContent='V27 · аудио '+fmt(audio.currentTime)+' с · '+(audio.paused?'пауза':'играет')+' · '+(lyricData?.timed?'строка '+(current+1)+'/'+lines.length:'нет меток')+' · метки '+fmt(line?.time)+' → '+fmt(next?.time)+' с · прокрутка '+Math.round(karaokeBody.scrollTop)+'/'+(lyricScrollTarget??'—')+(lastGap?' · разрыв меток':'');
   }
   function checkLyricClock(){
    if(!lyricsActive)return;
    if(music()?.rhythmFile?.()!==lyricFile){void karaoke();return}
-   if(!lyricData?.timed)return;
-   updateLine();
-   if(!audio.paused&&!audio.ended){
-    if(lyricScrollTarget!==null)advanceLyricScroll(w.performance.now());
-    startLyricFrame();
+   if(lyricData?.timed){
+    updateLine();
+    if(lyricScrollTarget!==null&&lyricScrollDeadline&&w.performance.now()>=lyricScrollDeadline){
+     if(Math.abs(karaokeBody.scrollTop-lyricScrollTarget)>3)karaokeBody.scrollTop=lyricScrollTarget;
+     lyricScrollDeadline=0;
+    }
    }
-  }
-  function startLyricFrame(){
-   if(lyricFrame||!lyricsActive||!lyricData?.timed||audio.paused||audio.ended)return;
-   lyricFrame=w.requestAnimationFrame(stamp=>{lyricFrame=0;updateLine();advanceLyricScroll(stamp);startLyricFrame()});
+   paintLyricDebug();
   }
   function updateLine(immediate=false){
    if(!lyricsActive||!lyricData?.timed||!karaokeBody||music()?.rhythmFile?.()!==lyricData.file)return;
@@ -491,33 +491,40 @@
     karaokeBody.classList.toggle('is-lyric-gap',!!gap);
    }
    if(next!==current||seek){
-    current=next;
-    lyricRows.forEach(({el,words},i)=>{
+    const previous=current;current=next;
+    const paintRow=i=>{
+     const row=lyricRows[i];if(!row)return;
+     const {el,words}=row;
      el.classList.toggle('is-current',i===next);
      el.classList.toggle('is-past',i<next);
      if(i!==next)words.forEach(v=>{v.last=-1;v.span.style.removeProperty('--sv-sung')});
      if(i===next)el.setAttribute('aria-current','true');else el.removeAttribute('aria-current');
-    });
+    };
+    if(seek||previous<0||Math.abs(next-previous)>1)lyricRows.forEach((_,i)=>paintRow(i));
+    else{paintRow(previous);paintRow(next)}
     activeWords=lyricRows[next]?.words||[];
     const row=lyricRows[next]?.el;
     if(row)alignLyric(row,seek);
-    else if(seek){lyricScrollTarget=null;karaokeBody.scrollTop=0;}
+    else if(seek){stopLyricFrame();karaokeBody.scrollTop=0;}
    }
    for(const v of activeWords){
-    const percent=Math.round(Math.max(0,Math.min(1,(time-v.start)/Math.max(.05,v.end-v.start)))*100);
+    const percent=Math.round(Math.max(0,Math.min(1,(time-v.start)/Math.max(.05,v.end-v.start)))*10)*10;
     if(v.last!==percent){v.last=percent;v.span.style.setProperty('--sv-sung',percent+'%')}
    }
   }
-  audio.addEventListener('timeupdate',()=>{updateLine();startLyricFrame()});
+  // One timer drives the lyric animation. Media events only force alignment
+  // on discontinuities; no competing per-frame scroll writer.
   audio.addEventListener('seeking',()=>updateLine(true));
-  audio.addEventListener('play',()=>{updateLine(true);startLyricFrame()});
-  audio.addEventListener('playing',()=>{updateLine(true);startLyricFrame()});
-  audio.addEventListener('seeked',()=>{updateLine(true);startLyricFrame()});
-  d.addEventListener('visibilitychange',()=>{if(!d.hidden){updateLine(true);startLyricFrame()}});
-  audio.addEventListener('pause',()=>{stopLyricFrame();updateLine(true)});
-  audio.addEventListener('ended',()=>{stopLyricFrame();updateLine()});
+  audio.addEventListener('play',()=>updateLine(true));
+  audio.addEventListener('playing',()=>updateLine(true));
+  audio.addEventListener('seeked',()=>updateLine(true));
+  audio.addEventListener('loadedmetadata',()=>updateLine(true));
+  d.addEventListener('visibilitychange',()=>{if(!d.hidden)checkLyricClock()});
+  audio.addEventListener('pause',()=>updateLine(true));
+  audio.addEventListener('ended',()=>updateLine());
   w.addEventListener('resize',()=>{if(lyricsActive&&lyricData?.timed){karaokeBody.style.setProperty('--sv-lyric-tail',Math.ceil(karaokeBody.clientHeight*.65)+'px');updateLine(true)}});
-  d.addEventListener('seyveo:music-state',()=>{if(lyricsActive&&music()?.rhythmFile?.()!==lyricFile){karaoke();return}updateLine()});
+  d.addEventListener('seyveo:music-state',()=>{if(lyricsActive&&music()?.rhythmFile?.()!==lyricFile)void karaoke()});
+
   // One local worker. Automatically prepare missing lyrics, never replace an existing text.
   const libraryLyricsLocal=['localhost','127.0.0.1'].includes(w.location.hostname);
   const libraryLyricStatus=$('svMusicLyricsQueueStatus');
