@@ -200,19 +200,21 @@
    for(let i=0;i<sceneBars.length;i++){
     const target=.12+.88*targets[i];
     sceneLevels[i]+=(target-sceneLevels[i])*(target>sceneLevels[i]?.69:.31);
-    const height=5+51*sceneLevels[i];
+    const rest=Number(sceneBars[i].dataset.rest)||8;
+    const height=scene===playerScene?Math.min(43,rest*(.46+.34*sceneLevels[i])+5*sceneLevels[i]):5+51*sceneLevels[i];
     sceneBars[i].setAttribute('y1',(74-height/2).toFixed(2));
     sceneBars[i].setAttribute('y2',(74+height/2).toFixed(2));
    }
-   const glow=(.23+.52*(bass*.55+mid*.30+air*.15)).toFixed(3);
+   const energy=bass*.55+mid*.30+air*.15;
+   const glow=(scene===playerScene?.15+.24*energy:.23+.52*energy).toFixed(3);
    scene.style.setProperty('--sv-scene-glow',glow);
    if(scene===playerScene)musicPage?.style.setProperty('--sv-now-glow',glow);
    // Slow breathing plus a small, smoothed bass response. No abrupt shaking.
    ringEnergy+=(bass-ringEnergy)*(bass>ringEnergy?.32:.14);
    const breath=(1+Math.sin(audio.currentTime*Math.PI/4))/2;
-   scene.style.setProperty('--sv-ring-scale',(1+.018*breath+.030*ringEnergy).toFixed(4));
+   scene.style.setProperty('--sv-ring-scale',(scene===playerScene?1+.008*breath+.012*ringEnergy:1+.018*breath+.030*ringEnergy).toFixed(4));
    scene.style.setProperty('--sv-ring-angle',(.65*Math.sin(audio.currentTime*Math.PI/5)+.28*ringEnergy).toFixed(3)+'deg');
-   scene.style.setProperty('--sv-ring-opacity',(.83+.10*breath+.07*ringEnergy).toFixed(3));
+   scene.style.setProperty('--sv-ring-opacity',(scene===playerScene?.46+.07*breath+.06*ringEnergy:.83+.10*breath+.07*ringEnergy).toFixed(3));
   }
   sceneFrame=requestAnimationFrame(tickScene);
  }
