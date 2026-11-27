@@ -20,6 +20,25 @@ html:root.sv-interior-first-paint body #homePage{
 }
 </style>
 <script>
+/* Music has a single first-paint gate. The router can expose its page before
+   the navigation controller and the final visual styles are ready. */
+(()=>{
+ const root=document.documentElement;
+ root.classList.add("sv-music-boot");
+ if(location.hash==="#sayvi-music")root.classList.add("sv-music-boot-route");
+})();
+</script>
+<style id="svMusicFirstPaint">
+html:root.sv-music-boot body #sayviMusicMini,
+html:root.sv-music-boot.sv-music-boot-route body #sayviMusicPage,
+html:root.sv-music-boot.sv-music-boot-route body > footer.dock{
+ display:none!important;
+}
+/* The legacy full player must never be the default view, even between
+   route visibility and music navigation initialization. */
+#sayviMusicPage:not([data-music-view="player"]) > :is(.sv-music-cover,.sv-music-track-bar,.sv-music-times,.sv-music-seek,.sv-music-controls,.sv-now-tools,.sv-now-menu,.sv-music-phrases,#svMusicRadioToggle){display:none!important}
+</style>
+<script>
 /* Cold Home starts with the large Sayvi already in its final position.
    Suppress only the old fallback content until the first render is ready. */
 (()=>{const p=new URLSearchParams(location.search);
@@ -1172,7 +1191,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
  <p class="sv-video-disclaimer">Официальный плеер YouTube · управление, субтитры и полноэкранный режим принадлежат YouTube. Некоторые видео не разрешают встраивание. При сворачивании просмотр останавливается для экономии батареи.</p>
  </details>
 
-</main><main id="sayviMusicPage" class="sv-music-page" hidden aria-label="Музыкальное пространство Сэйви">
+</main><main id="sayviMusicPage" class="sv-music-page" data-music-view="home" hidden aria-label="Музыкальное пространство Сэйви">
   <div class="sv-now-ambient" aria-hidden="true"><span></span><span></span><span></span></div>
   <div class="sv-now-backdrop" aria-hidden="true"><span></span><span></span></div>
   <header class="sv-music-head">
@@ -6547,9 +6566,6 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicPage{
 html:root.sv-music-screen.sv-music-browse body #svMusicHome{
  flex-shrink:0!important;overflow:visible!important;
 }
-html:root.sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot{
- flex-shrink:0!important;min-height:56px!important;margin-bottom:12px!important;
-}
 html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::before,
 html:root[data-theme="light"].sv-music-screen body footer.dock.sv-shared-dock.sv-music-navigation-only::after{
  filter:none!important;border:0!important;box-shadow:none!important;
@@ -7006,7 +7022,6 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"]:not(.sv
 html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] :is(.sv-music-track-bar,.sv-music-times,.sv-music-seek,.sv-music-phrases){
  width:var(--sv-music-art-size)!important;max-width:100%;
 }
-#sayviMusicPage[data-music-view="player"] .sv-music-track-bar{min-height:52px!important}
 #sayviMusicPage[data-music-view="player"] .sv-music-title{color:#fff!important;font-size:clamp(21px,5.6vw,29px);font-weight:620}
 #sayviMusicPage[data-music-view="player"] .sv-music-artist{color:var(--secondary)!important}
 #sayviMusicPage[data-music-view="player"] .sv-music-times{margin:10px auto 0!important}
@@ -7259,6 +7274,25 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #sayviM
   });
  });
  nodes.forEach(node=>observer.observe(node,{childList:true,characterData:true,subtree:true}));
+})();
+</script>
+<script>
+/* Run after the complete document and earlier DOMContentLoaded handlers
+   (including Music Dock init). Never wait for album art or audio storage. */
+(()=>{
+ const root=document.documentElement;
+ const finish=()=>{
+  const page=document.getElementById('sayviMusicPage');
+  if(location.hash==='#sayvi-music'&&page&&!page.hidden&&!window.SEYVEO_MUSIC_DOCK){
+   // A missing navigation script must not expose the obsolete player.
+   page.dataset.musicView='home';
+   root.classList.add('sv-music-screen','sv-music-browse');
+   const home=document.getElementById('svMusicHome');if(home)home.hidden=false;
+  }
+  root.classList.remove('sv-music-boot','sv-music-boot-route');
+ };
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',finish,{once:true});
+ else finish();
 })();
 </script>
 </body></html>
