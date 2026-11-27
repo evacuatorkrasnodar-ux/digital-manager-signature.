@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V78 · audio-driven living silk, quiet ground reflection · WebGL 1. */
+/* SEYVEO Liquid Sound V79 · audio-driven living silk, quiet ground reflection · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -129,7 +129,8 @@ void main(){
  else if(uKind>7.5){p=crease(x,v);vLight=1.0;}
  else {p=matter(x,v);vec3 dx=matter(clamp(x+.006,-.9999,.9999),v)-matter(clamp(x-.006,-.9999,.9999),v);vec3 dy=matter(x,min(1.0,v+.006))-matter(x,max(0.0,v-.006));vec3 n=cross(dx,dy);n/=length(n)+.000001;n*=n.z<0.0?-1.0:1.0;vLight=abs(n.z);vec3 lightDir=normalize(vec3(-.72,-.55,.65));vSheen=pow(max(0.0,dot(n,lightDir)),2.0);}
  float glass=step(4.5,uKind)*(1.0-step(5.5,uKind));
- float scale=.82*mix(.985,1.0,glass)*(1.0+mix(.015,0.0,glass)*uMusic.y)*(1.0+.020*p.z);
+ // Give the living silk and every crease/glow 7% more clearance; the glass stays fixed.
+ float scale=.82*mix(.91605,1.0,glass)*(1.0+mix(.015,0.0,glass)*uMusic.y)*(1.0+.020*p.z);
  gl_Position=vec4(scale*vec2(p.x+.012*p.z,-p.y+.012*p.z),p.z*.3,1.0);
  gl_PointSize=clamp(uSize*(uKind>3.5?.00205:uKind<2.5?.00215:.00215+.00020*uMusic.w),1.25,3.3);
  vUV=vec2(x,v);
@@ -167,7 +168,7 @@ void main(){
   float lowerLens=gauss(r-(.927-.035*bottom),.044)*peak(a,1.14,.80);
   float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left)*lowerRim;
   float fres=pow(max(0.0,1.0-n),3.0);
-  float light=clamp(.58*reflected+1.38*edge*lip+.48*edgeSoft*lip+.55*base+.22*inner+.58*crescent+.38*lowerLens+.16*shoulder,0.0,1.0);
+  float light=clamp(.53*reflected+1.38*edge*lip+.48*edgeSoft*lip+.55*base+.22*inner+.54*crescent+.38*lowerLens+.16*shoulder,0.0,1.0);
   float blueDepth=gauss(r-.91,.085)*(.55+.45*peak(a,-.75,.9));
   col=mix(vec3(.015,.39,.62),vec3(.05,.87,.94),clamp(light*1.65+.15*blueDepth,0.0,1.0));
   col=mix(col,vec3(.95,1.0,.99),smoothstep(.48,.99,light));
