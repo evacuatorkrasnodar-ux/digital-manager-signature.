@@ -89,7 +89,7 @@ html[data-theme="light"] #homePage #orb #signal.svl-live.svl-equalizer .svl-bars
  width:2.4px;
  flex-basis:2.4px;
  border-radius:999px;
- background:linear-gradient(180deg,rgba(160,193,215,.88) 0%,rgba(82,121,149,.90) 48%,rgba(126,164,188,.84) 100%);
+ background:linear-gradient(180deg,rgba(144,181,207,.94) 0%,rgba(65,105,136,.97) 48%,rgba(113,153,181,.92) 100%);
  box-shadow:0 0 3px rgba(100,148,182,.18),inset 0 1px 0 rgba(248,252,255,.55);
 }
 
@@ -97,8 +97,8 @@ html[data-theme="light"] #homePage #orb #signal.svl-live.svl-equalizer .svl-bars
    A fixed height and transform preserve the approved line geometry. */
 #homePage #orb #signal.svl-live.svl-equalizer.svl-rhythm .svl-bars i{
  animation:none!important;
- height:72%!important;
- opacity:.92;
+ height:88%!important;
+ opacity:1;
  transform:scaleY(var(--svl-rhythm-scale,.10));
  transform-origin:center;
  transition:transform .06s ease-out;
