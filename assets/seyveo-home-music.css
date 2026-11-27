@@ -27,7 +27,7 @@ html:root body #homePage #svSayviHomeWeather.sv-home-music-weather-replaced{visi
 #homePage #svHomeInlineMusic input[type=range]::-moz-range-progress{height:2px;border-radius:4px;background:var(--sv-home-player-ink)}
 #homePage #svHomeInlineMusic input[type=range]::-moz-range-thumb{width:6px;height:6px;border-radius:50%;border:0;background:var(--sv-home-player-ink)}
 #homePage #svHomeInlineMusic .sv-home-music-times{display:flex;justify-content:space-between;font-size:10px;line-height:1;color:var(--sv-home-player-sub);font-variant-numeric:tabular-nums}
-#homePage #svHomeInlineMusic .sv-home-music-controls{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:3px}
+#homePage #svHomeInlineMusic .sv-home-music-controls{display:grid;grid-template-columns:repeat(5,minmax(44px,1fr));align-items:center;justify-items:center;gap:0;margin-top:3px}
 #homePage #svHomeInlineMusic .sv-home-music-controls button{display:grid;place-items:center;width:44px;height:44px;border-radius:50%}
 #homePage #svHomeInlineMusic .sv-home-music-controls svg{display:block;width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 #homePage #svHomeInlineMusic .sv-home-music-controls [data-home-music=play] svg{width:30px;height:30px;stroke-width:1.8}
@@ -36,7 +36,7 @@ html:root body #homePage #svSayviHomeWeather.sv-home-music-weather-replaced{visi
 #homePage #svHomeInlineMusic button:focus-visible,#homePage #svHomeMusicReturn:focus-visible{outline:2px solid currentColor;outline-offset:1px}
 #homePage #svHomeMusicReturn{position:absolute!important;z-index:5;width:44px;height:44px;display:grid;place-items:center;color:#777b81}
 #homePage #svHomeInlineMusic.sv-home-music-compact .sv-home-music-heading{min-height:31px}
-#homePage #svHomeInlineMusic.sv-home-music-compact .sv-home-music-controls{margin-top:0;gap:20px}
+#homePage #svHomeInlineMusic.sv-home-music-compact .sv-home-music-controls{margin-top:0}
 :root[data-theme=dark] #homePage #svHomeInlineMusic{--sv-home-player-ink:#f3f4f6;--sv-home-player-sub:#afb3b9;--sv-home-player-line:#52565e}
 @keyframes sv-home-player-fade{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){#homePage #svHomeInlineMusic{animation:none}}
@@ -51,3 +51,17 @@ html:root body #homePage #svSayviHomeWeather.sv-home-music-weather-replaced > :i
 #homePage #svHomeInlineMusic.sv-home-music-tight .sv-home-music-meta small{font-size:10px}
 #homePage #svHomeInlineMusic.sv-home-music-tight input[type=range]{height:12px}
 #homePage #svHomeInlineMusic.sv-home-music-tight .sv-home-music-times{font-size:9px}
+
+/* Five quiet controls, shared modes with the full player, no added surfaces. */
+#homePage #svHomeInlineMusic [data-home-music=shuffle]{grid-column:1;grid-row:1}
+#homePage #svHomeInlineMusic [data-home-music=previous]{grid-column:2;grid-row:1}
+#homePage #svHomeInlineMusic [data-home-music=play]{grid-column:3;grid-row:1}
+#homePage #svHomeInlineMusic [data-home-music=next]{grid-column:4;grid-row:1}
+#homePage #svHomeInlineMusic [data-home-music=repeat]{grid-column:5;grid-row:1}
+#homePage #svHomeInlineMusic .sv-home-music-mode{color:#858a90}
+#homePage #svHomeInlineMusic .sv-home-music-mode[aria-pressed=true]{color:#1674d1}
+#homePage #svHomeInlineMusic .sv-home-music-mode svg{width:19px;height:19px;stroke-width:1.55}
+#homePage #svHomeInlineMusic .sv-home-music-mode[hidden]{display:none!important}
+#homePage #svHomeInlineMusic .sv-repeat-one{display:none}
+#homePage #svHomeInlineMusic [data-repeat=one] .sv-repeat-one{display:inline}
+:root[data-theme=dark] #homePage #svHomeInlineMusic .sv-home-music-mode[aria-pressed=true]{color:#75b9ff}
