@@ -236,17 +236,17 @@
    let r;
    if(kind===0){
     const silhouette=radius*(1+.007*Math.sin(2*a+t)+.004*Math.sin(3*a-t*.5));
-    const depth=radius*(.012+(.142+.018*m)*topLeft+.115*rightFold+.088*bottomFold+.153*shoulder-.065*pinch);
+    const depth=radius*(.004+(.129+.018*m)*topLeft+.103*rightFold+.073*bottomFold+.146*shoulder-.057*pinch);
     // Opposed bending produces a bright turning edge without deforming the silhouette.
-    const curl=radius*(.080*pinch-.038*shoulder+.025*rightFold*Math.sin(4*a+t));
+    const curl=radius*(.068*pinch-.030*shoulder+.010*rightFold*Math.sin(4*a+t));
     r=silhouette-depth*u+curl*Math.sin(Math.PI*u);
    }else{
     const opening=radius*(.753+.009*Math.sin(2*a+t)+.005*Math.sin(3*a-t*.65));
     // At the bottom the membrane turns inward rather than forming another external hoop.
-    const depth=radius*(.005+.079*innerTop-.119*innerBottom+.055*innerKnot);
-    r=opening+depth*u+radius*.052*innerKnot*Math.sin(Math.PI*u);
+    const depth=radius*(.003+.066*innerTop-.104*innerBottom+.031*innerKnot);
+    r=opening+depth*u+radius*.037*innerKnot*Math.sin(Math.PI*u);
    }
-   const shear=(kind===0?.085:.045)*Math.sin(Math.PI*u)*Math.sin(2*a+.8+t*.45);
+   const shear=(kind===0?.035:.024)*Math.sin(Math.PI*u)*Math.sin(2*a+.8+t*.45);
    const cs=Math.cos(shear),ss=Math.sin(shear);
    const x=r*(ca*cs-sa*ss),y=r*(sa*cs+ca*ss)*.995;
    return [200+x*cr-y*sr,200+x*sr+y*cr];
@@ -279,15 +279,29 @@
    const far=rows[count-1];
    for(let i=far.length-1;i>=0;i--){const [x,y]=far[i];if(i===far.length-1)ctx.moveTo(x,y);else ctx.lineTo(x,y)}
    ctx.closePath();
-   ctx.fillStyle=veil;ctx.globalAlpha=kind===0?.34:.24;ctx.fill('evenodd');
+   ctx.fillStyle=veil;ctx.globalAlpha=kind===0?.17:.12;ctx.fill('evenodd');
    for(let j=0;j<count;j++){
     const u=j/(count-1),edgeU=kind===0?.89:.08;
     const lip=Math.exp(-Math.pow((u-edgeU)/.23,2));
     const body=Math.exp(-Math.pow((u-(kind===0?.57:.42))/.31,2));
     path(rows[j]);ctx.strokeStyle=fiber;
-    ctx.globalAlpha=.055+.47*lip+.28*body;
-    ctx.lineWidth=.21+.23*lip+.13*body;ctx.stroke();
+    ctx.globalAlpha=.035+.39*lip+.17*body;
+    ctx.lineWidth=.15+.19*lip+.08*body;ctx.stroke();
    }
+   // Sparse subpixel glints articulate the depth without opaque shading.
+   ctx.fillStyle=kind===0?'rgba(147,255,231,.38)':'rgba(186,255,242,.30)';
+   ctx.globalAlpha=1;ctx.beginPath();
+   for(let j=2;j<count-2;j+=3){
+    const u=j/(count-1);
+    for(let i=1;i<liquidSteps;i+=2){
+     const g=geom[i];
+     const light=kind===0?Math.max(g.topLeft,g.rightFold,g.bottomFold,g.shoulder):Math.max(g.innerTop,g.innerBottom);
+     if(light<.25)continue;
+     const [x,y]=rows[j][i],d=.21+.15*light;
+     ctx.rect(x-d/2,y-d/2,d,d);
+    }
+   }
+   ctx.fill();
    ctx.globalAlpha=1;
    const edge=rows[kind===0?count-1:0];
    const spec=ctx.createLinearGradient(64,39,337,360);
@@ -299,7 +313,7 @@
    spec.addColorStop(1,'rgba(105,235,213,.38)');
    path(edge);ctx.strokeStyle=spec;ctx.globalAlpha=.13;ctx.lineWidth=2.5;ctx.stroke();
    ctx.globalAlpha=.30;ctx.lineWidth=1.6;ctx.stroke();
-   ctx.globalAlpha=1;ctx.lineWidth=1.05;ctx.stroke();
+   ctx.globalAlpha=1;ctx.lineWidth=.92;ctx.stroke();
    path(rows[kind===0?0:count-1]);ctx.strokeStyle='rgba(151,240,225,.19)';ctx.lineWidth=.32;ctx.stroke();
   }
   // Silk membrane: a broad fine mesh tapers into two points and folds back
@@ -324,7 +338,7 @@
   const columns=liquidMobile?94:140;
   for(let j=0;j<mesh;j++){
    const u=(j+.45)/mesh;
-   const size=.43+.19*Math.pow(u,4)+.04*h;
+   const size=.44+.20*Math.pow(u,4)+.04*h;
    ctx.beginPath();
    for(let i=1;i<columns;i++){
     const x=-1+2*(i+(j%2)*.34)/columns;
@@ -332,7 +346,7 @@
     ctx.rect(px-size/2,py-size/2,size,size);
    }
    ctx.fillStyle=memGradient;
-   ctx.globalAlpha=.48+.40*Math.pow(u,5);
+   ctx.globalAlpha=.54+.40*Math.pow(u,5);
    ctx.fill();
   }
   ctx.globalAlpha=1;
@@ -341,21 +355,21 @@
   const foldCount=liquidMobile?28:44,foldCols=liquidMobile?100:156;
   for(let j=0;j<foldCount;j++){
    const v=(j+.45)/foldCount;
-   const bend=1-Math.cos(v*Math.PI*.5);
+   const bend=Math.sin(v*Math.PI*.5);
    ctx.beginPath();
    for(let i=1;i<foldCols;i++){
     const x=-1+2*(i+(j%2)*.34)/foldCols,[px,py]=membrane(x,1);
     const env=Math.pow(Math.max(0,1-x*x),.78);
-    const width=R*(.34+.035*m)*env*(.74+.26*Math.cos(Math.PI*(x+.36)+t*.5));
+    const width=R*(.28+.035*m)*env*(.74+.26*Math.cos(Math.PI*(x+.29)+t*.5));
     const dx=R*.045*env*Math.sin(Math.PI*v);
     const size=.46+.19*Math.pow(v,2);
     ctx.rect(px+dx-size/2,py+width*bend-size/2,size,size);
    }
-   ctx.fillStyle=memGradient;ctx.globalAlpha=.54+.42*Math.pow(v,2);ctx.fill();
+   ctx.fillStyle=memGradient;ctx.globalAlpha=.36+.55*Math.pow(v,2);ctx.fill();
   }
   ctx.globalAlpha=1;
   // Sparse back-surface pearls make the lower hemisphere read as a volume.
-  ctx.fillStyle='rgba(119,224,210,.24)';
+  ctx.fillStyle='rgba(119,224,210,.28)';
   ctx.beginPath();
   const backRows=liquidMobile?17:24,backCols=liquidMobile?44:65;
   for(let j=1;j<=backRows;j++){
