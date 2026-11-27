@@ -606,6 +606,20 @@ function mediaSession(){
   });
  }catch{}
 }
+// Match the existing Music library fallback art, including its stable palette.
+const collectionCoverPalettes=[['#77969B','#315759'],['#8299B8','#354D73'],['#A091B3','#55446F'],['#BA9A81','#74513D'],['#819D8E','#3C6555'],['#B18F9E','#754C61'],['#8D9FAE','#465A71'],['#A9A17D','#6D633F']];
+function collectionFallbackArt(tile,key){
+ let hash=2166136261;
+ for(const char of String(key||'music'))hash=Math.imul(hash^char.charCodeAt(0),16777619);
+ const [light,deep]=collectionCoverPalettes[(hash>>>0)%collectionCoverPalettes.length];
+ tile.classList.add('sv-track-fallback');
+ tile.style.setProperty('--sv-track-light',light);tile.style.setProperty('--sv-track-deep',deep);
+ tile.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17.2V5.6l11-2.3v11.6M9 9l11-2.3"/><ellipse cx="5.9" cy="17.6" rx="3.1" ry="2.35" transform="rotate(-12 5.9 17.6)"/><ellipse cx="16.9" cy="15.3" rx="3.1" ry="2.35" transform="rotate(-12 16.9 15.3)"/></svg>';
+}
+function collectionRealArt(tile,src){
+ tile.classList.remove('sv-track-fallback');tile.classList.add('sv-track-cover');
+ tile.replaceChildren();tile.style.backgroundImage='url("'+src+'")';
+}
 function collectionRender(){
  collection.replaceChildren();
  if(collectionMode==='tracks'&&!tracks.length){
@@ -636,10 +650,10 @@ function collectionRender(){
   if(current)btn.setAttribute('aria-current','true');
   const remembered=String(key).split('|').slice(0,-2).join('|');
   const info=match?infoFor(match.file):metadata?.filenameParts(remembered)||{title:'Любимая песня',artist:''};
-  const tile=document.createElement('span');tile.className='sv-collection-art';tile.setAttribute('aria-hidden','true');
+  const tile=document.createElement('span');tile.className='sv-collection-art sv-music-track-tile';tile.setAttribute('aria-hidden','true');
   const thumb=match&&(trackThumbnails.get(match.file)||(match.file.radio?match.file.artwork:null));
-  if(thumb)tile.style.backgroundImage='url("'+thumb+'")';
-  else tile.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17V6l11-3v11"/><ellipse cx="6" cy="17.5" rx="3" ry="2.3"/><ellipse cx="17" cy="14.5" rx="3" ry="2.3"/></svg>';
+  if(thumb)collectionRealArt(tile,thumb);
+  else collectionFallbackArt(tile,match?.file?.radio?match.file.id:key);
   const copy=document.createElement('span');copy.className='sv-collection-copy';
   const name=document.createElement('strong');name.className='sv-music-row-title';name.textContent=info.title||'Без названия';copy.append(name);
   if(info.artist){const artist=document.createElement('small');artist.textContent=info.artist;copy.append(artist)}
@@ -658,7 +672,7 @@ function collectionRender(){
      if(!preview||!btn.isConnected)return;
      name.textContent=preview.title||name.textContent;
      if(preview.artist){let artist=copy.querySelector('small');if(!artist){artist=document.createElement('small');copy.append(artist)}artist.textContent=preview.artist}
-     if(preview.artwork){tile.replaceChildren();tile.style.backgroundImage='url("'+preview.artwork+'")'}
+     if(preview.artwork)collectionRealArt(tile,preview.artwork)
     }).catch(()=>{});
    }
   }
