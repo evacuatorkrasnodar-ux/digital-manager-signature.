@@ -14,10 +14,10 @@ const float PI=3.14159265;
 vec2 bez(vec2 a,vec2 b,vec2 c,vec2 d,float t){float q=1.0-t;return q*q*q*a+3.0*q*q*t*b+3.0*q*t*t*c+t*t*t*d;}
 vec3 contour(float k,float u){
  vec2 l=vec2(-.864,.174),r=vec2(.920,-.151),m,c1,c2,c3,c4;float z;
- if(k<.5){m=vec2(.10,-.794);c1=vec2(-.94,-.15);c2=vec2(-.42,-.80);c3=vec2(.50,-.788);c4=vec2(.83,-.48);z=-.13;}
- else if(k<1.5){m=vec2(-.08,.055);c1=vec2(-.72,.026);c2=vec2(-.40,.11);c3=vec2(.32,-.010);c4=vec2(.72,-.29);z=.23;}
- else if(k<2.5){m=vec2(-.08,.255);c1=vec2(-.70,.086);c2=vec2(-.43,.32);c3=vec2(.27,.190);c4=vec2(.70,-.31);z=.38;}
- else if(k<3.5){m=vec2(.23,.49);c1=vec2(-.50,.25);c2=vec2(-.12,.46);c3=vec2(.60,.54);c4=vec2(.96,.30);z=-.09;}
+ if(k<.5){m=vec2(.12,-.794);c1=vec2(-.82,-.10);c2=vec2(-.40,-.80);c3=vec2(.52,-.788);c4=vec2(.83,-.48);z=-.13;}
+ else if(k<1.5){m=vec2(-.08,.065);c1=vec2(-.73,.005);c2=vec2(-.40,.095);c3=vec2(.32,-.010);c4=vec2(.72,-.29);z=.23;}
+ else if(k<2.5){m=vec2(-.08,.270);c1=vec2(-.73,.075);c2=vec2(-.43,.35);c3=vec2(.27,.190);c4=vec2(.70,-.31);z=.38;}
+ else if(k<3.5){m=vec2(.31,.52);c1=vec2(-.50,.25);c2=vec2(-.02,.51);c3=vec2(.64,.53);c4=vec2(.96,.30);z=-.09;}
  else {m=vec2(-.06,.785);c1=vec2(-.90,.40);c2=vec2(-.43,.79);c3=vec2(.22,.80);c4=vec2(.91,.40);z=-.22;}
  vec2 p=u<.5?bez(l,c1,c2,m,u*2.0):bez(m,c3,c4,r,u*2.0-1.0);
  return vec3(p,z*sin(PI*u));
@@ -26,6 +26,16 @@ vec3 matter(float x,float v){
  float u=(x+1.0)*.5,t=uMusic.x,mid=uMusic.z;
  float k=uKind<2.5?0.0:uKind<3.5?1.0:uKind<4.5?2.0:3.0;
  vec3 p=mix(contour(k,u),contour(k+1.0,u),v);
+ // The translucent return of the upper cloth, visible only at the left shoulder.
+ if(uKind>6.5&&uKind<7.5){
+  u*=.61;vec3 q=contour(0.0,u);
+  float flap=sin(PI*u/.61);
+  q.xy+=vec2(-.185,.17)*flap*v;
+  q.z-=.16*flap*v;
+  q.y+=sin(PI*u)*(.010+.035*mid)*sin(u*5.5+t*.65);
+  q.z+=sin(PI*u)*.055*sin(t*.55+u*4.0)*(.30+mid);
+  return q;
+ }
  float f=sin(PI*v)*sin(PI*u),w=sin(PI*u);
  p.z+=f*(k<.5?.28:k<1.5?.20:-.16);
  p.x+=f*(.035*sin(PI*u*2.0+t*.32)+.115*sin(PI*u*1.6-.35)*(k<.5?1.0:-.6));
@@ -85,7 +95,7 @@ void main(){
   alpha=clamp(.008+.10*fres+.96*light,0.0,.98);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
-  float strength=uKind<8.5?(.28+.13*gauss(x-.85,.24)+.10*gauss(x+.87,.24)):.28*gauss(x+.10,.60);
+  float strength=uKind<8.5?(.25+.27*gauss(x-.85,.24)+.25*gauss(x+.87,.24)):.40*gauss(x+.10,.38);
   float g=gauss(v-.5,.17),soft=gauss(v-.5,.30);
   col=mix(vec3(.02,.81,.81),vec3(.63,1.0,.96),g*.55);
   alpha=strength*(.54*g+.46*soft)*(.44+.56*w);
@@ -94,18 +104,24 @@ void main(){
   float focus=gauss(x+.20,.78),edge=pow(v,20.0),start=pow(1.0-v,20.0);
   float tipGlow=gauss(x+.91,.18)+gauss(x-.92,.18);
   float facing=clamp(vLight,0.0,1.0);
-  float frontLight=.55+.45*gauss(x-.35,.70);
+  float frontLight=.57+.43*gauss(x-.22,.82);
   col=mix(vec3(.10,.82,.83),vec3(.76,1.0,.98),clamp(.24*turn+.18*fres+.30*tip,0.0,1.0));
   if(uKind<2.5)alpha=(.30+.29*v*v+.18*fres)*frontLight*(1.0-.55*tip);
-  else if(uKind<3.5){alpha=(.58+.40*turn+.16*fres)*(1.0-.22*tip);col=mix(col,vec3(.80,1.0,.97),turn*.85);}
+  else if(uKind<3.5){alpha=(.64+.40*turn+.16*fres)*(1.0-.14*tip);col=mix(col,vec3(.80,1.0,.97),turn*.85);}
   else if(uKind<4.5)alpha=(.11+.10*fres+.07*facing*gauss(x-.28,.62))*(1.0-.70*tip);
-  else alpha=(.10+.36*turn+.12*fres)*(1.0-.60*tip);
+  else alpha=(.10+.26*turn+.19*turn*gauss(x+.10,.42)+.12*fres)*(1.0-.60*tip);
   if(uMode<.5){
    if(uKind<2.5)alpha=.009+.025*fres+.09*start*focus+.09*pow(v,5.0)*tipGlow;
-   else if(uKind<3.5){alpha=clamp(.035+.86*edge+.36*start+.27*pow(v,4.0)+.20*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
+   else if(uKind<3.5){alpha=clamp(.035+.86*edge+.40*start+.30*pow(v,4.0)+.32*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
    else if(uKind<4.5)alpha=.009+.019*fres+.065*edge*focus+.16*pow(1.0-v,12.0)*(.55+.45*focus);
-   else {alpha=clamp(.012+.88*edge*gauss(x+.10,.60)+.43*pow(v,6.0)*focus+.12*start,0.0,.96);col=mix(vec3(.02,.80,.79),vec3(.82,1.0,.97),edge*.88);}
-  }else if(uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*8.0)*(1.0-smoothstep(.34,.50,d));}
+   else {alpha=clamp(.012+.93*edge*gauss(x+.10,.42)+.35*pow(v,6.0)*gauss(x+.10,.48)+.17*start,0.0,.96);col=mix(vec3(.02,.80,.79),vec3(.82,1.0,.97),edge*.88);}
+  }
+  if(uKind>6.5&&uKind<7.5){
+   float taper=sin(3.14159265*(x+1.0)*.5);
+   col=mix(vec3(.02,.69,.74),vec3(.39,.98,.95),pow(v,3.0));
+   alpha=(uMode<.5?(.035+.22*pow(v,5.0)):(.17+.20*v*v))*taper;
+  }
+  if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*8.0)*(1.0-smoothstep(.34,.50,d));}
 
  }
  gl_FragColor=vec4(col,clamp(alpha,0.0,1.0));
@@ -130,8 +146,8 @@ void main(){
   return {kind,mode,buffer,index,count:index?indices.length:values.length/4};
  }
  const glass=mesh(5,2,2,0),glowMid=mesh(8,96,10,0),glowBottom=mesh(9,96,10,0);
- const parts=[4,6,2,3].map(kind=>{
-  const dims=kind===2?[105,52,158,78]:kind===3?[112,30,170,44]:kind===4?[68,28,100,40]:[88,26,140,38];
+ const parts=[4,6,7,2,3].map(kind=>{
+  const dims=kind===7?[48,16,70,22]:kind===2?[105,52,158,78]:kind===3?[112,30,170,44]:kind===4?[68,28,100,40]:[88,26,140,38];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   return [mesh(kind,mobile?64:96,mobile?20:32,0),mesh(kind,n,m,1)];
  });
