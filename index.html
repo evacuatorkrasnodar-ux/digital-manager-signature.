@@ -7112,10 +7112,10 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-now
 #sayviMusicPage .sv-now-tools svg,#sayviMusicPage .sv-now-menu svg{width:22px;height:22px;flex:0 0 22px}
 #sayviMusicPage[data-music-view="player"] > .sv-now-menu:not([hidden]){
  display:block!important;position:fixed;z-index:45;bottom:max(14px,env(safe-area-inset-bottom,0px));
- right:max(14px,calc((100vw - 510px)/2));width:min(310px,calc(100vw - 28px));
+ right:max(14px,calc((100vw - 510px)/2));width:min(286px,calc(100vw - 28px));
  max-height:calc(100vh - 60px);overflow-y:auto;box-sizing:border-box;
- padding:8px 14px 12px;border-radius:22px;border:1px solid rgba(236,246,255,.20);
- background:rgba(25,36,47,.90);color:#F9FAFC;
+ padding:4px 11px 6px;border-radius:20px;border:1px solid rgba(236,246,255,.20);
+ background:rgba(25,36,47,.88);color:#F9FAFC;
  -webkit-backdrop-filter:blur(24px) saturate(115%);backdrop-filter:blur(24px) saturate(115%);
  box-shadow:0 6px 20px rgba(0,0,0,.12);
 }
@@ -7125,10 +7125,10 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-now
  background:transparent url("assets/seyveo-circular-interlace-mono.svg") center/158% no-repeat;
  filter:brightness(0) invert(1);opacity:.94;pointer-events:none;
 }
-#sayviMusicPage .sv-now-menu-head{display:flex;align-items:center;justify-content:space-between;padding-left:9px}
+#sayviMusicPage .sv-now-menu-head{display:flex;align-items:center;justify-content:space-between;padding-left:8px}
 #sayviMusicPage .sv-now-menu-head strong{font-size:15px;font-weight:620}
 #sayviMusicPage .sv-now-menu-row,#sayviMusicPage .sv-now-wake-row{
- display:flex;align-items:center;gap:12px;min-height:47px;width:100%;padding:10px 9px;
+ display:flex;align-items:center;gap:10px;box-sizing:border-box;min-height:44px;width:100%;padding:5px 8px;
  border:0;border-bottom:1px solid rgba(255,255,255,.065);background:transparent!important;
  color:inherit;text-align:left;font:inherit;font-size:14px;box-shadow:none!important;
 }
@@ -7151,7 +7151,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-now
  background:radial-gradient(circle at 26px 11px,#FFFFFF 0 8px,transparent 8.6px),rgba(102,176,145,.76);
 }
 @supports ((-webkit-backdrop-filter:blur(24px)) or (backdrop-filter:blur(24px))){
- #sayviMusicPage[data-music-view="player"] > .sv-now-menu:not([hidden]){background:rgba(25,36,47,.76)}
+ #sayviMusicPage[data-music-view="player"] > .sv-now-menu:not([hidden]){background:rgba(25,36,47,.66)}
 }
 @media(prefers-reduced-transparency:reduce){
  #sayviMusicPage[data-music-view="player"] > .sv-now-menu:not([hidden]){background:#19242F!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
@@ -7159,7 +7159,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-now
 @media(prefers-reduced-motion:reduce){
  #sayviMusicPage .sv-now-wake-row button::after{transition:none!important}
 }
-#sayviMusicPage .sv-now-wake-row small{display:block;color:rgba(238,245,249,.69);font-size:11px;line-height:1.35;padding:0 0 4px}
+#sayviMusicPage .sv-now-wake-row small{display:block;color:rgba(238,245,249,.69);font-size:11px;line-height:1.3;padding:0 0 3px}
 #sayviMusicPage .sv-now-stop{border:0;color:#F1A9A9}
 </style>
 <style id="svNowFinePolish">
