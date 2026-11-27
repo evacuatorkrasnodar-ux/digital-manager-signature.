@@ -217,9 +217,9 @@
   const geom=angles.map(([a,ca,sa])=>{
    const wave=Math.sin(2*a+t),fold=Math.sin(3*a-t*.65);
    // Asymmetric broad folds on opposite sides, with an almost circular silhouette.
-   const lobe=Math.pow(.5+.5*Math.cos(2*(a+2.16)+.42*Math.sin(t*.52)),1.12);
+   const lobe=Math.pow(.5+.5*Math.cos(2*(a+2.35)+.28*Math.sin(t*.52)),1.65);
    const innerLobe=Math.pow(.5+.5*Math.cos(2*(a+1.48)-.32*Math.sin(t*.45)),1.5);
-   const kink=Math.pow(.5+.5*Math.cos(a+.94-.28*Math.sin(t*.30)),12);
+   const kink=Math.pow(.5+.5*Math.cos(a+.99-.18*Math.sin(t*.30)),19);
    const ripple=Math.sin(5*a+t*.9);
    return {a,ca,sa,wave,fold,lobe,innerLobe,kink,ripple};
   });
@@ -228,8 +228,8 @@
    let r,z;
    if(kind===0){
     const silhouette=radius*(1+.009*wave+.006*fold);
-    const depth=radius*(.008+(.105+.028*m)*lobe+.105*kink);
-    const curl=radius*((.037+.018*m)*lobe*ripple+.055*kink*Math.sin(9*g.a+t*.7));
+    const depth=radius*(.005+(.127+.024*m)*lobe+.120*kink);
+    const curl=radius*((.025+.015*m)*lobe*ripple+.033*kink*Math.sin(8*g.a+t*.7));
     r=silhouette-depth*u+curl*Math.sin(Math.PI*u);
     z=radius*(.04*fold+.16*lobe*Math.sin(Math.PI*u));
    }else{
@@ -238,7 +238,10 @@
     r=opening+depth*u+radius*.023*innerLobe*ripple*Math.sin(Math.PI*u);
     z=radius*(.045*wave-.11*innerLobe*Math.sin(Math.PI*u));
    }
-   const x=r*ca,y=r*sa*.994,scale=1+z*.0005;
+   // The fibres travel tangentially as well as radially, like a twisted silk sheet.
+   const shear=(kind===0?.12:.08)*Math.sin(Math.PI*u)*Math.sin(2*g.a+.8+t*.45);
+   const cs=Math.cos(shear),ss=Math.sin(shear);
+   const x=r*(ca*cs-sa*ss),y=r*(sa*cs+ca*ss)*.994,scale=1+z*.0005;
    return [200+(x*cr-y*sr)*scale,200+(x*sr+y*cr)*scale];
   };
   const path=(pts,close=true)=>{
@@ -258,8 +261,8 @@
     const u=j/(count-1);
     const lip=Math.exp(-Math.pow((u-(kind===0?.89:.08))/.22,2));
     path(rows[j]);ctx.strokeStyle=fiber;
-    ctx.globalAlpha=.12+.65*lip;
-    ctx.lineWidth=.24+.25*lip;ctx.stroke();
+    ctx.globalAlpha=.055+.63*lip;
+    ctx.lineWidth=.20+.22*lip;ctx.stroke();
    }
    ctx.globalAlpha=1;
    const edge=rows[kind===0?count-1:0];
@@ -270,18 +273,18 @@
    spec.addColorStop(.69,'rgba(241,255,252,1)');
    spec.addColorStop(.88,'rgba(182,255,237,.94)');
    spec.addColorStop(1,'rgba(105,235,213,.38)');
-   path(edge);ctx.strokeStyle=spec;ctx.globalAlpha=.13;ctx.lineWidth=3.0;ctx.stroke();
+   path(edge);ctx.strokeStyle=spec;ctx.globalAlpha=.13;ctx.lineWidth=2.5;ctx.stroke();
    ctx.globalAlpha=.30;ctx.lineWidth=1.6;ctx.stroke();
-   ctx.globalAlpha=1;ctx.lineWidth=.85;ctx.stroke();
+   ctx.globalAlpha=1;ctx.lineWidth=1.05;ctx.stroke();
    path(rows[kind===0?0:count-1]);ctx.strokeStyle='rgba(151,240,225,.19)';ctx.lineWidth=.32;ctx.stroke();
   }
   // Silk membrane: a broad fine mesh tapers into two points and folds back
   // on itself near the diagonal crest. The interior is no longer a flat S line.
-  const R=radius*.753,tilt=-.32+.045*Math.sin(t*.7),mc=Math.cos(tilt),ms=Math.sin(tilt);
+  const R=radius*.753,tilt=-.27+.045*Math.sin(t*.7),mc=Math.cos(tilt),ms=Math.sin(tilt);
   const membrane=(x,u)=>{
    const env=Math.sqrt(Math.max(0,1-x*x));
    const arc=-env*(.97+.012*Math.sin(t));
-   const crest=env*(.025+.055*Math.sin(Math.PI*x+t*.5)+.022*Math.sin(2*Math.PI*x-t));
+   const crest=env*(.012-.060*Math.sin(Math.PI*x+t*.45)+.018*Math.sin(2*Math.PI*x-t));
    const crease=env*(.12+.05*m)*Math.pow(Math.sin(Math.PI*u),2)*Math.sin(Math.PI*x+.8+t*.45);
    const y=arc+(crest-arc)*u+crease;
    return [200+R*(x*mc-y*ms),200+R*(x*ms+y*mc)];
@@ -297,7 +300,7 @@
   const columns=liquidMobile?94:140;
   for(let j=0;j<mesh;j++){
    const u=(j+.45)/mesh;
-   const size=.38+.18*Math.pow(u,4)+.04*h;
+   const size=.42+.17*Math.pow(u,4)+.04*h;
    ctx.beginPath();
    for(let i=1;i<columns;i++){
     const x=-1+2*(i+(j%2)*.34)/columns;
@@ -305,7 +308,7 @@
     ctx.rect(px-size/2,py-size/2,size,size);
    }
    ctx.fillStyle=memGradient;
-   ctx.globalAlpha=.37+.48*Math.pow(u,5);
+   ctx.globalAlpha=.43+.42*Math.pow(u,5);
    ctx.fill();
   }
   ctx.globalAlpha=1;
@@ -314,10 +317,11 @@
    const v=j/(foldCount-1),pts=[];
    for(let i=0;i<=liquidSteps;i++){
     const x=-1+2*i/liquidSteps,[px,py]=membrane(x,1);
-    const env=Math.pow(Math.max(0,1-x*x),.9);
-    pts.push([px,py+R*(.20+.035*m)*env*Math.sin(Math.PI*v)*(.70+.30*Math.cos(Math.PI*(x+.30)+t*.5))]);
+    const env=Math.pow(Math.max(0,1-x*x),.85);
+    const bend=Math.sin(v*Math.PI*.85);
+    pts.push([px+R*.035*env*bend,py+R*(.26+.035*m)*env*bend*(.72+.28*Math.cos(Math.PI*(x+.38)+t*.5))]);
    }
-   path(pts,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.20+.49*Math.pow(Math.sin(Math.PI*v),2);ctx.lineWidth=.32;ctx.stroke();
+   path(pts,false);ctx.strokeStyle=memGradient;ctx.globalAlpha=.12+.52*Math.pow(v,3);ctx.lineWidth=.29;ctx.stroke();
   }
   // Sparse back-surface pearls make the lower hemisphere read as a volume.
   ctx.fillStyle='rgba(119,224,210,.17)';
@@ -340,6 +344,7 @@
  function syncLiquidMode(){
   const enabled=!!liquidContext&&liquidMode;
   playerScene?.classList.toggle('sv-liquid-mode',enabled);
+  musicPage?.classList.toggle('sv-liquid-visualizer',enabled);
   if(liquidToggle){liquidToggle.hidden=!liquidContext;liquidToggle.setAttribute('aria-pressed',String(enabled));liquidToggle.setAttribute('aria-label',enabled?'Liquid Sound. Переключить на эквалайзер':'Эквалайзер. Переключить на Liquid Sound')}
   if(liquidLabel)liquidLabel.textContent=enabled?'SEYVEO LIQUID SOUND':'SEYVEO SOUND';
   if(enabled)paintLiquid(performance.now(),0,0,0,true);
