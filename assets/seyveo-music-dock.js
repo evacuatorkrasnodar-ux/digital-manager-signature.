@@ -109,10 +109,19 @@ function init(){
   for(const [title,items] of [['Любимые исполнители',data.artists],['Любимые треки',data.tracks],['Любимые станции',data.stations]]){
    if(!items.length)continue;
    const h=document.createElement('h3');h.textContent=title;h.className='sv-music-section-title';out.append(h);
-   for(const [i,item] of items.entries()){const row=document.createElement('div');row.className='sv-replay-row';const rank=document.createElement('span');rank.textContent=String(i+1);rank.className='sv-replay-rank';const copy=document.createElement('div');const name=document.createElement('strong');name.textContent=item.title;const sub=document.createElement('small');sub.textContent=item.artist||'';copy.append(name,sub);const time=document.createElement('span');time.textContent=duration(item.seconds);time.className='sv-replay-time';row.append(rank);
+   for(const [i,item] of items.entries()){
+    const key=title==='Любимые треки'?String(item.key||'').replace(/^file:/,''):'';
+    const match=key?libraryByKey.get(key):null;
+    const row=document.createElement(match?'button':'div');row.className='sv-replay-row';
+    if(match){
+     row.type='button';row.classList.add('sv-replay-playable');
+     row.setAttribute('aria-label','Воспроизвести: '+item.title+(item.artist?' — '+item.artist:''));
+     row.addEventListener('click',()=>{
+      const current=music()?.browseTracks?.().find(track=>track.artKey===key);
+      if(current&&music()?.playIndexFromSearch?.(current.index))show('player');
+     });
+    }const rank=document.createElement('span');rank.textContent=String(i+1);rank.className='sv-replay-rank';const copy=document.createElement('span');copy.className='sv-replay-copy';const name=document.createElement('strong');name.textContent=item.title;const sub=document.createElement('small');sub.textContent=item.artist||'';copy.append(name,sub);const time=document.createElement('span');time.textContent=duration(item.seconds);time.className='sv-replay-time';row.append(rank);
     if(title==='Любимые треки'){
-     const key=String(item.key||'').replace(/^file:/,'');
-     const match=libraryByKey.get(key);
      const art=document.createElement('span');art.className='sv-music-track-tile sv-replay-art';art.setAttribute('aria-hidden','true');
      if(!paintCover(art,match?.artwork))fallbackCover(art,{artKey:key||item.title});
      row.append(art);
