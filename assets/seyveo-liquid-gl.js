@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V57 · continuous silk optics · WebGL 1. */
+/* SEYVEO Liquid Sound V58 · crystal rim and luminous silk · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -96,25 +96,27 @@ void main(){
   }
   float n=sqrt(max(0.0,1.0-r*r));
   float top=peak(a,-2.08,.61),bottom=peak(a,1.37,.57),right=peak(a,.60,.61),left=peak(a,2.85,.48);
-  float lip=.14+.85*top+.54*bottom+.57*right+.22*left;
+  float lip=.21+.78*top+.77*bottom+.72*right+.29*left;
   float edge=gauss(r-.993,.0055),edgeSoft=gauss(r-.973,.021);
   float reflected=gauss(r-(.957-.064*top),.014+.030*top)*pow(top,1.8);
   // Broad curved softbox reflection: a distinct inner edge with a translucent tail.
-  float innerArc=.945-.175*top;
+  float innerArc=.945-.185*top;
   float crescent=smoothstep(innerArc-.008,innerArc+.008,r)*(1.0-smoothstep(.929,.975,r))*pow(top,1.35);
   float shoulder=peak(a,-1.05,.60)*gauss(r-.91,.045);
-  float base=gauss(r-(.952-.048*bottom),.051)*bottom;
-  float lowerLens=gauss(r-(.927-.035*bottom),.037)*peak(a,1.14,.66);
+  float base=gauss(r-(.952-.048*bottom),.044)*bottom;
+  float lowerLens=gauss(r-(.927-.035*bottom),.044)*peak(a,1.14,.80);
   float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left);
   float fres=pow(max(0.0,1.0-n),3.0);
-  float light=clamp(.67*reflected+1.24*edge*lip+.48*edgeSoft*lip+.57*base+.22*inner+.68*crescent+.34*lowerLens+.16*shoulder,0.0,1.0);
-  col=mix(vec3(.01,.76,.87),vec3(.95,1.0,.99),smoothstep(.42,.98,light));
-  alpha=clamp(.006+.085*fres+.95*light,0.0,.98);
+  float light=clamp(.58*reflected+1.38*edge*lip+.48*edgeSoft*lip+.55*base+.22*inner+.58*crescent+.38*lowerLens+.16*shoulder,0.0,1.0);
+  float blueDepth=gauss(r-.91,.085)*(.55+.45*peak(a,-.75,.9));
+  col=mix(vec3(.015,.39,.62),vec3(.05,.87,.94),clamp(light*1.65+.15*blueDepth,0.0,1.0));
+  col=mix(col,vec3(.95,1.0,.99),smoothstep(.48,.99,light));
+  alpha=clamp(.006+.085*fres+.95*light+.11*blueDepth,0.0,.98);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.91,.20)+gauss(x-.91,.20);
-  float strength=uKind<8.5?(.32+.45*tips+.18*gauss(x+.30,.55)):uKind<9.5?(.76*gauss(x+.02,.25)+.14*gauss(x-.26,.48)):(.10+.24*tips);
-  float g=gauss(v-.5,.045),soft=gauss(v-.5,.27);
+  float strength=uKind<8.5?(.34+.50*tips+.24*gauss(x-.05,.65)):uKind<9.5?(.76*gauss(x+.02,.25)+.14*gauss(x-.26,.48)):(.10+.24*tips);
+  float g=gauss(v-.5,.055),soft=gauss(v-.5,.29);
   col=mix(vec3(.02,.91,.88),vec3(.88,1.0,.98),g*.78);
   float taper=smoothstep(0.0,.08,w);
   alpha=strength*(.36*g+.64*soft)*taper*(1.0-smoothstep(.46,.50,abs(v-.5)));
@@ -131,7 +133,7 @@ void main(){
   // Translucent absorption masks rear particles under the near-facing silk.
   float bodyMask=smoothstep(0.0,.13,v)*smoothstep(0.0,.13,1.0-v)*smoothstep(0.0,.18,1.0-abs(x));
   col=mix(vec3(.08,.88,.88),vec3(.84,1.0,.98),clamp(.24*turn+.22*fres+.30*tip,0.0,1.0));
-  if(uKind<2.5){float upperRim=pow(1.0-v,12.0);alpha=(.59+.20*v*v+.14*fres+.20*shoulderLight+.22*highlight+.12*upperRim)*frontLight*(1.0-.30*tip);col=mix(col,vec3(.62,1.0,.98),clamp(.24*shoulderLight+.16*silkLight+.50*highlight+.18*upperRim,0.0,1.0));}
+  if(uKind<2.5){float upperRim=pow(1.0-v,12.0);alpha=(.65+.20*v*v+.14*fres+.20*shoulderLight+.22*highlight+.12*upperRim)*frontLight*(1.0-.30*tip);col=mix(col,vec3(.62,1.0,.98),clamp(.24*shoulderLight+.16*silkLight+.50*highlight+.18*upperRim,0.0,1.0));}
   else if(uKind<3.5){alpha=(.84+.16*turn+.16*fres)*(1.0-.12*tip);col=mix(col,vec3(.83,1.0,.97),clamp(.24+.63*silkLight+.25*turn,0.0,1.0));}
   else if(uKind<4.5){alpha=(.28+.12*fres+.24*facing*gauss(x-.27,.71)+.20*highlight)*(1.0-.44*tip);col=mix(col,vec3(.32,1.0,.98),.28*highlight);}
   else alpha=(.27+.23*turn+.30*pow(v,2.3)*gauss(x+.10,.48)+.14*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.48*tip);
