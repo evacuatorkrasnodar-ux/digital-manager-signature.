@@ -166,11 +166,20 @@ void main(){
   float lowerLens=gauss(r-(.927-.035*bottom),.044)*peak(a,1.14,.80);
   float inner=gauss(r-.967,.008)*(.24+.45*right+.40*left);
   float fres=pow(max(0.0,1.0-n),3.0);
-  float light=clamp(.58*reflected+1.38*edge*lip+.48*edgeSoft*lip+.55*base+.22*inner+.58*crescent+.38*lowerLens+.16*shoulder,0.0,1.0);
+  // Subtle optical separation: neutral specular light and a quiet inner lens edge.
+  // Same analytic glass pass; no changes to cloth, geometry or animation.
+  float light=clamp(.64*reflected+1.43*edge*lip+.50*edgeSoft*lip+.55*base+.22*inner+.62*crescent+.38*lowerLens+.18*shoulder,0.0,1.0);
   float blueDepth=gauss(r-.91,.085)*(.55+.45*peak(a,-.75,.9));
+  float softReflection=gauss(r-.82,.028)*peak(a,-1.03,.47);
+  float lensShade=gauss(r-.936,.019)*(1.0-.82*top)*(.65+.35*right);
   col=mix(vec3(.015,.39,.62),vec3(.05,.87,.94),clamp(light*1.65+.15*blueDepth,0.0,1.0));
-  col=mix(col,vec3(.95,1.0,.99),smoothstep(.48,.99,light));
+  col=mix(col,vec3(.95,1.0,.99),smoothstep(.44,.96,light));
   alpha=clamp(.006+.085*fres+.95*light+.11*blueDepth,0.0,.98);
+  // Composite a faint dark inner edge and a neutral reflection in the existing pass.
+  float shade=.075*lensShade*(1.0-alpha);
+  float shine=.058*softReflection*(1.0-alpha);
+  col=(col*alpha+vec3(.022,.065,.09)*shade+vec3(.87,.96,1.0)*shine)/max(.0001,alpha+shade+shine);
+  alpha=clamp(alpha+shade+shine,0.0,.98);
  }else if(uKind>7.5){
   float w=sin(3.14159265*(x+1.0)*.5);
   float tips=gauss(x+.89,.16)+gauss(x-.73,.19);
