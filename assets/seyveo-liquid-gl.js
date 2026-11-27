@@ -14,11 +14,11 @@ const float PI=3.14159265;
 vec2 bez(vec2 a,vec2 b,vec2 c,vec2 d,float t){float q=1.0-t;return q*q*q*a+3.0*q*q*t*b+3.0*q*t*t*c+t*t*t*d;}
 vec3 contour(float k,float u){
  vec2 l=vec2(-.864,.174),r=vec2(.920,-.151),m,c1,c2,c3,c4;float z;
- if(k<.5){m=vec2(.12,-.794);c1=vec2(-.82,-.10);c2=vec2(-.40,-.80);c3=vec2(.52,-.788);c4=vec2(.83,-.48);z=-.13;}
+ if(k<.5){m=vec2(.12,-.794);c1=vec2(-.67,-.035);c2=vec2(-.52,-.77);c3=vec2(.52,-.788);c4=vec2(.84,-.48);z=-.13;}
  else if(k<1.5){m=vec2(-.08,.065);c1=vec2(-.73,.005);c2=vec2(-.40,.095);c3=vec2(.32,-.010);c4=vec2(.72,-.29);z=.23;}
- else if(k<2.5){m=vec2(-.08,.270);c1=vec2(-.73,.075);c2=vec2(-.43,.35);c3=vec2(.27,.190);c4=vec2(.70,-.31);z=.38;}
- else if(k<3.5){m=vec2(.31,.52);c1=vec2(-.50,.25);c2=vec2(-.02,.51);c3=vec2(.64,.53);c4=vec2(.96,.30);z=-.09;}
- else {m=vec2(-.06,.785);c1=vec2(-.90,.40);c2=vec2(-.43,.79);c3=vec2(.22,.80);c4=vec2(.91,.40);z=-.22;}
+ else if(k<2.5){m=vec2(-.08,.270);c1=vec2(-.73,.075);c2=vec2(-.43,.35);c3=vec2(.27,.190);c4=vec2(.73,-.34);z=.38;}
+ else if(k<3.5){m=vec2(.31,.55);c1=vec2(-.50,.25);c2=vec2(-.02,.55);c3=vec2(.64,.56);c4=vec2(.99,.33);z=-.09;}
+ else {m=vec2(-.06,.785);c1=vec2(-.91,.37);c2=vec2(-.46,.75);c3=vec2(.20,.83);c4=vec2(.94,.38);z=-.22;}
  vec2 p=u<.5?bez(l,c1,c2,m,u*2.0):bez(m,c3,c4,r,u*2.0-1.0);
  return vec3(p,z*sin(PI*u));
 }
@@ -28,10 +28,12 @@ vec3 matter(float x,float v){
  vec3 p=mix(contour(k,u),contour(k+1.0,u),v);
  // The translucent return of the upper cloth, visible only at the left shoulder.
  if(uKind>6.5&&uKind<7.5){
-  u*=.61;vec3 q=contour(0.0,u);
-  float flap=sin(PI*u/.61);
-  q.xy+=vec2(-.185,.17)*flap*v;
-  q.z-=.16*flap*v;
+  float h=u;u*=.50;vec3 q=contour(0.0,u);
+  // The return has its own outer contour, joining the same cloth at both ends.
+  vec2 outer=bez(contour(0.0,0.0).xy,vec2(-1.10,-.17),vec2(-.40,-.43),contour(0.0,.50).xy,h);
+  q.xy=mix(q.xy,outer,v);
+  float flap=sin(PI*h);
+  q.z-=.24*flap*v;
   q.y+=sin(PI*u)*(.010+.035*mid)*sin(u*5.5+t*.65);
   q.z+=sin(PI*u)*.055*sin(t*.55+u*4.0)*(.30+mid);
   return q;
@@ -113,13 +115,14 @@ void main(){
   if(uMode<.5){
    if(uKind<2.5)alpha=.009+.025*fres+.09*start*focus+.09*pow(v,5.0)*tipGlow;
    else if(uKind<3.5){alpha=clamp(.035+.86*edge+.40*start+.30*pow(v,4.0)+.32*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
-   else if(uKind<4.5)alpha=.009+.019*fres+.065*edge*focus+.16*pow(1.0-v,12.0)*(.55+.45*focus);
-   else {alpha=clamp(.012+.93*edge*gauss(x+.10,.42)+.35*pow(v,6.0)*gauss(x+.10,.48)+.17*start,0.0,.96);col=mix(vec3(.02,.80,.79),vec3(.82,1.0,.97),edge*.88);}
+   else if(uKind<4.5)alpha=.009+.019*fres+.17*edge*gauss(x-.35,.66)+.16*pow(1.0-v,12.0)*(.55+.45*focus);
+   else {float low=gauss(x+.10,.34);alpha=clamp(.012+.95*edge*low+.43*pow(v,5.0)*low+.19*start*gauss(x-.25,.76),0.0,.98);col=mix(vec3(.02,.80,.79),vec3(.82,1.0,.97),edge*.88*low);}
   }
   if(uKind>6.5&&uKind<7.5){
    float taper=sin(3.14159265*(x+1.0)*.5);
-   col=mix(vec3(.02,.69,.74),vec3(.39,.98,.95),pow(v,3.0));
-   alpha=(uMode<.5?(.035+.22*pow(v,5.0)):(.17+.20*v*v))*taper;
+   float foldLight=gauss(v-.78,.28)*gauss(x+.28,.75);
+   col=mix(vec3(.015,.66,.72),vec3(.53,1.0,.98),clamp(.65*foldLight+.22*pow(v,8.0),0.0,1.0));
+   alpha=(uMode<.5?(.018+.21*foldLight+.18*pow(v,15.0)):(.21+.32*foldLight))*taper;
   }
   if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*8.0)*(1.0-smoothstep(.34,.50,d));}
 
@@ -147,7 +150,7 @@ void main(){
  }
  const glass=mesh(5,2,2,0),glowMid=mesh(8,96,10,0),glowBottom=mesh(9,96,10,0);
  const parts=[4,6,7,2,3].map(kind=>{
-  const dims=kind===7?[48,16,70,22]:kind===2?[105,52,158,78]:kind===3?[112,30,170,44]:kind===4?[68,28,100,40]:[88,26,140,38];
+  const dims=kind===7?[52,20,78,28]:kind===2?[105,52,158,78]:kind===3?[112,30,170,44]:kind===4?[68,28,100,40]:[88,26,140,38];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   return [mesh(kind,mobile?64:96,mobile?20:32,0),mesh(kind,n,m,1)];
  });
