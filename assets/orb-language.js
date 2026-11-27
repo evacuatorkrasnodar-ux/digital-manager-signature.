@@ -219,8 +219,9 @@
    scene?.classList.remove('sv-scene-playing');resetSceneWave();
    scene=target;sceneBars=Array.from(scene?.querySelectorAll('.sv-music-scene-wave line')||[]);
   }
+  const allowed=!!scene&&sceneAllowed();
+  musicPage?.classList.toggle('sv-now-ambient-playing',!!playerScene&&scene===playerScene&&allowed);
   if(!scene)return;
-  const allowed=sceneAllowed();
   scene.classList.toggle('sv-scene-playing',allowed);
   if(!allowed||reduce?.matches){resetSceneWave();return}
   const file=window.SEYVEO_MUSIC?.rhythmFile?.();
