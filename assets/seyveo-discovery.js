@@ -150,22 +150,19 @@ function chooseReleases(data,artist,now=Date.now()){
  }).filter(r=>r.at<=now&&r.at>=now-LOOKBACK)
  .sort((a,b)=>b.at-a.at);
 }
+// Use the protected same-origin server rather than a browser cross-origin request.
+const catalogAvailable=()=>['localhost','127.0.0.1'].includes(location.hostname)||location.hostname.endsWith('.ts.net');
 async function lookup(artist,signal){
- const endpoint=new URL('https://itunes.apple.com/search');
- endpoint.searchParams.set('term',artist);
- endpoint.searchParams.set('country','US');
- endpoint.searchParams.set('media','music');
- endpoint.searchParams.set('entity','album');
- endpoint.searchParams.set('attribute','artistTerm');
- endpoint.searchParams.set('limit','60');
- const response=await fetch(endpoint.href,{method:'GET',credentials:'omit',
-  redirect:'follow',signal,headers:{accept:'application/json'}});
+ const endpoint=new URL('/api/seyveo-music-discovery',location.origin);
+ endpoint.searchParams.set('artist',artist);
+ const response=await fetch(endpoint.href,{method:'GET',credentials:'same-origin',
+  redirect:'error',signal,headers:{accept:'application/json'}});
  if(!response.ok)throw Error('Catalog '+response.status);
- const result=await response.json();
- return chooseReleases(result,artist);
+ return chooseReleases(await response.json(),artist);
 }
 async function check({force=false}={}){
  if(!state.enabled||checking||document.hidden)return false;
+ if(!catalogAvailable()){if(force)status('Для проверки новинок откройте SEYVEO через локальный сервер.');return false}
  const now=Date.now();
  // Only two qualified artists per check; no full browsing history leaves device.
  const eligible=state.artists.filter(a=>a.plays>=3&&a.last>now-120*DAY)
