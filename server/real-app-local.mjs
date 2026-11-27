@@ -4,6 +4,8 @@
  */
 import {createServer} from 'node:http';
 import {lookupMusicReleases} from './music-discovery.mjs';
+import {MAX_LYRIC_BYTES,lyricFormat,transcribeLyrics} from './music-lyrics.mjs';
+import {pythonForNoteAudio} from './note-audio-transcriber.mjs';
 import {MAX_MUSIC_CLIP,clipFormat,recognitionConfigured,recognizeMusic} from './music-recognition.mjs';
 import {createImageAttachments} from './image-attachments.mjs';
 import {proposeLocalPaperDraft} from './paper-vision-draft.mjs';
@@ -293,6 +295,28 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
     if(!res.destroyed)send(res,200,{result});
    }catch{if(!res.destroyed)send(res,502,{error:'Сервис распознавания недоступен. Попробуйте позже.'})}
    finally{recognitionBusy=false}
+   return;
+  }
+  if(req.method==='POST'&&path==='/api/seyveo-music-lyrics'){
+   if(req.headers.origin!==localOrigin(req)){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   if(!pythonForNoteAudio()){send(res,503,{error:'Локальный Whisper не установлен. Запустите server/install-note-transcription.cmd.'});return}
+   const type=req.headers['content-type'];
+   if(!lyricFormat(type)){send(res,415,{error:'Формат песни не поддерживается.'});return}
+   if(Number(req.headers['content-length'])>MAX_LYRIC_BYTES){send(res,413,{error:'Песня больше 25 МБ.'});return}
+   if(noteAudioBusy){send(res,429,{error:'Распознавание уже выполняется.'});return}
+   noteAudioBusy=true;
+   const controller=new AbortController();
+   res.once('close',()=>controller.abort());
+   try{
+    const chunks=[];let size=0;
+    for await(const chunk of req){size+=chunk.length;if(size<=MAX_LYRIC_BYTES)chunks.push(chunk)}
+    if(size>MAX_LYRIC_BYTES){send(res,413,{error:'Песня больше 25 МБ.'});return}
+    const result=await transcribeLyrics(Buffer.concat(chunks),type,{signal:controller.signal});
+    if(!res.destroyed)send(res,200,result);
+   }catch(error){
+    const labels={'engine-missing':'Локальный Whisper не установлен.','dependency-missing':'Установите локальный Whisper через server/install-note-transcription.cmd.','model-unavailable':'Модель Whisper не найдена. Запустите установщик распознавания.','too-long':'Поддерживаются песни до 10 минут.','no-speech':'Не удалось уверенно разобрать вокал.','timeout':'Анализ не завершился. Попробуйте более короткую песню.'};
+    if(!res.destroyed)send(res,422,{error:labels[error.message]||'Не удалось разобрать песню.'});
+   }finally{noteAudioBusy=false}
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-note-transcribe'){
