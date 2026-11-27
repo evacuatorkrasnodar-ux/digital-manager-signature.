@@ -1191,7 +1191,6 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   <div class="sv-music-section-heading"><h3 class="sv-music-section-title">Недавно слушали</h3><button type="button" data-music-view-action="library" aria-label="Открыть медиатеку">›</button></div>
   <div id="svMusicRecent" class="sv-music-recent"></div>
   <button type="button" class="sv-replay-entry" data-music-view-action="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 13v4m4-8v8m4-12v12m4-8v8m4-4v4"/></svg><span><strong>Мой музыкальный мир</strong><small>Ваши музыкальные итоги</small></span><span aria-hidden="true">›</span></button>
-  <div id="svMusicHomeMiniSlot" aria-label="Музыкальный мини-плеер"></div>
  </section>
  <section id="svMusicReplay" class="sv-music-browse-panel" hidden aria-labelledby="svMusicReplayTitle">
  <button type="button" class="sv-replay-back" data-music-view-action="home" aria-label="Назад к музыке">‹ Слушать</button>
@@ -2301,7 +2300,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
 <input id="svGlobalSearchInput" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Спроси или найди..." aria-label="Единый поиск в SEYVEO">
 </label>
 
-<div id="svGlobalSearchResults" class="sv-search-results" aria-live="polite"></div></section><div id="sayviMusicMini" class="sv-music-mini" hidden aria-label="Сейчас играет в SEYVEO" role="group">
+<div id="svGlobalSearchResults" class="sv-search-results" aria-live="polite"></div></section><div id="svMusicHomeMiniSlot" aria-label="Музыкальный мини-плеер"></div><div id="sayviMusicMini" class="sv-music-mini" hidden aria-label="Сейчас играет в SEYVEO" role="group">
  <button id="sayviMusicMiniOpen" class="sv-music-mini-open" type="button" aria-label="Открыть музыкальный плеер" title="Открыть плеер · свайп вправо — предыдущий трек, влево — следующий">
   <span class="sv-music-mini-symbol" aria-hidden="true">
    <svg class="sv-music-mini-placeholder" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l12-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.4"/><ellipse cx="18" cy="16" rx="3" ry="2.4"/></svg>
@@ -6631,6 +6630,90 @@ html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-sh
 /* Search keeps the original neutral ink until opened. */
 html:root[data-theme="light"][data-theme].sv-music-screen.sv-global-search-open body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage{color:#527783!important}
 html:root[data-theme="light"][data-theme].sv-music-screen.sv-global-search-open body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage > svg{color:inherit!important;stroke:currentColor!important}
+
+/* Music editorial polish. One sticky header, one fixed mini, one scroll surface.
+   The shared dock, full player and other SEYVEO routes keep their geometry. */
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage{
+ --sv-music-page-inset:clamp(16px,4.5vw,25px);
+ padding-top:0!important;padding-inline:var(--sv-music-page-inset)!important;
+}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage > .sv-music-head{
+ position:sticky!important;top:0!important;z-index:12!important;
+ align-self:stretch;align-items:center!important;flex:0 0 auto!important;
+ min-height:60px!important;box-sizing:border-box!important;
+ margin:0 calc(-1 * var(--sv-music-page-inset))!important;
+ padding:8px var(--sv-music-page-inset)!important;
+}
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage > .sv-music-head{
+ background:rgba(255,255,255,.82)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(108%)!important;
+ backdrop-filter:blur(18px) saturate(108%)!important;
+ border-bottom:1px solid rgba(112,127,146,.09)!important;
+}
+html:root[data-theme="dark"].sv-music-screen.sv-music-browse body #sayviMusicPage > .sv-music-head{
+ background:var(--sv-air-dock,var(--card2))!important;
+ -webkit-backdrop-filter:blur(18px)!important;backdrop-filter:blur(18px)!important;
+}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage .sv-music-minimize{
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ flex:0 0 44px!important;transform:none!important;box-shadow:none!important;
+}
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage .sv-music-minimize{
+ background:var(--sv-white-pearl-floating-dock,rgba(235,237,240,.62))!important;
+ border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.94))!important;
+}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome{
+ margin:12px auto 0!important;flex:0 0 auto!important;
+}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome .sv-music-page-title{
+ font-size:clamp(28px,7.8vw,33px)!important;font-weight:650!important;margin:0 0 13px!important;
+}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome .sv-music-section-title{
+ font-size:clamp(18px,5.2vw,21px)!important;font-weight:630!important;margin:0 0 4px!important;
+}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage #svMusicHome .sv-music-browse-caption{
+ font-size:13px!important;line-height:1.4!important;margin:0 0 10px!important;
+}
+#sayviMusicPage #svMusicHome .sv-music-feature-scroll{gap:10px!important;padding:0!important}
+#sayviMusicPage #svMusicHome .sv-music-feature{height:clamp(132px,40vw,190px)!important;border-radius:20px!important}
+#sayviMusicPage #svMusicHome .sv-music-feature-art svg{width:clamp(40px,12vw,66px)!important;height:clamp(40px,12vw,66px)!important}
+#sayviMusicPage #svMusicHome .sv-music-feature-caption{padding:18px 12px 10px!important}
+#sayviMusicPage #svMusicHome .sv-music-feature-caption strong{font-weight:620!important;font-size:clamp(16px,4.7vw,20px)!important}
+#sayviMusicPage #svMusicHome .sv-music-feature-lilac{height:64px!important}
+#sayviMusicPage #svMusicHome .sv-music-feature-lilac .sv-music-feature-caption{padding:0!important}
+#sayviMusicPage #svMusicHome .sv-music-feature-lilac .sv-music-feature-art svg{width:30px!important;height:30px!important}
+#sayviMusicPage #svMusicHome .sv-music-section-heading{margin:14px 0 0!important;min-height:44px!important}
+#sayviMusicPage #svMusicHome .sv-music-section-heading .sv-music-section-title{margin:0!important}
+#sayviMusicPage #svMusicHome .sv-music-section-heading button{font-size:23px!important}
+#sayviMusicPage #svMusicHome .sv-music-recent{gap:4px!important;padding:0!important;margin:0!important}
+#sayviMusicPage #svMusicHome .sv-music-recent-empty{grid-column:1/-1;margin:0!important;padding:2px 0 5px!important;font-size:13px!important;line-height:1.45!important}
+#sayviMusicPage #svMusicHome .sv-replay-entry{
+ min-height:66px!important;box-sizing:border-box!important;margin:14px 0 0!important;padding:10px 12px!important;
+ border-radius:17px!important;border:0!important;box-shadow:none!important;
+ background:linear-gradient(115deg,rgba(137,169,215,.15),rgba(189,165,216,.10),rgba(167,197,195,.06))!important;
+}
+#sayviMusicPage #svMusicHome .sv-replay-entry strong{font-size:14px!important;font-weight:620!important}
+#sayviMusicPage #svMusicHome .sv-replay-entry small{font-size:12px!important;line-height:1.35!important}
+#sayviMusicPage #svMusicHome .sv-replay-entry > span:last-child{font-size:21px!important;color:var(--secondary)!important}
+/* The same mini-player moves into a body-level slot, outside the scrollport.
+   No duplicate control, no white backing sheet. Match both outer dock edges. */
+#svMusicHomeMiniSlot{display:contents!important}
+html:root.sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]){
+ position:fixed!important;z-index:29!important;box-sizing:border-box!important;
+ left:max(clamp(14px,5vw,22px),env(safe-area-inset-left,0px))!important;
+ right:max(clamp(14px,5vw,22px),env(safe-area-inset-right,0px))!important;
+ top:auto!important;bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 68px)!important;
+ width:auto!important;max-width:none!important;margin:0!important;transform:none!important;
+ height:56px!important;min-height:56px!important;max-height:56px!important;
+}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="home"]{
+ padding-bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 136px)!important;
+ scroll-padding-bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 136px)!important;
+}
+html:root.sv-music-screen body:has(#sayviMusicPage.sv-music-empty) #svMusicHomeMiniSlot > #sayviMusicMini .sv-music-mini-progress{visibility:hidden!important}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage > .sv-music-head{background:#fff!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
 </style>
 
 <style id="svMainDockMusicPearlTrial">
