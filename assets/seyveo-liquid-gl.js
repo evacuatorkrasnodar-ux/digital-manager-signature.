@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V85 · audio-driven living silk, quiet ground reflection · WebGL 1. */
+/* SEYVEO Liquid Sound V86 · audio-driven living silk, quiet ground reflection · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -137,7 +137,7 @@ void main(){
 }
 `;
  const fs=(surfaceDots?'#extension GL_OES_standard_derivatives : enable\n#define SURFACE_DOTS 1\n':'')+`precision mediump float;
-uniform mediump float uKind,uMode; uniform mediump vec4 uMusic; varying mediump vec2 vUV; varying mediump float vLight,vSheen;
+uniform mediump float uKind,uMode,uPearl; uniform mediump vec4 uMusic; varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 float peak(float a,float c,float w){return exp(-(1.0-cos(a-c))/(w*w));}
 float gauss(float x,float w){float q=x/w;return exp(-q*q);}
 #ifdef SURFACE_DOTS
@@ -149,10 +149,25 @@ void main(){
  if(uKind>4.5&&uKind<5.5){
   vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
   if(r>1.0){
+   if(uPearl>.5)discard;
    float glow=gauss(r-1.0,.045)*(.018+.15*peak(a,-2.16,.44)+.28*peak(a,1.30,.58));
    float floorGlow=gauss(xy.x,.43)*gauss(xy.y-1.041,.038)*.15+gauss(xy.x,.21)*gauss(xy.y-1.033,.017)*.12;
    glow=clamp(glow+floorGlow,0.0,.75);
    gl_FragColor=vec4(.27,.75,.77,glow*.66);return;
+  }
+  // Pearl glass is a separate optical material, using the same stationary shell.
+  if(uPearl>.5){
+   float n=sqrt(max(0.0,1.0-r*r));
+   float top=peak(a,-2.16,.65),bottom=peak(a,1.30,.72);
+   float reflection=gauss(r-(.925-.075*top),.026+.024*top)*top;
+   float lower=gauss(r-.937,.035)*bottom;
+   float edge=gauss(r-.986,.014)*(.35+.65*bottom);
+   vec2 q=vec2(.78*xy.x+.625*xy.y,-.625*xy.x+.78*xy.y);
+   float curve=gauss(length(vec2(q.x,q.y*1.52))-.91,.014)*smoothstep(-.8,.2,-q.y)*(1.0-smoothstep(.84,.99,r));
+   float white=clamp(.72*reflection+.45*lower,0.0,1.0);
+   float lens=.24*edge+.09*pow(1.0-n,2.0)+.07*curve;
+   col=mix(vec3(.35,.64,.65),vec3(.99,1.0,1.0),white/(white+lens+.001));
+   gl_FragColor=vec4(col,clamp(.045+white+lens,0.0,.90));return;
   }
   // Original V36 glass (27 Nov 14:08 Moscow), independent of today's silk.
   float n=sqrt(max(0.0,1.0-r*r));
@@ -238,6 +253,11 @@ void main(){
 #endif
  }
  if(uKind<4.5||uKind>5.5&&uKind<7.5){float shimmer=.5+.5*sin(18.0*x+9.0*v-uMusic.x*12.0);alpha*=1.0+(.12*uMusic.w)*shimmer;}
+ if(uPearl>.5){
+  if(uKind>7.5){alpha*=.65;col=mix(col,vec3(.55,1.0,.97),.40);}
+  else if(uMode<.5){col=mix(vec3(.35,.65,.66),vec3(.82,.98,.97),clamp(col.g,0.0,1.0));alpha*=.58;}
+  else {col=mix(vec3(.22,.62,.65),vec3(.83,1.0,.98),smoothstep(.55,.98,col.r));alpha*=.64;}
+ }
  gl_FragColor=vec4(col,clamp(alpha,0.0,1.0));
 }
 `;
@@ -245,7 +265,7 @@ void main(){
  let vertex,fragment,program;
  try{vertex=shader(gl.VERTEX_SHADER,vs);fragment=shader(gl.FRAGMENT_SHADER,fs);program=gl.createProgram();gl.attachShader(program,vertex);gl.attachShader(program,fragment);gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));}catch(e){if(vertex)gl.deleteShader(vertex);if(fragment)gl.deleteShader(fragment);if(program)gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();throw e}
  gl.deleteShader(vertex);gl.deleteShader(fragment);gl.useProgram(program);
- const data=gl.getAttribLocation(program,'aData'),uniform={};for(const k of ['uMusic','uKind','uMode','uSize','uIdle'])uniform[k]=gl.getUniformLocation(program,k);
+ const data=gl.getAttribLocation(program,'aData'),uniform={};for(const k of ['uMusic','uKind','uMode','uSize','uIdle','uPearl'])uniform[k]=gl.getUniformLocation(program,k);
  // Separate parametric matter meshes and an analytic spherical glass layer.
  function mesh(kind,n,m,mode){
   const values=[],indices=[];
@@ -282,6 +302,6 @@ void main(){
  }
  gl.disable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
  const resources=[glass,glowMid,glowBottom,glowSeam,...parts.flat()];
- return {dispose(){if(lost)return;lost=true;for(const obj of resources){gl.deleteBuffer(obj.buffer);if(obj.index)gl.deleteBuffer(obj.index)}gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();canvas.width=canvas.height=1;},render(size,phase,bass,mid,air,idle=0){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uIdle,idle);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
+ return {dispose(){if(lost)return;lost=true;for(const obj of resources){gl.deleteBuffer(obj.buffer);if(obj.index)gl.deleteBuffer(obj.index)}gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();canvas.width=canvas.height=1;},render(size,phase,bass,mid,air,idle=0,pearl=false){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uIdle,idle);gl.uniform1f(uniform.uPearl,pearl?1:0);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
 }};
 })();
