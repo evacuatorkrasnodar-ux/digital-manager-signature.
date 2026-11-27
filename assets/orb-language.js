@@ -219,37 +219,37 @@
   // with a shallow double fold at the upper-right shoulder.
   const peak=(angle,center,width)=>Math.exp(-(1-Math.cos(angle-center))/(width*width));
   const drift=.10*Math.sin(t*.58);
+  // Reference-derived polar profiles for the lit fold, rear edge and light.
+  // Independent boundaries cross naturally as the silk turns over in space.
+  const profiles=[
+   [.997,.995,.982,.993,.997,.997,.976,.981,.986,.935,.90,.86,.85,.85,.91,.93,.912,.911,.905,.84,.81,.938,.995,.997],
+   [.89,.875,.87,.88,.90,.91,.91,.91,.90,.94,.98,1,1,1,1,1,1,1,1,1,.98,.99,.94,.90],
+   [.59,.88,1,.97,.94,.90,1,.94,.90,.70,.42,.26,.23,.22,.38,.84,1,1,1,.94,.80,1,.88,.59]
+  ];
+  const profile=(values,a)=>{
+   const n=values.length,z=((a/(Math.PI*2)*n)%n+n)%n,i=Math.floor(z),f=z-i;
+   const get=k=>values[(i+k+n)%n],A=get(-1),B=get(0),C=get(1),D=get(2);
+   return B+.5*f*(C-A+f*(2*A-5*B+4*C-D+f*(3*(B-C)+D-A)));
+  };
   const geom=angles.map(([a,ca,sa])=>{
    const aa=a+drift;
    return {a,ca,sa,
-    topLeft:peak(aa,-2.24,.57),
-    rightFold:peak(aa,.52,.56),
-    bottomFold:peak(aa,1.72,.45),
-    shoulder:peak(aa,-.77,.35),
-    pinch:peak(aa,-1.09,.17),
+    lip:profile(profiles[0],aa),back:profile(profiles[1],aa),
+    pinch:peak(aa,-1.0,.21),
     innerTop:peak(aa,-1.85,.54),
     innerBottom:peak(aa,1.52,.40),
     innerKnot:peak(aa,1.49,.12)};
   });
   const point=(g,kind,u)=>{
-   const {a,ca,sa,topLeft,rightFold,bottomFold,shoulder,pinch,innerTop,innerBottom,innerKnot}=g;
+   const {a,lip,back,pinch,innerTop,innerBottom,innerKnot}=g;
    let r;
    if(kind===0){
-    const silhouette=radius*(1+.007*Math.sin(2*a+t)+.004*Math.sin(3*a-t*.5));
-    const depth=radius*clamp(.004+(.145+.018*m)*topLeft+.132*rightFold+.078*bottomFold+.155*shoulder-.064*pinch,.003,.195);
-    // Opposed bending produces a bright turning edge without deforming the silhouette.
-    const curl=radius*(.064*pinch-.028*shoulder+.007*rightFold*Math.sin(4*a+t));
-    r=silhouette-depth*u+curl*Math.sin(Math.PI*u);
+    r=radius*(back+(lip-back)*u+(.028+.017*m)*pinch*Math.sin(Math.PI*u));
    }else{
-    const opening=radius*(.753+.009*Math.sin(2*a+t)+.005*Math.sin(3*a-t*.65));
-    // At the bottom the membrane turns inward rather than forming another external hoop.
-    const depth=radius*(.003+.052*innerTop-.107*innerBottom+.045*innerKnot);
-    r=opening+depth*u+radius*.016*innerKnot*Math.sin(Math.PI*u);
+    r=radius*(.753+.007*Math.sin(2*a+t)+(.052*innerTop-(.107+.012*m)*innerBottom+.045*innerKnot)*u+.016*innerKnot*Math.sin(Math.PI*u));
    }
-   const shear=(kind===0?.018:.012)*Math.sin(Math.PI*u)*Math.sin(2*a+.8+t*.45);
-   const cs=Math.cos(shear),ss=Math.sin(shear);
-   const x=r*(ca*cs-sa*ss),y=r*(sa*cs+ca*ss)*.995;
-   return [200+x*cr-y*sr,200+x*sr+y*cr];
+   const z=a+rot+.018*Math.sin(Math.PI*u)*Math.sin(2*a+.8+t*.45);
+   return [200+r*Math.cos(z),200+r*Math.sin(z)];
   };
   // Smooth closed paths between sampled vertices. Straight polygon chords
   // shared by all strands can create radial scallops on a high-DPI canvas.
@@ -265,130 +265,69 @@
    }
    ctx.closePath();
   };
-  // Fine continuous filaments, not polygon tiles: light accumulates where the
-  // folded surface turns toward its edge, while the wider shell stays transparent.
+  // Light follows a single turning edge, instead of drawing two complete hoops.
   function ribbon(kind,count){
-   const rows=Array.from({length:count},(_,j)=>geom.map(g=>point(g,kind,Math.max(0,Math.min(1,(j+(j===0||j===count-1?0:.19*Math.sin(j*2.399963)))/(count-1))))));
-   // Soft light runs across the fabric, not just the sharp turning lip.
-   // Directional gradients are continuous, with opposing luminous lobes.
-   const fiber=ctx.createLinearGradient(64,55,339,345);
-   fiber.addColorStop(0,'rgba(142,255,233,.94)');
-   fiber.addColorStop(.21,'rgba(143,255,232,1)');
-   fiber.addColorStop(.47,'rgba(71,181,173,.10)');
-   fiber.addColorStop(.76,'rgba(131,255,230,.98)');
-   fiber.addColorStop(1,'rgba(187,255,240,.92)');
-   const veil=ctx.createLinearGradient(45,76,350,326);
-   veil.addColorStop(0,'rgba(76,223,204,.45)');
-   veil.addColorStop(.22,'rgba(116,249,221,.67)');
-   veil.addColorStop(.48,'rgba(56,158,153,.08)');
-   veil.addColorStop(.75,'rgba(117,251,222,.60)');
-   veil.addColorStop(1,'rgba(91,229,207,.45)');
-   // A seamless underlay softens gaps without tiled fills or a blurred halo.
-   ctx.beginPath();
-   for(let i=0;i<rows[0].length;i++){const [x,y]=rows[0][i];if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}
-   ctx.closePath();
-   const far=rows[count-1];
-   for(let i=far.length-1;i>=0;i--){const [x,y]=far[i];if(i===far.length-1)ctx.moveTo(x,y);else ctx.lineTo(x,y)}
-   ctx.closePath();
-   ctx.fillStyle=veil;ctx.globalAlpha=kind===0?.12:.10;ctx.fill('evenodd');
-   // Angular material lighting: the illuminated lip changes from the inner
-   // side at upper left to the outer side at lower right. This makes the
-   // ribbon read as a turning surface, not a uniformly lit tube.
-   const lightBands=[];
-   if(typeof ctx.createConicGradient==='function'){
-    for(let k=0;k<=10;k++){
-     const u=k/10;
-     const gradient=ctx.createConicGradient(rot,200,200);
-     for(let q=0;q<=32;q++){
-      const a=q/32*Math.PI*2;
-      const upper=peak(a+drift,-2.16,.60);
-      const right=peak(a+drift,.60,.69);
-      const bottom=peak(a+drift,1.52,.46);
-      const left=peak(a+drift,2.72,.33);
-      const shoulderLight=peak(a+drift,-.83,.24);
-      const innerTop=peak(a+drift,-1.80,.65);
-      const innerBottom=peak(a+drift,1.49,.46);
-      const lip=kind===0?clamp(.93-.78*right-.56*bottom,.06,.96):.06+.70*innerBottom;
-      const rim=Math.exp(-Math.pow((u-lip)/.25,2));
-      const body=Math.exp(-Math.pow((u-.50)/.36,2));
-      const light=kind===0?clamp(.025+.98*upper+.98*right+.74*bottom+.10*left+.35*shoulderLight,0,1):clamp(.08+.92*innerTop+.82*innerBottom,0,1);
-      const opacity=clamp(.008+Math.pow(light,1.25)*(.91*rim+.28*body),0,.98);
-      const white=clamp(rim*.96*light,0,1);
-      gradient.addColorStop(q/32,'rgba('+Math.round(92+126*white)+','+Math.round(230+25*white)+','+Math.round(211+36*white)+','+opacity.toFixed(3)+')');
+   const rows=Array.from({length:count},(_,j)=>geom.map(g=>point(g,kind,j/(count-1))));
+   const edgeU=kind===0?1:0;
+   const intensity=a=>kind===0?clamp(profile(profiles[2],a+drift),0,1):clamp(.24+.78*peak(a+drift,-1.85,.60)+.78*peak(a+drift,1.52,.42),0,1);
+   const conic=typeof ctx.createConicGradient==='function';
+   const fallback=ctx.createLinearGradient(64,55,339,345);
+   fallback.addColorStop(0,'rgba(151,255,233,.88)');
+   fallback.addColorStop(.24,'rgba(229,255,249,1)');
+   fallback.addColorStop(.48,'rgba(73,186,174,.22)');
+   fallback.addColorStop(.77,'rgba(174,255,235,.96)');
+   fallback.addColorStop(1,'rgba(224,255,247,.86)');
+   const gradients=[];
+   if(conic){
+    for(let j=0;j<=16;j++){
+     const u=j/16,g=ctx.createConicGradient(rot,200,200);
+     const rim=Math.exp(-Math.pow(u-edgeU,2)/.08),body=Math.sin(Math.PI*u);
+     for(let k=0;k<=48;k++){
+      const a=k/48*Math.PI*2,light=intensity(a);
+      const opacity=clamp(.025+light*(.66*rim+.25*body),0,.95),w=light*rim;
+      g.addColorStop(k/48,'rgba('+Math.round(104+138*w)+','+Math.round(230+25*w)+','+Math.round(214+35*w)+','+opacity.toFixed(3)+')');
      }
-     lightBands.push(gradient);
+     gradients.push(g);
     }
    }
    for(let j=0;j<count;j++){
-    const u=j/(count-1),edgeU=kind===0?.89:.08;
-    const lip=Math.exp(-Math.pow((u-edgeU)/.23,2));
-    const body=Math.exp(-Math.pow((u-(kind===0?.57:.42))/.31,2));
-    path(rows[j]);
-    if(lightBands.length){
-     ctx.strokeStyle=lightBands[Math.round(u*10)];ctx.globalAlpha=1;
-     ctx.lineWidth=.28+.13*body;ctx.stroke();
-    }else{
-     ctx.strokeStyle=fiber;ctx.globalAlpha=.021+.68*lip+.16*body;
-     ctx.lineWidth=.25+.19*lip+.08*body;ctx.stroke();
-    }
+    const u=j/(count-1),rim=Math.exp(-Math.pow(u-edgeU,2)/.08);
+    path(rows[j]);ctx.strokeStyle=conic?gradients[Math.round(u*16)]:fallback;
+    ctx.globalAlpha=conic?1:.04+.60*rim+.19*Math.sin(Math.PI*u);
+    ctx.lineWidth=.27+.15*rim;ctx.stroke();
    }
-   if(kind===0&&lightBands.length){
-    const crest=geom.map(g=>{
-     const right=peak(g.a+drift,.60,.69),bottom=peak(g.a+drift,1.52,.46);
-     return point(g,0,clamp(.93-.78*right-.56*bottom,.06,.96));
-    });
-    const gloss=ctx.createConicGradient(rot,200,200);
+   let gloss=fallback;
+   if(conic){
+    gloss=ctx.createConicGradient(rot,200,200);
     for(let k=0;k<=48;k++){
-     const a=k/48*Math.PI*2;
-     const l=clamp(.93*peak(a+drift,-2.16,.49)+.96*peak(a+drift,.60,.54)+.78*peak(a+drift,1.52,.43),0,1);
-     gloss.addColorStop(k/48,'rgba(226,255,248,'+(l*.92).toFixed(3)+')');
+     const a=k/48*Math.PI*2,light=kind===0?intensity(a):.95;
+     gloss.addColorStop(k/48,'rgba(232,255,249,'+light.toFixed(3)+')');
     }
-    path(crest);ctx.strokeStyle=gloss;ctx.globalAlpha=.12;ctx.lineWidth=3.0;ctx.stroke();
-    ctx.globalAlpha=.94;ctx.lineWidth=.92;ctx.stroke();
    }
-   // A local curled crest, independent of the closed ring. The fine strands
-   // turn back across the shoulder, then merge smoothly into the main lip.
+   path(rows[kind===0?count-1:0]);ctx.strokeStyle=gloss;
+   ctx.globalAlpha=.16;ctx.lineWidth=2.8;ctx.stroke();
+   ctx.globalAlpha=1;ctx.lineWidth=1.05;ctx.stroke();
+   // Short, tapering return fold on the upper-right shoulder.
    if(kind===0){
-    const from=5.02,to=5.73;
-    const fan=geom.filter(g=>g.a>=from&&g.a<=to);
+    const from=5.10,to=5.58,fan=geom.filter(g=>g.a>=from&&g.a<=to);
     if(fan.length>2){
      const first=point(fan[0],0,1),last=point(fan[fan.length-1],0,1);
-     const sheen=ctx.createLinearGradient(first[0],first[1],last[0],last[1]);
+     const sheen=ctx.createLinearGradient(...first,...last);
      sheen.addColorStop(0,'rgba(157,255,234,0)');
-     sheen.addColorStop(.25,'rgba(157,255,234,.48)');
-     sheen.addColorStop(.48,'rgba(223,255,246,.90)');
-     sheen.addColorStop(.73,'rgba(151,255,234,.48)');
+     sheen.addColorStop(.45,'rgba(223,255,246,.72)');
      sheen.addColorStop(1,'rgba(157,255,234,0)');
-     const threads=liquidMobile?13:19;
-     for(let j=0;j<threads;j++){
-      const v=j/(threads-1);
-      const pts=fan.map(g=>{
-       const q=clamp((g.a-from)/(to-from),0,1);
-       const turn=Math.pow(Math.sin(Math.PI*q),1.6);
-       return point(g,0,1-(.34+.52*v)*turn);
-      });
-      path(pts,false);ctx.strokeStyle=sheen;
-      ctx.globalAlpha=.12+.80*Math.pow(v,4);ctx.lineWidth=.23+.66*Math.pow(v,5);ctx.stroke();
+     for(let j=0;j<12;j++){
+      const v=j/11;
+      const pts=fan.map(g=>point(g,0,1-(.24+.52*v)*Math.pow(Math.sin(Math.PI*(g.a-from)/(to-from)),1.6)));
+      path(pts,false);ctx.strokeStyle=sheen;ctx.globalAlpha=.12+.48*v*v;ctx.lineWidth=.24+.25*v*v;ctx.stroke();
      }
     }
    }
    ctx.globalAlpha=1;
-   const edge=rows[kind===0?count-1:0];
-   const spec=ctx.createLinearGradient(64,39,337,360);
-   spec.addColorStop(0,kind===0?'rgba(164,255,232,.35)':'rgba(229,255,249,.95)');
-   spec.addColorStop(.20,'rgba(229,255,249,1)');
-   spec.addColorStop(.44,kind===0?'rgba(100,219,206,.30)':'rgba(220,255,247,.88)');
-   spec.addColorStop(.69,kind===0?'rgba(156,247,229,.55)':'rgba(241,255,252,1)');
-   spec.addColorStop(.88,kind===0?'rgba(182,255,237,.48)':'rgba(224,255,247,.94)');
-   spec.addColorStop(1,kind===0?'rgba(105,235,213,.28)':'rgba(225,255,247,.91)');
-   path(edge);ctx.strokeStyle=spec;ctx.globalAlpha=.18;ctx.lineWidth=2.5;ctx.stroke();
-   ctx.globalAlpha=.40;ctx.lineWidth=1.6;ctx.stroke();
-   ctx.globalAlpha=kind===0?.86:1;ctx.lineWidth=kind===0?1.02:1.16;ctx.stroke();
-   path(rows[kind===0?0:count-1]);ctx.strokeStyle=kind===0&&lightBands.length?lightBands[0]:'rgba(151,240,225,.19)';ctx.lineWidth=kind===0?.65:.32;ctx.stroke();
   }
   // Silk membrane: a broad fine mesh tapers into two points and folds back
   // on itself near the diagonal crest. The interior is no longer a flat S line.
-  const R=radius*.753,tilt=-.31+.035*Math.sin(t*.7),mc=Math.cos(tilt),ms=Math.sin(tilt);
+  const R=radius*.753,tilt=-.27+.035*Math.sin(t*.7),mc=Math.cos(tilt),ms=Math.sin(tilt);
   const membrane=(x,u)=>{
    const env=Math.sqrt(Math.max(0,1-x*x));
    const arc=-env*(.97+.012*Math.sin(t));
