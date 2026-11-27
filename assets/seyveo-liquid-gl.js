@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V62 · continuous curved silk lattice · WebGL 1. */
+/* SEYVEO Liquid Sound V63 · traced three-stage central fold · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -10,13 +10,24 @@ attribute vec4 aData;
 uniform vec4 uMusic; uniform mediump float uKind,uMode; uniform float uSize;
 varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 const float PI=3.14159265;
-// Five shared cubic contours with matched first derivatives at the midpoint.
+// Shared cubic contours with continuous tangents at each join.
 vec2 bez(vec2 a,vec2 b,vec2 c,vec2 d,float t){float q=1.0-t;return q*q*q*a+3.0*q*q*t*b+3.0*q*t*t*c+t*t*t*d;}
 vec3 contour(float k,float u){
  vec2 l=vec2(-.864,.207),r=vec2(.961,-.045),m,c1,c2,c3,c4;float z;
+ // Central ribbon: separate dip, crest and rounded return, traced in sphere-relative coordinates.
+ if(k>.5&&k<2.5){
+  bool nearEdge=k>1.5;
+  vec2 dip=nearEdge?vec2(-.265,.263):vec2(-.265,.085);
+  vec2 crest=nearEdge?vec2(.790,-.225):vec2(.790,-.242);
+  vec2 dDip=nearEdge?vec2(1.70,0.0):vec2(1.65,-.14);
+  vec2 dCrest=vec2(.90,0.0);
+  vec2 p;
+  if(u<.46)p=bez(l,nearEdge?vec2(-.818,.105):vec2(-.817,.075),dip-dDip*(.46/3.0),dip,u/.46);
+  else if(u<.86)p=bez(dip,dip+dDip*(.40/3.0),crest-dCrest*(.40/3.0),crest,(u-.46)/.40);
+  else p=bez(crest,crest+dCrest*(.14/3.0),vec2(.947,-.185),r,(u-.86)/.14);
+  return vec3(p,(nearEdge?.38:.23)*sin(PI*u));
+ }
  if(k<.5){m=vec2(.105,-.795);c1=vec2(-.68,.105);c2=vec2(-.450,-.795);c3=vec2(.660,-.795);c4=vec2(.88,-.43);z=-.13;}
- else if(k<1.5){m=vec2(-.19,.060);c1=vec2(-.81,.012);c2=vec2(-.565,.120);c3=vec2(.185,0.0);c4=vec2(.78,-.47);z=.23;}
- else if(k<2.5){m=vec2(-.25,.270);c1=vec2(-.81,.065);c2=vec2(-.675,.270);c3=vec2(.175,.270);c4=vec2(.78,-.49);z=.38;}
  else if(k<3.5){m=vec2(.39,.55);c1=vec2(-.52,.23);c2=vec2(.020,.55);c3=vec2(.760,.55);c4=vec2(1.035,.20);z=-.09;}
  else {m=vec2(-.045,.785);c1=vec2(-.92,.47);c2=vec2(-.475,.785);c3=vec2(.385,.785);c4=vec2(1.02,.32);z=-.22;}
  vec2 p=u<.5?bez(l,c1,c2,m,u*2.0):bez(m,c3,c4,r,u*2.0-1.0);
@@ -56,7 +67,7 @@ vec3 crease(float x,float v){
  p.z+=w*.055*sin(t*.55+u*4.0)*(.30+mid);
  vec2 tangent=contour(k,min(1.0,u+.004)).xy-contour(k,max(0.0,u-.004)).xy;
  vec2 normal=normalize(vec2(-tangent.y,tangent.x)+vec2(.000001,0.0));
- float width=uKind<8.5?.133:uKind<9.5?.125:.065;
+ float width=uKind<8.5?(.115+.018*sin(PI*u)):uKind<9.5?.125:.065;
  p.xy+=normal*(v*2.0-1.0)*width*(.72+.28*w);
  return p;
 }
@@ -162,7 +173,7 @@ void main(){
   }
   if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*5.2)*(1.0-smoothstep(.24,.50,d));}
   // Subtle individual silk filaments, confined to the turning central fold.
-  if(uMode>1.5){float taper=pow(max(0.0,sin(3.14159265*(x+1.0)*.5)),.55);col=mix(vec3(.015,.74,.77),vec3(.55,1.0,.97),pow(v,2.0));alpha=(.045+.15*middleLight+.16*pow(v,5.0))*taper;}
+  if(uMode>1.5){float taper=pow(max(0.0,sin(3.14159265*(x+1.0)*.5)),.55);col=mix(vec3(.015,.74,.77),vec3(.55,1.0,.97),pow(v,2.0));alpha=(.045+.15*middleLight+.16*pow(v,5.0))*taper*(1.0-.65*smoothstep(.70,.90,x));}
 
  }
  gl_FragColor=vec4(col,clamp(alpha,0.0,1.0));
