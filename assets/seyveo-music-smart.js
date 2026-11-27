@@ -263,6 +263,7 @@
     body.replaceChildren();settings.replaceChildren();setLyricSettings(false);current=-2;lyricData=null;
     if(karaokeTools)karaokeTools.disabled=!data;
     $('svInlineKaraokeLabel').textContent=data?.draft?'ТЕКСТ · ЧЕРНОВИК':'ТЕКСТ ПЕСНИ';
+    let autoStart=null;
     if(data){
      lyricData={...data,file};
      if(data.draft)message('Черновик Сэйви · возможны ошибки',settings);
@@ -305,12 +306,11 @@
       body.append(el);
      }
     }else {
-     message('Готовый текст не найден. Сэйви может попробовать разобрать вокал на вашем компьютере.');
      const local=['localhost','127.0.0.1'].includes(w.location.hostname);
      if(local&&engine&&id){
       let status=null;
       function progress(text){if(!status){status=message(text);status.setAttribute('role','status')}else status.textContent=text;return status}
-      const start=action('Распознать текст автоматически',async()=>{
+      const start=action('Повторить распознавание',async()=>{
        if(!valid()||lyricAbort)return;
        const ext=(file.name.match(/\.([^.]+)$/)||[])[1]?.toLowerCase();
        const type=({mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',flac:'audio/flac',ogg:'audio/ogg',opus:'audio/opus',aiff:'audio/aiff',aif:'audio/aiff'})[ext]||file.type;
@@ -319,7 +319,7 @@
        const controller=new AbortController();lyricAbort=controller;
        const job=Array.from(w.crypto.getRandomValues(new Uint8Array(16)),v=>v.toString(16).padStart(2,'0')).join('');
        let pollTimer=0,done=false;
-       start.disabled=true;progress('Проверяю локальный движок…');
+       start.disabled=true;start.hidden=true;progress('Сэйви готовит текст песни…');
        const meter=d.createElement('progress');meter.className='sv-lyrics-progress';meter.max=100;meter.setAttribute('aria-label','Обработанная часть песни');status.after(meter);
        const showProgress=(phase,percent)=>{
         const labels={receiving:'Подготавливаю песню…',checking:'Проверяю аудиофайл…',loading:'Загружаю локальную модель…',decoding:'Разбираю вокал',finishing:'Подготавливаю текст…',complete:'Распознавание завершено'};
@@ -333,12 +333,19 @@
        const cancel=action('Отменить анализ',()=>controller.abort());
        try{
         const upgrade='Запущена старая версия сервера. Обновите проект из GitHub, остановите сервер (Ctrl+C) и снова запустите server/start-real-seyveo.cmd. Затем обновите страницу.';
-        const check=await w.fetch('/api/seyveo-music-lyrics-status',{cache:'no-store',signal:controller.signal});
-        if(check.status===404)throw Error(upgrade);
-        const readiness=await check.json().catch(()=>null);
-        if(!check.ok||readiness?.protocol!==2)throw Error(upgrade);
-        if(!readiness.pythonConfigured)throw Error('Локальный Whisper не установлен. Запустите server/install-note-transcription.cmd, затем перезапустите SEYVEO.');
-        if(readiness.busy)throw Error('Сэйви уже распознаёт запись. Повторите после завершения.');
+        // A previous song may still be releasing the single local Whisper worker.
+        for(let attempt=0;;attempt++){
+         if(!valid()||controller.signal.aborted)return;
+         const check=await w.fetch('/api/seyveo-music-lyrics-status',{cache:'no-store',signal:controller.signal});
+         if(check.status===404)throw Error(upgrade);
+         const readiness=await check.json().catch(()=>null);
+         if(!check.ok||readiness?.protocol!==2)throw Error(upgrade);
+         if(!readiness.pythonConfigured)throw Error('Локальный Whisper не установлен. Запустите server/install-note-transcription.cmd, затем перезапустите SEYVEO.');
+         if(!readiness.busy)break;
+         if(attempt>=9)throw Error('Локальный движок занят другой записью. Повторите позже.');
+         progress('Освобождаю локальный движок…');
+         await new Promise(resolve=>w.setTimeout(resolve,700));
+        }
         if(!valid()||controller.signal.aborted)return;
         showProgress('receiving',null);pollTimer=w.setTimeout(poll,500);
         const response=await w.fetch('/api/seyveo-music-lyrics',{method:'POST',headers:{'content-type':type,'x-seyveo-lyric-job':job},body:file,signal:controller.signal});
@@ -348,9 +355,10 @@
         done=true;showProgress('complete',100);
         const saved=await engine.put(id,data);if(valid()&&!controller.signal.aborted)render(data,true,saved);
        }catch(error){if(valid())status.textContent=controller.signal.aborted?'Анализ отменён.':String(error.message||'Анализ недоступен.')}
-       finally{done=true;w.clearTimeout(pollTimer);meter.remove();if(lyricAbort===controller)lyricAbort=null;if(valid()){start.disabled=false;cancel.remove()}}
+       finally{done=true;w.clearTimeout(pollTimer);meter.remove();if(lyricAbort===controller)lyricAbort=null;if(valid()){start.disabled=false;start.hidden=false;cancel.remove()}}
       });
-     }else message('Автоматическое распознавание пока доступно в локальной версии на компьютере.');
+      start.hidden=true;autoStart=start;
+     }else message('Автоматическое распознавание пока доступно в локальной версии на компьютере. Добавьте готовый текст песни.');
     }
     if(engine&&id){
      const input=d.createElement('input');input.type='file';input.accept='.lrc,.txt,text/plain';input.hidden=true;(data?settings:body).append(input);
@@ -359,6 +367,7 @@
       try{
        const parsed=await engine.read(selected);if(!valid())return;
        if(!parsed){message('Не удалось прочитать текст. Выберите LRC или TXT до 128 КБ.');return}
+       cancelLyric();
        const saved=await engine.put(id,parsed);if(valid())render(parsed,true,saved);
       }catch{if(valid())message('Не удалось загрузить текст.')}
      });
@@ -366,6 +375,7 @@
      if(imported)action('Удалить добавленный текст',async()=>{if(!valid())return;const removed=await engine.remove(id);if(valid()){if(removed)karaoke();else message('Не удалось удалить сохранённый текст.',settings)}},settings);
     }
     updateLine();
+    if(autoStart&&valid()&&!lyricAbort){autoStart.click();if(!lyricAbort)autoStart.hidden=false}
    };
    render(result,attached);
   }
