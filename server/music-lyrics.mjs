@@ -54,7 +54,7 @@ export async function transcribeLyrics(bytes,type,{signal,onProgress=()=>{}}={})
      const lines=Array.isArray(data.lines)?data.lines.filter(l=>Number.isFinite(l?.time)&&l.time>=0&&l.time<=600&&typeof l.text==='string'&&l.text.trim()).slice(0,500).map(l=>({time:l.time,text:l.text.slice(0,500),...(Number.isFinite(l.end)&&l.end>l.time&&l.end<=600?{end:l.end}:{}),words:Array.isArray(l.words)?l.words.filter(v=>typeof v?.text==='string'&&v.text.trim()&&Number.isFinite(v.start)&&Number.isFinite(v.end)&&v.start>=0&&v.end>v.start&&v.end<=600).slice(0,160).map(v=>({text:v.text.slice(0,120),start:v.start,end:v.end})):[]})).sort((a,b)=>a.time-b.time):[];
      if(!lines.length){finish(Error('no-speech'));return}
      onProgress({phase:'complete',percent:100});
-     finish(null,{timed:true,lines,draft:true});
+     finish(null,{timed:true,lines,draft:true,recognitionVersion:data.recognitionVersion===2?2:1,...(Number.isFinite(data.duration)&&data.duration>0&&data.duration<=600?{duration:data.duration}:{})});
     }catch{finish(Error('bad-audio'))}
    });
   });
