@@ -123,7 +123,7 @@
   if(!Number.isFinite(audio.duration)||audio.duration<=0)return;
   if(file.size>MAX_RHYTHM_BYTES||audio.duration>MAX_RHYTHM_SECONDS){rhythmCache.set(file,null);return}
   rhythmBusy=true;rhythmCache.set(file,null);
-  analyse(file).then(data=>{rhythmCache.set(file,data)}).catch(()=>{}).finally(()=>{rhythmBusy=false;syncRhythm()});
+  analyse(file).then(data=>{rhythmCache.set(file,data)}).catch(()=>{}).finally(()=>{rhythmBusy=false;syncRhythm();syncScene()});
  }
  function tickRhythm(timestamp){
   rhythmFrame=0;
@@ -157,6 +157,71 @@
   rhythmBars=nodes;
   signal.classList.add('svl-rhythm');
   if(!rhythmFrame)rhythmFrame=requestAnimationFrame(tickRhythm);
+ }
+
+ // The Music scene consumes the SAME bounded analysis cache as the Home orb.
+ // No second decoder, audio node, microphone, or change to the playback path.
+ const scene=musicPage?.querySelector('.sv-music-scene');
+ const sceneBars=Array.from(scene?.querySelectorAll('.sv-music-scene-wave line')||[]);
+ let sceneFrame=0,sceneLast=0,sceneFile=null,sceneVisible=true,sceneWaiting=false;
+ const sceneLevels=new Float32Array(sceneBars.length);
+ function sceneAllowed(){
+  return !!scene&&!!audio&&!document.hidden&&!musicPage.hidden&&
+   musicPage.dataset.musicView==='home'&&location.hash==='#sayvi-music'&&
+   sceneVisible&&!audio.paused&&!audio.ended&&!audio.error&&!sceneWaiting&&!audio.seeking&&audio.readyState>=2;
+ }
+ function resetSceneWave(){
+  if(sceneFrame)cancelAnimationFrame(sceneFrame);
+  sceneFrame=0;sceneLast=0;sceneFile=null;sceneLevels.fill(0);
+  scene?.classList.remove('sv-scene-rhythm');
+  scene?.style.removeProperty('--sv-scene-glow');
+  for(const bar of sceneBars){const h=Number(bar.dataset.rest)||8;bar.setAttribute('y1',String(74-h/2));bar.setAttribute('y2',String(74+h/2))}
+ }
+ function tickScene(timestamp){
+  sceneFrame=0;
+  if(!sceneAllowed()||reduce?.matches||window.SEYVEO_MUSIC?.rhythmFile?.()!==sceneFile){syncScene();return}
+  const data=rhythmCache.get(sceneFile);
+  if(!data?.length){resetSceneWave();return}
+  if(timestamp-sceneLast>=50){
+   sceneLast=timestamp;
+   const frame=clamp(Math.floor(audio.currentTime/RHYTHM_STEP),0,data.length/3-1)*3;
+   const bass=data[frame],mid=data[frame+1],air=data[frame+2];
+   const targets=[air*.65+mid*.15,mid*.72+air*.16,bass*.48+mid*.42,bass*.92,mid*.67+bass*.24,air*.66+mid*.16,mid*.47+air*.36,air*.59];
+   for(let i=0;i<sceneBars.length;i++){
+    const target=.12+.88*targets[i];
+    sceneLevels[i]+=(target-sceneLevels[i])*(target>sceneLevels[i]?.69:.31);
+    const height=5+51*sceneLevels[i];
+    sceneBars[i].setAttribute('y1',(74-height/2).toFixed(2));
+    sceneBars[i].setAttribute('y2',(74+height/2).toFixed(2));
+   }
+   scene.style.setProperty('--sv-scene-glow',(.23+.52*(bass*.55+mid*.30+air*.15)).toFixed(3));
+  }
+  sceneFrame=requestAnimationFrame(tickScene);
+ }
+ function syncScene(){
+  if(!scene)return;
+  const allowed=sceneAllowed();
+  scene.classList.toggle('sv-scene-playing',allowed);
+  if(!allowed||reduce?.matches){resetSceneWave();return}
+  const file=window.SEYVEO_MUSIC?.rhythmFile?.();
+  if(!file){if(sceneFile||sceneFrame)resetSceneWave();return}
+  if(sceneFile!==file){resetSceneWave();sceneFile=file}
+  prepareRhythm(file);
+  if(!rhythmCache.get(file)?.length)return;
+  scene.classList.add('sv-scene-rhythm');
+  if(!sceneFrame)sceneFrame=requestAnimationFrame(tickScene);
+ }
+ if(scene&&audio){
+  for(const name of ['waiting','stalled','seeking','emptied','error'])audio.addEventListener(name,()=>{sceneWaiting=true;syncScene()});
+  for(const name of ['playing','canplay','seeked'])audio.addEventListener(name,()=>{sceneWaiting=false;syncScene()});
+  for(const name of ['pause','ended','loadedmetadata','durationchange'])audio.addEventListener(name,syncScene);
+  for(const name of ['seyveo:music-view','seyveo:music-state','visibilitychange'])document.addEventListener(name,syncScene);
+  for(const name of ['hashchange','seyveo:route-changed','pageshow'])window.addEventListener(name,syncScene);
+  if(reduce?.addEventListener)reduce.addEventListener('change',syncScene);else reduce?.addListener?.(syncScene);
+  if(typeof IntersectionObserver==='function')new IntersectionObserver(entries=>{
+   sceneVisible=entries.some(entry=>entry.isIntersecting);syncScene();
+  },{threshold:0}).observe(scene);
+  new MutationObserver(syncScene).observe(musicPage,{attributes:true,attributeFilter:['hidden','data-music-view']});
  }
 
  function sync(){
@@ -214,5 +279,5 @@
  window.SEYVEO_ORB_LANGUAGE=Object.freeze({show,sync,state:()=>({
   voice:voice||'idle',musicPlaying:!!audio&&!audio.paused&&!audio.ended,signal:signal.dataset.svlKind||'idle'
  })});
- sync();
+ sync();syncScene();
 })();
