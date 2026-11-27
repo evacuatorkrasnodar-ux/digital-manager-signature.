@@ -617,16 +617,17 @@ function collectionRender(){
  const loaded=new Map(localTracks.map((file,i)=>[favoriteId(file),{file,i,local:true}]));
  const entries=favoriteView?[...favorites].map(key=>({key,match:loaded.get(key)}))
   :tracks.map((file,i)=>({key:favoriteId(file),match:{file,i,local:false}}));
- const header=document.createElement('div');header.className='sv-music-collection-header';
+ const header=document.createElement('div');header.className='sv-collection-head';
  const title=document.createElement('h2');title.className='sv-music-collection-label';
  title.textContent=favoriteView?'Избранное':'Очередь';
  const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='sv-music-panel-close';
  dismiss.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>';
  dismiss.setAttribute('aria-label','Закрыть список');dismiss.addEventListener('click',hidePanels);
  header.append(title,dismiss);collection.append(header);
+ const list=document.createElement('div');list.className='sv-collection-list';collection.append(list);
  if(favoriteView&&!entries.length){
   const note=document.createElement('p');note.className='sv-music-favorites-note';
-  note.textContent='Добавьте любимую песню сердечком.';collection.append(note);
+  note.textContent='Добавьте любимую песню сердечком.';list.append(note);
  }
  entries.forEach(({key,match})=>{
   const btn=document.createElement('button');btn.type='button';btn.className='sv-music-track-row';
@@ -661,11 +662,8 @@ function collectionRender(){
     }).catch(()=>{});
    }
   }
-  collection.append(btn);
+  list.append(btn);
  });
- if(favoriteView&&entries.some(entry=>!entry.match)){
-  const note=document.createElement('p');note.className='sv-music-favorites-note';note.textContent='Значок загрузки — добавить отсутствующую запись.';collection.append(note);
- }
  syncQueueToggle();
 }
 function switchTrack(i,autoplay=false){
