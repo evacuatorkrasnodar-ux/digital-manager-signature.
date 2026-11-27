@@ -299,6 +299,8 @@
    $('sayviMusicStage')?.setAttribute('aria-label','Текст текущей песни');
    setLyricSettings(false);
    const body=karaokeBody,settings=$('svInlineKaraokeOptions');
+   let lyricSize='normal';try{const v=w.localStorage.getItem('seyveo.lyric-size');if(['small','normal','large'].includes(v))lyricSize=v}catch{}
+   body.dataset.lyricSize=lyricSize;
    body.replaceChildren();settings.replaceChildren();body.classList.remove('has-timed-lyrics','is-lyric-gap');body.scrollTop=0;
    if(karaokeTools)karaokeTools.disabled=true;
    $('svInlineKaraokeLabel').textContent='ТЕКСТ ПЕСНИ';
@@ -359,12 +361,24 @@
       message('Если текст отстаёт, нажмите «+». Если опережает — «−». Поправка запоминается для этой песни.',settings);
       value.textContent=(lyricOffset>0?'+':'')+lyricOffset.toFixed(1)+' с';
      }
+     const sizeRow=d.createElement('label');sizeRow.className='sv-lyric-size-row';sizeRow.textContent='Размер текста';
+     const sizeSelect=d.createElement('select');sizeSelect.setAttribute('aria-label','Размер текста песни');
+     for(const [key,label] of [['small','Меньше'],['normal','Обычный'],['large','Крупнее']]){const opt=d.createElement('option');opt.value=key;opt.textContent=label;sizeSelect.append(opt)}
+     sizeSelect.value=lyricSize;sizeRow.append(sizeSelect);settings.append(sizeRow);
+     sizeSelect.addEventListener('change',()=>{if(!valid())return;lyricSize=sizeSelect.value;body.dataset.lyricSize=lyricSize;try{w.localStorage.setItem('seyveo.lyric-size',lyricSize)}catch{}updateLine(true)});
      action(lyricDebug?'Скрыть диагностику':'Диагностика синхронизации',()=>{lyricDebug=!lyricDebug;setLyricSettings(false);paintLyricDebug(true)},settings);
      if(!saved)message('Текст доступен до закрытия страницы: хранилище недоступно.',settings);
      const save=d.createElement('button');save.type='button';save.className='sv-smart-music-choice';
      save.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="15" height="18" rx="2"/><path d="M8 3v18M3 7h4M3 12h4M3 17h4M11 8h6M11 12h6M11 16h4"/></svg><span>В блокнот</span>';
      settings.append(save);
      const feedback=d.createElement('p');feedback.className='sv-lyrics-feedback';feedback.setAttribute('role','status');feedback.hidden=true;settings.append(feedback);
+     const copy=action('Копировать текст',async()=>{
+      if(!valid())return;
+      try{await w.navigator.clipboard.writeText(data.lines.map(line=>line.text).join('\n'));if(valid()){feedback.hidden=false;feedback.textContent='Текст скопирован.'}}
+      catch{if(valid()){feedback.hidden=false;feedback.textContent='Не удалось скопировать текст.'}}
+     },settings);
+     copy.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"/></svg><span>Копировать текст</span>';
+     settings.insertBefore(copy,save);
      save.addEventListener('click',()=>{
       if(!valid())return;
       const title=$('sayviMusicTrack')?.textContent?.trim()||'Текст песни';
