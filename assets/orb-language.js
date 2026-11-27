@@ -177,6 +177,7 @@
  let liquidMode=true,liquidLast=0,liquidSize=0,liquidGradient=null,liquidPhase=0,liquidClock=-1;
  let liquidQuality=1,liquidSlowFrames=0,liquidAmbientLast=0,liquidRenderCost=0;
  let liquidAutoReason="";
+ const longAmbient=()=>Number.isFinite(audio?.duration)&&audio.duration>MAX_RHYTHM_SECONDS;
  // Session-only protection: never bounce between visualizers during playback.
  function liquidInterval(){return musicPage?.dataset.liquidRhythm==='ambient'?65:liquidQuality<.85?50:liquidMobile?40:32}
  const liquidEnergy=new Float32Array(3);
@@ -194,6 +195,7 @@
  function paintLiquid(timestamp,bass=0,mid=0,air=0,force=false){
   if(!liquidVisible()||document.hidden)return;
   const interval=liquidInterval();
+  if(!force&&longAmbient())return;
   if(!force&&timestamp-liquidLast<interval-1)return;
   const dt=liquidLast?clamp(timestamp-liquidLast,1,100):33;
   if(!force&&liquidLast){
@@ -209,7 +211,7 @@
   const pixelRatio=liquidMobile?Math.min(window.devicePixelRatio||1,1.5):Math.max(1.75,Math.min(window.devicePixelRatio||1,2));
   const pixels=Math.max(160,Math.min(Math.round((liquidMobile?540:850)*liquidQuality),Math.round(cssSize*pixelRatio*liquidQuality)));
   if(liquidSize!==pixels){liquidCanvas.width=liquidCanvas.height=pixels;liquidSize=pixels;liquidGradient=null}
-  const playing=!audio.paused&&!audio.ended&&!reduce?.matches;
+  const playing=!audio.paused&&!audio.ended&&!reduce?.matches&&!longAmbient();
   if(playing){
    const t=audio.currentTime;
    const elapsed=liquidClock<0?0:clamp(t-liquidClock,0,.12);
@@ -338,12 +340,13 @@
    scene=target;sceneBars=Array.from(scene?.querySelectorAll('.sv-music-scene-wave line')||[]);
   }
   const allowed=!!scene&&sceneAllowed();
+  if(musicPage)musicPage.dataset.longAmbient=String(longAmbient());
   if(scene===playerScene&&liquidMode&&!allowed){liquidClock=-1;liquidLast=0;liquidSlowFrames=0;liquidRenderCost=0;if(!liquidSize)paintLiquid(performance.now(),0,0,0,true)}
   if(scene===playerScene&&liquidMode&&liquidVisible()&&!liquidSize)paintLiquid(performance.now(),0,0,0,true);
   musicPage?.classList.toggle('sv-now-ambient-playing',!!playerScene&&scene===playerScene&&allowed);
   if(!scene)return;
   scene.classList.toggle('sv-scene-playing',allowed);
-  if(!allowed||reduce?.matches){resetSceneWave();return}
+  if(!allowed||reduce?.matches||(scene===playerScene&&liquidMode&&longAmbient())){resetSceneWave();return}
   const file=window.SEYVEO_MUSIC?.rhythmFile?.();
   if(!file){if(sceneFile||sceneFrame)resetSceneWave();return}
   if(sceneFile!==file){resetSceneWave();sceneFile=file}
@@ -358,7 +361,7 @@
   audio.addEventListener('timeupdate',()=>{
    const t=audio.currentTime,advancing=sceneAudioTime>=0&&t>sceneAudioTime+.015;
    sceneAudioTime=t;
-   if(advancing&&!audio.paused&&!audio.ended&&!audio.seeking&&audio.readyState>=2&&(sceneWaiting||!sceneFrame)){sceneWaiting=false;syncScene()}
+   if(advancing&&!audio.paused&&!audio.ended&&!audio.seeking&&audio.readyState>=2&&(sceneWaiting||(!sceneFrame&&!longAmbient()))){sceneWaiting=false;syncScene()}
   });
   for(const name of ['playing','canplay','seeked'])audio.addEventListener(name,()=>{sceneWaiting=false;syncScene()});
   for(const name of ['pause','ended','loadedmetadata','durationchange'])audio.addEventListener(name,syncScene);

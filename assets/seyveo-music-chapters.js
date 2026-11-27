@@ -62,7 +62,9 @@ function frame(a,p){
 }
 async function scan(file,duration,valid,progress,canWork=()=>true){
  const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
- if(!Offline||!/\.mp3$/i.test(file.name)||duration<600||file.size>180*1024*1024)return [];
+ if(!Offline)throw Error('offline-unavailable');
+ if(!/\.mp3$/i.test(file.name))throw Error('format');
+ if(duration<600||file.size>180*1024*1024)throw Error('limit');
  const header=new Uint8Array(await file.slice(0,10).arrayBuffer());
  let pos=0;if(header.length>=10&&str(header,0,3)==='ID3')pos=10+syn(header,6)+(header[5]&16?10:0);
  let cache=new Uint8Array(),base=-1,t=0,groupStart=pos,groupTime=0,rate=0,found=false;
@@ -75,7 +77,7 @@ async function scan(file,duration,valid,progress,canWork=()=>true){
   await gate();
   const bytes=await file.slice(groupStart,end).arrayBuffer();
   const ctx=new Offline(1,1,16000);
-  const buffer=await new Promise((resolve,reject)=>{const job=ctx.decodeAudioData(bytes,resolve,reject);if(job?.then)job.then(resolve,reject)});
+  const buffer=await new Promise((resolve,reject)=>{try{const fail=()=>reject(Error('decode-block'));const job=ctx.decodeAudioData(bytes,resolve,fail);if(job?.then)job.then(resolve,fail)}catch{reject(Error('decode-block'))}});
   if(!valid())throw Error('cancel');
   const expected=endTime-groupTime;
   if(!buffer||Math.abs(buffer.duration-expected)>Math.max(.9,expected*.08))throw Error('decode mismatch');
@@ -102,14 +104,15 @@ async function scan(file,duration,valid,progress,canWork=()=>true){
   const offset=pos-base,f=frame(cache,offset);
   if(!found){
    const next=f&&frame(cache,offset+f.len);
-   if(!f||!next||next.rate!==f.rate){pos++;if(pos-groupStart>65536)return [];continue}
+   if(!f||!next||next.rate!==f.rate){pos++;if(pos-groupStart>65536)throw Error('frame-header');continue}
    found=true;groupStart=pos;rate=f.rate;
   }
   if(!f||f.rate!==rate||pos+f.len>file.size)break;
   pos+=f.len;t+=f.sec;
   if(t-groupTime>=24){await decodeBlock(pos,t);if(!valid())return []}
  }
- if(!valid()||!found||Math.abs(t-duration)>Math.max(3,duration*.015))return [];
+ if(!valid())return [];
+ if(!found||Math.abs(t-duration)>Math.max(3,duration*.015))throw Error('frame-timing');
  await decodeBlock(pos,t);progress?.(100);
  return normalize(rows,duration);
 }
