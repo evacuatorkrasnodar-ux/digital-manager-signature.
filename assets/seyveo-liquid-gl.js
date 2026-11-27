@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V56 · reference-shaped silk folds · WebGL 1. */
+/* SEYVEO Liquid Sound V57 · continuous silk optics · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -10,15 +10,15 @@ attribute vec4 aData;
 uniform vec4 uMusic; uniform mediump float uKind,uMode; uniform float uSize;
 varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 const float PI=3.14159265;
-// Five shared cubic contours traced from the approved matter silhouette.
+// Five shared cubic contours with matched first derivatives at the midpoint.
 vec2 bez(vec2 a,vec2 b,vec2 c,vec2 d,float t){float q=1.0-t;return q*q*q*a+3.0*q*q*t*b+3.0*q*t*t*c+t*t*t*d;}
 vec3 contour(float k,float u){
  vec2 l=vec2(-.864,.174),r=vec2(.961,-.105),m,c1,c2,c3,c4;float z;
- if(k<.5){m=vec2(.105,-.795);c1=vec2(-.46,.125);c2=vec2(-.62,-.795);c3=vec2(.49,-.795);c4=vec2(.83,-.47);z=-.13;}
- else if(k<1.5){m=vec2(-.13,.030);c1=vec2(-.81,.035);c2=vec2(-.43,.080);c3=vec2(.32,-.045);c4=vec2(.72,-.44);z=.23;}
- else if(k<2.5){m=vec2(-.25,.270);c1=vec2(-.78,.09);c2=vec2(-.55,.270);c3=vec2(.30,.270);c4=vec2(.72,-.46);z=.38;}
- else if(k<3.5){m=vec2(.39,.55);c1=vec2(-.52,.23);c2=vec2(.04,.55);c3=vec2(.78,.55);c4=vec2(1.045,.12);z=-.09;}
- else {m=vec2(-.045,.785);c1=vec2(-.92,.47);c2=vec2(-.49,.785);c3=vec2(.37,.785);c4=vec2(1.02,.28);z=-.22;}
+ if(k<.5){m=vec2(.105,-.795);c1=vec2(-.46,.125);c2=vec2(-.450,-.795);c3=vec2(.660,-.795);c4=vec2(.83,-.47);z=-.13;}
+ else if(k<1.5){m=vec2(-.13,.030);c1=vec2(-.81,.035);c2=vec2(-.505,.0925);c3=vec2(.245,-.0325);c4=vec2(.72,-.44);z=.23;}
+ else if(k<2.5){m=vec2(-.25,.270);c1=vec2(-.78,.09);c2=vec2(-.675,.270);c3=vec2(.175,.270);c4=vec2(.72,-.46);z=.38;}
+ else if(k<3.5){m=vec2(.39,.55);c1=vec2(-.52,.23);c2=vec2(.020,.55);c3=vec2(.760,.55);c4=vec2(1.045,.12);z=-.09;}
+ else {m=vec2(-.045,.785);c1=vec2(-.92,.47);c2=vec2(-.475,.785);c3=vec2(.385,.785);c4=vec2(1.02,.28);z=-.22;}
  vec2 p=u<.5?bez(l,c1,c2,m,u*2.0):bez(m,c3,c4,r,u*2.0-1.0);
  return vec3(p,z*sin(PI*u));
 }
@@ -31,7 +31,7 @@ vec3 matter(float x,float v){
   float h=u;u*=.50;vec3 q=contour(0.0,u);
   // The return has its own outer contour, joining the same cloth at both ends.
   vec2 join=vec2(-.935,-.09);
-  vec2 outer=h<.5?bez(contour(0.0,0.0).xy,vec2(-.96,.12),vec2(-.99,.02),join,h*2.0):bez(join,vec2(-.84,-.38),vec2(-.39,-.765),contour(0.0,.50).xy,h*2.0-1.0);
+  vec2 outer=h<.5?bez(contour(0.0,0.0).xy,vec2(-.96,.12),vec2(-.99,.02),join,h*2.0):bez(join,vec2(-.88,-.28),vec2(-.39,-.765),contour(0.0,.50).xy,h*2.0-1.0);
   float flap=sin(PI*h);
   q.xy=mix(q.xy,outer,v);
   q.xy+=vec2(-.015,.035)*flap*sin(PI*v);
@@ -131,12 +131,12 @@ void main(){
   // Translucent absorption masks rear particles under the near-facing silk.
   float bodyMask=smoothstep(0.0,.13,v)*smoothstep(0.0,.13,1.0-v)*smoothstep(0.0,.18,1.0-abs(x));
   col=mix(vec3(.08,.88,.88),vec3(.84,1.0,.98),clamp(.24*turn+.22*fres+.30*tip,0.0,1.0));
-  if(uKind<2.5){alpha=(.42+.26*v*v+.13*fres+.18*shoulderLight+.24*highlight)*frontLight*(1.0-.30*tip);col=mix(col,vec3(.62,1.0,.98),.22*shoulderLight+.13*silkLight+.45*highlight);}
+  if(uKind<2.5){float upperRim=pow(1.0-v,12.0);alpha=(.59+.20*v*v+.14*fres+.20*shoulderLight+.22*highlight+.12*upperRim)*frontLight*(1.0-.30*tip);col=mix(col,vec3(.62,1.0,.98),clamp(.24*shoulderLight+.16*silkLight+.50*highlight+.18*upperRim,0.0,1.0));}
   else if(uKind<3.5){alpha=(.84+.16*turn+.16*fres)*(1.0-.12*tip);col=mix(col,vec3(.83,1.0,.97),clamp(.24+.63*silkLight+.25*turn,0.0,1.0));}
   else if(uKind<4.5){alpha=(.28+.12*fres+.24*facing*gauss(x-.27,.71)+.20*highlight)*(1.0-.44*tip);col=mix(col,vec3(.32,1.0,.98),.28*highlight);}
   else alpha=(.27+.23*turn+.30*pow(v,2.3)*gauss(x+.10,.48)+.14*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.48*tip);
   if(uMode<.5){
-   if(uKind<2.5){alpha=.010+.025*fres+.09*start*focus+.10*pow(v,4.0)*tipGlow+.055*shoulderLight;col=mix(col,vec3(.008,.045,.065),.76*bodyMask);alpha+=.20*bodyMask;}
+   if(uKind<2.5){float rimLight=.20*pow(1.0-v,32.0)*(.55+.45*focus);alpha=.010+.025*fres+rimLight+.10*pow(v,4.0)*tipGlow+.035*shoulderLight;col=mix(col,vec3(.008,.045,.065),.84*bodyMask);alpha+=.16*bodyMask;}
    else if(uKind<3.5){alpha=clamp(.055+.64*edge+.30*start+.35*silkLight+.26*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
    else if(uKind<4.5){float rim=.29*edge*gauss(x-.35,.78)+.16*pow(1.0-v,12.0)*(.55+.45*focus);alpha=.009+.019*fres+rim+.29*bodyMask;col=mix(vec3(.006,.045,.065),vec3(.07,.92,.89),clamp(rim*2.7+.12*highlight,0.0,1.0));}
    else {float low=gauss(x-.08,.24),sweep=gauss(x-.22,.57);float seam=pow(1.0-v,24.0)*(.20+.80*gauss(x-.32,.60));alpha=clamp(.016+.90*edge*low+.52*pow(v,3.0)*low+.27*start*gauss(x-.25,.76)+.18*pow(v,3.0)*sweep+.62*seam,0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),clamp(edge*(.90*low+.24*sweep)+.44*seam,0.0,1.0));}
@@ -144,11 +144,11 @@ void main(){
   if(uKind>6.5&&uKind<7.5){
    float taper=sin(3.14159265*(x+1.0)*.5);
    // The returning silk catches light across its width, with a bright fine fold.
-   float foldLight=gauss(v-.50,.44)*gauss(x+.35,.76);
-   float hem=gauss(v-.96,.10)*gauss(x+.25,.66);
-   float join=gauss(v-.05,.10)*gauss(x+.52,.50);
+   float foldLight=gauss(v-.50,.37)*gauss(x+.35,.76);
+   float hem=gauss(v-.985,.055)*gauss(x+.25,.78);
+   float join=gauss(v-.025,.065)*gauss(x+.52,.66);
    col=mix(vec3(.015,.78,.79),vec3(.73,1.0,.96),clamp(.48*foldLight+.70*hem+.55*join,0.0,1.0));
-   alpha=(uMode<.5?(.013+.32*foldLight+.32*hem+.57*join):(.30+.45*foldLight+.40*hem))*taper;
+   alpha=(uMode<.5?(.013+.15*foldLight+.43*hem+.62*join):(.38+.45*foldLight+.40*hem))*taper;
   }
   if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*5.8)*(1.0-smoothstep(.22,.50,d));}
 
@@ -179,7 +179,7 @@ void main(){
  // Four distinct cloth intervals: 2=0..1, 3=1..2, 4=2..3, 6=3..4; 7 is the shoulder.
  // Back-to-front compositing keeps the lower returning silk behind the broad face.
  const parts=[6,4,7,2,3].map(kind=>{
-  const dims=kind===7?[58,22,92,34]:kind===2?[92,46,132,64]:kind===3?[110,34,152,48]:[84,36,128,54];
+  const dims=kind===7?[52,20,78,30]:kind===2?[92,46,132,64]:kind===3?[110,34,152,48]:[84,36,128,54];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
   return [mesh(kind,mobile?64:96,mobile?20:32,0),mesh(kind,n,m,1)];
  });
