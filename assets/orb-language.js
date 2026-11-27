@@ -282,11 +282,10 @@
   ctx.lineJoin='round';ctx.lineCap='round';
   if(!liquidGradient&&liquidPearl){
    liquidGradient=ctx.createRadialGradient(200,181,12,200,200,164);
-   // Soft internal mist, behind the silk rather than covering it.
-   liquidGradient.addColorStop(0,'rgba(236,247,247,.99)');
-   liquidGradient.addColorStop(.28,'rgba(224,241,241,.99)');
-   liquidGradient.addColorStop(.56,'rgba(170,207,208,.98)');
-   liquidGradient.addColorStop(.80,'rgba(208,231,231,.98)');
+   // Clear pearl transmission, no milky central fog.
+   liquidGradient.addColorStop(0,'rgba(218,239,239,.70)');
+   liquidGradient.addColorStop(.52,'rgba(217,238,238,.74)');
+   liquidGradient.addColorStop(.80,'rgba(196,222,223,.86)');
    liquidGradient.addColorStop(.96,'rgba(174,207,208,.98)');
    liquidGradient.addColorStop(.985,'rgba(174,207,208,.84)');
    liquidGradient.addColorStop(1,'rgba(174,207,208,0)');
