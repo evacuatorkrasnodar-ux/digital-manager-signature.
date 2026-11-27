@@ -42,7 +42,7 @@ def main():
     progress("decoding", 0)
     try:
         segments, _ = model.transcribe(path, beam_size=3, vad_filter=False,
-            condition_on_previous_text=False, temperature=0.0)
+            condition_on_previous_text=False, temperature=0.0, word_timestamps=True)
         lines = []
         last_percent = 0
         for segment in segments:
@@ -56,7 +56,15 @@ def main():
                 continue
             if len(lines) >= 500 or segment.start > 600:
                 break
-            lines.append({"time": round(max(0, segment.start), 3), "text": text[:500]})
+            words = []
+            for word in (segment.words or [])[:160]:
+                if word.start is None or word.end is None or not word.word.strip():
+                    continue
+                start = round(max(0, word.start), 3)
+                end = round(min(duration, word.end), 3)
+                if end > start:
+                    words.append({"text": word.word.strip()[:120], "start": start, "end": end})
+            lines.append({"time": round(max(0, segment.start), 3), "end": round(min(duration, segment.end), 3), "text": text[:500], "words": words})
         if not lines:
             respond(error="no-speech")
             return 7
