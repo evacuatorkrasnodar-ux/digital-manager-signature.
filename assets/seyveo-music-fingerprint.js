@@ -125,7 +125,7 @@
   for(let c=0;c<buf.numberOfChannels;c++){const a=buf.getChannelData(c);for(let i=0;i<a.length;i++)mono[i]+=a[i]/buf.numberOfChannels}
   return mono;
  }
- let dbPromise=null,records=new Map(),failed=new Set(),busy=false,ready=false,storage=true,scheduled=0,controller=null,dirty=true;
+ let dbPromise=null,records=new Map(),failed=new Set(),busy=false,ready=false,storage=true,scheduled=0,controller=null,dirty=true,listening=false;
  const library=()=>w?.SEYVEO_MUSIC?.recognitionLibrary?.()||[];
  function openDB(){
   if(!w?.indexedDB)return Promise.reject(Error('storage'));
@@ -150,7 +150,7 @@
  }
  let initPromise;
  async function run(){
-  if(busy||!Context()||w.document.hidden||!w.SEYVEO_MUSIC||w.SEYVEO_MUSIC.state().libraryLoading||w.SEYVEO_MUSIC.state().playing)return;
+  if(busy||listening||!Context()||w.document.hidden||!w.SEYVEO_MUSIC||w.SEYVEO_MUSIC.state().libraryLoading||w.SEYVEO_MUSIC.state().playing)return;
   busy=true;emit();
   try{
    await (initPromise??=init());
@@ -174,11 +174,12 @@
   }finally{controller=null;busy=false;emit();if(library().some(i=>!records.has(i.id)&&!failed.has(i.id))&&records.size+failed.size<MAX_TRACKS)schedule()}
  }
  function schedule(){
-  if(!w||scheduled||busy||w.document.hidden||!w.SEYVEO_MUSIC||w.SEYVEO_MUSIC.state().libraryLoading||w.SEYVEO_MUSIC.state().playing)return;
+  if(!w||scheduled||busy||listening||w.document.hidden||!w.SEYVEO_MUSIC||w.SEYVEO_MUSIC.state().libraryLoading||w.SEYVEO_MUSIC.state().playing)return;
   if(ready&&!dirty&&(records.size+failed.size>=MAX_TRACKS||!library().some(i=>!records.has(i.id)&&!failed.has(i.id))))return;
   scheduled=w.setTimeout(()=>{scheduled=0;run().catch(()=>{})},1000);
  }
  function stop(){controller?.abort();if(scheduled){w.clearTimeout(scheduled);scheduled=0}}
+ function setListening(value){listening=!!value;if(listening)stop();else schedule()}
  async function recognize(blob,{signal}={}){
   await (initPromise??=init());
   const ids=new Set(library().map(x=>x.id));
@@ -186,5 +187,5 @@
   return match(query,[...records.values()].filter(r=>ids.has(r.id)),{yieldWork:true,signal});
  }
  if(w){w.document.addEventListener('seyveo:music-library',()=>{dirty=true;schedule()});w.document.addEventListener('seyveo:music-state',()=>{if(w.SEYVEO_MUSIC?.state?.().playing)stop();else schedule()});w.document.addEventListener('visibilitychange',()=>{if(w.document.hidden)stop();else schedule()});w.addEventListener('pagehide',stop);schedule()}
- return Object.freeze({fingerprint,match,state,schedule,stop,recognize,VERSION,RATE});
+ return Object.freeze({fingerprint,match,state,schedule,stop,setListening,recognize,VERSION,RATE});
 });
