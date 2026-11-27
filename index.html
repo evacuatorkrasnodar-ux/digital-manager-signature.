@@ -5421,22 +5421,7 @@ $('printText').addEventListener('click',()=>{
   const win=window.open('','_blank');if(!win){composerMessage('Разрешите всплывающие окна для печати');return}
   win.opener=null;
   win.document.open();
-  win.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>SEYVEO · Запись</title><style>body{font:16px/1.6 system-ui,sans-serif;max-width:740px;margin:40px auto;padding:16px;color:#172033}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}</style><style id="svMusicFilledTransport">
-/* Match the approved rounded Home sphere transport. Keep all existing hit targets. */
-html:root body #sayviMusicMini .sv-music-mini-transport button svg,
-html:root body #sayviMusicMini .sv-music-mini-transport button svg path,
-html:root[data-theme] body #sayviMusicMini .sv-music-mini-transport button svg,
-html:root[data-theme] body #sayviMusicMini .sv-music-mini-transport button svg path{
- fill:currentColor!important;stroke:none!important;
-}
-html:root body #sayviMusicMini .sv-music-mini-transport button svg{width:24px!important;height:24px!important}
-html:root[data-theme="light"] body #sayviMusicMini .sv-music-mini-transport button{color:#111214!important}
-html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"] :is(#sayviMusicPrevious,#sayviMusicPlay,#sayviMusicNext) svg,
-html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"] :is(#sayviMusicPrevious,#sayviMusicPlay,#sayviMusicNext) svg path{
- fill:currentColor!important;stroke:none!important;
-}
-</style>
-</head><body><pre>'+escapeHtml(value)+'</pre></body></html>');
+  win.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>SEYVEO · Запись</title><style>body{font:16px/1.6 system-ui,sans-serif;max-width:740px;margin:40px auto;padding:16px;color:#172033}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body><pre>'+escapeHtml(value)+'</pre></body></html>');
   win.document.close();win.focus();win.print();
 });
 question.addEventListener('input',()=>{
@@ -7460,6 +7445,22 @@ html.sv-music-screen body #sayviMusicPage :is(#sayviMusicSourcesPanel,#sayviMusi
  #sayviMusicPage[data-music-view="player"] > :is(.sv-music-track-bar,.sv-music-times,.sv-music-seek,.sv-music-controls,.sv-now-tools,.sv-music-phrases){transition:none!important}
 }
 </style>
+<style id="svMusicFilledTransport">
+/* Match the approved rounded Home sphere transport. Keep all existing hit targets. */
+html:root body #sayviMusicMini .sv-music-mini-transport button svg,
+html:root body #sayviMusicMini .sv-music-mini-transport button svg path,
+html:root[data-theme] body #sayviMusicMini .sv-music-mini-transport button svg,
+html:root[data-theme] body #sayviMusicMini .sv-music-mini-transport button svg path{
+ fill:currentColor!important;stroke:none!important;
+}
+html:root body #sayviMusicMini .sv-music-mini-transport button svg{width:24px!important;height:24px!important}
+html:root[data-theme="light"] body #sayviMusicMini .sv-music-mini-transport button{color:#111214!important}
+html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"] :is(#sayviMusicPrevious,#sayviMusicPlay,#sayviMusicNext) svg,
+html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"] :is(#sayviMusicPrevious,#sayviMusicPlay,#sayviMusicNext) svg path{
+ fill:currentColor!important;stroke:none!important;
+}
+</style>
+
 <style id="svNowFinePolish">
 /* Optical alignment only: retain the original 44px hit areas and row positions. */
 #sayviMusicPage[data-music-view="player"] .sv-now-tools > button{
