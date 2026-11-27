@@ -171,29 +171,49 @@
    const tagline=d.createElement('strong');tagline.className='sv-adaptive-tagline';tagline.textContent='Интеллект в каждой ноте.';body.append(tagline);
    message('Не настраивайте музыку. Наслаждайтесь ею.');
    const statusLine=d.createElement('p');statusLine.className='sv-adaptive-status';statusLine.setAttribute('aria-live','polite');body.append(statusLine);
-   message('Adaptive Sound бережно снижает громкость слишком громких локальных записей. Частотный баланс и динамика не изменяются. Тихие песни не усиливаются.');
+   message('Бережная коррекция громкости. Характер записи сохраняется.');
    const modeButton=action('Pure Sound · без коррекции',()=>{const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
    modeButton.id='svAdaptivePure';
-   message('Радио, неподдерживаемые файлы и устройства звучат без нашей коррекции. Адаптация к акустике и полноценная нормализация — следующий этап.');
+   message('Работает с поддерживаемыми локальными песнями. Радио и другие источники — без коррекции.');
    updateSound();
   }
   function updateSound(){
-   if(mode!=='sound'||!dialog?.open)return;
    const s=w.SEYVEO_ADAPTIVE_SOUND?.state();
+   const quick=$('svAdaptiveQuick'),name=$('svAdaptiveQuickName'),sub=$('svAdaptiveQuickState');
+   if(quick&&name&&sub){
+    name.textContent=s?.pure?'Pure Sound':'Adaptive Sound';
+    const states={active:s?.attenuationDb<0?'Звучание адаптировано':'Без коррекции',analysing:'Анализ записи…',waiting:'Ожидание записи',idle:'Автоматический режим',limited:'Без коррекции',unsupported:'Без коррекции',pure:'Оригинальное звучание'};
+    sub.textContent=s?states[s.phase]||'Автоматический режим':'Недоступно';
+    quick.dataset.soundPhase=s?.phase||'unsupported';
+    quick.setAttribute('aria-pressed',String(!!s?.pure));
+    quick.setAttribute('aria-label',s?.pure?'Pure Sound. Включить Adaptive Sound':'Adaptive Sound. Включить Pure Sound');
+    quick.disabled=!s;
+   }
+   if(mode!=='sound'||!dialog?.open)return;
+   dialog.dataset.soundPhase=s?.phase||'unsupported';
    const el=body.querySelector('.sv-adaptive-status'),b=$('svAdaptivePure');
    if(!el||!b)return;
    const labels={pure:'Pure Sound · оригинал',active:s?.attenuationDb<0?'Adaptive Sound · коррекция '+s.attenuationDb+' дБ':'Adaptive Sound · коррекция не требуется',waiting:'Ожидание данных записи',analysing:'Анализ записи…',limited:'Без коррекции · формат или размер записи',unsupported:'Без коррекции · ограничение устройства',idle:'Готов к локальной музыке'};
-   el.textContent=!s?'Без коррекции · движок недоступен':labels[s.phase]||'Готов к локальной музыке';
+   el.replaceChildren();
+   const headline=d.createElement('strong');headline.textContent=s?.phase==='active'&&s.attenuationDb<0?'Звучание адаптировано':(!s?'Движок недоступен':labels[s.phase]||'Готов к локальной музыке');el.append(headline);
+   if(s?.phase==='active'&&s.attenuationDb<0){const db=d.createElement('small');db.textContent='Коррекция '+s.attenuationDb+' дБ';el.append(db)}
    b.textContent=s?.pure?'Вернуть Adaptive Sound':'Pure Sound · без коррекции';
    b.setAttribute('aria-pressed',String(!!s?.pure));b.disabled=!s;
   }
   d.addEventListener('seyveo:adaptive-sound',updateSound);
   $('svAdaptiveSoundOpen')?.addEventListener('click',soundSheet);
+  $('svAdaptiveQuick')?.addEventListener('click',()=>{const engine=w.SEYVEO_ADAPTIVE_SOUND;if(engine){engine.setPure(!engine.state().pure);updateSound()}});
+  $('svAdaptiveQuickInfo')?.addEventListener('click',soundSheet);
+  dialog?.addEventListener('close',()=>{delete dialog.dataset.soundPhase});
+  updateSound();
   $('svAdaptiveSoundMenu')?.addEventListener('click',soundSheet);
   $('svSmartShare')?.addEventListener('click',share);
   $('svSmartSleep')?.addEventListener('click',sleepSheet);
   $('svSmartKaraoke')?.addEventListener('click',karaoke);
   function handle(q){
+   const pure=/^(?:включи|верни) (?:pure sound|пьюр саунд|чистый звук|оригинальное звучание)$/.test(q);
+   const adaptive=/^(?:включи|верни) (?:adaptive sound|адаптив саунд|адаптивный звук|автоматический звук)$/.test(q);
+   if(pure||adaptive){const engine=w.SEYVEO_ADAPTIVE_SOUND;if(!engine)return {status:'unsupported',message:'Режим звука недоступен.'};engine.setPure(pure);updateSound();return {status:'changed',message:pure?'Pure Sound. Без дополнительной коррекции.':'Adaptive Sound. Автоматическая коррекция для поддерживаемых записей.'}}
    const minutes=sleepMinutes(q);
    if(minutes!==null){setSleep(minutes);return {status:'scheduled',message:'Музыка остановится через '+minutes+' мин. Если браузер не приостановит работу приложения.'}}
    if(/^(?:отмени|отключи)\s+таймер сна$/.test(q)){cancelSleep();return {status:'changed',message:'Таймер сна отключён.'}}
