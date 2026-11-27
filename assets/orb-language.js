@@ -190,7 +190,8 @@
   liquidLast=timestamp;
   const cssSize=liquidCanvas.clientWidth;
   if(!cssSize)return;
-  const pixels=Math.max(160,Math.min(liquidMobile?620:850,Math.round(cssSize*Math.min(window.devicePixelRatio||1,1.8))));
+  const pixelRatio=liquidMobile?Math.min(window.devicePixelRatio||1,1.8):Math.max(1.75,Math.min(window.devicePixelRatio||1,2));
+  const pixels=Math.max(160,Math.min(liquidMobile?620:850,Math.round(cssSize*pixelRatio)));
   if(liquidSize!==pixels){liquidCanvas.width=liquidCanvas.height=pixels;liquidSize=pixels;liquidGradient=null}
   const playing=!audio.paused&&!audio.ended&&!reduce?.matches;
   if(playing){
