@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V58 · crystal rim and luminous silk · WebGL 1. */
+/* SEYVEO Liquid Sound V59 · luminous filament weave · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -63,7 +63,7 @@ vec3 crease(float x,float v){
 void main(){
  float x=aData.x,v=aData.y;vec3 p;vSheen=0.0;
  // Reparameterize the particle lattice without changing the continuous silk surface.
- if(uMode>.5&&uMode<1.5&&uKind<6.5){
+ if(uMode>.5&&uKind<6.5){
   float u=(x+1.0)*.5;
   float bend=uKind<2.5?.14:uKind<3.5?-.09:uKind<4.5?.18:.10;
   u+=bend*sin(PI*u)*sin(PI*v)*(v-.36);
@@ -130,13 +130,14 @@ void main(){
   float shoulderLight=gauss(x+.53,.54)*gauss(v-.53,.40);
   float highlight=clamp(vSheen,0.0,1.0);
   float silkLight=pow(v,2.4)*(.57+.43*gauss(x+.25,.70));
+  float middleLight=gauss(v-.60,.44)*(.70+.30*gauss(x-.05,.8));
   // Translucent absorption masks rear particles under the near-facing silk.
   float bodyMask=smoothstep(0.0,.13,v)*smoothstep(0.0,.13,1.0-v)*smoothstep(0.0,.18,1.0-abs(x));
   col=mix(vec3(.08,.88,.88),vec3(.84,1.0,.98),clamp(.24*turn+.22*fres+.30*tip,0.0,1.0));
-  if(uKind<2.5){float upperRim=pow(1.0-v,12.0);alpha=(.65+.20*v*v+.14*fres+.20*shoulderLight+.22*highlight+.12*upperRim)*frontLight*(1.0-.30*tip);col=mix(col,vec3(.62,1.0,.98),clamp(.24*shoulderLight+.16*silkLight+.50*highlight+.18*upperRim,0.0,1.0));}
-  else if(uKind<3.5){alpha=(.84+.16*turn+.16*fres)*(1.0-.12*tip);col=mix(col,vec3(.83,1.0,.97),clamp(.24+.63*silkLight+.25*turn,0.0,1.0));}
-  else if(uKind<4.5){alpha=(.28+.12*fres+.24*facing*gauss(x-.27,.71)+.20*highlight)*(1.0-.44*tip);col=mix(col,vec3(.32,1.0,.98),.28*highlight);}
-  else alpha=(.27+.23*turn+.30*pow(v,2.3)*gauss(x+.10,.48)+.14*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.48*tip);
+  if(uKind<2.5){float upperRim=pow(1.0-v,12.0);alpha=(.70+.16*v*v+.14*fres+.20*shoulderLight+.22*highlight+.12*upperRim)*frontLight*(1.0-.25*tip);col=mix(col,vec3(.62,1.0,.98),clamp(.24*shoulderLight+.16*silkLight+.50*highlight+.18*upperRim,0.0,1.0));}
+  else if(uKind<3.5){alpha=(.84+.16*turn+.16*fres)*(1.0-.12*tip);col=mix(col,vec3(.83,1.0,.97),clamp(.24+.63*silkLight+.25*turn+.18*middleLight,0.0,1.0));}
+  else if(uKind<4.5){alpha=(.36+.14*fres+.24*facing*gauss(x-.27,.71)+.20*highlight)*(1.0-.40*tip);col=mix(col,vec3(.32,1.0,.98),.28*highlight);}
+  else alpha=(.31+.23*turn+.30*pow(v,2.3)*gauss(x+.10,.48)+.14*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.44*tip);
   if(uMode<.5){
    if(uKind<2.5){float rimLight=.20*pow(1.0-v,32.0)*(.55+.45*focus);alpha=.010+.025*fres+rimLight+.10*pow(v,4.0)*tipGlow+.035*shoulderLight;col=mix(col,vec3(.008,.045,.065),.84*bodyMask);alpha+=.16*bodyMask;}
    else if(uKind<3.5){alpha=clamp(.055+.64*edge+.30*start+.35*silkLight+.26*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
@@ -152,7 +153,9 @@ void main(){
    col=mix(vec3(.015,.78,.79),vec3(.73,1.0,.96),clamp(.48*foldLight+.70*hem+.55*join,0.0,1.0));
    alpha=(uMode<.5?(.013+.15*foldLight+.43*hem+.62*join):(.38+.45*foldLight+.40*hem))*taper;
   }
-  if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*5.8)*(1.0-smoothstep(.22,.50,d));}
+  if(uMode>.5&&uMode<1.5){float d=length(gl_PointCoord-.5);alpha*=exp(-d*d*4.5)*(1.0-smoothstep(.26,.50,d));}
+  // Subtle individual silk filaments, confined to the turning central fold.
+  if(uMode>1.5){float taper=pow(max(0.0,sin(3.14159265*(x+1.0)*.5)),.55);col=mix(vec3(.015,.74,.77),vec3(.55,1.0,.97),pow(v,2.0));alpha=(.045+.15*middleLight+.16*pow(v,5.0))*taper;}
 
  }
  gl_FragColor=vec4(col,clamp(alpha,0.0,1.0));
@@ -172,6 +175,7 @@ void main(){
    values.push(x,j/m,0,0);
   }
   if(mode===0)for(let j=0;j<m;j++)for(let i=0;i<n;i++){const k=j*(n+1)+i;indices.push(k,k+1,k+n+1,k+1,k+n+2,k+n+1)}
+  if(mode===2)for(let i=1;i<n;i++)for(let j=0;j<m;j++){const k=j*(n+1)+i;indices.push(k,k+n+1)}
   const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.STATIC_DRAW);
   let index=null;
   if(indices.length){index=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,index);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(indices),gl.STATIC_DRAW)}
@@ -183,15 +187,17 @@ void main(){
  const parts=[6,4,7,2,3].map(kind=>{
   const dims=kind===7?[52,20,78,30]:kind===2?[92,46,132,64]:kind===3?[110,34,152,48]:[84,36,128,54];
   const n=mobile?dims[0]:dims[2],m=mobile?dims[1]:dims[3];
-  return [mesh(kind,mobile?64:96,mobile?20:32,0),mesh(kind,n,m,1)];
+  const layers=[mesh(kind,mobile?64:96,mobile?20:32,0)];
+  if(kind===3)layers.push(mesh(kind,mobile?70:108,mobile?14:22,2));
+  layers.push(mesh(kind,n,m,1));return layers;
  });
  function draw(obj){
   gl.uniform1f(uniform.uKind,obj.kind);gl.uniform1f(uniform.uMode,obj.mode);
   gl.bindBuffer(gl.ARRAY_BUFFER,obj.buffer);gl.enableVertexAttribArray(data);gl.vertexAttribPointer(data,4,gl.FLOAT,false,0,0);
-  if(obj.index){gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,obj.index);gl.drawElements(gl.TRIANGLES,obj.count,gl.UNSIGNED_SHORT,0)}
+  if(obj.index){gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,obj.index);gl.drawElements(obj.mode===2?gl.LINES:gl.TRIANGLES,obj.count,gl.UNSIGNED_SHORT,0)}
   else gl.drawArrays(gl.POINTS,0,obj.count);
  }
  gl.disable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
- return {render(size,phase,bass,mid,air){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uSize,size);for(const pair of parts){draw(pair[0]);draw(pair[1]);}gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
+ return {render(size,phase,bass,mid,air){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
 }};
 })();
