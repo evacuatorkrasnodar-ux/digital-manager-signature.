@@ -248,8 +248,8 @@
   function paintQuality(){
    const chip=$('sayviMusicQuality'),detail=$('svAdaptiveSourceQuality');
    const q=qualityResult;
-   const label=q?(q.hiRes?'Hi-Res':q.format==='MP3'?'MP3':'Lossless'):qualityRadio?'RADIO':'';
-   if(chip){chip.hidden=!label;chip.textContent=label;chip.title=q?'Параметры исходного файла: '+q.format+' · '+q.detail:qualityRadio?'Заявленное качество радиостанции: '+qualityRadio:'';chip.dataset.quality=q?.hiRes?'hires':q?'file':'radio'}
+   const label=q?(q.hiRes?'Hi-Res':q.format==='MP3'?'MP3':'Lossless'):qualityRadio?'RADIO':qualityFile?(qualityPending?'…':'Аудио'):'';
+   if(chip){chip.hidden=!label;chip.textContent=label;chip.title=q?'Параметры исходного файла: '+q.format+' · '+q.detail:qualityRadio?'Заявленное качество радиостанции: '+qualityRadio:qualityPending?'Анализ исходного файла':'Параметры качества не определены';chip.dataset.quality=q?.hiRes?'hires':q?'file':qualityRadio?'radio':'unknown'}
    if(detail){
     detail.replaceChildren();
     const top=d.createElement('strong');top.textContent=q?label+' · '+q.format:qualityRadio?'Радио':qualityPending?'Анализ исходного файла…':'Качество файла не определено';detail.append(top);
@@ -274,6 +274,8 @@
   }
   d.addEventListener('seyveo:music-state',syncQuality);
   audio.addEventListener('loadedmetadata',syncQuality);
+  d.addEventListener('seyveo:music-view',syncQuality);
+  d.addEventListener('seyveo:music-library',syncQuality);
   function soundSheet(){
    if(!show('Adaptive Sound','sound'))return;
    const mark=d.createElement('div');mark.className='sv-adaptive-mark';mark.setAttribute('aria-hidden','true');
