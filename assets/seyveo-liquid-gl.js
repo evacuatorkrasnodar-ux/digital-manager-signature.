@@ -1,4 +1,4 @@
-/* SEYVEO Liquid Sound V63 · traced three-stage central fold · WebGL 1. */
+/* SEYVEO Liquid Sound V64 · rounded silk lip · WebGL 1. */
 (()=>{'use strict';
 window.SEYVEO_LIQUID_GL={create(mobile){
  const canvas=document.createElement('canvas');
@@ -17,12 +17,14 @@ vec3 contour(float k,float u){
  // Central ribbon: separate dip, crest and rounded return, traced in sphere-relative coordinates.
  if(k>.5&&k<2.5){
   bool nearEdge=k>1.5;
+  // The two lips have distinct endpoints, so the turn has a finite width.
+  vec2 leftLip=nearEdge?vec2(-.878,.248):vec2(-.865,.190);
   vec2 dip=nearEdge?vec2(-.265,.263):vec2(-.265,.085);
   vec2 crest=nearEdge?vec2(.790,-.225):vec2(.790,-.242);
   vec2 dDip=nearEdge?vec2(1.70,0.0):vec2(1.65,-.14);
   vec2 dCrest=vec2(.90,0.0);
   vec2 p;
-  if(u<.46)p=bez(l,nearEdge?vec2(-.818,.105):vec2(-.817,.075),dip-dDip*(.46/3.0),dip,u/.46);
+  if(u<.46)p=bez(leftLip,nearEdge?vec2(-.885,.105):vec2(-.854,.025),dip-dDip*(.46/3.0),dip,u/.46);
   else if(u<.86)p=bez(dip,dip+dDip*(.40/3.0),crest-dCrest*(.40/3.0),crest,(u-.46)/.40);
   else p=bez(crest,crest+dCrest*(.14/3.0),vec2(.947,-.185),r,(u-.86)/.14);
   return vec3(p,(nearEdge?.38:.23)*sin(PI*u));
@@ -142,6 +144,7 @@ void main(){
   float tip=pow(abs(x),6.0),turn=pow(v,5.0),fres=1.0-vLight;
   float focus=gauss(x+.20,.78),edge=pow(v,20.0),start=pow(1.0-v,20.0);
   float tipGlow=gauss(x+.87,.16)+gauss(x-.86,.19);
+  float leftTurn=gauss(x+.94,.15);
   float facing=clamp(vLight,0.0,1.0);
   float frontLight=.60+.40*gauss(x-.22,.82);
   // Directional silk sheen: light spreads along the cloth, not just its outline.
@@ -158,7 +161,7 @@ void main(){
   else alpha=(.31+.23*turn+.30*pow(v,2.3)*gauss(x+.10,.48)+.14*gauss(x-.25,.52)*v*v+.15*fres)*(1.0-.44*tip);
   if(uMode<.5){
    if(uKind<2.5){float rimLight=.20*pow(1.0-v,32.0)*(.55+.45*focus);alpha=.010+.025*fres+rimLight+.10*pow(v,4.0)*tipGlow+.035*shoulderLight;col=mix(col,vec3(.008,.045,.065),.84*bodyMask);alpha+=.16*bodyMask;}
-   else if(uKind<3.5){alpha=clamp(.055+.64*edge+.30*start+.35*silkLight+.26*tipGlow+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30,0.0,1.0));}
+   else if(uKind<3.5){alpha=clamp(.055+.64*edge+.30*start+.35*silkLight+.26*tipGlow+.14*leftTurn+.025*fres,0.0,.98);col=mix(vec3(.035,.87,.85),vec3(.95,1.0,.99),clamp(edge*.92+start*.38+tipGlow*.30+.24*leftTurn,0.0,1.0));}
    else if(uKind<4.5){float rim=.29*edge*gauss(x-.35,.78)+.16*pow(1.0-v,12.0)*(.55+.45*focus);alpha=.009+.019*fres+rim+.29*bodyMask;col=mix(vec3(.006,.045,.065),vec3(.07,.92,.89),clamp(rim*2.7+.12*highlight,0.0,1.0));}
    else {float low=gauss(x-.06,.20),sweep=gauss(x-.27,.49);float seam=pow(1.0-v,24.0)*(.20+.80*gauss(x-.32,.60));alpha=clamp(.016+.90*edge*low+.65*pow(v,3.0)*low+.27*start*gauss(x-.25,.76)+.18*pow(v,3.0)*sweep+.62*seam,0.0,.98);col=mix(vec3(.02,.89,.86),vec3(.88,1.0,.98),clamp(edge*(.90*low+.24*sweep)+.44*seam,0.0,1.0));}
   }
