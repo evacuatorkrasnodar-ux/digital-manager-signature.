@@ -137,7 +137,7 @@ void main(){
 }
 `;
  const fs=(surfaceDots?'#extension GL_OES_standard_derivatives : enable\n#define SURFACE_DOTS 1\n':'')+`precision mediump float;
-uniform mediump float uKind,uMode; uniform mediump vec4 uMusic; varying mediump vec2 vUV; varying mediump float vLight,vSheen;
+uniform mediump float uKind,uMode,uInside; uniform mediump vec4 uMusic; varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 float peak(float a,float c,float w){return exp(-(1.0-cos(a-c))/(w*w));}
 float gauss(float x,float w){float q=x/w;return exp(-q*q);}
 #ifdef SURFACE_DOTS
@@ -238,6 +238,12 @@ void main(){
 #endif
  }
  if(uKind<4.5||uKind>5.5&&uKind<7.5){float shimmer=.5+.5*sin(18.0*x+9.0*v-uMusic.x*12.0);alpha*=1.0+(.12*uMusic.w)*shimmer;}
+ // Optional Home silk-only material: faint teal particles and luminous folds on white glass.
+ if(uInside>.5){
+  if(uKind>7.5){float core=gauss(v-.5,.075);col=mix(vec3(.12,.72,.72),vec3(.94,1.0,.99),core);alpha*=.36+.55*core;}
+  else if(uMode<.5){col=mix(vec3(.26,.65,.66),vec3(.77,.98,.97),smoothstep(.2,.8,col.r));alpha*=uKind>2.5&&uKind<3.5?.52:.10;}
+  else {col=mix(vec3(.20,.53,.55),vec3(.48,.91,.89),smoothstep(.2,.85,col.r));alpha*=.67;}
+ }
  gl_FragColor=vec4(col,clamp(alpha,0.0,1.0));
 }
 `;
@@ -245,7 +251,7 @@ void main(){
  let vertex,fragment,program;
  try{vertex=shader(gl.VERTEX_SHADER,vs);fragment=shader(gl.FRAGMENT_SHADER,fs);program=gl.createProgram();gl.attachShader(program,vertex);gl.attachShader(program,fragment);gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));}catch(e){if(vertex)gl.deleteShader(vertex);if(fragment)gl.deleteShader(fragment);if(program)gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();throw e}
  gl.deleteShader(vertex);gl.deleteShader(fragment);gl.useProgram(program);
- const data=gl.getAttribLocation(program,'aData'),uniform={};for(const k of ['uMusic','uKind','uMode','uSize','uIdle'])uniform[k]=gl.getUniformLocation(program,k);
+ const data=gl.getAttribLocation(program,'aData'),uniform={};for(const k of ['uMusic','uKind','uMode','uSize','uIdle','uInside'])uniform[k]=gl.getUniformLocation(program,k);
  // Separate parametric matter meshes and an analytic spherical glass layer.
  function mesh(kind,n,m,mode){
   const values=[],indices=[];
@@ -282,6 +288,6 @@ void main(){
  }
  gl.disable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
  const resources=[glass,glowMid,glowBottom,glowSeam,...parts.flat()];
- return {dispose(){if(lost)return;lost=true;for(const obj of resources){gl.deleteBuffer(obj.buffer);if(obj.index)gl.deleteBuffer(obj.index)}gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();canvas.width=canvas.height=1;},render(size,phase,bass,mid,air,idle=0){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uIdle,idle);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glass);return gl.isContextLost()?null:canvas}};
+ return {dispose(){if(lost)return;lost=true;for(const obj of resources){gl.deleteBuffer(obj.buffer);if(obj.index)gl.deleteBuffer(obj.index)}gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();canvas.width=canvas.height=1;},render(size,phase,bass,mid,air,idle=0,inside=false){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uIdle,idle);gl.uniform1f(uniform.uInside,inside?1:0);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,inside?gl.ONE_MINUS_SRC_ALPHA:gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);if(!inside)draw(glass);return gl.isContextLost()?null:canvas}};
 }};
 })();
