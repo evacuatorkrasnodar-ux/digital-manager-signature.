@@ -7,10 +7,10 @@ function init(){
  const root=document.documentElement,home=$('homePage'),stage=home?.querySelector('#stage'),audio=$('sayviMusicAudio');
  if(!home||!stage||!audio||$('svHomeInlineMusic'))return;
  const note='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.2"/><ellipse cx="17" cy="16" rx="3" ry="2.2"/></svg>';
- const prev='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.8 6.05Q10.9 4.65 10.9 7.15v9.7Q10.9 19.35 8.8 17.95L2 13.45Q-.05 12 2 10.55Zm11 0Q21.9 4.65 21.9 7.15v9.7Q21.9 19.35 19.8 17.95L13 13.45q-2.05-1.45 0-2.9Z"/></svg>';
- const next='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 6.05Q2.1 4.65 2.1 7.15v9.7Q2.1 19.35 4.2 17.95l6.8-4.5q2.05-1.45 0-2.9Zm11 0q-2.1-1.4-2.1 1.1v9.7q0 2.5 2.1 1.1l6.8-4.5q2.05-1.45 0-2.9Z"/></svg>';
- const play='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.4 4.2Q5.5 2.6 5.5 5.85v12.3q0 3.25 2.9 1.65l11.5-6.2q2.9-1.6 0-3.2Z"/></svg>';
- const pause='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="5.5" height="18" rx="2.25"/><rect x="13.5" y="3" width="5.5" height="18" rx="2.25"/></svg>';
+ const prev='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14M19 5 8 12l11 7z"/></svg>';
+ const next='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 5v14M5 5l11 7-11 7z"/></svg>';
+ const play='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5 18 12 8 18.5z"/></svg>';
+ const pause='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>';
  const panel=document.createElement('section');panel.id='svHomeInlineMusic';panel.hidden=true;panel.setAttribute('aria-label','Музыка на главной');
  panel.innerHTML='<div class="sv-home-music-heading"><button type="button" class="sv-home-music-meta" aria-label="Открыть музыкальный плеер"><strong></strong><small></small></button></div><div class="sv-home-music-timeline"><input type="range" min="0" max="1000" step="1" value="0" aria-label="Положение воспроизведения"><div class="sv-home-music-times"><span>0:00</span><span>0:00</span></div></div><div class="sv-home-music-controls" role="group" aria-label="Воспроизведение"><button type="button" data-home-music="previous" aria-label="Предыдущий трек">'+prev+'</button><button type="button" data-home-music="play" aria-label="Пауза">'+pause+'</button><button type="button" data-home-music="next" aria-label="Следующий трек">'+next+'</button></div>';
  const back=document.createElement('button');back.type='button';back.id='svHomeMusicReturn';back.hidden=true;back.setAttribute('aria-label','Открыть музыкальный плеер');back.innerHTML=note;
