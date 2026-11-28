@@ -354,24 +354,36 @@ function setMode(next){
  if(mode==='genres'&&!selectedTags().length){window.SEYVEO_DISCOVERY?.open?.('music')}
  void loadPublic();
 }
-const sections=[['',['for-you','ru','world','news']],['',['genres','rock','pop','chanson','russianrock','russianpop','hiphop','electronic']],['',['upcoming','liked']]];
+const sections=[['Подборка',['for-you','ru','world','news']],['Жанры',['genres','rock','pop','chanson','russianrock','russianpop','hiphop','electronic']],['Просмотр',['upcoming','liked']]];
+const filterGlyphs={
+ 'for-you':['#6388ae','<path d="M12 3.5c0 5-3.5 8.5-8.5 8.5 5 0 8.5 3.5 8.5 8.5 0-5 3.5-8.5 8.5-8.5-5 0-8.5-3.5-8.5-8.5Z"/>'],
+ ru:['#758b9b','<path d="M5 21V4m0 1c5-4 9 4 14 0v11c-5 4-9-4-14 0"/>'],
+ world:['#5095a0','<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/>'],
+ news:['#8c80ac','<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8m-8 4h8m-8 3h5"/>'],
+ genres:['#8d80ab','<path d="M9 17V6l11-3v11"/><ellipse cx="6" cy="17.5" rx="3" ry="2.3"/><ellipse cx="17" cy="14.5" rx="3" ry="2.3"/>'],
+ upcoming:['#658eae','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'],
+ liked:['#b66d88','<path d="M20 6a5 5 0 0 0-7 0l-1 1-1-1a5 5 0 0 0-7 7l8 8 8-8a5 5 0 0 0 0-7Z"/>']
+};
+function filterGlyph(id){const data=filterGlyphs[id];if(!data)return null;const el=document.createElement('span');el.className='sv-filter-glyph';el.style.color=data[0];el.setAttribute('aria-hidden','true');el.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round">'+data[1]+'</svg>';return el}
+
 let genreView=false;
 const genreModes=new Set(sections[1][1]);
 const genreNav=button('Жанры','sv-new-filter-option sv-new-filter-genre-nav');
 genreNav.innerHTML='<span>Жанры</span><span class="sv-filter-current"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+genreNav.prepend(filterGlyph('genres'));
 const genreBack=button('Назад','sv-new-filter-back','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>');
 filterHead.prepend(genreBack);
 function filterPage(value=false){
  genreView=value;
  filterSheet.dataset.page=value?'genres':'main';
  filterTitle.textContent=value?'Жанры':'Настройки новинок';
- genreBack.hidden=!value;
+ genreBack.hidden=!value;filterSheet.scrollTop=0;
  genreNav.querySelector('.sv-filter-current').textContent=genreModes.has(mode)?(filters.find(x=>x[0]===mode)?.[1]||''):'';
 }
 genreNav.addEventListener('click',()=>filterPage(true));genreBack.addEventListener('click',()=>filterPage(false));filterSheet.addEventListener('close',()=>filterPage(false));
 for(const [heading,ids] of sections){
  const group=document.createElement('section');group.className='sv-new-filter-group';group.dataset.section=ids[0];const label=document.createElement('h3');label.textContent=heading;group.append(label);
- for(const id of ids){const entry=filters.find(x=>x[0]===id);if(!entry)continue;const b=button(entry[1],'sv-new-filter-option');b.dataset.mode=id;b.addEventListener('click',()=>{filterSheet.close();setMode(id)});const tick=document.createElement('span');tick.className='sv-new-filter-tick';tick.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';tick.setAttribute('aria-hidden','true');b.append(tick);group.append(b)}
+ for(const id of ids){const entry=filters.find(x=>x[0]===id);if(!entry)continue;const b=button(entry[1],'sv-new-filter-option');b.dataset.mode=id;const label=document.createElement('span');label.className='sv-filter-label';label.textContent=id==='upcoming'?'Скоро выйдут':entry[1];b.replaceChildren(label);const glyph=filterGlyph(id);if(glyph)b.prepend(glyph);b.addEventListener('click',()=>{filterSheet.close();setMode(id)});const tick=document.createElement('span');tick.className='sv-new-filter-tick';tick.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';tick.setAttribute('aria-hidden','true');b.append(tick);group.append(b)}
  if(ids[0]==='upcoming')filterBar.append(genreNav);filterBar.append(group);
 }
 const editGenres=button('Изменить любимые жанры','sv-new-filter-edit');
@@ -604,6 +616,30 @@ html:root body dialog.sv-new-filter-sheet[data-page="genres"] .sv-new-filter-ref
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions{background:transparent!important;border-radius:0!important;border-top:1px solid rgba(127,140,155,.16);margin-top:4px!important;padding:0!important}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions :is(.sv-new-filter-edit,.sv-new-filter-refresh){border:0!important;min-height:44px!important;font-size:14px!important;padding:0 2px!important;background:transparent!important}
 html:root body dialog.sv-new-filter-sheet #sayviDiscoveryStatus{display:none!important}
+
+/* Quiet premium list: bare outline glyphs, precise alignment and optical grouping. */
+html:root body dialog.sv-new-filter-sheet{width:min(calc(100% - 24px),380px)!important;border-radius:25px!important;padding:7px 18px 10px!important;border:1px solid rgba(145,155,168,.23)!important}
+@supports ((-webkit-backdrop-filter:blur(18px)) or (backdrop-filter:blur(18px))){html:root[data-theme="light"] body dialog.sv-new-filter-sheet{background:rgba(252,253,254,.95)!important;-webkit-backdrop-filter:blur(18px) saturate(1.08);backdrop-filter:blur(18px) saturate(1.08)}}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-head{position:relative;min-height:44px;margin:0 0 6px!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-head h2{font-size:17px!important;font-weight:600;letter-spacing:-.025em}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-close{flex:0 0 44px;color:var(--text,#141619)}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-close svg{width:18px;height:18px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-group h3{display:none!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-option{justify-content:flex-start;gap:11px;padding:0 3px!important;font-size:14px!important;font-weight:400!important;letter-spacing:-.012em}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-option[aria-pressed=true]{font-weight:550!important}
+html:root body dialog.sv-new-filter-sheet .sv-filter-glyph{display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;background:transparent!important;border:0!important}
+html:root body dialog.sv-new-filter-sheet .sv-filter-glyph svg{width:21px;height:21px}
+html:root body dialog.sv-new-filter-sheet .sv-filter-label{flex:1;min-width:0;text-align:left}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-tick{margin-left:auto;flex:0 0 19px;width:19px;height:19px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-tick svg{width:18px;height:18px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-genre-nav{margin:5px 0!important;min-height:52px!important;height:52px!important;border-top:1px solid rgba(127,140,155,.13)!important;border-bottom:1px solid rgba(127,140,155,.13)!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-genre-nav .sv-filter-current{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:39%}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-genre-nav>svg{width:15px;height:15px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions{border-color:rgba(127,140,155,.13);margin-top:5px!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions :is(.sv-new-filter-edit,.sv-new-filter-refresh){gap:11px;padding:0 3px!important;font-size:14px!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions :is(.sv-new-filter-edit,.sv-new-filter-refresh)>svg:first-child{width:21px;height:21px;flex:0 0 24px;color:#6388ae}
+html:root body dialog.sv-new-filter-sheet[data-page="genres"] .sv-new-filter-option{border-bottom:1px solid rgba(127,140,155,.09)!important}
+html:root body dialog.sv-new-filter-sheet[data-page="genres"] .sv-new-filter-option:last-child{border-bottom:0!important}
 `;document.head.append(style);
 
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
