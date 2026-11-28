@@ -288,7 +288,7 @@
  }
  const liquidEnergy=new Float32Array(3);
  const liquidMobile=window.matchMedia?.('(max-width: 600px)').matches||((navigator.hardwareConcurrency||8)<=4);
- function liquidVisible(){return !!liquidContext&&liquidMode&&!!audio&&!document.hidden&&location.hash==='#sayvi-music'&&musicPage?.dataset.musicView==='player'&&!musicPage.hidden&&visibleScenes.get(playerScene)!==false&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork')}
+ function liquidVisible(){return !musicPage?.classList.contains('sv-music-radio-player')&&!!liquidContext&&liquidMode&&!!audio&&!document.hidden&&location.hash==='#sayvi-music'&&musicPage?.dataset.musicView==='player'&&!musicPage.hidden&&visibleScenes.get(playerScene)!==false&&!musicPage.classList.contains('sv-karaoke-active')&&!playerStage?.classList.contains('has-artwork')}
  // Long compilations use the same low-rate internal cloth deformation as idle.
  // Do not decode a whole compilation or scale the glass canvas.
  function liquidResting(){return liquidVisible()&&!reduce?.matches&&(audio.paused||audio.ended||longAmbient())&&!audio.error}
