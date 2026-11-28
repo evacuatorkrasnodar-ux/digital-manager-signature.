@@ -5329,5 +5329,20 @@ html:root[data-theme="light"] body :is(#sayviTopActions .sv-top-action,#sayviHis
 <link rel="stylesheet" href="assets/seyveo-landscape.css?v=20261125-1">
 <link rel="stylesheet" href="assets/seyveo-scan-auto.css?v=2"><script src="assets/seyveo-scan-auto.js?v=2"></script>
 <script src="assets/seyveo-nav-glyphs.js?v=2"></script>
+<style id="svSayviApprovedSteelInk">
+/* Match neutral light dock and circular actions; retain the colored send arrow. */
+html:root[data-theme="light"][data-theme] body #sayviComposer > button#sayviPlus:not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body #sayviComposer > button#sayviPlus:not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
+html:root[data-theme="light"][data-theme] body #sayviComposer #sayviField #sayviMic:not([aria-pressed="true"]):not(.active):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body #sayviComposer #sayviField #sayviMic:not([aria-pressed="true"]):not(.active):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
+html:root[data-theme="light"][data-theme] body #sayviTopActions .sv-top-action:not([aria-pressed="true"]):not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body #sayviTopActions .sv-top-action:not([aria-pressed="true"]):not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
+html:root[data-theme="light"][data-theme] body #sayviHistory .history-head :is(#sayviHistoryClose,#sayviHistoryMenuButton):not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body #sayviHistory .history-head :is(#sayviHistoryClose,#sayviHistoryMenuButton):not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])){
+ color:#57636B!important;
+ stroke:#57636B!important;
+ stroke-width:1.55!important;
+}
+</style>
 </body>
 </html>
