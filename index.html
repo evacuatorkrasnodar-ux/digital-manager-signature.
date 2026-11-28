@@ -8028,7 +8028,8 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #svAdap
 #svSmartMusicSheet[data-music-sheet="sleep"] .sv-smart-music-choice[hidden]{display:none!important}
 #svSmartSleep[data-sleep-active="true"]>svg{color:#bce5ef}
 /* Quiet, compact lyrics settings: no developer text over the lyrics. */
-#sayviMusicPage #svInlineKaraoke.is-settings-open #svInlineKaraokeBody,#sayviMusicPage #svInlineKaraoke.is-settings-open #svInlineKaraokeDebug{visibility:hidden}
+#sayviMusicPage #svInlineKaraoke.is-settings-open #svInlineKaraokeBody{opacity:.22;pointer-events:none}
+#sayviMusicPage #svInlineKaraoke.is-settings-open #svInlineKaraokeDebug{visibility:hidden}
 #sayviMusicPage #svInlineKaraokeSettings{color-scheme:dark}
 #sayviMusicPage #svInlineKaraokeOptions .sv-lyric-size-row{justify-content:flex-start;gap:10px;border-bottom:1px solid rgba(255,255,255,.09)}
 #sayviMusicPage #svInlineKaraokeOptions .sv-lyric-size-row select{margin-left:auto;font-size:13px}
@@ -8537,5 +8538,15 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"].sv-kara
 #sayviMusicPage #svInlineKaraokeOptions .sv-lyric-size-segments>button[aria-pressed="true"]{background:rgba(210,233,241,.15)!important;color:#eaf5fa}
 #sayviMusicPage #svInlineKaraokeOptions .sv-lyric-advanced .sv-lyric-sync{border-bottom:0}
 #sayviMusicPage #svInlineKaraokeOptions .sv-lyrics-feedback[hidden]{display:none!important}
+</style>
+<style id="svLyricCompactMenu">
+/* Fit the visible actions, then grow only up to the lyrics viewport. */
+#sayviMusicPage #svInlineKaraokeSettings:not([hidden]){
+ inset:0 0 auto; height:auto; min-height:0; max-height:100%;
+}
+#sayviMusicPage #svInlineKaraokeSettings > .sv-inline-karaoke-head{flex:0 0 44px}
+#sayviMusicPage #svInlineKaraokeSettings #svInlineKaraokeOptions{
+ flex:0 1 auto;min-height:0;overflow-y:auto;padding-bottom:8px;
+}
 </style>
 </body></html>
