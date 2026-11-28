@@ -273,24 +273,24 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
   if(req.method==='GET'&&path==='/api/seyveo-radio-107'){
    if(req.headers['sec-fetch-site']==='cross-site'){send(res,403,{error:'Недоверенная страница.'});return}
    const params=new URL(req.url,ORIGIN).searchParams;
-   const quality=params.get('quality')||'320';
-   if(!['320','128'].includes(quality)){send(res,400,{error:'Недопустимый поток.'});return}
+   const quality=params.get('quality')||'256';
+   if(!['256','128','320'].includes(quality)){send(res,400,{error:'Недопустимый поток.'});return}
    if(radio107Connections>=2){send(res,429,{error:'Слишком много подключений.'});return}
    radio107Connections++;
-   const target=quality==='320'?'http://online.radio107.ru:8000/radio107_320.mp3':'http://online.radio107.ru:8000/radio107.mp3';
+   const target=quality==='128'?'http://62.183.34.109:8000/radio107.mp3':'http://62.183.34.109:8000/radio107_256.mp3';
    let upstream,finished=false;
    const finish=()=>{if(finished)return;finished=true;radio107Connections--;upstream?.destroy()};
-   const fail=()=>{if(finished)return;if(!res.destroyed&&!res.headersSent)send(res,502,{error:'Эфир временно недоступен.'});else if(!res.destroyed)res.destroy();finish()};
+   const fail=(reason)=>{if(finished)return;console.warn('[Radio 107]',quality,reason?.code||reason?.message||String(reason||'upstream unavailable'));if(!res.destroyed&&!res.headersSent)send(res,502,{error:'Эфир временно недоступен.'});else if(!res.destroyed)res.destroy();finish()};
    res.once('close',finish);
    try{
     upstream=radioHttpGet(target,{headers:{'accept':'audio/mpeg, audio/mp3','user-agent':'SEYVEO Local Radio'}},incoming=>{
      if(finished){incoming.destroy();return}
-     if(incoming.statusCode!==200||!/^audio\/(mpeg|mp3)(?:\s*;|$)/i.test(String(incoming.headers['content-type']||''))){incoming.destroy();fail();return}
+     if(incoming.statusCode!==200||!/^audio\/(mpeg|mp3)(?:\s*;|$)/i.test(String(incoming.headers['content-type']||''))){const reason='HTTP '+incoming.statusCode+' / '+String(incoming.headers['content-type']||'no content-type');incoming.destroy();fail(reason);return}
      res.writeHead(200,{...HEADERS,'content-type':'audio/mpeg','cache-control':'no-store','accept-ranges':'none'});
      incoming.once('error',fail);incoming.once('aborted',fail);incoming.pipe(res);
     });
-    upstream.setTimeout(15000,fail);upstream.once('error',fail);
-   }catch{fail()}
+    upstream.setTimeout(10000,()=>fail('timeout'));upstream.once('error',fail);
+   }catch(error){fail(error)}
    return;
   }
   if(req.method==='GET'&&path==='/api/seyveo-music-discovery'){
