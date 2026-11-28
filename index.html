@@ -1069,6 +1069,172 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
 <link rel="stylesheet" href="assets/seyveo-notebook-collections.css?v=20261126-avatar-glass-v118">
 <link rel="stylesheet" href="assets/seyveo-bulk-selection.css?v=20261126-draft-dock-v125">
 <link rel="stylesheet" href="assets/seyveo-media-pearl.css?v=20261126-v191">
+<style id="svUnifiedSilverDockMaterial">
+/* One optical material for existing light dock surfaces; do not alter
+   the global White Pearl tokens used by headers, dialogs and buttons. */
+:root[data-theme="light"]{
+ --sv-silver-dock-face:rgba(182,187,193,.16);
+ --sv-silver-dock-glint:linear-gradient(150deg,rgba(255,255,255,.10),transparent 58%,rgba(255,255,255,.025));
+ --sv-silver-dock-filter:blur(3px) saturate(108%);
+ --sv-silver-dock-edge:1px solid rgba(157,165,175,.38);
+ --sv-silver-dock-shadow:inset 0 0 0 .75px rgba(255,255,255,.76),0 2px 5px rgba(30,40,52,.055),0 7px 20px rgba(30,40,52,.105);
+}
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock,
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock,
+html:root[data-theme="light"][data-theme] body :is(.sv-smart-ink-tools,#svPaperNewDock,#sayviMusicMini){
+ --sv-white-pearl-floating-dock:var(--sv-silver-dock-face);
+ --sv-white-pearl-floating-blur:var(--sv-silver-dock-filter);
+ --sv-white-pearl-edge:var(--sv-silver-dock-edge);
+ --sv-white-pearl-dock-shadow:var(--sv-silver-dock-shadow);
+ --sv-white-pearl-circle-shadow:var(--sv-silver-dock-shadow);
+ --sv-dock-pearl-bg:var(--sv-silver-dock-face);
+ --sv-dock-pearl-border:var(--sv-silver-dock-edge);
+ --sv-dock-pearl-blur:var(--sv-silver-dock-filter);
+ --sv-dock-pearl-shadow:var(--sv-silver-dock-shadow);
+ --sv-dock-glass-finish:var(--sv-silver-dock-face);
+ --sv-dock-glass-filter:var(--sv-silver-dock-filter);
+ --sv-dock-glass-edge:var(--sv-silver-dock-edge);
+ --sv-dock-glass-relief:var(--sv-silver-dock-shadow);
+}
+/* Apply only to the actual existing capsule faces, not the transparent footer.
+   Existing content/display rules still control which pseudo surfaces exist. */
+html:root[data-theme="light"][data-theme] body > footer.dock.sv-shared-dock:not(.sv-music-navigation-only)::before,
+html:root[data-theme="light"][data-theme] body > footer.dock.sv-shared-dock:not(.sv-music-navigation-only)::after,
+html:root[data-theme="light"][data-theme] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::before,
+html:root[data-theme="light"][data-theme] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::after,
+html:root[data-theme="light"][data-theme] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > :is(.sv-health-dock-actions,#navManage),
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-home-new-dock::before,
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open) .sv-smart-ink-tools:not([hidden]),
+html:root[data-theme="light"][data-theme] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] .sv-paper-top #svPaperNewDock,
+html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]),
+html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only::after,
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]),
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only::after,
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]),
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > .svcp-clean-surface,
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile,
+html:root[data-theme="light"][data-theme] body #sayviMusicMini:not([hidden]){
+ background:var(--sv-silver-dock-face)!important;
+ background-image:var(--sv-silver-dock-glint)!important;
+ -webkit-backdrop-filter:var(--sv-silver-dock-filter)!important;
+ backdrop-filter:var(--sv-silver-dock-filter)!important;
+ border:var(--sv-silver-dock-edge)!important;
+ box-shadow:var(--sv-silver-dock-shadow)!important;
+}
+html:root[data-theme="light"][data-theme].sv-music-screen body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline .sv-music-mini-progress,
+html:root[data-theme="light"][data-theme] body #sayviMusicMini .sv-music-mini-progress{height:.75px!important;opacity:.62!important}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"]{--sv-silver-dock-face:#eef0f2;--sv-silver-dock-glint:none;--sv-silver-dock-filter:none}
+}
+
+</style>
+<style id="svApprovedDockGraphiteInk">
+/* Approved graphite ink for inactive light navigation glyphs. Preserve active colors, badge, orb and glass. */
+html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active) > svg,
+html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon),
+html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg :is(path,circle){
+ color:#57636B!important;
+ stroke:#57636B!important;
+}
+html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active):not([aria-current="page"]):not([aria-pressed="true"]) > svg,
+html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active):not([aria-current="page"]):not([aria-pressed="true"]) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
+html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
+html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button:not([aria-pressed="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button:not([aria-pressed="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
+html:root[data-theme="light"][data-theme].sv-music-screen:not(.sv-global-search-open) body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme].sv-music-screen:not(.sv-global-search-open) body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-browser-dock > button[data-sv-browser-action]:not(.active):not([aria-pressed="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-browser-dock > button[data-sv-browser-action]:not(.active):not([aria-pressed="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]){
+ color:#57636B!important;
+ stroke:#57636B!important;
+}
+/* Match the mini player's refined line weight without changing active ink. */
+html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > :is(#navHome#navHome,#navTasks#navTasks,#navManage#navManage,#navPicture#navPicture) > svg,
+html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > :is(#navHome#navHome,#navTasks#navTasks,#navManage#navManage,#navPicture#navPicture) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]){
+ stroke-width:1.55!important;
+}
+/* Same steel ink for neutral editor and white-chat actions; never recolor selected tools or Sayvi. */
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg,
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock > button.sv-note-draw-standalone:not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg,
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock > button.sv-note-draw-standalone:not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
+html:root[data-theme="light"][data-theme] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg,
+html:root[data-theme="light"][data-theme] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > :is(#svcpAttachFile,#svcpVoiceRecord):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg,
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > :is(#svcpAttachFile,#svcpVoiceRecord):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
+html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail.sv-editor-capsule button:not(.sv-doc-word-ai):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg,
+html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail.sv-editor-capsule button:not(.sv-doc-word-ai):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])){
+ color:#57636B!important;
+ stroke:#57636B!important;
+ stroke-width:1.55!important;
+}
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-browser-dock > button[data-sv-browser-action] > svg,
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-browser-dock > button[data-sv-browser-action] > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button > svg,
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage > svg,
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]){
+ stroke-width:1.55!important;
+}
+</style>
+<style id="svApprovedLightControlSystem">
+/* 2026-11-28 · Approved steel/glass family. Existing controls only.
+   Upper controls use less elevation; reading menus retain opaque text.
+   Dark, blue chat, colored confirmations and dock active states stay intact. */
+:root[data-theme="light"]{
+ --sv-steel-line:1.55;
+ --sv-steel-ink:#57636B;
+ --sv-header-icon-ink:var(--sv-steel-ink);
+ --sv-nav-glyph-stroke:var(--sv-steel-line);
+ --sv-light-control-face:rgba(182,187,193,.16);
+ --sv-light-control-edge:1px solid rgba(157,165,175,.32);
+ --sv-light-control-filter:blur(3px) saturate(108%);
+ --sv-light-control-shadow:inset 0 0 0 .75px rgba(255,255,255,.76),0 2px 5px rgba(30,40,52,.045),0 4px 12px rgba(30,40,52,.075);
+ --sv-menu-icon-stroke:var(--sv-steel-line);
+ --sv-menu-border:1px solid rgba(157,165,175,.30);
+ --sv-menu-shadow:0 10px 28px rgba(30,40,52,.11),0 3px 8px rgba(30,40,52,.045),inset 0 1px 0 rgba(255,255,255,.88);
+}
+html:root[data-theme="light"][data-theme] body seyveo-work-head,
+html:root[data-theme="light"][data-theme] body button:is(.sv-header-material-circle,.sv-white-pearl-circle,.sv-nav-back,.sv-nav-arrow,.sv-note-reader-circle,.sv-doc-head-icon,.sv-doc-search-toggle,.sv-doc-shelf-add,.sv-mail-icon-button,.sv-cabinet-plus,.calendar-header-add,.personal-tasks-add,.svcp-manager-task-create,#calendarAdd,#personalAddTasks,#sayviSurfaceBack,#noteReviewBack,#noteReadBack,#noteScanBack,#assistantChatHistoryBack,#svNoteHomeNew,#svMedicalBack,#svMedicalEdit,#seyveoAvatarClose,#seyveoOfflineClose,#svfClose):not(.sv-mail-top-buttons > button):not(.sv-mail-detail-tools > button):not(.sv-mail-editor-actions > button):not(.sv-mail-attached-remove):not(.is-danger):not(.is-destructive):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-disabled="true"]):not(:disabled):not([hidden]),
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="inbox"] :is(.svcp-work-chat-back,#svcpWorkHistoryTop,.svcp-directory-search-toggle,.sv-inbox-menu-button):not([hidden]):not([aria-pressed="true"]):not(:disabled),
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] :is(#svcpConversationStandaloneBack,.svcp-call-button):not([hidden]):not([aria-pressed="true"]):not(:disabled),
+html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons,
+html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-month-controls,
+html:root[data-theme="light"][data-theme] body #seyveoPayDialog .sw-month.sv-month-nav > .sv-month-controls{
+ --sv-white-pearl-surface:var(--sv-light-control-face);
+ --sv-white-pearl-edge:var(--sv-light-control-edge);
+ --sv-white-pearl-blur:var(--sv-light-control-filter);
+ --sv-white-pearl-circle-shadow:var(--sv-light-control-shadow);
+ --sv-white-pearl-dock-shadow:var(--sv-light-control-shadow);
+ --sv-header-circle:var(--sv-light-control-face);
+ --sv-header-circle-border:var(--sv-light-control-edge);
+ --sv-header-circle-shadow:var(--sv-light-control-shadow);
+ --sv-header-circle-filter:var(--sv-light-control-filter);
+ --sv-nav-capsule-shadow:var(--sv-light-control-shadow);
+}
+html:root[data-theme="light"][data-theme] body button:is(.sv-header-material-circle,.sv-white-pearl-circle,.sv-nav-back,.sv-nav-arrow,.sv-note-reader-circle,.sv-doc-head-icon,.sv-doc-search-toggle,.sv-doc-shelf-add,.sv-mail-icon-button,.sv-cabinet-plus,.calendar-header-add,.personal-tasks-add,.svcp-manager-task-create,#calendarAdd,#personalAddTasks,#sayviSurfaceBack,#noteReviewBack,#noteReadBack,#noteScanBack,#assistantChatHistoryBack,#svNoteHomeNew,#svMedicalBack,#svMedicalEdit,#seyveoAvatarClose,#seyveoOfflineClose,#svfClose):not(.sv-mail-top-buttons > button):not(.sv-mail-detail-tools > button):not(.sv-mail-editor-actions > button):not(.sv-mail-attached-remove):not(.is-danger):not(.is-destructive):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-disabled="true"]):not(:disabled):not([hidden]) > svg,
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="inbox"] :is(.svcp-work-chat-back,#svcpWorkHistoryTop,.svcp-directory-search-toggle,.sv-inbox-menu-button):not([hidden]):not([aria-pressed="true"]):not(:disabled) > svg,
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] :is(#svcpConversationStandaloneBack,.svcp-call-button):not([hidden]):not([aria-pressed="true"]):not(:disabled) > svg,
+html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > button:not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg,
+html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-month-controls > button:not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg,
+html:root[data-theme="light"][data-theme] body #seyveoPayDialog .sw-month.sv-month-nav > .sv-month-controls > button:not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg{
+ color:var(--sv-steel-ink)!important;
+ stroke:var(--sv-steel-ink)!important;
+ stroke-width:var(--sv-steel-line)!important;
+}
+html:root[data-theme="light"][data-theme] body :is(.sv-menu-surface,#svcpInboxMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,#svNotebookListMenu,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu,#svSmartVoiceMenu,#svfAttachMenu,#svcpAttachMenu,.sv-doc-list-menu,.sv-doc-scan-more-menu,.svdf-optional-actions,#sayviMenu,#sayviHistoryMenu,.sv-own-actions,.sv-doc-folder-menu,.sv-doc-draft-actions,.sv-task-context-menu,.sv-nb4-actions,.sv-mail-message-menu,.sv-mail-reply-menu,.sv-doc-file-popover,.svcp-message-menu,.sv-reply-menu-options,#svWorkCreateChoices,#homeWorldPopover,#seyveoCleanManageMenu,.sv-doc-head-options) :is(button,[role="menuitem"]):not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg,
+html:root[data-theme="light"][data-theme] body :is(.sv-menu-surface,#svcpInboxMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,#svNotebookListMenu,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu,#svSmartVoiceMenu,#svfAttachMenu,#svcpAttachMenu,.sv-doc-list-menu,.sv-doc-scan-more-menu,.svdf-optional-actions,#sayviMenu,#sayviHistoryMenu,.sv-own-actions,.sv-doc-folder-menu,.sv-doc-draft-actions,.sv-task-context-menu,.sv-nb4-actions,.sv-mail-message-menu,.sv-mail-reply-menu,.sv-doc-file-popover,.svcp-message-menu,.sv-reply-menu-options,#svWorkCreateChoices,#homeWorldPopover,#seyveoCleanManageMenu,.sv-doc-head-options) :is(button,[role="menuitem"]):not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > .sv-doc-menu-icon > svg{
+ color:var(--sv-steel-ink)!important;
+ stroke:var(--sv-steel-ink)!important;
+ stroke-width:var(--sv-steel-line)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"]{--sv-light-control-face:#eef0f2;--sv-light-control-filter:none}
+}
+</style>
 </head><body>
 <div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/seyveo-pwa-circular-s-192.png?v=1" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-owner-trigger" type="button" aria-label="Профиль владельца и бизнес" title="Владелец и бизнес" aria-haspopup="true" aria-expanded="false" aria-controls="homePassportPopover"><span id="seyveoHeaderAvatar" class="seyveo-avatar seyveo-company-avatar" aria-hidden="true"><img src="assets/company-building-avatar.svg?v=1" alt="" width="44" height="44" draggable="false"></span></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="contacts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Контакты</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="smart-home" aria-label="Открыть Умный дом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-7 9 7v9H3zM9 20v-7h6v7"/></svg><span>Умный дом</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="documents" aria-label="Открыть Личные документы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6"/></svg><span>Личные документы</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="mail" aria-label="Открыть Почту SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.6"/><path d="m4 7 8 6 8-6"/></svg><span>Почта</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="browser" aria-label="Открыть Браузер SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 4-5 14 0 18M12 3c5 4 5 14 0 18"/></svg><span>Браузер</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="play" hidden style="display:none!important" aria-label="Открыть YouTube"><svg class="seyveo-youtube-white" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="stroke:none;fill:none;opacity:1;display:block;width:26px;height:23px;flex:none;"><path fill="#fff" fill-rule="evenodd" clip-rule="evenodd" stroke="none" d="M5.7 5H18.3C20.9 5 22.5 6.6 22.5 9.1V14.9C22.5 17.4 20.9 19 18.3 19H5.7C3.1 19 1.5 17.4 1.5 14.9V9.1C1.5 6.6 3.1 5 5.7 5ZM9.85 8.45V15.55L16.5 12Z"/></svg><span>YouTube</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Сведения SEYVEO и карточка бизнеса">
@@ -9190,172 +9356,9 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini button:disabled{o
 
 
 
-<style id="svUnifiedSilverDockMaterial">
-/* One optical material for existing light dock surfaces; do not alter
-   the global White Pearl tokens used by headers, dialogs and buttons. */
-:root[data-theme="light"]{
- --sv-silver-dock-face:rgba(182,187,193,.16);
- --sv-silver-dock-glint:linear-gradient(150deg,rgba(255,255,255,.10),transparent 58%,rgba(255,255,255,.025));
- --sv-silver-dock-filter:blur(3px) saturate(108%);
- --sv-silver-dock-edge:1px solid rgba(157,165,175,.38);
- --sv-silver-dock-shadow:inset 0 0 0 .75px rgba(255,255,255,.76),0 2px 5px rgba(30,40,52,.055),0 7px 20px rgba(30,40,52,.105);
-}
-html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock,
-html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock,
-html:root[data-theme="light"][data-theme] body :is(.sv-smart-ink-tools,#svPaperNewDock,#sayviMusicMini){
- --sv-white-pearl-floating-dock:var(--sv-silver-dock-face);
- --sv-white-pearl-floating-blur:var(--sv-silver-dock-filter);
- --sv-white-pearl-edge:var(--sv-silver-dock-edge);
- --sv-white-pearl-dock-shadow:var(--sv-silver-dock-shadow);
- --sv-white-pearl-circle-shadow:var(--sv-silver-dock-shadow);
- --sv-dock-pearl-bg:var(--sv-silver-dock-face);
- --sv-dock-pearl-border:var(--sv-silver-dock-edge);
- --sv-dock-pearl-blur:var(--sv-silver-dock-filter);
- --sv-dock-pearl-shadow:var(--sv-silver-dock-shadow);
- --sv-dock-glass-finish:var(--sv-silver-dock-face);
- --sv-dock-glass-filter:var(--sv-silver-dock-filter);
- --sv-dock-glass-edge:var(--sv-silver-dock-edge);
- --sv-dock-glass-relief:var(--sv-silver-dock-shadow);
-}
-/* Apply only to the actual existing capsule faces, not the transparent footer.
-   Existing content/display rules still control which pseudo surfaces exist. */
-html:root[data-theme="light"][data-theme] body > footer.dock.sv-shared-dock:not(.sv-music-navigation-only)::before,
-html:root[data-theme="light"][data-theme] body > footer.dock.sv-shared-dock:not(.sv-music-navigation-only)::after,
-html:root[data-theme="light"][data-theme] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::before,
-html:root[data-theme="light"][data-theme] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::after,
-html:root[data-theme="light"][data-theme] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > :is(.sv-health-dock-actions,#navManage),
-html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
-html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-home-new-dock::before,
-html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open) .sv-smart-ink-tools:not([hidden]),
-html:root[data-theme="light"][data-theme] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] .sv-paper-top #svPaperNewDock,
-html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]),
-html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only::after,
-html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]),
-html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only::after,
-html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]),
-html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > .svcp-clean-surface,
-html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile,
-html:root[data-theme="light"][data-theme] body #sayviMusicMini:not([hidden]){
- background:var(--sv-silver-dock-face)!important;
- background-image:var(--sv-silver-dock-glint)!important;
- -webkit-backdrop-filter:var(--sv-silver-dock-filter)!important;
- backdrop-filter:var(--sv-silver-dock-filter)!important;
- border:var(--sv-silver-dock-edge)!important;
- box-shadow:var(--sv-silver-dock-shadow)!important;
-}
-html:root[data-theme="light"][data-theme].sv-music-screen body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline .sv-music-mini-progress,
-html:root[data-theme="light"][data-theme] body #sayviMusicMini .sv-music-mini-progress{height:.75px!important;opacity:.62!important}
-@media(prefers-reduced-transparency:reduce){
- :root[data-theme="light"]{--sv-silver-dock-face:#eef0f2;--sv-silver-dock-glint:none;--sv-silver-dock-filter:none}
-}
-
-</style>
 
 
-<style id="svApprovedDockGraphiteInk">
-/* Approved graphite ink for inactive light navigation glyphs. Preserve active colors, badge, orb and glass. */
-html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active) > svg,
-html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon),
-html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg,
-html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg :is(path,circle){
- color:#57636B!important;
- stroke:#57636B!important;
-}
-html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active):not([aria-current="page"]):not([aria-pressed="true"]) > svg,
-html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active):not([aria-current="page"]):not([aria-pressed="true"]) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
-html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg,
-html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
-html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button:not([aria-pressed="true"]):not(:active) > svg,
-html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button:not([aria-pressed="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
-html:root[data-theme="light"][data-theme].sv-music-screen:not(.sv-global-search-open) body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg,
-html:root[data-theme="light"][data-theme].sv-music-screen:not(.sv-global-search-open) body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
-html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-browser-dock > button[data-sv-browser-action]:not(.active):not([aria-pressed="true"]):not(:active) > svg,
-html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-browser-dock > button[data-sv-browser-action]:not(.active):not([aria-pressed="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]){
- color:#57636B!important;
- stroke:#57636B!important;
-}
-/* Match the mini player's refined line weight without changing active ink. */
-html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > :is(#navHome#navHome,#navTasks#navTasks,#navManage#navManage,#navPicture#navPicture) > svg,
-html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > :is(#navHome#navHome,#navTasks#navTasks,#navManage#navManage,#navPicture#navPicture) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]){
- stroke-width:1.55!important;
-}
-/* Same steel ink for neutral editor and white-chat actions; never recolor selected tools or Sayvi. */
-html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg,
-html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
-html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock > button.sv-note-draw-standalone:not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg,
-html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock > button.sv-note-draw-standalone:not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
-html:root[data-theme="light"][data-theme] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg,
-html:root[data-theme="light"][data-theme] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
-html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > :is(#svcpAttachFile,#svcpVoiceRecord):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg,
-html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > :is(#svcpAttachFile,#svcpVoiceRecord):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
-html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail.sv-editor-capsule button:not(.sv-doc-word-ai):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg,
-html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBody .sv-doc-edit-sheet .sv-doc-word-rail.sv-editor-capsule button:not(.sv-doc-word-ai):not(.active):not(.is-active):not(.selected):not(.is-selected):not([aria-pressed="true"]):not([aria-selected="true"]):not([data-active="true"]):not(:active):not(:disabled):not([aria-disabled="true"]) svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])){
- color:#57636B!important;
- stroke:#57636B!important;
- stroke-width:1.55!important;
-}
-html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-browser-dock > button[data-sv-browser-action] > svg,
-html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-browser-dock > button[data-sv-browser-action] > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
-html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button > svg,
-html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
-html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage > svg,
-html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]){
- stroke-width:1.55!important;
-}
-</style>
-<style id="svApprovedLightControlSystem">
-/* 2026-11-28 · Approved steel/glass family. Existing controls only.
-   Upper controls use less elevation; reading menus retain opaque text.
-   Dark, blue chat, colored confirmations and dock active states stay intact. */
-:root[data-theme="light"]{
- --sv-steel-line:1.55;
- --sv-steel-ink:#57636B;
- --sv-header-icon-ink:var(--sv-steel-ink);
- --sv-nav-glyph-stroke:var(--sv-steel-line);
- --sv-light-control-face:rgba(182,187,193,.16);
- --sv-light-control-edge:1px solid rgba(157,165,175,.32);
- --sv-light-control-filter:blur(3px) saturate(108%);
- --sv-light-control-shadow:inset 0 0 0 .75px rgba(255,255,255,.76),0 2px 5px rgba(30,40,52,.045),0 4px 12px rgba(30,40,52,.075);
- --sv-menu-icon-stroke:var(--sv-steel-line);
- --sv-menu-border:1px solid rgba(157,165,175,.30);
- --sv-menu-shadow:0 10px 28px rgba(30,40,52,.11),0 3px 8px rgba(30,40,52,.045),inset 0 1px 0 rgba(255,255,255,.88);
-}
-html:root[data-theme="light"][data-theme] body seyveo-work-head,
-html:root[data-theme="light"][data-theme] body button:is(.sv-header-material-circle,.sv-white-pearl-circle,.sv-nav-back,.sv-nav-arrow,.sv-note-reader-circle,.sv-doc-head-icon,.sv-doc-search-toggle,.sv-doc-shelf-add,.sv-mail-icon-button,.sv-cabinet-plus,.calendar-header-add,.personal-tasks-add,.svcp-manager-task-create,#calendarAdd,#personalAddTasks,#sayviSurfaceBack,#noteReviewBack,#noteReadBack,#noteScanBack,#assistantChatHistoryBack,#svNoteHomeNew,#svMedicalBack,#svMedicalEdit,#seyveoAvatarClose,#seyveoOfflineClose,#svfClose):not(.sv-mail-top-buttons > button):not(.sv-mail-detail-tools > button):not(.sv-mail-editor-actions > button):not(.sv-mail-attached-remove):not(.is-danger):not(.is-destructive):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-disabled="true"]):not(:disabled):not([hidden]),
-html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="inbox"] :is(.svcp-work-chat-back,#svcpWorkHistoryTop,.svcp-directory-search-toggle,.sv-inbox-menu-button):not([hidden]):not([aria-pressed="true"]):not(:disabled),
-html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] :is(#svcpConversationStandaloneBack,.svcp-call-button):not([hidden]):not([aria-pressed="true"]):not(:disabled),
-html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons,
-html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-month-controls,
-html:root[data-theme="light"][data-theme] body #seyveoPayDialog .sw-month.sv-month-nav > .sv-month-controls{
- --sv-white-pearl-surface:var(--sv-light-control-face);
- --sv-white-pearl-edge:var(--sv-light-control-edge);
- --sv-white-pearl-blur:var(--sv-light-control-filter);
- --sv-white-pearl-circle-shadow:var(--sv-light-control-shadow);
- --sv-white-pearl-dock-shadow:var(--sv-light-control-shadow);
- --sv-header-circle:var(--sv-light-control-face);
- --sv-header-circle-border:var(--sv-light-control-edge);
- --sv-header-circle-shadow:var(--sv-light-control-shadow);
- --sv-header-circle-filter:var(--sv-light-control-filter);
- --sv-nav-capsule-shadow:var(--sv-light-control-shadow);
-}
-html:root[data-theme="light"][data-theme] body button:is(.sv-header-material-circle,.sv-white-pearl-circle,.sv-nav-back,.sv-nav-arrow,.sv-note-reader-circle,.sv-doc-head-icon,.sv-doc-search-toggle,.sv-doc-shelf-add,.sv-mail-icon-button,.sv-cabinet-plus,.calendar-header-add,.personal-tasks-add,.svcp-manager-task-create,#calendarAdd,#personalAddTasks,#sayviSurfaceBack,#noteReviewBack,#noteReadBack,#noteScanBack,#assistantChatHistoryBack,#svNoteHomeNew,#svMedicalBack,#svMedicalEdit,#seyveoAvatarClose,#seyveoOfflineClose,#svfClose):not(.sv-mail-top-buttons > button):not(.sv-mail-detail-tools > button):not(.sv-mail-editor-actions > button):not(.sv-mail-attached-remove):not(.is-danger):not(.is-destructive):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-disabled="true"]):not(:disabled):not([hidden]) > svg,
-html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="inbox"] :is(.svcp-work-chat-back,#svcpWorkHistoryTop,.svcp-directory-search-toggle,.sv-inbox-menu-button):not([hidden]):not([aria-pressed="true"]):not(:disabled) > svg,
-html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] :is(#svcpConversationStandaloneBack,.svcp-call-button):not([hidden]):not([aria-pressed="true"]):not(:disabled) > svg,
-html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > button:not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg,
-html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-month-controls > button:not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg,
-html:root[data-theme="light"][data-theme] body #seyveoPayDialog .sw-month.sv-month-nav > .sv-month-controls > button:not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg{
- color:var(--sv-steel-ink)!important;
- stroke:var(--sv-steel-ink)!important;
- stroke-width:var(--sv-steel-line)!important;
-}
-html:root[data-theme="light"][data-theme] body :is(.sv-menu-surface,#svcpInboxMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,#svNotebookListMenu,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu,#svSmartVoiceMenu,#svfAttachMenu,#svcpAttachMenu,.sv-doc-list-menu,.sv-doc-scan-more-menu,.svdf-optional-actions,#sayviMenu,#sayviHistoryMenu,.sv-own-actions,.sv-doc-folder-menu,.sv-doc-draft-actions,.sv-task-context-menu,.sv-nb4-actions,.sv-mail-message-menu,.sv-mail-reply-menu,.sv-doc-file-popover,.svcp-message-menu,.sv-reply-menu-options,#svWorkCreateChoices,#homeWorldPopover,#seyveoCleanManageMenu,.sv-doc-head-options) :is(button,[role="menuitem"]):not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg,
-html:root[data-theme="light"][data-theme] body :is(.sv-menu-surface,#svcpInboxMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,#svNotebookListMenu,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu,#svSmartVoiceMenu,#svfAttachMenu,#svcpAttachMenu,.sv-doc-list-menu,.sv-doc-scan-more-menu,.svdf-optional-actions,#sayviMenu,#sayviHistoryMenu,.sv-own-actions,.sv-doc-folder-menu,.sv-doc-draft-actions,.sv-task-context-menu,.sv-nb4-actions,.sv-mail-message-menu,.sv-mail-reply-menu,.sv-doc-file-popover,.svcp-message-menu,.sv-reply-menu-options,#svWorkCreateChoices,#homeWorldPopover,#seyveoCleanManageMenu,.sv-doc-head-options) :is(button,[role="menuitem"]):not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > .sv-doc-menu-icon > svg{
- color:var(--sv-steel-ink)!important;
- stroke:var(--sv-steel-ink)!important;
- stroke-width:var(--sv-steel-line)!important;
-}
-@media(prefers-reduced-transparency:reduce){
- :root[data-theme="light"]{--sv-light-control-face:#eef0f2;--sv-light-control-filter:none}
-}
-</style>
+
+
+
 </body></html>
