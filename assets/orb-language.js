@@ -451,6 +451,13 @@
   let kind=voice==='listening'?'listening':voice==='speaking'?'speaking':
     audio&&!audio.paused&&!audio.ended&&(!!audio.currentSrc||!!audio.getAttribute('src'))?'equalizer':oneShot?.kind||'';
   if(!kind){clearOwn();return;}
+  // On the main screen the living silk replaces the legacy five music bars.
+  // Keep the shared rhythm analysis running without creating the old indicator.
+  if(kind==='equalizer'&&!home.hidden&&home.contains(orb)){
+   clearOwn();
+   if(!reduce?.matches)prepareRhythm(window.SEYVEO_MUSIC?.rhythmFile?.());
+   return;
+  }
   let content=signal.querySelector(':scope > .svl-depth');
   if(content&&signal.dataset.svlKind===kind){syncRhythm();return}
   clearOwn();
