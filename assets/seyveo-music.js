@@ -697,7 +697,7 @@ function syncResume(){
   if(inline){if(mini.parentNode!==miniHomeSlot)miniHomeSlot.append(mini)}
   else if(miniOrigin.parentNode&&mini.parentNode!==miniOrigin.parentNode)miniOrigin.parentNode.insertBefore(mini,miniOrigin.nextSibling);
   mini.classList.toggle('sv-music-mini-inline',inline);
-  mini.hidden=!inline&&(!loaded||!hasPlayed||audio.ended||(location.hash==='#sayvi-music'&&page.dataset.musicView!=='home'&&page.dataset.musicView!=='new'&&page.dataset.musicView!=='radio'&&page.dataset.musicView!=='radio-favorites'&&page.dataset.musicView!=='library'&&page.dataset.musicView!=='replay'&&page.dataset.musicView!=='history')||miniDismissed);
+  mini.hidden=!inline&&(!loaded||!hasPlayed||audio.ended||(location.hash==='#sayvi-music'&&page.dataset.musicView!=='home'&&page.dataset.musicView!=='new'&&page.dataset.musicView!=='radio'&&page.dataset.musicView!=='radio-favorites'&&page.dataset.musicView!=='radio-archive'&&page.dataset.musicView!=='library'&&page.dataset.musicView!=='replay'&&page.dataset.musicView!=='history')||miniDismissed);
   mini.classList.toggle('is-playing',playing);
   if(loaded){
    const file=tracks[index];
