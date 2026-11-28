@@ -155,12 +155,8 @@
   function recognitionIdle(version,notice=''){
    if(version!==generation||mode!=='recognize'||!dialog?.open)return;
    body.replaceChildren();
-   recognitionOrbButton('svRecognitionStart','Распознать музыку','',()=>{recognitionApproved=true;recordRecognition(version)});
-   if(canCaptureDevice()){
-    const device=action('Звук устройства',()=>recordRecognition(version,'device'));
-    device.classList.add('sv-recognition-device-action');
-    device.setAttribute('aria-description','Выбрать вкладку или экран с доступным звуком. Записывается только звук.');
-   }
+   const start=recognitionOrbButton('svRecognitionStart','Распознать музыку','',()=>{recognitionApproved=true;recordRecognition(version,canCaptureDevice()?'device':'microphone')});
+   if(canCaptureDevice())start.setAttribute('aria-description','Сначала доступный звук устройства, затем микрофон при необходимости. При отмене выбора источника запись не начинается.');
    if(notice){
     const toast=d.createElement('p');toast.className='sv-recognition-toast';toast.setAttribute('role','status');
     body.append(toast);toast.textContent=notice;
@@ -194,7 +190,11 @@
    try{
     stream=await (device?w.navigator.mediaDevices.getDisplayMedia({video:true,audio:true,systemAudio:'include'}):w.navigator.mediaDevices.getUserMedia({audio:true,video:false}));
     if(!valid()){release();return}
-    if(!stream.getAudioTracks().length){cancelRecognition();recognitionIdle(version,'Выберите вкладку или экран и разрешите передачу звука.');return}
+    if(!stream.getAudioTracks().length){
+     cancelRecognition();
+     if(device&&!d.hidden&&w.navigator.mediaDevices?.getUserMedia){void recordRecognition(version,'microphone');return}
+     recognitionIdle(version,'Звук недоступен. Попробуйте ещё раз.');return
+    }
     const audioOnly=new w.MediaStream(stream.getAudioTracks());
     const options=['audio/mp4','audio/webm;codecs=opus','audio/ogg;codecs=opus','audio/webm'].find(t=>w.MediaRecorder.isTypeSupported?.(t));
     recorder=new w.MediaRecorder(audioOnly,options?{mimeType:options}:undefined);
@@ -210,7 +210,10 @@
       const blob=new Blob(chunks,{type:recorder.mimeType||chunks[0]?.type||'audio/webm'});
       if(!blob.size||size>2*1024*1024)throw Error('clip');
       const data={result:await engine.recognize(blob,{signal:controller.signal})};if(!valid())return;
-      if(!data.result){recognitionIdle(version,'Не нашёл песню в медиатеке');return}
+      if(!data.result){
+       if(device&&!d.hidden&&w.navigator.mediaDevices?.getUserMedia){void recordRecognition(version,'microphone');return}
+       recognitionIdle(version,'Не нашёл песню в медиатеке');return
+      }
       body.replaceChildren();
       {
        const name=d.createElement('strong');name.className='sv-adaptive-tagline';name.textContent=data.result.title;body.append(name);message(data.result.artist);
@@ -238,6 +241,8 @@
     timer=w.setTimeout(()=>{if(recorder.state!=='inactive')recorder.stop();release()},10000);
    }catch(error){release();if(valid()){
     cancelRecognition();
+    // An explicit cancellation or refusal of screen/audio sharing must not start another capture.
+    if(device&&!d.hidden&&w.navigator.mediaDevices?.getUserMedia&&!['NotAllowedError','AbortError','PermissionDeniedError'].includes(error?.name)){void recordRecognition(version,'microphone');return}
     const notice=device?(error?.name==='NotAllowedError'||error?.name==='AbortError'?'Захват звука отменён':'Не удалось получить звук устройства'):
      error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'?'Разрешите доступ к микрофону':
      error?.name==='NotFoundError'||error?.name==='DevicesNotFoundError'?'Микрофон не найден':
