@@ -748,7 +748,20 @@ function initRadio(){
  window.addEventListener('pagehide',stopSongPoll);
  // A separate station-wide archive, not personal history or listening statistics.
  const archiveList=document.getElementById('svRadioArchiveRows'),archiveDate=document.getElementById('svRadioArchiveDate'),archiveNote=document.getElementById('svRadioArchiveNote'),archiveOpen=document.getElementById('svRadioArchiveOpenPlayer');
+ const archiveTrigger=document.getElementById('svRadioArchiveDateTrigger'),archiveMenu=document.getElementById('svRadioArchiveDateMenu'),archiveLabel=document.getElementById('svRadioArchiveDateLabel');
  const stationDay=at=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(at));
+ const archiveOptions=()=>Array.from({length:7},(_,i)=>{const at=Date.now()-i*86400000;return {value:stationDay(at),label:i===0?'Сегодня':i===1?'Вчера':new Intl.DateTimeFormat('ru-RU',{timeZone:'Europe/Moscow',day:'numeric',month:'long'}).format(new Date(at))}});
+ function syncArchiveLabel(){if(archiveLabel&&archiveDate)archiveLabel.textContent=archiveOptions().find(x=>x.value===archiveDate.value)?.label||'Сегодня'}
+ function closeArchiveDate(restore=false){if(!archiveMenu||!archiveTrigger)return;archiveMenu.hidden=true;archiveTrigger.setAttribute('aria-expanded','false');if(restore)archiveTrigger.focus({preventScroll:true})}
+ function openArchiveDate(){if(!archiveMenu||!archiveTrigger||!archiveDate)return;archiveMenu.replaceChildren();const options=archiveOptions();archiveMenu.hidden=false;archiveTrigger.setAttribute('aria-expanded','true');
+  const choose=value=>{archiveDate.value=value;syncArchiveLabel();closeArchiveDate(true);paintArchive()};
+  if(window.SEYVEO_WHEEL?.mount){const wheel=document.createElement('div');wheel.setAttribute('aria-label','Дата эфира');const done=document.createElement('button');done.type='button';done.className='sv-radio-wheel-done';done.textContent='Готово';archiveMenu.append(wheel,done);const picker=window.SEYVEO_WHEEL.mount(wheel,options,archiveDate.value);done.addEventListener('click',()=>choose(picker.value));wheel.focus({preventScroll:true});return}
+  for(const item of options){const btn=document.createElement('button');btn.type='button';btn.className='sv-radio-date-option';btn.textContent=item.label;btn.setAttribute('aria-pressed',String(item.value===archiveDate.value));btn.addEventListener('click',()=>choose(item.value));archiveMenu.append(btn)}
+  archiveMenu.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});
+ }
+ archiveTrigger?.addEventListener('click',()=>archiveMenu?.hidden?openArchiveDate():closeArchiveDate(true));
+ document.addEventListener('click',e=>{if(archiveMenu&&!archiveMenu.hidden&&!archiveMenu.contains(e.target)&&!archiveTrigger?.contains(e.target))closeArchiveDate()});
+ archiveMenu?.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeArchiveDate(true)}});
  let archiveRows=[],archiveStatus='idle',archiveTimer=0,archiveAbort=null,archiveGeneration=0;
  function paintArchive(){if(!archiveList||!archiveDate||page.dataset.musicView!=='radio-archive')return;archiveList.replaceChildren();if(archiveNote)archiveNote.textContent='Время Краснодара · архив с момента запуска сервера. Возможны пропуски.';
  const date=archiveDate.value,rows=archiveRows.filter(x=>stationDay(x.at)===date);
@@ -757,7 +770,7 @@ function initRadio(){
  }
  function stopArchive(){clearTimeout(archiveTimer);archiveTimer=0;archiveGeneration++;archiveAbort?.abort();archiveAbort=null}
  async function fetchArchive(){if(page.dataset.musicView!=='radio-archive'||document.hidden)return;clearTimeout(archiveTimer);archiveTimer=0;if(archiveAbort)return;const gen=archiveGeneration,ctrl=new AbortController();archiveAbort=ctrl;const timeout=setTimeout(()=>ctrl.abort(),6000);if(archiveStatus==='idle')archiveStatus='loading';paintArchive();try{const result=await fetch('/api/seyveo-radio-107-archive',{cache:'no-store',signal:ctrl.signal});if(!result.ok)throw Error('archive');const data=await result.json();if(gen!==archiveGeneration)return;archiveRows=Array.isArray(data.items)?data.items.filter(x=>typeof x?.title==='string'&&Number.isFinite(x.at)).slice(0,3000):[];archiveStatus='ready'}catch{if(gen===archiveGeneration)archiveStatus='error'}finally{clearTimeout(timeout);if(gen===archiveGeneration){archiveAbort=null;paintArchive();if(page.dataset.musicView==='radio-archive'&&!document.hidden)archiveTimer=setTimeout(fetchArchive,30000)}}}
- function syncArchive(){const state=window.SEYVEO_MUSIC?.state?.();if(archiveOpen)archiveOpen.hidden=state?.stationId!=='krd107';if(page.dataset.musicView!=='radio-archive'||document.hidden){stopArchive();return}if(archiveDate){archiveDate.max=stationDay(Date.now());archiveDate.min=stationDay(Date.now()-6*86400000);if(!archiveDate.value||archiveDate.value<archiveDate.min||archiveDate.value>archiveDate.max)archiveDate.value=archiveDate.max}if(!archiveTimer&&!archiveAbort)void fetchArchive()}
+ function syncArchive(){const state=window.SEYVEO_MUSIC?.state?.();if(archiveOpen)archiveOpen.hidden=state?.stationId!=='krd107';if(page.dataset.musicView!=='radio-archive'||document.hidden){closeArchiveDate();stopArchive();return}if(archiveDate){const options=archiveOptions();if(!options.some(x=>x.value===archiveDate.value))archiveDate.value=options[0].value;syncArchiveLabel()}if(!archiveTimer&&!archiveAbort)void fetchArchive()}
  archiveDate?.addEventListener('change',paintArchive);
  for(const event of ['seyveo:music-view','visibilitychange','seyveo:music-state'])document.addEventListener(event,syncArchive);
  window.addEventListener('pagehide',stopArchive);
