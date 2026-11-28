@@ -240,7 +240,7 @@ void main(){
  if(uKind<4.5||uKind>5.5&&uKind<7.5){float shimmer=.5+.5*sin(18.0*x+9.0*v-uMusic.x*12.0);alpha*=1.0+(.12*uMusic.w)*shimmer;}
  // Optional Home silk-only material: faint teal particles and luminous folds on white glass.
  if(uInside>.5){
-  if(uKind>7.5){float core=gauss(v-.5,.075);col=mix(vec3(.12,.72,.72),vec3(.94,1.0,.99),core);alpha*=.36+.55*core+.164*core*(1.0-step(8.5,uKind));}
+  if(uKind>7.5){float core=gauss(v-.5,.075);float central=1.0-step(8.5,uKind);col=mix(mix(vec3(.12,.72,.72),vec3(.08,.68,.69),central),mix(vec3(.94,1.0,.99),vec3(.57,.98,.96),central),core);alpha*=.36+.55*core+.164*core*central+.10*central*(1.0-core);}
   else if(uMode<.5){col=mix(vec3(.26,.65,.66),vec3(.77,.98,.97),smoothstep(.2,.8,col.r));alpha*=uKind>2.5&&uKind<3.5?.52:.10;}
   else {col=mix(vec3(.20,.53,.55),vec3(.48,.91,.89),smoothstep(.2,.85,col.r));alpha*=.67;}
  }
