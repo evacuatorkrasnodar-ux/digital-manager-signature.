@@ -446,7 +446,7 @@ function replayTick(){
  const info=infoFor(file);
  const row=bucket.items[key]||(bucket.items[key]={seconds:0,title:'',artist:'',radio:!!file.radio});
  row.title=info.title||safeName(file);row.artist=file.radio?file.country:(info.artist||'');row.seconds+=seconds;bucket.seconds+=seconds;
- if(!file.radio){if(info.genre)row.genre=info.genre;if(info.language)row.language=info.language;}
+ if(!file.radio){if(info.genre)row.genre=info.genre;if(info.language)row.language=info.language;const source=portraitSource(info.genre);if(source)row.source=source;}
  const stamp=new Date(now),day=month+'-'+String(stamp.getDate()).padStart(2,'0');
  bucket.days=bucket.days||{};bucket.days[day]=(Number(bucket.days[day])||0)+seconds;
  bucket.hours=Array.isArray(bucket.hours)?bucket.hours:Array(24).fill(0);
@@ -469,6 +469,15 @@ function replaySummary(period){
  return {seconds,musicSeconds,radioSeconds,tracks:all.filter(t=>!t.radio).slice(0,5),stations:all.filter(t=>t.radio).slice(0,5),artists:[...artists.values()].sort((a,b)=>b.seconds-a.seconds).slice(0,5)};
 }
 // Musical portrait: use actual listening duration and explicit embedded tags.
+const portraitSource=value=>{
+ const v=String(value||'').trim();
+ const match=v.match(/(?:https?:\/\/)?(?:www\.)?((?:[a-z0-9-]+\.)+(?:com|net|org|ru|me|fm|io|info|su|xn--p1ai|music|pro|club|cc|biz|site|online|xyz))(?=$|[\s\/:?#),;])/i);
+ if(!match)return '';
+ const host=match[1].toLowerCase();
+ if(host==='drivemusic.me')return 'DriveMusic.me';
+ if(/(^|\.)youtube\.com$/.test(host))return 'YouTube';
+ return host;
+};
 const portraitGenre=value=>{
  const v=String(value||'').trim();if(!v)return '';
  const numeric=v.match(/^\(?(\d{1,3})\)?$/);
@@ -497,7 +506,7 @@ const portraitLanguage=value=>{
 function replayPortrait(period){
  const months=Object.keys(replayMonths).filter(k=>k===period||(/^\d{4}$/.test(period)&&k.startsWith(period+'-')));
  const files=new Map(localTracks.map(file=>['file:'+favoriteId(file),file]));
- const genres=new Map(),languages=new Map(),artists=new Map(),days={},hours=Array(24).fill(0);
+ const genres=new Map(),languages=new Map(),artists=new Map(),sources=new Map(),days={},hours=Array(24).fill(0);
  let total=0,music=0,genreKnown=0,languageKnown=0,trackedFrom='';
  for(const month of months){
   const bucket=replayMonths[month];total+=Number(bucket.seconds)||0;
@@ -505,8 +514,11 @@ function replayPortrait(period){
   for(const [day,value] of Object.entries(bucket.days||{}))if(/^\d{4}-\d{2}-\d{2}$/.test(day)&&Number.isFinite(Number(value)))days[day]=(days[day]||0)+Math.max(0,Number(value));
   for(let i=0;i<24;i++)hours[i]+=Math.max(0,Number(bucket.hours?.[i])||0);
   for(const [key,row] of Object.entries(bucket.items||{})){
-   if(!row||row.radio)continue;const seconds=Number(row.seconds)||0;if(seconds<=0)continue;music+=seconds;
+   if(!row)continue;const seconds=Number(row.seconds)||0;if(seconds<=0)continue;
    const file=files.get(key),info=file?trackDescriptions.get(file):null;
+   const source=row.radio?'Радио':portraitSource(info?.genre)||portraitSource(row.source)||portraitSource(row.genre)||'Медиатека · без источника';
+   sources.set(source,(sources.get(source)||0)+seconds);
+   if(row.radio)continue;music+=seconds;
    const genre=portraitGenre(info?.genre||row.genre),language=portraitLanguage(info?.language||row.language);
    if(genre){genres.set(genre,(genres.get(genre)||0)+seconds);genreKnown+=seconds}
    if(language){languages.set(language,(languages.get(language)||0)+seconds);languageKnown+=seconds}
@@ -514,7 +526,7 @@ function replayPortrait(period){
   }
  }
  const list=map=>[...map].map(([name,seconds])=>({name,seconds})).sort((a,b)=>b.seconds-a.seconds);
- return {total,music,genreKnown,languageKnown,genres:list(genres),languages:list(languages),artists:list(artists),days,hours,trackedFrom};
+ return {total,music,genreKnown,languageKnown,genres:list(genres),languages:list(languages),artists:list(artists),sources:list(sources),days,hours,trackedFrom};
 }
 let portraitScan=null;const portraitScanned=new WeakSet();
 function enrichReplayPortrait(){
@@ -525,7 +537,7 @@ function enrichReplayPortrait(){
  portraitScan=(async()=>{let changed=false;for(const file of targets){
   if(document.hidden)break;portraitScanned.add(file);
   try{const info=await metadata.describe(file);if(!info)continue;const prior=trackDescriptions.get(file)||{};const {artwork,...details}=info;trackDescriptions.set(file,{...prior,...details});const key='file:'+favoriteId(file);
-   for(const bucket of Object.values(replayMonths)){const row=bucket.items?.[key];if(!row)continue;if(info.genre){row.genre=info.genre;changed=true}if(info.language){row.language=info.language;changed=true}}
+   for(const bucket of Object.values(replayMonths)){const row=bucket.items?.[key];if(!row)continue;if(info.genre){row.genre=info.genre;const source=portraitSource(info.genre);if(source)row.source=source;changed=true}if(info.language){row.language=info.language;changed=true}}
   }catch{}
  }if(changed){replayDirty=true;replaySave()}return changed})().finally(()=>{portraitScan=null});
  return portraitScan;
