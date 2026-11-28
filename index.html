@@ -9242,4 +9242,20 @@ html:root[data-theme="light"][data-theme] body #sayviMusicMini .sv-music-mini-pr
  :root[data-theme="light"]{--sv-silver-dock-face:#eef0f2;--sv-silver-dock-glint:none;--sv-silver-dock-filter:none}
 }
 </style>
+
+<style id="svHomeWhiteGlassTrial">
+/* Home-only optical trial. Keep shared Silver Glass unchanged elsewhere. */
+html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock):not(.sv-music-navigation-only){
+ --sv-silver-dock-face:rgba(242,244,246,.62);
+ --sv-silver-dock-glint:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.06));
+ --sv-silver-dock-filter:blur(16px) saturate(135%);
+ --sv-silver-dock-edge:1px solid rgba(255,255,255,.58);
+ --sv-silver-dock-shadow:inset 0 1px 0 rgba(255,255,255,.72),0 4px 14px rgba(31,41,55,.08);
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock):not(.sv-music-navigation-only){
+  --sv-silver-dock-face:#eef0f2;--sv-silver-dock-glint:none;--sv-silver-dock-filter:none;
+ }
+}
+</style>
 </body></html>
