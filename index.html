@@ -1608,7 +1608,9 @@ html:root[data-theme="light"] body #sayviMusicPage #svMusicReplay .sv-portrait-p
    <button type="button" data-music-view-action="sources"><svg class="sv-library-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/></svg><span class="sv-library-action-label">Источники</span><svg class="sv-library-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
    <button type="button" data-music-view-action="youtube"><svg class="sv-library-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="4"/><path d="m10 9 5 3-5 3Z"/></svg><span class="sv-library-action-label">YouTube</span><svg class="sv-library-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
   </div>
+  <details class="sv-library-details"><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v4a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4"/></svg><span>Загрузки и караоке</span><svg class="sv-library-details-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
   <div class="sv-library-status"><div class="sv-library-status-row"><svg class="sv-library-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v4a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4"/></svg><p id="svMusicStorageStatus" class="sv-music-browse-caption" role="status" aria-live="polite">Загрузка музыки с устройства…</p></div><div class="sv-library-status-row" id="svMusicLyricsStatusRow" hidden><svg class="sv-library-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 10v2a6.5 6.5 0 0 0 13 0v-2M12 18.5V22m-4 0h8"/></svg><div class="sv-library-status-copy"><p id="svMusicLyricsQueueStatus" class="sv-music-browse-caption" role="status" hidden></p><progress id="svMusicLyricsLibraryProgress" max="1" value="0" aria-label="Готовность караоке" hidden></progress></div></div></div>
+  </details>
   <h3 class="sv-music-section-title">Треки</h3>
   <div id="svMusicLibraryTracks" class="sv-music-library-tracks"></div>
  </section>
@@ -9789,5 +9791,31 @@ html:root body #svGlobalSearch.sv-search-radio-mode .sv-radio-search-result .sv-
 #svGlobalSearch.sv-search-radio-mode .sv-search-result-copy strong{font-size:15px!important;font-weight:550!important}
 #svGlobalSearch.sv-search-radio-mode .sv-search-result-copy small{font-size:12px!important;font-weight:400!important}
 #svGlobalSearch.sv-search-radio-mode .sv-radio-search-result:last-child .sv-search-result{border-bottom:0!important}
+</style>
+<style id="svLibraryCompactFinish">
+/* Library only; preserve all actions and progress reporting. */
+html:root body #sayviMusicPage #svMusicLibrary .sv-music-library-actions{
+ gap:4px;margin:0 0 4px!important;
+}
+html:root body #sayviMusicPage #svMusicLibrary .sv-music-library-actions>button{
+ min-height:44px!important;padding:6px 12px!important;border-radius:13px!important;
+ border:1px solid rgba(125,143,150,.10)!important;box-shadow:none!important;
+}
+#sayviMusicPage #svMusicLibrary .sv-library-action-label{font-size:14px!important;font-weight:520!important}
+#sayviMusicPage #svMusicLibrary .sv-music-library-actions .sv-library-icon{width:20px;height:20px;flex-basis:20px}
+#sayviMusicPage #svMusicLibrary .sv-library-details{margin:0 0 4px;padding:0;border:0;background:transparent}
+#sayviMusicPage #svMusicLibrary .sv-library-details>summary{
+ display:flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;
+ list-style:none;cursor:pointer;color:var(--secondary);font-size:12px;font-weight:450;
+}
+#sayviMusicPage #svMusicLibrary .sv-library-details>summary::-webkit-details-marker{display:none}
+#sayviMusicPage #svMusicLibrary .sv-library-details>summary::marker{content:""}
+#sayviMusicPage #svMusicLibrary .sv-library-details>summary svg{width:17px;height:17px;flex:0 0 17px}
+#sayviMusicPage #svMusicLibrary .sv-library-details>summary span{flex:1}
+#sayviMusicPage #svMusicLibrary .sv-library-details[open] .sv-library-details-chevron{transform:rotate(180deg)}
+#sayviMusicPage #svMusicLibrary .sv-library-details>summary:focus-visible{outline:2px solid currentColor;outline-offset:-2px;border-radius:10px}
+#sayviMusicPage #svMusicLibrary .sv-library-details:not([open])>.sv-library-status{display:none!important}
+#sayviMusicPage #svMusicLibrary .sv-library-details>.sv-library-status{margin:0 0 8px}
+#sayviMusicPage #svMusicLibrary>.sv-music-section-title{font-size:19px!important;margin:6px 0 5px!important}
 </style>
 </body></html>
