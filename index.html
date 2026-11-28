@@ -1270,6 +1270,54 @@ html.sv-music-wake-listening body #wakeVoiceStatus .wake-voice-dot{background:#5
 html.sv-music-wake-listening body #sayviMusicStage .sv-now-fallback{filter:brightness(1.12)}
 @media(prefers-reduced-motion:reduce){html.sv-music-wake-listening body #sayviMusicStage .sv-now-fallback{filter:none}}
 </style>
+
+<style id="svMusicalPortraitStyle">
+#sayviMusicPage #svMusicReplay .sv-replay-total{background:radial-gradient(ellipse at 93% 0%,rgba(149,161,231,.34),transparent 58%),radial-gradient(ellipse at 20% 100%,rgba(107,177,177,.24),transparent 55%),linear-gradient(135deg,#253c57,#344e70 62%,#383e63);padding:21px 18px 17px;border-radius:22px}
+#sayviMusicPage #svMusicReplay .sv-replay-total::before{opacity:.7}
+#sayviMusicPage #svMusicReplay .sv-portrait-insight{display:flex;align-items:center;gap:12px;padding-top:15px;margin-top:12px;border-top:1px solid rgba(232,241,255,.18)}
+#sayviMusicPage #svMusicReplay .sv-portrait-orb{width:53px;height:53px;flex:0 0 53px}
+#sayviMusicPage #svMusicReplay .sv-portrait-orb svg{width:100%;height:100%;display:block}
+#sayviMusicPage #svMusicReplay .sv-portrait-insight-copy{display:grid;gap:4px;min-width:0}
+#sayviMusicPage #svMusicReplay .sv-portrait-insight-copy small{color:#d9e8ff;font-size:12px;line-height:1.2;font-weight:600;letter-spacing:-.01em}
+#sayviMusicPage #svMusicReplay .sv-portrait-insight-copy p{font-size:13px;color:#f4f8ff;line-height:1.4;margin:0;overflow-wrap:anywhere}
+#sayviMusicPage #svMusicReplay .sv-portrait-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin:0 0 24px}
+#sayviMusicPage #svMusicReplay .sv-portrait-panel{min-width:0;padding:16px;border:1px solid rgba(140,157,179,.18);border-radius:20px;background:var(--card);box-shadow:none}
+html:root[data-theme="light"] body #sayviMusicPage #svMusicReplay .sv-portrait-panel{background:linear-gradient(145deg,rgba(244,247,252,.83),rgba(255,255,255,.96) 62%);border-color:rgba(143,161,184,.19)}
+#sayviMusicPage #svMusicReplay .sv-portrait-title{font-size:16px;font-weight:620;letter-spacing:-.025em;line-height:1.25;color:var(--text);margin:0 0 5px}
+#sayviMusicPage #svMusicReplay .sv-portrait-sub,#sayviMusicPage #svMusicReplay .sv-portrait-note{font-size:11px;line-height:1.45;color:var(--secondary);margin:0}
+#sayviMusicPage #svMusicReplay .sv-portrait-note{margin-top:11px}
+#sayviMusicPage #svMusicReplay .sv-portrait-empty{font-size:12px;line-height:1.5;color:var(--secondary);margin:10px 0 1px}
+#sayviMusicPage #svMusicReplay .sv-portrait-chart-detail{font-size:12px;font-weight:550;color:var(--text);min-height:17px;margin:12px 0 7px}
+#sayviMusicPage #svMusicReplay .sv-portrait-bars{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(19px,1fr);gap:3px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding-bottom:5px}
+#sayviMusicPage #svMusicReplay .sv-portrait-bar-col{display:grid!important;grid-template-rows:88px 18px;gap:4px;min-width:0;width:100%;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;transform:none!important;color:var(--secondary);text-align:center;align-items:end;justify-items:center}
+#sayviMusicPage #svMusicReplay .sv-portrait-bar-col[disabled]{opacity:.35}
+#sayviMusicPage #svMusicReplay .sv-portrait-bar-col small{font-size:9px;white-space:nowrap;line-height:1}
+#sayviMusicPage #svMusicReplay .sv-portrait-bar-rail{display:flex;align-items:flex-end;width:100%;height:88px;border-radius:5px;background:rgba(140,157,179,.08);overflow:hidden}
+#sayviMusicPage #svMusicReplay .sv-portrait-bar{width:100%;border-radius:5px;background:linear-gradient(180deg,#8b9ed2,#abc4dc);transition:height .25s ease}
+#sayviMusicPage #svMusicReplay .sv-portrait-bar.is-peak{background:linear-gradient(180deg,#807bc3,#9eaae3)}
+#sayviMusicPage #svMusicReplay .sv-portrait-distribution{display:grid;grid-template-columns:104px minmax(0,1fr);align-items:center;gap:12px;margin:14px 0 3px}
+#sayviMusicPage #svMusicReplay .sv-portrait-donut{position:relative;width:104px;height:104px;border-radius:50%;display:grid;place-items:center}
+#sayviMusicPage #svMusicReplay .sv-portrait-donut-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:72px;height:72px;border-radius:50%;background:var(--card,#fff);color:var(--text);text-align:center}
+#sayviMusicPage #svMusicReplay .sv-portrait-donut-center strong{font-size:19px;line-height:1;letter-spacing:-.04em}
+#sayviMusicPage #svMusicReplay .sv-portrait-donut-center small{max-width:65px;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sayviMusicPage #svMusicReplay .sv-portrait-legend{display:grid;gap:8px;min-width:0}
+#sayviMusicPage #svMusicReplay .sv-portrait-legend-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:12px;line-height:1.25}
+#sayviMusicPage #svMusicReplay .sv-portrait-legend-row i{width:7px;height:7px;border-radius:50%;flex:none}
+#sayviMusicPage #svMusicReplay .sv-portrait-legend-row span{flex:1;min-width:30px;overflow-wrap:anywhere}
+#sayviMusicPage #svMusicReplay .sv-portrait-legend-row strong{font-size:12px;font-weight:600;white-space:nowrap}
+#sayviMusicPage #svMusicReplay .sv-portrait-change{font-size:10px;color:var(--secondary);white-space:nowrap;margin-left:auto}
+#sayviMusicPage #svMusicReplay .sv-portrait-change.up{color:#37806e}
+#sayviMusicPage #svMusicReplay .sv-portrait-change.down{color:#a76c85}
+#sayviMusicPage #svMusicReplay .sv-portrait-rhythm-note{font-size:12px;line-height:1.4;color:var(--secondary);margin:0 0 13px}
+#sayviMusicPage #svMusicReplay .sv-portrait-rhythm{display:grid;gap:10px}
+#sayviMusicPage #svMusicReplay .sv-portrait-rhythm-row{display:grid;grid-template-columns:44px minmax(0,1fr) 34px;gap:10px;align-items:center;font-size:12px}
+#sayviMusicPage #svMusicReplay .sv-portrait-rhythm-row strong{text-align:right;font-size:12px;font-weight:600}
+#sayviMusicPage #svMusicReplay .sv-portrait-rhythm-track{height:6px;border-radius:5px;background:rgba(140,157,179,.15);overflow:hidden}
+#sayviMusicPage #svMusicReplay .sv-portrait-rhythm-track i{height:100%;display:block;border-radius:5px}
+@media(min-width:700px){#sayviMusicPage #svMusicReplay .sv-portrait-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:350px){#sayviMusicPage #svMusicReplay .sv-portrait-panel{padding:12px}#sayviMusicPage #svMusicReplay .sv-portrait-distribution{grid-template-columns:86px minmax(0,1fr);gap:9px}#sayviMusicPage #svMusicReplay .sv-portrait-donut{width:86px;height:86px}#sayviMusicPage #svMusicReplay .sv-portrait-donut-center{width:60px;height:60px}}
+@media(prefers-reduced-motion:reduce){#sayviMusicPage #svMusicReplay .sv-portrait-bar{transition:none}}
+</style>
 </head><body>
 <div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/seyveo-pwa-circular-s-192.png?v=1" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-owner-trigger" type="button" aria-label="Профиль владельца и бизнес" title="Владелец и бизнес" aria-haspopup="true" aria-expanded="false" aria-controls="homePassportPopover"><span id="seyveoHeaderAvatar" class="seyveo-avatar seyveo-company-avatar" aria-hidden="true"><img src="assets/company-building-avatar.svg?v=1" alt="" width="44" height="44" draggable="false"></span></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="contacts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Контакты</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="smart-home" aria-label="Открыть Умный дом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-7 9 7v9H3zM9 20v-7h6v7"/></svg><span>Умный дом</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="documents" aria-label="Открыть Личные документы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6"/></svg><span>Личные документы</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="mail" aria-label="Открыть Почту SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.6"/><path d="m4 7 8 6 8-6"/></svg><span>Почта</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="browser" aria-label="Открыть Браузер SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 4-5 14 0 18M12 3c5 4 5 14 0 18"/></svg><span>Браузер</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="play" hidden style="display:none!important" aria-label="Открыть YouTube"><svg class="seyveo-youtube-white" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="stroke:none;fill:none;opacity:1;display:block;width:26px;height:23px;flex:none;"><path fill="#fff" fill-rule="evenodd" clip-rule="evenodd" stroke="none" d="M5.7 5H18.3C20.9 5 22.5 6.6 22.5 9.1V14.9C22.5 17.4 20.9 19 18.3 19H5.7C3.1 19 1.5 17.4 1.5 14.9V9.1C1.5 6.6 3.1 5 5.7 5ZM9.85 8.45V15.55L16.5 12Z"/></svg><span>YouTube</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Сведения SEYVEO и карточка бизнеса">
@@ -4856,55 +4904,7 @@ function printNote(note){
   popup.opener=null;popup.document.open();
   popup.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>SEYVEO · Запись</title>'
    +'<style>body{font:16px/1.55 system-ui,sans-serif;color:#182033;max-width:740px;margin:40px auto;padding:14px}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}</style>'
-   +'</head><body><h1>Моя запись</h1><pre>'+escapeHtml(note.text)+'</pre>
-<style id="svMusicalPortraitStyle">
-#sayviMusicPage #svMusicReplay .sv-replay-total{background:radial-gradient(ellipse at 93% 0%,rgba(149,161,231,.34),transparent 58%),radial-gradient(ellipse at 20% 100%,rgba(107,177,177,.24),transparent 55%),linear-gradient(135deg,#253c57,#344e70 62%,#383e63);padding:21px 18px 17px;border-radius:22px}
-#sayviMusicPage #svMusicReplay .sv-replay-total::before{opacity:.7}
-#sayviMusicPage #svMusicReplay .sv-portrait-insight{display:flex;align-items:center;gap:12px;padding-top:15px;margin-top:12px;border-top:1px solid rgba(232,241,255,.18)}
-#sayviMusicPage #svMusicReplay .sv-portrait-orb{width:53px;height:53px;flex:0 0 53px}
-#sayviMusicPage #svMusicReplay .sv-portrait-orb svg{width:100%;height:100%;display:block}
-#sayviMusicPage #svMusicReplay .sv-portrait-insight-copy{display:grid;gap:4px;min-width:0}
-#sayviMusicPage #svMusicReplay .sv-portrait-insight-copy small{color:#d9e8ff;font-size:12px;line-height:1.2;font-weight:600;letter-spacing:-.01em}
-#sayviMusicPage #svMusicReplay .sv-portrait-insight-copy p{font-size:13px;color:#f4f8ff;line-height:1.4;margin:0;overflow-wrap:anywhere}
-#sayviMusicPage #svMusicReplay .sv-portrait-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin:0 0 24px}
-#sayviMusicPage #svMusicReplay .sv-portrait-panel{min-width:0;padding:16px;border:1px solid rgba(140,157,179,.18);border-radius:20px;background:var(--card);box-shadow:none}
-html:root[data-theme="light"] body #sayviMusicPage #svMusicReplay .sv-portrait-panel{background:linear-gradient(145deg,rgba(244,247,252,.83),rgba(255,255,255,.96) 62%);border-color:rgba(143,161,184,.19)}
-#sayviMusicPage #svMusicReplay .sv-portrait-title{font-size:16px;font-weight:620;letter-spacing:-.025em;line-height:1.25;color:var(--text);margin:0 0 5px}
-#sayviMusicPage #svMusicReplay .sv-portrait-sub,#sayviMusicPage #svMusicReplay .sv-portrait-note{font-size:11px;line-height:1.45;color:var(--secondary);margin:0}
-#sayviMusicPage #svMusicReplay .sv-portrait-note{margin-top:11px}
-#sayviMusicPage #svMusicReplay .sv-portrait-empty{font-size:12px;line-height:1.5;color:var(--secondary);margin:10px 0 1px}
-#sayviMusicPage #svMusicReplay .sv-portrait-chart-detail{font-size:12px;font-weight:550;color:var(--text);min-height:17px;margin:12px 0 7px}
-#sayviMusicPage #svMusicReplay .sv-portrait-bars{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(19px,1fr);gap:3px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding-bottom:5px}
-#sayviMusicPage #svMusicReplay .sv-portrait-bar-col{display:grid!important;grid-template-rows:88px 18px;gap:4px;min-width:0;width:100%;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;transform:none!important;color:var(--secondary);text-align:center;align-items:end;justify-items:center}
-#sayviMusicPage #svMusicReplay .sv-portrait-bar-col[disabled]{opacity:.35}
-#sayviMusicPage #svMusicReplay .sv-portrait-bar-col small{font-size:9px;white-space:nowrap;line-height:1}
-#sayviMusicPage #svMusicReplay .sv-portrait-bar-rail{display:flex;align-items:flex-end;width:100%;height:88px;border-radius:5px;background:rgba(140,157,179,.08);overflow:hidden}
-#sayviMusicPage #svMusicReplay .sv-portrait-bar{width:100%;border-radius:5px;background:linear-gradient(180deg,#8b9ed2,#abc4dc);transition:height .25s ease}
-#sayviMusicPage #svMusicReplay .sv-portrait-bar.is-peak{background:linear-gradient(180deg,#807bc3,#9eaae3)}
-#sayviMusicPage #svMusicReplay .sv-portrait-distribution{display:grid;grid-template-columns:104px minmax(0,1fr);align-items:center;gap:12px;margin:14px 0 3px}
-#sayviMusicPage #svMusicReplay .sv-portrait-donut{position:relative;width:104px;height:104px;border-radius:50%;display:grid;place-items:center}
-#sayviMusicPage #svMusicReplay .sv-portrait-donut-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:72px;height:72px;border-radius:50%;background:var(--card,#fff);color:var(--text);text-align:center}
-#sayviMusicPage #svMusicReplay .sv-portrait-donut-center strong{font-size:19px;line-height:1;letter-spacing:-.04em}
-#sayviMusicPage #svMusicReplay .sv-portrait-donut-center small{max-width:65px;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#sayviMusicPage #svMusicReplay .sv-portrait-legend{display:grid;gap:8px;min-width:0}
-#sayviMusicPage #svMusicReplay .sv-portrait-legend-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:12px;line-height:1.25}
-#sayviMusicPage #svMusicReplay .sv-portrait-legend-row i{width:7px;height:7px;border-radius:50%;flex:none}
-#sayviMusicPage #svMusicReplay .sv-portrait-legend-row span{flex:1;min-width:30px;overflow-wrap:anywhere}
-#sayviMusicPage #svMusicReplay .sv-portrait-legend-row strong{font-size:12px;font-weight:600;white-space:nowrap}
-#sayviMusicPage #svMusicReplay .sv-portrait-change{font-size:10px;color:var(--secondary);white-space:nowrap;margin-left:auto}
-#sayviMusicPage #svMusicReplay .sv-portrait-change.up{color:#37806e}
-#sayviMusicPage #svMusicReplay .sv-portrait-change.down{color:#a76c85}
-#sayviMusicPage #svMusicReplay .sv-portrait-rhythm-note{font-size:12px;line-height:1.4;color:var(--secondary);margin:0 0 13px}
-#sayviMusicPage #svMusicReplay .sv-portrait-rhythm{display:grid;gap:10px}
-#sayviMusicPage #svMusicReplay .sv-portrait-rhythm-row{display:grid;grid-template-columns:44px minmax(0,1fr) 34px;gap:10px;align-items:center;font-size:12px}
-#sayviMusicPage #svMusicReplay .sv-portrait-rhythm-row strong{text-align:right;font-size:12px;font-weight:600}
-#sayviMusicPage #svMusicReplay .sv-portrait-rhythm-track{height:6px;border-radius:5px;background:rgba(140,157,179,.15);overflow:hidden}
-#sayviMusicPage #svMusicReplay .sv-portrait-rhythm-track i{height:100%;display:block;border-radius:5px}
-@media(min-width:700px){#sayviMusicPage #svMusicReplay .sv-portrait-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:350px){#sayviMusicPage #svMusicReplay .sv-portrait-panel{padding:12px}#sayviMusicPage #svMusicReplay .sv-portrait-distribution{grid-template-columns:86px minmax(0,1fr);gap:9px}#sayviMusicPage #svMusicReplay .sv-portrait-donut{width:86px;height:86px}#sayviMusicPage #svMusicReplay .sv-portrait-donut-center{width:60px;height:60px}}
-@media(prefers-reduced-motion:reduce){#sayviMusicPage #svMusicReplay .sv-portrait-bar{transition:none}}
-</style>
-</body></html>');
+   +'</head><body><h1>Моя запись</h1><pre>'+escapeHtml(note.text)+'</pre></body></html>');
   popup.document.close();popup.focus();popup.print();
  }catch{
   try{popup.close()}catch{}
