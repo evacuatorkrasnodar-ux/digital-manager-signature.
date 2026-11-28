@@ -8735,4 +8735,19 @@ html:root body #sayviMusicPage #sayviMusicCollection .sv-queue-swipe-delete svg{
  width:20px!important;height:20px!important;display:block;fill:none!important;stroke:#fff!important;pointer-events:none;
 }
 </style>
+<style id="svQueueKeepCover">
+/* Reveal the action by compressing the flexible title area from the right.
+   Cover and leading text stay on their original axis; no clipped left edge. */
+html:root body #sayviMusicPage #sayviMusicCollection .sv-queue-slide > button.sv-music-track-row{
+ width:calc(100% + var(--sv-queue-offset,0px))!important;
+ max-width:calc(100% + var(--sv-queue-offset,0px))!important;
+ min-width:0!important;
+ transform:none!important;
+ transition:width .23s cubic-bezier(.22,.7,.25,1),max-width .23s cubic-bezier(.22,.7,.25,1)!important;
+}
+html:root body #sayviMusicPage #sayviMusicCollection .sv-queue-slide.sv-queue-sliding > button.sv-music-track-row{transition:none!important}
+@media(prefers-reduced-motion:reduce){
+ html:root body #sayviMusicPage #sayviMusicCollection .sv-queue-slide > button.sv-music-track-row{transition:none!important}
+}
+</style>
 </body></html>
