@@ -374,7 +374,7 @@ async function preview(r,anchor){
  }catch{if(run===previewRun)message.textContent='Предпрослушивание сейчас недоступно.'}
  finally{clearTimeout(timer);if(run===previewRun)previewController=null}
 }
-document.addEventListener('play',e=>{if(e.target instanceof HTMLMediaElement&&!previewBox.hidden)closePreview()},true);
+document.addEventListener('play',e=>{if(e.target instanceof HTMLMediaElement&&previewBox.open)closePreview()},true);
 window.addEventListener('hashchange',()=>{if(location.hash!=='#sayvi-music')closePreview()});
 const style=document.createElement('style');style.textContent=`
 html:root body #sayviMusicPage #sayviDiscoveryPanel .sv-new-filterbar{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain;margin:0 -4px 10px;padding:4px 4px 10px;align-items:center}
