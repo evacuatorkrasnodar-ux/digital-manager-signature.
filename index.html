@@ -4646,7 +4646,17 @@ function printNote(note){
   popup.opener=null;popup.document.open();
   popup.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>SEYVEO · Запись</title>'
    +'<style>body{font:16px/1.55 system-ui,sans-serif;color:#182033;max-width:740px;margin:40px auto;padding:14px}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}</style>'
-   +'</head><body><h1>Моя запись</h1><pre>'+escapeHtml(note.text)+'</pre></body></html>');
+   +'</head><body><h1>Моя запись</h1><pre>'+escapeHtml(note.text)+'</pre><style id="svHomeDockGrayInkTrial">
+/* Home only: neutral grey inactive glyphs, preserve active colors, badge and glass. */
+html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active) > svg,
+html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon),
+html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg :is(path,circle){
+ color:#65676D!important;
+ stroke:#65676D!important;
+}
+</style>
+</body></html>');
   popup.document.close();popup.focus();popup.print();
  }catch{
   try{popup.close()}catch{}
