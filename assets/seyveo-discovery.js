@@ -306,7 +306,7 @@ const filterBar=document.createElement('div');filterBar.className='sv-new-filter
 const filterHead=document.createElement('header');filterHead.className='sv-new-filter-head';
 const filterTitle=document.createElement('h2');filterTitle.id='svNewFilterTitle';filterTitle.textContent='Настройки новинок';
 const filterClose=document.createElement('button');filterClose.type='button';filterClose.className='sv-new-filter-close';filterClose.setAttribute('aria-label','Закрыть настройки');filterClose.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>';filterClose.addEventListener('click',()=>filterSheet.close());
-filterHead.append(filterTitle,filterClose);filterSheet.append(filterHead,filterBar);filterSheet.append(info);
+filterHead.append(filterTitle,filterClose);const grab=document.createElement('span');grab.className='sv-new-filter-grab';grab.setAttribute('aria-hidden','true');filterSheet.append(grab,filterHead,filterBar,info);
 filterSheet.addEventListener('click',e=>{if(e.target!==filterSheet)return;const rect=filterSheet.getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)filterSheet.close()});
 const feedHead=panel.querySelector('.sv-discovery-feed-head');
 if(feedHead){
@@ -361,7 +361,12 @@ for(const [heading,ids] of sections){
  filterBar.append(group);
 }
 const editGenres=button('Изменить любимые жанры','sv-new-filter-edit');
-editGenres.addEventListener('click',()=>{filterSheet.close();window.SEYVEO_DISCOVERY?.open?.('music')});filterSheet.append(editGenres);checkButton.classList.add('sv-new-filter-refresh');filterSheet.append(checkButton);checkButton.textContent='Обновить новинки';syncFilters();
+editGenres.addEventListener('click',()=>{filterSheet.close();window.SEYVEO_DISCOVERY?.open?.('music')});
+const filterActions=document.createElement('div');filterActions.className='sv-new-filter-actions';
+editGenres.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="var(--card,#fff)"/><circle cx="15" cy="12" r="2" fill="var(--card,#fff)"/><circle cx="10" cy="17" r="2" fill="var(--card,#fff)"/></svg><span>Любимые жанры</span><svg class="sv-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+checkButton.classList.add('sv-new-filter-refresh');
+checkButton.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2 6M20 4v7h-7"/></svg><span>Обновить новинки</span>';
+filterActions.append(editGenres,checkButton);filterSheet.append(filterActions);syncFilters();
 const previewBox=document.createElement('dialog');previewBox.className='sv-new-preview';previewBox.setAttribute('aria-label','Предпрослушивание');document.body.append(previewBox);
 let previewAnchor=null;
 function closePreview(){previewRun++;previewController?.abort();previewController=null;previewAnchor=null;if(previewBox.open)previewBox.close();previewBox.replaceChildren()}
@@ -536,6 +541,29 @@ html:root body dialog.sv-new-filter-sheet .sv-new-filter-option[aria-pressed=tru
 html:root body dialog.sv-new-filter-sheet :is(.sv-new-filter-edit,.sv-new-filter-refresh){min-height:44px!important;font-size:13px!important;padding:0 3px!important}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-edit{margin-top:5px!important}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-refresh{border-bottom:0!important}
+
+/* SEYVEO grouped sheet: translucent material, calm selection, no table rules. */
+html:root body dialog.sv-new-filter-sheet{width:min(calc(100% - 12px),460px)!important;bottom:max(6px,env(safe-area-inset-bottom))!important;border-radius:26px!important;border:1px solid rgba(145,155,168,.23)!important;padding:7px 16px 12px!important;background:var(--card,#fff)!important;overscroll-behavior:contain}
+@supports ((-webkit-backdrop-filter:blur(18px)) or (backdrop-filter:blur(18px))){html:root[data-theme="light"] body dialog.sv-new-filter-sheet{background:rgba(249,250,252,.91)!important;-webkit-backdrop-filter:blur(20px) saturate(1.15);backdrop-filter:blur(20px) saturate(1.15)}}
+dialog.sv-new-filter-sheet::backdrop{background:rgba(19,24,32,.18)}
+.sv-new-filter-grab{display:block;width:34px;height:4px;border-radius:4px;background:rgba(127,140,155,.32);margin:0 auto 3px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-head{margin-bottom:7px!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-close{position:relative;isolation:isolate;border-radius:50%!important;transform:none!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-close:before{content:'';position:absolute;inset:7px;border-radius:50%;background:rgba(127,140,155,.10);z-index:-1}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-options{gap:12px!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-group{column-gap:5px;row-gap:4px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-group h3{margin:0 0 2px 3px!important;font-size:12px!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-option{border:1px solid transparent!important;border-radius:12px!important;background:rgba(127,140,155,.075)!important;padding:0 9px!important;min-width:0;font-size:13px!important;font-weight:450}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-option[aria-pressed=true]{background:rgba(75,125,185,.10)!important;border-color:rgba(75,125,185,.20)!important;color:var(--text,#141619)!important;font-weight:550}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-group[data-section="rock"] .sv-new-filter-option{border-radius:22px!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-tick{flex-basis:16px;width:16px;height:16px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-tick svg{width:16px;height:16px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions{display:grid;margin-top:12px;border-radius:14px;background:rgba(127,140,155,.075);padding:0 9px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions :is(.sv-new-filter-edit,.sv-new-filter-refresh){display:flex;justify-content:flex-start;align-items:center;gap:9px;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;color:inherit!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions .sv-new-filter-refresh:not([hidden]){border-top:1px solid rgba(127,140,155,.12)!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions svg{width:19px;height:19px;flex:0 0 19px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions .sv-filter-chevron{margin-left:auto;width:15px;height:15px;flex-basis:15px;color:var(--secondary,#666)}
+@media(max-width:350px){html:root body dialog.sv-new-filter-sheet{padding-inline:10px!important}html:root body dialog.sv-new-filter-sheet .sv-new-filter-option{padding-inline:6px!important;font-size:12px!important}}
 `;document.head.append(style);
 
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
