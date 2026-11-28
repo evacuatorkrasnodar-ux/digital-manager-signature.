@@ -556,7 +556,7 @@ function initRadio(){
  const historyKey='seyveo-radio-recent-v1',timeKey='seyveo-radio-recent-time-v1';let history=[],playedAt={};
  try{const saved=JSON.parse(localStorage.getItem(timeKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))playedAt=saved}catch{}
  try{const saved=JSON.parse(localStorage.getItem(historyKey)||'[]');if(Array.isArray(saved))history=saved.filter(id=>typeof id==='string'&&stations.some(station=>station.id===id&&station.stream)).slice(0,6)}catch{}
- const recent=()=>history.map(id=>stations.find(x=>x.id===id)).filter(Boolean).map(station=>({radio:true,id:station.id,title:station.name,artist:station.country+' · '+station.quality,artwork:station.artwork,playedAt:Number(playedAt[station.id])||0}));
+ const recent=()=>history.map(id=>stations.find(x=>x.id===id)).filter(Boolean).map(station=>({radio:true,id:station.id,title:station.name,artist:station.city||station.country,artwork:station.artwork,playedAt:Number(playedAt[station.id])||0}));
  function removeRecentHistory(id=null){
   const next=id===null?[]:history.filter(key=>key!==id);
   const nextTimes=Object.fromEntries(next.map(key=>[key,playedAt[key]||0]));
@@ -583,7 +583,7 @@ function initRadio(){
  function drawRadio(){
   const state=window.SEYVEO_MUSIC?.state?.();
   for(const [id,btn] of buttons){const selected=state?.stationId===id&&state.playing;btn.setAttribute('aria-pressed',String(!!selected));btn.innerHTML=selected?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12m6-12v12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5 18 12 9 17.5Z" fill="currentColor"/></svg>';btn.setAttribute('aria-label',(selected?'Пауза: ':'Слушать: ')+stations.find(x=>x.id===id).name);}
-  status.textContent=state?.source==='radio'?(state.playing?'В эфире · ':'Выбрана станция · ')+stations.find(x=>x.id===state.stationId)?.name+' · '+(state.quality||''):'';
+  status.textContent=state?.source==='radio'?(state.playing?'В эфире · ':'Выбрана станция · ')+(stations.find(x=>x.id===state.stationId)?.name||''):'';
  }
 
  function sortedStations(){
@@ -655,7 +655,7 @@ function initRadio(){
 
    }
    const copy=document.createElement('div');copy.className='sv-radio-copy';const title=document.createElement('strong');title.textContent=station.name;title.title=station.name;
-   const subtitle=document.createElement('small');subtitle.textContent=(station.city||station.country)+(station.quality?' · '+station.quality:'');
+   const subtitle=document.createElement('small');subtitle.textContent=station.city||station.country||'';subtitle.hidden=!subtitle.textContent;
    copy.append(title,subtitle);row.append(cover,copy);bindRadioHold(row,station);list.append(row);
   }
   if(!list.children.length){const empty=document.createElement('p');empty.className='sv-radio-empty';empty.textContent='Станции не найдены';list.append(empty)}
