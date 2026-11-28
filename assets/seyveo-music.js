@@ -874,7 +874,7 @@ function editQueue(from,to,remove=false){
  collectionRender();syncResume();return true;
 }
 function bindQueueGesture(btn,handle,file,list,slide,remove){
- const WIDTH=88;
+ const WIDTH=56;
  let gesture=null,blockedUntil=0,target=null;
  const locate=()=>tracks.indexOf(file);
  const open=()=>slide.classList.contains('sv-queue-open');
@@ -917,7 +917,7 @@ function bindQueueGesture(btn,handle,file,list,slide,remove){
   if(g.drag){blockedUntil=Date.now()+450;if(!cancel&&Math.abs(dy)>8&&to>=0)editQueue(locate(),to);return}
   if(g.swipe||(!cancel&&!g.vertical&&dx<-35&&Math.abs(dx)>Math.abs(dy)*1.25)){
    blockedUntil=Date.now()+450;
-   setOpen(cancel?g.startOpen:((g.startOpen?-WIDTH:0)+dx)<-36);
+   setOpen(cancel?g.startOpen:((g.startOpen?-WIDTH:0)+dx)<-26);
   }else if(cancel)setOpen(g.startOpen);
  }
  // Dedicated row surface and non-passive horizontal touchmove, matching notebook swipe.
@@ -1017,7 +1017,7 @@ function collectionRender(){
     btn.setAttribute('aria-keyshortcuts','Alt+ArrowUp Alt+ArrowDown'+(current?'':' Delete'));
     const slide=document.createElement('div');slide.className='sv-queue-slide';
     const swipeDelete=document.createElement('button');swipeDelete.type='button';swipeDelete.className='sv-queue-swipe-delete';swipeDelete.hidden=true;swipeDelete.tabIndex=-1;swipeDelete.disabled=current;
-    swipeDelete.textContent='Удалить';swipeDelete.setAttribute('aria-label','Убрать из очереди: '+(info.title||'Без названия'));
+    swipeDelete.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M9 7V4.5h6V7M7 7l.8 12h8.4L17 7M10 10v6m4-6v6"/></svg>';swipeDelete.setAttribute('aria-label','Убрать из очереди: '+(info.title||'Без названия'));
     swipeDelete.addEventListener('click',()=>editQueue(tracks.indexOf(match.file),-1,true));
     slide.append(btn,swipeDelete);row=slide;
     bindQueueGesture(btn,handle,match.file,list,slide,swipeDelete);
