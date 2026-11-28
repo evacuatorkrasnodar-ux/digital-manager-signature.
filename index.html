@@ -162,10 +162,17 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none}
 /* Home only: living silk stays well inside the unchanged White Velvet glass. */
 #svHomeMatter{display:none;pointer-events:none}
-/* Static orbital field behind the original Home glass, echoing Liquid Sound. */
+/* Stationary Home orbital field. The flight animates #orb only; rings stay
+   in the original centered cluster and never become part of the dock sphere. */
 #svHomeOrbRings{display:none;pointer-events:none}
-html[data-theme=light]:not(.sv-sayvi-handoff-inflight):not(.sv-home-launch-pending) #homePage #orb > #svHomeOrbRings{display:block;position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:-1;pointer-events:none}
-html[data-theme=light].sv-music-ambient #homePage #orb > #svHomeOrbRings{transform:scale(.96);transform-origin:center}
+html[data-theme=light]:not(.sv-sayvi-handoff-inflight):not(.sv-home-launch-pending) #homePage #orbCluster > #svHomeOrbRings{
+ display:block;position:absolute;left:50%;top:50%;width:auto;height:100%;aspect-ratio:1/1;max-width:none;
+ transform:translate(-50%,-50%);overflow:visible;z-index:0;pointer-events:none;
+ opacity:1;transition:opacity .32s ease;
+}
+html[data-theme=light].sv-music-ambient #homePage #orbCluster > #svHomeOrbRings{transform:translate(-50%,-50%) scale(.96);transform-origin:center}
+html[data-theme=light]:is(.sv-home-empty-sphere-leaving,.sv-home-empty-route-exit,.sv-music-ambient-leaving) #homePage #orbCluster > #svHomeOrbRings{opacity:0}
+@media(prefers-reduced-motion:reduce){#homePage #orbCluster > #svHomeOrbRings{transition:none!important}}
 
 /* Compact glass in the Home music layout; the silk canvas keeps its original dimensions. */
 html[data-theme=light].sv-music-ambient #homePage #orb > #plasmaVisual{transform:scale(.92);transform-origin:50% 50%}
@@ -1087,7 +1094,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
 
 </div>
 </section>
-</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Общаться с Сэйви: нажмите для сообщения, удерживайте для голоса"><svg id="svHomeOrbRings" viewBox="0 0 440 440" aria-hidden="true" focusable="false"><g fill="none" stroke="#799da1" stroke-width="1.15" transform="rotate(-35 220 220)"><ellipse cx="220" cy="220" rx="190" ry="210" opacity=".22"/><ellipse cx="220" cy="220" rx="207" ry="227" opacity=".14"/><ellipse cx="220" cy="220" rx="228" ry="248" opacity=".07"/></g></svg><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature-light.svg?v=24" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Сэйви · на связи</div><h2 id="headline"></h2><p id="subline"></p><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true"><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
+</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><svg id="svHomeOrbRings" viewBox="0 0 440 440" aria-hidden="true" focusable="false"><g fill="none" stroke="#799da1" stroke-width="1.15" transform="rotate(-35 220 220)"><ellipse cx="220" cy="220" rx="190" ry="210" opacity=".22"/><ellipse cx="220" cy="220" rx="207" ry="227" opacity=".14"/><ellipse cx="220" cy="220" rx="228" ry="248" opacity=".07"/></g></svg><button id="orb" class="plasma" aria-label="Общаться с Сэйви: нажмите для сообщения, удерживайте для голоса"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature-light.svg?v=24" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Сэйви · на связи</div><h2 id="headline"></h2><p id="subline"></p><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true"><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
 <aside id="seyveoNameTip" class="seyveo-name-tip" role="note" hidden><span><strong>Я Сэйви.</strong> Можешь называть меня Сэй.</span><button id="seyveoNameTipClose" type="button" aria-label="Скрыть подсказку об имени">Понятно</button></aside>
 <section id="svSmartStartHome" class="sv-smart-start-home" hidden aria-labelledby="svSmartStartHomeTitle">
  <p class="sv-smart-start-home-kicker">SEYVEO · знакомство</p>
