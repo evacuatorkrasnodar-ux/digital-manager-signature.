@@ -65,3 +65,19 @@ html:root body #homePage #svSayviHomeWeather.sv-home-music-weather-replaced > :i
 #homePage #svHomeInlineMusic .sv-repeat-one{display:none}
 #homePage #svHomeInlineMusic [data-repeat=one] .sv-repeat-one{display:inline}
 :root[data-theme=dark] #homePage #svHomeInlineMusic .sv-home-music-mode[aria-pressed=true]{color:#75b9ff}
+
+/* Approved Home steel controls: same neutral ink as the dock.
+   Leave track title, active shuffle/repeat accents and dark theme unchanged. */
+html:root[data-theme="light"] #homePage #svHomeInlineMusic{
+ --sv-home-player-control-ink:#57636B;
+}
+html:root[data-theme="light"] #homePage #svHomeInlineMusic .sv-home-music-controls button:not([aria-pressed="true"]){
+ color:var(--sv-home-player-control-ink);
+}
+html:root[data-theme="light"] #homePage #svHomeInlineMusic .sv-home-music-controls svg,
+html:root[data-theme="light"] #homePage #svHomeInlineMusic .sv-home-music-controls [data-home-music="play"] svg{
+ stroke-width:1.55;
+}
+html:root[data-theme="light"] #homePage #svHomeInlineMusic .sv-home-music-controls .sv-home-music-mode:not([aria-pressed="true"]){
+ color:#858a90;
+}
