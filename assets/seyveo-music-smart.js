@@ -147,6 +147,8 @@
    status.textContent=!s?.supported?'Анализ звука недоступен на этом устройстве.':
     !s.total?'Добавьте песни в свою медиатеку.':
     'Изучено '+s.indexed+' из '+s.total+' · '+(s.busy?'Анализирую музыку…':'Индекс на устройстве')+(s.failed?' · Не прочитано: '+s.failed:'')+(s.total>s.limit?' · Лимит первой версии: '+s.limit:'')+(!s.storage?' · Без сохранения индекса':'');
+   const progress=$('svRecognitionIndexProgress');
+   if(progress){progress.hidden=!s?.supported||!s.total;if(!progress.hidden){progress.max=s.total;progress.value=Math.min(s.total,Math.max(0,s.indexed||0));}}
    button.disabled=!s?.indexed;
   }
   d.addEventListener('seyveo:music-fingerprint',updateRecognitionIndex);
@@ -155,16 +157,19 @@
    cancelRecognition();
    if(!show('Распознать музыку','recognize'))return;
    const version=generation;
-   message('Сэйви узнаёт композиции из вашей медиатеки.');
-   message('До 10 секунд звука с вашего разрешения. Анализ на устройстве, без передачи записи в интернет.');
+   const intro=message('Сэйви узнаёт песни из вашей медиатеки.');intro.classList.add('sv-recognition-intro');
+   const privacy=message('До 10 секунд звука с вашего разрешения. Запись анализируется на устройстве и не отправляется в интернет.');privacy.classList.add('sv-recognition-privacy');
    const engine=w.SEYVEO_MUSIC_FINGERPRINT;
    if(!w.isSecureContext||!w.navigator.mediaDevices?.getUserMedia||!w.MediaRecorder){message('Микрофон недоступен в этом браузере.');return}
    // First use keeps explicit consent; subsequent quick taps can start immediately.
    if(quick===true&&recognitionApproved&&engine?.state().indexed){recordRecognition(version);return}
-   const status=message('Готовлю музыкальный индекс…');status.id='svRecognitionIndexStatus';
+   const indexCard=d.createElement('div');indexCard.className='sv-recognition-index';
+   const status=message('Готовлю музыкальный индекс…');status.id='svRecognitionIndexStatus';indexCard.append(status);
+   const progress=d.createElement('progress');progress.id='svRecognitionIndexProgress';progress.setAttribute('aria-label','Изучение медиатеки');progress.hidden=true;indexCard.append(progress);body.append(indexCard);
    const startButton=action('Начать распознавание',()=>{recognitionApproved=true;recordRecognition(version)});startButton.id='svRecognitionStart';
+   startButton.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11v1a6.5 6.5 0 0 0 13 0v-1M12 18.5V22m-3 0h6"/></svg><span>Начать распознавание</span>';
    updateRecognitionIndex();engine?.schedule();
-   message('Новые песни изучаются автоматически, пока музыка на паузе и приложение открыто.');
+   const hint=message('Новые песни изучаются автоматически, когда приложение открыто и музыка на паузе.');hint.classList.add('sv-recognition-hint');
   }
   async function recordRecognition(version){
    if(version!==generation||mode!=='recognize')return;
