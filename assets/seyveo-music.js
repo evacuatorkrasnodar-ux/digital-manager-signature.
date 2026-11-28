@@ -593,6 +593,7 @@ function showCollection(mode){
  queueOpen=true;
  collectionRender();
  collection.scrollTop=0;
+ const list=collection.querySelector('.sv-collection-list');if(list)list.scrollTop=0;
  syncQueueToggle();
  collection.querySelector('.sv-music-panel-close')?.focus({preventScroll:true});
  return true;
@@ -861,7 +862,59 @@ function renderMiniCover(key,src){
  miniArtwork.hidden=!(key||src);
  mini.classList.toggle('has-artwork',!!(key||src));
 }
+// Session-only queue edits preserve the saved library and the playing audio source.
+function editQueue(from,to,remove=false){
+ if(collectionMode!=='tracks'||isRadio()||from<0||from>=tracks.length||(!remove&&(to<0||to>=tracks.length||from===to))||(remove&&from===index))return false;
+ const current=tracks[index],order=tracks.slice(),file=order.splice(from,1)[0];
+ if(!remove)order.splice(to,0,file);
+ tracks=order;index=tracks.indexOf(current);resetShuffle(current);
+ collectionRender();syncResume();return true;
+}
+function bindQueueGesture(btn,handle,file,list){
+ let start=null,blockedUntil=0,target=null;
+ const locate=()=>tracks.indexOf(file);
+ const clear=()=>{btn.classList.remove('sv-queue-dragging','sv-queue-swiping');btn.style.removeProperty('--sv-queue-swipe');target?.classList.remove('sv-queue-target');target=null};
+ btn.addEventListener('pointerdown',e=>{
+  if(!e.isPrimary||e.button!==0)return;
+  const drag=handle.contains(e.target);
+  if(!drag&&locate()===index)return;
+  start={id:e.pointerId,x:e.clientX,y:e.clientY,drag,swipe:false};
+  if(drag){handle.setPointerCapture(e.pointerId);btn.classList.add('sv-queue-dragging')}
+ });
+ btn.addEventListener('pointermove',e=>{
+  if(!start||e.pointerId!==start.id)return;
+  const dx=e.clientX-start.x,dy=e.clientY-start.y;
+  if(start.drag){
+   const row=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-queue-index]');
+   if(row!==target){target?.classList.remove('sv-queue-target');target=row&&list.contains(row)?row:null;target?.classList.add('sv-queue-target')}
+   const rect=list.getBoundingClientRect();
+   if(e.clientY<rect.top+26)list.scrollTop-=12;else if(e.clientY>rect.bottom-26)list.scrollTop+=12;
+  }else{
+   if(!start.swipe&&Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx)){start=null;return}
+   if(dx<-12&&Math.abs(dx)>Math.abs(dy)*1.3&&!start.swipe){start.swipe=true;btn.setPointerCapture(e.pointerId)}
+   if(start.swipe){btn.classList.add('sv-queue-swiping');btn.style.setProperty('--sv-queue-swipe',Math.max(-76,Math.min(0,dx))+'px')}
+  }
+ });
+ btn.addEventListener('pointerup',e=>{
+  if(!start||e.pointerId!==start.id)return;
+  const g=start;start=null;
+  const dx=e.clientX-g.x,dy=e.clientY-g.y;
+  const to=target?Number(target.dataset.queueIndex):-1;
+  clear();
+  if(g.drag){blockedUntil=Date.now()+450;if(Math.abs(dy)>8&&to>=0)editQueue(locate(),to)}
+  else if(g.swipe){blockedUntil=Date.now()+450;if(dx<-72)editQueue(locate(),-1,true)}
+ });
+ btn.addEventListener('pointercancel',()=>{start=null;clear()});
+ btn.addEventListener('lostpointercapture',()=>{if(start){start=null;clear()}});
+ btn.addEventListener('click',e=>{if(Date.now()<blockedUntil||handle.contains(e.target)){e.preventDefault();e.stopImmediatePropagation()}},true);
+ btn.addEventListener('keydown',e=>{
+  if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const i=locate(),to=i+(e.key==='ArrowUp'?-1:1);if(editQueue(i,to))collection.querySelector('[data-queue-index="'+to+'"]')?.focus({preventScroll:true})}
+  else if(e.key==='Delete'&&locate()!==index){e.preventDefault();const i=locate();if(editQueue(i,-1,true))collection.querySelector('[data-queue-index="'+Math.min(i,tracks.length-1)+'"]')?.focus({preventScroll:true})}
+ });
+}
 function collectionRender(){
+ const oldTop=collection.dataset.collectionMode===collectionMode?(collection.querySelector('.sv-collection-list')?.scrollTop||0):0;
+ collection.dataset.collectionMode=collectionMode;
  collection.replaceChildren();
  if(collectionMode==='tracks'&&!tracks.length){
   collection.hidden=true;syncQueueToggle();return;
@@ -881,6 +934,11 @@ function collectionRender(){
  header.append(title,dismiss);collection.append(header);
  const list=document.createElement('div');list.className='sv-collection-list';collection.append(list);
  if(!favoriteView&&queueOpen)renderChapters(list);
+ if(!favoriteView){
+  const fade=()=>list.classList.toggle('sv-queue-more',list.scrollHeight-list.clientHeight-list.scrollTop>3);
+  list.addEventListener('scroll',fade,{passive:true});
+  if(queueOpen)requestAnimationFrame(()=>{if(list.isConnected)fade()});
+ }
  if(favoriteView&&!entries.length){
   const note=document.createElement('p');note.className='sv-music-favorites-note';
   note.textContent='Добавьте любимую песню сердечком.';list.append(note);
@@ -901,13 +959,25 @@ function collectionRender(){
   if(info.artist){const artist=document.createElement('small');artist.textContent=info.artist;copy.append(artist)}
   const action=document.createElement('span');action.className='sv-collection-action';action.setAttribute('aria-hidden','true');
   action.innerHTML=match?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13L19 12z"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m-4-4 4 4 4-4M5 17v3h14v-3"/></svg>';
+  if(current&&!favoriteView){
+    action.innerHTML='<span class="sv-queue-equalizer"><i></i><i></i><i></i></span>';
+    btn.setAttribute('aria-label',(info.title||'Без названия')+' · текущий трек');
+  }
   btn.append(tile,copy,action);
+  if(!favoriteView&&match&&!match.file.radio){
+    btn.dataset.queueIndex=String(match.i);
+    const handle=document.createElement('span');handle.className='sv-queue-handle';handle.setAttribute('aria-hidden','true');
+    handle.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 8h10M7 12h10M7 16h10"/></svg>';
+    handle.title='Перетащить';btn.append(handle);
+    btn.setAttribute('aria-keyshortcuts','Alt+ArrowUp Alt+ArrowDown'+(current?'':' Delete'));
+    bindQueueGesture(btn,handle,match.file,list);
+  }
   if(!match){
    btn.classList.add('sv-music-favorites-unavailable');btn.title='Добавить файл повторно';
    btn.setAttribute('aria-label',name.textContent+'. Файл отсутствует. Добавить повторно');
    btn.addEventListener('click',()=>fileInput.click());
   }else{
-   btn.addEventListener('click',()=>{if(match.local)tracks=localTracks;switchTrack(match.i,true)});
+   btn.addEventListener('click',()=>{if(match.local)tracks=localTracks;switchTrack(match.local?match.i:tracks.indexOf(match.file),true)});
    if(queueOpen&&!thumb&&!match.file.radio){
     const localIndex=localTracks.indexOf(match.file);
     if(localIndex>=0)prepareTrackPreview(localIndex).then(preview=>{
@@ -920,6 +990,7 @@ function collectionRender(){
   }
   list.append(btn);
  });
+ list.scrollTop=oldTop;
  syncQueueToggle();
 }
 function switchTrack(i,autoplay=false,fromNavigation=false,resumeSeconds=0){
@@ -1013,7 +1084,7 @@ function ingest(list){
   const selected=new Map();let added=0;
   for(const file of chosen){
    const id=favoriteId(file);let entry=existing.get(id);
-   if(!entry){entry=file;localTracks.push(entry);existing.set(id,entry);added++}
+   if(!entry){entry=file;localTracks.push(entry);if(tracks!==localTracks&&tracks.length&&!isRadio())tracks.push(entry);existing.set(id,entry);added++}
    selected.set(id,entry);
   }
   if(!tracks.length){tracks=localTracks;switchTrack(0,false)}
