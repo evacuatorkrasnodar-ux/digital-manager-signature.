@@ -8907,10 +8907,10 @@ html:root body #sayviMusicPage #svMusicHome .sv-music-scene-actions>button::afte
  @supports selector(body:has(#svMusicWelcome[hidden])){
   html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="home"]:has(#svMusicWelcome[hidden]){
    overflow:hidden!important;
-   padding-bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 68px)!important;
+   padding-bottom:0!important;
   }
   html:root.sv-music-screen.sv-music-browse body:has(#sayviMusicMini.sv-music-mini-inline:not([hidden])) #sayviMusicPage[data-music-view="home"]:has(#svMusicWelcome[hidden]){
-   padding-bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 132px)!important;
+   padding-bottom:0!important;
   }
   html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="home"]:has(#svMusicWelcome[hidden]) #svMusicHome{
    display:flex!important;flex:1 1 0!important;flex-direction:column;min-height:0!important;overflow:hidden!important;
@@ -8918,9 +8918,13 @@ html:root body #sayviMusicPage #svMusicHome .sv-music-scene-actions>button::afte
   html:root body #sayviMusicPage[data-music-view="home"]:has(#svMusicWelcome[hidden]) #svMusicHome .sv-music-section-heading{flex:0 0 auto;margin-top:8px!important}
   html:root body #sayviMusicPage[data-music-view="home"]:has(#svMusicWelcome[hidden]) #svMusicRecent{
    flex:1 1 0;min-height:0;align-content:start;grid-auto-rows:max-content;overflow-y:auto!important;overflow-x:hidden!important;
-   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:14px!important;
-   -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 12px),transparent)!important;
-   mask-image:linear-gradient(to bottom,#000 calc(100% - 12px),transparent)!important;
+   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;box-sizing:border-box;padding-bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 76px)!important;
+   -webkit-mask-image:none!important;
+   mask-image:none!important;
+  }
+  html:root.sv-music-screen.sv-music-browse body:has(#sayviMusicMini.sv-music-mini-inline:not([hidden])) #sayviMusicPage[data-music-view="home"]:has(#svMusicWelcome[hidden]) #svMusicRecent{
+   padding-bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 138px)!important;
+   scroll-padding-bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 138px)!important;
   }
  }
 }
