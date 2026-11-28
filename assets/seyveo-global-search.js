@@ -566,6 +566,7 @@ document.addEventListener('keydown',event=>{
 trigger.addEventListener('click',()=>{
  if(active)close({restoreFocus:false});else open();
 });
+document.getElementById('svRadioSearchOpen')?.addEventListener('click',()=>{if(!radioContext())return;if(active)close({restoreFocus:true});else open();});
 closeButton.addEventListener('click',()=>close({restoreFocus:true}));
 field.addEventListener('input',render);
 field.addEventListener('search',render);
