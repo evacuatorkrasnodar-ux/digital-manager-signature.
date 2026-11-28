@@ -557,7 +557,7 @@ function initRadio(){
  const buttons=new Map();let lastTap=null,pauseTimer=0,heartTimer=0;
  function cancelPause(){clearTimeout(pauseTimer);pauseTimer=0;lastTap=null}
  function favoriteGesture(id){cancelPause();if(!rememberStation(id))return;const cover=buttons.get(id);if(!cover?.isConnected){renderFavoritesMotion(id);return}cover.querySelector('.sv-radio-like-flash')?.remove();const flash=document.createElement('span');flash.className='sv-radio-like-flash';flash.setAttribute('aria-hidden','true');flash.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.4S2.8 15 2.8 8.9A5.2 5.2 0 0 1 12 5.6a5.2 5.2 0 0 1 9.2 3.3c0 6.1-9.2 11.5-9.2 11.5Z"/></svg>';cover.append(flash);clearTimeout(heartTimer);heartTimer=setTimeout(()=>{flash.remove();renderFavoritesMotion(id)},620);}
- function tapStation(id,keyboard=false){const now=performance.now();if(!keyboard&&lastTap?.id===id&&now-lastTap.at<=320){favoriteGesture(id);return}if(pauseTimer){const prior=lastTap?.id;cancelPause();if(prior&&prior!==id){const state=window.SEYVEO_MUSIC?.state?.();if(state?.source==='radio'&&state.stationId===prior&&state.playing)openStation(prior)}}lastTap=keyboard?null:{id,at:now};const state=window.SEYVEO_MUSIC?.state?.();const playing=state?.source==='radio'&&state.stationId===id&&state.playing;const act=()=>{if(!openStation(id))status.textContent='Не удалось открыть эфир. Попробуйте позже.';else drawRadio()};if(playing&&!keyboard){pauseTimer=setTimeout(()=>{pauseTimer=0;lastTap=null;const current=window.SEYVEO_MUSIC?.state?.();if(current?.source==='radio'&&current.stationId===id&&current.playing)act()},330)}else act();}
+ function tapStation(id,keyboard=false){const now=performance.now();if(!keyboard&&lastTap?.id===id&&now-lastTap.at<=320){favoriteGesture(id);return}if(pauseTimer)cancelPause();lastTap=keyboard?null:{id,at:now};const state=window.SEYVEO_MUSIC?.state?.();const playing=state?.source==='radio'&&state.stationId===id&&state.playing;const act=()=>{if(!openStation(id))status.textContent='Не удалось открыть эфир. Попробуйте позже.';else drawRadio()};if(playing&&!keyboard){pauseTimer=setTimeout(()=>{pauseTimer=0;lastTap=null;const current=window.SEYVEO_MUSIC?.state?.();if(current?.source==='radio'&&current.stationId===id&&current.playing)act()},330)}else act();}
  const historyKey='seyveo-radio-recent-v1',timeKey='seyveo-radio-recent-time-v1';let history=[],playedAt={};
  try{const saved=JSON.parse(localStorage.getItem(timeKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))playedAt=saved}catch{}
  try{const saved=JSON.parse(localStorage.getItem(historyKey)||'[]');if(Array.isArray(saved))history=saved.filter(id=>typeof id==='string'&&stations.some(station=>station.id===id&&station.stream)).slice(0,6)}catch{}
@@ -623,7 +623,8 @@ function initRadio(){
   const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Отмена';
   remove.addEventListener('click',()=>{closeRadioMenu();setHidden(station.id,true)});
   cancel.addEventListener('click',()=>closeRadioMenu(true));
-  menu.append(title,remove,cancel);document.body.append(menu);radioMenu={node:menu,anchor:row};
+  const save=document.createElement('button');save.type='button';save.textContent='Сохранить в начале';save.addEventListener('click',()=>{closeRadioMenu();favoriteGesture(station.id)});
+  menu.append(title,save,remove,cancel);document.body.append(menu);radioMenu={node:menu,anchor:row};
   const rect=row.getBoundingClientRect(),width=menu.offsetWidth,height=menu.offsetHeight;
   const left=Math.max(12,Math.min(rect.left,window.innerWidth-width-12));
   const top=Math.max(12,Math.min(rect.bottom+5,window.innerHeight-height-16));
