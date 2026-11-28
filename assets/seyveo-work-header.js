@@ -67,19 +67,19 @@
 .control:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 .control svg{
  display:block;width:22px;height:22px;flex:none;
- fill:none;stroke:currentColor;stroke-width:1.7;
+ fill:none;stroke:currentColor;stroke-width:var(--sv-steel-line,1.7);
  stroke-linecap:round;stroke-linejoin:round;
  transform:none;transition:none;filter:none;
 }
 .back{grid-column:1;grid-row:1;justify-self:start}
 .back svg{width:22px;height:22px;stroke-width:1.55}
 .action{grid-column:4;grid-row:1;justify-self:end}
-.action svg{width:28px;height:28px;stroke-width:1.65}
+.action svg{width:28px;height:28px;stroke-width:var(--sv-steel-line,1.65)}
 .sv-review-cards-control{
  grid-column:2;grid-row:1;justify-self:start;
  position:relative;overflow:visible;
 }
-.sv-review-cards-control svg{width:20px;height:20px;stroke-width:1.6}
+.sv-review-cards-control svg{width:20px;height:20px;stroke-width:var(--sv-steel-line,1.6)}
 .sv-review-cards-badge:not([hidden]){
  position:absolute;top:3px;right:1px;display:grid;place-items:center;
  min-width:14px;height:14px;padding:0 3px;
@@ -162,7 +162,7 @@
 /* Dedicated All Tasks search: direct sibling of Back, using .control. */
 :host([data-task-selecting="true"]) .sv-history-dual{display:none!important}
 .sv-all-tasks-search{grid-column:4;grid-row:1;justify-self:end}
-.sv-all-tasks-search svg{width:22px;height:22px;stroke-width:1.65}
+.sv-all-tasks-search svg{width:22px;height:22px;stroke-width:var(--sv-steel-line,1.65)}
 .month[hidden]{display:none!important}
 .month:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:3px}
 .month{
