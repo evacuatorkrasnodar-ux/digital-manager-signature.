@@ -287,15 +287,21 @@ function readLikes(){
 let likes=readLikes();
 let mode='for-you', lastItems=[], lastStale=false, previewRun=0, previewController=null;
 const filters=[['for-you','Для тебя'],['genres','Мои жанры'],['ru','Россия'],['world','Мир'],['rock','Рок'],['pop','Поп'],['chanson','Шансон'],['russianrock','Русский рок'],['russianpop','Русский поп'],['hiphop','Хип-хоп'],['electronic','Электроника'],['upcoming','Скоро'],['news','Новости'],['liked','Понравилось']];
-const filterBar=document.createElement('nav');filterBar.className='sv-new-filterbar';filterBar.setAttribute('aria-label','Фильтры новинок');
+const filterSheet=document.createElement('dialog');filterSheet.className='sv-new-filter-sheet';filterSheet.setAttribute('aria-labelledby','svNewFilterTitle');document.body.append(filterSheet);
+const filterBar=document.createElement('div');filterBar.className='sv-new-filter-options';filterBar.setAttribute('role','group');filterBar.setAttribute('aria-label','Подборка новинок');
+const filterHead=document.createElement('header');filterHead.className='sv-new-filter-head';
+const filterTitle=document.createElement('h2');filterTitle.id='svNewFilterTitle';filterTitle.textContent='Настройки новинок';
+const filterClose=document.createElement('button');filterClose.type='button';filterClose.className='sv-new-filter-close';filterClose.setAttribute('aria-label','Закрыть настройки');filterClose.textContent='×';filterClose.addEventListener('click',()=>filterSheet.close());
+filterHead.append(filterTitle,filterClose);filterSheet.append(filterHead,filterBar);
+filterSheet.addEventListener('click',e=>{if(e.target!==filterSheet)return;const rect=filterSheet.getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)filterSheet.close()});
 const feedHead=panel.querySelector('.sv-discovery-feed-head');
 if(feedHead){
  feedHead.classList.add('sv-new-personal-head');
  const heading=feedHead.querySelector('h3');if(heading)heading.textContent='Сэйви';
- const edit=$('svDiscoveryEditTaste');if(edit){edit.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="var(--card,#fff)"/><circle cx="15" cy="12" r="2" fill="var(--card,#fff)"/><circle cx="10" cy="17" r="2" fill="var(--card,#fff)"/></svg>';edit.title='Изменить жанры';edit.setAttribute('aria-label',edit.title)}
+ const edit=$('svDiscoveryEditTaste');if(edit){edit.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="var(--card,#fff)"/><circle cx="15" cy="12" r="2" fill="var(--card,#fff)"/><circle cx="10" cy="17" r="2" fill="var(--card,#fff)"/></svg>';edit.title='Настройки новинок';edit.setAttribute('aria-label',edit.title);edit.setAttribute('aria-haspopup','dialog');const publicHead=$('svDiscoveryPublic')?.querySelector('.sv-discovery-feed-head');if(publicHead)publicHead.append(edit)}
 }
 const emptyCaption=empty?.querySelector('.sv-discovery-empty-caption');if(emptyCaption)emptyCaption.hidden=true;
-panel.insertBefore(filterBar,offer||feedHead);
+
 function button(label,cls,svg){
  const b=document.createElement('button');b.type='button';b.className=cls;b.setAttribute('aria-label',label);b.title=label;
  if(svg)b.innerHTML=svg;else b.textContent=label;return b;
@@ -334,7 +340,14 @@ function setMode(next){
  if(mode==='genres'&&!selectedTags().length){window.SEYVEO_DISCOVERY?.open?.('music')}
  void loadPublic();
 }
-for(const [id,label] of filters){const b=button(label,'sv-new-chip');b.dataset.mode=id;b.addEventListener('click',()=>setMode(id));filterBar.append(b)}
+const sections=[['Подборка',['for-you','genres','ru','world']],['Жанры',['rock','pop','chanson','russianrock','russianpop','hiphop','electronic']],['Просмотр',['upcoming','news','liked']]];
+for(const [heading,ids] of sections){
+ const group=document.createElement('section');group.className='sv-new-filter-group';const label=document.createElement('h3');label.textContent=heading;group.append(label);
+ for(const id of ids){const entry=filters.find(x=>x[0]===id);if(!entry)continue;const b=button(entry[1],'sv-new-filter-option');b.dataset.mode=id;b.addEventListener('click',()=>{filterSheet.close();setMode(id)});const tick=document.createElement('span');tick.className='sv-new-filter-tick';tick.textContent='✓';tick.setAttribute('aria-hidden','true');b.append(tick);group.append(b)}
+ filterBar.append(group);
+}
+const editGenres=button('Изменить любимые жанры','sv-new-filter-edit');
+editGenres.addEventListener('click',()=>{filterSheet.close();window.SEYVEO_DISCOVERY?.open?.('music')});filterSheet.append(editGenres);
 syncFilters();
 const previewBox=document.createElement('dialog');previewBox.className='sv-new-preview';previewBox.setAttribute('aria-label','Предпрослушивание');document.body.append(previewBox);
 let previewAnchor=null;
@@ -375,7 +388,7 @@ async function preview(r,anchor){
  finally{clearTimeout(timer);if(run===previewRun)previewController=null}
 }
 document.addEventListener('play',e=>{if(e.target instanceof HTMLMediaElement&&previewBox.open)closePreview()},true);
-window.addEventListener('hashchange',()=>{if(location.hash!=='#sayvi-music')closePreview()});
+window.addEventListener('hashchange',()=>{if(location.hash!=='#sayvi-music'){if(filterSheet.open)filterSheet.close();closePreview()}});
 const style=document.createElement('style');style.textContent=`
 html:root body #sayviMusicPage #sayviDiscoveryPanel .sv-new-filterbar{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain;margin:0 -4px 10px;padding:4px 4px 10px;align-items:center}
 #sayviDiscoveryPanel .sv-new-filterbar::-webkit-scrollbar{display:none}
@@ -457,6 +470,20 @@ dialog.sv-new-preview .sv-new-preview-head strong{font-size:16px;line-height:1.3
 dialog.sv-new-preview .sv-new-close{flex:0 0 44px;width:44px;height:44px;border:0;background:transparent!important;box-shadow:none!important;color:inherit;font-size:23px}
 dialog.sv-new-preview p,dialog.sv-new-preview a{font-size:12px;line-height:1.45;color:var(--secondary,#555)}
 dialog.sv-new-preview iframe{display:block;width:100%;height:min(380px,52vh);border:0;border-radius:13px;margin:10px 0}
+
+/* All discovery controls in a single settings sheet, no filter strip. */
+html:root body dialog.sv-new-filter-sheet{position:fixed!important;inset:auto 0 0!important;margin:0 auto!important;width:min(100%,520px)!important;max-width:100%!important;max-height:85vh!important;box-sizing:border-box;overflow-y:auto;padding:14px 18px calc(18px + env(safe-area-inset-bottom))!important;border:1px solid rgba(127,140,155,.22)!important;border-bottom:0!important;border-radius:24px 24px 0 0!important;background:var(--card,#fff)!important;color:var(--text,#141619)!important;box-shadow:none!important}
+dialog.sv-new-filter-sheet:not([open]){display:none!important}
+dialog.sv-new-filter-sheet::backdrop{background:rgba(19,24,32,.24)}
+.sv-new-filter-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sv-new-filter-head h2{font-size:19px!important;font-weight:600;margin:0}
+.sv-new-filter-close{width:44px;height:44px;min-height:44px;border:0;background:transparent!important;box-shadow:none!important;color:inherit;font-size:23px}
+.sv-new-filter-options{display:grid;gap:12px}
+.sv-new-filter-group h3{margin:8px 0 4px;color:var(--secondary,#666);font-size:12px;font-weight:550}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-option,html:root body dialog.sv-new-filter-sheet .sv-new-filter-edit{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;padding:0 6px!important;border:0!important;border-bottom:1px solid rgba(127,140,155,.13)!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;color:inherit;font-size:14px;text-align:left;transform:none!important}
+.sv-new-filter-tick{visibility:hidden;color:#3879bb;font-size:17px}
+.sv-new-filter-option[aria-pressed=true] .sv-new-filter-tick{visibility:visible}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-edit{margin-top:8px;color:#3879bb!important}
 `;document.head.append(style);
 
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
@@ -576,11 +603,11 @@ async function loadPublic(){
 }
 // Navigation to the New tab is owned by the music dock.
 settingsButton?.addEventListener('click',()=>{settingsOpen=!settingsOpen;syncChoice()});
-$('svDiscoveryEditTaste')?.addEventListener('click',()=>{settingsOpen=false;syncChoice();window.SEYVEO_DISCOVERY?.open?.('music')});
+$('svDiscoveryEditTaste')?.addEventListener('click',()=>{settingsOpen=false;syncChoice();syncFilters();if(!filterSheet.open)filterSheet.showModal()});
 window.addEventListener('seyveo:music-preferences-changed',()=>{if(!panel.hidden)void loadPublic()});
 offerYes?.addEventListener('click',()=>enable(true));
 offerNo?.addEventListener('click',()=>{rememberChoice();syncChoice()});
-document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='new'){settingsOpen=false;syncChoice();closePreview();++publicRun;publicController?.abort()}else{syncChoice();void loadPublic()}});
+document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='new'){settingsOpen=false;syncChoice();if(filterSheet.open)filterSheet.close();closePreview();++publicRun;publicController?.abort()}else{syncChoice();void loadPublic()}});
 consent.addEventListener('click',()=>enable(!state.enabled));
 checkButton.addEventListener('click',()=>{if(state.enabled)void check({force:true});void loadPublic()});
 clearButton.addEventListener('click',clear);
