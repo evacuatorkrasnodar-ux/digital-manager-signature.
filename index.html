@@ -9185,4 +9185,65 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini button:disabled{o
  syncVolume();
 })();
 </script>
+
+<style id="svMusicAdaptiveSmoke">
+/* One floating material, with a darker tint only over colored artwork or in dark theme. */
+html:root[data-theme][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline[data-glass-tone="smoke"]:not([hidden]),
+html:root[data-theme][data-theme].sv-music-screen.sv-music-browse body:has(#sayviMusicPage[data-music-view="new"]:not([hidden])) #sayviMusicMini[data-glass-tone="smoke"]:not([hidden]){
+ background:rgba(20,29,33,.61)!important;
+ background-image:linear-gradient(150deg,rgba(255,255,255,.055),transparent 58%,rgba(255,255,255,.018))!important;
+ -webkit-backdrop-filter:blur(22px) saturate(115%)!important;
+ backdrop-filter:blur(22px) saturate(115%)!important;
+ border:1px solid rgba(222,231,231,.19)!important;
+ box-shadow:inset 0 0 0 .5px rgba(255,255,255,.08),0 2px 9px rgba(8,15,19,.08)!important;
+ color:#d5dddd!important;
+}
+html:root[data-theme].sv-music-screen.sv-music-browse body #sayviMusicMini[data-glass-tone="smoke"] .sv-music-mini-title{color:#e0e5e5!important;font-weight:520!important}
+html:root[data-theme].sv-music-screen.sv-music-browse body #sayviMusicMini[data-glass-tone="smoke"] .sv-music-mini-artist{color:#b4c0c2!important;font-weight:400!important}
+html:root[data-theme].sv-music-screen.sv-music-browse body #sayviMusicMini[data-glass-tone="smoke"] button{color:#d0d9da!important}
+html:root[data-theme].sv-music-screen.sv-music-browse body #sayviMusicMini[data-glass-tone="smoke"] .sv-mini-tablet-only[aria-pressed=true]{color:#a7dfd9!important}
+html:root[data-theme].sv-music-screen.sv-music-browse body #sayviMusicMini[data-glass-tone="smoke"] .sv-music-mini-transport button svg,
+html:root[data-theme].sv-music-screen.sv-music-browse body #sayviMusicMini[data-glass-tone="smoke"] .sv-music-mini-transport button svg path{stroke:currentColor!important;stroke-width:1.55!important}
+html:root[data-theme].sv-music-screen.sv-music-browse body #sayviMusicMini[data-glass-tone="smoke"] .sv-music-mini-progress{background:linear-gradient(to right,rgba(220,231,232,.72) 0 var(--sv-mini-progress),rgba(215,228,230,.16) var(--sv-mini-progress) 100%)!important}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline[data-glass-tone="smoke"]:not([hidden]),
+ html:root[data-theme][data-theme].sv-music-screen.sv-music-browse body:has(#sayviMusicPage[data-music-view="new"]:not([hidden])) #sayviMusicMini[data-glass-tone="smoke"]:not([hidden]){
+  background:#263238!important;background-image:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
+</style>
+<script>
+(()=>{
+ const root=document.documentElement,page=document.getElementById('sayviMusicPage'),mini=document.getElementById('sayviMusicMini'),scene=page?.querySelector('.sv-music-scene');
+ if(!page||!mini)return;
+ let pending=0;
+ function refresh(){
+  pending=0;
+  if(!root.classList.contains('sv-music-browse')||mini.hidden){delete mini.dataset.glassTone;return}
+  let smoke=root.dataset.theme==='dark';
+  const bounds=mini.getBoundingClientRect();
+  if(!smoke&&bounds.width>0&&bounds.height>0){
+   const overlap=el=>{const r=el.getBoundingClientRect();return Math.max(0,Math.min(r.right,bounds.right)-Math.max(r.left,bounds.left))*Math.max(0,Math.min(r.bottom,bounds.bottom)-Math.max(r.top,bounds.top))};
+   let covered=0;
+   if(page.dataset.musicView==='home'&&scene)covered=overlap(scene);
+   else if(page.dataset.musicView==='new')for(const art of page.querySelectorAll('.sv-discovery-tile .sv-discovery-release-art'))covered+=overlap(art);
+   // Hysteresis prevents flicker at the boundary. Choose the surface by actual overlap, not track color.
+   smoke=covered/(bounds.width*bounds.height)>(mini.dataset.glassTone==='smoke'?.23:.36);
+  }
+  const tone=smoke?'smoke':'pearl';if(mini.dataset.glassTone!==tone)mini.dataset.glassTone=tone;
+ }
+ const schedule=()=>{if(!pending)pending=requestAnimationFrame(refresh)};
+ page.addEventListener('scroll',schedule,{passive:true,capture:true});
+ window.addEventListener('scroll',schedule,{passive:true});
+ window.addEventListener('resize',schedule,{passive:true});
+ window.visualViewport?.addEventListener('resize',schedule,{passive:true});
+ document.addEventListener('seyveo:music-view',schedule);
+ new MutationObserver(schedule).observe(root,{attributes:true,attributeFilter:['class','data-theme']});
+ new MutationObserver(schedule).observe(mini,{attributes:true,attributeFilter:['hidden','class']});
+ new MutationObserver(schedule).observe(page,{attributes:true,attributeFilter:['data-music-view','hidden']});
+ if(typeof ResizeObserver==='function'){const observer=new ResizeObserver(schedule);for(const el of [page,mini,scene])if(el)observer.observe(el)}
+ for(const id of ['svDiscoveryPublicList','svMusicDiscoveryReleases']){const el=document.getElementById(id);if(el)new MutationObserver(schedule).observe(el,{childList:true})}
+ schedule();
+})();
+</script>
 </body></html>
