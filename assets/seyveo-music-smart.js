@@ -174,7 +174,8 @@
    // Explicit start also stops our own audio, so the microphone can hear
    // the external source. Never automatically resume or restart the mic.
    if(!audio.paused)audio.pause();
-   message('Разрешите доступ к микрофону.');
+   const listeningButton=recognitionOrbButton('svRecognitionStop','Сэйви слушает','',()=>{cancelRecognition();close()});
+   listeningButton.setAttribute('aria-label','Отменить распознавание');
    try{
     stream=await w.navigator.mediaDevices.getUserMedia({audio:true,video:false});
     if(!valid()){release();return}
@@ -186,7 +187,8 @@
     recorder.onstop=async()=>{
      release();
      if(!valid())return;
-     body.replaceChildren();message('Сэйви ищет песню…');
+     listeningButton.classList.remove('is-listening');
+     listeningButton.querySelector('strong').textContent='Сэйви слушает';
      try{
       const blob=new Blob(chunks,{type:recorder.mimeType||chunks[0]?.type||'audio/webm'});
       if(!blob.size||size>2*1024*1024)throw Error('clip');
@@ -214,8 +216,7 @@
      }catch{if(valid()){body.replaceChildren();message('Не удалось прочитать или сравнить запись.');action('Повторить',recognitionSheet)}}
      finally{if(valid()){recognitionCancel=null;engine.setListening(false)}}
     };
-    recorder.start();body.replaceChildren();
-    recognitionOrbButton('svRecognitionStop','Сэйви слушает музыку','Нажмите для отмены',()=>{cancelRecognition();close()},true);
+    recorder.start();listeningButton.classList.add('is-listening');
     timer=w.setTimeout(()=>{if(recorder.state!=='inactive')recorder.stop();release()},10000);
    }catch{release();if(valid()){engine.setListening(false);recognitionCancel=null;body.replaceChildren();message('Нет доступа к микрофону или формат записи не поддерживается.');action('Повторить',recognitionSheet)}}
   }
