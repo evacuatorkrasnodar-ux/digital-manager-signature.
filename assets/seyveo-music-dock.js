@@ -88,11 +88,21 @@ function init(){
  function syncPeriod(){
   if(!periodSelect||!periodLabel||!periodMenu)return;
   periodLabel.textContent=periodSelect.selectedOptions[0]?.textContent||'Выбрать период';
-  for(const button of periodMenu.querySelectorAll('button'))button.setAttribute('aria-checked',String(button.dataset.period===periodSelect.value));
+  for(const button of periodMenu.querySelectorAll('button[data-period]'))button.setAttribute('aria-checked',String(button.dataset.period===periodSelect.value));
  }
  function openPeriod(){
   if(!periodMenu||!periodSelect||!periodTrigger)return;
   periodMenu.replaceChildren();
+  if(window.SEYVEO_WHEEL?.mount&&periodSelect.options.length){
+   periodMenu.setAttribute('role','group');periodMenu.classList.add('sv-replay-wheel-menu');
+   const wheel=document.createElement('div');wheel.setAttribute('aria-label','Период музыкальной статистики');
+   const done=document.createElement('button');done.type='button';done.className='sv-replay-wheel-done';done.textContent='Готово';
+   periodMenu.append(wheel,done);periodMenu.hidden=false;periodTrigger.setAttribute('aria-expanded','true');
+   const picker=window.SEYVEO_WHEEL.mount(wheel,Array.from(periodSelect.options,o=>({value:o.value,label:o.textContent})),periodSelect.value);
+   done.addEventListener('click',()=>{periodSelect.value=picker.value;closePeriod(true);periodSelect.dispatchEvent(new Event('change',{bubbles:true}))});
+   wheel.focus({preventScroll:true});return;
+  }
+  periodMenu.setAttribute('role','menu');periodMenu.classList.remove('sv-replay-wheel-menu');
   for(const option of periodSelect.options){
    const button=document.createElement('button');button.type='button';button.dataset.period=option.value;button.setAttribute('role','menuitemradio');
    const title=document.createElement('span');title.textContent=option.textContent;
@@ -110,6 +120,7 @@ function init(){
  document.addEventListener('click',event=>{if(periodMenu&&!periodMenu.hidden&&!periodMenu.contains(event.target)&&!periodTrigger?.contains(event.target))closePeriod()});
  periodMenu?.addEventListener('keydown',event=>{
   if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closePeriod(true);return}
+  if(periodMenu.classList.contains('sv-replay-wheel-menu'))return;
   if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
   event.preventDefault();const buttons=Array.from(periodMenu.querySelectorAll('button'));const i=buttons.indexOf(document.activeElement);
   const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(i+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length;
@@ -125,8 +136,8 @@ function init(){
   syncPeriod();
   const data=music()?.replaySummary?.(select.value);out.replaceChildren();if(!data)return;
   const total=document.createElement('div');total.className='sv-replay-total';
-  const minutes=Math.floor(data.seconds/60),value=document.createElement('strong');value.textContent=minutes.toLocaleString('ru-RU');
-  const label=document.createElement('span');label.textContent='мин. прослушивания';total.append(value,label);out.append(total);
+  const minutes=Math.max(0,Math.floor(data.seconds/60)),hours=Math.floor(minutes/60),value=document.createElement('strong');value.textContent=hours?hours.toLocaleString('ru-RU')+' ч '+(minutes%60)+' мин':minutes+' мин';
+  const label=document.createElement('span');label.textContent='Время прослушивания';total.append(value,label);out.append(total);
   const localSeconds=Number(data.musicSeconds)||0,radioSeconds=Number(data.radioSeconds)||0,combined=localSeconds+radioSeconds;
   if(combined>0){
    const chart=document.createElement('div');chart.className='sv-replay-chart';
@@ -163,6 +174,10 @@ function init(){
      if(!paintCover(art,match?.artwork))fallbackCover(art,{artKey:key||item.title});
      row.append(art);
      if(match&&!match.artwork&&music()?.prepareTrackPreview)music().prepareTrackPreview(match.index).then(info=>{if(art.isConnected&&info?.artwork)paintCover(art,info.artwork)}).catch(()=>{});
+    }
+    if(title==='Любимые исполнители'){
+     const art=document.createElement('span');art.className='sv-music-track-tile sv-replay-art sv-replay-artist-art';art.setAttribute('aria-hidden','true');
+     fallbackCover(art,{artKey:item.title});art.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.3"/><path d="M5 19c0-3.3 2.8-5.5 7-5.5s7 2.2 7 5.5"/></svg>';row.append(art);
     }
     if(!item.artist)sub.hidden=true;
     row.append(copy,time);out.append(row)}
