@@ -453,6 +453,10 @@
       feedback.textContent=saved?.ok?(saved.existing?'Этот текст уже есть в блокноте.':'Текст сохранён в блокноте. Музыка продолжает играть.'):(saved?.reason==='length'?'Текст длиннее лимита одной заметки (8000 символов).':saved?.reason==='limit'?'Блокнот заполнен. Освободите место для новой записи.':'Не удалось сохранить текст в блокноте.');
      });
      settings.append(advanced);
+     advanced.addEventListener('toggle',()=>{
+      if(!valid()||!advanced.isConnected)return;
+      settings.scrollTop=0;
+     });
      if(!saved){const warning=message('Текст доступен до закрытия страницы.',settings);warning.className='sv-lyric-warning'}
      const fragment=d.createDocumentFragment();
      data.lines.forEach((line,i)=>{
