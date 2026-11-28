@@ -33,12 +33,13 @@ const DAY=24*3600*1000,LOOKBACK=21*DAY,MAX_ARTISTS=30;
 const normalize=s=>String(s||'').normalize('NFKC').toLocaleLowerCase('ru-RU')
  .replace(/\s+/g,' ').trim();
 const clean=s=>typeof s==='string'?s.replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,100):'';
-function fresh(enabled=true){return {enabled,artists:[],releases:[],ignored:[],snoozed:{},checks:{},attempts:{}}}
+function fresh(enabled=true){return {enabled,replayAfterMonth:'',artists:[],releases:[],ignored:[],snoozed:{},checks:{},attempts:{}}}
 function read(){
  let x;try{x=JSON.parse(localStorage.getItem(STORE)||'null')}catch{}
  if(!x||typeof x!=='object'){let declined=false;try{declined=localStorage.getItem(CHOICE)==='1'}catch{}return fresh(!declined)}
  return {
   enabled:x.enabled===true,
+  replayAfterMonth:typeof x.replayAfterMonth==='string'&&/^\d{4}-\d{2}$/.test(x.replayAfterMonth)?x.replayAfterMonth:'',
   artists:Array.isArray(x.artists)?x.artists.slice(-MAX_ARTISTS).filter(a=>
    a&&typeof a.name==='string'&&typeof a.key==='string'&&
    Number.isSafeInteger(a.plays)&&a.plays>=0&&a.plays<=100000):[],
@@ -91,7 +92,7 @@ function clear(){
  rememberChoice();
  runId++;
  checking=false;
- state=fresh(false);likes=[];saveLikes();if(mode==='genres'){mode='for-you';syncFilters();syncPersonal()}
+ state=fresh(false);const date=new Date();state.replayAfterMonth=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0');likes=[];saveLikes();if(mode==='genres'){mode='for-you';syncFilters();syncPersonal()}
  try{localStorage.removeItem(GENRES_KEY);for(let i=localStorage.length-1;i>=0;i--){const key=localStorage.key(i);if(key?.startsWith('seyveo-music-editorial-v3-')&&key!=='seyveo-music-editorial-v3-general')localStorage.removeItem(key)}}catch{}
  persist();update();signal();if(feedVisible())void loadPublic();
 }
@@ -183,7 +184,7 @@ async function check({force=false}={}){
  const now=Date.now();
  // Only two qualified artists per check; no full browsing history leaves device.
  const eligible=qualifiedArtists().filter(a=>a.last>now-120*DAY)
-  .sort((a,b)=>b.plays-a.plays)
+  .sort((a,b)=>artistScore(b)-artistScore(a))
   .filter(a=>(force||now-Number(state.checks[a.key]||0)>=DAY)&&
    now-Number(state.attempts[a.key]||0)>=3600*1000)
   .slice(0,2);
@@ -377,20 +378,32 @@ function reminderCard(r){
  const later=button('Позже','sv-new-reminder-later');later.addEventListener('click',()=>{r.saved.snooze=Date.now()+3*DAY;saveLikes();signal();showPublic(lastItems,lastStale)});
  actions.append(play,later);card.append(label,title,body,actions);return card;
 }
+// Recommendations reuse local Replay aggregates; only selected artist names are queried.
+function artistScore(a){return Number(!!a.liked)*3600+(Number(a.seconds)||0)+Math.min(600,(Number(a.plays)||0)*30)}
 function qualifiedArtists(){
- const list=state.artists.filter(a=>a.plays>=3).map(a=>({...a}));
- if(state.enabled)for(const r of likes){
-  const key=normalize(r.artist);if(!key||list.some(a=>a.key===key))continue;
-  list.push({name:r.artist,key,plays:0,last:Date.now(),liked:true});
+ if(!state.enabled)return [];
+ const rows=new Map(),now=Date.now();
+ for(const a of state.artists){if(a.plays>=3&&a.last>now-120*DAY)rows.set(a.key,{...a,seconds:0})}
+ for(const a of window.SEYVEO_MUSIC?.discoveryTaste?.()||[]){
+  if(!a||a.month<=state.replayAfterMonth)continue;
+  const name=clean(a.name),key=normalize(name),seconds=Number(a.seconds)*Number(a.weight);
+  if(!key||key==='моя музыка'||key==='unknown artist'||!Number.isFinite(seconds)||seconds<=0)continue;
+  const row=rows.get(key)||{name,key,plays:0,last:now,seconds:0};
+  row.seconds+=seconds;row.last=Math.max(row.last,now);rows.set(key,row);
  }
- return list;
+ for(const r of likes){
+  const key=normalize(r.artist);if(!key)continue;
+  const row=rows.get(key)||{name:r.artist,key,plays:0,last:now,seconds:0};
+  row.liked=true;row.last=Math.max(row.last,now);rows.set(key,row);
+ }
+ return [...rows.values()].filter(a=>a.liked||a.plays>=3||a.seconds>=120).sort((a,b)=>artistScore(b)-artistScore(a)||b.last-a.last);
 }
 
 function selectedTags(){return tasteTags()}
 function syncPersonal(){if(feedHead)feedHead.hidden=true;releasesList.hidden=true;empty.hidden=true;info.hidden=!info.textContent}
 function syncFilters(){if(!favButton)return;const saved=mode==='liked';favButton.setAttribute('aria-pressed',String(saved));favButton.removeAttribute('aria-haspopup');favButton.title=saved?'Вернуться к новинкам':'Понравилось';favButton.setAttribute('aria-label',favButton.title);favButton.innerHTML=saved?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>':heartIcon}
 function feedVisible(){return location.hash==='#sayvi-music'&&$('sayviMusicPage')?.dataset.musicView==='new'&&!panel.hidden&&!document.hidden}
-function favoriteArtists(){if(!state.enabled)return [];return qualifiedArtists().filter(a=>a.last>Date.now()-120*DAY).sort((a,b)=>Number(!!b.liked)-Number(!!a.liked)||b.plays-a.plays||b.last-a.last).slice(0,3).map(a=>a.name)}
+function favoriteArtists(){if(!state.enabled)return [];return qualifiedArtists().slice(0,3).map(a=>a.name)}
 function setMode(next){mode=next==='liked'?'liked':'for-you';syncFilters();closePreview();if(mode==='liked'){++publicRun;publicController?.abort();publicController=null;showPublic(lastItems,lastStale);return}void loadPublic()}
 const previewBox=document.createElement('dialog');previewBox.className='sv-new-preview';previewBox.setAttribute('aria-label','Предпрослушивание');document.body.append(previewBox);
 let previewAnchor=null;
@@ -696,7 +709,7 @@ function showPublic(items,stale=false){
  const recent=mergedItems.filter(r=>r.date>=from&&r.date<=day).sort((a,b)=>b.date.localeCompare(a.date));
  const upcoming=mergedItems.filter(r=>r.date>day&&r.date<=until).sort((a,b)=>a.date.localeCompare(b.date));
  if(mode==='for-you'&&state.enabled){
-  const fav=new Set(likes.map(r=>normalize(r.artist)));const score=r=>Number(fav.has(normalize(r.artist)))*1000+Number(r.tasteMatch===true)*100+(state.artists.find(a=>a.key===normalize(r.artist))?.plays||0);
+  const taste=new Map(qualifiedArtists().map(a=>[a.key,artistScore(a)]));const score=r=>Number(r.tasteMatch===true)*100+(taste.get(normalize(r.artist))||0);
   recent.sort((a,b)=>score(b)-score(a));upcoming.sort((a,b)=>score(b)-score(a));
  }
  syncPersonal();
