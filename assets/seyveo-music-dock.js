@@ -225,8 +225,7 @@ function init(){
  function renderPortrait(out,p,previous,period,total){
   if(!p||!p.total)return;
   const insight=portraitEl('div','sv-portrait-insight');
-  const orb=portraitEl('span','sv-portrait-orb');orb.setAttribute('aria-hidden','true');
-  orb.innerHTML='<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="svPortraitGlow" cx=".28" cy=".2" r=".92"><stop stop-color="#d5f1ff"/><stop offset=".37" stop-color="#8fa9dc"/><stop offset=".72" stop-color="#6669a3"/><stop offset="1" stop-color="#283d59"/></radialGradient><linearGradient id="svPortraitWave" x2="1" y2="1"><stop stop-color="#c5f8ee"/><stop offset=".53" stop-color="#9eb6fb"/><stop offset="1" stop-color="#f3bde5"/></linearGradient><clipPath id="svPortraitClip"><circle cx="32" cy="32" r="29"/></clipPath></defs><circle cx="32" cy="32" r="29" fill="url(#svPortraitGlow)" stroke="#d3e2f8" stroke-opacity=".9"/><g clip-path="url(#svPortraitClip)"><path d="M1 43C15 4 25 57 39 28S65 13 66 40C43 63 18 42 1 43Z" fill="url(#svPortraitWave)" opacity=".6"/><path d="M0 33C18 62 32 7 45 30S60 50 66 29" stroke="#e2ecff" stroke-width="1.3"/><path d="M-1 35C14 17 26 55 42 21S60 23 67 34" stroke="#d3c8ff" stroke-width="1.3" opacity=".8"/></g><circle cx="32" cy="32" r="29" stroke="#f1f5ff" stroke-opacity=".45"/></svg>';
+  const orb=portraitEl('span','sv-portrait-orb sv-sayvi-symbol');orb.setAttribute('aria-hidden','true');
   const copy=portraitEl('div','sv-portrait-insight-copy');copy.append(portraitEl('small','','Сэйви заметила'),portraitEl('p','',portraitInsight(p,previous)));insight.append(orb,copy);total.append(insight);
   const grid=portraitEl('div','sv-portrait-grid');out.append(grid);
   const daily=portraitPanel('Музыка по дням',p.trackedFrom?'Фактическое время прослушивания':'Детальная история начнёт появляться после обновления');
