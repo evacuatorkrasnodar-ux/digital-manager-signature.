@@ -9968,6 +9968,27 @@ html:root body #sayviMusicPage #svMusicLibrary .sv-pl-smart-input{display:block;
 #sayviMusicPage #svMusicLibrary .sv-pl-selection-toolbar .sv-pl-button{font-size:12px!important;color:var(--secondary)!important}
 </style>
 <style id="svSmartPlaylistPolish">
+/* White Pearl avatar header standard: one frosted surface, feathered lower edge.
+   Preserve sticky scrollport, title and flat 44px actions. */
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="library"].sv-pl-editor-open>.sv-music-head{
+ background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;overflow:visible!important;
+}
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="library"].sv-pl-editor-open>.sv-music-head::before{
+ content:""!important;display:block!important;position:absolute!important;inset:0!important;z-index:-1!important;pointer-events:none!important;
+ background:var(--sv-white-pearl-header-face,rgba(247,247,248,.46))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 24px),transparent 100%)!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="library"].sv-pl-editor-open>.sv-music-head::after{content:none!important;display:none!important}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="library"].sv-pl-editor-open>.sv-music-head{background:var(--sv-white-pearl-solid,#F7F7F8)!important}
+ html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="library"].sv-pl-editor-open>.sv-music-head::before{content:none!important;display:none!important}
+}
+
 html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="library"].sv-pl-editor-open>.sv-music-head{
  grid-template-columns:44px minmax(0,1fr) 44px!important;gap:4px;
 }
