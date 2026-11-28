@@ -8,7 +8,7 @@ const KEY='seyveo-podcasts-v1';
 // Dedicated viewport layer; independent of the music page's grid and dock.
 const overlay=document.createElement('section');overlay.id='svPodcastViewport';overlay.hidden=true;overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Плеер подкаста');
 const notice=document.createElement('p');notice.id='svPodcastViewportNotice';notice.hidden=true;notice.setAttribute('role','status');
-const polish=document.createElement('style');polish.id='svPodcastPlayerPolishV17';polish.textContent=`
+const polish=document.createElement('style');polish.id='svPodcastPlayerPolishV18';polish.textContent=`
 html body #svPodcastViewport[hidden],html body #svPodcastViewport [hidden]{display:none!important}
 html body #svPodcastViewport:not([hidden]){display:block!important;position:fixed!important;inset:0!important;z-index:2147483000!important;overflow:hidden!important;background:#151515!important;color:#fff!important;isolation:isolate;--text:#fff;--secondary:#ffffffa8;--soft-line:#ffffff38}
 html body #svPodcastViewport #svPodcastPlayer:not([hidden]){position:relative!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;align-items:stretch!important;gap:14px!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0 24px calc(22px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important;overflow-y:auto!important;border:0!important;border-radius:0!important;background:#151515!important;box-shadow:none!important;color:#fff!important}
@@ -69,6 +69,27 @@ html body #svPodcastViewport .sv-podcast-bottom-tools button,html body #svPodcas
 #svPodcastViewport .sv-podcast-queue-pop button{display:block;width:100%;text-align:left;border-bottom:1px solid #ffffff15!important;font-size:14px;line-height:1.35}
 #svPodcastViewport .sv-podcast-queue-pop button[aria-current=true]{color:#91bfff!important}
 @media(max-height:650px){html body #svPodcastViewport #svPodcastPlayer:not([hidden]){gap:7px!important}#svPodcastViewport .sv-podcast-speed-pop,#svPodcastViewport .sv-podcast-queue-pop{bottom:110px}}
+
+/* Fade the actual artwork, not its taller empty container. */
+html body #svPodcastViewport #svPodcastFullCover{background:#151515!important;margin-bottom:-8px!important}
+html body #svPodcastViewport #svPodcastFullCover .sv-podcast-art{background:#151515!important;align-items:start!important}
+html body #svPodcastViewport #svPodcastFullCover .sv-podcast-art:not(.is-low-res) img{width:100%!important;height:auto!important;max-height:100%!important;object-fit:contain!important;object-position:center top!important;align-self:start;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 46%,rgba(0,0,0,.92) 63%,rgba(0,0,0,.55) 81%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0%,#000 46%,rgba(0,0,0,.92) 63%,rgba(0,0,0,.55) 81%,transparent 100%)}
+html body #svPodcastViewport #svPodcastFullCover .sv-podcast-art.is-low-res{align-items:center!important;background:radial-gradient(ellipse at 50% 24%,#343842,#151515 77%)!important}
+#svPodcastViewport #svPodcastFullCover .sv-podcast-art:not(:has(img)){align-items:center!important;background:radial-gradient(ellipse at 50% 24%,#343842,#151515 77%)!important}
+#svPodcastViewport #svPodcastFullCover::after{background:linear-gradient(to bottom,#0005 0%,transparent 15%);pointer-events:none}
+#svPodcastViewport #svPodcastCollapse span{background:#ffffffb8;box-shadow:0 1px 5px #0005}
+html body #svPodcastViewport #svPodcastPlayer:not([hidden]){gap:12px!important;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))!important}
+#svPodcastViewport #svPodcastPlaying{font-weight:600;font-size:clamp(18px,4.7vw,23px)}
+#svPodcastViewport .sv-podcast-now-copy{gap:4px}
+#svPodcastViewport .sv-podcast-volume{margin-top:8px}
+#svPodcastViewport .sv-podcast-bottom-tools{margin-top:2px}
+html body #svPodcastViewport .sv-podcast-speed-pop{bottom:var(--sv-speed-pop-bottom,155px);left:var(--sv-speed-pop-left,24px);width:min(270px,calc(100% - 48px));padding:14px 16px 12px;background:#202023ed;border-color:#ffffff30;box-shadow:0 12px 30px #0003}
+#svPodcastViewport .sv-podcast-speed-pop::after{content:'';position:absolute;bottom:-6px;left:var(--sv-speed-arrow,23px);width:10px;height:10px;transform:rotate(45deg);background:#202023;border-right:1px solid #ffffff30;border-bottom:1px solid #ffffff30}
+html body #svPodcastViewport .sv-podcast-speed-pop input::-webkit-slider-runnable-track{height:26px;border-radius:0;background:repeating-linear-gradient(90deg,transparent 0px,transparent 6px,#ffffff40 6px,#ffffff40 8px,transparent 8px,transparent 10px)}
+html body #svPodcastViewport .sv-podcast-speed-pop input::-webkit-slider-thumb{height:26px;width:3px;border-radius:3px;margin-top:0;background:#f5f5f7}
+html body #svPodcastViewport .sv-podcast-speed-pop input::-moz-range-track{height:26px;background:repeating-linear-gradient(90deg,transparent 0px,transparent 6px,#ffffff40 6px,#ffffff40 8px,transparent 8px,transparent 10px)}
+html body #svPodcastViewport .sv-podcast-speed-pop input::-moz-range-thumb{height:26px;width:3px;border:0;border-radius:3px;background:#f5f5f7}
+@media(max-height:650px){html body #svPodcastViewport #svPodcastPlayer:not([hidden]){gap:7px!important;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))!important}#svPodcastViewport .sv-podcast-volume,#svPodcastViewport .sv-podcast-bottom-tools{margin-top:0}}
 `;document.head.appendChild(polish);
 overlay.append(player);player.append(notice);document.body.append(overlay);
 const speedSelect=get('svPodcastSpeed'),sleepSelect=get('svPodcastSleep'),transport=player.querySelector('.sv-podcast-transport');
@@ -80,7 +101,7 @@ speedSelect.addEventListener('change',updateQuick);sleepSelect.addEventListener(
 const speedPop=document.createElement('div');speedPop.className='sv-podcast-speed-pop';speedPop.hidden=true;
 const speedRange=document.createElement('input');speedRange.type='range';speedRange.min='0.75';speedRange.max='2';speedRange.step='0.05';speedRange.value='1';speedRange.setAttribute('aria-label','Скорость речи');
 const speedNote=document.createElement('small');speedNote.textContent='Скорость речи';const speedRead=document.createElement('strong');speedRead.style.textAlign='center';speedRead.textContent='1×';speedPop.append(speedRead,speedRange,speedNote);player.append(speedPop);
-function showSpeed(value){speedPop.hidden=!value;speedQuick.setAttribute('aria-expanded',String(value));if(value){queuePop.hidden=true;queueButton.setAttribute('aria-expanded','false');speedRange.value=String(audio.playbackRate||1);paintSpeed()}}
+function showSpeed(value){speedPop.hidden=!value;speedQuick.setAttribute('aria-expanded',String(value));if(value){queuePop.hidden=true;queueButton.setAttribute('aria-expanded','false');speedRange.value=String(audio.playbackRate||1);paintSpeed();const p=player.getBoundingClientRect(),b=speedQuick.getBoundingClientRect();const left=Math.max(12,Math.min(p.width- speedPop.offsetWidth-12,b.left-p.left-12));speedPop.style.setProperty('--sv-speed-pop-left',left+'px');speedPop.style.setProperty('--sv-speed-pop-bottom',(p.bottom-b.top+8)+'px');speedPop.style.setProperty('--sv-speed-arrow',Math.max(12,b.left-p.left-left+b.width/2-5)+'px')}}
 function paintSpeed(){speedRead.textContent=String(Number(speedRange.value)).replace('.',',')+'×';speedRange.style.setProperty('--sv-value',((Number(speedRange.value)-.75)/1.25*100)+'%')}
 speedQuick.addEventListener('click',()=>showSpeed(speedPop.hidden));speedRange.addEventListener('input',()=>{const v=String(Number(speedRange.value));if(!Array.from(speedSelect.options).some(o=>o.value===v))speedSelect.add(new Option(v.replace('.',',')+'×',v));speedSelect.value=v;speedSelect.dispatchEvent(new Event('change'));paintSpeed()});
 const volumeRow=document.createElement('div');volumeRow.className='sv-podcast-volume';volumeRow.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3z"/></svg><input type="range" min="0" max="1" step="0.01" value="1" aria-label="Громкость"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path fill="currentColor" stroke="none" d="M2 9h4l5-4v14l-5-4H2z"/><path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg>';
