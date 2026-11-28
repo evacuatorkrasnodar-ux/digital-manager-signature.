@@ -672,6 +672,8 @@ function syncResume(){
  // Empty-state visuals must never resemble a broken, disabled progress bar.
  page.classList.toggle('sv-music-empty',!loaded);
  const playing=loaded&&!audio.paused&&!audio.ended;
+ const radioMode=loaded&&isRadio();page.classList.toggle('sv-music-radio-player',radioMode);
+ const radioName=$('svRadioPlayerName');if(radioName){const name=radioMode?tracks[index].name:'';if(radioName.textContent!==name)radioName.textContent=name;}
  // One actual audio element. The mini is a small remote, not a second player.
  if(mini){
   // Replay shares the approved floating Music Home remote during an active or paused session.
@@ -1200,7 +1202,7 @@ function switchTrack(i,autoplay=false,fromNavigation=false,resumeSeconds=0){
  radioFallback=false;
   if(file.radio){
    index=newIndex;audio.src=file.stream;
-   coverDataURL=file.artwork||null;if(coverDataURL)showArtwork();
+   coverDataURL=null; // Radio has its own lightweight orbit scene; mini-player keeps station artwork.
    setPlayerTitle(file.name,false);artist.textContent=(file.city||file.country);
    previous.disabled=next.disabled=tracks.length<2;updateFavorite();collectionRender();mediaSession();updatePlay();updateTime();
    if(autoplay){sayviMessage('Подключение к '+file.name+'…');smoothPlay().catch(()=>{if(version===selectVersion&&!audio.error)sayviMessage('Не удалось начать эфир. Нажмите Play ещё раз.')});}
