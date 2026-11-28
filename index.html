@@ -8265,4 +8265,28 @@ html:root.sv-music-screen.sv-music-player-open body #sayviMusicPage[data-music-v
  html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"]:not(.sv-karaoke-active) > .sv-now-tools{margin-top:4px;margin-bottom:0}
 }
 </style>
+<style id="svMusicBrowsePearlFinish">
+/* Same approved pearl finish as the main dock; no backing sheet or geometry changes. */
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]),
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only::after,
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]){
+ background:rgba(232,236,240,.76)!important;
+ background-image:linear-gradient(155deg,rgba(255,255,255,.42),transparent 52%,rgba(255,255,255,.13))!important;
+ border:1px solid rgba(161,177,188,.30)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
+ box-shadow:inset 0 0 0 1px rgba(255,255,255,.88),0 3px 12px rgba(38,48,60,.085)!important;
+}
+html:root.sv-music-browse #sayviMusicPage :is(.sv-music-recent-play,.sv-library-track-play) svg{
+ width:19px;height:19px;fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;stroke-linecap:round;stroke-linejoin:round;
+}
+html:root.sv-music-browse #sayviMusicPage :is(.sv-music-recent-play,.sv-library-track-play) svg path{fill:none!important;stroke:currentColor!important}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]),
+ html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only::after,
+ html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]){
+ background:#eef0f2!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
+</style>
 </body></html>
