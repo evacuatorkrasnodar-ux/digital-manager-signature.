@@ -153,12 +153,22 @@
   }
   d.addEventListener('seyveo:music-fingerprint',updateRecognitionIndex);
   d.addEventListener('seyveo:music-library',updateRecognitionIndex);
+  // One lightweight, reusable vector button. No second microphone or audio graph.
+  const recognitionOrbMarkup='<svg class="sv-recognition-orb" viewBox="0 0 200 200" aria-hidden="true" focusable="false"><circle class="sv-recognition-ring" cx="100" cy="100" r="95" opacity=".22"/><circle class="sv-recognition-ring" cx="100" cy="100" r="81" opacity=".34"/><circle class="sv-recognition-ring" cx="100" cy="100" r="66" opacity=".50"/><circle class="sv-recognition-ring" cx="100" cy="100" r="51" opacity=".68"/><circle class="sv-recognition-core" cx="100" cy="100" r="44"/><g class="sv-recognition-wave"><path d="M69 89v22M79 78v44M89 69v62M100 60v80M111 74v52M121 84v32M131 92v16"/></g></svg>';
+  function recognitionOrbButton(id,label,hint,fn,listening=false){
+   const b=d.createElement('button');b.type='button';b.id=id;b.className='sv-recognition-orb-button';
+   if(listening)b.classList.add('is-listening');
+   b.setAttribute('aria-label',listening?'Отменить распознавание':'Начать распознавание');
+   b.innerHTML=recognitionOrbMarkup;
+   const title=d.createElement('strong');title.textContent=label;
+   const sub=d.createElement('small');sub.textContent=hint;b.append(title,sub);
+   b.addEventListener('click',fn);body.append(b);return b;
+  }
   function recognitionSheet(quick=false){
    cancelRecognition();
    if(!show('Распознать музыку','recognize'))return;
    const version=generation;
-   const intro=message('Сэйви узнаёт песни из вашей медиатеки.');intro.classList.add('sv-recognition-intro');
-   const privacy=message('До 10 секунд звука с вашего разрешения. Запись анализируется на устройстве и не отправляется в интернет.');privacy.classList.add('sv-recognition-privacy');
+   const privacy=message('До 10 секунд звука с вашего разрешения. Анализ на устройстве, без передачи записи в интернет.');privacy.classList.add('sv-recognition-privacy');
    const engine=w.SEYVEO_MUSIC_FINGERPRINT;
    if(!w.isSecureContext||!w.navigator.mediaDevices?.getUserMedia||!w.MediaRecorder){message('Микрофон недоступен в этом браузере.');return}
    // First use keeps explicit consent; subsequent quick taps can start immediately.
@@ -166,8 +176,8 @@
    const indexCard=d.createElement('div');indexCard.className='sv-recognition-index';
    const status=message('Готовлю музыкальный индекс…');status.id='svRecognitionIndexStatus';indexCard.append(status);
    const progress=d.createElement('progress');progress.id='svRecognitionIndexProgress';progress.setAttribute('aria-label','Изучение медиатеки');progress.hidden=true;indexCard.append(progress);body.append(indexCard);
-   const startButton=action('Начать распознавание',()=>{recognitionApproved=true;recordRecognition(version)});startButton.id='svRecognitionStart';
-   startButton.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11v1a6.5 6.5 0 0 0 13 0v-1M12 18.5V22m-3 0h6"/></svg><span>Начать распознавание</span>';
+   const startButton=recognitionOrbButton('svRecognitionStart','Распознать музыку','Нажмите, чтобы Сэйви начала слушать',()=>{recognitionApproved=true;recordRecognition(version)});
+   body.prepend(startButton);
    updateRecognitionIndex();engine?.schedule();
    const hint=message('Новые песни изучаются автоматически, когда приложение открыто и музыка на паузе.');hint.classList.add('sv-recognition-hint');
   }
@@ -213,8 +223,8 @@
      }catch{if(valid()){body.replaceChildren();message('Не удалось прочитать или сравнить запись.');action('Повторить',recognitionSheet)}}
      finally{if(valid()){recognitionCancel=null;engine.setListening(false)}}
     };
-    recorder.start();body.replaceChildren();message('Слушаю музыку… До 10 секунд.');
-    action('Отменить',()=>{cancelRecognition();close()});
+    recorder.start();body.replaceChildren();
+    recognitionOrbButton('svRecognitionStop','Сэйви слушает музыку','До 10 секунд · Нажмите для отмены',()=>{cancelRecognition();close()},true);
     timer=w.setTimeout(()=>{if(recorder.state!=='inactive')recorder.stop();release()},10000);
    }catch{release();if(valid()){engine.setListening(false);recognitionCancel=null;body.replaceChildren();message('Нет доступа к микрофону или формат записи не поддерживается.');action('Повторить',recognitionSheet)}}
   }
