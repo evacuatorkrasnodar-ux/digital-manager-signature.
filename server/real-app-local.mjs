@@ -4,6 +4,7 @@
  */
 import {createServer, get as radioHttpGet} from 'node:http';
 import {Transform} from 'node:stream';
+import {readFileSync,writeFileSync,mkdirSync,renameSync} from 'node:fs';
 import {lookupMusicReleases} from './music-discovery.mjs';
 import {MAX_LYRIC_BYTES,lyricFormat,transcribeLyrics,vocalModelConfigured} from './music-lyrics.mjs';
 import {pythonForNoteAudio} from './note-audio-transcriber.mjs';
@@ -25,7 +26,7 @@ import {safePlaceQuery,searchPlace} from './seyveo-place-search.mjs';
 import {askLocalStream} from './local-stream.mjs';
 import {isDocumentWritingRequest} from './russian-writing.mjs';
 import {loadKnowledgeLibrary,retrieveKnowledge,knowledgeContext} from './knowledge-engine.mjs';
-import {createMemoryStore,memoryContext} from './local-memory.mjs';
+import {createMemoryStore,memoryContext,memoryFileLocation} from './local-memory.mjs';
 import {memoryCommand,memoryResultText} from './conversation-memory.mjs';
 import {validateHistory} from './local-dialogue.mjs';
 import {planAgentTask} from './agent/planner.mjs';
@@ -229,7 +230,7 @@ function localFile(path){
  if(!file.startsWith(resolve(ROOT,'assets')+sep))return null;
  return TYPES[extname(file).toLowerCase()]?file:null;
 }
-export function createRealLocalServer({memoryStore,learningQueue,searchProvider,noteTranscriber=transcribeNoteAudio}={}){
+export function createRealLocalServer({memoryStore,learningQueue,searchProvider,noteTranscriber=transcribeNoteAudio,radioArchiveMonitor=false}={}){
  // Force offline AI, even if a paid API key exists in the environment.
  process.env.SEYVEO_ENABLE_LOCAL='1';
  process.env.SEYVEO_ENABLE_CLOUD='0';
@@ -267,9 +268,49 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
  let discoveryMinute=-1,discoveryCount=0;
  let radio107Connections=0;
  const radio107Metadata=new Map();
- return createServer(async(req,res)=>{
+ // Station archive is separate from personal listening. Retain only title + first observation.
+ const archivePath=join(dirname(memoryFileLocation()),'radio107-archive.json'),archiveAge=7*86400000;
+ let archive=[],lastObserved=0,probe=null,probeTimer=null,probeDeadline=null,probeStopped=false;
+ try{const rows=JSON.parse(readFileSync(archivePath,'utf8'));if(Array.isArray(rows))archive=rows.filter(x=>typeof x?.title==='string'&&x.title.length<=240&&Number.isFinite(x.at)&&x.at>Date.now()-archiveAge).slice(0,3000)}catch{}
+ function archiveTitle(value){
+  const at=Date.now(),title=String(value||'').trim();
+  if(!/\s[-–—]\s/.test(title)||title.length>240)return;
+  const previous=archive[0];if(previous?.title===title&&at-lastObserved<180000){lastObserved=at;return}
+  if(previous?.title===title&&at-previous.at<600000){lastObserved=at;return}
+  lastObserved=at;archive=[{title,at},...archive.filter(x=>x.at>at-archiveAge)].slice(0,3000);
+  try{mkdirSync(dirname(archivePath),{recursive:true});writeFileSync(archivePath+'.tmp',JSON.stringify(archive));renameSync(archivePath+'.tmp',archivePath)}catch(error){console.warn('[Radio archive]',error.code||'write failed')}
+ }
+ function decodeRadioTitle(bytes){
+  let value=bytes.toString('utf8');if(value.includes('\uFFFD'))try{value=new TextDecoder('windows-1251').decode(bytes)}catch{}
+  const match=value.match(/StreamTitle='([\s\S]*?)';/i);return match?match[1].replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,240):null;
+ }
+ // Only when the real local server runs: sample the same fixed stream once per
+ // minute if no active relay already provides metadata. Abort immediately at
+ // first metadata block; never record audio and never accept arbitrary URLs.
+ function scheduleProbe(delay=60000){if(probeStopped||!radioArchiveMonitor)return;clearTimeout(probeTimer);probeTimer=setTimeout(sampleRadio,delay);probeTimer.unref?.()}
+ function sampleRadio(){
+  if(probeStopped)return;
+  if([...radio107Metadata.values()].some(x=>Date.now()-x.at<45000)){scheduleProbe();return}
+  let done=false;
+  const finish=(ok=false)=>{if(done)return;done=true;clearTimeout(probeDeadline);probeDeadline=null;const req=probe;probe=null;req?.destroy();scheduleProbe(ok?60000:180000)};
+  try{probe=radioHttpGet('http://62.183.34.109:8000/radio107.mp3',{headers:{'accept':'audio/mpeg, audio/mp3','user-agent':'SEYVEO Local Radio','Icy-MetaData':'1'}},incoming=>{
+   const interval=Number(incoming.headers['icy-metaint']);if(incoming.statusCode!==200||!Number.isSafeInteger(interval)||interval<1||interval>90000){incoming.destroy();finish();return}
+   let skip=interval,left=-1,parts=[],bytes=0;
+   incoming.on('data',chunk=>{
+    if(done)return;bytes+=chunk.length;if(bytes>110000){finish();return}
+    let offset=Math.min(skip,chunk.length);skip-=offset;if(skip)return;
+    if(left<0&&offset<chunk.length){left=chunk[offset++]*16;if(!left){finish(true);return}}
+    if(left>0){const count=Math.min(left,chunk.length-offset);parts.push(chunk.subarray(offset,offset+count));left-=count;if(!left){const title=decodeRadioTitle(Buffer.concat(parts));if(title)archiveTitle(title);finish(true)}}
+   });incoming.once('error',()=>finish());incoming.once('end',()=>finish());
+  });probe.once('error',()=>finish());probeDeadline=setTimeout(()=>finish(),10000);probeDeadline.unref?.()}catch{finish()}
+ }
+ const server=createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  if(req.method==='GET'&&path==='/api/seyveo-radio-107-archive'){
+   if(req.headers['sec-fetch-site']==='cross-site'){send(res,403,{error:'Недоверенная страница.'});return}
+   send(res,200,{station:'Радио 107',timezone:'Europe/Moscow',monitor:radioArchiveMonitor,items:archive.filter(x=>x.at>Date.now()-archiveAge)});return;
+  }
   if(req.method==='GET'&&path==='/api/seyveo-radio-107-now'){
    if(req.headers['sec-fetch-site']==='cross-site'){send(res,403,{error:'Недоверенная страница.'});return}
    const quality=new URL(req.url,ORIGIN).searchParams.get('quality')==='128'?'128':'256';
@@ -306,8 +347,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
        if(audioLeft>0){const count=Math.min(audioLeft,chunk.length-offset);this.push(chunk.subarray(offset,offset+count));offset+=count;audioLeft-=count;if(audioLeft===0)readingLength=true;continue}
        if(readingLength){metadataLeft=chunk[offset++]*16;readingLength=false;parts=[];if(!metadataLeft){audioLeft=interval;meta.at=Date.now()}continue}
        const count=Math.min(metadataLeft,chunk.length-offset);parts.push(chunk.subarray(offset,offset+count));offset+=count;metadataLeft-=count;
-       if(metadataLeft===0){const bytes=Buffer.concat(parts);let value=bytes.toString('utf8');if(value.includes('\uFFFD'))try{value=new TextDecoder('windows-1251').decode(bytes)}catch{}
-        const match=value.match(/StreamTitle='([\s\S]*?)';/i);if(match)meta.title=match[1].replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,240);meta.at=Date.now();parts=[];audioLeft=interval}
+       if(metadataLeft===0){const title=decodeRadioTitle(Buffer.concat(parts));if(title!==null){meta.title=title;archiveTitle(title)}meta.at=Date.now();parts=[];audioLeft=interval}
       }callback()}catch(error){callback(error)}
      }});
      strip.once('error',fail);incoming.pipe(strip).pipe(res);
@@ -1090,9 +1130,12 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
   }
   send(res,404,{error:'Не найдено.'});
  });
+ if(radioArchiveMonitor)server.once('listening',()=>scheduleProbe(1000));
+ server.once('close',()=>{probeStopped=true;clearTimeout(probeTimer);clearTimeout(probeDeadline);probe?.destroy()});
+ return server;
 }
 if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1])){
- const server=createRealLocalServer();
+ const server=createRealLocalServer({radioArchiveMonitor:true});
  server.requestTimeout=310000;
  server.listen(PORT,HOST,()=>{
   process.stdout.write('\nSEYVEO · настоящая Главная + локальный SEYVEO\n');
