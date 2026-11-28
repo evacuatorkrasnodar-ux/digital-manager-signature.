@@ -68,7 +68,7 @@
    }
    content.append(grid);
    const info=document.createElement('p');info.className='sv-section-discovery-note';
-   info.textContent='Жанры сохраняются на этом устройстве. Новинки и внешние музыкальные сервисы без разрешения не подключаются.';
+   info.textContent='Жанры сохраняются на устройстве. Для поиска новинок используются только названия жанров и исполнителей. Персонализацию можно отключить в управлении данными.';
    content.append(info);
    done.textContent='Запомнить';
   }else if(type==='documents'){
@@ -142,7 +142,7 @@
   clearTimeout(routeTimer);routeTimer=setTimeout(()=>{
    const route=routeFor();
    if(active&&active!==route)close({remember:false});
-   if(route&&!seen[route]&&!document.hidden)open(route);
+   if(route&&route!=='music'&&!seen[route]&&!document.hidden)open(route);
   },500);
  }
  window.addEventListener('hashchange',schedule);
