@@ -393,7 +393,7 @@ function init(){
   get('svMusicRadioToggle')?.setAttribute('aria-expanded',String(key==='radio'));
   for(const btn of nav.querySelectorAll('button')){const selected=btn.dataset.musicNav===(key==='podcasts'?'library':['replay','history'].includes(key)?'home':key);btn.setAttribute('aria-pressed',String(selected));if(selected)btn.setAttribute('aria-current','page');else btn.removeAttribute('aria-current')}
   page.scrollTop=0;renderTracks();if(key==='replay')renderReplay(true,changed);music()?.refreshMini?.();
-  if(changed&&key!=='player'&&key!=='new'&&key!=='replay'&&!document.hidden&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){const target=get(panels[key]);if(typeof target?.animate==='function'){target.getAnimations?.().filter(a=>a.id==='svMusicEnter').forEach(a=>a.cancel());const motion=target.animate([{opacity:.48},{opacity:1}],{duration:170,easing:'ease-out'});motion.id='svMusicEnter';}}
+  if(changed&&key!=='player'&&key!=='new'&&key!=='replay'&&key!=='radio'&&!document.hidden&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){const target=get(panels[key]);if(typeof target?.animate==='function'){target.getAnimations?.().filter(a=>a.id==='svMusicEnter').forEach(a=>a.cancel());const motion=target.animate([{opacity:.48},{opacity:1}],{duration:170,easing:'ease-out'});motion.id='svMusicEnter';}}
   document.dispatchEvent(new CustomEvent('seyveo:music-view',{detail:{view:key}}));
   return true;
  }
@@ -520,7 +520,17 @@ function initRadio(){
   }
   drawRadio();
  }
- filter.addEventListener('change',render);render();
+ function animateRadio(){
+  if(panel.hidden||page.hidden||document.hidden||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  Array.from(list.children).slice(0,9).forEach((node,i)=>{
+   if(typeof node.animate!=='function')return;
+   node.getAnimations?.().filter(a=>a.id==='svRadioEnter').forEach(a=>a.cancel());
+   const motion=node.animate([{opacity:.18,transform:'translateY(4px)'},{opacity:1,transform:'translateY(0)'}],{duration:190,delay:Math.min(i,5)*18,easing:'cubic-bezier(.2,.7,.25,1)',fill:'backwards'});motion.id='svRadioEnter';
+  });
+ }
+ filter.addEventListener('change',()=>{render();animateRadio()});render();
+ let radioVisible=false;
+ document.addEventListener('seyveo:music-view',e=>{const next=e.detail?.view==='radio';if(next&&!radioVisible)animateRadio();radioVisible=next});
  document.addEventListener('seyveo:music-state',drawRadio);
  for(const name of ['playing','pause','error','emptied'])audio.addEventListener(name,drawRadio);
  toggle.addEventListener('click',()=>{if(window.SEYVEO_MUSIC_DOCK?.show){window.SEYVEO_MUSIC_DOCK.show('radio');return}panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));});
