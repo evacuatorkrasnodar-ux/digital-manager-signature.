@@ -1601,7 +1601,7 @@ window.SEYVEO_MUSIC=Object.freeze({
  // Read-only access to the selected local File for optional visual analysis.
  rhythmFile:()=>isRadio()?null:tracks[index]||null,
  recognitionLibrary:()=>localTracks.map(file=>{const info=infoFor(file);return {id:favoriteId(file),file,title:info.title||safeName(file),artist:info.artist||'Моя музыка',album:info.album||''}}),
- browseTracks:()=>localTracks.map((file,i)=>({index:i,artKey:favoriteId(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null})),
+ browseTracks:()=>localTracks.map((file,i)=>({index:i,artKey:favoriteId(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',album:infoFor(file).album||'',artwork:trackThumbnails.get(file)||null})),
  recentTracks:()=>recentFiles.filter(file=>localTracks.includes(file)).map(file=>({index:localTracks.indexOf(file),artKey:favoriteId(file),title:infoFor(file).title||safeName(file),artist:infoFor(file).artist||'Моя музыка',artwork:trackThumbnails.get(file)||null,playedAt:recentPlayedAt.get(file)||0})),
  state:()=>Object.freeze({
   libraryLoading,libraryCount:localTracks.length,librarySaving:librarySaving>0,savedCount:savedTrackIds.size,

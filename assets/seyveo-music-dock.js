@@ -13,6 +13,10 @@ function init(){
  const panels={home:'svMusicHome',new:'svMusicNew',radio:'svMusicRadio','radio-favorites':'svMusicRadioFavorites','radio-archive':'svMusicRadioArchive',library:'svMusicLibrary',replay:'svMusicReplay',history:'svMusicHistory',podcasts:'svMusicPodcasts'};
  const get=id=>document.getElementById(id);
  let active=false,view='home',last='home',pending=false,libraryLimit=60;
+ let libraryMode='tracks',librarySort=0;
+ const libraryModes={tracks:'Треки',artists:'Исполнители',albums:'Альбомы'},librarySorts=['По добавлению','По названию','По исполнителю'];
+ const compareLibrary=(a,b)=>String(a||'').localeCompare(String(b||''),'ru',{numeric:true,sensitivity:'base'});
+ const libraryGroup=item=>libraryMode==='artists'?(item.artist||'Моя музыка'):(item.album||'Без альбома');
  const inside=()=>location.hash==='#sayvi-music'&&!page.hidden;
  const music=()=>window.SEYVEO_MUSIC;
  // Palette is a stable hash of the local track identity, not a random color.
@@ -137,11 +141,24 @@ function init(){
   if(historyMore)historyMore.disabled=!history.length;
   if(!history.length)closeHistoryMenu();
   const library=view==='library'?(music()?.browseTracks?.()||[]):[];
+  if(view==='library'){
+   const title=get('svLibraryCollectionTitle'),count=get('svLibraryCollectionCount'),sort=get('svLibrarySort');
+   if(title?.firstChild)title.firstChild.textContent=libraryModes[libraryMode]+' ';
+   if(count)count.textContent=String(libraryMode==='tracks'?library.length:new Set(library.map(libraryGroup)).size);
+   if(sort){sort.querySelector('span').textContent=librarySorts[librarySort];sort.setAttribute('aria-label','Сортировка: '+librarySorts[librarySort]+'. Нажмите для смены порядка')}
+   for(const btn of page.querySelectorAll('[data-library-mode]'))btn.setAttribute('aria-pressed',String(btn.dataset.libraryMode===libraryMode));
+   library.sort((a,b)=>(libraryMode!=='tracks'?compareLibrary(libraryGroup(a),libraryGroup(b)):0)||(librarySort===1?compareLibrary(a.title,b.title):librarySort===2?compareLibrary(a.artist,b.artist)||compareLibrary(a.title,b.title):b.index-a.index));
+  }
   const lists=view==='home'?[['svMusicRecent',history.slice(0,5),true]]:view==='history'?[['svMusicHistoryTracks',history,false]]:[['svMusicLibraryTracks',library.slice(0,libraryLimit),false]];
   for(const [id,items,recent] of lists){
    const el=get(id);if(!el)continue;el.replaceChildren();
    if(!items.length){const empty=document.createElement('p');empty.className=recent?'sv-music-recent-empty':'sv-music-browse-caption';empty.textContent=recent||view==='history'?'Включите любимую станцию или добавьте музыку. Здесь появится история прослушивания.':'Добавьте аудиофайлы с устройства.';el.append(empty);continue}
+   let lastGroup=null;
    for(const item of items){
+    if(view==='library'&&libraryMode!=='tracks'){
+     const group=libraryGroup(item);
+     if(group!==lastGroup){lastGroup=group;const heading=document.createElement('h4');heading.className='sv-library-group-heading';heading.textContent=group;el.append(heading)}
+    }
     const button=document.createElement('button');button.type='button';button.className=recent?'sv-music-recent-card':'sv-music-library-track';
     const art=document.createElement('span');art.className='sv-music-track-tile';art.setAttribute('aria-hidden','true');
     if(!paintCover(art,item.artwork))fallbackCover(art,item);
@@ -157,6 +174,8 @@ function init(){
   }
   scheduleRecentFit();
  }
+ get('svLibrarySort')?.addEventListener('click',()=>{librarySort=(librarySort+1)%librarySorts.length;libraryLimit=60;renderTracks()});
+ for(const btn of page.querySelectorAll('[data-library-mode]'))btn.addEventListener('click',()=>{if(!Object.hasOwn(libraryModes,btn.dataset.libraryMode))return;libraryMode=btn.dataset.libraryMode;libraryLimit=60;renderTracks()});
  document.addEventListener('seyveo:radio-history',renderTracks);
  const periodSelect=get('svMusicReplayPeriod'),periodTrigger=get('svReplayPeriodTrigger'),periodMenu=get('svReplayPeriodMenu'),periodLabel=get('svReplayPeriodLabel');
  function closePeriod(restore=false){
