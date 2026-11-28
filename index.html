@@ -8874,4 +8874,18 @@ html:root body #svSmartMusicSheet[data-music-sheet="sound"] #svAdaptivePure{min-
 html:root body #sayviMusicPage #sayviMusicCollection .sv-music-favorites-row{touch-action:pan-y;user-select:none;-webkit-user-select:none}
 html:root body #sayviMusicPage #sayviMusicCollection .sv-music-favorites-unavailable .sv-collection-action{color:var(--sv-collection-muted)}
 </style>
+<style id="svMusicHomeScrollFade">
+/* Fade the scroll surface, not the floating glass controls or body.
+   Keep the existing bottom scroll clearance and full-player geometry. */
+@supports selector(body:has(#sayviMusicMini)){
+ html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="home"]:not(:has(#sayviMusicCollection:not([hidden]),#sayviMusicSourcesPanel:not([hidden]))){
+  --sv-music-fade-end:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 54px);
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--sv-music-fade-end) - 30px),rgba(0,0,0,.24) calc(100% - var(--sv-music-fade-end) + 1px),transparent calc(100% - var(--sv-music-fade-end) + 20px),transparent 100%)!important;
+  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--sv-music-fade-end) - 30px),rgba(0,0,0,.24) calc(100% - var(--sv-music-fade-end) + 1px),transparent calc(100% - var(--sv-music-fade-end) + 20px),transparent 100%)!important;
+ }
+ html:root.sv-music-screen.sv-music-browse body:has(#sayviMusicMini.sv-music-mini-inline:not([hidden])) #sayviMusicPage[data-music-view="home"]{
+  --sv-music-fade-end:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 112px);
+ }
+}
+</style>
 </body></html>
