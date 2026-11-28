@@ -474,6 +474,40 @@ function initRadio(){
  const raw=[["США","rp","Radio Paradise","Авторская подборка · рок · соул","320 AAC","https://stream.radioparadise.com/aac-320","128 AAC","https://stream.radioparadise.com/aac-128","https://radioparadise.com/listen","#354d60","#bd8f72"],["США","rp2050","Radio 2050","Современная музыка · открытия","128 AAC","https://stream.radioparadise.com/radio2050-128","","","https://radioparadise.com/listen","#38475e","#d6a17b"],["США","rprock","Radio Paradise Rock","Классический и современный рок","320 AAC","https://stream.radioparadise.com/rock-320","128 AAC","https://stream.radioparadise.com/rock-128","https://radioparadise.com/listen","#433e50","#a76c56"],["Швейцария","jazz","Radio Swiss Jazz","Джаз · соул · блюз","192 AAC","https://stream.srg-ssr.ch/srgssr/rsj/aac/192","128 MP3","https://stream.srg-ssr.ch/srgssr/rsj/mp3/128","https://www.radioswissjazz.ch/en/reception/internet","#365750","#a9b9a2"],["Швейцария","classic","Radio Swiss Classic","Классическая музыка","192 AAC","https://stream.srg-ssr.ch/srgssr/rsc_de/aac/192","128 MP3","https://stream.srg-ssr.ch/srgssr/rsc_de/mp3/128","https://www.radioswissclassic.ch/en/reception/internet","#657988","#d5c6b1"],["Швейцария","pop","Radio Swiss Pop","Поп · софт-рок","192 AAC","https://stream.srg-ssr.ch/srgssr/rsp/aac/192","128 MP3","https://stream.srg-ssr.ch/srgssr/rsp/mp3/128","https://www.radioswisspop.ch/en/reception/internet","#60735e","#d6b7a0"],["Германия","kultur","Deutschlandfunk Kultur","Музыка · культура","192 AAC","https://st02.sslstream.dlf.de/dlf/02/high/aac/stream.aac?aggregator=web","128 MP3","https://st02.sslstream.dlf.de/dlf/02/128/mp3/stream.mp3?aggregator=web","https://www.deutschlandfunkkultur.de/","#3d566e","#b8b0d0"],["Германия","nova","Deutschlandfunk Nova","Инди · поп · культура","192 AAC","https://st03.sslstream.dlf.de/dlf/03/high/aac/stream.aac?aggregator=web","128 MP3","https://st03.sslstream.dlf.de/dlf/03/128/mp3/stream.mp3?aggregator=web","https://www.deutschlandfunknova.de/","#4c5973","#d7ac80"],["Франция","fip","FIP","Джаз · мировая музыка · эклектика","192 AAC","","","","https://www.radiofrance.fr/fip","#66546b","#d8aaa5"],["Франция","fipjazz","FIP Jazz","Джаз · импровизация","192 AAC","","","","https://www.radiofrance.fr/fip/radio-jazz","#514969","#d2b798"],["Чехия","czjazz","ČRo Jazz","Джаз · соул","FLAC","","","","https://jazz.rozhlas.cz/","#405a6b","#b1c8b7"],["Чехия","czclassic","ČRo D-dur","Классическая музыка","FLAC","","","","https://d-dur.rozhlas.cz/","#53687a","#d9c9ad"],["Великобритания","bbc6","BBC Radio 6 Music","Альтернатива · инди","","","","","https://www.bbc.co.uk/sounds/play/live:bbc_6music","#4e526c","#ba9ca9"],["Великобритания","bbc3","BBC Radio 3","Классика · джаз","","","","","https://www.bbc.co.uk/sounds/play/live:bbc_radio_three","#514b64","#d1bfa0"],["Россия","record","Radio Record","Электронная музыка","","","","","https://www.radiorecord.ru/","#4e5974","#c1a8ca"],["Россия","jazzru","Радио JAZZ","Джаз · блюз · соул","","","","","https://radiojazzfm.ru/","#4c5f58","#d1bda0"]];
  const makeArt=(c,d,i)=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600"><defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="'+c+'"/><stop offset="1" stop-color="'+d+'"/></linearGradient><radialGradient id="r"><stop stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><rect width="600" height="600" fill="url(#g)"/><circle cx="'+(180+i%4*70)+'" cy="210" r="290" fill="url(#r)"/><g fill="none" stroke="#fff" opacity=".58" stroke-width="2.4"><circle cx="300" cy="300" r="83"/><circle cx="300" cy="300" r="129"/><circle cx="300" cy="300" r="175"/><circle cx="300" cy="300" r="221"/></g><circle cx="300" cy="300" r="20" fill="#fff" opacity=".9"/></svg>');
  const stations=raw.map(([country,id,name,genre,quality,stream,fallbackQuality,fallback,site,c,d],i)=>({radio:true,country,id,name,genre,quality,stream,fallbackQuality,fallback,site,artwork:makeArt(c,d,i),color:c}));
+ const countryCodes={'США':'US','Швейцария':'CH','Германия':'DE','Франция':'FR','Чехия':'CZ','Великобритания':'GB','Россия':'RU'};
+ const norm=v=>String(v||'').toLocaleLowerCase().replace(/ё/g,'е').trim();
+ const regionKey='seyveo-radio-region-v1',catalogKey='seyveo-radio-catalog-v1';
+ function region(){
+  let saved=null,city='';try{saved=JSON.parse(localStorage.getItem(regionKey)||'null');city=String(JSON.parse(localStorage.getItem('seyveo.agenda-weather.location.v1')||'null')?.name||'').trim().slice(0,80)}catch{}
+  let code=/^[A-Z]{2}$/.test(saved?.code||'')?saved.code:'';
+  const lang=navigator.language||'';const locale=lang.match(/[-_]([A-Z]{2})(?:-|$)/);
+  if(!code&&locale)code=locale[1];
+  if(!code){const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';const zones={'Europe/Moscow':'RU','Europe/Helsinki':'FI','Europe/Berlin':'DE','Europe/Paris':'FR','Europe/London':'GB','Europe/Zurich':'CH','Europe/Prague':'CZ','Europe/Yerevan':'AM','America/New_York':'US','America/Los_Angeles':'US'};code=zones[tz]||''}
+  if(!code&&/^ru\b/i.test(lang))code='RU';
+  if(!saved&&code)try{localStorage.setItem(regionKey,JSON.stringify({code}))}catch{}
+  // Known explicitly selected cities override the device-region hint.
+  const cityCountries={'краснодар':'RU','москва':'RU','санкт-петербург':'RU','сочи':'RU','хельсинки':'FI','ереван':'AM','берлин':'DE','париж':'FR','лондон':'GB'};
+  return {code:cityCountries[norm(city)]||code,city};
+ }
+ const countryName=code=>{try{return new Intl.DisplayNames(['ru'],{type:'region'}).of(code)||code}catch{return Object.keys(countryCodes).find(k=>countryCodes[k]===code)||code}};
+ const regionInfo=region();
+ const countryOf=s=>s.countrycode||countryCodes[s.country]||'';
+ const safeHttps=v=>{try{const u=new URL(v);return u.protocol==='https:'&&!u.username&&!u.password?u.href:''}catch{return ''}};
+ function stationFrom(raw,i){
+  const id=String(raw.stationuuid||'');if(!/^[a-f0-9-]{36}$/i.test(id))return null;
+  const stream=safeHttps(raw.url_resolved)||safeHttps(raw.url),site=safeHttps(raw.homepage);
+  if(!stream||!String(raw.name||'').trim())return null;
+  const code=String(raw.countrycode||'').toUpperCase(),city=String(raw.state||'').trim().slice(0,80);
+  const c='#526c82',d='#a6a2c2';
+  return {radio:true,id:'rb-'+id,name:String(raw.name).trim().slice(0,120),country:countryName(code)||String(raw.country||''),countrycode:code,city,genre:String(raw.tags||'').slice(0,120),quality:[Number(raw.bitrate)>0?Number(raw.bitrate):'',String(raw.codec||'').slice(0,12)].filter(Boolean).join(' '),stream,site:site||stream,artwork:makeArt(c,d,i),color:c};
+ }
+ function register(rows){
+  const added=[];
+  for(const [i,raw] of rows.entries()){const st=stationFrom(raw,i);if(!st)continue;const old=stations.find(s=>s.id===st.id||s.stream===st.stream);if(old){added.push(old);continue}stations.push(st);added.push(st)}
+  return added;
+ }
+ let cached=[];try{const c=JSON.parse(localStorage.getItem(catalogKey)||'null');if(Array.isArray(c?.rows)&&c.region===regionInfo.code&&Date.now()-c.at<7*86400000)cached=c.rows.slice(0,60)}catch{}
+ const regional=register(cached);
  const list=document.getElementById('svMusicRadioStations'),status=document.getElementById('svMusicRadioStatus');
  if(!list||!status)return;
  const buttons=new Map();
@@ -487,7 +521,21 @@ function initRadio(){
   try{localStorage.setItem(historyKey,JSON.stringify(next));localStorage.setItem(timeKey,JSON.stringify(nextTimes))}catch{return false}
   history=next;playedAt=nextTimes;return true;
  }
- window.SEYVEO_RADIO=Object.freeze({recent,removeRecentHistory,play:id=>window.SEYVEO_MUSIC?.playRadio?.(stations,id)});
+ function openStation(id){
+  const station=stations.find(s=>s.id===id);if(!station)return false;
+  if(station.stream)return !!window.SEYVEO_MUSIC?.playRadio?.(stations,id);
+  if(station.site){window.open(station.site,'_blank','noopener,noreferrer');return true}return false;
+ }
+ function localSearch(q){const terms=norm(q).split(/\s+/).filter(Boolean);return stations.filter(s=>terms.every(t=>norm([s.name,s.country,s.city,s.genre,s.quality].join(' ')).includes(t)))}
+ const servers=['https://de1.api.radio-browser.info','https://nl1.api.radio-browser.info'];
+ async function fetchStations(params,signal){
+  for(const base of servers){try{const u=new URL('/json/stations/search',base);for(const [k,v] of Object.entries({hidebroken:'true',order:'clickcount',reverse:'true',limit:'40',...params}))u.searchParams.set(k,v);
+   const res=await fetch(u,{signal,credentials:'omit',referrerPolicy:'no-referrer'});if(!res.ok)continue;const rows=await res.json();if(Array.isArray(rows))return rows.slice(0,60);
+  }catch(e){if(signal?.aborted)throw e}}
+  throw Error('catalog unavailable');
+ }
+ async function onlineSearch(q,signal){const term=String(q||'').trim().slice(0,100);if(term.length<2)return localSearch(term);const rows=await fetchStations({name:term},signal);return [...new Map([...localSearch(term),...register(rows)].map(s=>[s.id,s])).values()]}
+ window.SEYVEO_RADIO=Object.freeze({recent,removeRecentHistory,play:openStation,search:localSearch,searchOnline:onlineSearch});
  audio.addEventListener('playing',()=>{const state=window.SEYVEO_MUSIC?.state?.();if(state?.source!=='radio'||!stations.some(x=>x.id===state.stationId))return;history=[state.stationId,...history.filter(id=>id!==state.stationId)].slice(0,6);playedAt[state.stationId]=Date.now();playedAt=Object.fromEntries(history.map(id=>[id,playedAt[id]||0]));try{localStorage.setItem(historyKey,JSON.stringify(history));localStorage.setItem(timeKey,JSON.stringify(playedAt))}catch{}document.dispatchEvent(new Event('seyveo:radio-history'))});
  document.dispatchEvent(new Event('seyveo:radio-history'));
  function drawRadio(){
@@ -496,17 +544,13 @@ function initRadio(){
   status.textContent=state?.source==='radio'?(state.playing?'В эфире · ':'Выбрана станция · ')+stations.find(x=>x.id===state.stationId)?.name+' · '+(state.quality||''):'';
  }
 
- const filter=document.createElement('input');filter.type='search';filter.placeholder='Поиск радиостанций';filter.setAttribute('aria-label','Поиск по названию, стране или жанру');filter.className='sv-radio-search';filter.autocomplete='off';
- const filterWrap=document.createElement('div');filterWrap.className='sv-radio-search-wrap';
- filterWrap.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4 4"/></svg>';
- filterWrap.append(filter);list.before(filterWrap);
- const normalizeRadio=v=>String(v||'').toLocaleLowerCase().replace(/ё/g,'е').trim();
+ function sortedStations(){
+  const score=s=>{const local=regionInfo.code&&countryOf(s)===regionInfo.code;const city=norm(regionInfo.city);return (local?100:0)+(local&&city&&norm(s.name+' '+(s.city||'')).includes(city)?100:0)};
+  const regionIds=new Set(regional.map(s=>s.id));return stations.filter(s=>!s.id.startsWith('rb-')||regionIds.has(s.id)).sort((a,b)=>score(b)-score(a));
+ }
  function render(){
   list.replaceChildren();buttons.clear();
-  const terms=normalizeRadio(filter.value).split(/\s+/).filter(Boolean);
-  for(const station of stations){
-   const hay=normalizeRadio([station.name,station.country,station.genre,station.quality].join(' '));
-   if(!terms.every(t=>hay.includes(t)))continue;
+  for(const station of sortedStations()){
    const row=document.createElement('article');row.className='sv-radio-station';
    const art=document.createElement('span');art.className='sv-radio-art';art.style.backgroundColor=station.color;art.style.backgroundImage='url("'+station.artwork+'")';art.setAttribute('aria-hidden','true');
    const cover=document.createElement('div');cover.className='sv-radio-tile-cover';cover.append(art);
@@ -530,9 +574,23 @@ function initRadio(){
    const motion=node.animate([{opacity:.18,transform:'translateY(4px)'},{opacity:1,transform:'translateY(0)'}],{duration:190,delay:Math.min(i,5)*18,easing:'cubic-bezier(.2,.7,.25,1)',fill:'backwards'});motion.id='svRadioEnter';
   });
  }
- filter.addEventListener('input',render);render();
- let radioVisible=false;
- document.addEventListener('seyveo:music-view',e=>{const next=e.detail?.view==='radio';if(next&&!radioVisible)animateRadio();radioVisible=next});
+ render();
+ let radioVisible=false,regionalLoaded=false;
+ async function loadRegional(){
+  if(regionalLoaded||!regionInfo.code)return;regionalLoaded=true;
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),9000);
+  try{
+   const jobs=[fetchStations({countrycode:regionInfo.code,limit:'30'},controller.signal)];
+   if(regionInfo.city)jobs.push(fetchStations({countrycode:regionInfo.code,name:regionInfo.city,limit:'12'},controller.signal));
+   const batches=await Promise.all(jobs.map(p=>p.catch(()=>[])));const rows=[...batches.slice(1).flat(),...batches[0]];
+   if(!rows.length){regionalLoaded=false;return}
+   const unique=[...new Map(rows.map(x=>[x.stationuuid,x])).values()].slice(0,42);
+   regional.splice(0,regional.length,...register(unique));
+   try{localStorage.setItem(catalogKey,JSON.stringify({region:regionInfo.code,at:Date.now(),rows:unique}))}catch{}
+   if(radioVisible){render();animateRadio()}
+  }finally{clearTimeout(timeout)}
+ }
+ document.addEventListener('seyveo:music-view',e=>{const next=e.detail?.view==='radio';if(next&&!radioVisible){animateRadio();void loadRegional()}radioVisible=next});
  document.addEventListener('seyveo:music-state',drawRadio);
  for(const name of ['playing','pause','error','emptied'])audio.addEventListener(name,drawRadio);
  toggle.addEventListener('click',()=>{if(window.SEYVEO_MUSIC_DOCK?.show){window.SEYVEO_MUSIC_DOCK.show('radio');return}panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));});
