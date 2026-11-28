@@ -8480,6 +8480,12 @@ html[data-theme="dark"] #svSmartMusicSheet[data-music-sheet="recognize"] .sv-rec
 /* Keep the accessible dialog title; no duplicate visible text above the orb. */
 #svSmartMusicSheet[data-music-sheet="recognize"] > header{justify-content:flex-end}
 #svSmartMusicSheet[data-music-sheet="recognize"] #svSmartMusicTitle{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb-button strong{color:inherit!important;opacity:1!important}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb-button strong{
+ color:#426873!important;opacity:1!important;font-size:17px;font-weight:520;letter-spacing:-.015em;line-height:1.3;
+}
+html[data-theme="dark"] #svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb-button strong,
+html.sv-music-player-open #svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb-button strong{
+ color:#AAC5CC!important;
+}
 </style>
 </body></html>
