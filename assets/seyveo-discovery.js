@@ -336,17 +336,21 @@ function setMode(next){
 }
 for(const [id,label] of filters){const b=button(label,'sv-new-chip');b.dataset.mode=id;b.addEventListener('click',()=>setMode(id));filterBar.append(b)}
 syncFilters();
-const previewBox=document.createElement('section');previewBox.className='sv-new-preview';previewBox.hidden=true;previewBox.setAttribute('aria-label','Предпрослушивание');
-function closePreview(){previewRun++;previewController?.abort();previewController=null;previewBox.replaceChildren();previewBox.hidden=true}
+const previewBox=document.createElement('dialog');previewBox.className='sv-new-preview';previewBox.setAttribute('aria-label','Предпрослушивание');document.body.append(previewBox);
+let previewAnchor=null;
+function closePreview(){previewRun++;previewController?.abort();previewController=null;previewAnchor=null;if(previewBox.open)previewBox.close();previewBox.replaceChildren()}
+previewBox.addEventListener('cancel',e=>{e.preventDefault();closePreview()});
+previewBox.addEventListener('click',e=>{if(e.target!==previewBox)return;const rect=previewBox.getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)closePreview()});
+previewBox.addEventListener('close',()=>{if(!previewBox.open&&previewAnchor)closePreview()});
 function appleAlbumURL(value){
  try{const u=new URL(value);if(!['music.apple.com','itunes.apple.com'].includes(u.hostname)||u.protocol!=='https:'||!/^\/[a-z]{2}\/album\/(?:[^/]+\/)?\d+\/?$/i.test(u.pathname))return '';return 'https://music.apple.com'+u.pathname}catch{return ''}
 }
 async function preview(r,anchor){
- closePreview();const run=previewRun;anchor.after(previewBox);previewBox.hidden=false;
+ closePreview();const run=previewRun;previewAnchor=anchor;
  const top=document.createElement('div');top.className='sv-new-preview-head';
  const title=document.createElement('strong');title.textContent=r.artist+' · '+r.title;
  const close=button('Закрыть','sv-new-close');close.textContent='×';close.addEventListener('click',closePreview);top.append(title,close);
- const message=document.createElement('p');message.textContent='Ищу этот релиз в Apple Music…';previewBox.append(top,message);
+ const message=document.createElement('p');message.textContent='Ищу этот релиз в Apple Music…';previewBox.append(top,message);previewBox.showModal();
  const controller=new AbortController();previewController=controller;const timer=setTimeout(()=>controller.abort(),9000);
  try{
   let album=appleAlbumURL(r.url);
@@ -424,24 +428,35 @@ html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-n
 html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-story strong{font-weight:550!important;font-size:15px!important}
 #sayviDiscoveryPanel .sv-new-actions{margin-top:-2px;gap:0}
 
-/* Compact release cards: 76px artwork, integrated play and favourite. */
-html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-releases:not([hidden]){grid-template-columns:minmax(0,1fr)!important;gap:7px!important}
-html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-tile{display:grid!important;grid-template-columns:76px minmax(0,1fr) 44px!important;align-items:center!important;align-content:center!important;gap:11px!important;min-height:92px!important;padding:7px 5px 7px 7px!important;box-sizing:border-box;border:1px solid rgba(127,140,155,.13);border-radius:16px;background:rgba(127,140,155,.035)}
-#sayviDiscoveryPanel .sv-new-cover{position:relative;width:76px;height:76px;min-width:0}
-html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-tile .sv-discovery-release-art{width:76px!important;height:76px!important;aspect-ratio:1!important;border-radius:11px!important;position:relative}
+
+/* Three compact square covers per row; the original feed and dock stay intact. */
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-releases:not([hidden]){grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:15px 9px!important;align-items:start}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-tile{display:grid!important;grid-template-columns:minmax(0,1fr)!important;align-content:start!important;gap:5px!important;min-height:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+#sayviDiscoveryPanel .sv-new-cover{position:relative;width:100%;aspect-ratio:1;min-width:0}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-tile .sv-discovery-release-art{width:100%!important;height:100%!important;aspect-ratio:1!important;border-radius:12px!important;position:relative}
 #sayviDiscoveryPanel .sv-new-cover .sv-new-art-caption{display:none!important}
-html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover .sv-new-no-art>svg{width:25px!important;height:25px!important;opacity:.5;transform:translateY(-13px)}
-html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover .sv-new-cover-play{position:absolute;right:0;bottom:0;display:grid;place-items:center;width:44px!important;height:44px!important;background:transparent!important;color:#fff!important;z-index:1}
-#sayviDiscoveryPanel .sv-new-cover-play:before{content:'';position:absolute;inset:5px;border-radius:50%;background:rgba(27,34,43,.67);border:1px solid rgba(255,255,255,.32);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-#sayviDiscoveryPanel .sv-new-cover-play svg{position:relative;width:20px!important;height:20px!important;z-index:1}
-#sayviDiscoveryPanel .sv-new-cover-soon{position:absolute;bottom:5px;left:5px;right:5px;font-size:10px;text-align:center;color:#fff;background:rgba(27,34,43,.68);border-radius:7px;padding:4px 0}
-#sayviDiscoveryPanel .sv-new-copy{display:grid;gap:4px;min-width:0}
-html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-copy>strong{font-size:14px!important;font-weight:550!important}
-html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-copy>small{font-size:12px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover .sv-new-no-art>svg{width:26px!important;height:26px!important;opacity:.55}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover :is(.sv-new-cover-play,.sv-new-cover-heart){position:absolute;display:grid;place-items:center;width:44px!important;height:44px!important;min-height:44px!important;background:transparent!important;color:#fff!important;z-index:1;padding:0!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover .sv-new-cover-play{right:0;bottom:0}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover .sv-new-cover-heart{right:0;top:0}
+#sayviDiscoveryPanel .sv-new-cover :is(.sv-new-cover-play,.sv-new-cover-heart):before{content:'';position:absolute;inset:7px;border-radius:50%;background:rgba(27,34,43,.62);border:1px solid rgba(255,255,255,.25);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#sayviDiscoveryPanel .sv-new-cover :is(.sv-new-cover-play,.sv-new-cover-heart) svg{position:relative;width:17px!important;height:17px!important;z-index:1}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover .sv-new-cover-heart[aria-pressed=true]{color:#ff7998!important}
+#sayviDiscoveryPanel .sv-new-cover-heart[aria-pressed=true] svg{fill:currentColor}
+#sayviDiscoveryPanel .sv-new-cover-soon{position:absolute;bottom:6px;left:6px;right:auto;font-size:10px;color:#fff;background:rgba(27,34,43,.65);border-radius:8px;padding:4px 7px}
+#sayviDiscoveryPanel .sv-new-copy{display:grid;gap:3px;min-width:0}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-copy>strong{font-size:13px!important;font-weight:550!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-copy>small{font-size:11px!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap!important}
 html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-copy>time{font-size:10px!important;line-height:1.35;white-space:normal!important}
-#sayviDiscoveryPanel .sv-new-actions{justify-content:center;align-self:center;margin:0}
-#sayviDiscoveryPanel .sv-new-story{margin:5px 0!important}
-@media(min-width:850px){html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-releases:not([hidden]){grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+#sayviDiscoveryPanel .sv-new-story{margin:4px 0!important}
+html:root body dialog.sv-new-preview{position:fixed!important;inset:auto 0 0!important;margin:0 auto!important;width:min(100%,520px)!important;max-width:100%!important;max-height:85vh!important;box-sizing:border-box;overflow-y:auto;padding:16px 16px calc(18px + env(safe-area-inset-bottom))!important;border:1px solid rgba(127,140,155,.25)!important;border-bottom:0!important;border-radius:24px 24px 0 0!important;background:var(--card,#fff)!important;color:var(--text,#141619)!important;box-shadow:0 -8px 40px rgba(0,0,0,.12)!important}
+dialog.sv-new-preview:not([open]){display:none!important}
+dialog.sv-new-preview::backdrop{background:rgba(19,24,32,.24)}
+dialog.sv-new-preview .sv-new-preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+dialog.sv-new-preview .sv-new-preview-head strong{font-size:16px;line-height:1.35;min-width:0;overflow-wrap:anywhere}
+dialog.sv-new-preview .sv-new-close{flex:0 0 44px;width:44px;height:44px;border:0;background:transparent!important;box-shadow:none!important;color:inherit;font-size:23px}
+dialog.sv-new-preview p,dialog.sv-new-preview a{font-size:12px;line-height:1.45;color:var(--secondary,#555)}
+dialog.sv-new-preview iframe{display:block;width:100%;height:min(380px,52vh);border:0;border-radius:13px;margin:10px 0}
 `;document.head.append(style);
 
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
@@ -458,15 +473,15 @@ function artTile(r){
  const imageURL=uuid(r.id)?'https://coverartarchive.org/release-group/'+r.id+'/front-250':safeArtwork(r.artwork);if(imageURL){img.src=imageURL;art.replaceChildren(img)}
  const title=document.createElement('strong');title.textContent=r.title;title.title=r.title;
  const artist=document.createElement('small');artist.textContent=r.artist;artist.title=r.artist;
- const date=document.createElement('time');date.className='sv-new-meta';date.dateTime=r.date;date.textContent=kind(r)+' · '+dateLabel(r.date);
+ const date=document.createElement('time');date.className='sv-new-meta';date.dateTime=r.date;date.textContent=kind(r)+' · '+new Date(r.date+'T00:00:00Z').toLocaleDateString('ru-RU',{day:'numeric',month:'short',timeZone:'UTC'});date.title=dateLabel(r.date);
  const cover=document.createElement('div');cover.className='sv-new-cover';cover.append(art);
  const copy=document.createElement('div');copy.className='sv-new-copy';copy.append(title,artist,date);
  if(r.date<=today()){
   const play=button('Предпрослушивание: '+r.title,'sv-new-icon sv-new-cover-play','<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 5.5v13l10-6.5z"/></svg>');
-  play.addEventListener('click',()=>{if(!previewBox.hidden&&previewBox.previousElementSibling===tile){closePreview();return}void preview(r,tile)});cover.append(play);
+  play.addEventListener('click',()=>{if(previewBox.open&&previewAnchor===tile){closePreview();return}void preview(r,tile)});cover.append(play);
  }else{const soon=document.createElement('span');soon.className='sv-new-cover-soon';soon.textContent='Скоро';cover.append(soon)}
- const actions=document.createElement('div');actions.className='sv-new-actions';actions.append(heart(r));
- tile.append(cover,copy,actions);return tile;
+ const favourite=heart(r);favourite.classList.add('sv-new-cover-heart');cover.append(favourite);
+ tile.append(cover,copy);return tile;
 }
 function story(r,future){
  const card=document.createElement('article');card.className='sv-new-story';
@@ -497,10 +512,10 @@ function showPublic(items,stale=false){
  else if(mode==='news')cards=[...upcoming.slice(0,6).map(r=>story(r,true)),...recent.slice(0,8).map(r=>story(r,false))];
  else{
   for(const [i,r] of recent.slice(0,12).entries()){
-   cards.push(artTile(r));if(i===1&&upcoming[0])cards.push(story(upcoming[0],true));
+   cards.push(artTile(r));if(i===2&&upcoming[0])cards.push(story(upcoming[0],true));
    if(i===5&&upcoming[1])cards.push(story(upcoming[1],true));
   }
-  if(recent.length<2&&upcoming[0])cards.push(story(upcoming[0],true));
+  if(recent.length<3&&upcoming[0])cards.push(story(upcoming[0],true));
   const remaining=upcoming.slice(recent.length>=6?2:1,5);if(remaining.length){const heading=document.createElement('h3');heading.textContent='Скоро выйдут';heading.style.gridColumn='1/-1';cards.push(heading,...remaining.map(artTile))}
  }
  publicList.replaceChildren(...cards);
