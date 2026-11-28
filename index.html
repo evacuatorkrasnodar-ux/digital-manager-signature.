@@ -9228,6 +9228,13 @@ html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-revi
 html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-home-new-dock::before,
 html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open) .sv-smart-ink-tools:not([hidden]),
 html:root[data-theme="light"][data-theme] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] .sv-paper-top #svPaperNewDock,
+html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]),
+html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only::after,
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]),
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only::after,
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]),
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > .svcp-clean-surface,
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset:not(.svcp-compose-multiline) > #svcpAttachFile,
 html:root[data-theme="light"][data-theme] body #sayviMusicMini:not([hidden]){
  background:var(--sv-silver-dock-face)!important;
  background-image:var(--sv-silver-dock-glint)!important;
@@ -9240,6 +9247,23 @@ html:root[data-theme="light"][data-theme].sv-music-screen body #svMusicHomeMiniS
 html:root[data-theme="light"][data-theme] body #sayviMusicMini .sv-music-mini-progress{height:.75px!important;opacity:.62!important}
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"]{--sv-silver-dock-face:#eef0f2;--sv-silver-dock-glint:none;--sv-silver-dock-filter:none}
+}
+
+/* Home shortcuts: a quiet silver face behind each existing app glyph.
+   No geometry, labels, badge, drag handlers or extra backdrop layer changes.
+   Small controls use a shorter shadow than floating dock capsules. */
+html:root[data-theme="light"][data-theme] body #homePage #svHomeFavorites .sv-home-favorite:not(.sv-home-add-entry) .sv-home-favorite-icon{
+ border-radius:50%!important;
+ background:var(--sv-silver-dock-face)!important;
+ background-image:var(--sv-silver-dock-glint)!important;
+ border:1px solid rgba(157,165,175,.22)!important;
+ box-shadow:inset 0 0 0 .65px rgba(255,255,255,.72),0 2px 6px rgba(30,40,52,.065)!important;
+}
+html:root[data-theme="light"][data-theme] body #homePage #svHomeFavorites .sv-home-add-entry .sv-home-favorite-icon{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"][data-theme] body #homePage #svHomeFavorites:not(.is-editing) .sv-home-favorite:active .sv-home-favorite-icon{
+ transform:none!important;
 }
 </style>
 
