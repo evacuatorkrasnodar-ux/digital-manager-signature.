@@ -252,6 +252,7 @@
   }
   $('svMusicRecognizeHome')?.addEventListener('click',recognitionSheet);
   $('svMusicRecognizeQuick')?.addEventListener('click',()=>recognitionSheet(true));
+  $('svRadioRecognizeQuick')?.addEventListener('click',()=>recognitionSheet(true));
   function shareData(){
    if(!loaded())return null;
    const name=($('sayviMusicTrack')?.dataset.fullTitle||$('sayviMusicTrack')?.textContent)?.trim()||'Музыка';
