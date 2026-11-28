@@ -511,7 +511,7 @@ function qualifyDiscoveryListen(){
   if(!performer||performer==='Моя музыка')return;
   discoveryCountedVersion=selectedVersion;
   window.dispatchEvent(new CustomEvent('seyveo:music-qualified-listen',{
-   detail:{artist:performer,title:record.title||safeName(tracks[index])}
+   detail:{artist:performer,title:record.title||safeName(tracks[index]),album:typeof record.album==='string'?record.album:''}
   }));
  },30000);
 }
