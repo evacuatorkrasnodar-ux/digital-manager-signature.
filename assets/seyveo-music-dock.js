@@ -258,6 +258,24 @@ function init(){
    const coverage=Math.min(100,Math.round(known/Math.max(1,p.music)*100));panel.append(portraitEl('p','sv-portrait-note',(canCompare?'Динамика к прошлому периоду · ':'')+'Известно для '+coverage+'% времени музыки'));return panel;
   }
   grid.append(distribution('Жанры и изменение вкуса','genre',p.genres,p.genreKnown,previous.genres,previous.genreKnown));
+  const sourcePanel=portraitPanel('Любимые источники музыки','По времени прослушивания');
+  const sourceRows=Array.isArray(p.sources)?p.sources:[],sourceTotal=sourceRows.reduce((n,r)=>n+r.seconds,0);
+  if(sourceTotal>0){
+   const list=portraitEl('div','sv-portrait-source-list');
+   const displayed=sourceRows.slice(0,6),rest=sourceTotal-displayed.reduce((n,r)=>n+r.seconds,0);
+   if(rest>.5)displayed.push({name:'Другие источники',seconds:rest});
+   displayed.forEach((r,i)=>{
+    const row=portraitEl('div','sv-portrait-source-row'),head=portraitEl('div','sv-portrait-source-head');
+    const share=r.seconds/sourceTotal*100;
+    head.append(portraitEl('span','',r.name),portraitEl('strong','',Math.round(share)+'%'));
+    const track=portraitEl('div','sv-portrait-rhythm-track'),fill=portraitEl('i','');
+    fill.style.width=share+'%';fill.style.background=portraitColors[i%portraitColors.length];track.append(fill);
+    row.append(head,track,portraitEl('small','sv-portrait-source-time',portraitDuration(r.seconds)));list.append(row);
+   });
+   sourcePanel.append(list,portraitEl('p','sv-portrait-note','Сайты определяются по метаданным файлов. Если источник не указан, музыка остаётся в медиатеке.'));
+   if(sourceTotal<p.total*.99)sourcePanel.append(portraitEl('p','sv-portrait-note','Данные доступны не для всей истории прослушиваний.'));
+  }else sourcePanel.append(portraitEl('p','sv-portrait-empty','Источники появятся по мере прослушивания музыки.'));
+  grid.append(sourcePanel);
   grid.append(distribution('Языки музыки','language',p.languages,p.languageKnown,previous.languages,previous.languageKnown));
   const times=portraitPanel('Твой музыкальный ритм');
   const bands=[['Утро',6,12],['День',12,18],['Вечер',18,24],['Ночь',0,6]].map(([name,a,b])=>({name,seconds:p.hours.slice(a,b).reduce((n,v)=>n+v,0)})),hourTotal=bands.reduce((a,r)=>a+r.seconds,0);
