@@ -532,7 +532,7 @@ function initRadio(){
   hiddenStations=next;renderFavoritesMotion(id);return true;
  }
  function toggleFavorite(id){
-  const station=stations.find(s=>s.id===id);if(!station)return false;
+  const station=stations.find(s=>s.id===id);if(!station?.stream)return false;
   const snapshot=id.startsWith('rb-')?{stationuuid:id.slice(3),name:station.name,countrycode:station.countrycode,country:station.country,state:station.city,tags:station.genre,url_resolved:station.stream,homepage:station.site,codec:station.quality.replace(/^\d+\s*/,''),bitrate:parseInt(station.quality,10)||0}:null;
   const next=isFavorite(id)?favorites.filter(f=>f.id!==id):[{id,snapshot},...favorites.filter(f=>f.id!==id)];
   if(next.length>200){status.textContent='Достигнут предел избранных станций.';return false}
@@ -555,9 +555,9 @@ function initRadio(){
  function openStation(id){
   const station=stations.find(s=>s.id===id);if(!station)return false;
   if(station.stream)return !!window.SEYVEO_MUSIC?.playRadio?.(stations,id);
-  if(station.site){window.open(station.site,'_blank','noopener,noreferrer');return true}return false;
+  return false;
  }
- function localSearch(q){const terms=norm(q).split(/\s+/).filter(Boolean);return stations.filter(s=>terms.every(t=>norm([s.name,s.country,s.city,s.genre,s.quality].join(' ')).includes(t)))}
+ function localSearch(q){const terms=norm(q).split(/\s+/).filter(Boolean);return stations.filter(s=>s.stream&&terms.every(t=>norm([s.name,s.country,s.city,s.genre,s.quality].join(' ')).includes(t)))}
  const servers=['https://de1.api.radio-browser.info','https://nl1.api.radio-browser.info'];
  async function fetchStations(params,signal){
   for(const base of servers){try{const u=new URL('/json/stations/search',base);for(const [k,v] of Object.entries({hidebroken:'true',order:'clickcount',reverse:'true',limit:'40',...params}))u.searchParams.set(k,v);
@@ -585,7 +585,7 @@ function initRadio(){
    return (local?1000:0)+match*100+(local&&city&&norm(s.name+' '+(s.city||'')).includes(city)?10:0);
   };
   const regionIds=new Set(regional.map(s=>s.id)),pins=new Map(favorites.map((f,i)=>[f.id,i]));
-  return stations.filter(s=>!isHidden(s.id)&&(pins.has(s.id)||!s.id.startsWith('rb-')||regionIds.has(s.id))).sort((a,b)=>{
+  return stations.filter(s=>s.stream&&!isHidden(s.id)&&(pins.has(s.id)||!s.id.startsWith('rb-')||regionIds.has(s.id))).sort((a,b)=>{
    const ai=pins.get(a.id),bi=pins.get(b.id);
    if(ai!==undefined||bi!==undefined)return (ai??Infinity)-(bi??Infinity);
    return score(b)-score(a);
@@ -639,9 +639,8 @@ function initRadio(){
    heart.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.6c0 4.1-8.8 9.9-8.8 9.9S3.2 12.7 3.2 8.6a4.6 4.6 0 0 1 8.8-1.8 4.6 4.6 0 0 1 8.8 1.8Z"/></svg>';
    heart.addEventListener('click',()=>toggleFavorite(station.id));cover.append(heart);
    if(station.stream){
-    const play=document.createElement('button');play.type='button';play.className='sv-radio-play';play.addEventListener('click',()=>{if(!window.SEYVEO_MUSIC?.playRadio?.(stations,station.id)){status.textContent='Не удалось открыть эфир. Откройте сайт станции.';}else drawRadio()});buttons.set(station.id,play);cover.append(play);
-   }else{
-    const open=document.createElement('a');open.href=station.site;open.target='_blank';open.rel='noopener noreferrer';open.className='sv-radio-play sv-radio-external';open.setAttribute('aria-label','Официальный плеер: '+station.name);open.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8m-7 0h7v7"/></svg>';cover.append(open);
+    const play=document.createElement('button');play.type='button';play.className='sv-radio-play';play.addEventListener('click',()=>{if(!window.SEYVEO_MUSIC?.playRadio?.(stations,station.id)){status.textContent='Не удалось открыть эфир. Попробуйте позже.';}else drawRadio()});buttons.set(station.id,play);cover.append(play);
+
    }
    const copy=document.createElement('div');copy.className='sv-radio-copy';const title=document.createElement('strong');title.textContent=station.name;title.title=station.name;
    const subtitle=document.createElement('small');subtitle.textContent=(station.city||station.country)+(station.quality?' · '+station.quality:'');
