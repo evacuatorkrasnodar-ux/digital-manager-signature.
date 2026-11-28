@@ -618,9 +618,9 @@ html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions :is(.sv-new-fil
 html:root body dialog.sv-new-filter-sheet #sayviDiscoveryStatus{display:none!important}
 
 /* Quiet premium list: bare outline glyphs, precise alignment and optical grouping. */
-html:root body dialog.sv-new-filter-sheet{width:min(calc(100% - 24px),380px)!important;border-radius:25px!important;padding:7px 18px 10px!important;border:1px solid rgba(145,155,168,.23)!important}
-@supports ((-webkit-backdrop-filter:blur(18px)) or (backdrop-filter:blur(18px))){html:root[data-theme="light"] body dialog.sv-new-filter-sheet{background:rgba(252,253,254,.95)!important;-webkit-backdrop-filter:blur(18px) saturate(1.08);backdrop-filter:blur(18px) saturate(1.08)}}
-html:root body dialog.sv-new-filter-sheet .sv-new-filter-head{position:relative;min-height:44px;margin:0 0 6px!important}
+html:root body dialog.sv-new-filter-sheet{width:min(calc(100% - 24px),380px)!important;border-radius:25px!important;padding:5px 18px 7px!important;border:1px solid rgba(190,200,212,.30)!important}
+@supports ((-webkit-backdrop-filter:blur(18px)) or (backdrop-filter:blur(18px))){html:root[data-theme="light"] body dialog.sv-new-filter-sheet{background:rgba(255,255,255,.97)!important;-webkit-backdrop-filter:blur(18px) saturate(1.08);backdrop-filter:blur(18px) saturate(1.08)}}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-head{position:relative;min-height:44px;margin:0 0 2px!important}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-head h2{font-size:17px!important;font-weight:600;letter-spacing:-.025em}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-close{flex:0 0 44px;color:var(--text,#141619)}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-close svg{width:18px;height:18px}
@@ -632,14 +632,17 @@ html:root body dialog.sv-new-filter-sheet .sv-filter-glyph svg{width:21px;height
 html:root body dialog.sv-new-filter-sheet .sv-filter-label{flex:1;min-width:0;text-align:left}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-tick{margin-left:auto;flex:0 0 19px;width:19px;height:19px}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-tick svg{width:18px;height:18px}
-html:root body dialog.sv-new-filter-sheet .sv-new-filter-genre-nav{margin:5px 0!important;min-height:52px!important;height:52px!important;border-top:1px solid rgba(127,140,155,.13)!important;border-bottom:1px solid rgba(127,140,155,.13)!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-genre-nav{margin:2px 0!important;min-height:44px!important;height:44px!important;border-top:1px solid rgba(127,140,155,.13)!important;border-bottom:1px solid rgba(127,140,155,.13)!important}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-genre-nav .sv-filter-current{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:39%}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-genre-nav>svg{width:15px;height:15px}
-html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions{border-color:rgba(127,140,155,.13);margin-top:5px!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions{border-color:rgba(127,140,155,.13);margin-top:2px!important}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions :is(.sv-new-filter-edit,.sv-new-filter-refresh){gap:11px;padding:0 3px!important;font-size:14px!important}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-actions :is(.sv-new-filter-edit,.sv-new-filter-refresh)>svg:first-child{width:21px;height:21px;flex:0 0 24px;color:#6388ae}
 html:root body dialog.sv-new-filter-sheet[data-page="genres"] .sv-new-filter-option{border-bottom:1px solid rgba(127,140,155,.09)!important}
 html:root body dialog.sv-new-filter-sheet[data-page="genres"] .sv-new-filter-option:last-child{border-bottom:0!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-genre-nav .sv-filter-glyph svg{color:#8d80ab!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-group[data-section="for-you"] .sv-new-filter-option{margin:0!important}
+html:root body dialog.sv-new-filter-sheet{background-clip:padding-box}
 `;document.head.append(style);
 
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
