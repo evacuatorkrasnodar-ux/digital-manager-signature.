@@ -112,7 +112,7 @@ function init(){
   if(historyMore)historyMore.disabled=!history.length;
   if(!history.length)closeHistoryMenu();
   const library=view==='library'?(music()?.browseTracks?.()||[]):[];
-  const lists=view==='home'?[['svMusicRecent',history.slice(0,5),true]]:view==='history'?[['svMusicHistoryTracks',history,false]]:[['svMusicLibraryTracks',library.slice(0,libraryLimit),false]];
+  const lists=view==='home'?[['svMusicRecent',history.slice(0,3),true]]:view==='history'?[['svMusicHistoryTracks',history,false]]:[['svMusicLibraryTracks',library.slice(0,libraryLimit),false]];
   for(const [id,items,recent] of lists){
    const el=get(id);if(!el)continue;el.replaceChildren();
    if(!items.length){const empty=document.createElement('p');empty.className=recent?'sv-music-recent-empty':'sv-music-browse-caption';empty.textContent=recent||view==='history'?'Включите любимую станцию или добавьте музыку. Здесь появится история прослушивания.':'Добавьте аудиофайлы с устройства.';el.append(empty);continue}
