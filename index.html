@@ -9194,11 +9194,11 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini button:disabled{o
 /* One optical material for existing light dock surfaces; do not alter
    the global White Pearl tokens used by headers, dialogs and buttons. */
 :root[data-theme="light"]{
- --sv-silver-dock-face:rgba(181,185,188,.18);
- --sv-silver-dock-glint:linear-gradient(150deg,rgba(255,255,255,.045),transparent 58%,rgba(255,255,255,.015));
- --sv-silver-dock-filter:blur(6px) saturate(108%);
- --sv-silver-dock-edge:1px solid rgba(185,195,201,.40);
- --sv-silver-dock-shadow:inset 0 0 0 .65px rgba(255,255,255,.55),0 2px 7px rgba(20,33,45,.036);
+ --sv-silver-dock-face:rgba(182,187,193,.32);
+ --sv-silver-dock-glint:linear-gradient(150deg,rgba(255,255,255,.14),transparent 58%,rgba(255,255,255,.035));
+ --sv-silver-dock-filter:blur(8px) saturate(108%);
+ --sv-silver-dock-edge:1px solid rgba(157,165,175,.38);
+ --sv-silver-dock-shadow:inset 0 0 0 .75px rgba(255,255,255,.76),0 3px 10px rgba(30,40,52,.085);
 }
 html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock,
 html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock,
@@ -9243,19 +9243,5 @@ html:root[data-theme="light"][data-theme] body #sayviMusicMini .sv-music-mini-pr
 }
 </style>
 
-<style id="svHomeWhiteGlassTrial">
-/* Home-only optical trial. Keep shared Silver Glass unchanged elsewhere. */
-html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock):not(.sv-music-navigation-only){
- --sv-silver-dock-face:rgba(242,244,246,.62);
- --sv-silver-dock-glint:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.06));
- --sv-silver-dock-filter:blur(16px) saturate(135%);
- --sv-silver-dock-edge:1px solid rgba(255,255,255,.58);
- --sv-silver-dock-shadow:inset 0 1px 0 rgba(255,255,255,.72),0 4px 14px rgba(31,41,55,.08);
-}
-@media(prefers-reduced-transparency:reduce){
- html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock):not(.sv-music-navigation-only){
-  --sv-silver-dock-face:#eef0f2;--sv-silver-dock-glint:none;--sv-silver-dock-filter:none;
- }
-}
-</style>
+
 </body></html>
