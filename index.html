@@ -2457,11 +2457,19 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
    <svg class="sv-music-mini-placeholder" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l12-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.4"/><ellipse cx="18" cy="16" rx="3" ry="2.4"/></svg>
    <span id="sayviMusicMiniArtwork" class="sv-music-mini-artwork" hidden></span>
   </span>
+  <span class="sv-mini-tablet-brand" aria-hidden="true">SEYVEO</span>
   <span class="sv-music-mini-meta"><span id="sayviMusicMiniTitle" class="sv-music-mini-title">Моя музыка</span><span id="sayviMusicMiniArtist" class="sv-music-mini-artist">SEYVEO</span></span>
  </button>
  <div class="sv-music-mini-transport" role="group" aria-label="Управление музыкой">
+  <button id="svTabletShuffle" class="sv-mini-tablet-only" type="button" aria-label="Перемешать" title="Перемешать" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h2.5c5.5 0 7.5 12 13 12H21m-4-4 4 4-4 4M3 18h2.5c5.5 0 7.5-12 13-12H21m-4-4 4 4-4 4"/></svg></button>
+  <button id="svTabletPrevious" class="sv-mini-tablet-only" type="button" aria-label="Предыдущий трек" title="Предыдущий трек" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5v14M19 5 8 12l11 7z"/></svg></button>
   <button id="sayviMusicMiniPlay" class="sv-music-mini-play" type="button" aria-label="Воспроизвести" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="sayviMusicMiniIcon" d="M8 5.5 18 12 8 18.5z"/></svg></button>
   <button id="sayviMusicMiniNext" class="sv-music-mini-skip" type="button" aria-label="Следующая песня" title="Следующая песня" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.25 5.5v13M5.5 5.5 15.75 12 5.5 18.5z"/></svg></button>
+  <button id="svTabletRepeat" class="sv-mini-tablet-only" type="button" aria-label="Повтор" title="Повтор" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10V8a3 3 0 0 1 3-3h13m-4-4 4 4-4 4M20 14v2a3 3 0 0 1-3 3H4m4-4-4 4 4 4"/><path class="sv-tablet-repeat-one" d="m10.5 10 1.5-1.5v7"/></svg></button>
+ </div>
+ <div class="sv-mini-tablet-tools" role="group" aria-label="Очередь и звук">
+  <button id="svTabletQueue" class="sv-mini-tablet-only" type="button" aria-label="Очередь воспроизведения" title="Очередь воспроизведения"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5h12M8 12h12M8 19h12M4 5h.1M4 12h.1M4 19h.1"/></svg></button>
+  <button id="svTabletVolume" class="sv-mini-tablet-only" type="button" aria-label="Выключить звук" title="Выключить звук"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3zM16 9a4 4 0 0 1 0 6M19 5a9 9 0 0 1 0 14"/><path class="sv-tablet-mute-line" d="m3 3 18 18"/></svg></button>
  </div>
  <span class="sv-music-mini-progress" aria-hidden="true"></span>
 </div><dialog id="assistantQuickSettings" class="assistant-quick-settings" aria-labelledby="assistantQuickSettingsTitle">
@@ -9118,4 +9126,63 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="
 #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-tile time{font-size:11px;color:var(--secondary)}
 #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-tile .sv-discovery-release-art svg{width:34px;height:34px}
 </style>
+
+<style id="svMusicLivingGlass">
+#sayviMusicMini .sv-mini-tablet-only,#sayviMusicMini .sv-mini-tablet-brand,#sayviMusicMini .sv-mini-tablet-tools{display:none!important}
+/* Only the floating music player: no change to the approved home screen or dock. */
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]),
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body:has(#sayviMusicPage[data-music-view="new"]:not([hidden])) #sayviMusicMini:not([hidden]){
+ background:rgba(235,239,241,.49)!important;
+ background-image:linear-gradient(150deg,rgba(255,255,255,.13),transparent 58%,rgba(255,255,255,.045))!important;
+ -webkit-backdrop-filter:blur(19px) saturate(125%)!important;
+ backdrop-filter:blur(19px) saturate(125%)!important;
+ border:1px solid rgba(151,168,181,.35)!important;
+ box-shadow:inset 0 0 0 .65px rgba(255,255,255,.55),0 2px 8px rgba(20,33,45,.055)!important;
+ color:#29343c!important;
+}
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicMini .sv-music-mini-title{color:#27323b!important;font-weight:550!important;letter-spacing:-.015em!important}
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicMini .sv-music-mini-artist{color:#4d5963!important;font-weight:400!important}
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicMini button{color:#34414b!important}
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicMini .sv-music-mini-transport button svg,html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicMini .sv-music-mini-transport button svg path{stroke:currentColor!important;stroke-width:1.55!important}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicMini button:disabled{opacity:.42!important}
+@media(min-width:768px) and (min-height:600px){
+ html:root[data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]){
+  display:grid!important;grid-template-columns: minmax(230px,1fr) minmax(100px,1fr) minmax(100px,1fr);align-items:center;gap:0!important;
+  height:56px!important;min-height:56px!important;max-height:56px!important;padding:0 12px!important;
+ }
+ html:root[data-theme].sv-music-screen.sv-music-browse body #sayviMusicMini .sv-music-mini-open{grid-column:2;grid-row:1;justify-self:center;justify-content:center;max-width:100%;width:100%;gap:0!important}
+ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini .sv-mini-tablet-brand{display:block!important;font:400 clamp(15px,2.1vw,22px)/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:.24em;padding-left:.24em;color:inherit;white-space:nowrap}
+ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini .sv-music-mini-open :is(.sv-music-mini-symbol,.sv-music-mini-meta){display:none!important}
+ html:root[data-theme].sv-music-screen.sv-music-browse body #sayviMusicMini .sv-music-mini-transport{grid-column:1;grid-row:1;display:flex!important;justify-self:start;align-items:center;min-width:220px!important;width:auto!important;gap:0!important}
+ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini .sv-mini-tablet-tools{display:flex!important;grid-column:3;grid-row:1;justify-self:end;align-items:center;gap:0}
+ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini .sv-mini-tablet-only{display:grid!important;place-items:center;flex:0 0 44px!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;transform:none!important}
+ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini .sv-mini-tablet-only svg{width:22px;height:22px;fill:none!important;stroke:currentColor!important;stroke-width:1.55!important}
+ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini .sv-mini-tablet-only[aria-pressed=true]{color:#307b93!important}
+ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini #svTabletRepeat:not([data-repeat="one"]) .sv-tablet-repeat-one,
+ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini #svTabletVolume:not([aria-pressed=true]) .sv-tablet-mute-line{display:none}
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]),
+ html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body:has(#sayviMusicPage[data-music-view="new"]:not([hidden])) #sayviMusicMini:not([hidden]){background:#eef0f2!important;background-image:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
+</style>
+<script>
+(()=>{
+ const by=id=>document.getElementById(id),mini=by('sayviMusicMini');if(!mini)return;
+ const pairs=[['svTabletShuffle','sayviMusicShuffle'],['svTabletPrevious','sayviMusicPrevious'],['svTabletRepeat','sayviMusicRepeat']];
+ for(const [target,source] of pairs){
+  const button=by(target),original=by(source);if(!button||!original)continue;
+  const sync=()=>{button.disabled=original.disabled;for(const attr of ['aria-pressed','aria-label','title','data-repeat']){const value=original.getAttribute(attr);if(value===null)button.removeAttribute(attr);else button.setAttribute(attr,value)}};
+  new MutationObserver(sync).observe(original,{attributes:true,attributeFilter:['disabled','aria-pressed','aria-label','title','data-repeat']});sync();
+  button.addEventListener('click',()=>{if(!original.disabled)original.click()});
+ }
+ by('svTabletQueue')?.addEventListener('click',()=>{by('sayviMusicMiniOpen')?.click();by('svNowQueue')?.click()});
+ const volume=by('svTabletVolume'),audio=by('sayviMusicAudio'),radio=by('svMusicRadioAudio');
+ const active=()=>radio&&!radio.paused?radio:audio;
+ const syncVolume=()=>{const a=active(),muted=!!a?.muted;volume?.setAttribute('aria-pressed',String(muted));const label=muted?'Включить звук':'Выключить звук';volume?.setAttribute('aria-label',label);if(volume)volume.title=label};
+ volume?.addEventListener('click',()=>{const a=active();if(a){a.muted=!a.muted;syncVolume()}});
+ for(const a of [audio,radio])if(a)for(const type of ['play','pause','volumechange'])a.addEventListener(type,syncVolume);
+ syncVolume();
+})();
+</script>
 </body></html>
