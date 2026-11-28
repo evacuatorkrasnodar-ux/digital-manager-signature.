@@ -574,6 +574,8 @@
  homeMatter.hidden=true;
  homeMatter.setAttribute('aria-hidden','true');
  orb.insertBefore(homeMatter,signal);
+ const homeRadioFog=document.createElement('span');homeRadioFog.id='svHomeRadioFog';homeRadioFog.setAttribute('aria-hidden','true');orb.insertBefore(homeRadioFog,signal);
+ let homeFogRelease=0;
  let homeMatterGPU=null,homeMatterTimer=0,homeMatterVisible=true,homeMatterFailed=false,homeMatterDrawn=false,homeMatterPhase=0;
  let homeMatterCtx=null;
  const homeMatterRoot=document.documentElement;
@@ -591,9 +593,11 @@
   if(homeMatterGPU){try{homeMatterGPU.dispose()}catch{}homeMatterGPU=null}
   if(homeMatter.width!==1)homeMatter.width=homeMatter.height=1;
  }
+ function radioFogActive(){const state=window.SEYVEO_MUSIC?.state?.();return state?.source==='radio'&&!!audio&&!audio.paused&&!audio.ended&&!audio.error;}
  function paintHomeMatter(){
   homeMatterTimer=0;
   if(!homeMatterAllowed()){releaseHomeMatter();return}
+  if(radioFogActive()){syncHomeMatter();return}
   if(homeMatterFailed)return;
   // Do not create a second active WebGL context when moving out of the player.
   if(liquidGPU)releaseLiquid();
@@ -625,7 +629,11 @@
   if(!reduce?.matches)homeMatterTimer=setTimeout(paintHomeMatter,100);
  }
  function syncHomeMatter(){
-  if(!homeMatterAllowed()){releaseHomeMatter();homeMatterFailed=false;return}
+  const allowed=homeMatterAllowed(),fog=allowed&&radioFogActive();
+  orb.classList.toggle('sv-home-radio-fog',fog);
+  if(!allowed){clearTimeout(homeFogRelease);homeFogRelease=0;releaseHomeMatter();homeMatterFailed=false;return}
+  if(fog){if(homeMatterTimer)clearTimeout(homeMatterTimer);homeMatterTimer=0;if(!homeFogRelease&&(homeMatterGPU||homeMatterDrawn)){if(reduce?.matches)releaseHomeMatter();else homeFogRelease=setTimeout(()=>{homeFogRelease=0;if(radioFogActive())releaseHomeMatter()},680)}return}
+  if(homeFogRelease){clearTimeout(homeFogRelease);homeFogRelease=0}
   if(!homeMatterTimer&&!homeMatterFailed&&(!homeMatterDrawn||!reduce?.matches))paintHomeMatter();
   if(reduce?.matches&&homeMatterTimer){clearTimeout(homeMatterTimer);homeMatterTimer=0}
  }
@@ -638,7 +646,8 @@
  homeMatterObserver.observe(signal,{attributes:true,attributeFilter:['class']});
  for(const name of ['seyveo:assistant-presence','seyveo:music-state','visibilitychange'])document.addEventListener(name,syncHomeMatter);
  for(const name of ['hashchange','seyveo:route-changed','pageshow'])window.addEventListener(name,syncHomeMatter);
- window.addEventListener('pagehide',releaseHomeMatter);
+ for(const name of ['playing','pause','ended','error','emptied'])audio?.addEventListener(name,syncHomeMatter);
+ window.addEventListener('pagehide',()=>{clearTimeout(homeFogRelease);homeFogRelease=0;orb.classList.remove('sv-home-radio-fog');releaseHomeMatter()});
  if(reduce?.addEventListener)reduce.addEventListener('change',syncHomeMatter);else reduce?.addListener?.(syncHomeMatter);
  sync();syncScene();syncHomeMatter();
 })();
