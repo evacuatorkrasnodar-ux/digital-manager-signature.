@@ -1,7 +1,7 @@
-/* SEYVEO Discovery v1 · explicit opt-in, on-device music interests.
+/* SEYVEO Discovery · default local music personalization, with an off switch.
  * A qualified play is reported by the ONE existing audio player.
- * Only artist names are stored; no files, full listening logs or browser history.
- * Once enabled, a bounded daily catalog check can create verified cards.
+ * Artist interests and explicit likes stay on-device; no files, full listening logs or browser history are sent.
+ * When personalization is on, a bounded daily catalog check can create verified cards.
  * No push/background promises and no playback of unavailable catalog music.
  */
 (()=>{
@@ -25,7 +25,7 @@ let answered=false,settingsOpen=false;
 try{answered=localStorage.getItem(CHOICE)==='1'||localStorage.getItem(STORE)!==null}catch{}
 function rememberChoice(){answered=true;try{localStorage.setItem(CHOICE,'1')}catch{}}
 function syncChoice(){
- if(offer)offer.hidden=answered||state.enabled||settingsOpen||mode!=='for-you';
+ if(offer)offer.hidden=true;
  if(settings)settings.hidden=!settingsOpen;
  if(settingsButton)settingsButton.setAttribute('aria-expanded',String(settingsOpen));
 }
@@ -33,10 +33,10 @@ const DAY=24*3600*1000,LOOKBACK=21*DAY,MAX_ARTISTS=30;
 const normalize=s=>String(s||'').normalize('NFKC').toLocaleLowerCase('ru-RU')
  .replace(/\s+/g,' ').trim();
 const clean=s=>typeof s==='string'?s.replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,100):'';
-function fresh(){return {enabled:false,artists:[],releases:[],ignored:[],snoozed:{},checks:{},attempts:{}}}
+function fresh(enabled=true){return {enabled,artists:[],releases:[],ignored:[],snoozed:{},checks:{},attempts:{}}}
 function read(){
  let x;try{x=JSON.parse(localStorage.getItem(STORE)||'null')}catch{}
- if(!x||typeof x!=='object')return fresh();
+ if(!x||typeof x!=='object'){let declined=false;try{declined=localStorage.getItem(CHOICE)==='1'}catch{}return fresh(!declined)}
  return {
   enabled:x.enabled===true,
   artists:Array.isArray(x.artists)?x.artists.slice(-MAX_ARTISTS).filter(a=>
@@ -91,7 +91,7 @@ function clear(){
  rememberChoice();
  runId++;
  checking=false;
- state=fresh();likes=[];saveLikes();if(mode==='genres'){mode='for-you';syncFilters();syncPersonal()}
+ state=fresh(false);likes=[];saveLikes();if(mode==='genres'){mode='for-you';syncFilters();syncPersonal()}
  try{localStorage.removeItem(GENRES_KEY);for(let i=localStorage.length-1;i>=0;i--){const key=localStorage.key(i);if(key?.startsWith('seyveo-music-editorial-v3-')&&key!=='seyveo-music-editorial-v3-general')localStorage.removeItem(key)}}catch{}
  persist();update();signal();if(!panel.hidden)void loadPublic();
 }
@@ -198,7 +198,7 @@ async function check({force=false}={}){
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),8500);
   try{
-   // Sending an artist name is explicit opt-in. No song titles or files sent.
+   // Send only the catalog artist query while personalization is enabled. No song titles or files sent.
    const releases=await lookup(artist.name,controller.signal);
    if(current!==runId||!state.enabled)break;
    state.checks[artist.key]=Date.now();
@@ -306,7 +306,7 @@ const filterBar=document.createElement('div');filterBar.className='sv-new-filter
 const filterHead=document.createElement('header');filterHead.className='sv-new-filter-head';
 const filterTitle=document.createElement('h2');filterTitle.id='svNewFilterTitle';filterTitle.textContent='Настройки новинок';
 const filterClose=document.createElement('button');filterClose.type='button';filterClose.className='sv-new-filter-close';filterClose.setAttribute('aria-label','Закрыть настройки');filterClose.textContent='×';filterClose.addEventListener('click',()=>filterSheet.close());
-filterHead.append(filterTitle,filterClose);filterSheet.append(filterHead,filterBar);if(offer)filterSheet.insertBefore(offer,filterBar);filterSheet.append(info);
+filterHead.append(filterTitle,filterClose);filterSheet.append(filterHead,filterBar);filterSheet.append(info);
 filterSheet.addEventListener('click',e=>{if(e.target!==filterSheet)return;const rect=filterSheet.getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)filterSheet.close()});
 const feedHead=panel.querySelector('.sv-discovery-feed-head');
 if(feedHead){
@@ -347,7 +347,7 @@ function selectedTags(){
 function syncPersonal(){if(feedHead)feedHead.hidden=true;releasesList.hidden=true;empty.hidden=true;info.hidden=!info.textContent}
 function syncFilters(){for(const b of filterBar.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.mode===mode));}
 function setMode(next){
- if(next==='genres'&&!state.enabled){mode='for-you';syncFilters();syncChoice();status('Включите музыкальные рекомендации, чтобы использовать сохранённые жанры.');if(!answered&&offer)offer.hidden=false;return}
+ if(next==='genres'&&!state.enabled){mode='for-you';syncFilters();syncChoice();status('Включите музыкальные рекомендации, чтобы использовать сохранённые жанры.');return}
  if(next==='genres'&&mode==='genres'){window.SEYVEO_DISCOVERY?.open?.('music');return}
  mode=next;syncFilters();syncChoice();closePreview();syncPersonal();
  if(mode==='liked'){++publicRun;publicController?.abort();showPublic(lastItems,lastStale);return}
