@@ -25,7 +25,7 @@ const id=src;if(items.some(x=>x.id===id))continue;
 items.push({id,src,title:(value(item,'title')||'Выпуск').slice(0,250),date:value(item,'pubDate').slice(0,100)});
 }
 if(!items.length)throw Error('В этой ленте нет доступных аудиовыпусков.');
-const author=value(channel,'author')||value(channel,'managingEditor');const art=direct(channel,'image');const artwork=https(art?.getAttribute('href')||value(art,'url'),base);return {title:title.slice(0,160),author:author.slice(0,160),artwork,items};
+const author=value(channel,'author')||value(channel,'managingEditor');const art=direct(channel,'image');const artUrl=art?.getAttribute('href')||value(art,'url');const artwork=artUrl?https(artUrl,base):'';return {title:title.slice(0,160),author:author.slice(0,160),artwork,items};
 }
 function storeFeed(id,data){
 const existing=state.feeds.find(f=>f.id===id);
@@ -150,7 +150,28 @@ async function search(term){
 }
 searchForm.addEventListener('submit',e=>{e.preventDefault();search(searchInput.value)});
 get('svPodcastTopics').addEventListener('click',e=>{const b=e.target.closest('[data-podcast-topic]');if(!b)return;openSearch();searchInput.value=b.dataset.podcastTopic;search(searchInput.value)});
-document.addEventListener('seyveo:music-view',e=>{if(e.detail?.view==='podcasts')render();else{openSearch(false);if(current){audio.pause();savePosition(true)}}});
+let refreshing=false;
+async function refreshSubscriptions(){
+ if(refreshing)return;refreshing=true;
+ try{
+  const due=state.feeds.filter(f=>https(f.id)&&Date.now()-(f.updated||0)>3600000);
+  for(const feed of due){
+   if(panel.hidden)break;
+   const c=new AbortController(),timeout=setTimeout(()=>c.abort(),8000);
+   try{
+    let data;
+    try{const res=await fetch(feed.id,{signal:c.signal,credentials:'omit',referrerPolicy:'no-referrer'});if(!res.ok)throw Error('feed');const xml=await res.text();if(xml.length>3000000)throw Error('size');data=parse(xml,res.url||feed.id)}
+    catch{if(!feed.directoryId)continue;data=await directoryEpisodes(feed)}
+    if(!state.feeds.includes(feed))continue;
+    const merged=new Map(feed.items.map(e=>[e.id,e]));for(const e of data.items)merged.set(e.id,e);
+    feed.items=[...data.items,...[...merged.values()].filter(e=>!data.items.some(x=>x.id===e.id))].slice(0,150);
+    feed.title=data.title;feed.author=data.author||feed.author||'';feed.artwork=data.artwork||feed.artwork||'';feed.updated=Date.now();persist();
+    if(!panel.hidden){renderHighlights();renderEpisodes()}
+   }catch{}finally{clearTimeout(timeout)}
+  }
+ }finally{refreshing=false}
+}
+document.addEventListener('seyveo:music-view',e=>{if(e.detail?.view==='podcasts'){render();refreshSubscriptions()}else{openSearch(false);if(current){audio.pause();savePosition(true)}}});
 render();
 };
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
