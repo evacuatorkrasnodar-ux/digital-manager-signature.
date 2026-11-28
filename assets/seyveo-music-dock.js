@@ -538,7 +538,7 @@ function initRadio(){
  const isHidden=id=>hiddenStations.has(id);
  const isFavorite=id=>!isHidden(id)&&favorites.some(f=>f.id===id);
  const stationSnapshot=station=>station.id.startsWith('rb-')?{stationuuid:station.id.slice(3),name:station.name,countrycode:station.countrycode,country:station.country,state:station.city,tags:station.genre,url_resolved:station.stream,homepage:station.site,codec:station.quality.replace(/^\d+\s*/,''),bitrate:parseInt(station.quality,10)||0}:null;
- function rememberStation(id){const station=stations.find(s=>s.id===id);if(!station?.stream)return false;const changed=favorites[0]?.id!==id||isHidden(id);if(!changed)return false;const next=[{id,snapshot:stationSnapshot(station)},...favorites.filter(f=>f.id!==id)].slice(0,200);favorites=next;try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{}if(isHidden(id)){hiddenStations.delete(id);try{localStorage.setItem(hiddenKey,JSON.stringify([...hiddenStations]))}catch{}}return true;}
+ function rememberStation(id){const station=stations.find(s=>s.id===id);if(!station?.stream)return false;const next=[{id,snapshot:stationSnapshot(station)},...favorites.filter(f=>f.id!==id)].slice(0,200);try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{status.textContent='Не удалось сохранить станцию.';return false}favorites=next;if(isHidden(id)){hiddenStations.delete(id);try{localStorage.setItem(hiddenKey,JSON.stringify([...hiddenStations]))}catch{}}return true;}
  function setHidden(id,hidden){
   const next=new Set(hiddenStations);if(hidden)next.add(id);else next.delete(id);
   try{localStorage.setItem(hiddenKey,JSON.stringify([...next]))}catch{status.textContent='Не удалось сохранить изменение.';return false}
@@ -554,7 +554,10 @@ function initRadio(){
  }
  const list=document.getElementById('svMusicRadioStations'),status=document.getElementById('svMusicRadioStatus');
  if(!list||!status)return;
- const buttons=new Map();
+ const buttons=new Map();let lastTap=null,pauseTimer=0,heartTimer=0;
+ function cancelPause(){clearTimeout(pauseTimer);pauseTimer=0;lastTap=null}
+ function favoriteGesture(id){cancelPause();if(!rememberStation(id))return;const cover=buttons.get(id);if(!cover?.isConnected){renderFavoritesMotion(id);return}cover.querySelector('.sv-radio-like-flash')?.remove();const flash=document.createElement('span');flash.className='sv-radio-like-flash';flash.setAttribute('aria-hidden','true');flash.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.4S2.8 15 2.8 8.9A5.2 5.2 0 0 1 12 5.6a5.2 5.2 0 0 1 9.2 3.3c0 6.1-9.2 11.5-9.2 11.5Z"/></svg>';cover.append(flash);clearTimeout(heartTimer);heartTimer=setTimeout(()=>{flash.remove();renderFavoritesMotion(id)},620);}
+ function tapStation(id,keyboard=false){const now=performance.now();if(!keyboard&&lastTap?.id===id&&now-lastTap.at<=320){favoriteGesture(id);return}if(pauseTimer){const prior=lastTap?.id;cancelPause();if(prior&&prior!==id){const state=window.SEYVEO_MUSIC?.state?.();if(state?.source==='radio'&&state.stationId===prior&&state.playing)openStation(prior)}}lastTap=keyboard?null:{id,at:now};const state=window.SEYVEO_MUSIC?.state?.();const playing=state?.source==='radio'&&state.stationId===id&&state.playing;const act=()=>{if(!openStation(id))status.textContent='Не удалось открыть эфир. Попробуйте позже.';else drawRadio()};if(playing&&!keyboard){pauseTimer=setTimeout(()=>{pauseTimer=0;lastTap=null;const current=window.SEYVEO_MUSIC?.state?.();if(current?.source==='radio'&&current.stationId===id&&current.playing)act()},330)}else act();}
  const historyKey='seyveo-radio-recent-v1',timeKey='seyveo-radio-recent-time-v1';let history=[],playedAt={};
  try{const saved=JSON.parse(localStorage.getItem(timeKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))playedAt=saved}catch{}
  try{const saved=JSON.parse(localStorage.getItem(historyKey)||'[]');if(Array.isArray(saved))history=saved.filter(id=>typeof id==='string'&&stations.some(station=>station.id===id&&station.stream)).slice(0,6)}catch{}
@@ -580,7 +583,7 @@ function initRadio(){
  }
  async function onlineSearch(q,signal){const term=String(q||'').trim().slice(0,100);if(term.length<2)return localSearch(term);const rows=await fetchStations({name:term},signal);return [...new Map([...localSearch(term),...register(rows)].map(s=>[s.id,s])).values()]}
  window.SEYVEO_RADIO=Object.freeze({recent,removeRecentHistory,play:openStation,search:localSearch,searchOnline:onlineSearch,isFavorite,isHidden,toggleFavorite});
- audio.addEventListener('playing',()=>{const state=window.SEYVEO_MUSIC?.state?.();if(state?.source!=='radio'||!stations.some(x=>x.id===state.stationId))return;history=[state.stationId,...history.filter(id=>id!==state.stationId)].slice(0,6);playedAt[state.stationId]=Date.now();playedAt=Object.fromEntries(history.map(id=>[id,playedAt[id]||0]));try{localStorage.setItem(historyKey,JSON.stringify(history));localStorage.setItem(timeKey,JSON.stringify(playedAt))}catch{}const moved=rememberStation(state.stationId);if(moved)renderFavoritesMotion(state.stationId);document.dispatchEvent(new Event('seyveo:radio-history'))});
+ audio.addEventListener('playing',()=>{const state=window.SEYVEO_MUSIC?.state?.();if(state?.source!=='radio'||!stations.some(x=>x.id===state.stationId))return;history=[state.stationId,...history.filter(id=>id!==state.stationId)].slice(0,6);playedAt[state.stationId]=Date.now();playedAt=Object.fromEntries(history.map(id=>[id,playedAt[id]||0]));try{localStorage.setItem(historyKey,JSON.stringify(history));localStorage.setItem(timeKey,JSON.stringify(playedAt))}catch{}if(isHidden(state.stationId))setHidden(state.stationId,false);document.dispatchEvent(new Event('seyveo:radio-history'))});
  document.dispatchEvent(new Event('seyveo:radio-history'));
  function drawRadio(){
   const state=window.SEYVEO_MUSIC?.state?.();
@@ -597,7 +600,7 @@ function initRadio(){
    const match=Math.max(0,...tags.map(tag=>weights.get(tag)||0));
    return (local?1000:0)+match*100+(local&&city&&norm(s.name+' '+(s.city||'')).includes(city)?10:0);
   };
-  const regionIds=new Set(regional.map(s=>s.id)),pins=new Map(favorites.map((f,i)=>[f.id,i]));
+  const regionIds=new Set([...regional.map(s=>s.id),...history]),pins=new Map(favorites.map((f,i)=>[f.id,i]));
   return stations.filter(s=>s.stream&&!isHidden(s.id)&&(pins.has(s.id)||!s.id.startsWith('rb-')||regionIds.has(s.id))).sort((a,b)=>{
    const ai=pins.get(a.id),bi=pins.get(b.id);
    if(ai!==undefined||bi!==undefined)return (ai??Infinity)-(bi??Infinity);
@@ -628,14 +631,14 @@ function initRadio(){
   remove.focus({preventScroll:true});
  }
  function bindRadioHold(row,station){
-  row.tabIndex=0;row.setAttribute('aria-label',station.name);row.setAttribute('aria-keyshortcuts','Delete Shift+F10');
+  row.tabIndex=0;row.setAttribute('aria-label',station.name);row.setAttribute('aria-keyshortcuts','Delete Shift+F10 F');
   let timer=0,start=null;
   const clear=()=>{clearTimeout(timer);timer=0;start=null};
-  row.addEventListener('pointerdown',e=>{if(e.button!==0||e.isPrimary===false||e.target.closest('a'))return;clear();start={x:e.clientX,y:e.clientY,id:e.pointerId};timer=setTimeout(()=>{clear();row.dataset.svHeld='1';openRadioMenu(row,station)},500)});
+  row.addEventListener('pointerdown',e=>{if(e.button!==0||e.isPrimary===false||e.target.closest('a'))return;clear();start={x:e.clientX,y:e.clientY,id:e.pointerId};timer=setTimeout(()=>{clear();cancelPause();row.dataset.svHeld='1';openRadioMenu(row,station)},500)});
   row.addEventListener('pointermove',e=>{if(start&&start.id===e.pointerId&&Math.hypot(e.clientX-start.x,e.clientY-start.y)>9)clear()});
   for(const name of ['pointerup','pointercancel','pointerleave','lostpointercapture'])row.addEventListener(name,clear);
   row.addEventListener('contextmenu',e=>{if(e.target.closest('a'))return;e.preventDefault();clear();if(radioMenu?.anchor!==row)openRadioMenu(row,station)});
-  row.addEventListener('keydown',e=>{if(e.target!==row&&!e.target.closest('.sv-radio-tile-cover'))return;if(e.key==='Delete'||e.key==='ContextMenu'||e.shiftKey&&e.key==='F10'){e.preventDefault();openRadioMenu(row,station)}});
+  row.addEventListener('keydown',e=>{if(e.target!==row&&!e.target.closest('.sv-radio-tile-cover'))return;if(e.key.toLowerCase()==='f'){e.preventDefault();favoriteGesture(station.id)}else if(e.key==='Delete'||e.key==='ContextMenu'||e.shiftKey&&e.key==='F10'){e.preventDefault();cancelPause();openRadioMenu(row,station)}});
  }
  document.addEventListener('pointerdown',e=>{if(radioMenu&&!radioMenu.node.contains(e.target))closeRadioMenu()});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&radioMenu){e.preventDefault();closeRadioMenu(true)}});
@@ -649,7 +652,7 @@ function initRadio(){
    const cover=document.createElement('button');cover.type='button';cover.className='sv-radio-tile-cover';cover.append(art);
    if(station.logo){const logo=document.createElement('img');logo.className='sv-radio-logo';logo.alt='';logo.loading='lazy';logo.decoding='async';logo.referrerPolicy='no-referrer';logo.addEventListener('error',()=>logo.remove(),{once:true});logo.src=station.logo;cover.append(logo)}
    cover.addEventListener('pointerdown',()=>{delete row.dataset.svHeld});
-   cover.addEventListener('click',()=>{if(row.dataset.svHeld){delete row.dataset.svHeld;return}if(!openStation(station.id)){status.textContent='Не удалось открыть эфир. Попробуйте позже.';}else drawRadio()});
+   cover.setAttribute('aria-description','Двойное нажатие — сохранить станцию в начале списка');cover.addEventListener('click',e=>{if(row.dataset.svHeld){delete row.dataset.svHeld;return}tapStation(station.id,e.detail===0)});
    buttons.set(station.id,cover);
    const copy=document.createElement('div');copy.className='sv-radio-copy';const title=document.createElement('strong');title.textContent=station.name;title.title=station.name;
    const subtitle=document.createElement('small');subtitle.textContent=station.city||station.country||'';subtitle.hidden=!subtitle.textContent;
@@ -696,7 +699,7 @@ function initRadio(){
    if(radioVisible){render();animateRadio()}
   }finally{clearTimeout(timeout)}
  }
- document.addEventListener('seyveo:music-view',e=>{const next=e.detail?.view==='radio';if(next&&!radioVisible){render();animateRadio();void loadRegional()}if(!next)closeRadioMenu();radioVisible=next});
+ document.addEventListener('seyveo:music-view',e=>{const next=e.detail?.view==='radio';if(next&&!radioVisible){render();animateRadio();void loadRegional()}if(!next){closeRadioMenu();cancelPause()}radioVisible=next});
  document.addEventListener('seyveo:music-state',drawRadio);
  for(const name of ['playing','pause','error','emptied'])audio.addEventListener(name,drawRadio);
  toggle.addEventListener('click',()=>{if(window.SEYVEO_MUSIC_DOCK?.show){window.SEYVEO_MUSIC_DOCK.show('radio');return}panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));});
