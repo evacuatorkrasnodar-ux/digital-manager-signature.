@@ -52,7 +52,7 @@ const fallbackInfo=file=>metadata?.filenameParts(file?.name)||{
 let trackDescriptions=new WeakMap(),trackThumbnails=new WeakMap(),coverDataURL=null,coverReader=null;
 let recentFiles=[];
 const recentPlayedAt=new Map();
-const infoFor=file=>file?.radio?{title:file.name,artist:file.country+' · '+file.quality,display:file.name,album:'SEYVEO RADIO'}:file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
+const infoFor=file=>file?.radio?{title:file.name,artist:(file.city||file.country),display:file.name,album:'SEYVEO RADIO'}:file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
 const safeName=file=>infoFor(file).display;
 const smoothPlay=()=>window.SEYVEO_ADAPTIVE_SOUND?.playSmooth?.()??audio.play();
 const smoothPause=()=>{const engine=window.SEYVEO_ADAPTIVE_SOUND;if(engine?.pauseSmooth)engine.pauseSmooth();else audio.pause()};
@@ -686,7 +686,7 @@ function syncResume(){
    const info=infoFor(file);
    renderMiniCover(file.radio?String(file.id||file.name):favoriteId(file),file.radio?file.artwork:trackThumbnails.get(file));
    if(miniTitle)miniTitle.textContent=chapterRows.length&&chapterIndex>=0?chapterLabel(chapterIndex):info.title||safeName(file);
-   if(miniArtist)miniArtist.textContent=isRadio()&&radioFallback?file.country+' · '+file.fallbackQuality:info.artist||'Моя музыка';
+   if(miniArtist)miniArtist.textContent=isRadio()&&radioFallback?(file.city||file.country):info.artist||'Моя музыка';
    if(miniOpen)miniOpen.setAttribute('aria-label','Открыть плеер: '+safeName(file));
    if(miniPlay){
     miniPlay.setAttribute('aria-label',playing?'Пауза':'Продолжить воспроизведение');
@@ -1201,7 +1201,7 @@ function switchTrack(i,autoplay=false,fromNavigation=false,resumeSeconds=0){
   if(file.radio){
    index=newIndex;audio.src=file.stream;
    coverDataURL=file.artwork||null;if(coverDataURL)showArtwork();
-   setPlayerTitle(file.name,false);artist.textContent=file.country+' · '+file.quality;
+   setPlayerTitle(file.name,false);artist.textContent=(file.city||file.country);
    previous.disabled=next.disabled=tracks.length<2;updateFavorite();collectionRender();mediaSession();updatePlay();updateTime();
    if(autoplay){sayviMessage('Подключение к '+file.name+'…');smoothPlay().catch(()=>{if(version===selectVersion&&!audio.error)sayviMessage('Не удалось начать эфир. Нажмите Play ещё раз.')});}
    return true;
@@ -1504,7 +1504,7 @@ audio.addEventListener('play',stopChapterScan);
 audio.addEventListener('playing',()=>{stopChapterScan();homeMusicSession=true;const file=tracks[index];if(file&&!file.radio){recentFiles=[file,...recentFiles.filter(item=>item!==file)].slice(0,12);recentPlayedAt.set(file,Date.now());for(const item of recentPlayedAt.keys())if(!recentFiles.includes(item))recentPlayedAt.delete(item);rememberRecent()}updatePlay();sayviMessage('');qualifyDiscoveryListen()});
 audio.addEventListener('pause',()=>{stopDiscoveryListen();savePosition(true);updatePlay();if(chapterBusy){chapterProgress='Продолжаю анализ сборника…';updateChapterStatus()}else scheduleChapterScan()});
 audio.addEventListener('ended',()=>{stopDiscoveryListen();if(isRadio()){updatePlay();sayviMessage('Эфир прервался. Нажмите Play для повторного подключения.');return}if(!navigateTrack(1,true)){savePosition(true);updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
-audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(isRadio()){const station=tracks[index],version=selectVersion;if(!radioFallback&&station.fallback){radioFallback=true;audio.src=station.fallback;artist.textContent=station.country+' · '+station.fallbackQuality;audio.play().catch(()=>{if(version===selectVersion)sayviMessage('Резервный эфир недоступен.')});return}sayviMessage('Эфир недоступен. Попробуйте другую станцию.');return}if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
+audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(isRadio()){const station=tracks[index],version=selectVersion;if(!radioFallback&&station.fallback){radioFallback=true;audio.src=station.fallback;artist.textContent=(station.city||station.country);audio.play().catch(()=>{if(version===selectVersion)sayviMessage('Резервный эфир недоступен.')});return}sayviMessage('Эфир недоступен. Попробуйте другую станцию.');return}if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
 /* Screen lock/background can dispatch lifecycle changes.
  * Never stop an actively playing track on pagehide: the OS decides if WebKit
  * can continue. A full browser termination remains outside PWA control. */
