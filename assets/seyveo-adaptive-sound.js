@@ -30,13 +30,14 @@
   let pure=false;try{pure=w.localStorage.getItem(key)==='pure'}catch{}
   let base=audio.volume,fade=1,factor=1,expected=audio.volume,lastFile=null,phase='idle',result=null,generation=0,busy=false,pending=false,ramp=0;
   let transport=1,transportRamp=0,transportEpoch=0,pausing=false,startPending=false;
+  let voiceDuck=1,voiceRamp=0;
   const cache=new WeakMap();
   const file=()=>w.SEYVEO_MUSIC?.rhythmFile?.()||null;
   const emit=()=>d.dispatchEvent(new w.CustomEvent('seyveo:adaptive-sound'));
   const state=()=>({pure,phase,gain:factor,attenuationDb:result?Math.round(20*Math.log10(result.gain)*10)/10:null,sampled:!!result?.sampled,supported:!ios&&!!Offline});
   function apply(){
    if(ios)return false;
-   const target=clamp(base*factor*fade*transport);
+   const target=clamp(base*factor*fade*transport*voiceDuck);
    expected=target;
    try{audio.volume=target}catch{return false}
    if(Math.abs(audio.volume-target)>.025){expected=audio.volume;return false}return true;
@@ -53,6 +54,7 @@
   }
   function setBaseVolume(v){if(!Number.isFinite(v)||ios)return false;base=clamp(v);return apply()}
   function setFade(v){if(!Number.isFinite(v)||ios)return false;fade=clamp(v);return apply()}
+  function setVoiceDuck(v){if(!Number.isFinite(v)||ios)return false;if(voiceRamp)w.clearInterval(voiceRamp);voiceRamp=0;const target=clamp(v),from=voiceDuck,at=Date.now();if(d.hidden||audio.paused||Math.abs(from-target)<.001){voiceDuck=target;return apply()}voiceRamp=w.setInterval(()=>{const t=clamp((Date.now()-at)/220);voiceDuck=from+(target-from)*t;if(!apply()||t===1){w.clearInterval(voiceRamp);voiceRamp=0}},25);return true}
   // Independent transport envelope: never overwrite the sleep fade or base volume.
   function cancelTransport(){
    ++transportEpoch;if(transportRamp){w.clearInterval(transportRamp);transportRamp=0}
@@ -100,7 +102,7 @@
   for(const name of ['pause','ended','error'])audio.addEventListener(name,resetTransport);
   d.addEventListener('visibilitychange',()=>{
    if(!d.hidden)return;
-   const stop=pausing;cancelTransport();if(stop)audio.pause();transport=1;apply();
+   const stop=pausing;cancelTransport();if(stop)audio.pause();transport=1;setVoiceDuck(1);apply();
   });
   audio.addEventListener('volumechange',()=>{
    if(ios||Math.abs(audio.volume-expected)<.00001)return;
@@ -160,7 +162,7 @@
   audio.addEventListener('loadedmetadata',()=>sync());
   audio.addEventListener('playing',()=>sync());
   d.addEventListener('visibilitychange',()=>{if(!d.hidden)sync()});
-  w.SEYVEO_ADAPTIVE_SOUND=Object.freeze({state,setPure,baseVolume:()=>base,setBaseVolume,setFade,playSmooth,pauseSmooth,isPausing:()=>pausing});
+  w.SEYVEO_ADAPTIVE_SOUND=Object.freeze({state,setPure,baseVolume:()=>base,setBaseVolume,setFade,setVoiceDuck,playSmooth,pauseSmooth,isPausing:()=>pausing});
   sync(true);
  }
  return {estimate,install};
