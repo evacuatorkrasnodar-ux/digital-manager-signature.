@@ -665,6 +665,20 @@ function updatePlay(){
  $('sayviMusicPlayIcon')?.setAttribute('d',playing?'M8 5v14M16 5v14':'M8 5.5 18 12 8 18.5z');
  syncResume();
 }
+let radioAirState='';
+function updateRadioAir(event){
+ const active=isRadio();
+ if(!active){radioAirState='';page.classList.remove('sv-radio-on-air');return}
+ if(event==='playing')radioAirState='live';
+ else if(event==='waiting'||event==='stalled'||event==='loadstart'||event==='emptied'||event==='play')radioAirState='connecting';
+ else if(event==='error')radioAirState='error';
+ else if(event==='pause'||event==='ended')radioAirState='paused';
+ const mode=audio.error?'error':audio.paused||audio.ended?'paused':radioAirState==='live'?'live':'connecting';
+ page.classList.toggle('sv-radio-on-air',mode==='live');
+ const label=$('svRadioAirLabel'),value=mode==='live'?'В эфире':mode==='connecting'?'Подключение…':mode==='error'?'Эфир недоступен':'Пауза';
+ if(label&&label.textContent!==value)label.textContent=value;
+}
+for(const event of ['playing','waiting','stalled','loadstart','emptied','play','error','pause','ended'])audio.addEventListener(event,()=>updateRadioAir(event));
 function syncResume(){
  syncModes();
  const loaded=tracks.length>0&&index>=0;
@@ -674,6 +688,8 @@ function syncResume(){
  const playing=loaded&&!audio.paused&&!audio.ended;
  const radioMode=loaded&&isRadio();page.classList.toggle('sv-music-radio-player',radioMode);
  const radioName=$('svRadioPlayerName');if(radioName){const name=radioMode?tracks[index].name:'';if(radioName.textContent!==name)radioName.textContent=name;}
+ const radioFreq=$('svRadioPlayerFrequency');if(radioFreq){const match=radioMode?String(tracks[index].quality||'').match(/^\s*(\d{2,3}(?:[.,]\d+)?)\s*FM\s*$/i):null;const value=match?match[1].replace(',','.') : '';radioFreq.textContent=value;radioFreq.hidden=!value;}
+ updateRadioAir();
  // One actual audio element. The mini is a small remote, not a second player.
  if(mini){
   // Replay shares the approved floating Music Home remote during an active or paused session.
