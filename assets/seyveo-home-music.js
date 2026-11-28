@@ -77,7 +77,12 @@ function init(){
   const stageRect=stage.getBoundingClientRect(),orb=$('orb')?.getBoundingClientRect(),rail=$('svHomeFavorites'),railRect=rail&&!rail.hidden?rail.getBoundingClientRect():null,dock=document.querySelector('body > footer.dock.sv-shared-dock')?.getBoundingClientRect();
   if(!stageRect.height||!orb?.height){hide();return}
   const topLimit=orb.bottom-Math.min(45,orb.height*.135)+5;
-  const bottomLimit=Math.min(dock?.top||innerHeight,railRect?.height?railRect.top:Infinity)-8;
+  const sharedAxis=window.matchMedia('(max-width:649px) and (orientation:portrait)').matches;
+  // Match the favorites rail's existing two-row reservation (66 + 10 + 66)
+  // even when only one row is currently populated.
+  const navTop=$('navHome')?.getBoundingClientRect().top||dock?.top||innerHeight;
+  const reservedTop=sharedAxis&&railRect?.height?navTop-32-142:Infinity;
+  const bottomLimit=Math.min(dock?.top||innerHeight,railRect?.height?railRect.top:Infinity,reservedTop)-8;
   const room=bottomLimit-topLimit;
   const measured=weather?.getBoundingClientRect();
   const row=measured?.height&&measured?.width?measured:{top:topLimit+Math.max(0,(room-52)/2),height:52,right:stageRect.left+stageRect.width/2};
@@ -96,10 +101,8 @@ function init(){
     // Prioritize breathing room under the sphere, without hiding controls
     // or overlapping the shortcut rail on short mobile viewports.
     const free=Math.max(0,room-height);
-    const sphereAir=Math.min(18,free);
-    // Mobile ONE and Business keep identical spacing from the painted sphere,
-    // rather than centering playback in the subscription-dependent lower gap.
-    const sharedAxis=window.matchMedia('(max-width:649px) and (orientation:portrait)').matches;
+    // Increase the common optical gap beneath the glass; never overlap shortcuts.
+    const sphereAir=Math.min(sharedAxis?30:18,free);
     const extraAir=Math.min(10,Math.max(0,free-sphereAir));
     const y=sharedAxis?topLimit+sphereAir:Math.min(bottomLimit-height-extraAir,Math.max(topLimit+sphereAir,row.top+row.height/2-height/2));
     const parent=panel.offsetParent?.getBoundingClientRect()||stageRect;
