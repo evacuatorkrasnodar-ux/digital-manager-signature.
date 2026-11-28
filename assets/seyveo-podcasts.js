@@ -19,7 +19,7 @@ const d=new DOMParser().parseFromString(xml,'application/xml');if(d.querySelecto
 const channel=d.getElementsByTagName('channel')[0];if(!channel)throw Error('Это не RSS-лента подкаста.');
 const title=value(channel,'title')||'Подкаст',items=[];
 for(const item of Array.from(channel.children).filter(n=>n.localName==='item').slice(0,100)){
-const enc=direct(item,'enclosure'),type=enc?.getAttribute('type')||'',src=https(enc?.getAttribute('url')||'',base);
+const enc=direct(item,'enclosure'),url=enc?.getAttribute('url');if(!url)continue;const type=enc.getAttribute('type')||'',src=https(url,base);
 if(!src||type&&!/^(audio\/|application\/ogg)/i.test(type))continue;
 const id=src;if(items.some(x=>x.id===id))continue;
 items.push({id,src,title:(value(item,'title')||'Выпуск').slice(0,250),date:value(item,'pubDate').slice(0,100)});
@@ -42,14 +42,14 @@ catch(e){if(token===loadToken)say(e.message==='Failed to fetch'||e.name==='Abort
 finally{clearTimeout(timeout);if(token===loadToken)get('svPodcastAdd').disabled=false}
 }
 form.addEventListener('submit',e=>{e.preventDefault();load(input.value.trim())});
-file.addEventListener('change',async()=>{const f=file.files?.[0];if(!f)return;try{if(f.size>3000000)throw Error('Файл слишком большой.');const data=parse(await f.text());storeFeed('file:'+data.title,data);say('')}catch(e){say(e.message||'Не удалось прочитать файл.')}finally{file.value=''}});
+file.addEventListener('change',async()=>{const f=file.files?.[0];if(!f)return;try{if(f.size>3000000)throw Error('Файл слишком большой.');const xml=typeof f.text==='function'?await f.text():await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsText(f)});const data=parse(xml);storeFeed('file:'+data.title,data);say('')}catch(e){say(e.message||'Не удалось прочитать файл.')}finally{file.value=''}});
 const duration=s=>{const n=Math.max(0,Math.floor(s||0));return Math.floor(n/60)+':'+String(n%60).padStart(2,'0')};
-function savePosition(force=false){if(!current||!Number.isFinite(audio.currentTime))return;if(!force&&Date.now()-lastSave<5000)return;lastSave=Date.now();state.progress[current.id]={position:audio.currentTime,duration:Number.isFinite(audio.duration)?audio.duration:0,finished:audio.ended,updated:Date.now()};state.last={feed:current.feed,id:current.id};persist()}
+function savePosition(force=false){if(!current||audio.readyState<1||!Number.isFinite(audio.currentTime))return;if(!force&&Date.now()-lastSave<5000)return;lastSave=Date.now();state.progress[current.id]={position:audio.currentTime,duration:Number.isFinite(audio.duration)?audio.duration:0,finished:audio.ended,updated:Date.now()};state.last={feed:current.feed,id:current.id};persist()}
 function play(feed,ep){
-savePosition(true);current={...ep,feed:feed.id};player.hidden=false;get('svPodcastPlaying').textContent=ep.title;get('svPodcastPlayingFeed').textContent=feed.title;
+savePosition(true);audio.pause();current=null;const pos=state.progress[ep.id];current={...ep,feed:feed.id};player.hidden=false;get('svPodcastPlaying').textContent=ep.title;get('svPodcastPlayingFeed').textContent=feed.title;
 const main=document.getElementById('sayviMusicAudio');main?.pause();
 audio.src=ep.src;audio.playbackRate=state.speed||1;get('svPodcastSpeed').value=String(audio.playbackRate);
-const pos=state.progress[ep.id];const expected=ep.src;
+const expected=ep.src;
 const resume=()=>{if(current?.src!==expected)return;if(pos&&!pos.finished&&pos.position>0&&(!Number.isFinite(audio.duration)||pos.position<audio.duration-2))try{audio.currentTime=pos.position}catch{}};
 audio.addEventListener('loadedmetadata',resume,{once:true});audio.play().catch(()=>say('Нажми воспроизведение, чтобы начать слушать.'));state.last={feed:feed.id,id:ep.id};persist();renderEpisodes();
 }
@@ -73,7 +73,7 @@ function render(){
 list.replaceChildren();if(!state.feeds.some(f=>f.id===selected))selected=state.feeds[0]?.id||null;
 const resume=get('svPodcastResume');resume.replaceChildren();const lastFeed=state.feeds.find(f=>f.id===state.last?.feed),lastEp=lastFeed?.items.find(e=>e.id===state.last?.id),pos=lastEp&&state.progress[lastEp.id];
 if(lastEp&&pos?.position>0&&!pos.finished){const b=button('Продолжить · '+lastEp.title,()=>{selected=lastFeed.id;render();play(lastFeed,lastEp)});b.classList.add('sv-podcast-resume');resume.append(b)}
-for(const feed of state.feeds){const row=el('div','sv-podcast-feed');const title=button(feed.title,()=>{selected=feed.id;render()});title.classList.toggle('is-selected',feed.id===selected);title.setAttribute('aria-pressed',String(feed.id===selected));row.append(title);if(https(feed.id))row.append(button('↻',()=>load(feed.id)));const remove=button('×',()=>{if(!confirm('Убрать подписку «'+feed.title+'»?'))return;if(current?.feed===feed.id){audio.pause();audio.removeAttribute('src');audio.load();current=null;player.hidden=true}state.feeds=state.feeds.filter(f=>f.id!==feed.id);persist();render()});remove.setAttribute('aria-label','Удалить подписку');row.append(remove);list.append(row)}
+for(const feed of state.feeds){const row=el('div','sv-podcast-feed');const title=button(feed.title,()=>{selected=feed.id;render()});title.classList.toggle('is-selected',feed.id===selected);title.setAttribute('aria-pressed',String(feed.id===selected));row.append(title);if(https(feed.id)){const refresh=button('↻',()=>load(feed.id));refresh.setAttribute('aria-label','Обновить выпуски');row.append(refresh)}const remove=button('×',()=>{if(!confirm('Убрать подписку «'+feed.title+'»?'))return;if(current?.feed===feed.id){audio.pause();audio.removeAttribute('src');audio.load();current=null;player.hidden=true}state.feeds=state.feeds.filter(f=>f.id!==feed.id);persist();render()});remove.setAttribute('aria-label','Удалить подписку');row.append(remove);list.append(row)}
 if(!state.feeds.length)list.append(el('p','sv-podcast-muted','Добавь любимый подкаст — новые выпуски будут здесь.'));
 renderEpisodes();
 }
