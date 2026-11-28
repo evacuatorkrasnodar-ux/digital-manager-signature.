@@ -3,6 +3,7 @@
    production index.html, plasma, layouts, local data or public app.
  */
 import {createServer, get as radioHttpGet} from 'node:http';
+import {Transform} from 'node:stream';
 import {lookupMusicReleases} from './music-discovery.mjs';
 import {MAX_LYRIC_BYTES,lyricFormat,transcribeLyrics,vocalModelConfigured} from './music-lyrics.mjs';
 import {pythonForNoteAudio} from './note-audio-transcriber.mjs';
@@ -265,9 +266,15 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
  let recognitionBusy=false,recognitionMinute=-1,recognitionCount=0;
  let discoveryMinute=-1,discoveryCount=0;
  let radio107Connections=0;
+ const radio107Metadata=new Map();
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  if(req.method==='GET'&&path==='/api/seyveo-radio-107-now'){
+   if(req.headers['sec-fetch-site']==='cross-site'){send(res,403,{error:'Недоверенная страница.'});return}
+   const quality=new URL(req.url,ORIGIN).searchParams.get('quality')==='128'?'128':'256';
+   const state=radio107Metadata.get(quality);send(res,200,{title:state&&Date.now()-state.at<60000?state.title:''});return;
+  }
   // Fixed local-only relay for Radio 107's published HTTP audio. No arbitrary
   // destination, redirects, recording, credentials or forwarded client headers.
   if(req.method==='GET'&&path==='/api/seyveo-radio-107'){
@@ -278,16 +285,32 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    if(radio107Connections>=2){send(res,429,{error:'Слишком много подключений.'});return}
    radio107Connections++;
    const target=quality==='128'?'http://62.183.34.109:8000/radio107.mp3':'http://62.183.34.109:8000/radio107_256.mp3';
-   let upstream,finished=false;
-   const finish=()=>{if(finished)return;finished=true;radio107Connections--;upstream?.destroy()};
+   let upstream,finished=false;const metaKey=quality==='128'?'128':'256';const meta={title:'',at:0};
+   const finish=()=>{if(finished)return;finished=true;radio107Connections--;if(radio107Metadata.get(metaKey)===meta)radio107Metadata.delete(metaKey);upstream?.destroy()};
    const fail=(reason)=>{if(finished)return;console.warn('[Radio 107]',quality,reason?.code||reason?.message||String(reason||'upstream unavailable'));if(!res.destroyed&&!res.headersSent)send(res,502,{error:'Эфир временно недоступен.'});else if(!res.destroyed)res.destroy();finish()};
    res.once('close',finish);
    try{
-    upstream=radioHttpGet(target,{headers:{'accept':'audio/mpeg, audio/mp3','user-agent':'SEYVEO Local Radio'}},incoming=>{
+    upstream=radioHttpGet(target,{headers:{'accept':'audio/mpeg, audio/mp3','user-agent':'SEYVEO Local Radio','Icy-MetaData':'1'}},incoming=>{
      if(finished){incoming.destroy();return}
      if(incoming.statusCode!==200||!/^audio\/(mpeg|mp3)(?:\s*;|$)/i.test(String(incoming.headers['content-type']||''))){const reason='HTTP '+incoming.statusCode+' / '+String(incoming.headers['content-type']||'no content-type');incoming.destroy();fail(reason);return}
      res.writeHead(200,{...HEADERS,'content-type':'audio/mpeg','cache-control':'no-store','accept-ranges':'none'});
-     incoming.once('error',fail);incoming.once('aborted',fail);incoming.pipe(res);
+     incoming.once('error',fail);incoming.once('aborted',fail);
+     const interval=Number(incoming.headers['icy-metaint']);
+     if(!Number.isSafeInteger(interval)||interval<1||interval>10000000){incoming.pipe(res);return}
+     radio107Metadata.set(metaKey,meta);
+     let audioLeft=interval,metadataLeft=0,readingLength=false,parts=[];
+     // ICY alternates audio bytes, a length byte, then metadata (16-byte units).
+     // Only audio is forwarded; metadata is bounded to 4080 bytes.
+     const strip=new Transform({transform(chunk,encoding,callback){
+      try{let offset=0;while(offset<chunk.length){
+       if(audioLeft>0){const count=Math.min(audioLeft,chunk.length-offset);this.push(chunk.subarray(offset,offset+count));offset+=count;audioLeft-=count;if(audioLeft===0)readingLength=true;continue}
+       if(readingLength){metadataLeft=chunk[offset++]*16;readingLength=false;parts=[];if(!metadataLeft){audioLeft=interval;meta.at=Date.now()}continue}
+       const count=Math.min(metadataLeft,chunk.length-offset);parts.push(chunk.subarray(offset,offset+count));offset+=count;metadataLeft-=count;
+       if(metadataLeft===0){const bytes=Buffer.concat(parts);let value=bytes.toString('utf8');if(value.includes('\uFFFD'))try{value=new TextDecoder('windows-1251').decode(bytes)}catch{}
+        const match=value.match(/StreamTitle='([\s\S]*?)';/i);if(match)meta.title=match[1].replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,240);meta.at=Date.now();parts=[];audioLeft=interval}
+      }callback()}catch(error){callback(error)}
+     }});
+     strip.once('error',fail);incoming.pipe(strip).pipe(res);
     });
     upstream.setTimeout(10000,()=>fail('timeout'));upstream.once('error',fail);
    }catch(error){fail(error)}
