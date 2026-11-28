@@ -8,7 +8,7 @@ const KEY='seyveo-podcasts-v1';
 // Dedicated viewport layer; independent of the music page's grid and dock.
 const overlay=document.createElement('section');overlay.id='svPodcastViewport';overlay.hidden=true;overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Плеер подкаста');
 const notice=document.createElement('p');notice.id='svPodcastViewportNotice';notice.hidden=true;notice.setAttribute('role','status');
-const polish=document.createElement('style');polish.id='svPodcastPlayerPolishV23';polish.textContent=`
+const polish=document.createElement('style');polish.id='svPodcastPlayerPolishV24';polish.textContent=`
 html body #svPodcastViewport[hidden],html body #svPodcastViewport [hidden]{display:none!important}
 html body #svPodcastViewport:not([hidden]){display:block!important;position:fixed!important;inset:0!important;z-index:2147483000!important;overflow:hidden!important;background:#151515!important;color:#fff!important;isolation:isolate;--text:#fff;--secondary:#ffffffa8;--soft-line:#ffffff38}
 html body #svPodcastViewport #svPodcastPlayer:not([hidden]){position:relative!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;align-items:stretch!important;gap:14px!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0 24px calc(22px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important;overflow-y:auto!important;border:0!important;border-radius:0!important;background:#151515!important;box-shadow:none!important;color:#fff!important}
@@ -195,6 +195,24 @@ html body #svPodcastViewport .sv-podcast-speed-head .sv-podcast-pitch{display:fl
 #svPodcastViewport .sv-podcast-speed-scale{min-height:37px;gap:7px}
 #svPodcastViewport .sv-podcast-speed-pop small{font-weight:400;font-size:11px}
 html body #svPodcastViewport .sv-podcast-speed-pop .sv-podcast-reset{font-size:11px!important;min-height:30px!important;padding:0 6px!important;color:#ffffff90!important}
+
+/* Final playback detail pass: no changes to cover artwork. */
+html body #svPodcastViewport .sv-podcast-speed-pop{width:min(248px,calc(100% - 32px));padding:8px 15px 11px;gap:7px;border-radius:26px;border-color:#ffffff20;background:rgba(24,24,26,.76)}
+#svPodcastViewport .sv-podcast-speed-head{padding-bottom:1px}
+html body #svPodcastViewport .sv-podcast-speed-head .sv-podcast-pitch{font-family:inherit;font-weight:400!important;font-size:13px!important;letter-spacing:0;gap:7px}
+#svPodcastViewport .sv-podcast-pitch svg{width:15px;height:15px}
+#svPodcastViewport .sv-podcast-speed-scale{gap:7px;min-height:34px}
+#svPodcastViewport .sv-podcast-speed-scale svg{width:19px;height:19px}
+#svPodcastViewport .sv-podcast-speed-pop small{font-size:11px;font-weight:400;letter-spacing:0}
+html body #svPodcastViewport .sv-podcast-speed-pop input::-webkit-slider-runnable-track{height:20px;background:repeating-linear-gradient(90deg,transparent 0px,transparent 3.5px,#ffffff40 3.5px,#ffffff40 5px,transparent 5px,transparent 7px)}
+html body #svPodcastViewport .sv-podcast-speed-pop input::-webkit-slider-thumb{height:25px;margin-top:-2.5px}
+html body #svPodcastViewport .sv-podcast-speed-pop input::-moz-range-track{height:20px;background:repeating-linear-gradient(90deg,transparent 0px,transparent 3.5px,#ffffff40 3.5px,#ffffff40 5px,transparent 5px,transparent 7px)}
+#svPodcastViewport .sv-podcast-quick>span{font-size:15px;font-weight:500;letter-spacing:-.02em}
+#svPodcastViewport .sv-podcast-transport #svPodcastRewind svg,#svPodcastViewport .sv-podcast-transport #svPodcastForward svg{width:30px;height:30px}
+#svPodcastViewport .sv-podcast-transport #svPodcastToggle svg{width:44px;height:44px}
+#svPodcastViewport .sv-podcast-volume svg{width:16px;height:16px}
+#svPodcastViewport .sv-podcast-bottom-tools svg{width:22px;height:22px}
+@media(prefers-reduced-transparency:reduce){html body #svPodcastViewport .sv-podcast-speed-pop{background:#242426!important}}
 `;document.head.appendChild(polish);
 overlay.append(player);player.append(notice);document.body.append(overlay);
 const speedSelect=get('svPodcastSpeed'),sleepSelect=get('svPodcastSleep'),transport=player.querySelector('.sv-podcast-transport');
@@ -206,13 +224,13 @@ speedSelect.addEventListener('change',updateQuick);sleepSelect.addEventListener(
 const sleepPop=document.createElement('div');sleepPop.className='sv-podcast-sleep-pop';sleepPop.hidden=true;player.append(sleepPop);
 function showSleep(value){sleepPop.hidden=!value;sleepQuick.setAttribute('aria-expanded',String(value));if(!value)return;showSpeed(false);queuePop.hidden=true;queueButton.setAttribute('aria-expanded','false');sleepPop.replaceChildren(el('strong','','Таймер сна'));for(const option of Array.from(sleepSelect.options)){const b=button(option.textContent,()=>{sleepSelect.value=option.value;sleepSelect.dispatchEvent(new Event('change'));showSleep(false);sleepQuick.focus({preventScroll:true})});if(option.value===sleepSelect.value){const tick=el('span');tick.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>';b.append(tick)}sleepPop.append(b)}const p=player.getBoundingClientRect(),b=sleepQuick.getBoundingClientRect();const right=Math.max(12,p.right-b.right-12);sleepPop.style.setProperty('--sv-sleep-right',right+'px');sleepPop.style.setProperty('--sv-sleep-bottom',(p.bottom-b.top+8)+'px');sleepPop.style.setProperty('--sv-sleep-arrow',Math.max(12,p.right-b.right-right+b.width/2-5)+'px')}
 sleepQuick.addEventListener('click',()=>showSleep(sleepPop.hidden));
-const skipIcon=(seconds,back)=>'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(back?'M10 3 6 8l6 1M6 8a12 12 0 1 1-2 12':'M22 3l4 5-6 1M26 8a12 12 0 1 0 2 12')+'"/><text x="16" y="21" font-family="system-ui,sans-serif" font-size="12" font-weight="600" text-anchor="middle" fill="currentColor" stroke="none">'+seconds+'</text></svg>';
+const skipIcon=(seconds,back)=>'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(back?'M10 3 6 8l6 1M6 8a12 12 0 1 1-2 12':'M22 3l4 5-6 1M26 8a12 12 0 1 0 2 12')+'"/><text x="16" y="21" font-family="system-ui,sans-serif" font-size="11" font-weight="550" text-anchor="middle" fill="currentColor" stroke="none">'+seconds+'</text></svg>';
 get('svPodcastRewind').innerHTML=skipIcon(15,true);get('svPodcastForward').innerHTML=skipIcon(30,false);get('svPodcastMiniForward').innerHTML=skipIcon(30,false);
 const speedPop=document.createElement('div');speedPop.className='sv-podcast-speed-pop';speedPop.hidden=true;
 const speedRange=document.createElement('input');speedRange.type='range';speedRange.min='0.75';speedRange.max='2';speedRange.step='0.05';speedRange.value='1';speedRange.setAttribute('aria-label','Скорость речи');
 const moreButton=document.createElement('button');moreButton.id='svPodcastMore';moreButton.type='button';moreButton.setAttribute('aria-label','Дополнительные действия');moreButton.setAttribute('aria-expanded','false');moreButton.innerHTML='<svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="13" fill="currentColor" opacity=".09"/><g fill="currentColor"><circle cx="8" cy="14" r="1.35"/><circle cx="14" cy="14" r="1.35"/><circle cx="20" cy="14" r="1.35"/></g></svg>';player.querySelector('.sv-podcast-now-identity').append(moreButton);
 const morePop=document.createElement('div');morePop.className='sv-podcast-more-pop';morePop.hidden=true;player.append(morePop);
-function showMore(value){morePop.hidden=!value;moreButton.setAttribute('aria-expanded',String(value));if(!value)return;showSpeed(false);showSleep(false);queuePop.hidden=true;queueButton.setAttribute('aria-expanded','false');morePop.replaceChildren();const active=!!(current&&state.favorites[current.id]);const favorite=button(active?'Убрать из избранного':'В избранное',()=>{favButton.click();showMore(false)});const listButton=button('Все выпуски',()=>{showMore(false);queueButton.click()});morePop.append(favorite,listButton);const p=player.getBoundingClientRect(),b=moreButton.getBoundingClientRect();morePop.style.setProperty('--sv-more-right',Math.max(12,p.right-b.right)+'px');morePop.style.setProperty('--sv-more-bottom',(p.bottom-b.top+8)+'px')}
+function showMore(value){morePop.hidden=!value;moreButton.setAttribute('aria-expanded',String(value));if(!value)return;showSpeed(false);showSleep(false);queuePop.hidden=true;queueButton.setAttribute('aria-expanded','false');morePop.replaceChildren();const active=!!(current&&state.favorites[current.id]);const favorite=button(active?'Убрать из избранного':'В избранное',()=>{favButton.click();showMore(false)});const listButton=button('Все выпуски',()=>{showMore(false);queueButton.click()});listButton.addEventListener('click',e=>e.stopPropagation());morePop.append(favorite,listButton);const p=player.getBoundingClientRect(),b=moreButton.getBoundingClientRect();morePop.style.setProperty('--sv-more-right',Math.max(12,p.right-b.right)+'px');morePop.style.setProperty('--sv-more-bottom',(p.bottom-b.top+8)+'px')}
 moreButton.addEventListener('click',()=>showMore(morePop.hidden));
 const speedNote=document.createElement('small');speedNote.textContent='Скорость воспроизведения';const speedRead=document.createElement('strong');speedRead.textContent='1×';
 const speedHead=document.createElement('div');speedHead.className='sv-podcast-speed-head';
