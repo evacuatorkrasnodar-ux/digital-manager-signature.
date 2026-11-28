@@ -932,6 +932,28 @@ html:root[data-theme="light"] body #seyveoPayDialog#seyveoPayDialog:not(#svWorkS
   border:0!important;border-radius:0!important;box-shadow:none!important;
   pointer-events:none!important;
  }
+
+ /* V46: use the very same optical material on real navigation headers
+    without adding a second blur surface or changing their layout. The
+    Music header already contains all three playlist rows and is sticky.
+    Existing measured full-header overlays remain the sole material owner. */
+ html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage > .sv-music-head,
+ html:root[data-theme="light"] body #calendarPage:not([hidden]) > .calendar-header,
+ html:root[data-theme="light"] body #manageThemeScreen:not([hidden]) > .manage-theme-head,
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject]:not([data-sv-subject="mail"]):not(.sv-full-glass-ready) > .sv-deep-top{
+  background:var(--sv-header-glass-face)!important;background-image:none!important;
+  -webkit-backdrop-filter:var(--sv-header-glass-filter)!important;
+  backdrop-filter:var(--sv-header-glass-filter)!important;
+  box-shadow:none!important;
+ }
+ html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage > .sv-music-head::before,
+ html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage > .sv-music-head::after{
+  content:none!important;display:none!important;
+ }
+ html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject]:not([data-sv-subject="mail"]):not(.sv-full-glass-ready) > .sv-deep-top .sv-continuity-titlebar{
+  background:transparent!important;background-image:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important;
+ }
  /* Mail: the title and account selector sit on a single optical face.
     Do not paint a second white strip over the upper part of the glass. */
  html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="overview"] .sv-mail-pinned-head:has(> .sv-mail-accounts:not([hidden])),
