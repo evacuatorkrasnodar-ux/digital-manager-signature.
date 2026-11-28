@@ -73,8 +73,8 @@ function update(){
  if(!state.enabled)status(state.artists.length?'Поиск новинок выключен. Сохранённые интересы можно очистить.':
   'Открытия можно включить в настройках.');
  else status(checking?'Сэйви проверяет новинки…':
-  qualified?'Подбираю новинки любимых исполнителей.':
-  'Сэйви учится по любимым релизам и прослушиваниям.');
+  qualified?'':
+  'Отмечайте сердечком то, что нравится.');
  renderReleases();
 }
 function enable(value){
@@ -127,7 +127,7 @@ function renderReleases(){
  releasesList.replaceChildren();
  for(const r of items)releasesList.append(artTile({...r,type:'Album'}));
  releasesList.hidden=mode!=='for-you'||!items.length;empty.hidden=mode!=='for-you'||!!items.length;
- emptyTitle.textContent=!state.enabled?'Открывайте новое с Сэйви':checking?'Ищу новинки':qualifiedArtists().length?'Ждём новые релизы':'Пока изучаю ваш вкус';
+ emptyTitle.textContent=!state.enabled?'Подберу музыку по вашему вкусу':checking?'Ищу новинки…':qualifiedArtists().length?'Ждём новые релизы':'Знакомлюсь с вашим вкусом';
 }
 function chooseReleases(data,artist,now=Date.now()){
  if(!data||!Array.isArray(data.results))return [];
@@ -289,6 +289,12 @@ let mode='for-you', lastItems=[], lastStale=false, previewRun=0, previewControll
 const filters=[['for-you','Для тебя'],['genres','Мои жанры'],['ru','Россия'],['world','Мир'],['rock','Рок'],['pop','Поп'],['chanson','Шансон'],['russianrock','Русский рок'],['russianpop','Русский поп'],['hiphop','Хип-хоп'],['electronic','Электроника'],['upcoming','Скоро'],['news','Новости'],['liked','Понравилось']];
 const filterBar=document.createElement('nav');filterBar.className='sv-new-filterbar';filterBar.setAttribute('aria-label','Фильтры новинок');
 const feedHead=panel.querySelector('.sv-discovery-feed-head');
+if(feedHead){
+ feedHead.classList.add('sv-new-personal-head');
+ const heading=feedHead.querySelector('h3');if(heading)heading.textContent='Сэйви';
+ const edit=$('svDiscoveryEditTaste');if(edit){edit.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="var(--card,#fff)"/><circle cx="15" cy="12" r="2" fill="var(--card,#fff)"/><circle cx="10" cy="17" r="2" fill="var(--card,#fff)"/></svg>';edit.title='Изменить жанры';edit.setAttribute('aria-label',edit.title)}
+}
+const emptyCaption=empty?.querySelector('.sv-discovery-empty-caption');if(emptyCaption)emptyCaption.hidden=true;
 panel.insertBefore(filterBar,offer||feedHead);
 function button(label,cls,svg){
  const b=document.createElement('button');b.type='button';b.className=cls;b.setAttribute('aria-label',label);b.title=label;
@@ -395,6 +401,28 @@ html:root body #sayviMusicPage #sayviDiscoveryPanel .sv-new-story{grid-column:1/
 #sayviDiscoveryPanel .sv-new-preview p,#sayviDiscoveryPanel .sv-new-preview a{font-size:12px;line-height:1.45}
 #sayviDiscoveryPanel .sv-new-preview a{color:inherit;text-decoration:underline}
 #sayviDiscoveryPanel #svDiscoveryUpcoming[hidden],#sayviDiscoveryPanel #svDiscoveryNews[hidden],#sayviDiscoveryPanel .sv-discovery-feed-head[hidden],#sayviDiscoveryPanel #svMusicDiscoveryEmpty[hidden]{display:none!important}
+
+/* Compact editorial rhythm, only the New screen. */
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel:not([hidden]){gap:10px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-filterbar{margin:0 -4px 0!important;padding:2px 4px 5px!important;gap:7px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-chip{min-height:34px!important;padding:0 12px!important;font-size:12px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-personal-head{min-height:44px!important;margin:0!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-personal-head h3{font-size:15px!important;font-weight:550!important;color:var(--secondary)}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel #svDiscoveryEditTaste{display:grid!important;place-items:center;width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;color:var(--secondary)}
+#sayviDiscoveryPanel #svDiscoveryEditTaste svg{width:21px;height:21px}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel #svMusicDiscoveryEmpty:not([hidden]){padding:0!important;align-items:flex-start!important;text-align:left!important;gap:3px!important;margin:0!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel #svMusicDiscoveryEmpty>svg,html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-empty-caption[hidden]{display:none!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel #svMusicDiscoveryEmptyTitle{font-size:15px!important;font-weight:550!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel #sayviDiscoveryStatus{max-width:none!important;margin:0!important;text-align:left!important;font-size:12px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-public{margin-top:5px!important;gap:6px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-releases:not([hidden]){gap:12px 12px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-tile{gap:3px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-tile .sv-discovery-release-art{border-radius:13px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-no-art{align-content:center;justify-items:center;gap:8px;background:radial-gradient(ellipse at 30% 15%,rgba(155,179,210,.17),transparent 65%),linear-gradient(150deg,rgba(138,155,172,.09),rgba(138,155,172,.18))!important}
+#sayviDiscoveryPanel .sv-new-art-caption{font-size:10px;line-height:1.2;color:var(--secondary)}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-story{padding:10px 0!important;margin:1px 0!important;gap:4px 8px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-story strong{font-weight:550!important;font-size:15px!important}
+#sayviDiscoveryPanel .sv-new-actions{margin-top:-2px;gap:0}
 `;document.head.append(style);
 
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
@@ -405,8 +433,9 @@ function artTile(r){
  const tile=document.createElement('article');tile.className='sv-discovery-tile sv-new-tile';
  const art=document.createElement('span');art.className='sv-discovery-release-art';art.setAttribute('aria-hidden','true');
  const fallback='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17V6l11-3v11"/><ellipse cx="6" cy="17.5" rx="3" ry="2.3"/><ellipse cx="17" cy="14.5" rx="3" ry="2.3"/></svg>';art.innerHTML=fallback;
+ const showFallback=()=>{art.innerHTML=fallback;art.classList.add('sv-new-no-art');const mark=document.createElement('span');mark.className='sv-new-art-caption';mark.textContent='Без обложки';art.append(mark)};showFallback();
  const img=document.createElement('img');img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
- img.addEventListener('error',()=>{art.innerHTML=fallback},{once:true});
+ img.addEventListener('error',showFallback,{once:true});img.addEventListener('load',()=>art.classList.remove('sv-new-no-art'),{once:true});
  const imageURL=uuid(r.id)?'https://coverartarchive.org/release-group/'+r.id+'/front-250':safeArtwork(r.artwork);if(imageURL){img.src=imageURL;art.replaceChildren(img)}
  const title=document.createElement('strong');title.textContent=r.title;title.title=r.title;
  const artist=document.createElement('small');artist.textContent=r.artist;artist.title=r.artist;
@@ -449,7 +478,7 @@ function showPublic(items,stale=false){
    if(i===5&&upcoming[1])cards.push(story(upcoming[1],true));
   }
   if(recent.length<2&&upcoming[0])cards.push(story(upcoming[0],true));
-  if(upcoming.length){const heading=document.createElement('h3');heading.textContent='Скоро выйдут';heading.style.gridColumn='1/-1';cards.push(heading,...upcoming.slice(0,4).map(artTile))}
+  const remaining=upcoming.slice(recent.length>=6?2:1,5);if(remaining.length){const heading=document.createElement('h3');heading.textContent='Скоро выйдут';heading.style.gridColumn='1/-1';cards.push(heading,...remaining.map(artTile))}
  }
  publicList.replaceChildren(...cards);
  publicMessage(mode==='liked'?(cards.length?'':'Нажмите сердечко на релизе или анонсе — он останется здесь.'):stale?'Сохранённая подборка · обновление пока недоступно.':cards.length?'':'В каталоге пока нет подходящих релизов.');
