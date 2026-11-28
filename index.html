@@ -9709,11 +9709,12 @@ html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"].sv
 html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"].sv-music-radio-player #svNowMenu>.sv-radio-only-tool{display:flex!important}
 html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"].sv-music-radio-player > .sv-now-tools{
  width:min(100%,360px)!important;justify-content:space-between;padding:0 10px!important;
- margin:auto auto max(8px,env(safe-area-inset-bottom,0px))!important;
+ margin:clamp(16px,3.8vh,34px) auto auto!important;
 }
-html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"].sv-music-radio-player #svRadioSong:not([hidden]){
+html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"].sv-music-radio-player #svRadioSong{
+ display:flex!important;align-items:center;flex:0 0 auto;
  width:min(100%,var(--sv-music-art-size),420px)!important;
- min-height:62px;justify-content:space-between;gap:12px;margin:0 auto!important;
+ min-height:76px;justify-content:space-between;gap:12px;margin:0 auto!important;
 }
 #sayviMusicPage.sv-music-radio-player #svRadioSongTitle{
  display:grid;flex:1;gap:4px;line-height:1.28;overflow:visible;
@@ -9735,7 +9736,11 @@ html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"].sv
 #sayviMusicPage.sv-music-radio-player .sv-radio-player-identity{gap:7px}
 #sayviMusicPage.sv-music-radio-player #svRadioPlayerFrequency{letter-spacing:.045em}
 @media(max-height:650px){
- html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"].sv-music-radio-player > .sv-now-tools{margin:0 auto 4px!important}
+ html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"].sv-music-radio-player > .sv-now-tools{margin:8px auto auto!important}
+}
+/* Reserve the song slot through metadata loading, pause and station changes. */
+html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"].sv-music-radio-player #svRadioSong[hidden]{
+ display:flex!important;visibility:hidden;pointer-events:none;
 }
 </style>
 
