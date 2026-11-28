@@ -141,7 +141,7 @@ void main(){
   }
   x=clamp(2.0*u-1.0,-.9999,.9999);
  }
- if(uKind>4.5&&uKind<5.5){p=vec3(x*1.10,(2.0*v-1.0)*1.10,0.0);vLight=1.0;}
+ if(uKind>4.5&&uKind<5.5){p=vec3(x*1.10,mix(-1.10,1.22,v),0.0);vLight=1.0;}
  else if(uKind>7.5){p=crease(x,v);vLight=1.0;}
  else {p=matter(x,v);vec3 dx=matter(clamp(x+.006,-.9999,.9999),v)-matter(clamp(x-.006,-.9999,.9999),v);vec3 dy=matter(x,min(1.0,v+.006))-matter(x,max(0.0,v-.006));vec3 n=cross(dx,dy);n/=length(n)+.000001;n*=n.z<0.0?-1.0:1.0;vLight=abs(n.z);vec3 lightDir=normalize(vec3(-.72,-.55,.65));vSheen=pow(max(0.0,dot(n,lightDir)),2.0);}
  float glass=step(4.5,uKind)*(1.0-step(5.5,uKind));
@@ -178,11 +178,11 @@ highp vec2 pulseIntegral(highp vec2 t,highp vec2 r){return floor(t)*(2.0*r)+clam
 void main(){
  float x=vUV.x,v=vUV.y,alpha;vec3 col;
  if(uKind>4.5&&uKind<5.5){
-  vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
+  vec2 xy=vec2(1.10*x,mix(-1.10,1.22,v));float r=length(xy),a=atan(xy.y,xy.x+.00001);
   if(r>1.0){
    float glow=gauss(r-1.0,.045)*(.018+.15*peak(a,-2.16,.44)+.28*peak(a,1.30,.58));
     // Separated soft caustic under the floating sphere, with a bright narrow core.
-   float floorGlow=gauss(xy.x,.48)*gauss(xy.y-1.070,.025)*.30+gauss(xy.x,.22)*gauss(xy.y-1.072,.012)*.43;
+   float floorGlow=gauss(xy.x,.55)*gauss(xy.y-1.155,.031)*.24+gauss(xy.x,.28)*gauss(xy.y-1.158,.016)*.32;
    vec3 tint=mix(vec3(.27,.75,.77),vec3(.48,1.0,.96),clamp(floorGlow*1.35,0.0,1.0));
    glow=clamp(glow+floorGlow,0.0,.92);
    gl_FragColor=vec4(tint,glow*.82);return;
