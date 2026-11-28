@@ -7,11 +7,11 @@
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
-const showSettings=$('sayviMusicDiscoveryToggle'),panel=$('sayviDiscoveryPanel');
+const panel=$('sayviDiscoveryPanel');
 const consent=$('sayviDiscoveryToggle'),checkButton=$('sayviDiscoveryCheck'),
  clearButton=$('sayviDiscoveryForget'),info=$('sayviDiscoveryStatus'),
  releasesList=$('svMusicDiscoveryReleases'),empty=$('svMusicDiscoveryEmpty'),emptyTitle=$('svMusicDiscoveryEmptyTitle');
-if(!showSettings||!panel||!consent||!checkButton||!clearButton||!info)return;
+if(!panel||!consent||!checkButton||!clearButton||!info)return;
 const STORE='seyveo-discovery-music-v1';
 const CHOICE='seyveo-discovery-choice-v1';
 const offer=$('svDiscoveryOffer'),offerYes=$('svDiscoveryOfferYes'),offerNo=$('svDiscoveryOfferNo'),settings=$('svDiscoverySettings'),settingsButton=$('svDiscoverySettingsButton');
