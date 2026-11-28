@@ -37,7 +37,7 @@ async function load(url,meta=null){
 const id=https(url);if(!id){say('Вставь HTTPS-ссылку на RSS подкаста.');return}
 const token=++loadToken;const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);
 say('Загружаю выпуски…');get('svPodcastAdd').disabled=true;
-try{const res=await fetch(id,{signal:controller.signal,credentials:'omit',referrerPolicy:'no-referrer'});if(!res.ok)throw Error('Лента недоступна.');const xml=await res.text();if(xml.length>3000000)throw Error('Лента слишком большая.');if(token!==loadToken)return;const data=parse(xml,res.url||id);if(meta){data.author=data.author||meta.author||'';data.directoryId=meta.directoryId||null;data.country=meta.country||'RU'}storeFeed(id,data);input.value='';say('');return true}
+try{const res=await fetch(id,{signal:controller.signal,credentials:'omit',referrerPolicy:'no-referrer'});if(!res.ok)throw Error('Лента недоступна.');const xml=await res.text();if(xml.length>3000000)throw Error('Лента слишком большая.');if(token!==loadToken)return;const data=parse(xml,res.url||id);if(meta){data.author=data.author||meta.author||'';data.artwork=data.artwork||meta.artwork||'';data.directoryId=meta.directoryId||null;data.country=meta.country||'RU'}storeFeed(id,data);input.value='';say('');return true}
 catch(e){if(token===loadToken){if(meta?.directoryId){try{const data=await directoryEpisodes(meta);if(token!==loadToken)return false;storeFeed(id,data);say('');return true}catch{}}say(e.message==='Failed to fetch'||e.name==='AbortError'||e instanceof TypeError?'Сайт не разрешает загрузить ленту из приложения. Можно добавить скачанный RSS-файл.':e.message||'Не удалось загрузить ленту.');return false}}
 finally{clearTimeout(timeout);if(token===loadToken)get('svPodcastAdd').disabled=false}
 }
@@ -74,7 +74,7 @@ const searchOpen=get('svPodcastSearchOpen'),searchForm=get('svPodcastSearchBar')
 let searchSerial=0,manageOpen=false;
 function openSearch(value=true){
  searchForm.hidden=!value;searchOpen.setAttribute('aria-expanded',String(value));
- if(value){searchInput.focus()}else{searchSerial++;results.hidden=true;results.replaceChildren();searchInput.value=''}
+ if(value){searchInput.focus()}else{searchSerial++;results.hidden=true;results.replaceChildren();searchInput.value='';panel.classList.remove('sv-podcast-search-active')}
 }
 searchOpen.addEventListener('click',()=>openSearch(searchForm.hidden));
 manage.addEventListener('click',()=>{manageOpen=!manageOpen;manual.hidden=!manageOpen;manage.setAttribute('aria-expanded',String(manageOpen));render()});
@@ -133,22 +133,24 @@ async function directoryEpisodes(meta){
  const data=await directoryRequest('lookup',{id:meta.directoryId,entity:'podcastEpisode',limit:50,country:meta.country||'RU'});
  const items=[];for(const x of (data.results||[])){const src=https(x.episodeUrl);if(x.kind!=='podcast-episode'||!src||items.some(e=>e.id===src))continue;items.push({id:src,src,title:String(x.trackName||'Выпуск').slice(0,250),date:String(x.releaseDate||'').slice(0,100)})}
  if(!items.length)throw Error('Выпуски недоступны');
- return {title:meta.title,author:meta.author||'',directoryId:meta.directoryId,country:meta.country||'RU',artwork:'',items}
+ return {title:meta.title,author:meta.author||'',directoryId:meta.directoryId,country:meta.country||'RU',artwork:meta.artwork||'',items}
 }
 let following=false;
 async function search(term){
  term=String(term||'').trim();if(!term)return;
- const token=++searchSerial;results.hidden=false;results.replaceChildren(el('p','sv-podcast-muted','Ищу подкасты…'));
+ const token=++searchSerial;panel.classList.add('sv-podcast-search-active');document.getElementById('sayviMusicPage').scrollTop=0;searchInput.blur();results.hidden=false;results.replaceChildren(el('p','sv-podcast-muted','Ищу подкасты…'));
  try{
   const country=countryFor(term);const data=await directoryRequest('search',{term,media:'podcast',entity:'podcast',limit:24,country});if(token!==searchSerial)return;
   results.replaceChildren(el('h3','sv-podcast-heading','Результаты поиска'));
-  const found=[];for(const x of (data.results||[])){const id=https(x.feedUrl);if(!id||found.some(f=>f.id===id))continue;found.push({id,title:String(x.collectionName||x.trackName||'Подкаст').slice(0,160),author:String(x.artistName||'').slice(0,160),directoryId:Number(x.collectionId||x.trackId)||null,country})}
+  const found=[];for(const x of (data.results||[])){const id=https(x.feedUrl);if(!id||found.some(f=>f.id===id))continue;found.push({id,title:String(x.collectionName||x.trackName||'Подкаст').slice(0,160),author:String(x.artistName||'').slice(0,160),directoryId:Number(x.collectionId||x.trackId)||null,artwork:https(x.artworkUrl100||x.artworkUrl60||x.artworkUrl600),country})}
   if(!found.length)results.append(el('p','sv-podcast-muted','Ничего не найдено. Попробуй другое название или тему.'));
-  for(const feed of found){const row=el('div','sv-podcast-result');const subscribed=state.feeds.some(f=>f.id===feed.id);const follow=action(subscribed?'Подписан':'＋',async()=>{if(following||state.feeds.some(f=>f.id===feed.id))return;following=true;follow.disabled=true;follow.textContent='…';try{const ok=await load(feed.id,feed);follow.textContent=ok?'Подписан':'＋';follow.disabled=!!ok;if(!ok&&status.textContent&&token===searchSerial)results.append(el('p','sv-podcast-muted',status.textContent))}finally{following=false}});follow.disabled=subscribed;follow.setAttribute('aria-label',subscribed?'Уже в подписках':'Подписаться на '+feed.title);row.append(artwork(feed),copyOf(feed.title,feed.author),follow);results.append(row)}
+  for(const feed of found){const row=el('div','sv-podcast-result');const subscribed=state.feeds.some(f=>f.id===feed.id);const follow=action(subscribed?'✓':'＋',async()=>{if(following||state.feeds.some(f=>f.id===feed.id))return;following=true;follow.disabled=true;follow.textContent='…';try{const ok=await load(feed.id,feed);follow.textContent=ok?'✓':'＋';follow.disabled=!!ok;if(ok)follow.setAttribute('aria-label','Уже в подписках');if(!ok&&status.textContent&&token===searchSerial)results.append(el('p','sv-podcast-muted',status.textContent))}finally{following=false}});follow.disabled=subscribed;follow.setAttribute('aria-label',subscribed?'Уже в подписках':'Подписаться на '+feed.title);row.append(artwork(feed),copyOf(feed.title,feed.author),follow);results.append(row)}
   if(found.length)results.append(el('small','sv-podcast-directory-credit','Каталог: Apple Podcasts. Аудио — из открытых лент издателей.'));
  }catch{if(token===searchSerial)results.replaceChildren(el('p','sv-podcast-muted','Каталог временно недоступен. Попробуй ещё раз.'))}
 }
 searchForm.addEventListener('submit',e=>{e.preventDefault();search(searchInput.value)});
+searchInput.addEventListener('input',()=>{if(!searchInput.value.trim()){searchSerial++;results.hidden=true;results.replaceChildren();panel.classList.remove('sv-podcast-search-active')}});
+searchInput.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();openSearch(false);searchOpen.focus()}});
 get('svPodcastTopics').addEventListener('click',e=>{const b=e.target.closest('[data-podcast-topic]');if(!b)return;openSearch();searchInput.value=b.dataset.podcastTopic;search(searchInput.value)});
 let refreshing=false;
 async function refreshSubscriptions(){
