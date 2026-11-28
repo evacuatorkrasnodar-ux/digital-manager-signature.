@@ -6,7 +6,12 @@
 const $=id=>document.getElementById(id);
 const Speech=()=>window.SpeechRecognition||window.webkitSpeechRecognition;
 let active=false,armed=false,engine=null,started=0,shortEnds=0;
-let retryTimer=null,questionTimer=null,hintTimer=null;
+let retryTimer=null,questionTimer=null,hintTimer=null,replyTimer=null;
+const musicRoute=()=>location.hash==='#sayvi-music';
+const allowedRoute=()=>!location.hash||musicRoute();
+const root=document.documentElement;
+const musicEntry=$('svMusicWakeToggle');
+let replyUntil=0;
 const button=$('assistantButton'),status=$('wakeVoiceStatus');
 function hint(message){
  const view=$('voiceHint');
@@ -14,10 +19,12 @@ function hint(message){
  clearTimeout(hintTimer);
  hintTimer=setTimeout(()=>view.classList.remove('active'),3600);
 }
-function state(message){status.hidden=false;$('wakeVoiceLabel').textContent=message}
+function state(message){status.hidden=false;$('wakeVoiceLabel').textContent=message;root.classList.toggle('sv-music-wake-active',musicRoute()&&active);root.classList.toggle('sv-music-wake-listening',musicRoute()&&armed);if(musicEntry){musicEntry.setAttribute('aria-pressed',String(active));musicEntry.querySelector('span').textContent=active?'Выключить вызов Сэйви':'Вызов Сэйви голосом'}}
+function duck(value){window.SEYVEO_ADAPTIVE_SOUND?.setVoiceDuck?.(value?0.24:1)}
 function stop(message=''){
  active=false;armed=false;
- clearTimeout(retryTimer);clearTimeout(questionTimer);
+ clearTimeout(retryTimer);clearTimeout(questionTimer);clearTimeout(replyTimer);replyUntil=0;duck(false);
+ root.classList.remove('sv-music-wake-active','sv-music-wake-listening');if(musicEntry){musicEntry.setAttribute('aria-pressed','false');musicEntry.querySelector('span').textContent='Вызов Сэйви голосом'}
  const old=engine;engine=null;
  if(old){try{old.abort()}catch{try{old.stop()}catch{}}}
  status.hidden=true;
@@ -26,7 +33,7 @@ function stop(message=''){
 }
 function ready(){
  if(!active)return;
- armed=false;clearTimeout(questionTimer);
+ armed=false;clearTimeout(questionTimer);duck(false);
  button.classList.remove('wake-awake');
  button.classList.add('wake-ready');
  state(wakeLabel());
@@ -38,7 +45,7 @@ function normalize(text){
 // Read the name at the moment of activation. Never turn microphone on just
 // because a saved preference changed. No audio or transcripts are persisted.
 const PROFILE='seyveo-first-acquaintance-v1';
-const BRAND_WAKE=Object.freeze(['сэйви','сейви','сэй','сей','сейвео','сэйвео','сейвио','сейвеу','сей вео','сей-вео','сейв ео','сейв-ео','seyveo']);
+const BRAND_WAKE=Object.freeze(['сэйви','сейви','сэйва','сейва','сэй','сей','сейвео','сэйвео','сейвио','сейвеу','сей вео','сей-вео','сейв ео','сейв-ео','seyveo']);
 function assistantNames(){
  let preferred='',aliases=[];
  try{
@@ -75,6 +82,15 @@ function wakeTail(text){
 function deliver(text){
  const phrase=String(text||'').trim();
  if(!phrase)return;
+ if(musicRoute()){
+  // Music commands use the same local player. No synthetic second assistant.
+  armed=false;clearTimeout(questionTimer);duck(false);button.classList.remove('wake-awake');button.classList.add('wake-ready');
+  let action=null;try{action=window.SEYVEO_MUSIC_ACTIONS?.handle?.(phrase)}catch{}
+  if(action){
+   if(action.status==='recognition-request'){stop();action.open?.();return}
+   replyUntil=Date.now()+2200;state(action.message||'Готово');clearTimeout(replyTimer);replyTimer=setTimeout(ready,2200);return;
+  }
+ }
  stop();
  // The wake phrase is a voice conversation, not an instruction to open
  // the text composer. The shared interpreter opens only requested previews.
@@ -82,19 +98,19 @@ function deliver(text){
  else hint('Помощник ещё загружается. Попробуйте снова.');
 }
 function handleSpeech(text){
- if(!active||document.hidden||location.hash)return;
+ if(!active||document.hidden||!allowedRoute()||Date.now()<replyUntil)return;
  const tail=wakeTail(text);
  if(tail!==null){
   armed=true;button.classList.remove('wake-ready');
   button.classList.add('wake-awake');
-  state('Слушаю. Что нужно?');
+  state('Слушаю. Что нужно?');if(musicRoute())duck(true);
   clearTimeout(questionTimer);
   questionTimer=setTimeout(ready,12000);
   if(tail)deliver(tail);
  }else if(armed)deliver(text);
 }
 function begin(){
- if(!active||document.hidden||location.hash)return;
+ if(!active||document.hidden||!allowedRoute())return;
  const Ctor=Speech();
  if(!Ctor){stop('Браузер не поддерживает обращение по имени.');return}
  try{
@@ -125,7 +141,7 @@ function begin(){
    if(engine!==sr)return;
    engine=null;
    if(!active)return;
-   if(document.hidden||location.hash){stop();return}
+   if(document.hidden||!allowedRoute()){stop();return}
    shortEnds=Date.now()-started<7000?shortEnds+1:0;
    if(shortEnds>1){stop('Браузер завершил ожидание. Включите снова вручную.');return}
    state('Восстанавливаю прослушивание…');
@@ -135,6 +151,7 @@ function begin(){
  }catch{stop('Браузер не разрешил продолжить прослушивание.')}
 }
 function start(){
+ if(!allowedRoute()){hint('Откройте главную или музыку.');return}
  if(active){stop('Ожидание имени выключено');return}
  if(!Speech()){hint('Обращение по имени не поддерживается этим браузером.');return}
  active=true;armed=false;shortEnds=0;
@@ -151,6 +168,9 @@ function offer(){
  $('wakeVoiceConsent').showModal();
 }
 $('wakeVoiceMore').addEventListener('click',offer);
+musicEntry?.addEventListener('click',()=>{$('svNowMenuClose')?.click();offer()});
+// Move the existing indicator out of the home-only container so it also appears over music.
+if(status)document.body.append(status);
 $('wakeVoiceStop').addEventListener('click',()=>stop('Ожидание имени выключено'));
 $('wakeVoiceCancel').addEventListener('click',()=>$('wakeVoiceConsent').close());
 $('wakeVoiceConfirm').addEventListener('click',()=>{
@@ -159,7 +179,7 @@ $('wakeVoiceConfirm').addEventListener('click',()=>{
  start();
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
-window.addEventListener('hashchange',()=>{if(location.hash)stop()});
+window.addEventListener('hashchange',()=>{if(!allowedRoute())stop();else if(active){duck(armed&&musicRoute());state(armed?'Слушаю. Что нужно?':wakeLabel())}});
 window.addEventListener('seyveo:manual-voice',()=>stop());
 window.addEventListener('seyveo:profile-changed',()=>{if(active&&!armed)state(wakeLabel())});
 window.addEventListener('storage',event=>{if(event.key===PROFILE&&active&&!armed)state(wakeLabel())});
