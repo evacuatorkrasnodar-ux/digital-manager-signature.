@@ -717,6 +717,23 @@ function initRadio(){
  }
  document.addEventListener('seyveo:music-view',e=>{const next=e.detail?.view==='radio';if(next&&!radioVisible){render();animateRadio();void loadRegional()}if(!next){closeRadioMenu();cancelPause()}radioVisible=next});
  document.addEventListener('seyveo:music-state',drawRadio);
+ // Radio song likes are distinct from pinned radio stations and local audio files.
+ const songBox=document.getElementById('svRadioSong'),songText=document.getElementById('svRadioSongTitle'),songLike=document.getElementById('svRadioSongLike'),songList=document.getElementById('svRadioSavedSongs');
+ const songsKey='seyveo-radio-saved-songs-v1';let songs=[],currentSong='',songTimer=0,songRequest=null,songGeneration=0;
+ try{const saved=JSON.parse(localStorage.getItem(songsKey)||'[]');if(Array.isArray(saved))songs=saved.filter(x=>typeof x?.title==='string'&&x.title.length<=240).slice(0,500)}catch{}
+ const songKey=t=>String(t||'').trim().toLocaleLowerCase();
+ function paintSavedSongs(){if(!songList)return;songList.hidden=!songs.length;songList.replaceChildren();if(!songs.length)return;const title=document.createElement('h3');title.textContent='Понравилось в эфире';songList.append(title);for(const song of songs){const row=document.createElement('div');row.className='sv-radio-saved-song';const copy=document.createElement('div'),name=document.createElement('strong'),sub=document.createElement('small');name.textContent=song.title;sub.textContent=song.station||'Радио';copy.append(name,sub);const remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.setAttribute('aria-label','Убрать из сохранённых: '+song.title);remove.addEventListener('click',()=>saveSongs(songs.filter(x=>songKey(x.title)!==songKey(song.title))));row.append(copy,remove);songList.append(row)}}
+ function paintSong(){if(!songBox||!songText||!songLike)return;songBox.hidden=!currentSong;songText.textContent=currentSong;const liked=!!currentSong&&songs.some(x=>songKey(x.title)===songKey(currentSong));songLike.setAttribute('aria-pressed',String(liked));songLike.setAttribute('aria-label',liked?'Убрать песню из сохранённых':'Сохранить песню');}
+ function saveSongs(next){try{localStorage.setItem(songsKey,JSON.stringify(next.slice(0,500)))}catch{return false}songs=next.slice(0,500);paintSong();paintSavedSongs();return true}
+ songLike?.addEventListener('click',()=>{if(!currentSong)return;const state=window.SEYVEO_MUSIC?.state?.();if(state?.stationId!=='krd107')return;const key=songKey(currentSong);saveSongs(songs.some(x=>songKey(x.title)===key)?songs.filter(x=>songKey(x.title)!==key):[{title:currentSong,station:'Радио 107',at:Date.now()},...songs])});
+ function radioSongActive(){const state=window.SEYVEO_MUSIC?.state?.();return state?.source==='radio'&&state.stationId==='krd107'&&!audio.paused&&!audio.ended&&!audio.error&&!document.hidden&&page.dataset.musicView==='player'&&!page.hidden&&['127.0.0.1:8790','localhost:8790'].includes(location.host)?state:null}
+ function stopSongPoll(){clearTimeout(songTimer);songTimer=0;songGeneration++;songRequest?.abort();songRequest=null;currentSong='';paintSong()}
+ async function pollSong(){songTimer=0;const state=radioSongActive();if(!state){stopSongPoll();return}const generation=songGeneration;const controller=new AbortController();songRequest=controller;const timeout=setTimeout(()=>controller.abort(),4000);try{const q=/128/.test(state.quality||'')?'128':'256';const result=await fetch('/api/seyveo-radio-107-now?quality='+q,{cache:'no-store',signal:controller.signal});if(!result.ok)throw Error('metadata');const data=await result.json();if(generation!==songGeneration||!radioSongActive())return;const raw=typeof data.title==='string'?data.title.trim().slice(0,240):'';currentSong=/\s[-–—]\s/.test(raw)?raw:'';paintSong()}catch{if(generation===songGeneration){currentSong='';paintSong()}}finally{clearTimeout(timeout);if(generation===songGeneration){songRequest=null;if(radioSongActive())songTimer=setTimeout(pollSong,5000)}}}
+ function syncSongPoll(){if(!radioSongActive()){stopSongPoll();return}if(!songTimer&&!songRequest)void pollSong()}
+ for(const name of ['playing','pause','error','emptied','ended'])audio.addEventListener(name,syncSongPoll);
+ for(const name of ['seyveo:music-state','seyveo:music-view','visibilitychange'])document.addEventListener(name,syncSongPoll);
+ window.addEventListener('pagehide',stopSongPoll);
+ paintSavedSongs();syncSongPoll();
  for(const name of ['playing','pause','error','emptied'])audio.addEventListener(name,drawRadio);
  toggle.addEventListener('click',()=>{if(window.SEYVEO_MUSIC_DOCK?.show){window.SEYVEO_MUSIC_DOCK.show('radio');return}panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));});
 }
