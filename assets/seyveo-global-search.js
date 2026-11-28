@@ -292,7 +292,14 @@ function note(textValue,className='sv-search-caption'){
 }
 function radioResults(found,raw,online=false){
  results.replaceChildren();liveMatches=found.slice(0,40).map(st=>({title:st.name,meta:[st.country,st.city,st.quality].filter(Boolean).join(' · '),action:'radio:'+st.id}));
- if(liveMatches.length){for(const entry of liveMatches)results.append(itemRow(entry,'record'));}
+ if(liveMatches.length){for(const entry of liveMatches){
+  const row=document.createElement('div');row.className='sv-radio-search-result';
+  const id=entry.action.slice(6),heart=document.createElement('button');heart.type='button';heart.className='sv-radio-search-heart';
+  heart.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.6c0 4.1-8.8 9.9-8.8 9.9S3.2 12.7 3.2 8.6a4.6 4.6 0 0 1 8.8-1.8 4.6 4.6 0 0 1 8.8 1.8Z"/></svg>';
+  const sync=()=>{const liked=!!window.SEYVEO_RADIO?.isFavorite?.(id);heart.setAttribute('aria-pressed',String(liked));heart.setAttribute('aria-label',(liked?'Убрать из избранного: ':'В избранное: ')+entry.title)};
+  sync();heart.addEventListener('click',()=>{window.SEYVEO_RADIO?.toggleFavorite?.(id);sync()});
+  row.append(itemRow(entry,'record'),heart);results.append(row);
+ }}
  else results.append(note(online?'Станции не найдены.':'Введите название радиостанции.'));
  if(raw&&raw.length>=2&&!online)results.append(actionButton('Искать в каталоге радио','radio-search','Поиск радиостанций'));
 }
