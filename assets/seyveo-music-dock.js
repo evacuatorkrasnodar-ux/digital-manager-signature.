@@ -657,7 +657,7 @@ function initRadio(){
    buttons.set(station.id,cover);
    const copy=document.createElement('div');copy.className='sv-radio-copy';const title=document.createElement('strong');title.textContent=station.name;title.title=station.name;
    const subtitle=document.createElement('small');subtitle.textContent=station.city||station.country||'';subtitle.hidden=!subtitle.textContent;
-   copy.append(title,subtitle);const fm=String(station.quality||'').match(/^\s*(\d{2,3}(?:[.,]\d+)?)\s*FM\s*$/i);if(fm){const frequency=document.createElement('small');frequency.className='sv-radio-frequency';frequency.textContent=fm[1].replace('.',',')+' FM';copy.append(frequency)}row.append(cover,copy);bindRadioHold(row,station);list.append(row);
+   const fm=String(station.quality||'').match(/^\s*(\d{2,3}(?:[.,]\d+)?)\s*FM\s*$/i);subtitle.textContent=[station.city||station.country||'',fm?fm[1].replace(',','.'):''].filter(Boolean).join(' · ');subtitle.hidden=!subtitle.textContent;copy.append(title,subtitle);row.append(cover,copy);bindRadioHold(row,station);list.append(row);
   }
   if(!list.children.length){const empty=document.createElement('p');empty.className='sv-radio-empty';empty.textContent='Станции не найдены';list.append(empty)}
   drawRadio();
