@@ -87,14 +87,20 @@ function init(){
    }
    return;
   }
-  const header=document.createElement('div');header.className='sv-pl-head';const title=document.createElement('h4');title.textContent='Мои плейлисты';header.append(title,playlistButton('+ Новый',()=>playlistEditor(el,library,null),'sv-pl-primary'));el.append(header);
+  const header=document.createElement('div');header.className='sv-pl-head sv-pl-home-heading';const title=document.createElement('h4');title.textContent='Мои плейлисты';header.append(title);el.append(header);
+  const create=document.createElement('button');create.type='button';create.className='sv-pl-card sv-pl-create';create.innerHTML='<span class="sv-pl-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span><strong>Новый плейлист</strong><small>Создай свою коллекцию</small></span><span class="sv-pl-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></span>';create.addEventListener('click',()=>playlistEditor(el,library,null));el.append(create);
   function card(p,smartCard){
-   const b=document.createElement('button');b.type='button';b.className='sv-pl-card';const art=document.createElement('span');art.className='sv-pl-art';art.innerHTML=smartCard?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 3v18M3 12h18M6 6l12 12M18 6 6 18"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 6h16M4 11h12M4 16h8M18 12v8m-4-4h8"/></svg>';
-   const copy=document.createElement('span');const name=document.createElement('strong');name.textContent=p.name;const meta=document.createElement('small');meta.textContent=(p.sub?p.sub+' · ':'')+getTracks(p).length+' тр.';copy.append(name,meta);const arrow=document.createElement('span');arrow.textContent='›';b.append(art,copy,arrow);b.addEventListener('click',()=>{playlistOpen=p.id;renderTracks()});el.append(b);
+   const b=document.createElement('button');b.type='button';b.className='sv-pl-card';const art=document.createElement('span');art.className='sv-pl-art';art.setAttribute('aria-hidden','true');
+   const symbols={
+    'smart:favorites':['favorite','<path d="M20.5 5.5a5 5 0 0 0-7 0L12 7l-1.5-1.5a5 5 0 0 0-7 7L12 21l8.5-8.5a5 5 0 0 0 0-7Z"/>'],
+    'smart:recent':['recent','<path d="M3 5v5h5M3.9 9a9 9 0 1 1 .8 8M12 7v5l3 2"/>'],
+    'smart:taste':['taste','<path d="M3 10v4M6.6 7.5v9M10.2 3.8v16.4M13.8 7v10M17.4 5.5v13M21 10v4"/>']
+   };
+   const [kind,shape]=symbols[p.id]||['personal','<path d="M4 6h16M4 11h12M4 16h8M18 12v8m-4-4h8"/>'];art.dataset.kind=kind;art.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+shape+'</svg>';
+   const copy=document.createElement('span');const name=document.createElement('strong');name.textContent=p.name;const meta=document.createElement('small');meta.textContent=(p.sub?p.sub+' · ':'')+getTracks(p).length+' тр.';copy.append(name,meta);const arrow=document.createElement('span');arrow.className='sv-pl-chevron';arrow.setAttribute('aria-hidden','true');arrow.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>';b.append(art,copy,arrow);b.addEventListener('click',()=>{playlistOpen=p.id;renderTracks()});el.append(b);
   }
-  if(!personalLists.length)playlistNotice(el,'Собери свои любимые песни в отдельный плейлист.');
   for(const p of personalLists)card(p,false);
-  const h=document.createElement('h4');h.className='sv-library-group-heading';h.textContent='Подборки Сэйви';el.append(h);
+  const h=document.createElement('h4');h.className='sv-library-group-heading sv-pl-smart-heading';h.textContent='Подборки Сэйви';el.append(h);
   for(const p of smart)card(p,true);
  }
  // Palette is a stable hash of the local track identity, not a random color.
