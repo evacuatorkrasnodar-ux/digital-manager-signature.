@@ -1986,17 +1986,31 @@ html:root[data-theme="light"] body #sayviComposer{
  background:transparent!important;background-image:none!important;
  box-shadow:none!important;
 }
+html:root[data-theme="light"] body #sayviComposer{
+ --sv-chat-dock-face:rgba(182,187,193,.16);
+ --sv-chat-dock-glint:linear-gradient(150deg,rgba(255,255,255,.10),transparent 58%,rgba(255,255,255,.025));
+ --sv-chat-dock-filter:blur(3px) saturate(108%);
+ --sv-chat-dock-edge:1px solid rgba(157,165,175,.38);
+ --sv-chat-dock-shadow:inset 0 0 0 .75px rgba(255,255,255,.76),0 2px 5px rgba(30,40,52,.055),0 7px 20px rgba(30,40,52,.105);
+}
 html:root[data-theme="light"] body #sayviComposer::before,
 html:root[data-theme="light"] body #sayviComposer > button#sayviPlus{
- background:var(--sv-white-pearl-surface)!important;
- border:var(--sv-white-pearl-edge)!important;
- box-shadow:var(--sv-white-pearl-dock-shadow)!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
- backdrop-filter:var(--sv-white-pearl-blur)!important;
+ background:var(--sv-chat-dock-face)!important;
+ background-image:var(--sv-chat-dock-glint)!important;
+ border:var(--sv-chat-dock-edge)!important;
+ box-shadow:var(--sv-chat-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-chat-dock-filter)!important;
+ backdrop-filter:var(--sv-chat-dock-filter)!important;
 }
 html:root[data-theme="light"] body #sayviComposer > button#sayviPlus{
- box-shadow:var(--sv-white-pearl-circle-shadow)!important;
  color:var(--sv-white-pearl-ink)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #sayviComposer{
+  --sv-chat-dock-face:#eef0f2;
+  --sv-chat-dock-glint:none;
+  --sv-chat-dock-filter:none;
+ }
 }
 html:root[data-theme="light"] body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
  background:transparent!important;border:0!important;box-shadow:none!important;
