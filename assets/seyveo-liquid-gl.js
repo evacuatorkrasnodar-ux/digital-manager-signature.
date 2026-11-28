@@ -182,7 +182,8 @@ void main(){
   if(r>1.0){
    float glow=gauss(r-1.0,.045)*(.018+.15*peak(a,-2.16,.44)+.28*peak(a,1.30,.58));
     // Separated soft caustic under the floating sphere, with a bright narrow core.
-   float floorGlow=gauss(xy.x,.55)*gauss(xy.y-1.155,.031)*.24+gauss(xy.x,.28)*gauss(xy.y-1.158,.016)*.32;
+   float floorGlow=gauss(xy.x,.56)*gauss(xy.y-1.155,.043)*.24+gauss(xy.x,.29)*gauss(xy.y-1.158,.027)*.25;
+   floorGlow*=1.0-smoothstep(1.195,1.22,xy.y);
    vec3 tint=mix(vec3(.27,.75,.77),vec3(.48,1.0,.96),clamp(floorGlow*1.35,0.0,1.0));
    glow=clamp(glow+floorGlow,0.0,.92);
    gl_FragColor=vec4(tint,glow*.82);return;
