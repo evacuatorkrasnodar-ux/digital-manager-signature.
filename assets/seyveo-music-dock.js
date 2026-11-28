@@ -290,7 +290,18 @@ function init(){
   if(hourTotal){const leader=[...bands].sort((a,b)=>b.seconds-a.seconds)[0];times.append(portraitEl('p','sv-portrait-rhythm-note',leader.name+' — твоё самое музыкальное время'));const rails=portraitEl('div','sv-portrait-rhythm');bands.forEach((r,i)=>{const row=portraitEl('div','sv-portrait-rhythm-row'),track=portraitEl('span','sv-portrait-rhythm-track'),fill=portraitEl('i','');fill.style.width=r.seconds/hourTotal*100+'%';fill.style.background=portraitColors[i];track.append(fill);row.append(portraitEl('span','',r.name),track,portraitEl('strong','',Math.round(r.seconds/hourTotal*100)+'%'));rails.append(row)});times.append(rails)}else{times.classList.add('is-empty');times.append(portraitEl('p','sv-portrait-empty','Сэйви изучает твой музыкальный ритм.'));}
   grid.append(times);
  }
- function renderReplay(scan=true){
+ function animateReplay(out){
+  if(view!=='replay'||document.hidden||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const nodes=[...out.querySelectorAll('.sv-replay-total,.sv-portrait-panel,.sv-music-section-title,.sv-replay-row')].slice(0,12);
+  nodes.forEach((node,i)=>{
+   if(typeof node.animate!=='function')return;
+   node.animate([{opacity:.12,transform:'translateY(5px)'},{opacity:1,transform:'translateY(0)'}],{duration:200,delay:Math.min(i,5)*22,easing:'cubic-bezier(.2,.7,.25,1)',fill:'backwards'});
+  });
+  const chart=out.querySelector('.sv-replay-chart-bar');
+  if(typeof chart?.animate==='function')chart.animate([{opacity:.2,transform:'scaleX(.96)'},{opacity:1,transform:'scaleX(1)'}],{duration:220,easing:'ease-out'});
+ }
+ let replayMotionPeriod='';
+ function renderReplay(scan=true,enter=false){
   const select=get('svMusicReplayPeriod'),out=get('svMusicReplayResults');if(!select||!out)return;
   if(!select.options.length){
    const now=new Date(),format=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'});
@@ -299,6 +310,7 @@ function init(){
   }
   syncPeriod();
   const data=music()?.replaySummary?.(select.value);out.replaceChildren();if(!data)return;
+  const animate=enter||replayMotionPeriod!==select.value;replayMotionPeriod=select.value;
   const total=document.createElement('div');total.className='sv-replay-total';
   const minutes=Math.max(0,Math.floor(data.seconds/60)),hours=Math.floor(minutes/60),value=document.createElement('strong');value.textContent=hours?hours.toLocaleString('ru-RU')+' ч '+(minutes%60)+' мин':minutes+' мин';
   const label=document.createElement('span');label.textContent='Время прослушивания';total.append(value,label);out.append(total);
@@ -316,7 +328,7 @@ function init(){
    bar.setAttribute('aria-label',labels.join(', '));chart.append(bar,legend);total.append(chart);
   }
   const duration=s=>s<60?Math.floor(s)+' сек.':Math.floor(s/60)+' мин.';
-  if(!data.seconds){const empty=document.createElement('p');empty.className='sv-music-browse-caption';empty.textContent='Слушайте музыку и радио. Здесь появятся ваши настоящие музыкальные итоги.';out.append(empty);return}
+  if(!data.seconds){const empty=document.createElement('p');empty.className='sv-music-browse-caption';empty.textContent='Слушайте музыку и радио. Здесь появятся ваши настоящие музыкальные итоги.';out.append(empty);if(animate)animateReplay(out);return}
   const portrait=music()?.replayPortrait?.(select.value),previous=music()?.replayPortrait?.(priorPeriod(select.value));
   if(portrait&&previous)renderPortrait(out,portrait,previous,select.value,total);
   if(scan&&music()?.enrichReplayPortrait){const selected=select.value;music().enrichReplayPortrait().then(changed=>{if(changed&&view==='replay'&&select.value===selected)renderReplay(false)}).catch(()=>{})}
@@ -349,6 +361,7 @@ function init(){
     if(!item.artist)sub.hidden=true;
     row.append(copy,time);out.append(row)}
   }
+  if(animate)animateReplay(out);
  }
  get('svMusicReplayPeriod')?.addEventListener('change',()=>renderReplay());
  document.getElementById('sayviMusicAudio')?.addEventListener('pause',()=>{if(view==='replay')renderReplay()});
@@ -379,8 +392,8 @@ function init(){
   get('sayviMusicDiscoveryToggle')?.setAttribute('aria-expanded',String(key==='new'));
   get('svMusicRadioToggle')?.setAttribute('aria-expanded',String(key==='radio'));
   for(const btn of nav.querySelectorAll('button')){const selected=btn.dataset.musicNav===(key==='podcasts'?'library':['replay','history'].includes(key)?'home':key);btn.setAttribute('aria-pressed',String(selected));if(selected)btn.setAttribute('aria-current','page');else btn.removeAttribute('aria-current')}
-  page.scrollTop=0;renderTracks();if(key==='replay')renderReplay();music()?.refreshMini?.();
-  if(changed&&key!=='player'&&key!=='new'&&!document.hidden&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){const target=get(panels[key]);if(typeof target?.animate==='function'){target.getAnimations?.().filter(a=>a.id==='svMusicEnter').forEach(a=>a.cancel());const motion=target.animate([{opacity:.48},{opacity:1}],{duration:170,easing:'ease-out'});motion.id='svMusicEnter';}}
+  page.scrollTop=0;renderTracks();if(key==='replay')renderReplay(true,changed);music()?.refreshMini?.();
+  if(changed&&key!=='player'&&key!=='new'&&key!=='replay'&&!document.hidden&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){const target=get(panels[key]);if(typeof target?.animate==='function'){target.getAnimations?.().filter(a=>a.id==='svMusicEnter').forEach(a=>a.cancel());const motion=target.animate([{opacity:.48},{opacity:1}],{duration:170,easing:'ease-out'});motion.id='svMusicEnter';}}
   document.dispatchEvent(new CustomEvent('seyveo:music-view',{detail:{view:key}}));
   return true;
  }
