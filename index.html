@@ -1595,6 +1595,7 @@ html:root[data-theme="light"] body #sayviMusicPage #svMusicReplay .sv-portrait-p
  <div id="svReplayPeriodMenu" role="menu" aria-label="Выбор периода" hidden></div>
  </div></div>
  <div id="svRadioSavedSongs" hidden></div>
+ <div id="svRadioHeardSongs" hidden></div>
  <div id="svMusicReplayResults"></div>
  <p class="sv-music-browse-caption">Статистика хранится на этом устройстве и собирается с момента обновления.</p>
  </section>
@@ -6461,7 +6462,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-mus
 
 #sayviMusicPage #svMusicRecognizeHome>svg{color:inherit}
 #svSmartMusicBody a.sv-smart-music-choice{text-decoration:none;box-sizing:border-box}
-</style><script src="assets/seyveo-adaptive-sound.js?v=4-voice-duck"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-lyrics-automatic-simple"></script><script src="assets/seyveo-music-dock.js?v=20261128-radio-song-likes-v25"></script><script src="assets/seyveo-podcasts.js?v=1"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-radio-home-fog-v3"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
+</style><script src="assets/seyveo-adaptive-sound.js?v=4-voice-duck"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-lyrics-automatic-simple"></script><script src="assets/seyveo-music-dock.js?v=20261128-radio-history-v26"></script><script src="assets/seyveo-podcasts.js?v=1"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-radio-home-fog-v3"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
@@ -8718,6 +8719,16 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] #svAdap
 .sv-radio-saved-song strong{font-size:14px;font-weight:550}
 .sv-radio-saved-song small{font-size:12px;color:var(--secondary)}
 .sv-radio-saved-song button{flex:0 0 44px;min-height:44px;border:0;background:transparent;color:var(--secondary);box-shadow:none;font-size:20px}
+</style>
+<style id="svRadioWorldFinish">
+#svRadioHeardSongs{margin:18px 0}
+#svRadioHeardSongs[hidden]{display:none!important}
+#svRadioHeardSongs h3,#svRadioSavedSongs h3{margin:0 0 8px;font-size:clamp(18px,5vw,22px);font-weight:640;letter-spacing:-.025em}
+#svRadioHeardSongs .sv-music-browse-caption{margin:0 0 8px;line-height:1.45}
+.sv-radio-saved-song>div{flex:1}
+.sv-radio-saved-song :is(.sv-radio-history-heart,.sv-radio-song-find){flex:0 0 44px;width:44px;height:44px;display:grid;place-items:center;min-height:44px;border:0;background:transparent;color:var(--secondary);box-shadow:none;padding:0;text-decoration:none}
+.sv-radio-saved-song :is(.sv-radio-history-heart,.sv-radio-song-find) svg{width:20px;height:20px}
+.sv-radio-saved-song .sv-radio-history-heart[aria-pressed=true] svg{fill:#e77b98;stroke:#e77b98}
 </style>
 <style id="svRadioTransportFinish">
 html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"].sv-music-radio-player > :is(.sv-music-track-bar,.sv-music-times,.sv-music-seek){display:none!important}
