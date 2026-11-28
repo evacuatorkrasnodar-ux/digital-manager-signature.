@@ -154,9 +154,9 @@ function init(){
   const play=(p,t)=>{if(music()?.playCollection?.(getTracks(p).map(x=>x.artKey),t?.artKey))show('player')};
   if(selected){
    const items=getTracks(selected),custom=!selected.id.startsWith('smart:');
-   const count=playlistNotice(el,items.length+' тр.');count.classList.add('sv-pl-detail-count');
    const actions=document.createElement('div');actions.className='sv-pl-actions';
-   const playBtn=playlistButton('▶  Слушать',()=>play(selected),'sv-pl-primary');playBtn.disabled=!items.length;actions.append(playBtn);
+   const count=document.createElement('span');count.className='sv-pl-detail-count';const n=items.length;count.textContent=n+' '+(n%100>=11&&n%100<=14?'треков':n%10===1?'трек':n%10>=2&&n%10<=4?'трека':'треков');actions.append(count);
+   const playBtn=playlistButton('Слушать',()=>play(selected),'sv-pl-primary');playBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13L19 12z"/></svg><span>Слушать</span>';playBtn.disabled=!items.length;actions.append(playBtn);
    if(custom){actions.append(playlistButton('Изменить',()=>playlistEditor(el,library,selected)),playlistButton('Удалить',()=>{if(!window.confirm('Удалить плейлист? Песни останутся в медиатеке.'))return;if(saveLists(personalLists.filter(p=>p.id!==selected.id))){playlistOpen='';renderTracks()}else playlistNotice(el,'Не удалось удалить плейлист.') }))}
    el.append(actions);
    if(!items.length){playlistNotice(el,custom?'Добавьте песни в этот плейлист.':'Подборка появится по мере прослушивания и добавления песен.');return}
