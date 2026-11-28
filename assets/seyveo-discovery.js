@@ -91,7 +91,7 @@ function clear(){
  runId++;
  checking=false;
  state=fresh();
- try{localStorage.removeItem(GENRES_KEY)}catch{}
+ try{localStorage.removeItem(GENRES_KEY);for(let i=localStorage.length-1;i>=0;i--){const key=localStorage.key(i);if(key?.startsWith('seyveo-music-editorial-v3-')&&key!=='seyveo-music-editorial-v3-general')localStorage.removeItem(key)}}catch{}
  persist();update();signal();if(!panel.hidden)void loadPublic();
 }
 function listen(payload){
