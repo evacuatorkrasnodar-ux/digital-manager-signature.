@@ -7223,12 +7223,12 @@ html:root.sv-music-screen body:has(#sayviMusicPage.sv-music-empty) #svMusicHomeM
    sphere handoff, selected indicator, shape, coordinates and transitions. */
 html:root[data-theme="light"][data-theme] body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock):not(.sv-music-navigation-only)::before,
 html:root[data-theme="light"][data-theme] body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock):not(.sv-music-navigation-only)::after{
- background:rgba(232,236,240,.76)!important;
- background-image:linear-gradient(155deg,rgba(255,255,255,.42),transparent 52%,rgba(255,255,255,.13))!important;
- border:1px solid rgba(161,177,188,.30)!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
- backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
- box-shadow:inset 0 0 0 1px rgba(255,255,255,.88),0 3px 12px rgba(38,48,60,.085)!important;
+ background:var(--sv-silver-dock-face)!important;
+ background-image:var(--sv-silver-dock-glint)!important;
+ -webkit-backdrop-filter:var(--sv-silver-dock-filter)!important;
+ backdrop-filter:var(--sv-silver-dock-filter)!important;
+ border:var(--sv-silver-dock-edge)!important;
+ box-shadow:var(--sv-silver-dock-shadow)!important;
 }
 </style>
 
@@ -8308,12 +8308,12 @@ html:root.sv-music-screen.sv-music-player-open body #sayviMusicPage[data-music-v
 html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]),
 html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only::after,
 html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]){
- background:rgba(232,236,240,.76)!important;
- background-image:linear-gradient(155deg,rgba(255,255,255,.42),transparent 52%,rgba(255,255,255,.13))!important;
- border:1px solid rgba(161,177,188,.30)!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
- backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
- box-shadow:inset 0 0 0 1px rgba(255,255,255,.88),0 3px 12px rgba(38,48,60,.085)!important;
+ background:var(--sv-silver-dock-face)!important;
+ background-image:var(--sv-silver-dock-glint)!important;
+ -webkit-backdrop-filter:var(--sv-silver-dock-filter)!important;
+ backdrop-filter:var(--sv-silver-dock-filter)!important;
+ border:var(--sv-silver-dock-edge)!important;
+ box-shadow:var(--sv-silver-dock-shadow)!important;
 }
 html:root.sv-music-browse #sayviMusicPage :is(.sv-music-recent-play,.sv-library-track-play) svg{
  width:19px;height:19px;fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;stroke-linecap:round;stroke-linejoin:round;
@@ -8331,12 +8331,12 @@ html:root.sv-music-browse #sayviMusicPage :is(.sv-music-recent-play,.sv-library-
 /* Browse-only final finish: keep the original dock and player geometry. */
 html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only:not([hidden]),
 html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only::after{
- border-color:rgba(143,161,174,.43)!important;
- box-shadow:inset 0 0 0 1px rgba(255,255,255,.94),0 3px 12px rgba(38,48,60,.075)!important;
+ border:var(--sv-silver-dock-edge)!important;
+ box-shadow:var(--sv-silver-dock-shadow)!important;
 }
 html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]){
- border-color:rgba(161,177,188,.34)!important;
- box-shadow:inset 0 0 0 1px rgba(255,255,255,.92),0 2px 8px rgba(38,48,60,.045)!important;
+ border:var(--sv-silver-dock-edge)!important;
+ box-shadow:var(--sv-silver-dock-shadow)!important;
 }
 /* Use the existing audio-driven ring variables; no additional frame loop.
    A slow fallback only runs while the existing playback state is active. */
@@ -8360,10 +8360,12 @@ html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body #
    Keep the under-sphere inline music controls transparent and unobstructed. */
 html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock):not(.sv-music-navigation-only)::before,
 html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock):not(.sv-music-navigation-only)::after{
- background:rgba(232,236,240,.76)!important;
- background-image:linear-gradient(155deg,rgba(255,255,255,.42),transparent 52%,rgba(255,255,255,.13))!important;
- border-color:rgba(143,161,174,.43)!important;
- box-shadow:inset 0 0 0 1px rgba(255,255,255,.94),0 3px 12px rgba(38,48,60,.075)!important;
+ background:var(--sv-silver-dock-face)!important;
+ background-image:var(--sv-silver-dock-glint)!important;
+ -webkit-backdrop-filter:var(--sv-silver-dock-filter)!important;
+ backdrop-filter:var(--sv-silver-dock-filter)!important;
+ border:var(--sv-silver-dock-edge)!important;
+ box-shadow:var(--sv-silver-dock-shadow)!important;
 }
 @media(prefers-reduced-transparency:reduce){
  html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock):not(.sv-music-navigation-only)::before,
@@ -9132,12 +9134,12 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="
 /* Only the floating music player: no change to the approved home screen or dock. */
 html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden]),
 html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body:has(#sayviMusicPage[data-music-view="new"]:not([hidden])) #sayviMusicMini:not([hidden]){
- background:rgba(181,185,188,.18)!important;
- background-image:linear-gradient(150deg,rgba(255,255,255,.045),transparent 58%,rgba(255,255,255,.015))!important;
- -webkit-backdrop-filter:blur(6px) saturate(108%)!important;
- backdrop-filter:blur(6px) saturate(108%)!important;
- border:1px solid rgba(185,195,201,.40)!important;
- box-shadow:inset 0 0 0 .5px rgba(255,255,255,.32),0 2px 8px rgba(20,33,45,.045)!important;
+ background:var(--sv-silver-dock-face)!important;
+ background-image:var(--sv-silver-dock-glint)!important;
+ -webkit-backdrop-filter:var(--sv-silver-dock-filter)!important;
+ backdrop-filter:var(--sv-silver-dock-filter)!important;
+ border:var(--sv-silver-dock-edge)!important;
+ box-shadow:var(--sv-silver-dock-shadow)!important;
  color:#29343c!important;
 }
 html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicMini .sv-music-mini-title{color:#27323b!important;font-weight:550!important;letter-spacing:-.015em!important}
@@ -9187,4 +9189,57 @@ html:root.sv-music-screen.sv-music-browse body #sayviMusicMini button:disabled{o
 </script>
 
 
+
+<style id="svUnifiedSilverDockMaterial">
+/* One optical material for existing light dock surfaces; do not alter
+   the global White Pearl tokens used by headers, dialogs and buttons. */
+:root[data-theme="light"]{
+ --sv-silver-dock-face:rgba(181,185,188,.18);
+ --sv-silver-dock-glint:linear-gradient(150deg,rgba(255,255,255,.045),transparent 58%,rgba(255,255,255,.015));
+ --sv-silver-dock-filter:blur(6px) saturate(108%);
+ --sv-silver-dock-edge:1px solid rgba(185,195,201,.40);
+ --sv-silver-dock-shadow:inset 0 0 0 .65px rgba(255,255,255,.55),0 2px 7px rgba(20,33,45,.036);
+}
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock,
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock,
+html:root[data-theme="light"][data-theme] body :is(.sv-smart-ink-tools,#svPaperNewDock,#sayviMusicMini){
+ --sv-white-pearl-floating-dock:var(--sv-silver-dock-face);
+ --sv-white-pearl-floating-blur:var(--sv-silver-dock-filter);
+ --sv-white-pearl-edge:var(--sv-silver-dock-edge);
+ --sv-white-pearl-dock-shadow:var(--sv-silver-dock-shadow);
+ --sv-white-pearl-circle-shadow:var(--sv-silver-dock-shadow);
+ --sv-dock-pearl-bg:var(--sv-silver-dock-face);
+ --sv-dock-pearl-border:var(--sv-silver-dock-edge);
+ --sv-dock-pearl-blur:var(--sv-silver-dock-filter);
+ --sv-dock-pearl-shadow:var(--sv-silver-dock-shadow);
+ --sv-dock-glass-finish:var(--sv-silver-dock-face);
+ --sv-dock-glass-filter:var(--sv-silver-dock-filter);
+ --sv-dock-glass-edge:var(--sv-silver-dock-edge);
+ --sv-dock-glass-relief:var(--sv-silver-dock-shadow);
+}
+/* Apply only to the actual existing capsule faces, not the transparent footer.
+   Existing content/display rules still control which pseudo surfaces exist. */
+html:root[data-theme="light"][data-theme] body > footer.dock.sv-shared-dock:not(.sv-music-navigation-only)::before,
+html:root[data-theme="light"][data-theme] body > footer.dock.sv-shared-dock:not(.sv-music-navigation-only)::after,
+html:root[data-theme="light"][data-theme] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::before,
+html:root[data-theme="light"][data-theme] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::after,
+html:root[data-theme="light"][data-theme] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > :is(.sv-health-dock-actions,#navManage),
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-home-new-dock::before,
+html:root[data-theme="light"][data-theme] body dialog#noteReviewDialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open) .sv-smart-ink-tools:not([hidden]),
+html:root[data-theme="light"][data-theme] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open] .sv-paper-top #svPaperNewDock,
+html:root[data-theme="light"][data-theme] body #sayviMusicMini:not([hidden]){
+ background:var(--sv-silver-dock-face)!important;
+ background-image:var(--sv-silver-dock-glint)!important;
+ -webkit-backdrop-filter:var(--sv-silver-dock-filter)!important;
+ backdrop-filter:var(--sv-silver-dock-filter)!important;
+ border:var(--sv-silver-dock-edge)!important;
+ box-shadow:var(--sv-silver-dock-shadow)!important;
+}
+html:root[data-theme="light"][data-theme].sv-music-screen body #svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline .sv-music-mini-progress,
+html:root[data-theme="light"][data-theme] body #sayviMusicMini .sv-music-mini-progress{height:.75px!important;opacity:.62!important}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"]{--sv-silver-dock-face:#eef0f2;--sv-silver-dock-glint:none;--sv-silver-dock-filter:none}
+}
+</style>
 </body></html>
