@@ -958,7 +958,7 @@ function collectionRender(){
   const name=document.createElement('strong');name.className='sv-music-row-title';name.textContent=info.title||'Без названия';copy.append(name);
   if(info.artist){const artist=document.createElement('small');artist.textContent=info.artist;copy.append(artist)}
   const action=document.createElement('span');action.className='sv-collection-action';action.setAttribute('aria-hidden','true');
-  action.innerHTML=match?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13L19 12z"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m-4-4 4 4 4-4M5 17v3h14v-3"/></svg>';
+  action.innerHTML=match?'<svg class="sv-music-outline-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5.5v13L19 12z"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m-4-4 4 4 4-4M5 17v3h14v-3"/></svg>';
   if(current&&!favoriteView){
     action.innerHTML='<span class="sv-queue-equalizer"><i></i><i></i><i></i></span>';
     btn.setAttribute('aria-label',(info.title||'Без названия')+' · текущий трек');
