@@ -105,7 +105,7 @@ function mapHomeHeaders(){
  // different HTTPS broadcaster hosts; permit media, not scripts or fetches.
  const radioCatalog='https://de1.api.radio-browser.info/json/stations/search https://nl1.api.radio-browser.info/json/stations/search';
  const extra={'script-src':sdk+" 'unsafe-eval'",'connect-src':data+' '+walletRates+' '+musicCatalog+' '+radioCatalog,
-  'style-src':sdk,'img-src':data+' '+musicArtwork,'worker-src':'data: '+sdk,'media-src':'https:'};
+  'style-src':sdk,'img-src':data+' '+musicArtwork+' https://www.radio107.ru/images/logo.png','worker-src':'data: '+sdk,'media-src':'https:'};
  const policy=HEADERS['content-security-policy'].split(';').map(part=>{
   const directive=part.trim().split(/\s+/)[0];
   return extra[directive]?part+' '+extra[directive]:part;
