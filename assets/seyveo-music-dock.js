@@ -545,7 +545,14 @@ function initRadio(){
  }
 
  function sortedStations(){
-  const score=s=>{const local=regionInfo.code&&countryOf(s)===regionInfo.code;const city=norm(regionInfo.city);return (local?100:0)+(local&&city&&norm(s.name+' '+(s.city||'')).includes(city)?100:0)};
+  let enabled=true,after='';try{const p=JSON.parse(localStorage.getItem('seyveo-discovery-music-v1')||'null');enabled=p?p.enabled===true:localStorage.getItem('seyveo-discovery-choice-v1')!=='1';after=p?.replayAfterMonth||''}catch{}
+  const taste=enabled?(window.SEYVEO_MUSIC?.sharedGenreTaste?.(after)||[]):[];
+  const top=Math.max(1,taste[0]?.score||0),weights=new Map(taste.map(t=>[t.tag,t.score/top]));
+  const score=s=>{const local=regionInfo.code&&countryOf(s)===regionInfo.code;const city=norm(regionInfo.city);
+   const tags=window.SEYVEO_MUSIC?.genreTasteTags?.(s.genre)||[];
+   const match=Math.max(0,...tags.map(tag=>weights.get(tag)||0));
+   return (local?1000:0)+match*100+(local&&city&&norm(s.name+' '+(s.city||'')).includes(city)?10:0);
+  };
   const regionIds=new Set(regional.map(s=>s.id));return stations.filter(s=>!s.id.startsWith('rb-')||regionIds.has(s.id)).sort((a,b)=>score(b)-score(a));
  }
  function render(){
@@ -590,7 +597,7 @@ function initRadio(){
    if(radioVisible){render();animateRadio()}
   }finally{clearTimeout(timeout)}
  }
- document.addEventListener('seyveo:music-view',e=>{const next=e.detail?.view==='radio';if(next&&!radioVisible){animateRadio();void loadRegional()}radioVisible=next});
+ document.addEventListener('seyveo:music-view',e=>{const next=e.detail?.view==='radio';if(next&&!radioVisible){render();animateRadio();void loadRegional()}radioVisible=next});
  document.addEventListener('seyveo:music-state',drawRadio);
  for(const name of ['playing','pause','error','emptied'])audio.addEventListener(name,drawRadio);
  toggle.addEventListener('click',()=>{if(window.SEYVEO_MUSIC_DOCK?.show){window.SEYVEO_MUSIC_DOCK.show('radio');return}panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));});
