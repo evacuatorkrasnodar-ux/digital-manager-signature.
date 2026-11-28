@@ -446,6 +446,12 @@ function replayTick(){
  const info=infoFor(file);
  const row=bucket.items[key]||(bucket.items[key]={seconds:0,title:'',artist:'',radio:!!file.radio});
  row.title=info.title||safeName(file);row.artist=file.radio?file.country:(info.artist||'');row.seconds+=seconds;bucket.seconds+=seconds;
+ if(!file.radio){if(info.genre)row.genre=info.genre;if(info.language)row.language=info.language;}
+ const stamp=new Date(now),day=month+'-'+String(stamp.getDate()).padStart(2,'0');
+ bucket.days=bucket.days||{};bucket.days[day]=(Number(bucket.days[day])||0)+seconds;
+ bucket.hours=Array.isArray(bucket.hours)?bucket.hours:Array(24).fill(0);
+ bucket.hours[stamp.getHours()]=(Number(bucket.hours[stamp.getHours()])||0)+seconds;
+ if(!bucket.trackedFrom)bucket.trackedFrom=day;
  replayDirty=true;if(now-replayLastSave>15000)replaySave();
 }
 audio.addEventListener('timeupdate',replayTick);
@@ -461,6 +467,63 @@ function replaySummary(period){
  const radioSeconds=all.filter(t=>t.radio).reduce((sum,t)=>sum+t.seconds,0);
  const musicSeconds=all.filter(t=>!t.radio).reduce((sum,t)=>sum+t.seconds,0);
  return {seconds,musicSeconds,radioSeconds,tracks:all.filter(t=>!t.radio).slice(0,5),stations:all.filter(t=>t.radio).slice(0,5),artists:[...artists.values()].sort((a,b)=>b.seconds-a.seconds).slice(0,5)};
+}
+// Musical portrait: use actual listening duration and explicit embedded tags.
+const portraitGenre=value=>{
+ const v=String(value||'').trim();if(!v)return '';
+ const numeric=v.match(/^\(?(\d{1,3})\)?$/);
+ const codes={0:'Блюз',1:'Классический рок',3:'Танцевальная',4:'Диско',5:'Фанк',7:'Хип-хоп',8:'Джаз',9:'Метал',13:'Поп',14:'R&B',15:'Рэп',17:'Рок',18:'Техно',19:'Индастриал',20:'Альтернатива',24:'Саундтрек',26:'Эмбиент',31:'Транс',32:'Классика',33:'Инструментальная',40:'Альтернативный рок',43:'Панк',48:'Этническая',52:'Электронная',53:'Поп-фолк',54:'Европоп',55:'Dream',56:'Южный рок',59:'Гангста-рэп',62:'Поп/фанк',65:'Кабаре',66:'New Wave',67:'Психоделическая',69:'Шоу',70:'Трейлер',71:'Lo-Fi',73:'Эйсид-панк',74:'Эйсид-джаз',75:'Полька',76:'Ретро',77:'Мюзикл',78:'Рок-н-ролл',79:'Хард-рок',80:'Фолк',81:'Фолк-рок',84:'Быстрый фьюжн',85:'Бибоп',86:'Латинская',87:'Ревайвал',88:'Кельтская',89:'Блюграсс',90:'Авангард',91:'Готик-рок',92:'Прогрессивный рок',93:'Психоделический рок',94:'Симфонический рок',95:'Медленный рок',96:'Биг-бэнд',97:'Хор',98:'Лёгкая музыка',99:'Акустическая',100:'Юмор',101:'Речь',102:'Шансон',103:'Опера',104:'Камерная',105:'Соната',106:'Симфония',107:'Бути-басс',108:'Primus',109:'Порногрув',110:'Сатира',111:'Slow Jam',112:'Клаб',113:'Танго',114:'Самба',115:'Фольклор',116:'Баллада',117:'Пауэр-баллада',118:'Ритмичный соул',119:'Фристайл',120:'Дуэт',121:'Панк-рок',122:'Драм-соло',123:'Акапелла',124:'Евро-хаус',125:'Dance Hall',126:'Goa',127:'Драм-н-бейс',128:'Club-House',129:'Хардкор',130:'Террор',131:'Инди',132:'Бритпоп',133:'Afro-Punk',134:'Польский панк',135:'Бит',136:'Христианский гангста-рэп',137:'Хэви-метал',138:'Блэк-метал',139:'Кроссовер',140:'Современная христианская',141:'Христианский рок',142:'Меренге',143:'Сальса',144:'Трэш-метал',145:'Аниме',146:'J-Pop',147:'Синтипоп'};
+ const raw=numeric?(codes[Number(numeric[1])]||''):v.replace(/^\(\d+\)\s*/,'').trim();if(!raw)return '';
+ const k=raw.toLowerCase();if(/russian rock|русский рок/.test(k))return 'Русский рок';
+ if(/russian pop|русский поп/.test(k))return 'Русский поп';
+ if(/chanson|шансон/.test(k))return 'Шансон';
+ if(/rock|рок|metal|метал|punk|панк/.test(k))return 'Рок';
+ if(/hip.?hop|rap|рэп|хип.?хоп/.test(k))return 'Хип-хоп';
+ if(/pop|поп/.test(k))return 'Поп';
+ if(/electro|электрон|techno|техно|house|хаус|trance|транс/.test(k))return 'Электроника';
+ if(/jazz|джаз/.test(k))return 'Джаз';if(/classical|классик/.test(k))return 'Классика';
+ return raw.slice(0,40);
+};
+const portraitLanguage=value=>{
+ const v=String(value||'').trim().toLowerCase();if(!v||/^(und|xxx|zxx|mul|unknown)$/.test(v))return '';
+ const codes={rus:'Русский',ru:'Русский',russian:'Русский',русский:'Русский',eng:'Английский',en:'Английский',english:'Английский',английский:'Английский',deu:'Немецкий',ger:'Немецкий',de:'Немецкий',fra:'Французский',fre:'Французский',fr:'Французский',spa:'Испанский',es:'Испанский',ita:'Итальянский',it:'Итальянский',por:'Португальский',pt:'Португальский',ukr:'Украинский',uk:'Украинский',jpn:'Японский',ja:'Японский',kor:'Корейский',ko:'Корейский',zho:'Китайский',chi:'Китайский',zh:'Китайский',ara:'Арабский',ar:'Арабский',tur:'Турецкий',tr:'Турецкий',fin:'Финский',fi:'Финский'};
+ return codes[v]||'';
+};
+function replayPortrait(period){
+ const months=Object.keys(replayMonths).filter(k=>k===period||(/^\d{4}$/.test(period)&&k.startsWith(period+'-')));
+ const files=new Map(localTracks.map(file=>['file:'+favoriteId(file),file]));
+ const genres=new Map(),languages=new Map(),artists=new Map(),days={},hours=Array(24).fill(0);
+ let total=0,music=0,genreKnown=0,languageKnown=0,trackedFrom='';
+ for(const month of months){
+  const bucket=replayMonths[month];total+=Number(bucket.seconds)||0;
+  if(bucket.trackedFrom&&(!trackedFrom||bucket.trackedFrom<trackedFrom))trackedFrom=bucket.trackedFrom;
+  for(const [day,value] of Object.entries(bucket.days||{}))if(/^\d{4}-\d{2}-\d{2}$/.test(day)&&Number.isFinite(Number(value)))days[day]=(days[day]||0)+Math.max(0,Number(value));
+  for(let i=0;i<24;i++)hours[i]+=Math.max(0,Number(bucket.hours?.[i])||0);
+  for(const [key,row] of Object.entries(bucket.items||{})){
+   if(!row||row.radio)continue;const seconds=Number(row.seconds)||0;if(seconds<=0)continue;music+=seconds;
+   const file=files.get(key),info=file?trackDescriptions.get(file):null;
+   const genre=portraitGenre(info?.genre||row.genre),language=portraitLanguage(info?.language||row.language);
+   if(genre){genres.set(genre,(genres.get(genre)||0)+seconds);genreKnown+=seconds}
+   if(language){languages.set(language,(languages.get(language)||0)+seconds);languageKnown+=seconds}
+   if(row.artist&&row.artist!=='Моя музыка')artists.set(row.artist,(artists.get(row.artist)||0)+seconds);
+  }
+ }
+ const list=map=>[...map].map(([name,seconds])=>({name,seconds})).sort((a,b)=>b.seconds-a.seconds);
+ return {total,music,genreKnown,languageKnown,genres:list(genres),languages:list(languages),artists:list(artists),days,hours,trackedFrom};
+}
+let portraitScan=null;const portraitScanned=new WeakSet();
+function enrichReplayPortrait(){
+ if(portraitScan||!metadata?.describe)return portraitScan||Promise.resolve(false);
+ const heard=new Map();for(const bucket of Object.values(replayMonths))for(const [key,row] of Object.entries(bucket.items||{}))if(!row.radio)heard.set(key,(heard.get(key)||0)+(Number(row.seconds)||0));
+ const targets=localTracks.filter(f=>heard.has('file:'+favoriteId(f))&&!portraitScanned.has(f)).sort((a,b)=>(heard.get('file:'+favoriteId(b))||0)-(heard.get('file:'+favoriteId(a))||0)).slice(0,24);
+ if(!targets.length)return Promise.resolve(false);
+ portraitScan=(async()=>{let changed=false;for(const file of targets){
+  if(document.hidden)break;portraitScanned.add(file);
+  try{const info=await metadata.describe(file);if(!info)continue;const prior=trackDescriptions.get(file)||{};const {artwork,...details}=info;trackDescriptions.set(file,{...prior,...details});const key='file:'+favoriteId(file);
+   for(const bucket of Object.values(replayMonths)){const row=bucket.items?.[key];if(!row)continue;if(info.genre){row.genre=info.genre;changed=true}if(info.language){row.language=info.language;changed=true}}
+  }catch{}
+ }if(changed){replayDirty=true;replaySave()}return changed})().finally(()=>{portraitScan=null});
+ return portraitScan;
 }
 // Read-only summary of the same local statistics shown in My Musical World.
 function discoveryTaste(){
@@ -1462,7 +1525,7 @@ function playRadio(stations,id){
  tracks=available;miniDismissed=false;return switchTrack(selected,true);
 }
 window.SEYVEO_MUSIC=Object.freeze({
- playRadio,replaySummary,discoveryTaste,removeRecentHistory,
+ playRadio,replaySummary,replayPortrait,enrichReplayPortrait,discoveryTaste,removeRecentHistory,
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
  searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,prepareTrackPreview,
  // Read-only access to the selected local File for optional visual analysis.
