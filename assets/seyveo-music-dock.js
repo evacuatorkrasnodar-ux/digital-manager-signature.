@@ -538,19 +538,28 @@ function initRadio(){
  const isHidden=id=>hiddenStations.has(id);
  const isFavorite=id=>!isHidden(id)&&favorites.some(f=>f.id===id&&f.liked!==false);
  const stationSnapshot=station=>station.id.startsWith('rb-')?{stationuuid:station.id.slice(3),name:station.name,countrycode:station.countrycode,country:station.country,state:station.city,tags:station.genre,url_resolved:station.stream,homepage:station.site,codec:station.quality.replace(/^\d+\s*/,''),bitrate:parseInt(station.quality,10)||0}:null;
- function rememberStation(id,liked=true){const station=stations.find(s=>s.id===id);if(!station?.stream)return false;const old=favorites.find(f=>f.id===id);const next=[{id,snapshot:stationSnapshot(station),liked:liked||!!(old&&old.liked!==false)},...favorites.filter(f=>f.id!==id)].slice(0,200);try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{status.textContent='Не удалось сохранить станцию.';return false}favorites=next;if(isHidden(id)){hiddenStations.delete(id);try{localStorage.setItem(hiddenKey,JSON.stringify([...hiddenStations]))}catch{}}return true;}
+ function rememberStation(id,liked=true){
+  const station=stations.find(s=>s.id===id);if(!station?.stream)return false;
+  const old=favorites.find(f=>f.id===id),alreadyPinned=!!old&&old.liked!==false;
+  if(alreadyPinned&&!isHidden(id))return liked;
+  const pins=favorites.filter(f=>f.id!==id&&f.liked!==false),others=favorites.filter(f=>f.id!==id&&f.liked===false);
+  if(pins.length>=200){if(liked)status.textContent='Достигнут предел закреплённых станций.';return false}
+  const entry={id,snapshot:stationSnapshot(station),liked:liked||alreadyPinned};
+  const next=[...pins,entry,...others].slice(0,200);
+  try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{status.textContent='Не удалось сохранить станцию.';return false}
+  favorites=next;if(isHidden(id)){hiddenStations.delete(id);try{localStorage.setItem(hiddenKey,JSON.stringify([...hiddenStations]))}catch{}}return true;
+ }
  function setHidden(id,hidden){
   const next=new Set(hiddenStations);if(hidden)next.add(id);else next.delete(id);
   try{localStorage.setItem(hiddenKey,JSON.stringify([...next]))}catch{status.textContent='Не удалось сохранить изменение.';return false}
   hiddenStations=next;renderFavoritesMotion(id);return true;
  }
  function toggleFavorite(id){
-  const station=stations.find(s=>s.id===id);if(!station?.stream)return false;
-  const snapshot=id.startsWith('rb-')?{stationuuid:id.slice(3),name:station.name,countrycode:station.countrycode,country:station.country,state:station.city,tags:station.genre,url_resolved:station.stream,homepage:station.site,codec:station.quality.replace(/^\d+\s*/,''),bitrate:parseInt(station.quality,10)||0}:null;
-  const next=isFavorite(id)?favorites.map(f=>f.id===id?{...f,liked:false}:f):[{id,snapshot,liked:true},...favorites.filter(f=>f.id!==id)];
-  if(next.length>200){status.textContent='Достигнут предел избранных станций.';return false}
-  try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{status.textContent='Не удалось сохранить избранное.';return false}
-  favorites=next;if(isHidden(id))return setHidden(id,false);renderFavoritesMotion(id);return true;
+  if(!isFavorite(id)){if(!rememberStation(id,true))return false;renderFavoritesMotion(id);return true}
+  const entry=favorites.find(f=>f.id===id);
+  const next=[...favorites.filter(f=>f.id!==id&&f.liked!==false),{...entry,liked:false},...favorites.filter(f=>f.id!==id&&f.liked===false)];
+  try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{status.textContent='Не удалось сохранить изменение.';return false}
+  favorites=next;renderFavoritesMotion(id);return true;
  }
  const list=document.getElementById('svMusicRadioStations'),status=document.getElementById('svMusicRadioStatus');
  if(!list||!status)return;
@@ -590,7 +599,7 @@ function initRadio(){
  function resetRadioListen(){radioListen=null}
  function radioListenState(){const state=window.SEYVEO_MUSIC?.state?.();return state?.source==='radio'&&state.stationId?state:null}
  audio.addEventListener('playing',()=>{const state=radioListenState();if(!state)return;if(radioListen?.id!==state.stationId)radioListen={id:state.stationId,seconds:0,done:false,last:null};radioListen.last=Number(audio.currentTime)});
- audio.addEventListener('timeupdate',()=>{const state=radioListenState();if(!state||audio.paused||audio.seeking||audio.readyState<2)return;if(radioListen?.id!==state.stationId)radioListen={id:state.stationId,seconds:0,done:false,last:null};const track=radioListen;if(track.done)return;const now=Number(audio.currentTime);if(!Number.isFinite(now))return;const delta=track.last===null?0:now-track.last;track.last=now;if(delta>0&&delta<=3)track.seconds+=delta;if(track.seconds<20)return;track.done=true;if(isHidden(track.id))return;if(favorites[0]?.id===track.id)return;if(rememberStation(track.id,false))renderFavoritesMotion(track.id)});
+ audio.addEventListener('timeupdate',()=>{const state=radioListenState();if(!state||audio.paused||audio.seeking||audio.readyState<2)return;if(radioListen?.id!==state.stationId)radioListen={id:state.stationId,seconds:0,done:false,last:null};const track=radioListen;if(track.done)return;const now=Number(audio.currentTime);if(!Number.isFinite(now))return;const delta=track.last===null?0:now-track.last;track.last=now;if(delta>0&&delta<=3)track.seconds+=delta;if(track.seconds<20)return;track.done=true;if(isHidden(track.id)||isFavorite(track.id))return;if(favorites.find(f=>f.liked===false&&!isHidden(f.id))?.id===track.id)return;if(rememberStation(track.id,false))renderFavoritesMotion(track.id)});
  for(const event of ['pause','emptied','loadstart','error','ended'])audio.addEventListener(event,resetRadioListen);
  for(const event of ['waiting','seeking'])audio.addEventListener(event,()=>{if(radioListen)radioListen.last=null});
  function drawRadio(){
@@ -608,7 +617,7 @@ function initRadio(){
    const match=Math.max(0,...tags.map(tag=>weights.get(tag)||0));
    return (local?1000:0)+match*100+(local&&city&&norm(s.name+' '+(s.city||'')).includes(city)?10:0);
   };
-  const regionIds=new Set([...regional.map(s=>s.id),...history]),pins=new Map(favorites.map((f,i)=>[f.id,i]));
+  const regionIds=new Set([...regional.map(s=>s.id),...history]),pins=new Map([...favorites.filter(f=>f.liked!==false),...favorites.filter(f=>f.liked===false)].map((f,i)=>[f.id,i]));
   return stations.filter(s=>s.stream&&!isHidden(s.id)&&(pins.has(s.id)||!s.id.startsWith('rb-')||regionIds.has(s.id))).sort((a,b)=>{
    const ai=pins.get(a.id),bi=pins.get(b.id);
    if(ai!==undefined||bi!==undefined)return (ai??Infinity)-(bi??Infinity);
@@ -631,7 +640,7 @@ function initRadio(){
   const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Отмена';
   remove.addEventListener('click',()=>{closeRadioMenu();setHidden(station.id,true)});
   cancel.addEventListener('click',()=>closeRadioMenu(true));
-  const save=document.createElement('button');save.type='button';save.textContent='Сохранить в начале';save.addEventListener('click',()=>{closeRadioMenu();favoriteGesture(station.id)});
+  const save=document.createElement('button');save.type='button';save.textContent=isFavorite(station.id)?'Открепить станцию':'Закрепить станцию';save.addEventListener('click',()=>{closeRadioMenu();if(isFavorite(station.id))toggleFavorite(station.id);else favoriteGesture(station.id)});
   menu.append(title,save,remove,cancel);document.body.append(menu);radioMenu={node:menu,anchor:row};
   const rect=row.getBoundingClientRect(),width=menu.offsetWidth,height=menu.offsetHeight;
   const left=Math.max(12,Math.min(rect.left,window.innerWidth-width-12));
