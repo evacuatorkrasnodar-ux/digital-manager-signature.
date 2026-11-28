@@ -17,7 +17,7 @@
  let seen=read(KEY)||{},active=null,previousFocus=null,routeTimer=0;
  const genres=[['rock','Рок'],['pop','Поп'],['electronic','Электроника'],
   ['jazz','Джаз'],['classical','Классика'],['hiphop','Хип-хоп'],
-  ['indie','Инди'],['other','Другое']];
+  ['indie','Инди'],['russianrock','Русский рок'],['russianpop','Русский поп'],['chanson','Шансон'],['other','Другое']];
  const sheet=document.createElement('div');
  sheet.id='svSectionDiscovery';sheet.hidden=true;
  sheet.innerHTML=`
