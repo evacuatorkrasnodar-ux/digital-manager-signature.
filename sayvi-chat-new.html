@@ -2082,6 +2082,41 @@ html:root[data-theme="light"] body :is(#sayviTopActions .sv-top-action,#sayviHis
 <script src="assets/seyveo-signature.js?v=20261125-stylus-v2" defer></script>
 <link rel="stylesheet" href="assets/seyveo-unified-menu-material.css?v=20261126-menu-clean-v153">
 <link rel="stylesheet" href="assets/seyveo-media-pearl.css?v=20261126-v191">
+<style id="svSayviApprovedSteelInk">
+/* Match neutral light dock and circular actions; retain the colored send arrow. */
+html:root[data-theme="light"][data-theme] body #sayviComposer > button#sayviPlus:not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body #sayviComposer > button#sayviPlus:not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
+html:root[data-theme="light"][data-theme] body #sayviComposer #sayviField #sayviMic:not([aria-pressed="true"]):not(.active):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body #sayviComposer #sayviField #sayviMic:not([aria-pressed="true"]):not(.active):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
+html:root[data-theme="light"][data-theme] body #sayviTopActions .sv-top-action:not([aria-pressed="true"]):not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body #sayviTopActions .sv-top-action:not([aria-pressed="true"]):not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
+html:root[data-theme="light"][data-theme] body #sayviHistory .history-head :is(#sayviHistoryClose,#sayviHistoryMenuButton):not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body #sayviHistory .history-head :is(#sayviHistoryClose,#sayviHistoryMenuButton):not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])){
+ color:#57636B!important;
+ stroke:#57636B!important;
+ stroke-width:1.55!important;
+}
+</style>
+<style id="svSayviApprovedLightControls">
+/* Same optical hierarchy as the main app; retain blue send, opaque menus and dark theme. */
+html:root[data-theme="light"][data-theme] body :is(#sayviTopActions .sv-top-action,#sayviHistoryClose,#sayviHistoryMenuButton){
+ --sv-white-pearl-surface:rgba(182,187,193,.16);
+ --sv-white-pearl-edge:1px solid rgba(157,165,175,.32);
+ --sv-white-pearl-circle-shadow:inset 0 0 0 .75px rgba(255,255,255,.76),0 2px 5px rgba(30,40,52,.045),0 4px 12px rgba(30,40,52,.075);
+ --sv-white-pearl-blur:blur(3px) saturate(108%);
+}
+html:root[data-theme="light"][data-theme] body :is(#sayviMenu,#sayviHistoryMenu){
+ --sv-white-pearl-edge:1px solid rgba(157,165,175,.30);
+ --sv-depth-menu:0 10px 28px rgba(30,40,52,.11),0 3px 8px rgba(30,40,52,.045),inset 0 1px 0 rgba(255,255,255,.88);
+ --sv-menu-icon-stroke:1.55;
+}
+html:root[data-theme="light"][data-theme] body :is(#sayviMenu,#sayviHistoryMenu) > button:not(#sayviHistoryClear):not(.is-danger):not(.is-destructive):not([data-action="delete"]):not([data-action="clear"]):not(:disabled) > svg{
+ color:#57636B!important;stroke:#57636B!important;stroke-width:1.55!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"][data-theme] body :is(#sayviTopActions .sv-top-action,#sayviHistoryClose,#sayviHistoryMenuButton){--sv-white-pearl-surface:#eef0f2;--sv-white-pearl-blur:none}
+}
+</style>
 </head>
 <body>
 <main>
@@ -5329,40 +5364,7 @@ html:root[data-theme="light"] body :is(#sayviTopActions .sv-top-action,#sayviHis
 <link rel="stylesheet" href="assets/seyveo-landscape.css?v=20261125-1">
 <link rel="stylesheet" href="assets/seyveo-scan-auto.css?v=2"><script src="assets/seyveo-scan-auto.js?v=2"></script>
 <script src="assets/seyveo-nav-glyphs.js?v=2"></script>
-<style id="svSayviApprovedSteelInk">
-/* Match neutral light dock and circular actions; retain the colored send arrow. */
-html:root[data-theme="light"][data-theme] body #sayviComposer > button#sayviPlus:not([aria-expanded="true"]):not(:active) > svg,
-html:root[data-theme="light"][data-theme] body #sayviComposer > button#sayviPlus:not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
-html:root[data-theme="light"][data-theme] body #sayviComposer #sayviField #sayviMic:not([aria-pressed="true"]):not(.active):not(:active) > svg,
-html:root[data-theme="light"][data-theme] body #sayviComposer #sayviField #sayviMic:not([aria-pressed="true"]):not(.active):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
-html:root[data-theme="light"][data-theme] body #sayviTopActions .sv-top-action:not([aria-pressed="true"]):not([aria-expanded="true"]):not(:active) > svg,
-html:root[data-theme="light"][data-theme] body #sayviTopActions .sv-top-action:not([aria-pressed="true"]):not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])),
-html:root[data-theme="light"][data-theme] body #sayviHistory .history-head :is(#sayviHistoryClose,#sayviHistoryMenuButton):not([aria-expanded="true"]):not(:active) > svg,
-html:root[data-theme="light"][data-theme] body #sayviHistory .history-head :is(#sayviHistoryClose,#sayviHistoryMenuButton):not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]):not([fill]:not([fill="none"])){
- color:#57636B!important;
- stroke:#57636B!important;
- stroke-width:1.55!important;
-}
-</style>
-<style id="svSayviApprovedLightControls">
-/* Same optical hierarchy as the main app; retain blue send, opaque menus and dark theme. */
-html:root[data-theme="light"][data-theme] body :is(#sayviTopActions .sv-top-action,#sayviHistoryClose,#sayviHistoryMenuButton){
- --sv-white-pearl-surface:rgba(182,187,193,.16);
- --sv-white-pearl-edge:1px solid rgba(157,165,175,.32);
- --sv-white-pearl-circle-shadow:inset 0 0 0 .75px rgba(255,255,255,.76),0 2px 5px rgba(30,40,52,.045),0 4px 12px rgba(30,40,52,.075);
- --sv-white-pearl-blur:blur(3px) saturate(108%);
-}
-html:root[data-theme="light"][data-theme] body :is(#sayviMenu,#sayviHistoryMenu){
- --sv-white-pearl-edge:1px solid rgba(157,165,175,.30);
- --sv-depth-menu:0 10px 28px rgba(30,40,52,.11),0 3px 8px rgba(30,40,52,.045),inset 0 1px 0 rgba(255,255,255,.88);
- --sv-menu-icon-stroke:1.55;
-}
-html:root[data-theme="light"][data-theme] body :is(#sayviMenu,#sayviHistoryMenu) > button:not(#sayviHistoryClear):not(.is-danger):not(.is-destructive):not([data-action="delete"]):not([data-action="clear"]):not(:disabled) > svg{
- color:#57636B!important;stroke:#57636B!important;stroke-width:1.55!important;
-}
-@media(prefers-reduced-transparency:reduce){
- html:root[data-theme="light"][data-theme] body :is(#sayviTopActions .sv-top-action,#sayviHistoryClose,#sayviHistoryMenuButton){--sv-white-pearl-surface:#eef0f2;--sv-white-pearl-blur:none}
-}
-</style>
+
+
 </body>
 </html>
