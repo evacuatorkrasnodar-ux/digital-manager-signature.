@@ -8,7 +8,7 @@ const KEY='seyveo-podcasts-v1';
 // Dedicated viewport layer; independent of the music page's grid and dock.
 const overlay=document.createElement('section');overlay.id='svPodcastViewport';overlay.hidden=true;overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Плеер подкаста');
 const notice=document.createElement('p');notice.id='svPodcastViewportNotice';notice.hidden=true;notice.setAttribute('role','status');
-const polish=document.createElement('style');polish.id='svPodcastPlayerPolishV24';polish.textContent=`
+const polish=document.createElement('style');polish.id='svPodcastPlayerPolishV25';polish.textContent=`
 html body #svPodcastViewport[hidden],html body #svPodcastViewport [hidden]{display:none!important}
 html body #svPodcastViewport:not([hidden]){display:block!important;position:fixed!important;inset:0!important;z-index:2147483000!important;overflow:hidden!important;background:#151515!important;color:#fff!important;isolation:isolate;--text:#fff;--secondary:#ffffffa8;--soft-line:#ffffff38}
 html body #svPodcastViewport #svPodcastPlayer:not([hidden]){position:relative!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;align-items:stretch!important;gap:14px!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0 24px calc(22px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important;overflow-y:auto!important;border:0!important;border-radius:0!important;background:#151515!important;box-shadow:none!important;color:#fff!important}
@@ -213,6 +213,13 @@ html body #svPodcastViewport .sv-podcast-speed-pop input::-moz-range-track{heigh
 #svPodcastViewport .sv-podcast-volume svg{width:16px;height:16px}
 #svPodcastViewport .sv-podcast-bottom-tools svg{width:22px;height:22px}
 @media(prefers-reduced-transparency:reduce){html body #svPodcastViewport .sv-podcast-speed-pop{background:#242426!important}}
+
+/* Interaction polish; keep the approved playback composition and artwork. */
+html body #svPodcastViewport #svPodcastCollapse{touch-action:none;cursor:grab}
+#svPodcastViewport .sv-podcast-speed-pop{transform-origin:20% 100%}
+#svPodcastViewport .sv-podcast-speed-pop:not([hidden]),#svPodcastViewport .sv-podcast-sleep-pop:not([hidden]),#svPodcastViewport .sv-podcast-more-pop:not([hidden]){animation:svPodcastMenuIn .14s ease-out}
+@keyframes svPodcastMenuIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){#svPodcastViewport .sv-podcast-speed-pop,#svPodcastViewport .sv-podcast-sleep-pop,#svPodcastViewport .sv-podcast-more-pop{animation:none!important}}
 `;document.head.appendChild(polish);
 overlay.append(player);player.append(notice);document.body.append(overlay);
 const speedSelect=get('svPodcastSpeed'),sleepSelect=get('svPodcastSleep'),transport=player.querySelector('.sv-podcast-transport');
@@ -243,7 +250,7 @@ if(pitchKey)speedHead.append(pitchButton);else speedHead.append(speedReset);
 const speedScale=document.createElement('div');speedScale.className='sv-podcast-speed-scale';
 const slow=document.createElement('span');slow.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15c0-5 3.5-8 8-8s8 3 8 8H3ZM19 15h2a2 2 0 1 0-2-2M6 15l-1 3m11-3 1 3M8 8l3 7 3-7M3 15l-1 1"/></svg>';
 const fast=document.createElement('span');fast.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 17H5a3 3 0 0 1 0-6c2 0 4 1 5 2l3-4c-2-3-2-6 0-7 2 0 3 4 3 6 1-3 3-5 4-4 1 1 0 4-2 6 2 0 4 2 4 4 0 3-4 4-7 3l-2 3H8l3-4M2 7h5"/></svg>';
-speedScale.append(slow,speedRange,fast);speedRange.addEventListener('dblclick',()=>{speedRange.value='1';speedRange.dispatchEvent(new Event('input'))});speedPop.append(speedHead,speedScale,speedNote);player.append(speedPop);
+speedScale.append(slow,speedRange,fast);speedRange.addEventListener('dblclick',()=>{speedRange.value='1';speedRange.dispatchEvent(new Event('input'))});speedRange.addEventListener('keydown',e=>{if(e.key==='Home'&&e.altKey){e.preventDefault();speedRange.value='1';speedRange.dispatchEvent(new Event('input'))}});speedPop.append(speedHead,speedScale,speedNote);player.append(speedPop);
 function showSpeed(value){speedPop.hidden=!value;speedQuick.setAttribute('aria-expanded',String(value));if(value){showSleep(false);queuePop.hidden=true;queueButton.setAttribute('aria-expanded','false');speedRange.value=String(audio.playbackRate||1);applyPitch();paintSpeed();const p=player.getBoundingClientRect(),b=speedQuick.getBoundingClientRect();const left=Math.max(12,Math.min(p.width- speedPop.offsetWidth-12,b.left-p.left-12));speedPop.style.setProperty('--sv-speed-pop-left',left+'px');speedPop.style.setProperty('--sv-speed-pop-bottom',(p.bottom-b.top+8)+'px');speedPop.style.setProperty('--sv-speed-arrow',Math.max(12,b.left-p.left-left+b.width/2-5)+'px')}}
 function paintSpeed(){speedRead.textContent=String(Number(speedRange.value)).replace('.',',')+'×';speedRange.setAttribute('aria-valuetext',speedRead.textContent);speedRange.style.setProperty('--sv-value',((Number(speedRange.value)-.75)/1.25*100)+'%')}
 speedQuick.addEventListener('click',()=>showSpeed(speedPop.hidden));speedRange.addEventListener('input',()=>{const v=String(Number(speedRange.value));if(!Array.from(speedSelect.options).some(o=>o.value===v))speedSelect.add(new Option(v.replace('.',',')+'×',v));speedSelect.value=v;speedSelect.dispatchEvent(new Event('change'));paintSpeed()});
@@ -340,7 +347,12 @@ function openFull(){
  openSearch(false);resetTools();fullOpen=true;syncPodcastView();page.scrollTop=0;renderHighlights();
 }
 function closeFull(){closePopups();fullOpen=false;syncPodcastView();renderHighlights();page.scrollTop=0;if(!mini.hidden)get('svPodcastMiniOpen').focus({preventScroll:true})}
-get('svPodcastCollapse').addEventListener('click',closeFull);
+const collapseHandle=get('svPodcastCollapse');let collapseGesture=null,ignoreCollapseClick=0;
+collapseHandle.addEventListener('click',()=>{if(Date.now()>ignoreCollapseClick)closeFull()});
+function finishCollapseGesture(x,y){if(!collapseGesture)return;const dx=x-collapseGesture.x,dy=y-collapseGesture.y;collapseGesture=null;if(dy>48&&dy>Math.abs(dx)*1.3){ignoreCollapseClick=Date.now()+450;closeFull()}}
+if(window.PointerEvent){collapseHandle.addEventListener('pointerdown',e=>{if(e.button!==0)return;collapseGesture={x:e.clientX,y:e.clientY};try{collapseHandle.setPointerCapture(e.pointerId)}catch{}});collapseHandle.addEventListener('pointerup',e=>finishCollapseGesture(e.clientX,e.clientY));collapseHandle.addEventListener('pointercancel',()=>{collapseGesture=null})}
+else{collapseHandle.addEventListener('touchstart',e=>{const t=e.touches[0];if(t)collapseGesture={x:t.clientX,y:t.clientY}},{passive:true});collapseHandle.addEventListener('touchend',e=>{const t=e.changedTouches[0];if(t)finishCollapseGesture(t.clientX,t.clientY)});collapseHandle.addEventListener('touchcancel',()=>{collapseGesture=null})}
+
 get('svPodcastMiniOpen').addEventListener('click',openFull);
 miniToggle.addEventListener('click',()=>{if(current){if(audio.paused||audio.ended)audio.play().catch(()=>say('Не удалось начать воспроизведение.'));else audio.pause()}});
 get('svPodcastMiniForward').addEventListener('click',()=>jump(30));
