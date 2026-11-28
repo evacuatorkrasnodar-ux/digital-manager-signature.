@@ -679,7 +679,7 @@ function artTile(r){
  const fallback='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17V6l11-3v11"/><ellipse cx="6" cy="17.5" rx="3" ry="2.3"/><ellipse cx="17" cy="14.5" rx="3" ry="2.3"/></svg>';art.innerHTML=fallback;
  const showFallback=()=>{art.innerHTML=fallback;art.classList.add('sv-new-no-art');const mark=document.createElement('span');mark.className='sv-new-art-caption';mark.textContent='Без обложки';art.append(mark)};showFallback();
  const img=document.createElement('img');img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
- img.addEventListener('error',()=>{const backup=safeArtwork(r.artwork);if(backup&&img.src!==backup){img.addEventListener('error',showFallback,{once:true});img.src=backup}else showFallback()},{once:true});img.addEventListener('load',()=>art.classList.remove('sv-new-no-art'),{once:true});
+ img.addEventListener('error',()=>{const backup=safeArtwork(r.artwork);if(backup&&img.src!==backup){img.addEventListener('error',showFallback,{once:true});img.src=backup}else showFallback()},{once:true});img.addEventListener('load',()=>{art.classList.remove('sv-new-no-art');if(typeof img.animate==='function'&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.hidden)img.animate([{opacity:0},{opacity:1}],{duration:180,easing:'ease-out'})},{once:true});
  const imageURL=uuid(r.id)?'https://coverartarchive.org/release-group/'+r.id+'/front-250':safeArtwork(r.artwork);if(imageURL){img.src=imageURL;art.replaceChildren(img)}
  const title=document.createElement('strong');title.textContent=r.title;title.title=r.title;
  const artist=document.createElement('small');artist.textContent=r.artist;artist.title=r.artist;
@@ -700,6 +700,7 @@ function story(r,future){
  const body=document.createElement('p');body.textContent=future?'Ожидается релиз. Дата может измениться.':'Релиз появился в музыкальном каталоге.';
  card.append(date,title,body,heart(r));return card;
 }
+let lastMotionFeed='';
 function showPublic(items,stale=false){
  if(!publicList||!publicTitle)return;
  closePreview();if(mode!=='liked'){lastItems=items;lastStale=stale}
@@ -728,7 +729,12 @@ function showPublic(items,stale=false){
   const remaining=upcoming.slice(recent.length>=6?2:1,5);if(remaining.length){const heading=document.createElement('h3');heading.textContent='Скоро выйдут';heading.style.gridColumn='1/-1';cards.push(heading,...remaining.map(artTile))}
  }
  if(mode==='for-you')cards.unshift(...pendingReminders().slice(0,1).map(reminderCard));
+ const motionKey=mode+'|'+mergedItems.map(r=>r.id+':'+r.date).join('|');
+ const animateFeed=motionKey!==lastMotionFeed;lastMotionFeed=motionKey;
  publicList.replaceChildren(...cards);
+ if(animateFeed&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.hidden){
+  cards.slice(0,9).forEach((card,i)=>{if(typeof card.animate==='function')card.animate([{opacity:0,transform:'translateY(5px)'},{opacity:1,transform:'translateY(0)'}],{duration:190,delay:Math.min(i,5)*16,easing:'cubic-bezier(.2,.7,.25,1)',fill:'backwards'})});
+ }
  publicMessage(mode==='liked'?(cards.length?'':'Нажмите сердечко на релизе или анонсе — он останется здесь.'):stale?'Сохранённая подборка · обновление пока недоступно.':cards.length?'':'В каталоге пока нет подходящих релизов.');
  if(publicSource){publicSource.textContent='MusicBrainz · Cover Art Archive · даты могут уточняться';publicSource.hidden=false;$('svDiscoveryPublic').append(publicSource)}
 }
