@@ -205,7 +205,67 @@ function init(){
   const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(i+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length;
   buttons[next]?.focus();
  });
- function renderReplay(){
+ const portraitColors=['#6688bc','#8a81bb','#69a4a4','#be91ad','#a4aabf','#b5a17b'];
+ const portraitEl=(tag,cls,content)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(content!==undefined)el.textContent=content;return el};
+ const portraitDuration=seconds=>{const m=Math.floor(Math.max(0,seconds)/60);return m>=60?Math.floor(m/60)+' ч '+m%60+' мин':m?m+' мин':seconds>0?'Меньше минуты':'0 мин'};
+ const priorPeriod=p=>{if(/^\d{4}$/.test(p))return String(Number(p)-1);const [y,m]=p.split('-').map(Number),d=new Date(y,m-2,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+ function portraitPanel(title,sub){const el=portraitEl('section','sv-portrait-panel');el.append(portraitEl('h3','sv-portrait-title',title));if(sub)el.append(portraitEl('p','sv-portrait-sub',sub));return el}
+ function portraitInsight(p,previous){
+  const sufficient=(a,kind)=>a.music>=600&&a[kind+'Known']/a.music>=.6;
+  if(sufficient(p,'genre')&&sufficient(previous,'genre')){
+   const old=new Map(previous.genres.map(r=>[r.name,r.seconds/previous.genreKnown]));
+   const changed=p.genres.map(r=>({name:r.name,delta:r.seconds/p.genreKnown-(old.get(r.name)||0)})).sort((a,b)=>b.delta-a.delta)[0];
+   if(changed&&changed.delta>=.05)return 'В твоём музыкальном мире стало больше направления «'+changed.name+'» — на '+Math.round(changed.delta*100)+' п. п. среди музыки с известным жанром.';
+  }
+  if(p.artists.length&&previous.artists.length&&p.artists[0].name!==previous.artists[0].name)return 'Новый лидер твоего музыкального мира — '+p.artists[0].name+'. За этот период ты слушал этого исполнителя '+portraitDuration(p.artists[0].seconds)+'.';
+  if(sufficient(p,'genre')&&p.genres.length)return 'Сейчас в твоём музыкальном мире лидирует '+p.genres[0].name.toLowerCase()+'. Сэйви учтёт любимых исполнителей в подборке новинок.';
+  if(p.artists.length)return 'Больше всего твоего времени заняла музыка '+p.artists[0].name+' — '+portraitDuration(p.artists[0].seconds)+'. Сэйви учитывает это при выборе новинок.';
+  return 'Твой музыкальный мир постепенно складывается из того, что ты слушаешь.';
+ }
+ function renderPortrait(out,p,previous,period,total){
+  if(!p||!p.total)return;
+  const insight=portraitEl('div','sv-portrait-insight');
+  const orb=portraitEl('span','sv-portrait-orb');orb.setAttribute('aria-hidden','true');
+  orb.innerHTML='<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="svPortraitGlow" cx=".28" cy=".2" r=".92"><stop stop-color="#d5f1ff"/><stop offset=".37" stop-color="#8fa9dc"/><stop offset=".72" stop-color="#6669a3"/><stop offset="1" stop-color="#283d59"/></radialGradient><linearGradient id="svPortraitWave" x2="1" y2="1"><stop stop-color="#c5f8ee"/><stop offset=".53" stop-color="#9eb6fb"/><stop offset="1" stop-color="#f3bde5"/></linearGradient><clipPath id="svPortraitClip"><circle cx="32" cy="32" r="29"/></clipPath></defs><circle cx="32" cy="32" r="29" fill="url(#svPortraitGlow)" stroke="#d3e2f8" stroke-opacity=".9"/><g clip-path="url(#svPortraitClip)"><path d="M1 43C15 4 25 57 39 28S65 13 66 40C43 63 18 42 1 43Z" fill="url(#svPortraitWave)" opacity=".6"/><path d="M0 33C18 62 32 7 45 30S60 50 66 29" stroke="#e2ecff" stroke-width="1.3"/><path d="M-1 35C14 17 26 55 42 21S60 23 67 34" stroke="#d3c8ff" stroke-width="1.3" opacity=".8"/></g><circle cx="32" cy="32" r="29" stroke="#f1f5ff" stroke-opacity=".45"/></svg>';
+  const copy=portraitEl('div','sv-portrait-insight-copy');copy.append(portraitEl('small','','Сэйви заметила'),portraitEl('p','',portraitInsight(p,previous)));insight.append(orb,copy);total.append(insight);
+  const grid=portraitEl('div','sv-portrait-grid');out.append(grid);
+  const daily=portraitPanel('Музыка по дням',p.trackedFrom?'Фактическое время прослушивания':'Детальная история начнёт появляться после обновления');
+  if(p.trackedFrom){
+   const year=/^\d{4}$/.test(period);let entries=[];
+   if(year){for(let i=1;i<=12;i++){const m=period+'-'+String(i).padStart(2,'0');entries.push({key:m,label:new Date(Number(period),i-1,1).toLocaleDateString('ru-RU',{month:'short'}),seconds:Object.entries(p.days).filter(([d])=>d.startsWith(m)).reduce((a,[,v])=>a+v,0),known:m>=p.trackedFrom.slice(0,7)})}}
+   else{const [y,m]=period.split('-').map(Number),count=new Date(y,m,0).getDate();for(let i=1;i<=count;i++){const key=period+'-'+String(i).padStart(2,'0');entries.push({key,label:String(i),seconds:p.days[key]||0,known:key>=p.trackedFrom})}}
+   const now=new Date(),today=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');entries=entries.filter(e=>e.key<=today.slice(0,e.key.length));
+   const max=Math.max(60,...entries.map(e=>e.seconds)),chart=portraitEl('div','sv-portrait-bars'),detail=portraitEl('div','sv-portrait-chart-detail');
+   const peak=entries.reduce((a,b)=>b.seconds>(a?.seconds||0)?b:a,null);
+   const detailDefault=peak?'Максимум · '+(year?peak.label:peak.label+' число')+' · '+portraitDuration(peak.seconds):'Пока мало данных';
+   detail.textContent=detailDefault;detail.setAttribute('aria-live','polite');
+   entries.forEach((e,i)=>{const col=portraitEl('button','sv-portrait-bar-col');col.type='button';col.disabled=!e.known;col.setAttribute('aria-label',(year?e.label:e.label+' число')+': '+(e.known?portraitDuration(e.seconds):'нет детализации'));const rail=portraitEl('span','sv-portrait-bar-rail'),bar=portraitEl('i','sv-portrait-bar');bar.style.height=(e.known?Math.max(e.seconds?4:0,100*e.seconds/max):0)+'%';if(peak===e)bar.classList.add('is-peak');rail.append(bar);const label=portraitEl('small','',year||i===0||i===entries.length-1||i%7===6?e.label:'');col.append(rail,label);col.addEventListener('click',()=>{detail.textContent=(year?e.label:e.label+' число')+' · '+portraitDuration(e.seconds)});chart.append(col)});
+   daily.append(detail,chart);
+   const tracked=Object.values(p.days).reduce((a,b)=>a+b,0);if(tracked<p.total*.99)daily.append(portraitEl('p','sv-portrait-note','Детализация доступна с '+p.trackedFrom.split('-').reverse().join('.')+'. Более раннее время сохранено в общем итоге.'));
+  }else daily.append(portraitEl('p','sv-portrait-empty','Пока есть только общий итог. Новые прослушивания автоматически появятся на графике.'));
+  grid.append(daily);
+  function distribution(title,kind,rows,known,oldRows,oldKnown){
+   const panel=portraitPanel(title);
+   if(!known){panel.append(portraitEl('p','sv-portrait-empty',kind==='genre'?'Сэйви уточняет жанры по метаданным музыкальных файлов.':'Язык появится, когда он указан в метаданных или текстах песен.'));return panel}
+   const displayed=rows.slice(0,5),rest=known-displayed.reduce((n,r)=>n+r.seconds,0);if(rest>0.5)displayed.push({name:'Другие',seconds:rest});
+   const donut=portraitEl('div','sv-portrait-donut'),stops=[];let at=0;
+   displayed.forEach((r,i)=>{const end=at+r.seconds/known*100;stops.push(portraitColors[i%portraitColors.length]+' '+at+'% '+end+'%');at=end});
+   donut.style.background='conic-gradient('+stops.join(',')+')';
+   const center=portraitEl('div','sv-portrait-donut-center');center.append(portraitEl('strong','',Math.round(displayed[0].seconds/known*100)+'%'),portraitEl('small','',displayed[0].name));donut.append(center);donut.setAttribute('aria-hidden','true');
+   const body=portraitEl('div','sv-portrait-distribution');body.append(donut);const legend=portraitEl('div','sv-portrait-legend');
+   const canCompare=kind==='genre'&&p.music>=600&&previous.music>=600&&known/p.music>=.6&&oldKnown/previous.music>=.6;
+   const old=new Map(oldRows.map(r=>[r.name,r.seconds/oldKnown]));
+   displayed.forEach((r,i)=>{const row=portraitEl('div','sv-portrait-legend-row'),dot=portraitEl('i','');dot.style.background=portraitColors[i%portraitColors.length];const name=portraitEl('span','',r.name),percent=portraitEl('strong','',Math.round(r.seconds/known*100)+'%');row.append(dot,name,percent);if(canCompare&&r.name!=='Другие'){const change=Math.round((r.seconds/known-(old.get(r.name)||0))*100);if(change)row.append(portraitEl('small','sv-portrait-change '+(change>0?'up':'down'),(change>0?'+':'')+change+' п. п.'))}legend.append(row)});body.append(legend);panel.append(body);
+   const coverage=Math.min(100,Math.round(known/Math.max(1,p.music)*100));panel.append(portraitEl('p','sv-portrait-note',(canCompare?'Динамика к прошлому периоду · ':'')+'Известно для '+coverage+'% времени музыки'));return panel;
+  }
+  grid.append(distribution('Жанры и изменение вкуса','genre',p.genres,p.genreKnown,previous.genres,previous.genreKnown));
+  grid.append(distribution('Языки музыки','language',p.languages,p.languageKnown,previous.languages,previous.languageKnown));
+  const times=portraitPanel('Твой музыкальный ритм');
+  const bands=[['Утро',6,12],['День',12,18],['Вечер',18,24],['Ночь',0,6]].map(([name,a,b])=>({name,seconds:p.hours.slice(a,b).reduce((n,v)=>n+v,0)})),hourTotal=bands.reduce((a,r)=>a+r.seconds,0);
+  if(hourTotal){const leader=[...bands].sort((a,b)=>b.seconds-a.seconds)[0];times.append(portraitEl('p','sv-portrait-rhythm-note',leader.name+' — твоё самое музыкальное время'));const rails=portraitEl('div','sv-portrait-rhythm');bands.forEach((r,i)=>{const row=portraitEl('div','sv-portrait-rhythm-row'),track=portraitEl('span','sv-portrait-rhythm-track'),fill=portraitEl('i','');fill.style.width=r.seconds/hourTotal*100+'%';fill.style.background=portraitColors[i];track.append(fill);row.append(portraitEl('span','',r.name),track,portraitEl('strong','',Math.round(r.seconds/hourTotal*100)+'%'));rails.append(row)});times.append(rails)}else times.append(portraitEl('p','sv-portrait-empty','Сэйви начнёт замечать, в какое время ты чаще слушаешь музыку.'));
+  grid.append(times);
+ }
+ function renderReplay(scan=true){
   const select=get('svMusicReplayPeriod'),out=get('svMusicReplayResults');if(!select||!out)return;
   if(!select.options.length){
    const now=new Date(),format=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'});
@@ -232,6 +292,9 @@ function init(){
   }
   const duration=s=>s<60?Math.floor(s)+' сек.':Math.floor(s/60)+' мин.';
   if(!data.seconds){const empty=document.createElement('p');empty.className='sv-music-browse-caption';empty.textContent='Слушайте музыку и радио. Здесь появятся ваши настоящие музыкальные итоги.';out.append(empty);return}
+  const portrait=music()?.replayPortrait?.(select.value),previous=music()?.replayPortrait?.(priorPeriod(select.value));
+  if(portrait&&previous)renderPortrait(out,portrait,previous,select.value,total);
+  if(scan&&music()?.enrichReplayPortrait){const selected=select.value;music().enrichReplayPortrait().then(changed=>{if(changed&&view==='replay'&&select.value===selected)renderReplay(false)}).catch(()=>{})}
   const libraryByKey=new Map((music()?.browseTracks?.()||[]).map(track=>[track.artKey,track]));
   for(const [title,items] of [['Любимые исполнители',data.artists],['Любимые треки',data.tracks],['Любимые станции',data.stations]]){
    if(!items.length)continue;
@@ -262,7 +325,7 @@ function init(){
     row.append(copy,time);out.append(row)}
   }
  }
- get('svMusicReplayPeriod')?.addEventListener('change',renderReplay);
+ get('svMusicReplayPeriod')?.addEventListener('change',()=>renderReplay());
  document.getElementById('sayviMusicAudio')?.addEventListener('pause',()=>{if(view==='replay')renderReplay()});
  const more=get('svNowMore'),menu=get('svNowMenu'),queue=get('svNowQueue');
  function closeNowMenu(restore=false){
