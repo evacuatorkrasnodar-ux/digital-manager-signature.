@@ -38,7 +38,8 @@ function init(){
  }
  function playlistNotice(el,label){const p=document.createElement('p');p.className='sv-music-browse-caption';p.textContent=label;el.append(p);return p}
  function setPlaylistEditing(value){
-  playlistEditing=!!value;get('svMusicLibrary')?.classList.toggle('sv-pl-editing',playlistEditing);
+  playlistEditing=!!value;get('svMusicLibrary')?.classList.toggle('sv-pl-editing',playlistEditing);page.classList.toggle('sv-pl-editor-open',playlistEditing);
+  if(!playlistEditing){page.querySelectorAll('.sv-pl-header-action').forEach(b=>b.remove());const label=page.querySelector('[data-title-view="library"]');if(label)label.textContent='Медиатека';}
  }
  const plNorm=value=>String(value||'').normalize('NFKC').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').replace(/[«»"“”]/g,'').replace(/\s+/g,' ').trim();
  function parsePlaylistCommand(value,library){
@@ -74,13 +75,13 @@ function init(){
  }
  function playlistEditor(el,library,existing){
   setPlaylistEditing(true);stopCoverObserver();el.replaceChildren();page.scrollTop=0;
-  const top=document.createElement('div');top.className='sv-pl-editor-head';
-  const heading=document.createElement('h4');heading.textContent=existing?'Редактировать':'Новый плейлист';
-  const cancel=playlistButton('Отмена',()=>{setPlaylistEditing(false);renderTracks()});
-  const done=playlistButton('Готово',()=>save(),'sv-pl-primary');top.append(cancel,heading,done);el.append(top);
+  const top=page.querySelector('.sv-music-head');
+  const labelTitle=top.querySelector('[data-title-view="library"]');labelTitle.textContent=existing?'Редактирование':'Новый плейлист';
+  const cancel=playlistButton('Отмена',()=>{setPlaylistEditing(false);renderTracks()},'sv-pl-header-action sv-pl-header-cancel');
+  const done=playlistButton('Готово',()=>save(),'sv-pl-header-action sv-pl-header-done');top.append(cancel,done);
   const panel=document.createElement('div');panel.className='sv-pl-smart-panel';
   const label=document.createElement('label');label.className='sv-pl-smart-label';label.htmlFor='svPlaylistCommand';label.textContent='Скажи, что собрать';panel.append(label);
-  const input=document.createElement('textarea');input.id='svPlaylistCommand';input.rows=2;input.maxLength=400;input.placeholder='Например: В дорогу, добавь рок и Шамана';input.setAttribute('aria-label','Название и состав плейлиста');input.value=existing?.name||'';input.className='sv-pl-smart-input';panel.append(input);
+  const input=document.createElement('textarea');input.id='svPlaylistCommand';input.rows=2;input.maxLength=400;input.placeholder='В дорогу, добавь рок и Шамана';input.setAttribute('aria-label','Название и состав плейлиста');input.value=existing?.name||'';input.className='sv-pl-smart-input';panel.append(input);
   const preview=document.createElement('div');preview.className='sv-pl-smart-preview';preview.setAttribute('aria-live','polite');panel.append(preview);el.append(panel);
   const message=playlistNotice(el,'');message.classList.add('sv-pl-editor-message');message.setAttribute('role','status');
   const manual=new Map((existing?.ids||[]).map(id=>[id,true]));
@@ -94,7 +95,7 @@ function init(){
    for(const [id,value] of manual){if(value)chosen.add(id);else chosen.delete(id)}
    note.textContent='Выбрано: '+chosen.size;
    preview.replaceChildren();
-   const name=document.createElement('span');name.className='sv-pl-smart-name';name.textContent=parsed.name?'Название: '+parsed.name:'Название пока не указано';preview.append(name);
+   if(parsed.name){const name=document.createElement('span');name.className='sv-pl-smart-name';name.textContent=parsed.name;preview.append(name)}
    if(parsed.query&&(parsed.explicit||parsed.ids.size)){const count=document.createElement('span');count.textContent='Найдено: '+parsed.ids.size;preview.append(count)}
    if(parsed.explicit&&parsed.missing.length){const hint=document.createElement('small');hint.textContent='Нет совпадений: '+parsed.missing.join(', ');preview.append(hint)}
    toggle.setAttribute('aria-pressed',String(onlySelected));toggle.textContent=onlySelected?'Все песни':'Выбранные';
