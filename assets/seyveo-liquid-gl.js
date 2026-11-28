@@ -8,7 +8,7 @@ window.SEYVEO_LIQUID_GL={create(mobile){
  let lost=false;canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();lost=true});
  const vs=`precision highp float;
 attribute vec4 aData;
-uniform mediump vec4 uMusic; uniform mediump float uKind,uMode,uIdle; uniform float uSize;
+uniform mediump vec4 uMusic; uniform mediump float uKind,uMode,uIdle,uInside; uniform float uSize;
 varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 const float PI=3.14159265;
 // Shared cubic contours with continuous tangents at each join.
@@ -131,6 +131,8 @@ void main(){
  float glass=step(4.5,uKind)*(1.0-step(5.5,uKind));
  // Give the living silk and every crease/glow 7% more clearance; the glass stays fixed.
  float scale=.82*mix(.91605,1.0,glass)*(1.0+mix(.015,0.0,glass)*uMusic.y)*(1.0+.020*p.z);
+ // Home only: a gentle six-second breath, synchronized across silk and creases.
+ scale*=1.0+uInside*(1.0-glass)*.028*sin(uMusic.x*2.4);
  gl_Position=vec4(scale*vec2(p.x+.012*p.z,-p.y+.012*p.z),p.z*.3,1.0);
  gl_PointSize=clamp(uSize*(uKind>3.5?.00205:uKind<2.5?.00215:.00215+.00020*uMusic.w),1.25,3.3);
  vUV=vec2(x,v);
