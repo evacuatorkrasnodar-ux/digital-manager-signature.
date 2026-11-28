@@ -9252,12 +9252,25 @@ html:root[data-theme="light"][data-theme] body #sayviMusicMini .sv-music-mini-pr
 </style>
 
 
-<style id="svHomeDockGrayInkTrial">
-/* Home only: neutral grey inactive glyphs, preserve active colors, badge and glass. */
+<style id="svApprovedDockGraphiteInk">
+/* Approved graphite ink for inactive light navigation glyphs. Preserve active colors, badge, orb and glass. */
 html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active) > svg,
 html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon),
 html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg,
 html:root[data-theme="light"][data-theme].sv-home-inline-music-route:not(.seyveo-conversation):not(.sv-music-screen) body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg :is(path,circle){
+ color:#484C53!important;
+ stroke:#484C53!important;
+}
+html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active):not([aria-current="page"]):not([aria-pressed="true"]) > svg,
+html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > :is(#navHome,#navTasks,#navPicture):not(.active):not(.sv-dock-nav-press):not(:active):not([aria-current="page"]):not([aria-pressed="true"]) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
+html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body :is(footer.dock.sv-shared-dock,dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock):not(dialog[data-space="health"] footer) > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
+html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button:not([aria-pressed="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme].sv-music-screen body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > .sv-music-nav-only button:not([aria-pressed="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
+html:root[data-theme="light"][data-theme].sv-music-screen:not(.sv-global-search-open) body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme].sv-music-screen:not(.sv-global-search-open) body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage:not([aria-expanded="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]),
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-browser-dock > button[data-sv-browser-action]:not(.active):not([aria-pressed="true"]):not(:active) > svg,
+html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-browser-dock > button[data-sv-browser-action]:not(.active):not([aria-pressed="true"]):not(:active) > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]){
  color:#484C53!important;
  stroke:#484C53!important;
 }
