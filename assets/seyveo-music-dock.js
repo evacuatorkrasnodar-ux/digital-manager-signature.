@@ -372,7 +372,7 @@ function init(){
   if(!active||(!Object.hasOwn(panels,key)&&key!=='player'))return false;
   closeHistoryMenu();closePeriod();closeNowMenu();music()?.closePanels?.();
   if(key==='library'&&view!=='player'&&view!=='library')libraryLimit=60;
-  view=key;if(key!=='player')last=key;
+  const changed=view!==key;view=key;if(key!=='player')last=key;
   page.dataset.musicView=key;root.classList.toggle('sv-music-browse',key!=='player');root.classList.toggle('sv-music-player-open',key==='player');
   for(const [name,id] of Object.entries(panels))get(id).hidden=name!==key;
   const discovery=get('sayviDiscoveryPanel');if(discovery)discovery.hidden=key!=='new';
@@ -380,6 +380,7 @@ function init(){
   get('svMusicRadioToggle')?.setAttribute('aria-expanded',String(key==='radio'));
   for(const btn of nav.querySelectorAll('button')){const selected=btn.dataset.musicNav===(key==='podcasts'?'library':['replay','history'].includes(key)?'home':key);btn.setAttribute('aria-pressed',String(selected));if(selected)btn.setAttribute('aria-current','page');else btn.removeAttribute('aria-current')}
   page.scrollTop=0;renderTracks();if(key==='replay')renderReplay();music()?.refreshMini?.();
+  if(changed&&key!=='player'&&key!=='new'&&!document.hidden&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){const target=get(panels[key]);if(typeof target?.animate==='function'){target.getAnimations?.().filter(a=>a.id==='svMusicEnter').forEach(a=>a.cancel());const motion=target.animate([{opacity:.48},{opacity:1}],{duration:170,easing:'ease-out'});motion.id='svMusicEnter';}}
   document.dispatchEvent(new CustomEvent('seyveo:music-view',{detail:{view:key}}));
   return true;
  }
