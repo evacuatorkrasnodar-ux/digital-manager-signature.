@@ -9,7 +9,9 @@ const results=$('svGlobalSearchResults'),closeButton=$('svGlobalSearchClose');
 const trigger=$('navManage');
 if(!screen||!field||!results||!closeButton||!trigger)return;
 let active=false,previousFocus=null,previousOverflow='',searchEpoch=0,liveMatches=[];
-let preparedPlan=null,vaultSearchTimer=null;
+let preparedPlan=null,vaultSearchTimer=null,radioRequest=null;
+const radioContext=()=>location.hash==='#sayvi-music'&&document.getElementById('sayviMusicPage')?.dataset.musicView==='radio';
+function cancelRadioSearch(){radioRequest?.abort();radioRequest=null}
 const normalize=value=>String(value||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim().replace(/\s+/g,' ');
 const nice=value=>String(value||'').replace(/[\u0000-\u001f\u007f]/g,' ').trim();
 const rows=(key,max)=>{
@@ -288,11 +290,18 @@ function scopedTerm(query,action=''){
 function note(textValue,className='sv-search-caption'){
  const p=document.createElement('p');p.className=className;p.textContent=textValue;return p;
 }
+function radioResults(found,raw,online=false){
+ results.replaceChildren();liveMatches=found.slice(0,40).map(st=>({title:st.name,meta:[st.country,st.city,st.quality].filter(Boolean).join(' · '),action:'radio:'+st.id}));
+ if(liveMatches.length){for(const entry of liveMatches)results.append(itemRow(entry,'record'));}
+ else results.append(note(online?'Станции не найдены.':'Введите название радиостанции.'));
+ if(raw&&raw.length>=2&&!online)results.append(actionButton('Искать в каталоге радио','radio-search','Поиск радиостанций'));
+}
 function render(){
- const epoch=++searchEpoch;
+ cancelRadioSearch();const epoch=++searchEpoch;
  if(vaultSearchTimer!==null){clearTimeout(vaultSearchTimer);vaultSearchTimer=null;}
  const query=normalize(field.value),raw=field.value.trim();
  results.replaceChildren();liveMatches=[];
+ if(radioContext()){preparedPlan=null;radioResults(window.SEYVEO_RADIO?.search?.(raw)||[],raw);return;}
  if(!raw){
   preparedPlan=null;
   const ctx=searchContext();
@@ -357,6 +366,7 @@ function render(){
 async function submitSearch(){
  const raw=field.value.trim();
  if(!raw)return;
+ if(radioContext()){await searchRadioOnline();return;}
  const now=searchContext();
  const stable=preparedPlan?.raw===raw&&preparedPlan.route===location.hash
   &&preparedPlan.area===(now.area||'');
@@ -384,6 +394,14 @@ async function submitSearch(){
  visit('ask');
 }
 
+async function searchRadioOnline(){
+ const raw=field.value.trim();if(raw.length<2)return;
+ cancelRadioSearch();const controller=new AbortController();radioRequest=controller;const epoch=++searchEpoch;
+ const timeout=setTimeout(()=>controller.abort(),9000);const hint=note('Ищу радиостанции…');results.append(hint);
+ try{const found=await window.SEYVEO_RADIO?.searchOnline?.(raw,controller.signal);if(active&&radioContext()&&epoch===searchEpoch&&field.value.trim()===raw)radioResults(found||[],raw,true)}
+ catch{if(active&&radioContext()&&epoch===searchEpoch){radioResults(window.SEYVEO_RADIO?.search?.(raw)||[],raw,true);results.append(note('Онлайн-каталог временно недоступен.'))}}
+ finally{clearTimeout(timeout);if(radioRequest===controller)radioRequest=null;}
+}
 function open(){
  if(active)return true;
  if(trigger.dataset.svMusicAction||trigger.dataset.svBrowserAction)return false;
@@ -397,6 +415,9 @@ function open(){
  previousOverflow=document.body.style.overflow;
  document.body.style.overflow='hidden';
  field.value='';
+ field.placeholder=radioContext()?'Поиск радиостанций':'Спроси или найди...';
+ field.setAttribute('aria-label',radioContext()?'Поиск радиостанций':'Единый поиск в SEYVEO');
+ const title=screen.querySelector('.sv-search-header h2');if(title)title.textContent=radioContext()?'Поиск радио':'Поиск';
  render();
  // Focusing within the real tap gesture allows iOS to display the keyboard.
  field.focus({preventScroll:true});
@@ -405,7 +426,7 @@ function open(){
 function close({restoreFocus=false}={}){
  if(!active)return;
  active=false;
- searchEpoch++;
+ cancelRadioSearch();searchEpoch++;
  if(vaultSearchTimer!==null){clearTimeout(vaultSearchTimer);vaultSearchTimer=null;}
  preparedPlan=null;
  field.blur();
@@ -418,6 +439,8 @@ function close({restoreFocus=false}={}){
  previousFocus=null;
 }
 function visit(action,{reveal=false}={}){
+ if(action==='radio-search'){void searchRadioOnline();return;}
+ if(action.startsWith('radio:')){close();window.SEYVEO_RADIO?.play?.(action.slice(6));return;}
  const typed=field.value.trim(),intent=routeFor(typed);
  // Strip natural-language navigation verbs before filtering filenames.
  const searchText=scopedTerm(typed,action)||'';
