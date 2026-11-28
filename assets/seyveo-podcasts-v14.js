@@ -8,7 +8,7 @@ const KEY='seyveo-podcasts-v1';
 // Dedicated viewport layer; independent of the music page's grid and dock.
 const overlay=document.createElement('section');overlay.id='svPodcastViewport';overlay.hidden=true;overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Плеер подкаста');
 const notice=document.createElement('p');notice.id='svPodcastViewportNotice';notice.hidden=true;notice.setAttribute('role','status');
-const polish=document.createElement('style');polish.id='svPodcastPlayerPolishV21';polish.textContent=`
+const polish=document.createElement('style');polish.id='svPodcastPlayerPolishV22';polish.textContent=`
 html body #svPodcastViewport[hidden],html body #svPodcastViewport [hidden]{display:none!important}
 html body #svPodcastViewport:not([hidden]){display:block!important;position:fixed!important;inset:0!important;z-index:2147483000!important;overflow:hidden!important;background:#151515!important;color:#fff!important;isolation:isolate;--text:#fff;--secondary:#ffffffa8;--soft-line:#ffffff38}
 html body #svPodcastViewport #svPodcastPlayer:not([hidden]){position:relative!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;align-items:stretch!important;gap:14px!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0 24px calc(22px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important;overflow-y:auto!important;border:0!important;border-radius:0!important;background:#151515!important;box-shadow:none!important;color:#fff!important}
@@ -165,6 +165,24 @@ html body #svPodcastViewport .sv-podcast-more-pop button{display:flex!important;
 #svPodcastViewport .sv-podcast-more-pop button+button{border-top:1px solid #ffffff15!important}
 #svPodcastViewport .sv-podcast-more-pop svg{width:19px;height:19px;flex-shrink:0}
 @media(max-height:700px){html body #svPodcastViewport #svPodcastPlayer:not([hidden]){gap:8px!important;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))!important}html body #svPodcastViewport .sv-podcast-transport{padding:2px 0 6px!important}#svPodcastViewport .sv-podcast-volume,#svPodcastViewport .sv-podcast-bottom-tools{margin-top:0}}
+
+/* Compact smoked-glass speed control, anchored to its own button. */
+html body #svPodcastViewport .sv-podcast-speed-pop{width:min(252px,calc(100% - 32px));padding:12px 15px 13px;gap:9px;border-radius:22px;border:1px solid #ffffff24;background:rgba(28,28,30,.79);-webkit-backdrop-filter:blur(24px) saturate(115%);backdrop-filter:blur(24px) saturate(115%);box-shadow:none}
+#svPodcastViewport .sv-podcast-speed-pop::after{background:#1c1c1e;border-color:#ffffff24}
+#svPodcastViewport .sv-podcast-speed-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:34px;border-bottom:1px solid #ffffff15;padding-bottom:4px}
+#svPodcastViewport .sv-podcast-speed-head>strong{font-size:15px;font-weight:550;letter-spacing:-.02em}
+html body #svPodcastViewport .sv-podcast-speed-head button{font-size:12px!important;font-weight:500;min-height:34px!important;padding:0 3px!important;color:#ffffffa8!important}
+#svPodcastViewport .sv-podcast-speed-scale{display:flex;align-items:center;gap:8px;min-height:36px}
+#svPodcastViewport .sv-podcast-speed-scale svg{width:20px;height:20px;flex:0 0 20px;color:#ffffff75}
+html body #svPodcastViewport .sv-podcast-speed-scale input{flex:1;min-width:0;width:100%;height:34px}
+html body #svPodcastViewport .sv-podcast-speed-pop input::-webkit-slider-runnable-track{height:22px;background:repeating-linear-gradient(90deg,transparent 0px,transparent 4px,#ffffff40 4px,#ffffff40 5.5px,transparent 5.5px,transparent 7px)}
+html body #svPodcastViewport .sv-podcast-speed-pop input::-webkit-slider-thumb{height:26px;width:2px;margin-top:-2px;border-radius:2px}
+html body #svPodcastViewport .sv-podcast-speed-pop input::-moz-range-track{height:22px;background:repeating-linear-gradient(90deg,transparent 0px,transparent 4px,#ffffff40 4px,#ffffff40 5.5px,transparent 5.5px,transparent 7px)}
+html body #svPodcastViewport .sv-podcast-speed-pop input::-moz-range-thumb{height:26px;width:2px}
+#svPodcastViewport .sv-podcast-speed-pop small{font-size:11px;color:#ffffff80;line-height:1.35}
+#svPodcastViewport .sv-podcast-quick[aria-expanded=true]{color:#fff!important}
+#svPodcastViewport .sv-podcast-quick[aria-expanded=true]::after{content:''!important;display:block!important;position:absolute;bottom:2px;left:calc(50% - 1.5px);height:3px;width:3px;background:#fff;border-radius:50%;pointer-events:none}
+@media(prefers-reduced-transparency:reduce){html body #svPodcastViewport .sv-podcast-speed-pop{background:#242426!important}}
 `;document.head.appendChild(polish);
 overlay.append(player);player.append(notice);document.body.append(overlay);
 const speedSelect=get('svPodcastSpeed'),sleepSelect=get('svPodcastSleep'),transport=player.querySelector('.sv-podcast-transport');
@@ -184,7 +202,12 @@ const moreButton=document.createElement('button');moreButton.id='svPodcastMore';
 const morePop=document.createElement('div');morePop.className='sv-podcast-more-pop';morePop.hidden=true;player.append(morePop);
 function showMore(value){morePop.hidden=!value;moreButton.setAttribute('aria-expanded',String(value));if(!value)return;showSpeed(false);showSleep(false);queuePop.hidden=true;queueButton.setAttribute('aria-expanded','false');morePop.replaceChildren();const active=!!(current&&state.favorites[current.id]);const favorite=button(active?'Убрать из избранного':'В избранное',()=>{favButton.click();showMore(false)});const listButton=button('Все выпуски',()=>{showMore(false);queueButton.click()});morePop.append(favorite,listButton);const p=player.getBoundingClientRect(),b=moreButton.getBoundingClientRect();morePop.style.setProperty('--sv-more-right',Math.max(12,p.right-b.right)+'px');morePop.style.setProperty('--sv-more-bottom',(p.bottom-b.top+8)+'px')}
 moreButton.addEventListener('click',()=>showMore(morePop.hidden));
-const speedNote=document.createElement('small');speedNote.textContent='Скорость речи';const speedRead=document.createElement('strong');speedRead.style.textAlign='center';speedRead.textContent='1×';speedPop.append(speedRead,speedRange,speedNote);player.append(speedPop);
+const speedNote=document.createElement('small');speedNote.textContent='Скорость воспроизведения';const speedRead=document.createElement('strong');speedRead.textContent='1×';
+const speedHead=document.createElement('div');speedHead.className='sv-podcast-speed-head';const speedReset=document.createElement('button');speedReset.type='button';speedReset.textContent='Обычная · 1×';speedReset.setAttribute('aria-label','Вернуть обычную скорость');speedReset.addEventListener('click',()=>{speedRange.value='1';speedRange.dispatchEvent(new Event('input'))});speedHead.append(speedRead,speedReset);
+const speedScale=document.createElement('div');speedScale.className='sv-podcast-speed-scale';
+const slow=document.createElement('span');slow.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15c0-5 3.5-8 8-8s8 3 8 8H3ZM19 15h2a2 2 0 1 0-2-2M6 15l-1 3m11-3 1 3M8 8l3 7 3-7M3 15l-1 1"/></svg>';
+const fast=document.createElement('span');fast.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 17H5a3 3 0 0 1 0-6c2 0 4 1 5 2l3-4c-2-3-2-6 0-7 2 0 3 4 3 6 1-3 3-5 4-4 1 1 0 4-2 6 2 0 4 2 4 4 0 3-4 4-7 3l-2 3H8l3-4M2 7h5"/></svg>';
+speedScale.append(slow,speedRange,fast);speedPop.append(speedHead,speedScale,speedNote);player.append(speedPop);
 function showSpeed(value){speedPop.hidden=!value;speedQuick.setAttribute('aria-expanded',String(value));if(value){showSleep(false);queuePop.hidden=true;queueButton.setAttribute('aria-expanded','false');speedRange.value=String(audio.playbackRate||1);paintSpeed();const p=player.getBoundingClientRect(),b=speedQuick.getBoundingClientRect();const left=Math.max(12,Math.min(p.width- speedPop.offsetWidth-12,b.left-p.left-12));speedPop.style.setProperty('--sv-speed-pop-left',left+'px');speedPop.style.setProperty('--sv-speed-pop-bottom',(p.bottom-b.top+8)+'px');speedPop.style.setProperty('--sv-speed-arrow',Math.max(12,b.left-p.left-left+b.width/2-5)+'px')}}
 function paintSpeed(){speedRead.textContent=String(Number(speedRange.value)).replace('.',',')+'×';speedRange.style.setProperty('--sv-value',((Number(speedRange.value)-.75)/1.25*100)+'%')}
 speedQuick.addEventListener('click',()=>showSpeed(speedPop.hidden));speedRange.addEventListener('input',()=>{const v=String(Number(speedRange.value));if(!Array.from(speedSelect.options).some(o=>o.value===v))speedSelect.add(new Option(v.replace('.',',')+'×',v));speedSelect.value=v;speedSelect.dispatchEvent(new Event('change'));paintSpeed()});
