@@ -537,6 +537,8 @@ function initRadio(){
  try{const saved=JSON.parse(localStorage.getItem(hiddenKey)||'[]');if(Array.isArray(saved))hiddenStations=new Set(saved.filter(id=>typeof id==='string'))}catch{}
  const isHidden=id=>hiddenStations.has(id);
  const isFavorite=id=>!isHidden(id)&&favorites.some(f=>f.id===id);
+ const stationSnapshot=station=>station.id.startsWith('rb-')?{stationuuid:station.id.slice(3),name:station.name,countrycode:station.countrycode,country:station.country,state:station.city,tags:station.genre,url_resolved:station.stream,homepage:station.site,codec:station.quality.replace(/^\d+\s*/,''),bitrate:parseInt(station.quality,10)||0}:null;
+ function rememberStation(id){const station=stations.find(s=>s.id===id);if(!station?.stream)return false;const changed=favorites[0]?.id!==id||isHidden(id);if(!changed)return false;const next=[{id,snapshot:stationSnapshot(station)},...favorites.filter(f=>f.id!==id)].slice(0,200);favorites=next;try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{}if(isHidden(id)){hiddenStations.delete(id);try{localStorage.setItem(hiddenKey,JSON.stringify([...hiddenStations]))}catch{}}return true;}
  function setHidden(id,hidden){
   const next=new Set(hiddenStations);if(hidden)next.add(id);else next.delete(id);
   try{localStorage.setItem(hiddenKey,JSON.stringify([...next]))}catch{status.textContent='Не удалось сохранить изменение.';return false}
@@ -578,11 +580,11 @@ function initRadio(){
  }
  async function onlineSearch(q,signal){const term=String(q||'').trim().slice(0,100);if(term.length<2)return localSearch(term);const rows=await fetchStations({name:term},signal);return [...new Map([...localSearch(term),...register(rows)].map(s=>[s.id,s])).values()]}
  window.SEYVEO_RADIO=Object.freeze({recent,removeRecentHistory,play:openStation,search:localSearch,searchOnline:onlineSearch,isFavorite,isHidden,toggleFavorite});
- audio.addEventListener('playing',()=>{const state=window.SEYVEO_MUSIC?.state?.();if(state?.source!=='radio'||!stations.some(x=>x.id===state.stationId))return;history=[state.stationId,...history.filter(id=>id!==state.stationId)].slice(0,6);playedAt[state.stationId]=Date.now();playedAt=Object.fromEntries(history.map(id=>[id,playedAt[id]||0]));try{localStorage.setItem(historyKey,JSON.stringify(history));localStorage.setItem(timeKey,JSON.stringify(playedAt))}catch{}document.dispatchEvent(new Event('seyveo:radio-history'))});
+ audio.addEventListener('playing',()=>{const state=window.SEYVEO_MUSIC?.state?.();if(state?.source!=='radio'||!stations.some(x=>x.id===state.stationId))return;history=[state.stationId,...history.filter(id=>id!==state.stationId)].slice(0,6);playedAt[state.stationId]=Date.now();playedAt=Object.fromEntries(history.map(id=>[id,playedAt[id]||0]));try{localStorage.setItem(historyKey,JSON.stringify(history));localStorage.setItem(timeKey,JSON.stringify(playedAt))}catch{}const moved=rememberStation(state.stationId);if(moved)renderFavoritesMotion(state.stationId);document.dispatchEvent(new Event('seyveo:radio-history'))});
  document.dispatchEvent(new Event('seyveo:radio-history'));
  function drawRadio(){
   const state=window.SEYVEO_MUSIC?.state?.();
-  for(const [id,btn] of buttons){const selected=state?.stationId===id&&state.playing;btn.setAttribute('aria-pressed',String(!!selected));btn.innerHTML=selected?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12m6-12v12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5 18 12 9 17.5Z" fill="currentColor"/></svg>';btn.setAttribute('aria-label',(selected?'Пауза: ':'Слушать: ')+stations.find(x=>x.id===id).name);}
+  for(const [id,btn] of buttons){const selected=state?.source==='radio'&&state.stationId===id,playing=selected&&state.playing;btn.setAttribute('aria-pressed',String(!!playing));btn.closest('.sv-radio-station')?.classList.toggle('sv-radio-current',!!selected);btn.setAttribute('aria-label',(playing?'Пауза: ':'Слушать: ')+stations.find(x=>x.id===id).name);}
   status.textContent=state?.source==='radio'?(state.playing?'В эфире · ':'Выбрана станция · ')+(stations.find(x=>x.id===state.stationId)?.name||''):'';
  }
 
@@ -629,11 +631,11 @@ function initRadio(){
   row.tabIndex=0;row.setAttribute('aria-label',station.name);row.setAttribute('aria-keyshortcuts','Delete Shift+F10');
   let timer=0,start=null;
   const clear=()=>{clearTimeout(timer);timer=0;start=null};
-  row.addEventListener('pointerdown',e=>{if(e.button!==0||e.isPrimary===false||e.target.closest('button,a'))return;clear();start={x:e.clientX,y:e.clientY,id:e.pointerId};timer=setTimeout(()=>{clear();openRadioMenu(row,station)},500)});
+  row.addEventListener('pointerdown',e=>{if(e.button!==0||e.isPrimary===false||e.target.closest('a'))return;clear();start={x:e.clientX,y:e.clientY,id:e.pointerId};timer=setTimeout(()=>{clear();row.dataset.svHeld='1';openRadioMenu(row,station)},500)});
   row.addEventListener('pointermove',e=>{if(start&&start.id===e.pointerId&&Math.hypot(e.clientX-start.x,e.clientY-start.y)>9)clear()});
   for(const name of ['pointerup','pointercancel','pointerleave','lostpointercapture'])row.addEventListener(name,clear);
-  row.addEventListener('contextmenu',e=>{if(e.target.closest('button,a'))return;e.preventDefault();clear();if(radioMenu?.anchor!==row)openRadioMenu(row,station)});
-  row.addEventListener('keydown',e=>{if(e.target!==row)return;if(e.key==='Delete'||e.key==='ContextMenu'||e.shiftKey&&e.key==='F10'){e.preventDefault();openRadioMenu(row,station)}});
+  row.addEventListener('contextmenu',e=>{if(e.target.closest('a'))return;e.preventDefault();clear();if(radioMenu?.anchor!==row)openRadioMenu(row,station)});
+  row.addEventListener('keydown',e=>{if(e.target!==row&&!e.target.closest('.sv-radio-tile-cover'))return;if(e.key==='Delete'||e.key==='ContextMenu'||e.shiftKey&&e.key==='F10'){e.preventDefault();openRadioMenu(row,station)}});
  }
  document.addEventListener('pointerdown',e=>{if(radioMenu&&!radioMenu.node.contains(e.target))closeRadioMenu()});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&radioMenu){e.preventDefault();closeRadioMenu(true)}});
@@ -644,16 +646,11 @@ function initRadio(){
   for(const station of sortedStations()){
    const row=document.createElement('article');row.className='sv-radio-station';row.dataset.stationId=station.id;
    const art=document.createElement('span');art.className='sv-radio-art';art.style.backgroundColor=station.color;art.style.backgroundImage='url("'+station.artwork+'")';art.setAttribute('aria-hidden','true');
-   const cover=document.createElement('div');cover.className='sv-radio-tile-cover';cover.append(art);
+   const cover=document.createElement('button');cover.type='button';cover.className='sv-radio-tile-cover';cover.append(art);
    if(station.logo){const logo=document.createElement('img');logo.className='sv-radio-logo';logo.alt='';logo.loading='lazy';logo.decoding='async';logo.referrerPolicy='no-referrer';logo.addEventListener('error',()=>logo.remove(),{once:true});logo.src=station.logo;cover.append(logo)}
-   const heart=document.createElement('button');heart.type='button';heart.className='sv-radio-heart';heart.setAttribute('aria-pressed',String(isFavorite(station.id)));
-   heart.setAttribute('aria-label',(isFavorite(station.id)?'Убрать из избранного: ':'В избранное: ')+station.name);
-   heart.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.6c0 4.1-8.8 9.9-8.8 9.9S3.2 12.7 3.2 8.6a4.6 4.6 0 0 1 8.8-1.8 4.6 4.6 0 0 1 8.8 1.8Z"/></svg>';
-   heart.addEventListener('click',()=>toggleFavorite(station.id));cover.append(heart);
-   if(station.stream){
-    const play=document.createElement('button');play.type='button';play.className='sv-radio-play';play.addEventListener('click',()=>{if(!window.SEYVEO_MUSIC?.playRadio?.(stations,station.id)){status.textContent='Не удалось открыть эфир. Попробуйте позже.';}else drawRadio()});buttons.set(station.id,play);cover.append(play);
-
-   }
+   cover.addEventListener('pointerdown',()=>{delete row.dataset.svHeld});
+   cover.addEventListener('click',()=>{if(row.dataset.svHeld){delete row.dataset.svHeld;return}if(!openStation(station.id)){status.textContent='Не удалось открыть эфир. Попробуйте позже.';}else drawRadio()});
+   buttons.set(station.id,cover);
    const copy=document.createElement('div');copy.className='sv-radio-copy';const title=document.createElement('strong');title.textContent=station.name;title.title=station.name;
    const subtitle=document.createElement('small');subtitle.textContent=station.city||station.country||'';subtitle.hidden=!subtitle.textContent;
    copy.append(title,subtitle);row.append(cover,copy);bindRadioHold(row,station);list.append(row);
@@ -663,13 +660,13 @@ function initRadio(){
  }
  function renderFavoritesMotion(id){
   if(panel.hidden||page.hidden){return}
-  const focus=document.activeElement?.classList.contains('sv-radio-heart');
+  const focus=document.activeElement?.classList.contains('sv-radio-tile-cover');
   const motion=!document.hidden&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const before=new Map();
   if(motion)for(const node of Array.from(list.children).slice(0,24))before.set(node.dataset.stationId,node.getBoundingClientRect());
   render();
   for(const node of Array.from(list.children).slice(0,24)){
-   if(focus&&node.dataset.stationId===id)node.querySelector('.sv-radio-heart')?.focus({preventScroll:true});
+   if(focus&&node.dataset.stationId===id)node.querySelector('.sv-radio-tile-cover')?.focus({preventScroll:true});
    const old=before.get(node.dataset.stationId);if(!old||typeof node.animate!=='function')continue;
    const now=node.getBoundingClientRect(),dx=old.left-now.left,dy=old.top-now.top;
    if(Math.abs(dx)+Math.abs(dy)>0&&Math.abs(dy)<window.innerHeight)node.animate([{transform:'translate('+dx+'px,'+dy+'px)'},{transform:'translate(0,0)'}],{duration:240,easing:'cubic-bezier(.2,.7,.25,1)'});
