@@ -326,7 +326,11 @@
   function setLyricSettings(open){
    if(!karaokeSettings||!lyricsActive)return;
    karaokeSettings.hidden=!open;karaokePanel?.classList.toggle('is-settings-open',open);karaokeTools?.setAttribute('aria-expanded',String(open));
-   if(open)$('svInlineKaraokeCloseSettings')?.focus({preventScroll:true});
+   if(open){
+    const options=$('svInlineKaraokeOptions');
+    if(options){options.querySelectorAll('details').forEach(section=>{section.open=false});options.scrollTop=0;}
+    $('svInlineKaraokeCloseSettings')?.focus({preventScroll:true});
+   }
    karaokeBody.inert=open;
   }
   function exitKaraoke(){
@@ -449,7 +453,7 @@
       feedback.textContent=saved?.ok?(saved.existing?'Этот текст уже есть в блокноте.':'Текст сохранён в блокноте. Музыка продолжает играть.'):(saved?.reason==='length'?'Текст длиннее лимита одной заметки (8000 символов).':saved?.reason==='limit'?'Блокнот заполнен. Освободите место для новой записи.':'Не удалось сохранить текст в блокноте.');
      });
      settings.append(advanced);
-     if(data.draft||!saved){const warning=message(!saved?'Текст доступен до закрытия страницы.':'Черновик Сэйви · возможны ошибки',settings);warning.className='sv-lyric-warning'}
+     if(!saved){const warning=message('Текст доступен до закрытия страницы.',settings);warning.className='sv-lyric-warning'}
      const fragment=d.createDocumentFragment();
      data.lines.forEach((line,i)=>{
       const el=d.createElement(data.timed?'button':'p');el.className='sv-smart-lyric';
@@ -551,8 +555,14 @@
        const saved=await engine.put(id,parsed);if(valid())render(parsed,true,saved);
       }catch{if(valid())message('Не удалось загрузить текст.')}
      });
-     action(data?'Заменить текст':'Добавить текст песни',()=>input.click(),data?settings:body);
-     if(imported)action('Удалить добавленный текст',async()=>{if(!valid())return;const removed=await engine.remove(id);if(valid()){if(removed)karaoke();else message('Не удалось удалить сохранённый текст.',settings)}},settings);
+     const fileActions=data?(settings.querySelector('.sv-lyric-advanced')||settings):body;
+     const upload=action(data?'Загрузить другой текст':'Добавить текст песни',()=>input.click(),fileActions);
+     const uploadLabel=upload.textContent;
+     upload.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M12 17v-6m-3 3 3-3 3 3"/></svg><span></span>';upload.querySelector('span').textContent=uploadLabel;
+     if(imported){
+      const remove=action('Удалить добавленный текст',async()=>{if(!valid())return;const removed=await engine.remove(id);if(valid()){if(removed)karaoke();else message('Не удалось удалить сохранённый текст.',settings)}},data?fileActions:settings);
+      remove.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v7m4-7v7"/></svg><span>Удалить добавленный текст</span>';
+     }
     }
     if(data?.timed){
      // Use actual viewport height for the final lines, even in compact players.
