@@ -8,7 +8,7 @@ const KEY='seyveo-podcasts-v1';
 // Dedicated viewport layer; independent of the music page's grid and dock.
 const overlay=document.createElement('section');overlay.id='svPodcastViewport';overlay.hidden=true;overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Плеер подкаста');
 const notice=document.createElement('p');notice.id='svPodcastViewportNotice';notice.hidden=true;notice.setAttribute('role','status');
-const polish=document.createElement('style');polish.id='svPodcastPlayerPolishV18';polish.textContent=`
+const polish=document.createElement('style');polish.id='svPodcastPlayerPolishV19';polish.textContent=`
 html body #svPodcastViewport[hidden],html body #svPodcastViewport [hidden]{display:none!important}
 html body #svPodcastViewport:not([hidden]){display:block!important;position:fixed!important;inset:0!important;z-index:2147483000!important;overflow:hidden!important;background:#151515!important;color:#fff!important;isolation:isolate;--text:#fff;--secondary:#ffffffa8;--soft-line:#ffffff38}
 html body #svPodcastViewport #svPodcastPlayer:not([hidden]){position:relative!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;align-items:stretch!important;gap:14px!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0 24px calc(22px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important;overflow-y:auto!important;border:0!important;border-radius:0!important;background:#151515!important;box-shadow:none!important;color:#fff!important}
@@ -90,6 +90,21 @@ html body #svPodcastViewport .sv-podcast-speed-pop input::-webkit-slider-thumb{h
 html body #svPodcastViewport .sv-podcast-speed-pop input::-moz-range-track{height:26px;background:repeating-linear-gradient(90deg,transparent 0px,transparent 6px,#ffffff40 6px,#ffffff40 8px,transparent 8px,transparent 10px)}
 html body #svPodcastViewport .sv-podcast-speed-pop input::-moz-range-thumb{height:26px;width:3px;border:0;border-radius:3px;background:#f5f5f7}
 @media(max-height:650px){html body #svPodcastViewport #svPodcastPlayer:not([hidden]){gap:7px!important;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))!important}#svPodcastViewport .sv-podcast-volume,#svPodcastViewport .sv-podcast-bottom-tools{margin-top:0}}
+
+/* Editorial full-screen artwork: preserve the square original; extend only its soft colour field. */
+html body #svPodcastViewport #svPodcastFullCover .sv-podcast-art.has-cover{display:block!important;background:#151515!important}
+html body #svPodcastViewport #svPodcastFullCover .sv-podcast-art.has-cover .sv-podcast-art-ambient{position:absolute!important;inset:10% -12% -12%!important;width:124%!important;height:102%!important;max-height:none!important;object-fit:cover!important;object-position:center!important;filter:blur(32px);opacity:.28;pointer-events:none;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 38%,#000 53%,transparent 94%);mask-image:linear-gradient(to bottom,transparent 0%,#000 38%,#000 53%,transparent 94%)}
+html body #svPodcastViewport #svPodcastFullCover .sv-podcast-art.has-cover .sv-podcast-art-main{position:relative!important;z-index:1;display:block!important;width:100%!important;height:auto!important;max-height:100%!important;object-fit:contain!important;object-position:center top!important;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 61%,rgba(0,0,0,.95) 73%,rgba(0,0,0,.55) 88%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0%,#000 61%,rgba(0,0,0,.95) 73%,rgba(0,0,0,.55) 88%,transparent 100%)}
+html body #svPodcastViewport #svPodcastFullCover::after{z-index:2;background:linear-gradient(to bottom,#0003 0%,transparent 13%,transparent 65%,#151515 100%)}
+html body #svPodcastViewport #svPodcastPlayer:not([hidden]){gap:15px!important;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))!important}
+#svPodcastViewport .sv-podcast-now-identity{padding-bottom:1px}
+#svPodcastViewport .sv-podcast-transport{padding-top:7px!important;padding-bottom:10px!important}
+#svPodcastViewport .sv-podcast-volume{margin-top:12px}
+#svPodcastViewport .sv-podcast-bottom-tools{margin-top:4px}
+#svPodcastViewport .sv-podcast-bottom-tools button{opacity:.86}
+#svPodcastViewport .sv-podcast-bottom-tools button[aria-pressed=true]{opacity:1}
+@media(max-height:700px){html body #svPodcastViewport #svPodcastPlayer:not([hidden]){gap:8px!important;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important}#svPodcastViewport .sv-podcast-volume,#svPodcastViewport .sv-podcast-bottom-tools{margin-top:0}#svPodcastViewport .sv-podcast-transport{padding-top:0!important;padding-bottom:4px!important}}
+@media(prefers-reduced-motion:reduce){#svPodcastViewport .sv-podcast-art-ambient{filter:blur(24px)}}
 `;document.head.appendChild(polish);
 overlay.append(player);player.append(notice);document.body.append(overlay);
 const speedSelect=get('svPodcastSpeed'),sleepSelect=get('svPodcastSleep'),transport=player.querySelector('.sv-podcast-transport');
@@ -255,7 +270,7 @@ function artwork(feed,large=false){
  fallback();const urls=[feed.episodeArtwork,large?feed.artwork:feed.directoryArtwork,large?feed.directoryArtwork:feed.artwork].map(v=>https(v)).filter(Boolean);
  const upscale=url=>{try{const u=new URL(url);if(!/(^|\.)mzstatic\.com$/i.test(u.hostname))return url;u.pathname=u.pathname.replace(/\/\d+x\d+bb(?=\.)/i,'/1200x1200bb');return u.href}catch{return url}};
  const choices=[...new Set(large?[...urls.map(upscale),...urls]:urls)];let best=null;
- const put=(img,low=false)=>{a.classList.toggle('is-low-res',low);if(low)a.style.setProperty('--sv-art-side',Math.min(260,Math.max(100,img.naturalWidth*1.35))+'px');a.replaceChildren(img)};
+ const put=(img,low=false)=>{a.classList.toggle('is-low-res',low);a.classList.toggle('has-cover',large&&!low);if(low)a.style.setProperty('--sv-art-side',Math.min(260,Math.max(100,img.naturalWidth*1.35))+'px');if(large&&!low){const ambient=img.cloneNode(false);ambient.className='sv-podcast-art-ambient';ambient.setAttribute('aria-hidden','true');img.className='sv-podcast-art-main';a.replaceChildren(ambient,img)}else a.replaceChildren(img)};
  const tryNext=()=>{const url=choices.shift();if(!url){if(best)put(best,true);else fallback();return}const img=el('img');img.alt='';img.loading='eager';img.referrerPolicy='no-referrer';img.addEventListener('error',tryNext,{once:true});img.addEventListener('load',()=>{if(!large||Math.min(img.naturalWidth,img.naturalHeight)>=450){put(img);return}if(!best||img.naturalWidth*img.naturalHeight>best.naturalWidth*best.naturalHeight)best=img;tryNext()},{once:true});img.src=url};if(choices.length)tryNext();return a
 }
 function paintCurrentCover(feed,ep){const cover={...feed,episodeArtwork:ep.artwork||''};get('svPodcastNowArt').replaceChildren(artwork(cover));get('svPodcastFullCover').replaceChildren(artwork(cover,true));get('svPodcastMiniArt').replaceChildren(artwork(cover))}
