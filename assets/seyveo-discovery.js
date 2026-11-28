@@ -74,7 +74,7 @@ function update(){
   'Открытия можно включить в настройках.');
  else status(checking?'Сэйви проверяет новинки…':
   qualified?'':
-  'Отмечайте сердечком то, что нравится.');
+  '');
  renderReleases();
 }
 function enable(value){
@@ -305,7 +305,7 @@ const filterSheet=document.createElement('dialog');filterSheet.className='sv-new
 const filterBar=document.createElement('div');filterBar.className='sv-new-filter-options';filterBar.setAttribute('role','group');filterBar.setAttribute('aria-label','Подборка новинок');
 const filterHead=document.createElement('header');filterHead.className='sv-new-filter-head';
 const filterTitle=document.createElement('h2');filterTitle.id='svNewFilterTitle';filterTitle.textContent='Настройки новинок';
-const filterClose=document.createElement('button');filterClose.type='button';filterClose.className='sv-new-filter-close';filterClose.setAttribute('aria-label','Закрыть настройки');filterClose.textContent='×';filterClose.addEventListener('click',()=>filterSheet.close());
+const filterClose=document.createElement('button');filterClose.type='button';filterClose.className='sv-new-filter-close';filterClose.setAttribute('aria-label','Закрыть настройки');filterClose.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>';filterClose.addEventListener('click',()=>filterSheet.close());
 filterHead.append(filterTitle,filterClose);filterSheet.append(filterHead,filterBar);filterSheet.append(info);
 filterSheet.addEventListener('click',e=>{if(e.target!==filterSheet)return;const rect=filterSheet.getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)filterSheet.close()});
 const feedHead=panel.querySelector('.sv-discovery-feed-head');
@@ -356,8 +356,8 @@ function setMode(next){
 }
 const sections=[['Подборка',['for-you','genres','ru','world']],['Жанры',['rock','pop','chanson','russianrock','russianpop','hiphop','electronic']],['Просмотр',['upcoming','news','liked']]];
 for(const [heading,ids] of sections){
- const group=document.createElement('section');group.className='sv-new-filter-group';const label=document.createElement('h3');label.textContent=heading;group.append(label);
- for(const id of ids){const entry=filters.find(x=>x[0]===id);if(!entry)continue;const b=button(entry[1],'sv-new-filter-option');b.dataset.mode=id;b.addEventListener('click',()=>{filterSheet.close();setMode(id)});const tick=document.createElement('span');tick.className='sv-new-filter-tick';tick.textContent='✓';tick.setAttribute('aria-hidden','true');b.append(tick);group.append(b)}
+ const group=document.createElement('section');group.className='sv-new-filter-group';group.dataset.section=ids[0];const label=document.createElement('h3');label.textContent=heading;group.append(label);
+ for(const id of ids){const entry=filters.find(x=>x[0]===id);if(!entry)continue;const b=button(entry[1],'sv-new-filter-option');b.dataset.mode=id;b.addEventListener('click',()=>{filterSheet.close();setMode(id)});const tick=document.createElement('span');tick.className='sv-new-filter-tick';tick.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';tick.setAttribute('aria-hidden','true');b.append(tick);group.append(b)}
  filterBar.append(group);
 }
 const editGenres=button('Изменить любимые жанры','sv-new-filter-edit');
@@ -518,6 +518,24 @@ html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-n
 html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover:has(.sv-new-no-art) :is(.sv-new-cover-play,.sv-new-cover-heart):before{background:rgba(255,255,255,.54)!important;border-color:rgba(127,140,155,.18)!important}
 html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover .sv-new-cover-heart[aria-pressed=true]{color:#ce4167!important}
 html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel #svDiscoveryPublicSource{font-size:10px!important;opacity:.72;margin-top:8px!important;line-height:1.35!important}
+
+/* Compact filter sheet; keep full 44px targets even on small iPhones. */
+html:root body dialog.sv-new-filter-sheet{padding:10px 16px calc(10px + env(safe-area-inset-bottom))!important;max-height:88vh!important;max-height:88dvh!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-head{margin:0 0 5px!important;gap:8px;min-height:44px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-head h2{font-size:17px!important;font-weight:600;letter-spacing:-.025em}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-close{display:grid;place-items:center;min-height:44px;min-width:44px;padding:0!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-close svg{width:20px;height:20px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-options{display:grid;gap:10px!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-group{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px;row-gap:0}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-group h3{grid-column:1/-1;font-size:12px!important;font-weight:500;line-height:1.35;margin:0 0 1px!important;color:var(--secondary,#666)}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-option{min-height:44px!important;height:44px!important;padding:0 3px!important;font-size:13px!important;gap:4px;line-height:1.2}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-tick{display:grid;place-items:center;flex:0 0 19px;width:19px;height:19px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-tick svg{width:17px;height:17px}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-option[aria-pressed=false] .sv-new-filter-tick{visibility:hidden}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-option[aria-pressed=true] .sv-new-filter-tick{visibility:visible;color:#3879bb}
+html:root body dialog.sv-new-filter-sheet :is(.sv-new-filter-edit,.sv-new-filter-refresh){min-height:44px!important;font-size:13px!important;padding:0 3px!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-edit{margin-top:5px!important}
+html:root body dialog.sv-new-filter-sheet .sv-new-filter-refresh{border-bottom:0!important}
 `;document.head.append(style);
 
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
