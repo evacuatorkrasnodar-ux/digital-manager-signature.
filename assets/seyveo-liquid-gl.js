@@ -8,9 +8,22 @@ window.SEYVEO_LIQUID_GL={create(mobile){
  let lost=false;canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();lost=true});
  const vs=`precision highp float;
 attribute vec4 aData;
-uniform mediump vec4 uMusic; uniform mediump float uKind,uMode,uIdle,uInside; uniform float uSize;
+uniform mediump vec4 uMusic,uSpectrumA,uSpectrumB; uniform mediump float uKind,uMode,uIdle,uInside; uniform float uSize;
 varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 const float PI=3.14159265;
+// Eight measured FFT bands; interpolate between adjacent peaks, never use fake bars.
+float spectrumAt(float u){
+ float q=clamp(u*8.0-.5,0.0,7.0);
+ float f=smoothstep(0.0,1.0,fract(q));
+ if(q<1.0)return mix(uSpectrumA.x,uSpectrumA.y,f);
+ if(q<2.0)return mix(uSpectrumA.y,uSpectrumA.z,f);
+ if(q<3.0)return mix(uSpectrumA.z,uSpectrumA.w,f);
+ if(q<4.0)return mix(uSpectrumA.w,uSpectrumB.x,f);
+ if(q<5.0)return mix(uSpectrumB.x,uSpectrumB.y,f);
+ if(q<6.0)return mix(uSpectrumB.y,uSpectrumB.z,f);
+ return mix(uSpectrumB.z,uSpectrumB.w,clamp(q-6.0,0.0,1.0));
+}
+
 // Shared cubic contours with continuous tangents at each join.
 vec2 bez(vec2 a,vec2 b,vec2 c,vec2 d,float t){float q=1.0-t;return q*q*q*a+3.0*q*q*t*b+3.0*q*t*t*c+t*t*t*d;}
 vec3 contour(float k,float u){
@@ -33,7 +46,10 @@ vec3 contour(float k,float u){
    float b=sin(PI*t);p.y+=(nearEdge?.070:-.055)*b*b;
   }
   else p=bez(crest,crest+dCrest*(.14/3.0),vec2(.947,-.185),r,(u-.86)/.14);
-  return vec3(p,(nearEdge?.38:.23)*sin(PI*u));
+  // Both lips share the same displacement, so the adjacent cloth follows the spectrum.
+  float energy=spectrumAt(u)*pow(max(0.0,sin(PI*u)),.40);
+  p.y-=mix(.23,.18,uInside)*energy;
+  return vec3(p,(nearEdge?.38:.23)*sin(PI*u)+.055*energy);
  }
  if(k<.5){m=vec2(.105,-.795);c1=vec2(-.675,.155);c2=vec2(-.425,-.795);c3=vec2(.635,-.795);c4=vec2(.88,-.43);z=-.13;}
  else if(k<3.5){m=vec2(.39,.555);c1=vec2(-.50,.24);c2=vec2(-.005,.555);c3=vec2(.785,.555);c4=vec2(1.025,.26);z=-.09;}
@@ -139,9 +155,22 @@ void main(){
 }
 `;
  const fs=(surfaceDots?'#extension GL_OES_standard_derivatives : enable\n#define SURFACE_DOTS 1\n':'')+`precision mediump float;
-uniform mediump float uKind,uMode,uInside; uniform mediump vec4 uMusic; varying mediump vec2 vUV; varying mediump float vLight,vSheen;
+uniform mediump float uKind,uMode,uInside; uniform mediump vec4 uMusic,uSpectrumA,uSpectrumB; varying mediump vec2 vUV; varying mediump float vLight,vSheen;
 float peak(float a,float c,float w){return exp(-(1.0-cos(a-c))/(w*w));}
 float gauss(float x,float w){float q=x/w;return exp(-q*q);}
+// Eight measured FFT bands; interpolate between adjacent peaks, never use fake bars.
+float spectrumAt(float u){
+ float q=clamp(u*8.0-.5,0.0,7.0);
+ float f=smoothstep(0.0,1.0,fract(q));
+ if(q<1.0)return mix(uSpectrumA.x,uSpectrumA.y,f);
+ if(q<2.0)return mix(uSpectrumA.y,uSpectrumA.z,f);
+ if(q<3.0)return mix(uSpectrumA.z,uSpectrumA.w,f);
+ if(q<4.0)return mix(uSpectrumA.w,uSpectrumB.x,f);
+ if(q<5.0)return mix(uSpectrumB.x,uSpectrumB.y,f);
+ if(q<6.0)return mix(uSpectrumB.y,uSpectrumB.z,f);
+ return mix(uSpectrumB.z,uSpectrumB.w,clamp(q-6.0,0.0,1.0));
+}
+
 #ifdef SURFACE_DOTS
 // Integral of a periodic pulse, so subpixel filaments preserve their average energy.
 highp vec2 pulseIntegral(highp vec2 t,highp vec2 r){return floor(t)*(2.0*r)+clamp(fract(t)-(.5-r),vec2(0.0),2.0*r);}
@@ -178,6 +207,7 @@ void main(){
   col=mix(vec3(.02,.91,.88),vec3(.88,1.0,.98),g*.78);
   float taper=smoothstep(0.0,.08,w);
   alpha=strength*(.36*g+.64*soft)*taper*(1.0-smoothstep(.46,.50,abs(v-.5)));
+  if(uKind<8.5){float energy=spectrumAt((x+1.0)*.5);alpha*=1.0+.45*energy;col=mix(col,vec3(.82,1.0,.98),.22*energy*g);}
  }else{
   float tip=pow(abs(x),6.0),turn=pow(v,5.0),fres=1.0-vLight;
   float focus=gauss(x+.20,.78),edge=pow(v,20.0),start=pow(1.0-v,20.0);
@@ -253,7 +283,7 @@ void main(){
  let vertex,fragment,program;
  try{vertex=shader(gl.VERTEX_SHADER,vs);fragment=shader(gl.FRAGMENT_SHADER,fs);program=gl.createProgram();gl.attachShader(program,vertex);gl.attachShader(program,fragment);gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));}catch(e){if(vertex)gl.deleteShader(vertex);if(fragment)gl.deleteShader(fragment);if(program)gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();throw e}
  gl.deleteShader(vertex);gl.deleteShader(fragment);gl.useProgram(program);
- const data=gl.getAttribLocation(program,'aData'),uniform={};for(const k of ['uMusic','uKind','uMode','uSize','uIdle','uInside'])uniform[k]=gl.getUniformLocation(program,k);
+ const data=gl.getAttribLocation(program,'aData'),uniform={};for(const k of ['uMusic','uKind','uMode','uSize','uIdle','uInside','uSpectrumA','uSpectrumB'])uniform[k]=gl.getUniformLocation(program,k);
  // Separate parametric matter meshes and an analytic spherical glass layer.
  function mesh(kind,n,m,mode){
   const values=[],indices=[];
@@ -290,6 +320,6 @@ void main(){
  }
  gl.disable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
  const resources=[glass,glowMid,glowBottom,glowSeam,...parts.flat()];
- return {dispose(){if(lost)return;lost=true;for(const obj of resources){gl.deleteBuffer(obj.buffer);if(obj.index)gl.deleteBuffer(obj.index)}gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();canvas.width=canvas.height=1;},render(size,phase,bass,mid,air,idle=0,inside=false){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uIdle,idle);gl.uniform1f(uniform.uInside,inside?1:0);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,inside?gl.ONE_MINUS_SRC_ALPHA:gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);if(!inside)draw(glass);return gl.isContextLost()?null:canvas}};
+ return {dispose(){if(lost)return;lost=true;for(const obj of resources){gl.deleteBuffer(obj.buffer);if(obj.index)gl.deleteBuffer(obj.index)}gl.deleteProgram(program);gl.getExtension('WEBGL_lose_context')?.loseContext();canvas.width=canvas.height=1;},render(size,phase,bass,mid,air,idle=0,inside=false,spectrum=null){if(lost||gl.isContextLost())return null;if(canvas.width!==size||canvas.height!==size){canvas.width=canvas.height=size}gl.viewport(0,0,size,size);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform4f(uniform.uMusic,phase*.4,bass,mid,air);gl.uniform1f(uniform.uIdle,idle);gl.uniform1f(uniform.uInside,inside?1:0);gl.uniform4f(uniform.uSpectrumA,spectrum?.[0]||0,spectrum?.[1]||0,spectrum?.[2]||0,spectrum?.[3]||0);gl.uniform4f(uniform.uSpectrumB,spectrum?.[4]||0,spectrum?.[5]||0,spectrum?.[6]||0,spectrum?.[7]||0);gl.uniform1f(uniform.uSize,size);for(const layers of parts)for(const layer of layers)draw(layer);gl.blendFuncSeparate(gl.SRC_ALPHA,inside?gl.ONE_MINUS_SRC_ALPHA:gl.ONE,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);draw(glowBottom);draw(glowMid);draw(glowSeam);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);if(!inside)draw(glass);return gl.isContextLost()?null:canvas}};
 }};
 })();
