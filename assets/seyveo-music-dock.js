@@ -508,6 +508,29 @@ function initRadio(){
  }
  let cached=[];try{const c=JSON.parse(localStorage.getItem(catalogKey)||'null');if(Array.isArray(c?.rows)&&c.region===regionInfo.code&&Date.now()-c.at<7*86400000)cached=c.rows.slice(0,60)}catch{}
  const regional=register(cached);
+ const favoriteKey='seyveo-radio-favorites-v1';let favorites=[];
+ // Save discovered stations as well as curated IDs so pins survive catalog refreshes.
+ try{
+  const saved=JSON.parse(localStorage.getItem(favoriteKey)||'[]');
+  if(Array.isArray(saved))for(const item of saved.slice(0,200)){
+   if(!item||typeof item.id!=='string')continue;
+   let station=stations.find(s=>s.id===item.id);
+   if(!station&&item.id.startsWith('rb-')&&item.snapshot){
+    const raw=item.snapshot;if('rb-'+raw.stationuuid!==item.id)continue;
+    station=register([raw])[0];
+   }
+   if(station&&!favorites.some(f=>f.id===station.id))favorites.push({id:station.id,snapshot:item.snapshot||null});
+  }
+ }catch{}
+ const isFavorite=id=>favorites.some(f=>f.id===id);
+ function toggleFavorite(id){
+  const station=stations.find(s=>s.id===id);if(!station)return false;
+  const snapshot=id.startsWith('rb-')?{stationuuid:id.slice(3),name:station.name,countrycode:station.countrycode,country:station.country,state:station.city,tags:station.genre,url_resolved:station.stream,homepage:station.site,codec:station.quality.replace(/^\d+\s*/,''),bitrate:parseInt(station.quality,10)||0}:null;
+  const next=isFavorite(id)?favorites.filter(f=>f.id!==id):[{id,snapshot},...favorites];
+  if(next.length>200){status.textContent='Достигнут предел избранных станций.';return false}
+  try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{status.textContent='Не удалось сохранить избранное.';return false}
+  favorites=next;renderFavoritesMotion(id);return true;
+ }
  const list=document.getElementById('svMusicRadioStations'),status=document.getElementById('svMusicRadioStatus');
  if(!list||!status)return;
  const buttons=new Map();
@@ -535,7 +558,7 @@ function initRadio(){
   throw Error('catalog unavailable');
  }
  async function onlineSearch(q,signal){const term=String(q||'').trim().slice(0,100);if(term.length<2)return localSearch(term);const rows=await fetchStations({name:term},signal);return [...new Map([...localSearch(term),...register(rows)].map(s=>[s.id,s])).values()]}
- window.SEYVEO_RADIO=Object.freeze({recent,removeRecentHistory,play:openStation,search:localSearch,searchOnline:onlineSearch});
+ window.SEYVEO_RADIO=Object.freeze({recent,removeRecentHistory,play:openStation,search:localSearch,searchOnline:onlineSearch,isFavorite,toggleFavorite});
  audio.addEventListener('playing',()=>{const state=window.SEYVEO_MUSIC?.state?.();if(state?.source!=='radio'||!stations.some(x=>x.id===state.stationId))return;history=[state.stationId,...history.filter(id=>id!==state.stationId)].slice(0,6);playedAt[state.stationId]=Date.now();playedAt=Object.fromEntries(history.map(id=>[id,playedAt[id]||0]));try{localStorage.setItem(historyKey,JSON.stringify(history));localStorage.setItem(timeKey,JSON.stringify(playedAt))}catch{}document.dispatchEvent(new Event('seyveo:radio-history'))});
  document.dispatchEvent(new Event('seyveo:radio-history'));
  function drawRadio(){
@@ -553,14 +576,23 @@ function initRadio(){
    const match=Math.max(0,...tags.map(tag=>weights.get(tag)||0));
    return (local?1000:0)+match*100+(local&&city&&norm(s.name+' '+(s.city||'')).includes(city)?10:0);
   };
-  const regionIds=new Set(regional.map(s=>s.id));return stations.filter(s=>!s.id.startsWith('rb-')||regionIds.has(s.id)).sort((a,b)=>score(b)-score(a));
+  const regionIds=new Set(regional.map(s=>s.id)),pins=new Map(favorites.map((f,i)=>[f.id,i]));
+  return stations.filter(s=>pins.has(s.id)||!s.id.startsWith('rb-')||regionIds.has(s.id)).sort((a,b)=>{
+   const ai=pins.get(a.id),bi=pins.get(b.id);
+   if(ai!==undefined||bi!==undefined)return (ai??Infinity)-(bi??Infinity);
+   return score(b)-score(a);
+  });
  }
  function render(){
   list.replaceChildren();buttons.clear();
   for(const station of sortedStations()){
-   const row=document.createElement('article');row.className='sv-radio-station';
+   const row=document.createElement('article');row.className='sv-radio-station';row.dataset.stationId=station.id;
    const art=document.createElement('span');art.className='sv-radio-art';art.style.backgroundColor=station.color;art.style.backgroundImage='url("'+station.artwork+'")';art.setAttribute('aria-hidden','true');
    const cover=document.createElement('div');cover.className='sv-radio-tile-cover';cover.append(art);
+   const heart=document.createElement('button');heart.type='button';heart.className='sv-radio-heart';heart.setAttribute('aria-pressed',String(isFavorite(station.id)));
+   heart.setAttribute('aria-label',(isFavorite(station.id)?'Убрать из избранного: ':'В избранное: ')+station.name);
+   heart.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.6c0 4.1-8.8 9.9-8.8 9.9S3.2 12.7 3.2 8.6a4.6 4.6 0 0 1 8.8-1.8 4.6 4.6 0 0 1 8.8 1.8Z"/></svg>';
+   heart.addEventListener('click',()=>toggleFavorite(station.id));cover.append(heart);
    if(station.stream){
     const play=document.createElement('button');play.type='button';play.className='sv-radio-play';play.addEventListener('click',()=>{if(!window.SEYVEO_MUSIC?.playRadio?.(stations,station.id)){status.textContent='Не удалось открыть эфир. Откройте сайт станции.';}else drawRadio()});buttons.set(station.id,play);cover.append(play);
    }else{
@@ -572,6 +604,20 @@ function initRadio(){
   }
   if(!list.children.length){const empty=document.createElement('p');empty.className='sv-radio-empty';empty.textContent='Станции не найдены';list.append(empty)}
   drawRadio();
+ }
+ function renderFavoritesMotion(id){
+  if(panel.hidden||page.hidden){return}
+  const focus=document.activeElement?.classList.contains('sv-radio-heart');
+  const motion=!document.hidden&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const before=new Map();
+  if(motion)for(const node of Array.from(list.children).slice(0,24))before.set(node.dataset.stationId,node.getBoundingClientRect());
+  render();
+  for(const node of Array.from(list.children).slice(0,24)){
+   if(focus&&node.dataset.stationId===id)node.querySelector('.sv-radio-heart')?.focus({preventScroll:true});
+   const old=before.get(node.dataset.stationId);if(!old||typeof node.animate!=='function')continue;
+   const now=node.getBoundingClientRect(),dx=old.left-now.left,dy=old.top-now.top;
+   if(Math.abs(dx)+Math.abs(dy)>0&&Math.abs(dy)<window.innerHeight)node.animate([{transform:'translate('+dx+'px,'+dy+'px)'},{transform:'translate(0,0)'}],{duration:240,easing:'cubic-bezier(.2,.7,.25,1)'});
+  }
  }
  function animateRadio(){
   if(panel.hidden||page.hidden||document.hidden||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
