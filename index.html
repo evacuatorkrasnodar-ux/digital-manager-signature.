@@ -4577,15 +4577,16 @@ function putNotes(list){
 }
 // Explicit copy from Music: preserve every existing record and original line breaks.
 window.SEYVEO_MUSIC_NOTE=Object.freeze({
- save(value){
+ save(value,kind='music-lyrics'){
+  const source=kind==='music-recognition'?'music-recognition':'music-lyrics';
   if(typeof value!=='string'||!value.trim()||value.length>8000)return {ok:false,reason:'length'};
   try{
    const stored=JSON.parse(localStorage.getItem(NOTES_KEY)||'[]');
    if(!Array.isArray(stored))return {ok:false,reason:'storage'};
    if(stored.filter(n=>n&&typeof n.text==='string'&&typeof n.id==='string'&&!isHealthMeasurementNote(n)).length>=100)return {ok:false,reason:'limit'};
-   const existing=stored.find(n=>n?.source==='music-lyrics'&&n.text===value);
+   const existing=stored.find(n=>n?.source===source&&n.text===value);
    if(existing)return {ok:true,existing:true,id:existing.id};
-   const note={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:value,createdAt:Date.now(),preserveLines:true,source:'music-lyrics'};
+   const note={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:value,createdAt:Date.now(),preserveLines:true,source};
    localStorage.setItem(NOTES_KEY,JSON.stringify([note,...stored]));
    window.dispatchEvent(new Event('seyveo:notes-changed'));
    return {ok:true,id:note.id};
@@ -6090,7 +6091,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-mus
 
 #sayviMusicPage #svMusicRecognizeHome>svg{color:#668b9e}
 #svSmartMusicBody a.sv-smart-music-choice{text-decoration:none;box-sizing:border-box}
-</style><script src="assets/seyveo-adaptive-sound.js?v=3-compilation"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-recognition-minimal"></script><script src="assets/seyveo-music-dock.js?v=37-replay-wheel"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-spectral-silk-v1"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
+</style><script src="assets/seyveo-adaptive-sound.js?v=3-compilation"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-recognition-clean-note"></script><script src="assets/seyveo-music-dock.js?v=37-replay-wheel"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-spectral-silk-v1"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
@@ -8469,8 +8470,10 @@ html[data-theme="dark"] #svSmartMusicSheet[data-music-sheet="recognize"] .sv-rec
 @media(prefers-reduced-transparency:reduce){html[data-theme="light"]:not(.sv-music-player-open) #svSmartMusicSheet[data-music-sheet="recognize"]{background:#f8f9fa!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
 </style>
 <style id="svRecognitionMinimal">
-#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-index[hidden]{display:none!important}
-#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-privacy{font-size:11.5px;line-height:1.35}
 #svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb-button{padding-bottom:4px}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-result-action{display:flex;align-items:center;gap:10px;min-height:44px;font-size:14px}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-result-action svg{width:20px;height:20px;flex:none;color:#729ca5}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-result-action:disabled{opacity:.72}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-smart-music-message[hidden]{display:none!important}
 </style>
 </body></html>
