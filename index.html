@@ -1373,8 +1373,9 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
  <div class="sv-discovery-feed-head"><h3>Для вас</h3><div class="sv-discovery-feed-actions"><button type="button" id="sayviDiscoveryCheck" aria-label="Проверить новинки" title="Проверить новинки" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.2 6M20 5v6h-6"/></svg></button><button type="button" id="svDiscoverySettingsButton" aria-label="Настройки музыкальных открытий" title="Настройки" aria-expanded="false" aria-controls="svDiscoverySettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="var(--card)"/><circle cx="15" cy="12" r="2" fill="var(--card)"/><circle cx="10" cy="17" r="2" fill="var(--card)"/></svg></button></div></div>
  <div id="svMusicDiscoveryReleases" class="sv-discovery-releases" hidden></div>
  <div id="svMusicDiscoveryEmpty" class="sv-discovery-empty">
-  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 26v-5a14 14 0 0 1 28 0v5"/><rect x="7" y="23" width="9" height="15" rx="4"/><rect x="32" y="23" width="9" height="15" rx="4"/></svg>
+  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 26v-5a14 14 0 0 1 28 0v5"/><rect x="7" y="23" width="9" height="15" rx="4"/><rect x="32" y="23" width="9" height="15" rx="4"/></svg>
   <h4 id="svMusicDiscoveryEmptyTitle">Открывайте новое с Сэйви</h4>
+  <p class="sv-discovery-empty-caption">Новинки любимых исполнителей — по вашему вкусу.</p>
  </div>
  <p id="sayviDiscoveryStatus" class="sv-discovery-status" role="status" aria-live="polite"></p>
 </section>
@@ -9052,6 +9053,33 @@ html:root body #sayviMusicPage #svMusicHistoryTracks .sv-history-swipe.is-moving
   height:38px!important;min-height:38px!important;padding:0 12px!important;font-size:13px!important;
   box-shadow:0 2px 9px rgba(42,52,72,.055)!important;
  }
+}
+</style>
+
+<style id="svMusicNewQuietPolish">
+/* New releases only: shared back glyph stays untouched. */
+html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="new"] > .sv-music-head{
+ background:rgba(255,255,255,.82)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(108%)!important;
+ backdrop-filter:blur(18px) saturate(108%)!important;
+}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-feed-head h3{font-weight:550!important;letter-spacing:-.025em}
+html:root body #sayviMusicPage[data-music-view="new"] #svDiscoverySettingsButton svg{width:20px!important;height:20px!important;stroke-width:1.35!important}
+html:root body #sayviMusicPage[data-music-view="new"] #svMusicDiscoveryEmpty{gap:9px!important;padding-top:20px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #svMusicDiscoveryEmpty > svg{width:40px!important;height:40px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #svMusicDiscoveryEmptyTitle{font-weight:520!important}
+html:root body #sayviMusicPage[data-music-view="new"] .sv-discovery-empty-caption{max-width:260px;margin:0;color:var(--secondary);font-size:12px!important;font-weight:400;line-height:1.45;text-align:center}
+html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body:has(#sayviMusicPage[data-music-view="new"]:not([hidden])) #sayviMusicMini:not([hidden]){
+ background:rgba(232,236,240,.76)!important;
+ background-image:linear-gradient(155deg,rgba(255,255,255,.42),transparent 52%,rgba(255,255,255,.13))!important;
+ border:1px solid rgba(161,177,188,.34)!important;
+ box-shadow:inset 0 0 0 1px rgba(255,255,255,.92),0 2px 8px rgba(38,48,60,.045)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
+ backdrop-filter:var(--sv-white-pearl-floating-blur,blur(10px) saturate(108%))!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="new"] > .sv-music-head{background:#fff!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body:has(#sayviMusicPage[data-music-view="new"]:not([hidden])) #sayviMusicMini:not([hidden]){background:#eef0f2!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 }
 </style>
 </body></html>
