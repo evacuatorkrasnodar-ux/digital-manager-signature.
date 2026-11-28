@@ -1216,7 +1216,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
     <h1 class="sv-music-heading"><span class="sv-music-brand">SEYVEO</span><span class="sv-music-brand-sub">MUSIC</span></h1>
     <button type="button" class="sv-music-technology" id="svAdaptiveSoundOpen" aria-label="Adaptive Sound — интеллектуальное звучание SEYVEO">SOUND · <span class="sv-music-ai">ai</span> · TECHNOLOGY</button>
    </div>
-   <button class="sv-music-inner-back" type="button" data-music-view-action="home" aria-label="Назад к музыке"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
+   <button class="sv-music-inner-back" type="button" data-music-view-action="home" aria-label="Назад к музыке"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></button>
    <div class="sv-music-inner-title"><span data-title-view="replay">Мой музыкальный мир</span><span data-title-view="history">Недавно слушали</span><span data-title-view="library">Медиатека</span><span data-title-view="new">Новинки</span><span data-title-view="radio">Радио</span></div>
    <div id="svAdaptiveQuickGroup" role="group" aria-label="Режим звучания">
     <button id="svAdaptiveQuick" type="button" aria-pressed="false" aria-label="Adaptive Sound. Включить Pure Sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M6 10v4m3-7v10m3-12v14m3-12v10m3-7v4"/></svg><span><strong id="svAdaptiveQuickName">Adaptive Sound</strong><small id="svAdaptiveQuickState">Автоматический режим</small></span></button>
@@ -8390,6 +8390,23 @@ html[data-theme="dark"] #sayviMusicPage #svReplayPeriodMenu .sv-replay-wheel-don
 html:root.sv-music-screen.sv-music-browse body:has(#svMusicHomeMiniSlot > #sayviMusicMini.sv-music-mini-inline:not([hidden])) #sayviMusicPage[data-music-view="replay"]{
  padding-bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 136px)!important;
  scroll-padding-bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 136px)!important;
+}
+</style>
+<style id="svMusicBackNeutralInk">
+/* Shared SEYVEO back glyph: neutral ink in each theme; no optical effects. */
+html:root[data-theme="light"] #sayviMusicPage .sv-music-inner-back{color:#111111!important}
+html:root[data-theme="dark"] #sayviMusicPage .sv-music-inner-back{color:#F3F3F3!important}
+html:root[data-theme] #sayviMusicPage .sv-music-inner-back,
+html:root[data-theme] #sayviMusicPage .sv-music-inner-back:active{
+ opacity:1!important;filter:none!important;transform:none!important;mix-blend-mode:normal!important;
+}
+html:root[data-theme] #sayviMusicPage .sv-music-inner-back svg{
+ display:block;width:22px!important;height:22px!important;flex:none;
+ color:inherit!important;stroke:currentColor!important;fill:none!important;
+ stroke-width:1.55!important;opacity:1!important;filter:none!important;transform:none!important;mix-blend-mode:normal!important;
+}
+html:root[data-theme] #sayviMusicPage .sv-music-inner-back svg path{
+ stroke:currentColor!important;fill:none!important;opacity:1!important;filter:none!important;
 }
 </style>
 </body></html>
