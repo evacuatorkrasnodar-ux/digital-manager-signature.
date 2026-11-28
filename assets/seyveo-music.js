@@ -575,6 +575,7 @@ function syncQueueToggle(){
  }
 }
 function hidePanels(){
+ queueEditing=false;
  queueOpen=false;
  collection.hidden=true;
  if(sourcesPanel)sourcesPanel.hidden=true;
@@ -589,6 +590,7 @@ function showCollection(mode){
  }
  if(sourcesPanel)sourcesPanel.hidden=true;
  sourcesToggle?.setAttribute('aria-expanded','false');
+ queueEditing=false;
  collectionMode=mode;
  queueOpen=true;
  collectionRender();
@@ -863,6 +865,7 @@ function renderMiniCover(key,src){
  mini.classList.toggle('has-artwork',!!(key||src));
 }
 // Session-only queue edits preserve the saved library and the playing audio source.
+let queueEditing=false;
 function editQueue(from,to,remove=false){
  if(collectionMode!=='tracks'||isRadio()||from<0||from>=tracks.length||(!remove&&(to<0||to>=tracks.length||from===to))||(remove&&from===index))return false;
  const current=tracks[index],order=tracks.slice(),file=order.splice(from,1)[0];
@@ -875,7 +878,7 @@ function bindQueueGesture(btn,handle,file,list){
  const locate=()=>tracks.indexOf(file);
  const clear=()=>{btn.classList.remove('sv-queue-dragging','sv-queue-swiping');btn.style.removeProperty('--sv-queue-swipe');target?.classList.remove('sv-queue-target');target=null};
  btn.addEventListener('pointerdown',e=>{
-  if(!e.isPrimary||e.button!==0)return;
+  if(e.pointerType==='touch'||!e.isPrimary||e.button!==0)return;
   const drag=handle.contains(e.target);
   if(!drag&&locate()===index)return;
   start={id:e.pointerId,x:e.clientX,y:e.clientY,drag,swipe:false};
@@ -907,6 +910,41 @@ function bindQueueGesture(btn,handle,file,list){
  btn.addEventListener('pointercancel',()=>{start=null;clear()});
  btn.addEventListener('lostpointercapture',()=>{if(start){start=null;clear()}});
  btn.addEventListener('click',e=>{if(Date.now()<blockedUntil||handle.contains(e.target)){e.preventDefault();e.stopImmediatePropagation()}},true);
+ // Touch events are explicit for older iPhone Safari; vertical scrolling
+ // stays native until a horizontal swipe or a grip drag is established.
+ let touch=null;
+ btn.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1){touch=null;return}
+  const p=e.touches[0],drag=handle.contains(e.target);
+  if(!drag&&locate()===index)return;
+  touch={id:p.identifier,x:p.clientX,y:p.clientY,drag,swipe:false};
+  if(drag){btn.classList.add('sv-queue-dragging');e.preventDefault()}
+ },{passive:false});
+ btn.addEventListener('touchmove',e=>{
+  if(!touch)return;const p=Array.from(e.touches).find(t=>t.identifier===touch.id);if(!p)return;
+  const dx=p.clientX-touch.x,dy=p.clientY-touch.y;
+  if(touch.drag){
+   if(e.cancelable)e.preventDefault();
+   const row=document.elementFromPoint(p.clientX,p.clientY)?.closest('[data-queue-index]');
+   if(row!==target){target?.classList.remove('sv-queue-target');target=row&&list.contains(row)?row:null;target?.classList.add('sv-queue-target')}
+   const rect=list.getBoundingClientRect();
+   if(p.clientY<rect.top+30)list.scrollTop-=10;else if(p.clientY>rect.bottom-30)list.scrollTop+=10;
+   return;
+  }
+  if(!touch.swipe&&Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx)){touch=null;return}
+  if(dx<-12&&Math.abs(dx)>Math.abs(dy)*1.25)touch.swipe=true;
+  if(touch.swipe){if(e.cancelable)e.preventDefault();btn.classList.add('sv-queue-swiping');btn.style.setProperty('--sv-queue-swipe',Math.max(-76,Math.min(0,dx))+'px')}
+ },{passive:false});
+ btn.addEventListener('touchend',e=>{
+  if(!touch)return;const p=Array.from(e.changedTouches).find(t=>t.identifier===touch.id);if(!p)return;
+  const g=touch;touch=null;const to=target?Number(target.dataset.queueIndex):-1;clear();
+  if(g.drag||g.swipe){
+   if(e.cancelable)e.preventDefault();blockedUntil=Date.now()+450;
+   if(g.drag&&Math.abs(p.clientY-g.y)>8&&to>=0)editQueue(locate(),to);
+   else if(g.swipe&&p.clientX-g.x<-72)editQueue(locate(),-1,true);
+  }
+ },{passive:false});
+ btn.addEventListener('touchcancel',()=>{touch=null;clear()},{passive:true});
  btn.addEventListener('keydown',e=>{
   if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const i=locate(),to=i+(e.key==='ArrowUp'?-1:1);if(editQueue(i,to))collection.querySelector('[data-queue-index="'+to+'"]')?.focus({preventScroll:true})}
   else if(e.key==='Delete'&&locate()!==index){e.preventDefault();const i=locate();if(editQueue(i,-1,true))collection.querySelector('[data-queue-index="'+Math.min(i,tracks.length-1)+'"]')?.focus({preventScroll:true})}
@@ -931,7 +969,14 @@ function collectionRender(){
  const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='sv-music-panel-close';
  dismiss.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>';
  dismiss.setAttribute('aria-label','Закрыть список');dismiss.addEventListener('click',hidePanels);
- header.append(title,dismiss);collection.append(header);
+ header.append(title);
+ if(!favoriteView&&!isRadio()&&tracks.length>1){
+  const edit=document.createElement('button');edit.type='button';edit.className='sv-queue-edit';
+  edit.textContent=queueEditing?'Готово':'Изменить';edit.setAttribute('aria-pressed',String(queueEditing));
+  edit.addEventListener('click',()=>{queueEditing=!queueEditing;collectionRender();collection.querySelector('.sv-queue-edit')?.focus({preventScroll:true})});
+  header.classList.add('sv-queue-editable');header.append(edit);
+ }
+ header.append(dismiss);collection.append(header);
  const list=document.createElement('div');list.className='sv-collection-list';collection.append(list);
  if(!favoriteView&&queueOpen)renderChapters(list);
  if(!favoriteView){
@@ -988,7 +1033,14 @@ function collectionRender(){
     }).catch(()=>{});
    }
   }
-  list.append(btn);
+  if(queueEditing&&!favoriteView&&match&&!match.file.radio){
+   const wrap=document.createElement('div');wrap.className='sv-queue-edit-row';
+   const remove=document.createElement('button');remove.type='button';remove.className='sv-queue-remove';remove.disabled=current;
+   remove.setAttribute('aria-label','Убрать из очереди: '+(info.title||'Без названия'));
+   remove.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12h7"/></svg>';
+   remove.addEventListener('click',()=>editQueue(tracks.indexOf(match.file),-1,true));
+   wrap.append(remove,btn);list.append(wrap);
+  }else list.append(btn);
  });
  list.scrollTop=oldTop;
  syncQueueToggle();
