@@ -575,7 +575,6 @@ function syncQueueToggle(){
  }
 }
 function hidePanels(){
- queueEditing=false;
  queueOpen=false;
  collection.hidden=true;
  if(sourcesPanel)sourcesPanel.hidden=true;
@@ -590,7 +589,6 @@ function showCollection(mode){
  }
  if(sourcesPanel)sourcesPanel.hidden=true;
  sourcesToggle?.setAttribute('aria-expanded','false');
- queueEditing=false;
  collectionMode=mode;
  queueOpen=true;
  collectionRender();
@@ -865,7 +863,6 @@ function renderMiniCover(key,src){
  mini.classList.toggle('has-artwork',!!(key||src));
 }
 // Session-only queue edits preserve the saved library and the playing audio source.
-let queueEditing=false;
 function editQueue(from,to,remove=false){
  if(collectionMode!=='tracks'||isRadio()||from<0||from>=tracks.length||(!remove&&(to<0||to>=tracks.length||from===to))||(remove&&from===index))return false;
  const current=tracks[index],order=tracks.slice(),file=order.splice(from,1)[0];
@@ -969,12 +966,6 @@ function collectionRender(){
  dismiss.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>';
  dismiss.setAttribute('aria-label','Закрыть список');dismiss.addEventListener('click',hidePanels);
  header.append(title);
- if(!favoriteView&&!isRadio()&&tracks.length>1){
-  const edit=document.createElement('button');edit.type='button';edit.className='sv-queue-edit';
-  edit.textContent=queueEditing?'Готово':'Изменить';edit.setAttribute('aria-pressed',String(queueEditing));
-  edit.addEventListener('click',()=>{queueEditing=!queueEditing;collectionRender();collection.querySelector('.sv-queue-edit')?.focus({preventScroll:true})});
-  header.classList.add('sv-queue-editable');header.append(edit);
- }
  header.append(dismiss);collection.append(header);
  const list=document.createElement('div');list.className='sv-collection-list';collection.append(list);
  if(!favoriteView&&queueOpen)renderChapters(list);
@@ -1038,14 +1029,7 @@ function collectionRender(){
     }).catch(()=>{});
    }
   }
-  if(queueEditing&&!favoriteView&&match&&!match.file.radio){
-   const wrap=document.createElement('div');wrap.className='sv-queue-edit-row';
-   const remove=document.createElement('button');remove.type='button';remove.className='sv-queue-remove';remove.disabled=current;
-   remove.setAttribute('aria-label','Убрать из очереди: '+(info.title||'Без названия'));
-   remove.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12h7"/></svg>';
-   remove.addEventListener('click',()=>editQueue(tracks.indexOf(match.file),-1,true));
-   wrap.append(remove,row);list.append(wrap);
-  }else list.append(row);
+  list.append(row);
  });
  list.scrollTop=oldTop;
  syncQueueToggle();
