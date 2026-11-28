@@ -447,6 +447,7 @@ function replayTick(){
  const row=bucket.items[key]||(bucket.items[key]={seconds:0,title:'',artist:'',radio:!!file.radio});
  row.title=info.title||safeName(file);row.artist=file.radio?file.country:(info.artist||'');row.seconds+=seconds;bucket.seconds+=seconds;
  if(!file.radio){if(info.genre)row.genre=info.genre;if(info.language)row.language=info.language;const source=portraitSource(info.genre);if(source)row.source=source;}
+ if(file.radio&&file.genre)row.genre=String(file.genre).slice(0,160);
  const stamp=new Date(now),day=month+'-'+String(stamp.getDate()).padStart(2,'0');
  bucket.days=bucket.days||{};bucket.days[day]=(Number(bucket.days[day])||0)+seconds;
  bucket.hours=Array.isArray(bucket.hours)?bucket.hours:Array(24).fill(0);
@@ -541,6 +542,38 @@ function enrichReplayPortrait(){
   }catch{}
  }if(changed){replayDirty=true;replaySave()}return changed})().finally(()=>{portraitScan=null});
  return portraitScan;
+}
+// Shared taste taxonomy: radio formats may contain more than one genre.
+const tastePatterns=[
+ ['russian rock',/русский рок|russian rock/i],['russian pop',/русский поп|russian pop/i],['rock',/rock|рок|metal|метал|punk|панк/i],
+ ['pop',/\bpop\b|поп/i],['electronic',/electro|электрон|techno|техно|house|хаус|trance|транс|edm/i],
+ ['dance',/dance|танцевальн|диско|disco/i],['jazz',/jazz|джаз/i],['classical',/classical|классическ|классика/i],
+ ['hip hop',/hip.?hop|\brap\b|рэп|хип.?хоп/i],['indie',/indie|инди|альтернатив/i],
+ ['russian chanson',/chanson|шансон/i],['country',/\bcountry\b|кантри/i],['blues',/blues|блюз/i],
+ ['soul',/\bsoul\b|соул|r&b|rhythm and blues/i],['folk',/\bfolk\b|фолк/i]
+];
+function genreTasteTags(value){
+ const v=String(value||'');if(!v||portraitSource(v))return [];
+ const normalized=portraitGenre(v),text=v+' '+normalized;
+ const hits=tastePatterns.filter(([,test])=>test.test(text)).map(([tag])=>tag);
+ // Classical rock is rock, not classical music.
+ return /classic(?:al)? rock|классическ[а-я]* рок/i.test(v)?hits.filter(t=>t!=='classical'):hits;
+}
+function sharedGenreTaste(afterMonth=''){
+ const now=new Date(),current=now.getFullYear()*12+now.getMonth();
+ const rows=new Map(),files=new Map(localTracks.map(file=>['file:'+favoriteId(file),file]));
+ for(const [month,bucket] of Object.entries(replayMonths)){
+  if(!/^\d{4}-\d{2}$/.test(month)||month<=afterMonth)continue;
+  const [y,m]=month.split('-').map(Number),age=current-(y*12+m-1);if(age<0||age>2)continue;
+  for(const [key,row] of Object.entries(bucket.items||{})){
+   const seconds=Number(row?.seconds);if(!Number.isFinite(seconds)||seconds<=0)continue;
+   const file=files.get(key),info=file?trackDescriptions.get(file):null;
+   const tags=genreTasteTags(row.radio?row.genre:info?.genre||row.genre);if(!tags.length)continue;
+   const weight=[1,.5,.25][age]/tags.length;
+   for(const tag of tags){const item=rows.get(tag)||{tag,musicSeconds:0,radioSeconds:0};item[row.radio?'radioSeconds':'musicSeconds']+=seconds*weight;rows.set(tag,item)}
+  }
+ }
+ return [...rows.values()].map(r=>({...r,score:r.musicSeconds+r.radioSeconds*.5})).filter(r=>r.score>=60).sort((a,b)=>b.score-a.score);
 }
 // Read-only summary of the same local statistics shown in My Musical World.
 function discoveryTaste(){
@@ -1542,7 +1575,7 @@ function playRadio(stations,id){
  tracks=available;miniDismissed=false;return switchTrack(selected,true);
 }
 window.SEYVEO_MUSIC=Object.freeze({
- playRadio,replaySummary,replayPortrait,enrichReplayPortrait,discoveryTaste,removeRecentHistory,
+ playRadio,replaySummary,replayPortrait,enrichReplayPortrait,discoveryTaste,sharedGenreTaste,genreTasteTags,removeRecentHistory,
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
  searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,prepareTrackPreview,
  // Read-only access to the selected local File for optional visual analysis.
