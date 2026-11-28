@@ -1633,6 +1633,7 @@ html:root[data-theme="light"] body #sayviMusicPage #svMusicReplay .sv-portrait-p
   <div id="svPodcastSearchResults" hidden aria-live="polite"></div>
   <div id="svPodcastResume"></div>
   <div id="svPodcastPlayer" class="sv-podcast-player" hidden>
+   <div class="sv-podcast-full-cover" id="svPodcastFullCover"></div><button id="svPodcastCollapse" type="button" aria-label="Свернуть плеер"><span></span></button>
    <div class="sv-podcast-now-identity"><div id="svPodcastNowArt"></div><div class="sv-podcast-now-copy"><small id="svPodcastPlayingFeed"></small><strong id="svPodcastPlaying"></strong></div></div>
    <audio id="svPodcastAudio" preload="none" hidden></audio>
    <div class="sv-podcast-timeline"><input id="svPodcastSeek" type="range" min="0" max="1" value="0" step="0.1" aria-label="Позиция воспроизведения" disabled><div class="sv-podcast-times"><small id="svPodcastElapsed">0:00</small><small id="svPodcastRemaining">−0:00</small></div></div>
@@ -2808,7 +2809,7 @@ html:root[data-theme="light"] body #sayviMusicPage #svMusicReplay .sv-portrait-p
 <input id="svGlobalSearchInput" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Спроси или найди..." aria-label="Единый поиск в SEYVEO">
 </label>
 
-<div id="svGlobalSearchResults" class="sv-search-results" aria-live="polite"></div></section><div id="svMusicHomeMiniSlot" aria-label="Музыкальный мини-плеер"></div><div id="sayviMusicMini" class="sv-music-mini" hidden aria-label="Сейчас играет в SEYVEO" role="group">
+<div id="svGlobalSearchResults" class="sv-search-results" aria-live="polite"></div></section><div id="svMusicHomeMiniSlot" aria-label="Музыкальный мини-плеер"></div><div id="svPodcastMini" hidden role="group" aria-label="Сейчас играет подкаст"><button id="svPodcastMiniOpen" type="button" aria-label="Открыть плеер подкаста"><span id="svPodcastMiniArt"></span><span class="sv-podcast-mini-copy"><strong id="svPodcastMiniTitle"></strong><small id="svPodcastMiniAuthor"></small></span></button><button id="svPodcastMiniToggle" type="button" aria-label="Воспроизвести"></button><button id="svPodcastMiniForward" type="button" aria-label="Вперёд на 30 секунд"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M25 8v-5M25 8h-5M25 8a12 12 0 1 0 3 9"/><text x="16" y="21" font-size="10" text-anchor="middle" fill="currentColor" stroke="none">30</text></svg></button></div><div id="sayviMusicMini" class="sv-music-mini" hidden aria-label="Сейчас играет в SEYVEO" role="group">
  <button id="sayviMusicMiniOpen" class="sv-music-mini-open" type="button" aria-label="Открыть музыкальный плеер" title="Открыть плеер · свайп вправо — предыдущий трек, влево — следующий">
   <span class="sv-music-mini-symbol" aria-hidden="true">
    <svg class="sv-music-mini-placeholder" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l12-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2.4"/><ellipse cx="18" cy="16" rx="3" ry="2.4"/></svg>
@@ -6491,7 +6492,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-mus
 
 #sayviMusicPage #svMusicRecognizeHome>svg{color:inherit}
 #svSmartMusicBody a.sv-smart-music-choice{text-decoration:none;box-sizing:border-box}
-</style><script src="assets/seyveo-adaptive-sound.js?v=4-voice-duck"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-recognition-radio-v3"></script><script src="assets/seyveo-music-dock.js?v=20261128-builder-glass-v45"></script><script src="assets/seyveo-podcasts-v13.js"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-radio-home-fog-v3"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
+</style><script src="assets/seyveo-adaptive-sound.js?v=4-voice-duck"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-recognition-radio-v3"></script><script src="assets/seyveo-music-dock.js?v=20261128-builder-glass-v45"></script><script src="assets/seyveo-podcasts-v14.js"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-radio-home-fog-v3"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
@@ -10229,5 +10230,56 @@ html:root body #sayviMusicPage #svMusicPodcasts #svPodcastPlayer:not([hidden]){g
 #svMusicPodcasts #svPodcastPlayer .sv-podcast-player-tools{gap:6px 16px}
 #svMusicPodcasts #svPodcastPlayer .sv-podcast-player-tools select{min-height:44px}
 #svMusicPodcasts #svPodcastPlayer .sv-podcast-transport{gap:20px}
+</style>
+
+<style id="svPodcastAppleV14">
+/* Three compact subscription covers, management remains a list with shared trash. */
+#svMusicPodcasts #svPodcastFeeds.sv-podcast-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px 9px;margin:6px 0 12px}
+#svMusicPodcasts #svPodcastFeeds.sv-podcast-grid .sv-podcast-feed{display:block;padding:0;border:0;min-width:0}
+html:root body #sayviMusicPage #svMusicPodcasts .sv-podcast-tile{display:grid;gap:4px;width:100%;min-width:0;text-align:left;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;color:var(--text);font:inherit;align-content:start}
+#svMusicPodcasts .sv-podcast-tile .sv-podcast-art{width:100%;height:auto;aspect-ratio:1;border-radius:10px}
+#svMusicPodcasts .sv-podcast-tile strong,#svMusicPodcasts .sv-podcast-tile small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#svMusicPodcasts .sv-podcast-tile strong{font-size:13px;font-weight:600;line-height:1.25}
+#svMusicPodcasts .sv-podcast-tile small{font-size:11px}
+#svPodcastMini[hidden]{display:none!important}
+html:root.sv-podcast-mini-active body #sayviMusicMini{display:none!important}
+html:root.sv-music-screen.sv-music-browse body #svPodcastMini:not([hidden]){
+ display:flex!important;position:fixed;z-index:29;left:50%;transform:translateX(-50%);bottom:calc(var(--seyveo-dock-bottom,7px) + var(--seyveo-dock-height,58px) + 7px);width:min(382px,calc(100vw - 32px));height:44px;min-height:44px;box-sizing:border-box;padding:0 6px;border-radius:999px;border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.55));background:var(--sv-liquid-nav-material,var(--sv-white-pearl-floating-dock));-webkit-backdrop-filter:var(--sv-liquid-nav-blur,var(--sv-white-pearl-floating-blur));backdrop-filter:var(--sv-liquid-nav-blur,var(--sv-white-pearl-floating-blur));box-shadow:var(--sv-liquid-nav-shadow,var(--sv-white-pearl-dock-shadow));color:var(--text);align-items:center;overflow:hidden
+}
+#svPodcastMini button{border:0!important;background:transparent!important;box-shadow:none!important;color:inherit;min-height:44px;padding:0!important;display:grid;place-items:center;flex:0 0 44px}
+#svPodcastMini #svPodcastMiniOpen{display:flex;flex:1;min-width:0;align-items:center;gap:7px;text-align:left}
+#svPodcastMiniArt .sv-podcast-art{display:grid;place-items:center;width:34px;height:34px;border-radius:7px;overflow:hidden;background:var(--card2,var(--card))}
+#svPodcastMiniArt .sv-podcast-art img{width:100%;height:100%;object-fit:cover}
+#svPodcastMiniArt svg{width:21px;height:21px}
+#svPodcastMini .sv-podcast-mini-copy{display:grid;gap:2px;min-width:0}
+#svPodcastMini strong,#svPodcastMini small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+#svPodcastMini strong{font-size:13px;font-weight:600}
+#svPodcastMini small{font-size:11px;color:var(--secondary)}
+#svPodcastMiniToggle svg{width:23px;height:23px}
+#svPodcastMiniForward svg{width:25px;height:25px}
+html:root.sv-podcast-mini-active.sv-music-browse body #sayviMusicPage{scroll-padding-bottom:130px!important}
+#svPodcastFullCover,#svPodcastCollapse{display:none}
+html:root.sv-podcast-full-open body footer.dock{display:none!important}
+html:root.sv-podcast-full-open.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="podcasts"]{background:#151515!important;color:#fff!important;padding:0!important;overflow-y:auto!important}
+html:root.sv-podcast-full-open.sv-music-screen.sv-music-browse body #sayviMusicPage>.sv-music-head{display:none!important}
+html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open>:not(#svPodcastPlayer):not(#svPodcastStatus){display:none!important}
+html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open{display:block!important;padding:0!important;margin:0!important;width:100%!important;max-width:none!important;background:#151515!important;color:#fff!important;--text:#fff;--secondary:rgba(255,255,255,.65);--soft-line:rgba(255,255,255,.24)}
+html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open #svPodcastPlayer:not([hidden]){position:relative;display:flex!important;flex-direction:column;justify-content:center;gap:12px;padding:0 22px max(16px,env(safe-area-inset-bottom,0px))!important;margin:0!important;border:0!important;min-height:calc(100dvh - 8px);min-height:calc(100svh - 8px);box-sizing:border-box;color:#fff;background:#151515!important}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover{display:block;position:relative;margin:0 -22px;flex:1 0 auto;min-height:0;overflow:hidden}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover .sv-podcast-art{display:grid;width:100%;height:min(53vh,480px);border-radius:0;background:#252525;place-items:center}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover img{width:100%;height:100%;object-fit:cover}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,transparent 58%,#151515 100%);pointer-events:none}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastCollapse{display:grid;place-items:center;position:absolute;top:max(5px,env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:64px;height:44px;z-index:2;border:0!important;background:transparent!important;box-shadow:none!important}
+#svPodcastCollapse span{width:36px;height:4px;border-radius:9px;background:rgba(255,255,255,.78);box-shadow:0 0 4px #0005}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastNowArt{display:none}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-now-identity{padding-top:2px}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastPlaying{font-size:clamp(18px,5.4vw,25px);line-height:1.15;color:#fff}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-transport{justify-content:space-evenly;gap:12px;padding:5px 0}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-transport #svPodcastToggle svg{width:44px;height:44px}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-transport button{color:#fff!important}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-player-tools select{color:#fff;background:#151515!important}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastStatus{color:#fff}
+@media(max-height:650px){#svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover .sv-podcast-art{height:42vh}}
+@media(prefers-reduced-transparency:reduce){#svPodcastMini{background:var(--card)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
 </style>
 </body></html>
