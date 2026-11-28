@@ -8578,4 +8578,31 @@ html.sv-music-player-open #sayviMusicPage #svInlineKaraokeSettings:not([hidden])
 @media(prefers-reduced-motion:reduce){#sayviMusicPage #sayviMusicCollection .sv-queue-equalizer i{animation:none!important}}
 @media(prefers-reduced-transparency:reduce){html.sv-music-player-open body #sayviMusicPage #sayviMusicCollection[data-collection-mode="tracks"]:not([hidden]){--sv-sheet-bg:rgb(var(--sv-music-live-menu-rgb,34,42,46));-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
 </style>
+<style id="svCompactSheetMotion">
+/* SEYVEO Sheet Motion: compact floating panels use the same timing
+   as full-height sheets, but travel only a short distance. Preserve
+   original transform-based centering, geometry and live glass palette. */
+@keyframes svCompactSheetEnter{
+ from{opacity:0}
+ to{opacity:1}
+}
+@supports (translate:0 1px){
+ @keyframes svCompactSheetEnter{
+  from{opacity:0;translate:0 16px}
+  to{opacity:1;translate:0 0}
+ }
+}
+@keyframes svCompactSheetShade{from{opacity:0}to{opacity:1}}
+html.sv-music-screen body #sayviMusicPage :is(#sayviMusicCollection,#sayviMusicSourcesPanel,#svNowMenu,#svInlineKaraokeSettings):not([hidden]),
+html.sv-music-screen body #svSmartMusicSheet[open]{
+ animation:svCompactSheetEnter var(--sv-sheet-enter-duration,.28s) var(--sv-sheet-enter-ease,cubic-bezier(.22,.7,.25,1)) both!important;
+}
+html.sv-music-screen body #svSmartMusicSheet[open]::backdrop{
+ animation:svCompactSheetShade .2s ease-out both;
+}
+@media(prefers-reduced-motion:reduce){
+ html.sv-music-screen body #sayviMusicPage :is(#sayviMusicCollection,#sayviMusicSourcesPanel,#svNowMenu,#svInlineKaraokeSettings):not([hidden]),
+ html.sv-music-screen body #svSmartMusicSheet[open],html.sv-music-screen body #svSmartMusicSheet[open]::backdrop{animation:none!important}
+}
+</style>
 </body></html>
