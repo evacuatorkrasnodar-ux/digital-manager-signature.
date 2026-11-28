@@ -495,29 +495,31 @@ function initRadio(){
   for(const [id,btn] of buttons){const selected=state?.stationId===id&&state.playing;btn.setAttribute('aria-pressed',String(!!selected));btn.innerHTML=selected?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12m6-12v12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5 18 12 9 17.5Z" fill="currentColor"/></svg>';btn.setAttribute('aria-label',(selected?'Пауза: ':'Слушать: ')+stations.find(x=>x.id===id).name);}
   status.textContent=state?.source==='radio'?(state.playing?'В эфире · ':'Выбрана станция · ')+stations.find(x=>x.id===state.stationId)?.name+' · '+(state.quality||''):'';
  }
- const countries=[...new Set(stations.map(x=>x.country))];
- const filter=document.createElement('select');filter.setAttribute('aria-label','Страна радиостанции');filter.className='sv-radio-country';
- const filterWrap=document.createElement('div');filterWrap.className='sv-radio-country-wrap';
- filterWrap.innerHTML='<svg class="sv-radio-country-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg><svg class="sv-radio-country-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>';
- filterWrap.append(filter);
- for(const name of ['Все страны',...countries]){const opt=document.createElement('option');opt.value=name;opt.textContent=name;filter.append(opt)}
- list.before(filterWrap);
+
+ const filter=document.createElement('input');filter.type='search';filter.placeholder='Поиск радиостанций';filter.setAttribute('aria-label','Поиск по названию, стране или жанру');filter.className='sv-radio-search';filter.autocomplete='off';
+ const filterWrap=document.createElement('div');filterWrap.className='sv-radio-search-wrap';
+ filterWrap.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4 4"/></svg>';
+ filterWrap.append(filter);list.before(filterWrap);
+ const normalizeRadio=v=>String(v||'').toLocaleLowerCase().replace(/ё/g,'е').trim();
  function render(){
   list.replaceChildren();buttons.clear();
-  for(const country of countries){
-   if(filter.value!=='Все страны'&&filter.value!==country)continue;
-   const label=document.createElement('h3');label.className='sv-music-section-title sv-radio-country-title';label.textContent=country;list.append(label);
-   for(const station of stations.filter(x=>x.country===country)){
-    const row=document.createElement('article');row.className='sv-radio-station';
-    const art=document.createElement('span');art.className='sv-radio-art';art.style.backgroundColor=station.color;art.style.backgroundImage='url("'+station.artwork+'")';art.style.backgroundSize='cover';art.setAttribute('aria-hidden','true');
-    const copy=document.createElement('div');copy.className='sv-radio-copy';const title=document.createElement('strong');title.textContent=station.name;
-    const subtitle=document.createElement('small');subtitle.textContent=station.genre+(station.quality?' · '+station.quality:'');
-    const link=document.createElement('a');link.href=station.site;link.target='_blank';link.rel='noopener noreferrer';link.textContent=station.stream?'Сайт станции':'Официальный плеер ↗';
-    copy.append(title,subtitle,link);row.append(art,copy);
-    if(station.stream){const play=document.createElement('button');play.type='button';play.className='sv-radio-play';play.addEventListener('click',()=>{if(!window.SEYVEO_MUSIC?.playRadio?.(stations,station.id)){status.textContent='Не удалось открыть эфир. Откройте сайт станции.';}drawRadio()});buttons.set(station.id,play);row.append(play)}
-    list.append(row);
+  const terms=normalizeRadio(filter.value).split(/\s+/).filter(Boolean);
+  for(const station of stations){
+   const hay=normalizeRadio([station.name,station.country,station.genre,station.quality].join(' '));
+   if(!terms.every(t=>hay.includes(t)))continue;
+   const row=document.createElement('article');row.className='sv-radio-station';
+   const art=document.createElement('span');art.className='sv-radio-art';art.style.backgroundColor=station.color;art.style.backgroundImage='url("'+station.artwork+'")';art.setAttribute('aria-hidden','true');
+   const cover=document.createElement('div');cover.className='sv-radio-tile-cover';cover.append(art);
+   if(station.stream){
+    const play=document.createElement('button');play.type='button';play.className='sv-radio-play';play.addEventListener('click',()=>{if(!window.SEYVEO_MUSIC?.playRadio?.(stations,station.id)){status.textContent='Не удалось открыть эфир. Откройте сайт станции.';}else drawRadio()});buttons.set(station.id,play);cover.append(play);
+   }else{
+    const open=document.createElement('a');open.href=station.site;open.target='_blank';open.rel='noopener noreferrer';open.className='sv-radio-play sv-radio-external';open.setAttribute('aria-label','Официальный плеер: '+station.name);open.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8m-7 0h7v7"/></svg>';cover.append(open);
    }
+   const copy=document.createElement('div');copy.className='sv-radio-copy';const title=document.createElement('strong');title.textContent=station.name;title.title=station.name;
+   const subtitle=document.createElement('small');subtitle.textContent=station.country+(station.quality?' · '+station.quality:'');
+   copy.append(title,subtitle);row.append(cover,copy);list.append(row);
   }
+  if(!list.children.length){const empty=document.createElement('p');empty.className='sv-radio-empty';empty.textContent='Станции не найдены';list.append(empty)}
   drawRadio();
  }
  function animateRadio(){
@@ -528,7 +530,7 @@ function initRadio(){
    const motion=node.animate([{opacity:.18,transform:'translateY(4px)'},{opacity:1,transform:'translateY(0)'}],{duration:190,delay:Math.min(i,5)*18,easing:'cubic-bezier(.2,.7,.25,1)',fill:'backwards'});motion.id='svRadioEnter';
   });
  }
- filter.addEventListener('change',()=>{render();animateRadio()});render();
+ filter.addEventListener('input',render);render();
  let radioVisible=false;
  document.addEventListener('seyveo:music-view',e=>{const next=e.detail?.view==='radio';if(next&&!radioVisible)animateRadio();radioVisible=next});
  document.addEventListener('seyveo:music-state',drawRadio);
