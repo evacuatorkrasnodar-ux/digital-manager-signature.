@@ -73,20 +73,24 @@ function init(){
   }
   return {name,query,ids:matches,missing,explicit,searchOnly};
  }
- function clearBulkHeader(){page.classList.remove('sv-music-bulk','sv-library-bulk-open');page.querySelectorAll('.sv-music-bulk-action').forEach(n=>n.remove())}
+ function clearBulkHeader(){page.classList.remove('sv-music-bulk','sv-library-bulk-open','sv-bulk-entry','sv-bulk-can-play');page.querySelectorAll('.sv-music-bulk-action').forEach(n=>n.remove())}
  function resetBulk(){bulk=null;clearBulkHeader()}
- function beginBulk(scope,id){bulk={scope,ids:new Set([id])};renderTracks()}
- function bulkUI(scope,ids,remove,question='Удалить выбранные записи'){
-  if(bulk?.scope!==scope)return null;
+ function beginBulk(scope,id){bulk={scope,ids:new Set(id==null?[]:[id])};renderTracks()}
+ function bulkUI(scope,ids,remove,question='Удалить выбранные записи',playSelected=null){
+  if(bulk?.scope!==scope){
+   if(ids.length){const b=document.createElement('button');b.type='button';b.className='sv-music-bulk-action sv-bulk-entry-button';b.textContent='Выбрать';b.addEventListener('click',()=>{closeHistoryMenu();beginBulk(scope,null)});page.querySelector('.sv-music-head').append(b);page.classList.add('sv-bulk-entry')}
+   return null;
+  }
   const valid=new Set(ids);for(const id of bulk.ids)if(!valid.has(id))bulk.ids.delete(id);
   const top=page.querySelector('.sv-music-head'),rows=new Map();
-  clearBulkHeader();page.classList.add('sv-music-bulk');
+  clearBulkHeader();page.classList.add('sv-music-bulk');page.classList.toggle('sv-bulk-can-play',!!playSelected&&!!remove);
   const make=(label,cls,svg,fn)=>{const b=document.createElement('button');b.type='button';b.className='sv-music-bulk-action '+cls;b.setAttribute('aria-label',label);b.innerHTML=svg;b.addEventListener('click',fn);top.append(b);return b};
   const glyph=path=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+path+'"/></svg>';
   make('Закончить выбор','sv-bulk-close',glyph('m5 12 4.5 4.5L19 7'),()=>{resetBulk();renderTracks()});
   const center=make('Выбрать все','sv-bulk-center','<span></span><small></small>',()=>{bulk.ids=bulk.ids.size===ids.length?new Set():new Set(ids);sync()});
-  const trash=make('Удалить выбранное','sv-bulk-trash',glyph('M5 7h14M9 7V4.5h6V7M7 7l.8 12h8.4L17 7M10 10v6m4-6v6'),async()=>{const chosen=[...bulk.ids];if(chosen.length&&window.confirm(question+' ('+chosen.length+')?')){resetBulk();await remove(chosen);renderTracks()}});
-  function sync(){center.children[0].textContent='Выбрано: '+bulk.ids.size;center.children[1].textContent=bulk.ids.size===ids.length?'Снять все':'Выбрать все';center.setAttribute('aria-label',center.children[1].textContent);trash.disabled=!bulk.ids.size;for(const [id,b] of rows)b.setAttribute('aria-pressed',String(bulk.ids.has(id)))}
+  const trash=remove?make('Удалить выбранное','sv-bulk-trash',glyph('M5 7h14M9 7V4.5h6V7M7 7l.8 12h8.4L17 7M10 10v6m4-6v6'),async()=>{const chosen=ids.filter(id=>bulk.ids.has(id));if(chosen.length&&window.confirm(question+' ('+chosen.length+')?')){resetBulk();await remove(chosen);renderTracks()}}):null;
+  const play=playSelected?make('Слушать выбранное','sv-bulk-play',glyph('M8 5.5v13L19 12z'),()=>{const chosen=ids.filter(id=>bulk.ids.has(id));if(chosen.length)playSelected(chosen)}):null;
+  function sync(){center.children[0].textContent='Выбрано: '+bulk.ids.size;center.children[1].textContent=bulk.ids.size===ids.length?'Снять все':'Выбрать все';center.setAttribute('aria-label',center.children[1].textContent);if(trash)trash.disabled=!bulk.ids.size;if(play)play.disabled=!bulk.ids.size;for(const [id,b] of rows)b.setAttribute('aria-pressed',String(bulk.ids.has(id)))}
   sync();
   return (button,id)=>{button.classList.add('sv-bulk-row');rows.set(id,button);button.setAttribute('aria-pressed',String(bulk.ids.has(id)));const mark=document.createElement('span');mark.className='sv-bulk-mark';mark.setAttribute('aria-hidden','true');mark.innerHTML=glyph('m5 12 4.5 4.5L19 7');button.prepend(mark);button.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();if(bulk.ids.has(id))bulk.ids.delete(id);else bulk.ids.add(id);sync()},true);return button};
  }
@@ -98,7 +102,7 @@ function init(){
   const accessibleTitle=get('svMusicLibraryTitle');if(accessibleTitle)accessibleTitle.textContent=selected?.name||'Медиатека';
  }
  function playlistEditor(el,library,existing){
-  setPlaylistDetail(null);
+  resetBulk();setPlaylistDetail(null);
   setPlaylistEditing(true);stopCoverObserver();el.replaceChildren();page.scrollTop=0;
   const top=page.querySelector('.sv-music-head');
   const labelTitle=top.querySelector('[data-title-view="library"]');labelTitle.textContent=existing?'Редактирование':'Новый плейлист';
@@ -178,7 +182,7 @@ function init(){
     else if(scope==='smart:recent')for(const id of keys){if(!music()?.removeRecentHistory?.(id))ok=false}
     if(!ok)window.alert('Не удалось сохранить часть изменений.');
    };
-   const selectRow=removable?bulkUI(scope,items.map(t=>t.artKey),removeIds):null;
+   const selectRow=bulkUI(scope,items.map(t=>t.artKey),removable?removeIds:null,'Убрать выбранные записи',ids=>{if(music()?.playCollection?.(ids))show('player')});
    const actions=document.createElement('div');actions.className='sv-pl-actions';
    const count=document.createElement('span');count.className='sv-pl-detail-count';const n=items.length;count.textContent=n+' '+(n%100>=11&&n%100<=14?'треков':n%10===1?'трек':n%10>=2&&n%10<=4?'трека':'треков');actions.append(count);
    const playBtn=playlistButton('Слушать',()=>play(selected),'sv-pl-primary');playBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13L19 12z"/></svg><span>Слушать</span>';playBtn.disabled=!items.length;actions.append(playBtn);
@@ -338,7 +342,7 @@ function init(){
   const library=view==='library'?(music()?.browseTracks?.()||[]):[];
   const libraryScope='library:'+libraryMode;
   const removeLibrary=async ids=>{if(!await music()?.removeLibraryTracks?.(ids)){window.alert('Не удалось удалить записи из медиатеки.');return}const removed=new Set(ids);if(!saveLists(personalLists.map(p=>({...p,ids:p.ids.filter(id=>!removed.has(id))}))))window.alert('Не удалось обновить сохранённые плейлисты.')};
-  const librarySelect=view==='library'&&libraryMode!=='playlists'?bulkUI(libraryScope,library.map(t=>t.artKey),removeLibrary,'Удалить загруженные копии из медиатеки SEYVEO, не затрагивая исходные файлы'):null;
+  const librarySelect=view==='library'&&libraryMode!=='playlists'?bulkUI(libraryScope,library.map(t=>t.artKey),removeLibrary,'Удалить загруженные копии из медиатеки SEYVEO, не затрагивая исходные файлы',ids=>{if(music()?.playCollection?.(ids))show('player')}):null;
   page.classList.toggle('sv-library-bulk-open',!!librarySelect);
   if(view==='library'){
    const title=get('svLibraryCollectionTitle'),count=get('svLibraryCollectionCount'),sort=get('svLibrarySort');
