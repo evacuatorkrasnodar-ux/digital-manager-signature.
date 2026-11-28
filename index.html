@@ -162,6 +162,8 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none}
 /* Home only: living silk stays well inside the unchanged White Velvet glass. */
 #svHomeMatter{display:none;pointer-events:none}
+/* Compact glass in the Home music layout; the silk canvas keeps its original dimensions. */
+html[data-theme=light].sv-music-ambient #homePage #orb > #plasmaVisual{transform:scale(.92);transform-origin:50% 50%}
 html[data-theme=light] #homePage #orb > #svHomeMatter:not([hidden]){display:block;position:absolute;left:50%;top:50%;width:76%;height:76%;transform:translate(-50%,-50%);z-index:1;opacity:.56;border:0;background:transparent;clip-path:circle(48%);pointer-events:none}
 /* One SVG owns the Home sphere. Hide residual legacy fog/signature overlays. */
 #homePage #orb > .orb-mist,
