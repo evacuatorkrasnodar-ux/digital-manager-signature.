@@ -362,6 +362,28 @@ async function libraryTransaction(mode,operation){
   try{request=operation(tx.objectStore(LIBRARY_STORE))}catch(error){try{tx.abort()}catch{}reject(error)}
  })}finally{db.close()}
 }
+function removeLibraryTracks(ids){
+ const keys=new Set(Array.isArray(ids)?ids:[]);
+ const task=libraryQueue.then(async()=>{
+  const existing=new Set(localTracks.map(f=>favoriteId(f)));
+  const targets=[...keys].filter(id=>existing.has(id));if(!targets.length)return true;
+  const removed=new Set(targets);
+  const persisted=targets.filter(id=>savedTrackIds.has(id));
+  if(persisted.length)await libraryTransaction('readwrite',store=>{for(const id of persisted)store.delete(id)});
+  // Keep the current source alive until playback changes; never delete the original device file.
+  const current=tracks[index];
+  localTracks=localTracks.filter(f=>!removed.has(favoriteId(f)));
+  tracks=tracks.filter(f=>f===current||f.radio||!removed.has(favoriteId(f)));
+  index=current?tracks.indexOf(current):-1;resetShuffle(current);
+  for(const id of removed){savedTrackIds.delete(id);favorites.delete(id)}
+  recentFiles=recentFiles.filter(f=>!removed.has(favoriteId(f)));
+  for(const f of recentPlayedAt.keys())if(!recentFiles.includes(f))recentPlayedAt.delete(f);
+  rememberRecent();
+  try{localStorage.setItem(FAVORITES_KEY,JSON.stringify([...favorites].slice(-200)))}catch{}
+  updateFavorite();libraryRefresh();libraryMessage(libraryCount()+'.');return true;
+ }).catch(()=>false);
+ libraryQueue=task.then(()=>{});return task;
+}
 async function restoreLibrary(){
  try{
   const keys=await libraryTransaction('readonly',store=>store.getAllKeys());
@@ -1604,7 +1626,7 @@ function playRadio(stations,id){
  tracks=available;miniDismissed=false;return switchTrack(selected,true);
 }
 window.SEYVEO_MUSIC=Object.freeze({
- playRadio,replaySummary,replayPortrait,enrichReplayPortrait,discoveryTaste,sharedGenreTaste,genreTasteTags,removeRecentHistory,removeFavoriteFromList,
+ playRadio,replaySummary,replayPortrait,enrichReplayPortrait,discoveryTaste,sharedGenreTaste,genreTasteTags,removeRecentHistory,removeFavoriteFromList,removeLibraryTracks,
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
  searchTracks,playFromSearch,playIndexFromSearch,playCollection,refreshMini:syncResume,prepareTrackPreview,
  // Read-only access to the selected local File for optional visual analysis.

@@ -73,10 +73,10 @@ function init(){
   }
   return {name,query,ids:matches,missing,explicit,searchOnly};
  }
- function clearBulkHeader(){page.classList.remove('sv-music-bulk');page.querySelectorAll('.sv-music-bulk-action').forEach(n=>n.remove())}
+ function clearBulkHeader(){page.classList.remove('sv-music-bulk','sv-library-bulk-open');page.querySelectorAll('.sv-music-bulk-action').forEach(n=>n.remove())}
  function resetBulk(){bulk=null;clearBulkHeader()}
  function beginBulk(scope,id){bulk={scope,ids:new Set([id])};renderTracks()}
- function bulkUI(scope,ids,remove){
+ function bulkUI(scope,ids,remove,question='Удалить выбранные записи'){
   if(bulk?.scope!==scope)return null;
   const valid=new Set(ids);for(const id of bulk.ids)if(!valid.has(id))bulk.ids.delete(id);
   const top=page.querySelector('.sv-music-head'),rows=new Map();
@@ -85,7 +85,7 @@ function init(){
   const glyph=path=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+path+'"/></svg>';
   make('Закончить выбор','sv-bulk-close',glyph('m5 12 4.5 4.5L19 7'),()=>{resetBulk();renderTracks()});
   const center=make('Выбрать все','sv-bulk-center','<span></span><small></small>',()=>{bulk.ids=bulk.ids.size===ids.length?new Set():new Set(ids);sync()});
-  const trash=make('Удалить выбранное','sv-bulk-trash',glyph('M5 7h14M9 7V4.5h6V7M7 7l.8 12h8.4L17 7M10 10v6m4-6v6'),()=>{const chosen=[...bulk.ids];if(chosen.length&&window.confirm('Удалить выбранные записи ('+chosen.length+')?')){resetBulk();remove(chosen);renderTracks()}});
+  const trash=make('Удалить выбранное','sv-bulk-trash',glyph('M5 7h14M9 7V4.5h6V7M7 7l.8 12h8.4L17 7M10 10v6m4-6v6'),async()=>{const chosen=[...bulk.ids];if(chosen.length&&window.confirm(question+' ('+chosen.length+')?')){resetBulk();await remove(chosen);renderTracks()}});
   function sync(){center.children[0].textContent='Выбрано: '+bulk.ids.size;center.children[1].textContent=bulk.ids.size===ids.length?'Снять все':'Выбрать все';center.setAttribute('aria-label',center.children[1].textContent);trash.disabled=!bulk.ids.size;for(const [id,b] of rows)b.setAttribute('aria-pressed',String(bulk.ids.has(id)))}
   sync();
   return (button,id)=>{button.classList.add('sv-bulk-row');rows.set(id,button);button.setAttribute('aria-pressed',String(bulk.ids.has(id)));const mark=document.createElement('span');mark.className='sv-bulk-mark';mark.setAttribute('aria-hidden','true');mark.innerHTML=glyph('m5 12 4.5 4.5L19 7');button.prepend(mark);button.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();if(bulk.ids.has(id))bulk.ids.delete(id);else bulk.ids.add(id);sync()},true);return button};
@@ -201,7 +201,7 @@ function init(){
     'smart:taste':['taste','<path d="M3 10v4M6.6 7.5v9M10.2 3.8v16.4M13.8 7v10M17.4 5.5v13M21 10v4"/>']
    };
    const [kind,shape]=symbols[p.id]||['personal','<path d="M4 6h16M4 11h12M4 16h8M18 12v8m-4-4h8"/>'];art.dataset.kind=kind;art.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+shape+'</svg>';
-   const copy=document.createElement('span');const name=document.createElement('strong');name.textContent=p.name;const meta=document.createElement('small');meta.textContent=(p.sub?p.sub+' · ':'')+getTracks(p).length+' тр.';copy.append(name,meta);const arrow=document.createElement('span');arrow.className='sv-pl-chevron';arrow.setAttribute('aria-hidden','true');arrow.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>';b.append(art,copy,arrow);b.addEventListener('click',()=>{playlistOpen=p.id;renderTracks();page.scrollTop=0});el.append(b);
+   const copy=document.createElement('span');const name=document.createElement('strong');name.textContent=p.name;const meta=document.createElement('small');meta.textContent=(p.sub?p.sub+' · ':'')+getTracks(p).length+' тр.';copy.append(name,meta);const arrow=document.createElement('span');arrow.className='sv-pl-chevron';arrow.setAttribute('aria-hidden','true');arrow.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>';b.append(art,copy,arrow);b.addEventListener('click',()=>{playlistOpen=p.id;renderTracks();page.scrollTop=0});el.append(smartCard?b:historySwipe(b,{title:p.name},el,{label:'Удалить плейлист',remove:()=>{if(window.confirm('Удалить плейлист? Песни останутся в медиатеке.')){if(!saveLists(personalLists.filter(x=>x.id!==p.id)))window.alert('Не удалось удалить плейлист.');renderTracks()}}}));
   }
   for(const p of personalLists)card(p,false);
   const h=document.createElement('h4');h.className='sv-library-group-heading sv-pl-smart-heading';h.textContent='Подборки Сэйви';el.append(h);
@@ -336,6 +336,10 @@ function init(){
   if(historyMore)historyMore.disabled=!history.length;
   if(!history.length)closeHistoryMenu();
   const library=view==='library'?(music()?.browseTracks?.()||[]):[];
+  const libraryScope='library:'+libraryMode;
+  const removeLibrary=async ids=>{if(!await music()?.removeLibraryTracks?.(ids)){window.alert('Не удалось удалить записи из медиатеки.');return}const removed=new Set(ids);if(!saveLists(personalLists.map(p=>({...p,ids:p.ids.filter(id=>!removed.has(id))}))))window.alert('Не удалось обновить сохранённые плейлисты.')};
+  const librarySelect=view==='library'&&libraryMode!=='playlists'?bulkUI(libraryScope,library.map(t=>t.artKey),removeLibrary,'Удалить загруженные копии из медиатеки SEYVEO, не затрагивая исходные файлы'):null;
+  page.classList.toggle('sv-library-bulk-open',!!librarySelect);
   if(view==='library'){
    const title=get('svLibraryCollectionTitle'),count=get('svLibraryCollectionCount'),sort=get('svLibrarySort');
    if(title?.firstChild)title.firstChild.textContent=libraryModes[libraryMode]+' ';
@@ -362,7 +366,7 @@ function init(){
     const title=document.createElement('strong');title.textContent=item.title;const artist=document.createElement('small');artist.textContent=item.artist;
     const copy=document.createElement('span');copy.className='sv-music-track-tile-copy';copy.append(title,artist);button.append(art,copy);
     if(recent||view==='library'||view==='history'){const icon=document.createElement('span');icon.className=recent?'sv-music-recent-play':'sv-library-track-play';icon.setAttribute('aria-hidden','true');icon.innerHTML='<svg viewBox="0 0 24 24"><path d="M8 5.5v13L19 12z"/></svg>';button.append(icon)}
-    button.addEventListener('click',()=>{if(item.radio){if(window.SEYVEO_RADIO?.play?.(item.id))show('player')}else if(music()?.playIndexFromSearch?.(item.index))show('player')});el.append(view==='history'?(historySelect?historySelect(button,historyKey(item)):historySwipe(button,item,el,{hold:()=>beginBulk('history',historyKey(item))})):button);
+    button.addEventListener('click',()=>{if(item.radio){if(window.SEYVEO_RADIO?.play?.(item.id))show('player')}else if(music()?.playIndexFromSearch?.(item.index))show('player')});el.append(view==='history'?(historySelect?historySelect(button,historyKey(item)):historySwipe(button,item,el,{hold:()=>beginBulk('history',historyKey(item))})):view==='library'?(librarySelect?librarySelect(button,item.artKey):historySwipe(button,item,el,{label:'Удалить из медиатеки',remove:async()=>{if(window.confirm('Удалить загруженную копию из медиатеки SEYVEO? Исходный файл останется на устройстве.')){await removeLibrary([item.artKey]);renderTracks()}},hold:()=>beginBulk(libraryScope,item.artKey)})):button);
     watchCover(button,item,art,title,artist,generation);
    }
    if(view==='library'&&library.length>libraryLimit){
