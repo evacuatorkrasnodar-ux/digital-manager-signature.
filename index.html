@@ -1539,6 +1539,8 @@ html:root[data-theme="light"] body #sayviMusicPage #svMusicReplay .sv-portrait-p
    <div class="sv-music-inner-title"><span data-title-view="replay">Мой музыкальный мир</span><span data-title-view="history">Недавно слушали</span><span data-title-view="library">Медиатека</span><span data-title-view="new">Новинки</span><span data-title-view="radio">Радио</span><span data-title-view="radio-favorites">Избранное</span><span data-title-view="radio-archive">История эфира</span><span data-title-view="podcasts">Подкасты</span></div>
    <button id="svRadioFavoritesOpen" type="button" data-music-view-action="radio-favorites" aria-label="Избранные песни радио" title="Избранные песни радио"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.3 5.5a5.1 5.1 0 0 0-7.2 0L12 6.6l-1.1-1.1a5.1 5.1 0 0 0-7.2 7.2L12 21l8.3-8.3a5.1 5.1 0 0 0 0-7.2Z"/></svg></button>
    <button id="svRadioSearchOpen" type="button" aria-label="Поиск радиостанций" aria-controls="svGlobalSearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m15.7 15.7 5 5"/></svg></button>
+   <button id="svPodcastSearchOpen" type="button" aria-label="Найти подкаст" aria-expanded="false" aria-controls="svPodcastSearchBar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m15.7 15.7 5 5"/></svg></button>
+   <form id="svPodcastSearchBar" hidden><label class="sv-podcast-search-label" for="svPodcastSearchInput">Поиск подкастов</label><input id="svPodcastSearchInput" type="search" placeholder="Название, автор или тема" autocomplete="off" maxlength="120"><button type="submit">Найти</button></form>
    <button id="svMusicHistoryMore" type="button" aria-label="Действия с историей" aria-expanded="false" aria-controls="svMusicHistoryMenu"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.45"/><circle cx="12" cy="12" r="1.45"/><circle cx="19" cy="12" r="1.45"/></svg></button>
    <div id="svMusicHistoryMenu" hidden><button id="svMusicHistoryClear" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M9 7V4.5h6V7M7 7l.8 12h8.4L17 7M10 10v6m4-6v6"/></svg><span>Очистить историю</span></button></div>
    <div id="svAdaptiveQuickGroup" role="group" aria-label="Режим звучания">
@@ -1627,16 +1629,19 @@ html:root[data-theme="light"] body #sayviMusicPage #svMusicReplay .sv-portrait-p
  </section>
  <section id="svMusicPodcasts" class="sv-music-browse-panel" hidden aria-labelledby="svMusicPodcastsTitle">
   <h2 id="svMusicPodcastsTitle" hidden>Подкасты</h2>
-  <div class="sv-podcast-intro"><span class="sv-sayvi-symbol" aria-hidden="true"></span><div><h3>Слушай то, что интересно</h3><p>Любимые авторы и новые знания рядом.</p></div></div>
+  <div id="svPodcastIntro" class="sv-podcast-intro"><span class="sv-sayvi-symbol" aria-hidden="true"></span><div><h3>Слушай то, что интересно</h3><p>Любимые авторы и новые знания рядом.</p></div></div>
+  <div id="svPodcastSearchResults" hidden aria-live="polite"></div>
   <div id="svPodcastResume"></div>
   <div id="svPodcastPlayer" class="sv-podcast-player" hidden>
    <small id="svPodcastPlayingFeed"></small><strong id="svPodcastPlaying"></strong>
    <audio id="svPodcastAudio" controls preload="none"></audio>
    <div class="sv-podcast-player-tools"><label>Скорость <select id="svPodcastSpeed"><option value="0.75">0,75×</option><option value="1" selected>1×</option><option value="1.25">1,25×</option><option value="1.5">1,5×</option><option value="2">2×</option></select></label><label>Таймер сна <select id="svPodcastSleep"><option value="0">Выкл.</option><option value="15">15 мин</option><option value="30">30 мин</option><option value="60">60 мин</option></select></label></div>
   </div>
-  <h3 class="sv-podcast-heading">Мои подписки</h3><div id="svPodcastFeeds"></div>
-  <form id="svPodcastForm"><input type="url" id="svPodcastUrl" placeholder="Ссылка на RSS подкаста" aria-label="Ссылка на RSS подкаста" required><button id="svPodcastAdd" type="submit" class="sv-podcast-button">Добавить</button></form>
-  <label class="sv-podcast-import">Добавить RSS-файл<input id="svPodcastXml" type="file" accept=".rss,.xml,application/rss+xml,application/xml,text/xml"></label>
+  <div class="sv-podcast-section-head"><h3 class="sv-podcast-heading">Мои подписки</h3><button id="svPodcastManage" type="button" aria-label="Управление подписками" aria-expanded="false" aria-controls="svPodcastManual"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.45"/><circle cx="12" cy="12" r="1.45"/><circle cx="19" cy="12" r="1.45"/></svg></button></div><div id="svPodcastFeeds"></div>
+  <div id="svPodcastNew" hidden></div><div id="svPodcastForYou" hidden></div>
+  <div id="svPodcastTopics"><h3 class="sv-podcast-heading">Что интересно?</h3><div class="sv-podcast-topics"><button type="button" data-podcast-topic="Истории">Истории</button><button type="button" data-podcast-topic="Наука">Наука</button><button type="button" data-podcast-topic="Психология">Психология</button><button type="button" data-podcast-topic="Бизнес">Бизнес</button><button type="button" data-podcast-topic="Музыка">Музыка</button><button type="button" data-podcast-topic="Юмор">Юмор</button></div></div>
+  <div id="svPodcastManual" hidden><h3 class="sv-podcast-heading">Добавить по ссылке</h3><form id="svPodcastForm"><input type="url" id="svPodcastUrl" placeholder="Ссылка на RSS подкаста" aria-label="Ссылка на RSS подкаста" required><button id="svPodcastAdd" type="submit" class="sv-podcast-button">Добавить</button></form>
+  <label class="sv-podcast-import">Добавить RSS-файл<input id="svPodcastXml" type="file" accept=".rss,.xml,application/rss+xml,application/xml,text/xml"></label></div>
   <p id="svPodcastStatus" role="status" hidden></p>
   <div id="svPodcastEpisodes"></div>
  </section>
@@ -6480,7 +6485,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-mus
 
 #sayviMusicPage #svMusicRecognizeHome>svg{color:inherit}
 #svSmartMusicBody a.sv-smart-music-choice{text-decoration:none;box-sizing:border-box}
-</style><script src="assets/seyveo-adaptive-sound.js?v=4-voice-duck"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-recognition-radio-v3"></script><script src="assets/seyveo-music-dock.js?v=20261128-builder-glass-v45"></script><script src="assets/seyveo-podcasts.js?v=1"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-radio-home-fog-v3"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
+</style><script src="assets/seyveo-adaptive-sound.js?v=4-voice-duck"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-recognition-radio-v3"></script><script src="assets/seyveo-music-dock.js?v=20261128-builder-glass-v45"></script><script src="assets/seyveo-podcasts.js?v=20261128-discovery-v2"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-radio-home-fog-v3"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
@@ -10092,5 +10097,32 @@ html:root[data-theme] body #svWorkShell[data-active="notes"] #notesDialog #notes
 html:root[data-theme] body #sayviSurfacePage[data-sv-subject="mail"] button.sv-mail-swipe-action[data-mail-swipe-action="trash"]:focus-visible,
 html:root[data-theme] body #sayviSurfacePage[data-sv-subject="mail"] button.sv-mail-draft-swipe-delete:focus-visible{outline:2px solid currentColor!important;outline-offset:-3px!important}
 html:root body #sayviMusicPage.sv-music-bulk>.sv-music-head>.sv-bulk-trash{color:var(--sv-destructive-ink)!important}
+</style>
+
+<style id="svPodcastDiscoveryV2">
+#svPodcastSearchOpen,#svPodcastSearchBar{display:none!important}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="podcasts"]>.sv-music-head>#svPodcastSearchOpen{display:grid!important;grid-column:3;grid-row:1;place-items:center;justify-self:end;width:44px!important;height:44px!important;min-width:44px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;color:var(--text);transform:none!important}
+#svPodcastSearchOpen svg,#svPodcastManage svg{width:22px;height:22px}
+html:root body #sayviMusicPage[data-music-view="podcasts"]>.sv-music-head>#svPodcastSearchBar:not([hidden]){display:flex!important;grid-column:1/-1;grid-row:2;align-items:center;gap:8px;min-width:0;margin:0;padding:4px 0 8px;background:transparent}
+#svPodcastSearchBar .sv-podcast-search-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+#svPodcastSearchBar input{flex:1;min-width:0;height:40px;padding:0 12px;border:1px solid var(--soft-line);border-radius:20px;background:var(--card2,var(--card));color:var(--text);font:inherit;font-size:16px;box-shadow:none}
+#svPodcastSearchBar button,#svPodcastManage{min-height:44px;min-width:44px;border:0;background:transparent;box-shadow:none;color:var(--text);padding:0 6px;font:inherit;cursor:pointer}
+#svPodcastSearchBar button{color:#007aff;font-size:14px}
+#svMusicPodcasts .sv-podcast-section-head{display:flex;align-items:center;justify-content:space-between;margin:10px 0 2px}
+#svMusicPodcasts .sv-podcast-section-head .sv-podcast-heading{margin:0}
+#svMusicPodcasts .sv-podcast-intro{padding:13px 10px;border:0;border-radius:0;background:transparent;margin:0 0 6px}
+#svMusicPodcasts .sv-podcast-topics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#svMusicPodcasts .sv-podcast-topics button{min-height:50px;text-align:left;padding:8px 13px;border:1px solid var(--soft-line);border-radius:14px;background:var(--card2,var(--card));color:var(--text);font:550 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+#svMusicPodcasts .sv-podcast-feed,#svMusicPodcasts .sv-podcast-result,#svMusicPodcasts .sv-podcast-episode-card{display:flex;align-items:center;gap:9px;padding:7px 0;margin:0;border-bottom:1px solid var(--soft-line);min-width:0}
+#svMusicPodcasts .sv-podcast-art{display:grid;place-items:center;width:52px;height:52px;flex:0 0 52px;border-radius:11px;overflow:hidden;background:var(--card2,var(--card));color:var(--secondary);font-size:21px}
+#svMusicPodcasts .sv-podcast-art img{width:100%;height:100%;object-fit:cover}
+#svMusicPodcasts .sv-podcast-row-copy{display:grid;gap:3px;flex:1;min-width:0;text-align:left;padding:0;background:transparent;border:0;box-shadow:none;color:var(--text);font:inherit;min-height:44px;align-content:center}
+#svMusicPodcasts .sv-podcast-row-copy strong{font-size:14px;font-weight:600;overflow-wrap:anywhere}
+#svMusicPodcasts .sv-podcast-flat-action{border:0!important;background:transparent!important;box-shadow:none!important;color:#007aff!important;font-size:13px;padding:0 5px;min-height:44px;min-width:44px}
+#svMusicPodcasts .sv-podcast-flat-action.is-remove{color:#d93238!important}
+#svMusicPodcasts #svPodcastManual{margin-top:12px;padding:0 0 8px;border-top:1px solid var(--soft-line)}
+#svMusicPodcasts #svPodcastStatus{margin:8px 0}
+#svMusicPodcasts .sv-podcast-directory-credit{display:block;color:var(--secondary);font-size:11px;margin:6px 0 12px}
+#svMusicPodcasts .sv-podcast-empty-search{border:0;background:transparent;color:#007aff;min-height:44px;padding:0;font:inherit;font-size:14px}
 </style>
 </body></html>
