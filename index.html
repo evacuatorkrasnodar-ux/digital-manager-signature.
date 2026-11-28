@@ -6586,7 +6586,7 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-home-status-light.js?v=2"></script>
 
 <script src="assets/seyveo-weather-brief.js?v=20261126-music-weather"></script>
-<script src="assets/seyveo-home-music.js?v=9-playback-modes"></script>
+<script src="assets/seyveo-home-music.js?v=10-shared-orb-axis"></script>
 
 <script src="assets/seyveo-weather-peek.js?v=20261126-home-material-v188"></script>
 <script src="assets/seyveo-writing-focus.js?v=1"></script>
@@ -9004,5 +9004,43 @@ html:root body #sayviMusicPage #svMusicHistoryTracks .sv-history-remove:not([hid
 #sayviMusicPage #svMusicHistoryTracks .sv-history-remove::before,#sayviMusicPage #svMusicHistoryTracks .sv-history-remove::after{content:none!important;display:none!important}
 html:root body #sayviMusicPage #svMusicHistoryTracks .sv-history-swipe.is-moving>button{transition:none!important}
 @media(prefers-reduced-motion:reduce){html:root body #sayviMusicPage #svMusicHistoryTracks .sv-history-swipe>button{transition:none!important}}
+</style>
+
+<style id="svHomeSharedOrbAxis">
+/* ONE and Business share the same sphere axis; never depend on shortcut count
+   or on the changing height of Sayvi's thought. Keep the existing size. */
+@media (max-width:649px) and (orientation:portrait){
+ html:root.sv-sayvi-handoff-demo{
+  --sv-home-orb-lift:clamp(10px,calc(10dvh - 54px),24px);
+ }
+ html:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked):not(.sv-sayvi-handoff-inflight) body #homePage #orbCluster,
+ html:root.sv-sayvi-handoff-docked:is(.sv-home-empty-sphere,.sv-music-ambient):not(.sv-sayvi-handoff-inflight) body #homePage #orbCluster{
+  position:absolute!important;
+  top:calc(50dvh - 100px - var(--sv-home-orb-lift))!important;
+  left:0!important;right:0!important;
+  transform:translateY(-50%)!important;
+ }
+ /* Give the upper thought a compact but readable reserved slot.
+    Keep the existing dynamic measurement and never move the sphere for copy. */
+ html:root.sv-home-empty-sphere.sv-home-greeting-expired body #homePage #svHomeLivingLine[data-sv-presence="idle"]{
+  top:var(--sv-thought-top,0px)!important;
+  gap:5px!important;
+  width:min(360px,calc(100% - 32px))!important;
+  line-height:1.35!important;
+ }
+ html:root.sv-home-empty-sphere body #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-heading:not([hidden]){
+  font-size:15px!important;line-height:1.25!important;margin:0!important;
+ }
+ html:root.sv-home-empty-sphere body #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-copy{
+  font-size:14px!important;line-height:1.35!important;
+ }
+ html:root.sv-home-empty-sphere body #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-actions:not([hidden]){
+  min-height:38px!important;margin:0!important;
+ }
+ html:root.sv-home-empty-sphere body #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-action{
+  height:38px!important;min-height:38px!important;padding:0 12px!important;font-size:13px!important;
+  box-shadow:0 2px 9px rgba(42,52,72,.055)!important;
+ }
+}
 </style>
 </body></html>
