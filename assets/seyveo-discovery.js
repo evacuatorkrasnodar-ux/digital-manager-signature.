@@ -18,7 +18,9 @@ const GENRES_KEY='seyveo.music.preferences.v1';
 const GENRE_TAGS=Object.freeze({rock:'rock',pop:'pop',electronic:'electronic',jazz:'jazz',classical:'classical',hiphop:'hip hop',indie:'indie',russianrock:'russian rock',russianpop:'russian pop',chanson:'russian chanson'});
 function tasteTags(){
  if(!state.enabled)return [];
- try{const values=JSON.parse(localStorage.getItem(GENRES_KEY)||'null')?.genres;return Array.isArray(values)?[...new Set(values.filter(x=>Object.hasOwn(GENRE_TAGS,x)).map(x=>GENRE_TAGS[x]))].sort().slice(0,10):[]}catch{return []}
+ let explicit=[];try{const values=JSON.parse(localStorage.getItem(GENRES_KEY)||'null')?.genres;if(Array.isArray(values))explicit=values.filter(x=>Object.hasOwn(GENRE_TAGS,x)).map(x=>GENRE_TAGS[x])}catch{}
+ const learned=(window.SEYVEO_MUSIC?.sharedGenreTaste?.(state.replayAfterMonth)||[]).slice(0,4).map(x=>x.tag);
+ return [...new Set([...learned,...explicit])].slice(0,10);
 }
 const offer=$('svDiscoveryOffer'),offerYes=$('svDiscoveryOfferYes'),offerNo=$('svDiscoveryOfferNo'),settings=$('svDiscoverySettings'),settingsButton=$('svDiscoverySettingsButton');
 let answered=false,settingsOpen=false;
