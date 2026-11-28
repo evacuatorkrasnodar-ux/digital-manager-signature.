@@ -37,33 +37,42 @@ function init(){
   const b=document.createElement('button');b.type='button';b.className='sv-pl-button '+cls;b.textContent=label;b.addEventListener('click',fn);return b
  }
  function playlistNotice(el,label){const p=document.createElement('p');p.className='sv-music-browse-caption';p.textContent=label;el.append(p);return p}
+ function setPlaylistEditing(value){
+  playlistEditing=!!value;get('svMusicLibrary')?.classList.toggle('sv-pl-editing',playlistEditing);
+ }
  function playlistEditor(el,library,existing){
-  playlistEditing=true;el.replaceChildren();
-  const top=document.createElement('div');top.className='sv-pl-head';
-  const heading=document.createElement('h4');heading.textContent=existing?'Редактировать плейлист':'Новый плейлист';top.append(heading);el.append(top);
+  setPlaylistEditing(true);stopCoverObserver();el.replaceChildren();page.scrollTop=0;
+  const top=document.createElement('div');top.className='sv-pl-editor-head';
+  const heading=document.createElement('h4');heading.textContent=existing?'Редактировать':'Новый плейлист';
+  const cancel=playlistButton('Отмена',()=>{setPlaylistEditing(false);renderTracks()});
+  const done=playlistButton('Готово',()=>save(),'sv-pl-primary');top.append(cancel,heading,done);el.append(top);
   const input=document.createElement('input');input.type='text';input.maxLength=80;input.placeholder='Название плейлиста';input.setAttribute('aria-label','Название плейлиста');input.value=existing?.name||'';input.className='sv-pl-input';el.append(input);
+  const message=playlistNotice(el,'');message.classList.add('sv-pl-editor-message');message.setAttribute('role','status');
   const chosen=new Set(existing?.ids||[]);
-  const note=playlistNotice(el,'Выберите песни');
   const search=document.createElement('input');search.type='search';search.placeholder='Найти песню';search.setAttribute('aria-label','Найти песню для плейлиста');search.className='sv-pl-input';el.append(search);
+  const note=playlistNotice(el,'');note.classList.add('sv-pl-selection-count');
   const list=document.createElement('div');list.className='sv-pl-picker';el.append(list);
   const refresh=()=>{
    list.replaceChildren();const q=search.value.toLocaleLowerCase('ru-RU').trim();
-   for(const t of library.filter(t=>!q||[t.title,t.artist].join(' ').toLocaleLowerCase('ru-RU').includes(q))){
-    const row=document.createElement('label');row.className='sv-pl-pick-row';const check=document.createElement('input');check.type='checkbox';check.checked=chosen.has(t.artKey);const copy=document.createElement('span');copy.textContent=t.title+' · '+t.artist;
-    check.addEventListener('change',()=>{if(check.checked)chosen.add(t.artKey);else chosen.delete(t.artKey);note.textContent='Выбрано: '+chosen.size});row.append(check,copy);list.append(row);
+   const matches=library.filter(t=>!q||[t.title,t.artist].join(' ').toLocaleLowerCase('ru-RU').includes(q));
+   for(const t of matches){
+    const row=document.createElement('label');row.className='sv-pl-pick-row';const check=document.createElement('input');check.type='checkbox';check.checked=chosen.has(t.artKey);check.setAttribute('aria-label',t.title+' — '+t.artist);
+    const art=document.createElement('span');art.className='sv-music-track-tile sv-pl-pick-art';art.setAttribute('aria-hidden','true');if(!paintCover(art,t.artwork))fallbackCover(art,t);
+    const copy=document.createElement('span');copy.className='sv-pl-pick-copy';const name=document.createElement('strong');name.textContent=t.title;const artist=document.createElement('small');artist.textContent=t.artist;copy.append(name,artist);
+    check.addEventListener('change',()=>{if(check.checked)chosen.add(t.artKey);else chosen.delete(t.artKey);note.textContent='Выбрано: '+chosen.size});row.append(check,art,copy);list.append(row);
    }
+   if(!matches.length)playlistNotice(list,'Песни не найдены.');
   };
   search.addEventListener('input',refresh);refresh();note.textContent='Выбрано: '+chosen.size;
-  const actions=document.createElement('div');actions.className='sv-pl-actions';
-  const message=playlistNotice(el,'');message.setAttribute('role','status');
-  actions.append(playlistButton('Отмена',()=>{playlistEditing=false;renderTracks()}),playlistButton('Сохранить',()=>{
+  input.addEventListener('input',()=>{message.textContent=''});
+  function save(){
    const name=input.value.trim();if(!name){message.textContent='Введите название.';input.focus();return}
    if(!existing&&personalLists.length>=100){message.textContent='Достигнут предел плейлистов.';return}
    const item={id:existing?.id||'pl:'+Date.now()+'-'+Math.random().toString(36).slice(2,8),name,ids:[...chosen]};
    const next=existing?personalLists.map(p=>p.id===item.id?item:p):[...personalLists,item];
    if(!saveLists(next)){message.textContent='Не удалось сохранить плейлист.';return}
-   playlistEditing=false;playlistOpen=item.id;renderTracks();
-  },'sv-pl-primary'));el.append(actions);
+   setPlaylistEditing(false);playlistOpen=item.id;renderTracks();page.scrollTop=0;
+  }
  }
  function renderPlaylists(el,library){
   if(playlistEditing)return;
@@ -262,7 +271,7 @@ function init(){
   scheduleRecentFit();
  }
  get('svLibrarySort')?.addEventListener('click',()=>{librarySort=(librarySort+1)%librarySorts.length;libraryLimit=60;renderTracks()});
- for(const btn of page.querySelectorAll('[data-library-mode]'))btn.addEventListener('click',()=>{if(!Object.hasOwn(libraryModes,btn.dataset.libraryMode))return;playlistEditing=false;playlistOpen='';libraryMode=btn.dataset.libraryMode;libraryLimit=60;renderTracks()});
+ for(const btn of page.querySelectorAll('[data-library-mode]'))btn.addEventListener('click',()=>{if(!Object.hasOwn(libraryModes,btn.dataset.libraryMode))return;setPlaylistEditing(false);playlistOpen='';libraryMode=btn.dataset.libraryMode;libraryLimit=60;renderTracks()});
  document.addEventListener('seyveo:radio-history',renderTracks);
  const periodSelect=get('svMusicReplayPeriod'),periodTrigger=get('svReplayPeriodTrigger'),periodMenu=get('svReplayPeriodMenu'),periodLabel=get('svReplayPeriodLabel');
  function closePeriod(restore=false){
@@ -491,7 +500,7 @@ function init(){
   if(!active||(!Object.hasOwn(panels,key)&&key!=='player'))return false;
   closeHistoryMenu();closePeriod();closeNowMenu();music()?.closePanels?.();
   if(key==='library'&&view!=='player'&&view!=='library')libraryLimit=60;
-  if(key!=='library')playlistEditing=false;
+  if(key!=='library'||playlistEditing)setPlaylistEditing(false);
   const changed=view!==key;view=key;if(key!=='player')last=key;
   page.dataset.musicView=key;root.classList.toggle('sv-music-browse',key!=='player');root.classList.toggle('sv-music-player-open',key==='player');
   for(const [name,id] of Object.entries(panels))get(id).hidden=name!==key;
@@ -509,7 +518,7 @@ function init(){
   const key=pending==='new'?'new':pending?'player':'home';pending=false;last='home';show(key);
  }
  function leave(){
-  if(!active)return;closeHistoryMenu();closePeriod();closeNowMenu();stopCoverObserver();active=false;nav.hidden=true;dock.classList.remove('seyveo-music-dock','sv-music-navigation-only');
+  if(!active)return;setPlaylistEditing(false);closeHistoryMenu();closePeriod();closeNowMenu();stopCoverObserver();active=false;nav.hidden=true;dock.classList.remove('seyveo-music-dock','sv-music-navigation-only');
   root.classList.remove('sv-music-browse','sv-music-player-open');delete page.dataset.musicView;
   for(const id of Object.values(panels))get(id).hidden=true;
   const discovery=get('sayviDiscoveryPanel');if(discovery)discovery.hidden=true;

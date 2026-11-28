@@ -6480,7 +6480,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-mus
 
 #sayviMusicPage #svMusicRecognizeHome>svg{color:inherit}
 #svSmartMusicBody a.sv-smart-music-choice{text-decoration:none;box-sizing:border-box}
-</style><script src="assets/seyveo-adaptive-sound.js?v=4-voice-duck"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-recognition-radio-v3"></script><script src="assets/seyveo-music-dock.js?v=20261128-playlists-polish-v33"></script><script src="assets/seyveo-podcasts.js?v=1"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-radio-home-fog-v3"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
+</style><script src="assets/seyveo-adaptive-sound.js?v=4-voice-duck"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-recognition-radio-v3"></script><script src="assets/seyveo-music-dock.js?v=20261128-playlist-editor-v34"></script><script src="assets/seyveo-podcasts.js?v=1"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-radio-home-fog-v3"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
@@ -9931,5 +9931,30 @@ html:root body #sayviMusicPage #svMusicLibrary .sv-library-filters>button[aria-p
 #sayviMusicPage #svMusicLibrary .sv-pl-chevron svg{width:17px;height:17px}
 #sayviMusicPage #svMusicLibrary .sv-pl-card small{font-size:11.5px;line-height:1.35}
 #sayviMusicPage #svMusicLibrary .sv-pl-card:last-child{border-bottom:0!important}
+</style>
+<style id="svPlaylistEditorFinish">
+html:root body #sayviMusicPage #svMusicLibrary.sv-pl-editing>:is(.sv-music-library-actions,.sv-library-details,.sv-library-collection){display:none!important}
+#sayviMusicPage #svMusicLibrary .sv-pl-editor-head{display:grid;grid-template-columns:66px minmax(0,1fr) 66px;align-items:center;gap:3px;margin:0 0 10px}
+#sayviMusicPage #svMusicLibrary .sv-pl-editor-head h4{margin:0;text-align:center;font-size:15px;line-height:1.2;font-weight:600}
+#sayviMusicPage #svMusicLibrary .sv-pl-editor-head .sv-pl-button{padding:0 3px!important;font-size:13px!important}
+#sayviMusicPage #svMusicLibrary .sv-pl-editor-head .sv-pl-primary{color:#367e91!important}
+#sayviMusicPage #svMusicLibrary .sv-pl-editor-message:empty{display:none!important}
+#sayviMusicPage #svMusicLibrary .sv-pl-editor-message{color:#b85b78;margin:2px 0!important;font-size:12px}
+#sayviMusicPage #svMusicLibrary .sv-pl-selection-count{margin:8px 0!important;color:var(--secondary);font-size:12px}
+#sayviMusicPage #svMusicLibrary .sv-pl-picker{max-height:none!important;overflow:visible!important}
+html:root body #sayviMusicPage[data-music-view="library"]:has(#svMusicLibrary.sv-pl-editing){padding-bottom:calc(145px + env(safe-area-inset-bottom,0px))!important}
+#sayviMusicPage #svMusicLibrary .sv-pl-pick-row{min-height:54px;gap:10px;padding:6px 0;cursor:pointer}
+html:root body #sayviMusicPage #svMusicLibrary .sv-pl-pick-row input[type="checkbox"]{
+ appearance:none!important;-webkit-appearance:none!important;display:grid;place-items:center;
+ box-sizing:border-box;width:20px!important;height:20px!important;flex:0 0 20px;margin:0!important;padding:0!important;
+ border:1.3px solid var(--secondary)!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;
+}
+html:root body #sayviMusicPage #svMusicLibrary .sv-pl-pick-row input[type="checkbox"]:checked{background:#668d98!important;border-color:#668d98!important}
+#sayviMusicPage #svMusicLibrary .sv-pl-pick-row input[type="checkbox"]:checked::after{content:"";width:8px;height:4px;border-left:1.7px solid white;border-bottom:1.7px solid white;transform:rotate(-45deg) translateY(-1px)}
+#sayviMusicPage #svMusicLibrary .sv-pl-pick-row .sv-pl-pick-art{width:36px;height:36px;flex:0 0 36px;border-radius:9px}
+#sayviMusicPage #svMusicLibrary .sv-pl-pick-copy{min-width:0;flex:1;display:grid;gap:3px}
+#sayviMusicPage #svMusicLibrary .sv-pl-pick-copy strong,#sayviMusicPage #svMusicLibrary .sv-pl-pick-copy small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.25}
+#sayviMusicPage #svMusicLibrary .sv-pl-pick-copy strong{font-size:14px;font-weight:550}
+#sayviMusicPage #svMusicLibrary .sv-pl-pick-copy small{font-size:12px;color:var(--secondary)}
 </style>
 </body></html>
