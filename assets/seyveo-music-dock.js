@@ -530,15 +530,15 @@ function initRadio(){
     const raw=item.snapshot;if('rb-'+raw.stationuuid!==item.id)continue;
     station=register([raw])[0];
    }
-   if(station&&!favorites.some(f=>f.id===station.id))favorites.push({id:station.id,snapshot:item.snapshot||null});
+   if(station&&!favorites.some(f=>f.id===station.id))favorites.push({id:station.id,snapshot:item.snapshot||null,liked:item.liked!==false});
   }
  }catch{}
  const hiddenKey='seyveo-radio-hidden-v1';let hiddenStations=new Set();
  try{const saved=JSON.parse(localStorage.getItem(hiddenKey)||'[]');if(Array.isArray(saved))hiddenStations=new Set(saved.filter(id=>typeof id==='string'))}catch{}
  const isHidden=id=>hiddenStations.has(id);
- const isFavorite=id=>!isHidden(id)&&favorites.some(f=>f.id===id);
+ const isFavorite=id=>!isHidden(id)&&favorites.some(f=>f.id===id&&f.liked!==false);
  const stationSnapshot=station=>station.id.startsWith('rb-')?{stationuuid:station.id.slice(3),name:station.name,countrycode:station.countrycode,country:station.country,state:station.city,tags:station.genre,url_resolved:station.stream,homepage:station.site,codec:station.quality.replace(/^\d+\s*/,''),bitrate:parseInt(station.quality,10)||0}:null;
- function rememberStation(id){const station=stations.find(s=>s.id===id);if(!station?.stream)return false;const next=[{id,snapshot:stationSnapshot(station)},...favorites.filter(f=>f.id!==id)].slice(0,200);try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{status.textContent='Не удалось сохранить станцию.';return false}favorites=next;if(isHidden(id)){hiddenStations.delete(id);try{localStorage.setItem(hiddenKey,JSON.stringify([...hiddenStations]))}catch{}}return true;}
+ function rememberStation(id,liked=true){const station=stations.find(s=>s.id===id);if(!station?.stream)return false;const old=favorites.find(f=>f.id===id);const next=[{id,snapshot:stationSnapshot(station),liked:liked||!!(old&&old.liked!==false)},...favorites.filter(f=>f.id!==id)].slice(0,200);try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{status.textContent='Не удалось сохранить станцию.';return false}favorites=next;if(isHidden(id)){hiddenStations.delete(id);try{localStorage.setItem(hiddenKey,JSON.stringify([...hiddenStations]))}catch{}}return true;}
  function setHidden(id,hidden){
   const next=new Set(hiddenStations);if(hidden)next.add(id);else next.delete(id);
   try{localStorage.setItem(hiddenKey,JSON.stringify([...next]))}catch{status.textContent='Не удалось сохранить изменение.';return false}
@@ -547,7 +547,7 @@ function initRadio(){
  function toggleFavorite(id){
   const station=stations.find(s=>s.id===id);if(!station?.stream)return false;
   const snapshot=id.startsWith('rb-')?{stationuuid:id.slice(3),name:station.name,countrycode:station.countrycode,country:station.country,state:station.city,tags:station.genre,url_resolved:station.stream,homepage:station.site,codec:station.quality.replace(/^\d+\s*/,''),bitrate:parseInt(station.quality,10)||0}:null;
-  const next=isFavorite(id)?favorites.filter(f=>f.id!==id):[{id,snapshot},...favorites.filter(f=>f.id!==id)];
+  const next=isFavorite(id)?favorites.map(f=>f.id===id?{...f,liked:false}:f):[{id,snapshot,liked:true},...favorites.filter(f=>f.id!==id)];
   if(next.length>200){status.textContent='Достигнут предел избранных станций.';return false}
   try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{status.textContent='Не удалось сохранить избранное.';return false}
   favorites=next;if(isHidden(id))return setHidden(id,false);renderFavoritesMotion(id);return true;
@@ -585,6 +585,14 @@ function initRadio(){
  window.SEYVEO_RADIO=Object.freeze({recent,removeRecentHistory,play:openStation,search:localSearch,searchOnline:onlineSearch,isFavorite,isHidden,toggleFavorite});
  audio.addEventListener('playing',()=>{const state=window.SEYVEO_MUSIC?.state?.();if(state?.source!=='radio'||!stations.some(x=>x.id===state.stationId))return;history=[state.stationId,...history.filter(id=>id!==state.stationId)].slice(0,6);playedAt[state.stationId]=Date.now();playedAt=Object.fromEntries(history.map(id=>[id,playedAt[id]||0]));try{localStorage.setItem(historyKey,JSON.stringify(history));localStorage.setItem(timeKey,JSON.stringify(playedAt))}catch{}if(isHidden(state.stationId))setHidden(state.stationId,false);document.dispatchEvent(new Event('seyveo:radio-history'))});
  document.dispatchEvent(new Event('seyveo:radio-history'));
+ // Count actual advancing audio time, not time spent loading or paused.
+ let radioListen=null;
+ function resetRadioListen(){radioListen=null}
+ function radioListenState(){const state=window.SEYVEO_MUSIC?.state?.();return state?.source==='radio'&&state.stationId?state:null}
+ audio.addEventListener('playing',()=>{const state=radioListenState();if(!state)return;if(radioListen?.id!==state.stationId)radioListen={id:state.stationId,seconds:0,done:false,last:null};radioListen.last=Number(audio.currentTime)});
+ audio.addEventListener('timeupdate',()=>{const state=radioListenState();if(!state||audio.paused||audio.seeking||audio.readyState<2)return;if(radioListen?.id!==state.stationId)radioListen={id:state.stationId,seconds:0,done:false,last:null};const track=radioListen;if(track.done)return;const now=Number(audio.currentTime);if(!Number.isFinite(now))return;const delta=track.last===null?0:now-track.last;track.last=now;if(delta>0&&delta<=3)track.seconds+=delta;if(track.seconds<20)return;track.done=true;if(isHidden(track.id))return;if(favorites[0]?.id===track.id)return;if(rememberStation(track.id,false))renderFavoritesMotion(track.id)});
+ for(const event of ['pause','emptied','loadstart','error','ended'])audio.addEventListener(event,resetRadioListen);
+ for(const event of ['waiting','seeking'])audio.addEventListener(event,()=>{if(radioListen)radioListen.last=null});
  function drawRadio(){
   const state=window.SEYVEO_MUSIC?.state?.();
   for(const [id,btn] of buttons){const selected=state?.source==='radio'&&state.stationId===id,playing=selected&&state.playing;btn.setAttribute('aria-pressed',String(!!playing));btn.closest('.sv-radio-station')?.classList.toggle('sv-radio-current',!!selected);btn.setAttribute('aria-label',(playing?'Пауза: ':'Слушать: ')+stations.find(x=>x.id===id).name);}
