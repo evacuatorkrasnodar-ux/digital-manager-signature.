@@ -291,10 +291,14 @@ function note(textValue,className='sv-search-caption'){
  const p=document.createElement('p');p.className=className;p.textContent=textValue;return p;
 }
 function radioResults(found,raw,online=false){
- results.replaceChildren();liveMatches=found.slice(0,40).map(st=>({title:st.name,meta:st.city||st.country||'',action:'radio:'+st.id}));
+ results.replaceChildren();liveMatches=found.slice(0,40).map(st=>({title:st.name,meta:st.city||st.country||'',action:'radio:'+st.id,artwork:st.artwork}));
  if(liveMatches.length){for(const entry of liveMatches){
   const row=document.createElement('div');row.className='sv-radio-search-result';
-  row.append(itemRow(entry,'record'));results.append(row);
+  const button=itemRow(entry,'record'),icon=button.querySelector('.sv-search-result-symbol');
+  if(icon){icon.textContent='';icon.classList.add('sv-radio-search-art');const art=entry.artwork;
+   if(typeof art==='string'&&art.startsWith('data:image/svg+xml;charset=utf-8,')){const img=document.createElement('img');img.alt='';img.decoding='async';img.loading='lazy';img.src=art;icon.append(img)}
+   else icon.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="1.7"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9m9-9a6.4 6.4 0 0 1 0 9M4.6 4.6a10.5 10.5 0 0 0 0 14.8m14.8-14.8a10.5 10.5 0 0 1 0 14.8"/></svg>'}
+  row.append(button);results.append(row);
  }}
  else results.append(note(online?'Станции не найдены.':'Введите название радиостанции.'));
  if(raw&&raw.length>=2&&!online)results.append(actionButton('Искать в каталоге радио','radio-search','Поиск радиостанций'));
@@ -420,7 +424,10 @@ function open(){
  field.value='';
  field.placeholder=radioContext()?'Поиск радиостанций':'Спроси или найди...';
  field.setAttribute('aria-label',radioContext()?'Поиск радиостанций':'Единый поиск в SEYVEO');
- const title=screen.querySelector('.sv-search-header h2');if(title)title.textContent=radioContext()?'Поиск радио':'Поиск';
+ const radio=radioContext();screen.classList.toggle('sv-search-radio-mode',radio);
+ const title=screen.querySelector('.sv-search-header h2');if(title)title.textContent=radio?'Поиск радио':'Поиск';
+ if(radio){closeButton.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';closeButton.setAttribute('aria-label','Назад к радиостанциям')}
+ else{closeButton.textContent='Отмена';closeButton.removeAttribute('aria-label')}
  render();
  // Focusing within the real tap gesture allows iOS to display the keyboard.
  field.focus({preventScroll:true});
@@ -433,7 +440,7 @@ function close({restoreFocus=false}={}){
  if(vaultSearchTimer!==null){clearTimeout(vaultSearchTimer);vaultSearchTimer=null;}
  preparedPlan=null;
  field.blur();
- screen.hidden=true;
+ screen.hidden=true;screen.classList.remove('sv-search-radio-mode');closeButton.textContent='Отмена';closeButton.removeAttribute('aria-label');
  document.documentElement.classList.remove('sv-global-search-open');
  document.body.style.overflow=previousOverflow;
  trigger.setAttribute('aria-expanded','false');

@@ -6752,7 +6752,7 @@ syncManager();render();
 </div></dialog><script src="assets/seyveo-pay.js?v=20261126-jade-platinum-v222"></script><script src="assets/seyveo-wallet-currency.js?v=3"></script><script src="assets/seyveo-wallet-goals.js?v=1"></script><script src="assets/seyveo-wallet-loyalty.js?v=20261126-v212"></script><script src="assets/seyveo-chat-polls.js?v=6"></script><script src="assets/seyveo-chat-themes.js?v=6"></script><script src="assets/seyveo-family-chat.js?v=20261125-auto-scan"></script><script src="assets/seyveo-avatar-art.js?v=3"></script>
 <script src="assets/seyveo-sayvi-holidays.js?v=20261126-holiday-auto-v150"></script>
 
-<script src="assets/seyveo-business-command.js?v=20261126-attachment-grid-v2"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261126-notifications-glass-v156"></script><script src="assets/seyveo-unified-tasks.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-employee-schedule.js?v=4"></script><script src="assets/seyveo-dock-continuity.js?v=10"></script><script src="assets/seyveo-global-search.js?v=18-radio-auto"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=20261128-smart-feed-v30-taste"></script><script src="assets/seyveo-card-studio.js?v=20261126-card-master-v50"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=20261126-bulk-v119"></script>
+<script src="assets/seyveo-business-command.js?v=20261126-attachment-grid-v2"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261126-notifications-glass-v156"></script><script src="assets/seyveo-unified-tasks.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-employee-schedule.js?v=4"></script><script src="assets/seyveo-dock-continuity.js?v=10"></script><script src="assets/seyveo-global-search.js?v=19-radio-finish"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=20261128-smart-feed-v30-taste"></script><script src="assets/seyveo-card-studio.js?v=20261126-card-master-v50"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=20261126-bulk-v119"></script>
 <script src="assets/seyveo-learning-lab.js?v=1" defer></script>
 <dialog id="seyveoOfflineDialog" class="seyveo-offline-dialog" aria-labelledby="seyveoOfflineHeading"><div class="seyveo-offline-shell"><header class="seyveo-offline-head"><div><span class="seyveo-offline-kicker">SEYVEO ONE · УПРАВЛЕНИЕ</span><h2 id="seyveoOfflineHeading">Сэйви офлайн</h2><p>Сэйви рядом, даже когда нет интернета</p></div><button type="button" id="seyveoOfflineClose" aria-label="Закрыть">×</button></header><div id="seyveoOfflineChoices" class="seyveo-offline-choices"></div><div class="seyveo-offline-summary"><span>Полный офлайн-комплект</span><strong id="seyveoOfflineSize">0 МБ</strong><small id="seyveoOfflineNotice">Предварительная оценка. Готовые пакеты ещё не опубликованы.</small></div><button type="button" id="seyveoOfflineConfirm" class="seyveo-offline-save">Понятно</button><p class="seyveo-offline-foot">Офлайн-комплект будет доступен для отдельной установки после публикации проверенных файлов. Личная память хранится отдельно.</p></div></dialog><script src="assets/seyveo-offline-manager.js?v=20261125-shared-sheets-v3" defer></script>
 
@@ -9752,4 +9752,42 @@ html:root.sv-music-player-open body #sayviMusicPage[data-music-view="player"].sv
 }
 </style>
 
+<style id="svRadioSearchFinish">
+/* Only the radio search overlay; keep the general search untouched. */
+html:root body #svGlobalSearch.sv-search-radio-mode{
+ padding:calc(env(safe-area-inset-top,0px) + 6px) max(16px,calc((100vw - 520px)/2)) calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+}
+html:root body #svGlobalSearch.sv-search-radio-mode .sv-search-header{
+ position:relative;display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px;
+ align-items:center;min-height:54px;margin:0 0 10px!important;gap:0;
+}
+html:root body #svGlobalSearch.sv-search-radio-mode .sv-search-header h2{
+ grid-column:2;grid-row:1;text-align:center;font-size:17px!important;
+ font-weight:600!important;letter-spacing:-.025em;line-height:1.2;
+}
+html:root body #svGlobalSearch.sv-search-radio-mode #svGlobalSearchClose{
+ grid-column:1;grid-row:1;display:grid!important;place-items:center;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;color:var(--text)!important;transform:none!important;
+}
+#svGlobalSearch.sv-search-radio-mode #svGlobalSearchClose svg{display:block;width:22px;height:22px}
+html:root body #svGlobalSearch.sv-search-radio-mode .sv-search-input-shell{
+ min-height:46px!important;height:46px!important;border-radius:999px!important;
+ box-shadow:none!important;
+}
+html:root body #svGlobalSearch.sv-search-radio-mode .sv-radio-search-result .sv-search-result{
+ grid-template-columns:36px minmax(0,1fr) 18px;gap:12px;min-height:58px!important;padding:6px 4px!important;
+}
+#svGlobalSearch.sv-search-radio-mode .sv-radio-search-art{
+ width:36px;height:36px;overflow:hidden;border-radius:9px;opacity:1;background:var(--card2);
+}
+#svGlobalSearch.sv-search-radio-mode .sv-radio-search-art img{
+ display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit;
+}
+#svGlobalSearch.sv-search-radio-mode .sv-radio-search-art svg{width:21px;height:21px}
+#svGlobalSearch.sv-search-radio-mode .sv-search-result-copy strong{font-size:15px!important;font-weight:550!important}
+#svGlobalSearch.sv-search-radio-mode .sv-search-result-copy small{font-size:12px!important;font-weight:400!important}
+#svGlobalSearch.sv-search-radio-mode .sv-radio-search-result:last-child .sv-search-result{border-bottom:0!important}
+</style>
 </body></html>
