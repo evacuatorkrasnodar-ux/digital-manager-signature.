@@ -14,6 +14,12 @@ const consent=$('sayviDiscoveryToggle'),checkButton=$('sayviDiscoveryCheck'),
 if(!panel||!consent||!checkButton||!clearButton||!info)return;
 const STORE='seyveo-discovery-music-v1';
 const CHOICE='seyveo-discovery-choice-v1';
+const GENRES_KEY='seyveo.music.preferences.v1';
+const GENRE_TAGS=Object.freeze({rock:'rock',pop:'pop',electronic:'electronic',jazz:'jazz',classical:'classical',hiphop:'hip hop',indie:'indie',russianrock:'russian rock',russianpop:'russian pop',chanson:'russian chanson'});
+function tasteTags(){
+ if(!state.enabled)return [];
+ try{const values=JSON.parse(localStorage.getItem(GENRES_KEY)||'null')?.genres;return Array.isArray(values)?[...new Set(values.filter(x=>Object.hasOwn(GENRE_TAGS,x)).map(x=>GENRE_TAGS[x]))].sort().slice(0,10):[]}catch{return []}
+}
 const offer=$('svDiscoveryOffer'),offerYes=$('svDiscoveryOfferYes'),offerNo=$('svDiscoveryOfferNo'),settings=$('svDiscoverySettings'),settingsButton=$('svDiscoverySettingsButton');
 let answered=false,settingsOpen=false;
 try{answered=localStorage.getItem(CHOICE)==='1'||localStorage.getItem(STORE)!==null}catch{}
@@ -78,13 +84,15 @@ function enable(value){
  state.enabled=value===true;
  persist();update();signal();
  if(state.enabled)maybeCheck();
+ if(!panel.hidden)void loadPublic();
 }
 function clear(){
  rememberChoice();
  runId++;
  checking=false;
  state=fresh();
- persist();update();signal();
+ try{localStorage.removeItem(GENRES_KEY)}catch{}
+ persist();update();signal();if(!panel.hidden)void loadPublic();
 }
 function listen(payload){
  if(!state.enabled)return false;
@@ -223,7 +231,7 @@ function asCard(release){
   title:release.artist+' · '+release.title,
   fact:'В музыкальном каталоге iTunes указан релиз от '+new Date(release.date+'T00:00:00Z')
     .toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})+'.',
-  suggestion:'Хочешь посмотреть альбом? Открою его страницу в SEYVEO Browser.',
+  suggestion:'Возможно, тебе понравится этот релиз. Хочешь посмотреть новинки?',
   priority:'normal',source:'Каталог iTunes · дата релиза',demo:false
  });
  return event?Object.freeze({...event,releaseId:release.id,releaseUrl:release.url}):null;
@@ -231,7 +239,7 @@ function asCard(release){
 function current(){
  if(!state.enabled)return null;
  const top=state.releases.find(r=>!state.ignored.includes(r.id)&&
-  Date.now()>=Number(state.snoozed[r.id]||0)&&safeUrl(r.url));
+  Date.now()>=Number(state.snoozed[r.id]||0)&&safeUrl(r.url)&&Date.parse(r.date+'T00:00:00Z')>=Date.now()-LOOKBACK);
  return top?asCard(top):null;
 }
 function postpone(id){
@@ -249,7 +257,7 @@ function dismiss(id){
 // Public editorial shelf. No playback, outbound buttons or fabricated news.
 // MusicBrainz catalog dates are community-maintained, not independent press confirmation.
 const publicList=$('svDiscoveryPublicList'),publicStatus=$('svDiscoveryPublicStatus'),publicTitle=$('svDiscoveryPublicTitle'),publicSource=$('svDiscoveryPublicSource');
-const PUBLIC_KEY='seyveo-music-editorial-v2-',PUBLIC_TTL=6*3600000;
+const PUBLIC_KEY='seyveo-music-editorial-v3-',PUBLIC_TTL=6*3600000;
 const upcomingList=$('svDiscoveryUpcomingList'),upcomingStatus=$('svDiscoveryUpcomingStatus'),newsList=$('svDiscoveryNewsList');
 let publicRun=0,publicController=null,lastPublicRequest=0;
 const uuid=s=>typeof s==='string'&&/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(s);
@@ -313,7 +321,7 @@ function showPublic(items,stale=false){
  renderNews(recent,upcoming);
  if(publicSource){publicSource.textContent='Данные: MusicBrainz · обложки: Cover Art Archive. Даты могут уточняться.';publicSource.hidden=false}
 }
-async function requestCatalog(country,future,signal){
+async function requestCatalog(tags,future,signal){
  // Serialize public requests, respecting the catalog's one-request-per-second limit.
  const wait=Math.max(0,1200-(Date.now()-lastPublicRequest));
  if(wait)await new Promise(resolve=>setTimeout(resolve,wait));
@@ -321,17 +329,17 @@ async function requestCatalog(country,future,signal){
  lastPublicRequest=Date.now();
  const start=future?dayISO(Date.now()+DAY):dayISO(Date.now()-21*DAY);
  const end=future?dayISO(Date.now()+60*DAY):today();
- const field=country==='ru'?'date':'firstreleasedate';
- const query=field+':['+start+' TO '+end+'] AND status:official AND (primarytype:album OR primarytype:single OR primarytype:ep)'+(country==='ru'?' AND country:RU':'');
- const endpoint=new URL('https://musicbrainz.org/ws/2/'+(country==='ru'?'release':'release-group')+'/');
+ const filter=tags.length?' AND ('+tags.map(t=>'tag:"'+t+'"').join(' OR ')+')':'';
+ const query='firstreleasedate:['+start+' TO '+end+'] AND status:official AND (primarytype:album OR primarytype:single OR primarytype:ep)'+filter;
+ const endpoint=new URL('https://musicbrainz.org/ws/2/release-group/');
  endpoint.searchParams.set('query',query);endpoint.searchParams.set('fmt','json');endpoint.searchParams.set('limit','35');
  const response=await fetch(endpoint.href,{signal,credentials:'omit',referrerPolicy:'no-referrer',headers:{accept:'application/json'}});
  if(!response.ok)throw Error('catalog '+response.status);
- return catalogItems(await response.json(),country);
+ return catalogItems(await response.json(),'world');
 }
 async function loadPublic(){
  if(!publicList)return;
- const country=panel.dataset.scope==='ru'?'ru':'world',key=PUBLIC_KEY+country;
+ const tags=tasteTags(),key=PUBLIC_KEY+(tags.join('|')||'general');
  const run=++publicRun;publicController?.abort();publicController=null;
  let cache=null;try{cache=JSON.parse(localStorage.getItem(key)||'null')}catch{}
  const cached=publicItems(cache?.items);
@@ -345,8 +353,8 @@ async function loadPublic(){
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);publicController=controller;
  try{
   let fresh=[],future=[],ok=0;
-  try{fresh=await requestCatalog(country,false,controller.signal);ok++}catch{}
-  try{future=await requestCatalog(country,true,controller.signal);ok++}catch{}
+  try{fresh=await requestCatalog(tags,false,controller.signal);ok++}catch{}
+  try{future=await requestCatalog(tags,true,controller.signal);ok++}catch{}
   if(run!==publicRun)return;
   if(!ok)throw Error('unavailable');
   const items=publicItems([...fresh,...future,...(ok<2?cached:[])]);
@@ -362,19 +370,10 @@ async function loadPublic(){
   }
  }finally{clearTimeout(timer);if(run===publicRun)publicController=null}
 }
-const scope=$('svDiscoveryScope');
-if(scope){
- panel.dataset.scope='personal';
- scope.addEventListener('click',event=>{
-  const button=event.target.closest('button[data-discovery-scope]');
-  if(!button||!scope.contains(button)||panel.dataset.scope===button.dataset.discoveryScope)return;
-  panel.dataset.scope=button.dataset.discoveryScope;
-  for(const item of scope.querySelectorAll('button[data-discovery-scope]'))item.setAttribute('aria-pressed',String(item===button));
-  void loadPublic();
- });
-}
 // Navigation to the New tab is owned by the music dock.
 settingsButton?.addEventListener('click',()=>{settingsOpen=!settingsOpen;syncChoice()});
+$('svDiscoveryEditTaste')?.addEventListener('click',()=>{settingsOpen=false;syncChoice();window.SEYVEO_DISCOVERY?.open?.('music')});
+window.addEventListener('seyveo:music-preferences-changed',()=>{if(!panel.hidden)void loadPublic()});
 offerYes?.addEventListener('click',()=>enable(true));
 offerNo?.addEventListener('click',()=>{rememberChoice();syncChoice()});
 document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='new'){settingsOpen=false;syncChoice()}else{syncChoice();void loadPublic()}});
