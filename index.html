@@ -8803,4 +8803,71 @@ html:root body #svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-
  gap:6px; padding-top:0;
 }
 </style>
+<style id="svMusicSharedCardStandard">
+/* One compact typographic and optical scale for the five music cards.
+   Keep the approved live palette, accessibility and existing handlers. */
+html:root body #sayviMusicPage #sayviMusicCollection[data-collection-mode="favorites"] .sv-collection-head,
+html:root body #sayviMusicPage #sayviMusicSourcesPanel .sv-sources-head,
+html:root body #svSmartMusicSheet:is([data-music-sheet="share"],[data-music-sheet="sleep"],[data-music-sheet="sound"])>header{
+ display:grid!important;grid-template-columns:minmax(0,1fr) 44px!important;align-items:center!important;
+ min-height:44px!important;padding:0 4px!important;gap:8px!important;box-sizing:border-box;
+}
+html:root body #sayviMusicPage #sayviMusicCollection[data-collection-mode="favorites"] .sv-music-collection-label,
+html:root body #sayviMusicPage #sayviMusicSourcesPanel #svMusicSourcesTitle,
+html:root body #svSmartMusicSheet:is([data-music-sheet="share"],[data-music-sheet="sleep"],[data-music-sheet="sound"]) #svSmartMusicTitle{
+ font-size:15px!important;font-weight:550!important;letter-spacing:-.025em;line-height:1.2;
+}
+html:root body #sayviMusicPage #sayviMusicCollection[data-collection-mode="favorites"] .sv-music-panel-close>svg,
+html:root body #sayviMusicPage #sayviMusicSourcesPanel #sayviMusicSourcesClose>svg,
+html:root body #svSmartMusicSheet:is([data-music-sheet="share"],[data-music-sheet="sleep"],[data-music-sheet="sound"]) #svSmartMusicClose>svg{
+ width:16px!important;height:16px!important;min-width:16px!important;min-height:16px!important;stroke-width:1.35!important;
+}
+html:root body #svSmartMusicSheet:is([data-music-sheet="share"],[data-music-sheet="sleep"],[data-music-sheet="sound"]) #svSmartMusicClose{
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ display:grid!important;place-items:center!important;justify-self:end;
+ margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;transform:none!important;
+}
+html:root body #sayviMusicPage #sayviMusicCollection[data-collection-mode="favorites"] .sv-music-track-row{
+ min-height:48px!important;padding:5px 4px!important;gap:8px!important;border-bottom-color:rgba(148,163,175,.065)!important;
+}
+html:root body #sayviMusicPage #sayviMusicCollection[data-collection-mode="favorites"] .sv-collection-art{
+ width:33px!important;height:33px!important;flex-basis:33px!important;border-radius:8px;
+}
+html:root body #sayviMusicPage #sayviMusicSourcesPanel .sv-music-provider-row{
+ min-height:44px!important;padding:5px 4px!important;gap:10px!important;border-bottom-color:rgba(148,163,175,.065);
+}
+html:root body #sayviMusicPage #sayviMusicSourcesPanel .sv-source-icon{width:19px!important;height:19px!important;flex-basis:19px!important}
+html:root body #sayviMusicPage #sayviMusicSourcesPanel .sv-music-providers-desc{font-size:11px!important;line-height:1.4;margin-top:8px}
+html:root body #svSmartMusicSheet:is([data-music-sheet="share"],[data-music-sheet="sleep"],[data-music-sheet="sound"]){
+ padding:4px 12px 12px!important;border-radius:22px!important;
+ width:calc(100% - 28px)!important;max-width:420px!important;gap:4px!important;
+ bottom:max(14px,env(safe-area-inset-bottom,0px))!important;
+}
+html:root body #svSmartMusicSheet:is([data-music-sheet="share"],[data-music-sheet="sleep"]) .sv-smart-music-choice{
+ min-height:44px!important;padding:5px 4px!important;gap:10px!important;
+ font-size:14px!important;font-weight:480!important;border-bottom-color:rgba(148,163,175,.065)!important;
+}
+html:root body #svSmartMusicSheet:is([data-music-sheet="share"],[data-music-sheet="sleep"]) .sv-smart-music-choice>svg{
+ width:19px!important;height:19px!important;flex-basis:19px!important;stroke-width:1.4!important;
+}
+html:root body #svSmartMusicSheet #svSmartMusicBody :is(.sv-share-track,.sv-sleep-summary){
+ padding:8px 4px 10px;gap:10px;border-bottom-color:rgba(148,163,175,.09)!important;
+}
+html:root body #svSmartMusicSheet #svSmartMusicBody .sv-share-art{width:44px;height:44px;flex-basis:44px;border-radius:10px}
+html:root body #svSmartMusicSheet #svSmartMusicBody .sv-sleep-mark{width:44px;height:44px;flex-basis:44px}
+html:root body #svSmartMusicSheet #svSmartMusicBody :is(.sv-share-art,.sv-sleep-mark)>svg{width:22px;height:22px}
+html:root body #svSmartMusicSheet #svSmartMusicBody :is(.sv-share-meta,.sv-sleep-info) strong{font-size:14px!important;font-weight:550!important}
+html:root body #svSmartMusicSheet #svSmartMusicBody :is(.sv-share-meta span,.sv-sleep-info small,.sv-sleep-unit){font-size:12px!important;font-weight:400!important}
+html:root body #svSmartMusicSheet:is([data-music-sheet="share"],[data-music-sheet="sleep"]) .sv-smart-music-message{
+ font-size:11px!important;line-height:1.45;margin:8px 4px 2px;opacity:.85;
+}
+html:root body #svSmartMusicSheet[data-music-sheet="sound"] #svSmartMusicBody{gap:7px!important;overflow:auto!important}
+html:root body #svSmartMusicSheet[data-music-sheet="sound"] #svSmartMusicBody .sv-adaptive-mark{width:48px;height:48px;margin:2px auto 4px}
+html:root body #svSmartMusicSheet[data-music-sheet="sound"] .sv-adaptive-tagline{font-size:16px!important;font-weight:550!important;line-height:1.3}
+html:root body #svSmartMusicSheet[data-music-sheet="sound"] .sv-smart-music-message{font-size:12px!important;line-height:1.45;margin:0!important}
+html:root body #svSmartMusicSheet[data-music-sheet="sound"] :is(.sv-adaptive-status,#svAdaptiveSourceQuality){padding:9px 4px!important;margin:0!important}
+html:root body #svSmartMusicSheet[data-music-sheet="sound"] :is(.sv-adaptive-status,#svAdaptiveSourceQuality) strong{font-size:14px!important;font-weight:550!important}
+html:root body #svSmartMusicSheet[data-music-sheet="sound"] :is(.sv-adaptive-status,#svAdaptiveSourceQuality) small{font-size:11px!important;font-weight:400!important;line-height:1.4}
+html:root body #svSmartMusicSheet[data-music-sheet="sound"] #svAdaptivePure{min-height:44px!important;padding:6px 4px!important;font-size:14px!important;font-weight:500!important}
+</style>
 </body></html>
