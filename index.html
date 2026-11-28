@@ -9013,6 +9013,10 @@ html:root body #sayviMusicPage #svMusicHistoryTracks .sv-history-swipe.is-moving
  html:root.sv-sayvi-handoff-demo{
   --sv-home-orb-lift:clamp(10px,calc(10dvh - 54px),24px);
  }
+ /* Keep the status clear of the iOS safe area, while releasing space for copy. */
+ html:root.sv-sayvi-handoff-demo body #homePage .sv-sayvi-home-online{
+  top:calc(env(safe-area-inset-top,0px) + 6px)!important;
+ }
  html:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked):not(.sv-sayvi-handoff-inflight) body #homePage #orbCluster,
  html:root.sv-sayvi-handoff-docked:is(.sv-home-empty-sphere,.sv-music-ambient):not(.sv-sayvi-handoff-inflight) body #homePage #orbCluster{
   position:absolute!important;
