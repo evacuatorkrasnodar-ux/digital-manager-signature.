@@ -52,7 +52,7 @@ function handle(raw){
   audio.pause();
   const message='Музыка на паузе.';msg(message);return{status:'paused',message};
  }
- if(/^(?:следующ(?:ий|ую) (?:трек|песню)|переключи на следующ(?:ий|ую)|предыдущ(?:ий|ую) (?:трек|песню)|верни предыдущ(?:ий|ую))$/.test(q)){
+ if(/^(?:следующ(?:ий|ую) (?:трек|песню)|переключи на следующ(?:ий|ую)|переключи (?:трек|песню|музыку)|пропусти (?:трек|песню)|предыдущ(?:ий|ую) (?:трек|песню)|верни предыдущ(?:ий|ую))$/.test(q)){
   const next=!/предыдущ/.test(q),button=$(next?'sayviMusicNext':'sayviMusicPrevious');
   if(!local()||!button||button.disabled){const message='Сейчас нечего переключать.';msg(message);return{status:'unavailable',message}}
   button.click();
