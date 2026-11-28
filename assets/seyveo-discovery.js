@@ -241,63 +241,121 @@ function dismiss(id){
  state.releases=state.releases.filter(r=>r.id!==id);
  persist();update();signal();
 }
-// Public metadata tiles; no outbound navigation or user interests.
+// Public editorial shelf. No playback, outbound buttons or fabricated news.
+// MusicBrainz catalog dates are community-maintained, not independent press confirmation.
 const publicList=$('svDiscoveryPublicList'),publicStatus=$('svDiscoveryPublicStatus'),publicTitle=$('svDiscoveryPublicTitle'),publicSource=$('svDiscoveryPublicSource');
-const PUBLIC_KEY='seyveo-public-song-chart-v2-',PUBLIC_TTL=6*3600000;
-let publicRun=0,publicController=null;
+const PUBLIC_KEY='seyveo-music-editorial-v1-',PUBLIC_TTL=6*3600000;
+const upcomingList=$('svDiscoveryUpcomingList'),upcomingStatus=$('svDiscoveryUpcomingStatus'),newsList=$('svDiscoveryNewsList');
+let publicRun=0,publicController=null,lastPublicRequest=0;
+const uuid=s=>typeof s==='string'&&/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(s);
+const dayISO=ms=>new Date(ms).toISOString().slice(0,10);
+const today=()=>dayISO(Date.now());
+const dateLabel=date=>new Date(date+'T00:00:00Z').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
 function publicItems(raw){
  if(!Array.isArray(raw))return [];
- const now=Date.now(),seen=new Set();
+ const seen=new Set();
  return raw.flatMap(r=>{
-  if(!r||!safeUrl(r.url)||!validDate(r.date)||!clean(r.title)||!clean(r.artist))return [];
-  const at=Date.parse(r.date+'T00:00:00Z');
-  if(!Number.isFinite(at)||at>now||seen.has(r.url))return [];
-  seen.add(r.url);
-  let artwork='';
-  try{const u=new URL(r.artwork);if(u.protocol==='https:'&&u.hostname.endsWith('.mzstatic.com'))artwork=u.href}catch{}
-  return [{title:clean(r.title),artist:clean(r.artist),date:r.date,url:safeUrl(r.url),artwork,at}];
- }).slice(0,50);
+  if(!r||!uuid(r.id)||!validDate(r.date)||!Number.isFinite(Date.parse(r.date+'T00:00:00Z'))||!clean(r.title)||!clean(r.artist)||seen.has(r.id))return [];
+  seen.add(r.id);
+  return [{id:r.id,title:clean(r.title),artist:clean(r.artist),date:r.date,type:r.type==='Single'?'Single':r.type==='EP'?'EP':'Album'}];
+ }).slice(0,100);
+}
+function catalogItems(data,country){
+ const entries=country==='ru'?data?.releases:data?.['release-groups'];
+ if(!Array.isArray(entries))return [];
+ return publicItems(entries.map(r=>{
+  const g=country==='ru'?r['release-group']:r;
+  const artist=(g?.['artist-credit']||r['artist-credit']||[]).map(x=>(x.name||x.artist?.name||'')+(x.joinphrase||'')).join('');
+  return {id:g?.id,title:g?.title||r.title,artist,date:country==='ru'?r.date:g?.['first-release-date'],type:g?.['primary-type']};
+ }));
 }
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
+function artTile(r){
+ const tile=document.createElement('article');tile.className='sv-discovery-tile';
+ const art=document.createElement('span');art.className='sv-discovery-release-art';art.setAttribute('aria-hidden','true');art.textContent='♫';
+ const img=document.createElement('img');img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
+ img.addEventListener('error',()=>{art.textContent='♫'},{once:true});
+ img.src='https://coverartarchive.org/release-group/'+r.id+'/front-250';art.replaceChildren(img);
+ const title=document.createElement('strong');title.textContent=r.title;title.title=r.title;
+ const artist=document.createElement('small');artist.textContent=r.artist;artist.title=r.artist;
+ const date=document.createElement('time');date.dateTime=r.date;date.textContent=dateLabel(r.date);
+ tile.append(art,title,artist,date);return tile;
+}
+function renderNews(recent,upcoming){
+ if(!newsList)return;
+ newsList.replaceChildren();
+ const stories=[...upcoming.slice(0,3).map(r=>({r,future:true})),...recent.slice(0,3).map(r=>({r,future:false}))];
+ for(const {r,future} of stories){
+  const story=document.createElement('article');story.className='sv-discovery-news-card';
+  const date=document.createElement('time');date.dateTime=r.date;date.textContent=dateLabel(r.date);
+  const title=document.createElement('strong');title.textContent=r.artist+' — '+r.title;
+  const body=document.createElement('p');const kind=r.type==='Single'?'сингл':r.type==='EP'?'мини-альбом':'альбом';
+  body.textContent=future?'В каталоге указан предстоящий '+kind+'. Дата может измениться.':'В каталоге появился '+kind+' с датой релиза '+dateLabel(r.date)+'.';
+  story.append(date,title,body);newsList.append(story);
+ }
+ if(!stories.length){const p=document.createElement('p');p.className='sv-discovery-public-status';p.textContent='Пока нет свежих сообщений о релизах.';newsList.append(p)}
+}
 function showPublic(items,stale=false){
  if(!publicList||!publicTitle)return;
- const recent=items.filter(r=>r.at>=Date.now()-LOOKBACK).sort((a,b)=>b.at-a.at);
- const rows=(recent.length?recent:items).slice(0,12);
- publicTitle.textContent=recent.length?'Свежие релизы в чарте':'Популярное сейчас';
- publicList.replaceChildren();
- for(const r of rows){
-  const tile=document.createElement('article');tile.className='sv-discovery-tile';
-  const art=document.createElement('span');art.className='sv-discovery-release-art';art.setAttribute('aria-hidden','true');art.textContent='♫';
-  if(r.artwork){const img=document.createElement('img');img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.addEventListener('error',()=>{art.textContent='♫'},{once:true});img.src=r.artwork;art.replaceChildren(img)}
-  const title=document.createElement('strong');title.textContent=r.title;title.title=r.title;
-  const artist=document.createElement('small');artist.textContent=r.artist;artist.title=r.artist;
-  const date=document.createElement('time');date.dateTime=r.date;date.textContent=new Date(r.at).toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
-  tile.append(art,title,artist,date);publicList.append(tile);
- }
- publicMessage(stale?'Сохранённая подборка · обновление пока недоступно.':'');
+ const day=today(),from=dayISO(Date.now()-21*DAY),until=dayISO(Date.now()+60*DAY);
+ const recent=items.filter(r=>r.date>=from&&r.date<=day).sort((a,b)=>b.date.localeCompare(a.date));
+ const upcoming=items.filter(r=>r.date>day&&r.date<=until).sort((a,b)=>a.date.localeCompare(b.date));
+ publicTitle.textContent='Свежие релизы';
+ publicList.replaceChildren(...recent.slice(0,8).map(artTile));
+ upcomingList?.replaceChildren(...upcoming.slice(0,6).map(artTile));
+ if(upcomingStatus){upcomingStatus.hidden=!!upcoming.length;upcomingStatus.textContent='В каталоге пока нет предстоящих релизов.'}
+ publicMessage(stale?'Сохранённая подборка · обновление пока недоступно.':recent.length?'':'Свежих релизов в каталоге пока нет.');
+ renderNews(recent,upcoming);
+ if(publicSource){publicSource.textContent='Данные: MusicBrainz · обложки: Cover Art Archive. Даты могут уточняться.';publicSource.hidden=false}
+}
+async function requestCatalog(country,future,signal){
+ // Serialize public requests, respecting the catalog's one-request-per-second limit.
+ const wait=Math.max(0,1200-(Date.now()-lastPublicRequest));
+ if(wait)await new Promise(resolve=>setTimeout(resolve,wait));
+ if(signal.aborted)throw Error('aborted');
+ lastPublicRequest=Date.now();
+ const start=future?dayISO(Date.now()+DAY):dayISO(Date.now()-21*DAY);
+ const end=future?dayISO(Date.now()+60*DAY):today();
+ const field=country==='ru'?'date':'firstreleasedate';
+ const query=field+':['+start+' TO '+end+'] AND status:official AND (primarytype:album OR primarytype:single OR primarytype:ep)'+(country==='ru'?' AND country:RU':'');
+ const endpoint=new URL('https://musicbrainz.org/ws/2/'+(country==='ru'?'release':'release-group')+'/');
+ endpoint.searchParams.set('query',query);endpoint.searchParams.set('fmt','json');endpoint.searchParams.set('limit','35');
+ const response=await fetch(endpoint.href,{signal,credentials:'omit',referrerPolicy:'no-referrer',headers:{accept:'application/json'}});
+ if(!response.ok)throw Error('catalog '+response.status);
+ return catalogItems(await response.json(),country);
 }
 async function loadPublic(){
  if(!publicList)return;
- const country=panel.dataset.scope==='ru'?'ru':'us',key=PUBLIC_KEY+country;
+ const country=panel.dataset.scope==='ru'?'ru':'world',key=PUBLIC_KEY+country;
  const run=++publicRun;publicController?.abort();publicController=null;
- publicList.replaceChildren();publicTitle.textContent=country==='ru'?'Новинки России':'Сейчас в музыке';
- if(publicSource){publicSource.textContent='Источник: Apple Music · '+(country==='ru'?'чарт России':'чарт США');publicSource.hidden=true}
  let cache=null;try{cache=JSON.parse(localStorage.getItem(key)||'null')}catch{}
  const cached=publicItems(cache?.items);
- if(cached.length){showPublic(cached,Date.now()-Number(cache.at)>PUBLIC_TTL);if(publicSource)publicSource.hidden=false;if(Date.now()-Number(cache.at)<PUBLIC_TTL)return}
- if(!cached.length)publicMessage('Загружаем музыкальную подборку…');
- const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),9000);publicController=controller;
+ if(cached.length){showPublic(cached,Date.now()-Number(cache.at)>PUBLIC_TTL);if(Date.now()-Number(cache.at)<PUBLIC_TTL)return}
+ else{
+  publicList.replaceChildren();upcomingList?.replaceChildren();newsList?.replaceChildren();
+  publicTitle.textContent='Свежие релизы';publicMessage('Сэйви проверяет новинки…');
+  if(publicSource)publicSource.hidden=true;
+  if(upcomingStatus){upcomingStatus.hidden=false;upcomingStatus.textContent='Проверяем календарь релизов…'}
+ }
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);publicController=controller;
  try{
-  const response=await fetch('https://rss.marketingtools.apple.com/api/v2/'+country+'/music/most-played/50/songs.json',{signal:controller.signal,credentials:'omit',referrerPolicy:'no-referrer'});
-  if(!response.ok)throw Error('chart-unavailable');
-  const data=await response.json();
-  const items=publicItems(data?.feed?.results?.map(r=>({title:r.name,artist:r.artistName,date:r.releaseDate,url:r.url,artwork:r.artworkUrl100})));
-  if(!items.length)throw Error('empty-chart');
+  let fresh=[],future=[],ok=0;
+  try{fresh=await requestCatalog(country,false,controller.signal);ok++}catch{}
+  try{future=await requestCatalog(country,true,controller.signal);ok++}catch{}
   if(run!==publicRun)return;
-  try{localStorage.setItem(key,JSON.stringify({at:Date.now(),items}))}catch{}
-  showPublic(items);if(publicSource)publicSource.hidden=false;
- }catch{if(run!==publicRun)return;if(cached.length)showPublic(cached,true);else publicMessage(country==='ru'?'Российская подборка пока недоступна.':'Музыкальная подборка пока недоступна.')}
- finally{clearTimeout(timer);if(run===publicRun)publicController=null}
+  if(!ok)throw Error('unavailable');
+  const items=publicItems([...fresh,...future,...(ok<2?cached:[])]);
+  if(ok===2)try{localStorage.setItem(key,JSON.stringify({at:Date.now(),items}))}catch{}
+  showPublic(items,ok<2);
+  if(ok<2)publicMessage('Часть каталога временно недоступна.');
+ }catch{
+  if(run!==publicRun)return;
+  if(cached.length)showPublic(cached,true);
+  else{
+   publicMessage('Не удалось обновить каталог. Попробуйте открыть раздел позже.');
+   if(upcomingStatus){upcomingStatus.hidden=false;upcomingStatus.textContent='Календарь релизов пока недоступен.'}
+  }
+ }finally{clearTimeout(timer);if(run===publicRun)publicController=null}
 }
 const scope=$('svDiscoveryScope');
 if(scope){
