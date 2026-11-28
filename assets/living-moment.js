@@ -1354,8 +1354,8 @@ function showDiscovery(card){
   // The new Sayvi/Edit screen is a non-destructive local preview.
   if(id==='sayvi'||id==='edit'||id==='confirm-preview')return;
   if(id==='navigate'||id==='open-release'){
-   const opened=window.SEYVEO_BROWSER?.open?.(card.releaseUrl);
-   if(opened)window.SEYVEO_DISCOVERY?.dismiss?.(card.releaseId);
+   const opened=window.SEYVEO_MUSIC_DOCK?.openNew?.();
+   if(opened)window.SEYVEO_DISCOVERY?.postpone?.(card.releaseId);
    return;
   }
   if(id==='cycle')engine?.snoozeCards?.(card);
