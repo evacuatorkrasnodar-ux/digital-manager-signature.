@@ -1604,7 +1604,7 @@ function playRadio(stations,id){
  tracks=available;miniDismissed=false;return switchTrack(selected,true);
 }
 window.SEYVEO_MUSIC=Object.freeze({
- playRadio,replaySummary,replayPortrait,enrichReplayPortrait,discoveryTaste,sharedGenreTaste,genreTasteTags,removeRecentHistory,
+ playRadio,replaySummary,replayPortrait,enrichReplayPortrait,discoveryTaste,sharedGenreTaste,genreTasteTags,removeRecentHistory,removeFavoriteFromList,
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
  searchTracks,playFromSearch,playIndexFromSearch,playCollection,refreshMini:syncResume,prepareTrackPreview,
  // Read-only access to the selected local File for optional visual analysis.
