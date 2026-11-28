@@ -1569,7 +1569,7 @@ function playFromSearch(query){
  return {status:ok?'started':'unavailable',track:hits[0]};
 }
 function playRadio(stations,id){
- const available=stations.filter(station=>station.radio&&(/^https:\/\//.test(station.stream||'')||(station.id==='krd107'&&['127.0.0.1:8790','localhost:8790'].includes(location.host)&&/^\/api\/seyveo-radio-107\?quality=(320|128)$/.test(station.stream||''))));
+ const available=stations.filter(station=>station.radio&&(/^https:\/\//.test(station.stream||'')||(station.id==='krd107'&&['127.0.0.1:8790','localhost:8790'].includes(location.host)&&/^\/api\/seyveo-radio-107\?quality=(256|128)$/.test(station.stream||''))));
  const selected=available.findIndex(station=>station.id===id);if(selected<0)return false;
  if(isRadio()&&tracks[index].id===id){play();return true;}
  tracks=available;miniDismissed=false;return switchTrack(selected,true);
