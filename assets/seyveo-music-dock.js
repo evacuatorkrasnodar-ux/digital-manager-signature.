@@ -297,7 +297,7 @@ function init(){
  }
  function enter(){
   if(active)return;active=true;nav.hidden=false;dock.classList.add('seyveo-music-dock','sv-music-navigation-only');
-  const key=pending?'player':'home';pending=false;last='home';show(key);
+  const key=pending==='new'?'new':pending?'player':'home';pending=false;last='home';show(key);
  }
  function leave(){
   if(!active)return;closeHistoryMenu();closePeriod();closeNowMenu();stopCoverObserver();active=false;nav.hidden=true;dock.classList.remove('seyveo-music-dock','sv-music-navigation-only');
@@ -309,6 +309,7 @@ function init(){
  }
  function refresh(){if(inside())enter();else leave()}
  function openPlayer(){if(active)return show('player');pending=true;return music()?.open?.()}
+ function openNew(){if(active)return show('new');pending='new';const ok=music()?.open?.();if(!ok)pending=false;return !!ok}
  function closePlayer(){
   if(!active||view!=='player')return false;
   const stage=get('sayviMusicStage'),art=get('sayviMusicArtwork'),mini=get('sayviMusicMini');
@@ -357,7 +358,7 @@ function init(){
  window.addEventListener('hashchange',refresh);window.addEventListener('seyveo:route-changed',refresh);
  new MutationObserver(refresh).observe(page,{attributes:true,attributeFilter:['hidden']});
  document.addEventListener('seyveo:music-state',()=>{refresh();renderTracks()});
- window.SEYVEO_MUSIC_DOCK=Object.freeze({setMode:refresh,isActive:()=>active,show,openPlayer,closePlayer});
+ window.SEYVEO_MUSIC_DOCK=Object.freeze({setMode:refresh,isActive:()=>active,show,openPlayer,openNew,closePlayer});
  refresh();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
