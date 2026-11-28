@@ -413,12 +413,20 @@
       offsetBox.append(controls);syncDetails.append(summary,offsetBox);settings.append(syncDetails);
       value.textContent=(lyricOffset>0?'+':'')+lyricOffset.toFixed(1)+' с';
      }
-     const sizeRow=d.createElement('label');sizeRow.className='sv-lyric-size-row';sizeRow.innerHTML=glyph('<path d="m3 18 5-12 5 12M5 14h6m3 4 3.5-8 3.5 8m-5.8-2h4.6"/>')+'<span>Размер текста</span>';
-     const sizeSelect=d.createElement('select');sizeSelect.setAttribute('aria-label','Размер текста песни');
-     for(const [key,label] of [['small','Меньше'],['normal','Обычный'],['large','Крупнее']]){const opt=d.createElement('option');opt.value=key;opt.textContent=label;sizeSelect.append(opt)}
-     sizeSelect.value=lyricSize;sizeRow.append(sizeSelect);settings.append(sizeRow);
-     sizeSelect.addEventListener('change',()=>{if(!valid())return;lyricSize=sizeSelect.value;body.dataset.lyricSize=lyricSize;try{w.localStorage.setItem('seyveo.lyric-size',lyricSize)}catch{}updateLine(true)});
-     settings.prepend(sizeRow);if(refine){if(syncDetails)syncDetails.after(refine);else sizeRow.after(refine)}
+     // Keep reading accessibility and timing out of the everyday actions.
+     const advanced=d.createElement('details');advanced.className='sv-lyric-advanced';
+     const advancedHead=d.createElement('summary');advancedHead.innerHTML=glyph('<path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="currentColor"/><circle cx="15" cy="12" r="2" fill="currentColor"/><circle cx="10" cy="17" r="2" fill="currentColor"/>')+'<span>Дополнительно</span>'+glyph('<path d="m9 6 6 6-6 6"/>').replace('<svg ','<svg class="sv-lyric-chevron" ');
+     advanced.append(advancedHead);
+     const sizeRow=d.createElement('div');sizeRow.className='sv-lyric-size-options';
+     const sizeLabel=d.createElement('span');sizeLabel.textContent='Размер текста';sizeRow.append(sizeLabel);
+     const sizeGroup=d.createElement('div');sizeGroup.className='sv-lyric-size-segments';sizeGroup.setAttribute('role','group');sizeGroup.setAttribute('aria-label','Размер текста песни');
+     for(const [key,label] of [['small','Меньше'],['normal','Обычный'],['large','Крупнее']]){
+      const button=d.createElement('button');button.type='button';button.textContent=label;button.dataset.size=key;button.setAttribute('aria-pressed',String(key===lyricSize));
+      button.addEventListener('click',()=>{if(!valid())return;lyricSize=key;body.dataset.lyricSize=key;try{w.localStorage.setItem('seyveo.lyric-size',key)}catch{}for(const child of sizeGroup.children)child.setAttribute('aria-pressed',String(child.dataset.size===key));updateLine(true)});
+      sizeGroup.append(button);
+     }
+     sizeRow.append(sizeGroup);advanced.append(sizeRow);if(syncDetails)advanced.append(syncDetails);
+     if(refine)settings.prepend(refine);
      lyricDebug=false;paintLyricDebug(true);
      const save=d.createElement('button');save.type='button';save.className='sv-smart-music-choice';
      save.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="15" height="18" rx="2"/><path d="M8 3v18M3 7h4M3 12h4M3 17h4M11 8h6M11 12h6M11 16h4"/></svg><span>В блокнот</span>';
@@ -440,25 +448,7 @@
       feedback.hidden=false;
       feedback.textContent=saved?.ok?(saved.existing?'Этот текст уже есть в блокноте.':'Текст сохранён в блокноте. Музыка продолжает играть.'):(saved?.reason==='length'?'Текст длиннее лимита одной заметки (8000 символов).':saved?.reason==='limit'?'Блокнот заполнен. Освободите место для новой записи.':'Не удалось сохранить текст в блокноте.');
      });
-     const edit=engine&&id?action('Исправить текст',()=>{
-      if(!valid())return;
-      settings.replaceChildren();
-      message(data.timed?'Исправьте слова, не меняя количество строк: время каждой строки сохранится.':'Исправьте текст песни.',settings);
-      const editor=d.createElement('textarea');editor.className='sv-inline-lyrics-editor';editor.setAttribute('aria-label','Текст песни');editor.value=data.lines.map(line=>line.text).join('\n');settings.append(editor);
-      const status=message('',settings);status.setAttribute('role','status');
-      const commit=action('Сохранить изменения',async()=>{
-       if(!valid())return;
-       const lines=editor.value.replace(/\r/g,'').split('\n');
-       if(editor.value.length>128*1024||!lines.some(line=>line.trim())||lines.length>3000){status.textContent='Проверьте размер и содержимое текста.';return}
-       if(data.timed&&lines.length!==data.lines.length){status.textContent='Для сохранения синхронизации оставьте прежнее количество строк.';return}
-       const corrected={...data,userEdited:true,lines:data.timed?data.lines.map((line,i)=>({...line,text:lines[i],words:lines[i]===line.text?line.words:undefined})):lines.map(text=>({text}))};
-       commit.disabled=true;
-       try{const saved=await engine.put(id,corrected);if(valid())render(corrected,true,saved)}catch{if(valid()){status.textContent='Не удалось сохранить исправления.';commit.disabled=false}}
-      },settings);
-      action('Отмена',()=>{if(valid()){render(data,imported,saved);setLyricSettings(true)}},settings);
-      editor.focus({preventScroll:true});
-     },settings):null;
-     if(edit){decorate(edit,'<path d="m14 5 5 5M4 20l5-1 12-12a2.1 2.1 0 0 0-3-3L6 16l-2 4Z"/>');settings.insertBefore(edit,copy)}
+     settings.append(advanced);
      if(data.draft||!saved){const warning=message(!saved?'Текст доступен до закрытия страницы.':'Черновик Сэйви · возможны ошибки',settings);warning.className='sv-lyric-warning'}
      const fragment=d.createDocumentFragment();
      data.lines.forEach((line,i)=>{
