@@ -181,9 +181,11 @@ void main(){
   vec2 xy=1.10*vec2(x,2.0*v-1.0);float r=length(xy),a=atan(xy.y,xy.x+.00001);
   if(r>1.0){
    float glow=gauss(r-1.0,.045)*(.018+.15*peak(a,-2.16,.44)+.28*peak(a,1.30,.58));
-   float floorGlow=gauss(xy.x,.43)*gauss(xy.y-1.041,.038)*.15+gauss(xy.x,.21)*gauss(xy.y-1.033,.017)*.12;
-   glow=clamp(glow+floorGlow,0.0,.75);
-   gl_FragColor=vec4(.27,.75,.77,glow*.66);return;
+    // Separated soft caustic under the floating sphere, with a bright narrow core.
+   float floorGlow=gauss(xy.x,.48)*gauss(xy.y-1.070,.025)*.30+gauss(xy.x,.22)*gauss(xy.y-1.072,.012)*.43;
+   vec3 tint=mix(vec3(.27,.75,.77),vec3(.48,1.0,.96),clamp(floorGlow*1.35,0.0,1.0));
+   glow=clamp(glow+floorGlow,0.0,.92);
+   gl_FragColor=vec4(tint,glow*.82);return;
   }
   // Original V36 glass (27 Nov 14:08 Moscow), independent of today's silk.
   float n=sqrt(max(0.0,1.0-r*r));
