@@ -274,7 +274,7 @@ function publicItems(raw){
  return raw.flatMap(r=>{
   if(!r||!uuid(r.id)||!validDate(r.date)||!Number.isFinite(Date.parse(r.date+'T00:00:00Z'))||!clean(r.title)||!clean(r.artist)||seen.has(r.id))return [];
   seen.add(r.id);
-  return [{id:r.id,title:clean(r.title),artist:clean(r.artist),date:r.date,type:r.type==='Single'?'Single':r.type==='EP'?'EP':'Album'}];
+  return [{id:r.id,title:clean(r.title),artist:clean(r.artist),date:r.date,type:r.type==='Single'?'Single':r.type==='EP'?'EP':'Album',tasteMatch:r.tasteMatch===true}];
  }).slice(0,100);
 }
 function catalogItems(data,country){
@@ -510,6 +510,14 @@ dialog.sv-new-filter-sheet .sv-discovery-offer-actions{display:flex;gap:8px}
 dialog.sv-new-filter-sheet .sv-discovery-offer-actions button{flex:1;min-height:44px;border-radius:12px;border:1px solid rgba(127,140,155,.18);box-shadow:none;background:transparent;color:inherit}
 dialog.sv-new-filter-sheet #svDiscoveryOfferYes{background:#426b78;color:#fff}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-refresh{display:flex;align-items:center;width:100%;min-height:44px;padding:0 6px;border:0;border-bottom:1px solid rgba(127,140,155,.13);background:transparent!important;box-shadow:none!important;color:inherit;font-size:14px;text-align:left}
+
+/* Refined overlay buttons: visual 25px, touch area remains 44px. */
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover :is(.sv-new-cover-play,.sv-new-cover-heart):before{inset:10px!important;background:rgba(22,29,39,.33)!important;border:1px solid rgba(255,255,255,.42)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(6px)!important;backdrop-filter:blur(6px)!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover :is(.sv-new-cover-play,.sv-new-cover-heart) svg{width:15px!important;height:15px!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover:has(.sv-new-no-art) :is(.sv-new-cover-play,.sv-new-cover-heart){color:#53606e!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover:has(.sv-new-no-art) :is(.sv-new-cover-play,.sv-new-cover-heart):before{background:rgba(255,255,255,.54)!important;border-color:rgba(127,140,155,.18)!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-new-cover .sv-new-cover-heart[aria-pressed=true]{color:#ce4167!important}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel #svDiscoveryPublicSource{font-size:10px!important;opacity:.72;margin-top:8px!important;line-height:1.35!important}
 `;document.head.append(style);
 
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
@@ -552,7 +560,7 @@ function showPublic(items,stale=false){
  const recent=mergedItems.filter(r=>r.date>=from&&r.date<=day).sort((a,b)=>b.date.localeCompare(a.date));
  const upcoming=mergedItems.filter(r=>r.date>day&&r.date<=until).sort((a,b)=>a.date.localeCompare(b.date));
  if(mode==='for-you'&&state.enabled){
-  const fav=new Set(likes.map(r=>normalize(r.artist)));const score=r=>Number(fav.has(normalize(r.artist)))*100+(state.artists.find(a=>a.key===normalize(r.artist))?.plays||0);
+  const fav=new Set(likes.map(r=>normalize(r.artist)));const score=r=>Number(fav.has(normalize(r.artist)))*1000+Number(r.tasteMatch===true)*100+(state.artists.find(a=>a.key===normalize(r.artist))?.plays||0);
   recent.sort((a,b)=>score(b)-score(a));upcoming.sort((a,b)=>score(b)-score(a));
  }
  syncPersonal();
@@ -572,7 +580,7 @@ function showPublic(items,stale=false){
  }
  publicList.replaceChildren(...cards);
  publicMessage(mode==='liked'?(cards.length?'':'Нажмите сердечко на релизе или анонсе — он останется здесь.'):stale?'Сохранённая подборка · обновление пока недоступно.':cards.length?'':'В каталоге пока нет подходящих релизов.');
- if(publicSource){publicSource.textContent='Данные: MusicBrainz · обложки: Cover Art Archive. Даты могут уточняться.';publicSource.hidden=false;$('svDiscoveryPublic').append(publicSource)}
+ if(publicSource){publicSource.textContent='MusicBrainz · Cover Art Archive · даты могут уточняться';publicSource.hidden=false;$('svDiscoveryPublic').append(publicSource)}
 }
 async function requestCatalog(tags,future,signal){
  // Serialize public requests, respecting the catalog's one-request-per-second limit.
@@ -584,9 +592,9 @@ async function requestCatalog(tags,future,signal){
  const end=future?dayISO(Date.now()+60*DAY):today();
  const country=mode==='ru'?'ru':'world';
  const filter=tags.length?' AND ('+tags.map(t=>'tag:"'+t+'"').join(' OR ')+')':'';
- const query=(country==='ru'?'date:[':'firstreleasedate:[')+start+' TO '+end+'] AND status:official AND (primarytype:album OR primarytype:single OR primarytype:ep)'+(country==='ru'?' AND country:RU':'')+filter;
+ const query=(country==='ru'?'date:[':'firstreleasedate:[')+start+' TO '+end+'] AND (primarytype:album OR primarytype:single OR primarytype:ep)'+(country==='ru'?' AND status:official AND country:RU':'')+filter;
  const endpoint=new URL('https://musicbrainz.org/ws/2/'+(country==='ru'?'release/':'release-group/'));
- endpoint.searchParams.set('query',query);endpoint.searchParams.set('fmt','json');endpoint.searchParams.set('limit','35');
+ endpoint.searchParams.set('query',query);endpoint.searchParams.set('fmt','json');endpoint.searchParams.set('limit','50');
  const response=await fetch(endpoint.href,{signal,credentials:'omit',referrerPolicy:'no-referrer',headers:{accept:'application/json'}});
  if(!response.ok)throw Error('catalog '+response.status);
  return catalogItems(await response.json(),country);
@@ -595,7 +603,7 @@ async function loadPublic(){
  if(!publicList)return;
  if(mode==='liked'){showPublic(lastItems,lastStale);return}
  if(mode==='genres'&&!state.enabled){mode='for-you';syncFilters();syncChoice();syncPersonal()}
- const tags=selectedTags(),key=PUBLIC_KEY+(mode==='ru'?'ru-':'')+(tags.join('|')||'general');
+ const tags=selectedTags(),key=PUBLIC_KEY+'feed20-'+(mode==='ru'?'ru-':'')+(tags.join('|')||'general');
  const run=++publicRun;publicController?.abort();publicController=null;
  let cache=null;try{cache=JSON.parse(localStorage.getItem(key)||'null')}catch{}
  const cached=publicItems(cache?.items);
@@ -606,11 +614,17 @@ async function loadPublic(){
   if(publicSource)publicSource.hidden=true;
   if(upcomingStatus){upcomingStatus.hidden=false;upcomingStatus.textContent='Проверяем календарь релизов…'}
  }
- const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);publicController=controller;
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),24000);publicController=controller;
  try{
   let fresh=[],future=[],ok=0;
   try{fresh=await requestCatalog(tags,false,controller.signal);ok++}catch{}
   try{future=await requestCatalog(tags,true,controller.signal);ok++}catch{}
+  if(run!==publicRun)return;
+  if(mode==='for-you'&&tags.length){
+   fresh=fresh.map(r=>({...r,tasteMatch:true}));future=future.map(r=>({...r,tasteMatch:true}));
+   if(fresh.length<9){try{fresh=publicItems([...fresh,...await requestCatalog([],false,controller.signal)])}catch{}}
+   if(future.length<3){try{future=publicItems([...future,...await requestCatalog([],true,controller.signal)])}catch{}}
+  }
   if(run!==publicRun)return;
   if(!ok)throw Error('unavailable');
   const items=publicItems([...fresh,...future,...(ok<2?cached:[])]);
