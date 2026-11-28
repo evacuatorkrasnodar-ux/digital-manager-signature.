@@ -8605,4 +8605,53 @@ html.sv-music-screen body #svSmartMusicSheet[open]::backdrop{
  html.sv-music-screen body #svSmartMusicSheet[open],html.sv-music-screen body #svSmartMusicSheet[open]::backdrop{animation:none!important}
 }
 </style>
+<style id="svCompactSheetExitMotion">
+@keyframes svCompactSheetExit{from{opacity:1}to{opacity:0}}
+@supports (translate:0 1px){@keyframes svCompactSheetExit{from{opacity:1;translate:0 0}to{opacity:0;translate:0 12px}}}
+html.sv-music-screen body #sayviMusicPage :is(#sayviMusicCollection,#sayviMusicSourcesPanel,#svNowMenu,#svInlineKaraokeSettings).sv-sheet-dismissing:not([hidden]),
+html.sv-music-screen body #svSmartMusicSheet.sv-sheet-dismissing[open]{
+ animation:svCompactSheetExit .17s cubic-bezier(.4,0,.8,.4) both!important;
+ pointer-events:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html.sv-music-screen body #sayviMusicPage .sv-sheet-dismissing,html.sv-music-screen body #svSmartMusicSheet.sv-sheet-dismissing{animation:none!important}
+}
+</style>
+<script id="svCompactSheetExitController">
+/* Opt-in visual dismissal only for compact music X buttons.
+   Original close handlers remain authoritative; route changes, microphone
+   recognition, Escape and background safety closes are never delayed. */
+(()=>{
+ const selectors='.sv-music-panel-close,#sayviMusicSourcesClose,#svNowMenuClose,#svInlineKaraokeCloseSettings,#svSmartMusicClose';
+ const pending=new WeakMap(),replaying=new WeakSet();
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+ const visible=sheet=>sheet.tagName==='DIALOG'?sheet.open:!sheet.hidden;
+ document.addEventListener('click',event=>{
+  const button=event.target.closest?.(selectors);
+  if(!button||replaying.has(button)||reduced.matches||document.hidden||location.hash!=='#sayvi-music')return;
+  const sheet=button.closest('#sayviMusicCollection,#sayviMusicSourcesPanel,#svNowMenu,#svInlineKaraokeSettings,#svSmartMusicSheet');
+  if(!sheet||!visible(sheet)||sheet.dataset.musicSheet==='recognize')return;
+  event.preventDefault();event.stopImmediatePropagation();
+  if(pending.has(sheet))return;
+  const mode=sheet.dataset.musicSheet,view=document.getElementById('sayviMusicPage')?.dataset.musicView;
+  let timer=0,observer=null;
+  const cleanup=()=>{
+   clearTimeout(timer);observer?.disconnect();sheet.removeEventListener('animationend',onEnd);
+   sheet.classList.remove('sv-sheet-dismissing');pending.delete(sheet);
+  };
+  const finish=()=>{
+   cleanup();
+   if(!visible(sheet)||!button.isConnected||location.hash!=='#sayvi-music'||sheet.dataset.musicSheet!==mode||document.getElementById('sayviMusicPage')?.dataset.musicView!==view)return;
+   replaying.add(button);try{button.click()}finally{replaying.delete(button)}
+  };
+  const onEnd=e=>{if(e.target===sheet&&e.animationName==='svCompactSheetExit')finish()};
+  pending.set(sheet,cleanup);
+  observer=new MutationObserver(records=>{if(records.some(r=>r.attributeName==='hidden'||r.attributeName==='open'||r.attributeName==='data-music-sheet'))cleanup()});
+  observer.observe(sheet,{attributes:true,attributeFilter:['hidden','open','data-music-sheet']});
+  sheet.addEventListener('animationend',onEnd);
+  sheet.classList.add('sv-sheet-dismissing');
+  timer=setTimeout(finish,230);
+ },true);
+})();
+</script>
 </body></html>
