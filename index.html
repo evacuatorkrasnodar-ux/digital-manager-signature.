@@ -6090,7 +6090,7 @@ html:root.sv-music-player-open #sayviMusicPage[data-music-view="player"] .sv-mus
 
 #sayviMusicPage #svMusicRecognizeHome>svg{color:#668b9e}
 #svSmartMusicBody a.sv-smart-music-choice{text-decoration:none;box-sizing:border-box}
-</style><script src="assets/seyveo-adaptive-sound.js?v=3-compilation"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-recognition-pearl"></script><script src="assets/seyveo-music-dock.js?v=37-replay-wheel"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-spectral-silk-v1"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
+</style><script src="assets/seyveo-adaptive-sound.js?v=3-compilation"></script><script src="assets/seyveo-music-fingerprint.js?v=1-local"></script><script src="assets/seyveo-music-smart.js?v=20261128-recognition-orb"></script><script src="assets/seyveo-music-dock.js?v=37-replay-wheel"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=6-music-source"></script><script src="assets/magnetic-ink-dock.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/seyveo-liquid-gl.js?v=20261128-home-crease-dock-v1"></script><script src="assets/orb-language.js?v=20261128-spectral-silk-v1"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/seyveo-nav-glyphs.js?v=20261126-back-v144"></script><script src="assets/navigation-system.js?v=8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=7" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
@@ -8443,9 +8443,28 @@ html[data-theme="light"]:not(.sv-music-player-open) #svSmartMusicSheet[data-musi
 #svRecognitionIndexProgress::-webkit-progress-bar{background:rgba(128,150,165,.20);border-radius:999px}
 #svRecognitionIndexProgress::-webkit-progress-value{background:#648e99;border-radius:999px}
 #svRecognitionIndexProgress::-moz-progress-bar{background:#648e99;border-radius:999px}
-#svSmartMusicSheet[data-music-sheet="recognize"] #svRecognitionStart{display:flex;align-items:center;justify-content:center;gap:9px;min-height:44px;width:100%;border:1px solid rgba(100,145,167,.23);border-radius:999px;background:rgba(100,145,167,.12);color:inherit;font-size:14px;font-weight:600;box-shadow:none;transform:none;padding:10px 12px}
-#svSmartMusicSheet[data-music-sheet="recognize"] #svRecognitionStart svg{width:20px;height:20px;flex:none;color:#648e99}
-#svSmartMusicSheet[data-music-sheet="recognize"] #svRecognitionStart:disabled{opacity:.45}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb-button{
+ display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+ width:100%;margin:0;padding:2px 6px 10px;min-height:44px;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ border-radius:20px;transform:none!important;cursor:pointer;color:inherit;text-align:center;
+ -webkit-tap-highlight-color:transparent;
+}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb-button strong{font-size:19px;font-weight:620;letter-spacing:-.025em;line-height:1.25}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb-button small{font-size:12px;line-height:1.4;color:var(--secondary,#626873)}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb-button:disabled{opacity:.42;cursor:default}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb-button:focus-visible{outline:2px solid #6b9aa6;outline-offset:-2px}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb{display:block;width:min(164px,44vw);height:auto;aspect-ratio:1;overflow:visible;margin:0 auto 6px;color:#729ca5;pointer-events:none}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-ring{fill:none;stroke:currentColor;stroke-width:.85}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-core{fill:currentColor;fill-opacity:.09;stroke:currentColor;stroke-opacity:.18;stroke-width:.65}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-wave{fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;transform-origin:50% 50%}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-privacy{font-size:12px;text-align:center}
+#svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-hint{text-align:center}
+html[data-theme="dark"] #svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb,html.sv-music-player-open #svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-orb{color:#8cb9c3}
+@media(prefers-reduced-motion:no-preference){
+ #svSmartMusicSheet[data-music-sheet="recognize"] .is-listening .sv-recognition-wave{animation:svRecognitionBreath 1.15s ease-in-out infinite alternate}
+ @keyframes svRecognitionBreath{from{transform:scaleY(.75);opacity:.7}to{transform:scaleY(1.05);opacity:1}}
+}
 #svSmartMusicSheet[data-music-sheet="recognize"] .sv-recognition-hint{font-size:11.5px}
 @media(prefers-reduced-transparency:reduce){html[data-theme="light"]:not(.sv-music-player-open) #svSmartMusicSheet[data-music-sheet="recognize"]{background:#f8f9fa!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
 </style>
