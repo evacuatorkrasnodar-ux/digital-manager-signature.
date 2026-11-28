@@ -140,22 +140,6 @@
   w.addEventListener('pagehide',cancelLyric);
   w.addEventListener('pagehide',cancelRecognition);
   d.addEventListener('visibilitychange',()=>{if(d.hidden&&mode==='recognize'){cancelRecognition();close()}});
-  function updateRecognitionIndex(){
-   const status=$('svRecognitionIndexStatus'),button=$('svRecognitionStart'),engine=w.SEYVEO_MUSIC_FINGERPRINT;
-   if(!status||!button||mode!=='recognize')return;
-   const s=engine?.state();
-   const blocked=!s?.indexed;
-   const card=status.closest('.sv-recognition-index');
-   if(card)card.hidden=!blocked;
-   status.textContent=!s?.supported?'Распознавание недоступно на этом устройстве.':
-    !s.total?'Добавьте музыку в медиатеку.':
-    s.failed>=s.total?'Не удалось изучить песни.':'Сэйви готовит медиатеку…';
-   const progress=$('svRecognitionIndexProgress');
-   if(progress){progress.hidden=!blocked||!s?.supported||!s.total||s.failed>=s.total;if(!progress.hidden){progress.max=s.total;progress.value=Math.min(s.total,Math.max(0,s.indexed||0));}}
-   button.disabled=!s?.indexed;
-  }
-  d.addEventListener('seyveo:music-fingerprint',updateRecognitionIndex);
-  d.addEventListener('seyveo:music-library',updateRecognitionIndex);
   // One lightweight, reusable vector button. No second microphone or audio graph.
   const recognitionOrbMarkup='<svg class="sv-recognition-orb" viewBox="0 0 200 200" aria-hidden="true" focusable="false"><circle class="sv-recognition-ring" cx="100" cy="100" r="95" opacity=".22"/><circle class="sv-recognition-ring" cx="100" cy="100" r="81" opacity=".34"/><circle class="sv-recognition-ring" cx="100" cy="100" r="66" opacity=".50"/><circle class="sv-recognition-ring" cx="100" cy="100" r="51" opacity=".68"/><circle class="sv-recognition-core" cx="100" cy="100" r="44"/><g class="sv-recognition-wave"><path d="M69 89v22M79 78v44M89 69v62M100 60v80M111 74v52M121 84v32M131 92v16"/></g></svg>';
   function recognitionOrbButton(id,label,hint,fn,listening=false){
@@ -171,22 +155,16 @@
    cancelRecognition();
    if(!show('Распознать музыку','recognize'))return;
    const version=generation;
-   const privacy=message('До 10 сек. · Запись не покидает устройство');privacy.classList.add('sv-recognition-privacy');
    const engine=w.SEYVEO_MUSIC_FINGERPRINT;
    if(!w.isSecureContext||!w.navigator.mediaDevices?.getUserMedia||!w.MediaRecorder){message('Микрофон недоступен в этом браузере.');return}
-   // First use keeps explicit consent; subsequent quick taps can start immediately.
-   if(quick===true&&recognitionApproved&&engine?.state().indexed){recordRecognition(version);return}
-   const indexCard=d.createElement('div');indexCard.className='sv-recognition-index';indexCard.hidden=true;
-   const status=message('Готовлю музыкальный индекс…');status.id='svRecognitionIndexStatus';indexCard.append(status);
-   const progress=d.createElement('progress');progress.id='svRecognitionIndexProgress';progress.setAttribute('aria-label','Изучение медиатеки');progress.hidden=true;indexCard.append(progress);body.append(indexCard);
-   const startButton=recognitionOrbButton('svRecognitionStart','Распознать музыку','',()=>{recognitionApproved=true;recordRecognition(version)});
-   body.prepend(startButton);
-   updateRecognitionIndex();engine?.schedule();
+   // The round button is always available. Ask for microphone access only after a tap.
+   recognitionOrbButton('svRecognitionStart','Распознать музыку','',()=>{recognitionApproved=true;recordRecognition(version)});
+   engine?.schedule();
   }
   async function recordRecognition(version){
    if(version!==generation||mode!=='recognize')return;
    cancelRecognition();body.replaceChildren();
-   const engine=w.SEYVEO_MUSIC_FINGERPRINT;if(!engine?.state().indexed){message('Сначала дождитесь создания музыкального индекса.');action('Назад',recognitionSheet);return}
+   const engine=w.SEYVEO_MUSIC_FINGERPRINT;if(!engine?.state().supported){message('Распознавание пока недоступно.');action('Повторить',recognitionSheet);return}
    engine.setListening(true);
    const valid=()=>version===generation&&mode==='recognize'&&dialog?.open&&!cancelled;
    let stream=null,recorder=null,timer=0,cancelled=false;
@@ -214,19 +192,30 @@
       if(!blob.size||size>2*1024*1024)throw Error('clip');
       const data={result:await engine.recognize(blob,{signal:controller.signal})};if(!valid())return;
       body.replaceChildren();
-      if(!data.result){message('Не нашла уверенного совпадения в вашей медиатеке. Попробуйте ближе к источнику музыки.')}
+      if(!data.result){message('Не удалось узнать песню. Попробуйте ещё раз.')}
       else{
        const name=d.createElement('strong');name.className='sv-adaptive-tagline';name.textContent=data.result.title;body.append(name);message(data.result.artist);
        if(data.result.album)message(data.result.album);
        action('Включить песню',()=>{const items=music()?.recognitionLibrary?.()||[];const i=items.findIndex(x=>x.id===data.result.id);if(i<0){message('Песня удалена из медиатеки.');return}close();music()?.playIndexFromSearch?.(i)});
-       action('Копировать название',async()=>{try{await w.navigator.clipboard.writeText(data.result.artist+' — '+data.result.title);message('Скопировано.')}catch{message('Не удалось скопировать.')}});
+       const save=action('В блокнот',()=>{
+        const text=[data.result.title,data.result.artist].filter(Boolean).join(' — ');
+        const saved=w.SEYVEO_MUSIC_NOTE?.save(text,'music-recognition');
+        if(saved?.ok){save.disabled=true;save.querySelector('span').textContent='Записано в блокнот';}
+        else {feedback.hidden=false;feedback.textContent='Не удалось сохранить запись.';}
+       });
+       save.classList.add('sv-recognition-result-action');
+       save.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="15" height="18" rx="2"/><path d="M8 3v18M3 7h4M3 12h4M3 17h4M11 8h6M11 12h6"/></svg><span>В блокнот</span>';
+       const feedback=message('');feedback.hidden=true;feedback.setAttribute('role','status');
+       const copy=action('Копировать название',async()=>{try{await w.navigator.clipboard.writeText([data.result.artist,data.result.title].filter(Boolean).join(' — '));copy.querySelector('span').textContent='Скопировано';}catch{feedback.hidden=false;feedback.textContent='Не удалось скопировать.';}});
+       copy.classList.add('sv-recognition-result-action');
+       copy.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12"/></svg><span>Копировать название</span>';
       }
       action('Распознать ещё',recognitionSheet);
      }catch{if(valid()){body.replaceChildren();message('Не удалось прочитать или сравнить запись.');action('Повторить',recognitionSheet)}}
      finally{if(valid()){recognitionCancel=null;engine.setListening(false)}}
     };
     recorder.start();body.replaceChildren();
-    recognitionOrbButton('svRecognitionStop','Сэйви слушает музыку','До 10 секунд · Нажмите для отмены',()=>{cancelRecognition();close()},true);
+    recognitionOrbButton('svRecognitionStop','Сэйви слушает музыку','Нажмите для отмены',()=>{cancelRecognition();close()},true);
     timer=w.setTimeout(()=>{if(recorder.state!=='inactive')recorder.stop();release()},10000);
    }catch{release();if(valid()){engine.setListening(false);recognitionCancel=null;body.replaceChildren();message('Нет доступа к микрофону или формат записи не поддерживается.');action('Повторить',recognitionSheet)}}
   }
