@@ -478,9 +478,9 @@ function initRadio(){
   const label=String(name||'RADIO').trim().replace(/\s+/g,' '),words=label.split(' ');let lines=[''];
   for(const word of words){if(lines[lines.length-1]&&lines[lines.length-1].length+word.length>14&&lines.length<3)lines.push(word);else lines[lines.length-1]+=(lines[lines.length-1]?' ':'')+word}
   lines=lines.map(x=>x.slice(0,22));const size=Math.min(80,Math.floor(455/Math.max(4,...lines.map(x=>x.length)))*1.5);
-  const freq=/\d+(?:[.,]\d+)?\s*FM/i.test(quality)?String(quality).replace('.',','):'ON AIR';
+  const fm=String(quality||'').match(/^\s*(\d{2,3}(?:[.,]\d+)?)\s*FM\s*$/i);const freq=fm?fm[1].replace(',','.'):'ON AIR';
   const marks=['<g fill="none" stroke="#fff" opacity=".18" stroke-width="2"><circle cx="300" cy="300" r="205"/><circle cx="300" cy="300" r="250"/></g>','<g stroke="#fff" opacity=".14" stroke-width="3"><path d="M0 430 Q150 310 300 430 T600 430"/><path d="M0 470 Q150 350 300 470 T600 470"/><path d="M0 510 Q150 390 300 510 T600 510"/></g>','<g fill="#fff" opacity=".12"><circle cx="500" cy="90" r="190"/><circle cx="500" cy="90" r="125"/></g>'];
-  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600"><defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="'+c+'"/><stop offset="1" stop-color="'+d+'"/></linearGradient></defs><rect width="600" height="600" fill="url(#g)"/>'+marks[i%3]+'<g text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="'+size+'">'+lines.map((line,j)=>'<text x="300" y="'+(285+(j-(lines.length-1)/2)*(size*1.12))+'">'+escArt(line)+'</text>').join('')+'</g><text x="300" y="426" text-anchor="middle" fill="#fff" opacity=".9" font-family="Arial,sans-serif" font-size="29" font-weight="500" letter-spacing="3">'+escArt(freq)+'</text></svg>');
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600"><defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="'+c+'"/><stop offset="1" stop-color="'+d+'"/></linearGradient></defs><rect width="600" height="600" fill="url(#g)"/>'+marks[i%3]+'<g text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="'+size+'">'+lines.map((line,j)=>'<text x="300" y="'+(285+(j-(lines.length-1)/2)*(size*1.12))+'">'+escArt(line)+'</text>').join('')+'</g><text x="300" y="480" text-anchor="middle" fill="#fff" opacity=".95" font-family="Arial,sans-serif" font-size="'+(fm?65:29)+'" font-weight="'+(fm?600:500)+'" letter-spacing="2">'+escArt(freq)+'</text></svg>');
  };
  const officialLogos={krd107:'https://www.radio107.ru/images/logo.png'};
 
@@ -651,13 +651,13 @@ function initRadio(){
    const row=document.createElement('article');row.className='sv-radio-station';row.dataset.stationId=station.id;
    const art=document.createElement('span');art.className='sv-radio-art';art.style.backgroundColor=station.color;art.style.backgroundImage='url("'+station.artwork+'")';art.setAttribute('aria-hidden','true');
    const cover=document.createElement('button');cover.type='button';cover.className='sv-radio-tile-cover';cover.append(art);
-   if(station.logo){const logo=document.createElement('img');logo.className='sv-radio-logo';logo.alt='';logo.loading='lazy';logo.decoding='async';logo.referrerPolicy='no-referrer';logo.addEventListener('error',()=>logo.remove(),{once:true});logo.src=station.logo;cover.append(logo)}
+   if(station.logo&&!/\bFM\s*$/i.test(station.quality||'')){const logo=document.createElement('img');logo.className='sv-radio-logo';logo.alt='';logo.loading='lazy';logo.decoding='async';logo.referrerPolicy='no-referrer';logo.addEventListener('error',()=>logo.remove(),{once:true});logo.src=station.logo;cover.append(logo)}
    cover.addEventListener('pointerdown',()=>{delete row.dataset.svHeld});
    cover.setAttribute('aria-description','Двойное нажатие — сохранить станцию в начале списка');cover.addEventListener('click',e=>{if(row.dataset.svHeld){delete row.dataset.svHeld;return}tapStation(station.id,e.detail===0)});
    buttons.set(station.id,cover);
    const copy=document.createElement('div');copy.className='sv-radio-copy';const title=document.createElement('strong');title.textContent=station.name;title.title=station.name;
    const subtitle=document.createElement('small');subtitle.textContent=station.city||station.country||'';subtitle.hidden=!subtitle.textContent;
-   const fm=String(station.quality||'').match(/^\s*(\d{2,3}(?:[.,]\d+)?)\s*FM\s*$/i);subtitle.textContent=[station.city||station.country||'',fm?fm[1].replace(',','.'):''].filter(Boolean).join(' · ');subtitle.hidden=!subtitle.textContent;copy.append(title,subtitle);row.append(cover,copy);bindRadioHold(row,station);list.append(row);
+   copy.append(title,subtitle);row.append(cover,copy);bindRadioHold(row,station);list.append(row);
   }
   if(!list.children.length){const empty=document.createElement('p');empty.className='sv-radio-empty';empty.textContent='Станции не найдены';list.append(empty)}
   drawRadio();
