@@ -533,7 +533,8 @@ function syncResume(){
  const playing=loaded&&!audio.paused&&!audio.ended;
  // One actual audio element. The mini is a small remote, not a second player.
  if(mini){
-  const inline=miniOnMusicHome();
+  // Replay shares the approved floating Music Home remote during an active or paused session.
+  const inline=miniOnMusicHome()||(location.hash==='#sayvi-music'&&page.dataset.musicView==='replay'&&!page.hidden&&!!miniHomeSlot&&loaded&&hasPlayed&&!audio.ended&&!miniDismissed);
   if(inline){if(mini.parentNode!==miniHomeSlot)miniHomeSlot.append(mini)}
   else if(miniOrigin.parentNode&&mini.parentNode!==miniOrigin.parentNode)miniOrigin.parentNode.insertBefore(mini,miniOrigin.nextSibling);
   mini.classList.toggle('sv-music-mini-inline',inline);
