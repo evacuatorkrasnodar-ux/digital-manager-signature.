@@ -9894,4 +9894,28 @@ html:root body #sayviMusicPage #svMusicLibrary #svLibrarySort{
 #sayviMusicPage #svMusicLibrary .sv-pl-pick-row input{width:19px;height:19px;flex:0 0 19px;accent-color:#688e99}
 #sayviMusicPage #svMusicLibrary .sv-pl-picker{max-height:38vh;overflow:auto;overscroll-behavior:contain}
 </style>
+<style id="svLibraryFilterFit">
+/* All five collection modes are visible, with full-size touch targets. */
+html:root body #sayviMusicPage #svMusicLibrary .sv-library-filters{
+ display:grid!important;grid-template-columns:.79fr 1.34fr 1.04fr .83fr 1.12fr;
+ gap:3px!important;align-items:center;overflow:visible!important;
+ border:1px solid var(--soft-line);border-radius:16px;padding:3px!important;box-sizing:border-box;
+}
+html:root body #sayviMusicPage #svMusicLibrary .sv-library-filters>button{
+ width:100%!important;min-width:0!important;min-height:44px!important;margin:0!important;
+ padding:0 2px!important;box-sizing:border-box;white-space:nowrap;
+ font-size:clamp(10px,2.95vw,12px)!important;font-weight:520;
+ border:0!important;border-radius:12px!important;background:transparent!important;
+}
+html:root body #sayviMusicPage #svMusicLibrary .sv-library-filters>button[aria-pressed=true]{
+ background:var(--card2,var(--card))!important;color:var(--text)!important;
+}
+@media(max-width:350px){
+ html:root body #sayviMusicPage #svMusicLibrary .sv-library-filters{
+  grid-template-columns:repeat(6,minmax(0,1fr));gap:2px!important;
+ }
+ html:root body #sayviMusicPage #svMusicLibrary .sv-library-filters>button{grid-column:span 2;font-size:11px!important}
+ html:root body #sayviMusicPage #svMusicLibrary .sv-library-filters>button:nth-child(n+4){grid-column:span 3}
+}
+</style>
 </body></html>
