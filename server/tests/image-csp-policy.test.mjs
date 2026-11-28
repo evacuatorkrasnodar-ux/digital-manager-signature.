@@ -43,9 +43,19 @@ test('Wallet exchange rates are allowed only by the Home connect-src exception',
 
 test('Music catalog is allowed only by the Home connect-src exception',()=>{
  const home=server.slice(server.indexOf('function mapHomeHeaders(){'),server.indexOf('function homePageHeaders(req)'));
- assert.match(home,/const musicCatalog='https:\/\/itunes\.apple\.com\/search';/);
+ assert.match(home,/const musicCatalog='https:\/\/itunes\.apple\.com\/search https:\/\/musicbrainz\.org\/ws\/2\/';/);
  assert.match(home,/'connect-src':data\+' '\+walletRates\+' '\+musicCatalog/);
  const base=server.match(/connect-src ([^;]+);/)?.[1];
  assert.ok(base);
  assert.doesNotMatch(base,/itunes\.apple\.com/);
+});
+
+test('Radio catalog and HTTPS media are allowed only on the main Home page',()=>{
+ const home=server.slice(server.indexOf('function mapHomeHeaders(){'),server.indexOf('function homePageHeaders(req)'));
+ assert.match(home,/const radioCatalog='https:\/\/de1\.api\.radio-browser\.info\/json\/stations\/search https:\/\/nl1\.api\.radio-browser\.info\/json\/stations\/search';/);
+ assert.match(home,/'connect-src':data\+' '\+walletRates\+' '\+musicCatalog\+' '\+radioCatalog/);
+ assert.match(home,/'media-src':'https:'/);
+ const base=server.match(/connect-src ([^;]+);/)?.[1];
+ assert.doesNotMatch(base,/radio-browser/);
+ assert.match(server,/media-src 'self' blob:;/);
 });
