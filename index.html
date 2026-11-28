@@ -8707,4 +8707,20 @@ html.sv-music-screen #sayviMusicPage #sayviMusicCollection .sv-collection-action
  #sayviMusicPage #sayviMusicCollection .sv-queue-slide>*{transition:none!important}
 }
 </style>
+<style id="svQueueSwipeFinalMaterial">
+/* Flat destructive action, isolated from global button materials. */
+html:root body #sayviMusicPage #sayviMusicCollection .sv-queue-slide > button.sv-queue-swipe-delete:not([hidden]){
+ background:#d94b50!important;background-image:none!important;color:#fff!important;
+ -webkit-text-fill-color:#fff!important;border:0!important;outline:0!important;
+ border-radius:0 10px 10px 0!important;box-shadow:none!important;
+ font-size:12px!important;font-weight:550!important;letter-spacing:0!important;
+}
+html:root body #sayviMusicPage #sayviMusicCollection .sv-queue-slide > button.sv-queue-swipe-delete::before,
+html:root body #sayviMusicPage #sayviMusicCollection .sv-queue-slide > button.sv-queue-swipe-delete::after{
+ content:none!important;display:none!important;
+}
+html:root body #sayviMusicPage #sayviMusicCollection .sv-queue-slide > button.sv-queue-swipe-delete:focus-visible{
+ outline:2px solid currentColor!important;outline-offset:-3px!important;
+}
+</style>
 </body></html>
