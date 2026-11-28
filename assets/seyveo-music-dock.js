@@ -102,6 +102,31 @@ function init(){
   button.addEventListener('keydown',e=>{if(e.key==='Delete'){e.preventDefault();forget()}});
   button.setAttribute('aria-keyshortcuts','Delete');row.append(button,remove);return row;
  }
+ // Keep up to five complete recent rows, leaving breathing room above the dock.
+ let recentFitFrame=0;
+ function fitRecentRows(){
+  recentFitFrame=0;
+  if(!active||view!=='home')return;
+  const list=get('svMusicRecent');
+  if(!list||!list.getClientRects().length)return;
+  const rows=Array.from(list.querySelectorAll('.sv-music-recent-card'));
+  if(!rows.length)return;
+  for(const row of rows)row.style.removeProperty('display');
+  const viewport=window.visualViewport;
+  let bottom=Math.min(viewport?viewport.offsetTop+viewport.height:window.innerHeight,page.getBoundingClientRect().bottom);
+  for(const control of [dock,get('sayviMusicMini')]){
+   if(!control||control.hidden||!control.getClientRects().length)continue;
+   const rect=control.getBoundingClientRect();
+   if(rect.height>0&&rect.top>list.getBoundingClientRect().top)bottom=Math.min(bottom,rect.top);
+  }
+  const boundary=bottom-18;
+  const ends=rows.map(row=>row.getBoundingClientRect().bottom);
+  for(let i=1;i<rows.length;i++)if(ends[i]>boundary)rows[i].style.setProperty('display','none','important');
+ }
+ function scheduleRecentFit(){
+  if(!active||view!=='home'||recentFitFrame)return;
+  recentFitFrame=requestAnimationFrame(fitRecentRows);
+ }
  function renderTracks(){
   stopCoverObserver();const generation=coverGeneration;
   if(!active)return;
@@ -112,7 +137,7 @@ function init(){
   if(historyMore)historyMore.disabled=!history.length;
   if(!history.length)closeHistoryMenu();
   const library=view==='library'?(music()?.browseTracks?.()||[]):[];
-  const lists=view==='home'?[['svMusicRecent',history.slice(0,3),true]]:view==='history'?[['svMusicHistoryTracks',history,false]]:[['svMusicLibraryTracks',library.slice(0,libraryLimit),false]];
+  const lists=view==='home'?[['svMusicRecent',history.slice(0,5),true]]:view==='history'?[['svMusicHistoryTracks',history,false]]:[['svMusicLibraryTracks',library.slice(0,libraryLimit),false]];
   for(const [id,items,recent] of lists){
    const el=get(id);if(!el)continue;el.replaceChildren();
    if(!items.length){const empty=document.createElement('p');empty.className=recent?'sv-music-recent-empty':'sv-music-browse-caption';empty.textContent=recent||view==='history'?'Включите любимую станцию или добавьте музыку. Здесь появится история прослушивания.':'Добавьте аудиофайлы с устройства.';el.append(empty);continue}
@@ -130,6 +155,7 @@ function init(){
     const more=document.createElement('button');more.type='button';more.className='sv-replay-back';more.style.cssText='display:block;width:100%;min-height:44px;text-align:center';more.textContent='Показать ещё · '+Math.min(60,library.length-libraryLimit);more.addEventListener('click',()=>{libraryLimit+=60;renderTracks()});el.append(more);
    }
   }
+  scheduleRecentFit();
  }
  document.addEventListener('seyveo:radio-history',renderTracks);
  const periodSelect=get('svMusicReplayPeriod'),periodTrigger=get('svReplayPeriodTrigger'),periodMenu=get('svReplayPeriodMenu'),periodLabel=get('svReplayPeriodLabel');
@@ -326,6 +352,8 @@ function init(){
  }
  nav.addEventListener('click',e=>{const btn=e.target.closest('button[data-music-nav]');if(!btn)return;e.preventDefault();e.stopPropagation();show(btn.dataset.musicNav)});
  page.addEventListener('click',e=>{const btn=e.target.closest('[data-music-view-action]');if(!btn)return;const key=btn.dataset.musicViewAction;if(key==='youtube'){closeNowMenu();music()?.closePanels?.();window.SEYVEO_VIDEO?.open({from:'music'});}else if(key==='import')get('sayviMusicImport')?.click();else if(key==='favorites')get('sayviMusicFavoritesToggle')?.click();else if(key==='sources')get('sayviMusicSourcesToggle')?.click();else show(key)});
+ window.addEventListener('resize',scheduleRecentFit,{passive:true});
+ window.visualViewport?.addEventListener('resize',scheduleRecentFit,{passive:true});
  window.addEventListener('hashchange',refresh);window.addEventListener('seyveo:route-changed',refresh);
  new MutationObserver(refresh).observe(page,{attributes:true,attributeFilter:['hidden']});
  document.addEventListener('seyveo:music-state',()=>{refresh();renderTracks()});
