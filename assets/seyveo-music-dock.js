@@ -534,7 +534,7 @@ function initRadio(){
  function toggleFavorite(id){
   const station=stations.find(s=>s.id===id);if(!station)return false;
   const snapshot=id.startsWith('rb-')?{stationuuid:id.slice(3),name:station.name,countrycode:station.countrycode,country:station.country,state:station.city,tags:station.genre,url_resolved:station.stream,homepage:station.site,codec:station.quality.replace(/^\d+\s*/,''),bitrate:parseInt(station.quality,10)||0}:null;
-  const next=isFavorite(id)?favorites.filter(f=>f.id!==id):[{id,snapshot},...favorites];
+  const next=isFavorite(id)?favorites.filter(f=>f.id!==id):[{id,snapshot},...favorites.filter(f=>f.id!==id)];
   if(next.length>200){status.textContent='Достигнут предел избранных станций.';return false}
   try{localStorage.setItem(favoriteKey,JSON.stringify(next))}catch{status.textContent='Не удалось сохранить избранное.';return false}
   favorites=next;if(isHidden(id))return setHidden(id,false);renderFavoritesMotion(id);return true;
