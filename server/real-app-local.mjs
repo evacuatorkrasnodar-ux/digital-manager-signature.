@@ -97,10 +97,12 @@ function mapHomeHeaders(){
  const data=sdk+' https://*.maps.yandex.net';
  // Wallet rates are public reference data. Permit only the JSON endpoint on Home.
  const walletRates='https://www.cbr-xml-daily.ru/daily_json.js';
- // Discovery uses only the public iTunes Search API after opt-in.
- const musicCatalog='https://itunes.apple.com/search';
+ // Public release metadata (MusicBrainz) and opt-in artist lookup (iTunes).
+ // Cover Art Archive redirects image downloads to Internet Archive storage.
+ const musicCatalog='https://itunes.apple.com/search https://musicbrainz.org/ws/2/';
+ const musicArtwork='https://*.mzstatic.com https://coverartarchive.org https://archive.org https://*.archive.org';
  const extra={'script-src':sdk+" 'unsafe-eval'",'connect-src':data+' '+walletRates+' '+musicCatalog,
-  'style-src':sdk,'img-src':data,'worker-src':'data: '+sdk};
+  'style-src':sdk,'img-src':data+' '+musicArtwork,'worker-src':'data: '+sdk};
  const policy=HEADERS['content-security-policy'].split(';').map(part=>{
   const directive=part.trim().split(/\s+/)[0];
   return extra[directive]?part+' '+extra[directive]:part;
