@@ -1253,7 +1253,7 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
    </svg>
    <div class="sv-music-scene-copy"><span class="sv-music-scene-signature">ADAPTIVE SOUND · <i>AI</i></span><strong>В вашем ритме</strong><small>Музыка, которая рядом</small></div>
    <div class="sv-music-scene-actions">
-    <button type="button" data-music-view-action="replay" aria-label="Мой музыкальный мир"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v4m4-8v8m4-12v12m4-8v8m4-4v4"/></svg><span><strong>Мой мир</strong></span></button>
+    <button type="button" data-music-view-action="replay" aria-label="Мой музыкальный мир"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v4" stroke="#91D9CB"/><path d="M8 9v8" stroke="#A3E5D9"/><path d="M12 5v12" stroke="#B6DAF5"/><path d="M16 9v8" stroke="#D3C4F3"/><path d="M20 13v4" stroke="#C1B5ED"/></svg><span><strong>Мой мир</strong></span></button>
     <button type="button" data-music-view-action="youtube" aria-label="YouTube — клипы и концерты"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"/></svg><span><strong>YouTube</strong></span></button>
     <button type="button" id="svMusicRecognizeHome" aria-label="Распознать музыку"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M6.8 12.9 10.6 9.1a3.2 3.2 0 0 1 4.5 0l.9.9M17.2 11.1l-3.8 3.8a3.2 3.2 0 0 1-4.5 0l-.9-.9"/></svg><span><strong>Распознать</strong></span></button>
    </div>
@@ -8927,6 +8927,18 @@ html:root body #sayviMusicPage #svMusicHome .sv-music-scene-actions>button::afte
    scroll-padding-bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 138px)!important;
   }
  }
+}
+</style>
+<style id="svMusicHeroIconAccents">
+/* Restrained accents on the glyphs only; keep the three glass buttons equal. */
+html:root body #sayviMusicPage #svMusicHome .sv-music-scene-actions>button[data-music-view-action="youtube"]>svg{
+ color:#ff9295!important;stroke:currentColor!important;stroke-width:1.35!important;
+}
+html:root body #sayviMusicPage #svMusicHome .sv-music-scene-actions>button[data-music-view-action="youtube"]>svg path{
+ fill:none!important;stroke:currentColor!important;stroke-width:1.25!important;
+}
+html:root body #sayviMusicPage #svMusicHome .sv-music-scene-actions>button[data-music-view-action="replay"]>svg{
+ color:#a0e2d5!important;stroke:currentColor!important;
 }
 </style>
 </body></html>
