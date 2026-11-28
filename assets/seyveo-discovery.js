@@ -109,6 +109,9 @@ const safeUrl=s=>{
    (u.hostname==='music.apple.com'||u.hostname==='itunes.apple.com')?u.href:'';
  }catch{return ''}
 };
+function safeArtwork(s){
+ try{const u=new URL(s);return u.protocol==='https:'&&u.hostname.endsWith('.mzstatic.com')?u.href:''}catch{return ''}
+}
 function renderReleases(){
  if(!releasesList||!empty||!emptyTitle)return;
  const items=state.enabled?state.releases.filter(r=>!state.ignored.includes(r.id)&&validDate(r.date)&&safeUrl(r.url)&&Date.now()>=Number(state.snoozed[r.id]||0)).slice(0,20):[];
@@ -117,10 +120,12 @@ function renderReleases(){
   const row=document.createElement('article');row.className='sv-discovery-tile';
   const art=document.createElement('span');art.className='sv-discovery-release-art';art.setAttribute('aria-hidden','true');
   art.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17V6l11-3v11"/><ellipse cx="6" cy="17.5" rx="3" ry="2.3"/><ellipse cx="17" cy="14.5" rx="3" ry="2.3"/></svg>';
+  const artwork=safeArtwork(r.artwork);
+  if(artwork){const img=document.createElement('img');img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
+   const fallback=art.innerHTML;img.addEventListener('error',()=>{art.innerHTML=fallback},{once:true});img.src=artwork;art.replaceChildren(img)}
   const copy=document.createElement('span');copy.className='sv-discovery-release-copy';
   const title=document.createElement('strong');title.textContent=r.title;
   const artist=document.createElement('small');artist.textContent=r.artist+' · '+new Date(r.date+'T00:00:00Z').toLocaleDateString('ru-RU',{day:'numeric',month:'short',timeZone:'UTC'});
-  const arrow=document.createElement('span');arrow.className='sv-discovery-release-arrow';arrow.setAttribute('aria-hidden','true');arrow.textContent='↗';
   copy.append(title,artist);row.append(art,copy);releasesList.append(row);
  }
  releasesList.hidden=!items.length;empty.hidden=!!items.length;
@@ -145,7 +150,7 @@ function chooseReleases(data,artist,now=Date.now()){
   return {
    id:'itunes:'+r.collectionId,
    artist:clean(r.artistName),title:clean(r.collectionName),
-   date,url:safeUrl(r.collectionViewUrl),at
+   date,url:safeUrl(r.collectionViewUrl),artwork:safeArtwork(r.artworkUrl100),at
   };
  }).filter(r=>r.at<=now&&r.at>=now-LOOKBACK)
  .sort((a,b)=>b.at-a.at);
@@ -190,7 +195,7 @@ async function check({force=false}={}){
     if(state.ignored.includes(release.id)||state.releases.some(r=>r.id===release.id))continue;
     state.releases.unshift({
      id:release.id,artist:release.artist,title:release.title,
-     date:release.date,url:release.url
+     date:release.date,url:release.url,artwork:release.artwork
     });
     found++;
    }
@@ -244,7 +249,7 @@ function dismiss(id){
 // Public editorial shelf. No playback, outbound buttons or fabricated news.
 // MusicBrainz catalog dates are community-maintained, not independent press confirmation.
 const publicList=$('svDiscoveryPublicList'),publicStatus=$('svDiscoveryPublicStatus'),publicTitle=$('svDiscoveryPublicTitle'),publicSource=$('svDiscoveryPublicSource');
-const PUBLIC_KEY='seyveo-music-editorial-v1-',PUBLIC_TTL=6*3600000;
+const PUBLIC_KEY='seyveo-music-editorial-v2-',PUBLIC_TTL=6*3600000;
 const upcomingList=$('svDiscoveryUpcomingList'),upcomingStatus=$('svDiscoveryUpcomingStatus'),newsList=$('svDiscoveryNewsList');
 let publicRun=0,publicController=null,lastPublicRequest=0;
 const uuid=s=>typeof s==='string'&&/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(s);
@@ -290,7 +295,7 @@ function renderNews(recent,upcoming){
   const date=document.createElement('time');date.dateTime=r.date;date.textContent=dateLabel(r.date);
   const title=document.createElement('strong');title.textContent=r.artist+' — '+r.title;
   const body=document.createElement('p');const kind=r.type==='Single'?'сингл':r.type==='EP'?'мини-альбом':'альбом';
-  body.textContent=future?'В каталоге указан предстоящий '+kind+'. Дата может измениться.':'В каталоге появился '+kind+' с датой релиза '+dateLabel(r.date)+'.';
+  body.textContent=future?'Ожидается новый '+kind+'. Дата указана в каталоге и может измениться.':'Вышел '+kind+' — по данным музыкального каталога.';
   story.append(date,title,body);newsList.append(story);
  }
  if(!stories.length){const p=document.createElement('p');p.className='sv-discovery-public-status';p.textContent='Пока нет свежих сообщений о релизах.';newsList.append(p)}
@@ -330,7 +335,7 @@ async function loadPublic(){
  const run=++publicRun;publicController?.abort();publicController=null;
  let cache=null;try{cache=JSON.parse(localStorage.getItem(key)||'null')}catch{}
  const cached=publicItems(cache?.items);
- if(cached.length){showPublic(cached,Date.now()-Number(cache.at)>PUBLIC_TTL);if(Date.now()-Number(cache.at)<PUBLIC_TTL)return}
+ if(cached.length){showPublic(cached,Date.now()-Number(cache.at)>PUBLIC_TTL);if(Date.now()-Number(cache.at)<PUBLIC_TTL)return} else if(cache&&Array.isArray(cache.items)&&Date.now()-Number(cache.at)<PUBLIC_TTL){showPublic([]);return}
  else{
   publicList.replaceChildren();upcomingList?.replaceChildren();newsList?.replaceChildren();
   publicTitle.textContent='Свежие релизы';publicMessage('Сэйви проверяет новинки…');
@@ -347,7 +352,7 @@ async function loadPublic(){
   const items=publicItems([...fresh,...future,...(ok<2?cached:[])]);
   if(ok===2)try{localStorage.setItem(key,JSON.stringify({at:Date.now(),items}))}catch{}
   showPublic(items,ok<2);
-  if(ok<2)publicMessage('Часть каталога временно недоступна.');
+  if(ok<2){publicMessage('Часть каталога временно недоступна.');if(upcomingStatus&&!upcomingList?.childElementCount){upcomingStatus.hidden=false;upcomingStatus.textContent='Не удалось полностью проверить календарь релизов.'}}
  }catch{
   if(run!==publicRun)return;
   if(cached.length)showPublic(cached,true);
