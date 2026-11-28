@@ -65,6 +65,54 @@
  }
  // Analyse low, mid and high energy in 50 ms windows. Use transient
  // increases in bass as the main pulse, with gentle dynamic compression.
+
+ // Eight logarithmic frequency bands from the same decoded PCM, no second decoder.
+ function makeSilkSpectrum(rate){
+  const N=1024,half=N/2,rev=new Uint16Array(N),win=new Float32Array(N),
+    cs=new Float32Array(half),sn=new Float32Array(half),re=new Float32Array(N),im=new Float32Array(N);
+  const edges=[35,90,180,360,720,1440,2880,5760,8000];
+  const bins=new Int8Array(half);bins.fill(-1);
+  for(let i=0;i<N;i++){
+   let x=i,y=0;for(let j=0;j<10;j++){y=(y<<1)|(x&1);x>>=1}rev[i]=y;
+   win[i]=.5-.5*Math.cos(2*Math.PI*i/(N-1));
+  }
+  for(let i=0;i<half;i++){
+   cs[i]=Math.cos(-2*Math.PI*i/N);sn[i]=Math.sin(-2*Math.PI*i/N);
+   const hz=i*rate/N;for(let k=0;k<8;k++)if(hz>=edges[k]&&hz<edges[k+1]){bins[i]=k;break}
+  }
+  const power=new Float32Array(8),counts=new Uint16Array(8);
+  for(let i=0;i<half;i++)if(bins[i]>=0)counts[bins[i]]++;
+  return function sampleSpectrum(left,right,center,out,offset){
+   for(let i=0;i<N;i++){
+    const p=center+i-half;
+    const value=p>=0&&p<left.length?(right?(left[p]+right[p])*.5:left[p]):0;
+    re[rev[i]]=value*win[i];im[rev[i]]=0;
+   }
+   for(let len=2;len<=N;len*=2){
+    const step=N/len,mid=len/2;
+    for(let i=0;i<N;i+=len)for(let j=0;j<mid;j++){
+     const a=i+j,b=a+mid,k=j*step;
+     const tr=re[b]*cs[k]-im[b]*sn[k],ti=re[b]*sn[k]+im[b]*cs[k];
+     re[b]=re[a]-tr;im[b]=im[a]-ti;re[a]+=tr;im[a]+=ti;
+    }
+   }
+   power.fill(0);
+   for(let i=1;i<half;i++){const k=bins[i];if(k>=0)power[k]+=re[i]*re[i]+im[i]*im[i]}
+   for(let k=0;k<8;k++)out[offset+k]=Math.sqrt(power[k]/Math.max(1,counts[k]))*4/N;
+  };
+ }
+ const silenceSpectrum=new Float32Array(8);
+ const playerSpectrum=new Float32Array(8),homeSpectrum=new Float32Array(8);
+ function updateSilkSpectrum(target,data,time,dt,amount){
+  const spectrum=data?.silkSpectrum;
+  const index=spectrum?.length?clamp(time/RHYTHM_STEP,0,spectrum.length/8-1):0;
+  const a=Math.floor(index),b=spectrum?.length?Math.min(a+1,spectrum.length/8-1):0,f=index-a;
+  for(let i=0;i<8;i++){
+   const value=spectrum?(spectrum[a*8+i]*(1-f)+spectrum[b*8+i]*f)*amount:0;
+   target[i]+=(value-target[i])*(1-Math.exp(-dt/(value>target[i]?75:240)));
+  }
+  return target;
+ }
  async function analyse(file){
   const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
   if(!Offline)return null;
@@ -74,7 +122,7 @@
    buffer=await decode(context,await readBytes(file));
    if(!buffer||!Number.isFinite(buffer.duration)||buffer.duration>MAX_RHYTHM_SECONDS||!buffer.length)return null;
    const rate=buffer.sampleRate,n=Math.max(1,Math.round(rate*RHYTHM_STEP)),frames=Math.ceil(buffer.length/n);
-   const raw=new Float32Array(frames*3);
+   const raw=new Float32Array(frames*3),spectrum=new Float32Array(frames*8),sampleSpectrum=makeSilkSpectrum(rate);
    const left=buffer.getChannelData(0),right=buffer.numberOfChannels>1?buffer.getChannelData(1):null;
    const a=1-Math.exp(-2*Math.PI*180/rate),b=1-Math.exp(-2*Math.PI*1800/rate);
    let low=0,mid=0,previousBass=0;
@@ -95,6 +143,7 @@
     raw[frame*3]=rms+onset*.9;
     raw[frame*3+1]=Math.sqrt(body/count);
     raw[frame*3+2]=Math.sqrt(air/count);
+    sampleSpectrum(left,right,Math.floor((start+end)/2),spectrum,frame*8);
     // Yield during long tracks; no synchronous multi-second UI freeze.
     if(frame%120===119)await new Promise(resolve=>setTimeout(resolve,0));
    }
@@ -104,6 +153,13 @@
     norm[band]=Math.max(.006,values[Math.floor((values.length-1)*.92)]||0);
    }
    for(let i=0;i<raw.length;i++)raw[i]=clamp(Math.pow(raw[i]/norm[i%3],.65),0,1);
+   // A robust per-band reference keeps quiet highs visible without inventing motion.
+   for(let k=0;k<8;k++){
+    const values=Array.from({length:frames},(_,i)=>spectrum[i*8+k]).sort((a,b)=>a-b);
+    const ref=Math.max(.002,values[Math.floor((values.length-1)*.95)]||0);
+    for(let i=k;i<spectrum.length;i+=8)spectrum[i]=clamp(Math.pow(spectrum[i]/ref,.72),0,1);
+   }
+   raw.silkSpectrum=spectrum;
    return raw;
   }catch{return null}
   finally{buffer=null;context=null}
@@ -240,7 +296,7 @@
   if(liquidGPU){try{liquidGPU.dispose?.()}catch{}liquidGPU=null}
   liquidGPUAttempted=false;resetLiquidTiming();liquidClock=-1;liquidSlowFrames=0;liquidAmbientLast=0;liquidRenderCost=0;
   if(liquidSize){liquidCanvas.width=liquidCanvas.height=1;liquidSize=0;liquidGradient=null}
-  liquidEnergy.fill(0);liquidIdleMix=0;liquidIdleActive=false;
+  liquidEnergy.fill(0);playerSpectrum.fill(0);liquidIdleMix=0;liquidIdleActive=false;
  }
  function fallBackLiquid(reason){
   liquidAutoReason=reason;liquidMode=false;syncLiquidMode();
@@ -294,7 +350,9 @@
   }
   if(liquidGPU){
    try{
-    const frame=liquidGPU.render(pixels,p,b,m,h,liquidIdleMix);
+    const spectrumData=playing&&sceneFile?rhythmCache.get(sceneFile):null;
+    const spectrum=reduce?.matches?silenceSpectrum:updateSilkSpectrum(playerSpectrum,spectrumData,audio.currentTime,dt,1);
+    const frame=liquidGPU.render(pixels,p,b,m,h,liquidIdleMix,false,spectrum);
     if(frame){ctx.drawImage(frame,0,0,400,400);liquidRenderCost=force?0:performance.now()-renderStarted;return}
    }catch{}
    try{liquidGPU.dispose?.()}catch{}liquidGPU=null;
@@ -529,7 +587,7 @@
  }
  function releaseHomeMatter(){
   if(homeMatterTimer)clearTimeout(homeMatterTimer);
-  homeMatterTimer=0;homeMatter.hidden=true;homeMatterDrawn=false;
+  homeMatterTimer=0;homeMatter.hidden=true;homeMatterDrawn=false;homeSpectrum.fill(0);
   if(homeMatterGPU){try{homeMatterGPU.dispose()}catch{}homeMatterGPU=null}
   if(homeMatter.width!==1)homeMatter.width=homeMatter.height=1;
  }
@@ -555,7 +613,9 @@
   }
   if(!reduce?.matches)homeMatterPhase=(homeMatterPhase+.11) % 600;
   try{
-   const frame=homeMatterGPU.render(size,homeMatterPhase,b,m,h,1,true);
+   const file=playing?window.SEYVEO_MUSIC?.rhythmFile?.():null;
+   const spectrum=reduce?.matches?silenceSpectrum:updateSilkSpectrum(homeSpectrum,file&&rhythmCache.get(file),audio?.currentTime||0,100,.62);
+   const frame=homeMatterGPU.render(size,homeMatterPhase,b,m,h,1,true,spectrum);
    if(!frame)throw Error('Home silk unavailable');
    if(homeMatter.width!==size)homeMatter.width=homeMatter.height=size;
    homeMatterCtx.clearRect(0,0,size,size);
