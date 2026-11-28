@@ -39,7 +39,7 @@ function init(){
  function playlistNotice(el,label){const p=document.createElement('p');p.className='sv-music-browse-caption';p.textContent=label;el.append(p);return p}
  function setPlaylistEditing(value){
   playlistEditing=!!value;get('svMusicLibrary')?.classList.toggle('sv-pl-editing',playlistEditing);page.classList.toggle('sv-pl-editor-open',playlistEditing);
-  if(!playlistEditing){page.querySelectorAll('.sv-pl-header-action,.sv-pl-selection-toolbar').forEach(b=>b.remove());const label=page.querySelector('[data-title-view="library"]');if(label)label.textContent='Медиатека';}
+  if(!playlistEditing){page.querySelectorAll('.sv-pl-header-action,.sv-pl-selection-toolbar,.sv-pl-smart-panel').forEach(b=>b.remove());const label=page.querySelector('[data-title-view="library"]');if(label)label.textContent='Медиатека';}
  }
  const plNorm=value=>String(value||'').normalize('NFKC').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').replace(/[«»"“”]/g,'').replace(/\s+/g,' ').trim();
  function parsePlaylistCommand(value,library){
@@ -117,7 +117,7 @@ function init(){
   const panel=document.createElement('div');panel.className='sv-pl-smart-panel';
   const label=document.createElement('label');label.className='sv-pl-smart-label';label.htmlFor='svPlaylistCommand';label.textContent='Название или команда';panel.append(label);
   const input=document.createElement('textarea');input.id='svPlaylistCommand';input.rows=1;input.maxLength=400;input.placeholder='В дорогу, добавь рок и Шамана';input.setAttribute('aria-label','Название и состав плейлиста');input.value=existing?.name||'';input.className='sv-pl-smart-input';panel.append(input);
-  const preview=document.createElement('div');preview.className='sv-pl-smart-preview';preview.setAttribute('aria-live','polite');panel.append(preview);el.append(panel);
+  const preview=document.createElement('div');preview.className='sv-pl-smart-preview';preview.setAttribute('aria-live','polite');panel.append(preview);top.append(panel);
   const message=playlistNotice(el,'');message.classList.add('sv-pl-editor-message');message.setAttribute('role','status');
   const manual=new Map((existing?.ids||[]).map(id=>[id,true]));
   let parsed={name:existing?.name||'',query:'',ids:new Set(),missing:[],explicit:false,searchOnly:false},chosen=new Set(existing?.ids||[]),onlySelected=false;
