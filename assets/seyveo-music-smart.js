@@ -134,12 +134,13 @@
   dialog?.addEventListener('close',()=>{++generation;mode='';delete dialog.dataset.musicSheet});
   dialog?.addEventListener('click',e=>{if(e.target===dialog)close()});
   d.addEventListener('seyveo:music-view',e=>{if(e.detail?.view!=='player'&&dialog?.open)close()});
-  let recognitionCancel=null,recognitionApproved=false;
-  function cancelRecognition(){const cancel=recognitionCancel;recognitionCancel=null;cancel?.()}
+  let recognitionCancel=null,recognitionApproved=false,recognitionSource='';
+  const canCaptureDevice=()=>!!(w.isSecureContext&&w.navigator.mediaDevices?.getDisplayMedia&&w.MediaRecorder);
+  function cancelRecognition(){const cancel=recognitionCancel;recognitionCancel=null;recognitionSource='';cancel?.()}
   dialog?.addEventListener('close',cancelRecognition);
   w.addEventListener('pagehide',cancelLyric);
   w.addEventListener('pagehide',cancelRecognition);
-  d.addEventListener('visibilitychange',()=>{if(d.hidden&&mode==='recognize'){cancelRecognition();close()}});
+  d.addEventListener('visibilitychange',()=>{if(d.hidden&&mode==='recognize'&&recognitionSource!=='device'){cancelRecognition();close()}});
   // One lightweight, reusable vector button. No second microphone or audio graph.
   const recognitionOrbMarkup='<svg class="sv-recognition-orb" viewBox="0 0 200 200" aria-hidden="true" focusable="false"><circle class="sv-recognition-ring" cx="100" cy="100" r="95" opacity=".22"/><circle class="sv-recognition-ring" cx="100" cy="100" r="81" opacity=".34"/><circle class="sv-recognition-ring" cx="100" cy="100" r="66" opacity=".50"/><circle class="sv-recognition-ring" cx="100" cy="100" r="51" opacity=".68"/><circle class="sv-recognition-core" cx="100" cy="100" r="44"/><g class="sv-recognition-wave"><path d="M69 89v22M79 78v44M89 69v62M100 60v80M111 74v52M121 84v32M131 92v16"/></g></svg>';
   function recognitionOrbButton(id,label,hint,fn,listening=false){
@@ -155,6 +156,11 @@
    if(version!==generation||mode!=='recognize'||!dialog?.open)return;
    body.replaceChildren();
    recognitionOrbButton('svRecognitionStart','Распознать музыку','',()=>{recognitionApproved=true;recordRecognition(version)});
+   if(canCaptureDevice()){
+    const device=action('Звук устройства',()=>recordRecognition(version,'device'));
+    device.classList.add('sv-recognition-device-action');
+    device.setAttribute('aria-description','Выбрать вкладку или экран с доступным звуком. Записывается только звук.');
+   }
    if(notice){
     const toast=d.createElement('p');toast.className='sv-recognition-toast';toast.setAttribute('role','status');
     body.append(toast);toast.textContent=notice;
@@ -167,13 +173,14 @@
    recognitionIdle(generation);
    w.SEYVEO_MUSIC_FINGERPRINT?.schedule();
   }
-  async function recordRecognition(version){
+  async function recordRecognition(version,source='microphone'){
    if(version!==generation||mode!=='recognize')return;
    cancelRecognition();body.replaceChildren();
    const engine=w.SEYVEO_MUSIC_FINGERPRINT;
-   if(!w.isSecureContext||!w.navigator.mediaDevices?.getUserMedia||!w.MediaRecorder){recognitionIdle(version,'Микрофон недоступен в этом браузере');return}
+   const device=source==='device';
+   if(!w.isSecureContext||!w.MediaRecorder||(device?!canCaptureDevice():!w.navigator.mediaDevices?.getUserMedia)){recognitionIdle(version,device?'Звук устройства недоступен в этом браузере':'Микрофон недоступен в этом браузере');return}
    if(!engine?.state().supported){recognitionIdle(version,'Распознавание пока недоступно');return}
-   engine.setListening(true);
+   engine.setListening(true);recognitionSource=source;
    const valid=()=>version===generation&&mode==='recognize'&&dialog?.open&&!cancelled;
    let stream=null,recorder=null,timer=0,cancelled=false;
    const controller=new AbortController();
@@ -181,14 +188,16 @@
    recognitionCancel=()=>{cancelled=true;controller.abort();if(recorder&&recorder.state!=='inactive'){try{recorder.stop()}catch{}}release();engine.setListening(false)};
    // Explicit start also stops our own audio, so the microphone can hear
    // the external source. Never automatically resume or restart the mic.
-   if(!audio.paused)audio.pause();
+   if(!device&&!audio.paused)audio.pause();
    const listeningButton=recognitionOrbButton('svRecognitionStop','Сэйви слушает','',()=>{cancelRecognition();close()});
    listeningButton.setAttribute('aria-label','Отменить распознавание');
    try{
-    stream=await w.navigator.mediaDevices.getUserMedia({audio:true,video:false});
+    stream=await (device?w.navigator.mediaDevices.getDisplayMedia({video:true,audio:true,systemAudio:'include'}):w.navigator.mediaDevices.getUserMedia({audio:true,video:false}));
     if(!valid()){release();return}
+    if(!stream.getAudioTracks().length){cancelRecognition();recognitionIdle(version,'Выберите вкладку или экран и разрешите передачу звука.');return}
+    const audioOnly=new w.MediaStream(stream.getAudioTracks());
     const options=['audio/mp4','audio/webm;codecs=opus','audio/ogg;codecs=opus','audio/webm'].find(t=>w.MediaRecorder.isTypeSupported?.(t));
-    recorder=new w.MediaRecorder(stream,options?{mimeType:options}:undefined);
+    recorder=new w.MediaRecorder(audioOnly,options?{mimeType:options}:undefined);
     const chunks=[];let size=0;
     recorder.ondataavailable=e=>{if(e.data.size){size+=e.data.size;if(size<=2*1024*1024)chunks.push(e.data)}};
     recorder.onerror=()=>{if(!valid())return;cancelRecognition();recognitionIdle(version,'Не удалось записать звук');};
@@ -201,7 +210,7 @@
       const blob=new Blob(chunks,{type:recorder.mimeType||chunks[0]?.type||'audio/webm'});
       if(!blob.size||size>2*1024*1024)throw Error('clip');
       const data={result:await engine.recognize(blob,{signal:controller.signal})};if(!valid())return;
-      if(!data.result){recognitionIdle(version,'Не удалось узнать песню');return}
+      if(!data.result){recognitionIdle(version,'Не нашёл песню в медиатеке');return}
       body.replaceChildren();
       {
        const name=d.createElement('strong');name.className='sv-adaptive-tagline';name.textContent=data.result.title;body.append(name);message(data.result.artist);
@@ -222,13 +231,15 @@
       }
       action('Распознать ещё',recognitionSheet);
      }catch{if(valid())recognitionIdle(version,'Не удалось распознать звук')}
-     finally{if(valid()){recognitionCancel=null;engine.setListening(false)}}
+     finally{if(valid()){recognitionCancel=null;recognitionSource='';engine.setListening(false)}}
     };
+    for(const track of stream.getAudioTracks())track.addEventListener('ended',()=>{if(recorder.state!=='inactive')recorder.stop()},{once:true});
     recorder.start();listeningButton.classList.add('is-listening');
     timer=w.setTimeout(()=>{if(recorder.state!=='inactive')recorder.stop();release()},10000);
    }catch(error){release();if(valid()){
     cancelRecognition();
-    const notice=error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'?'Разрешите доступ к микрофону':
+    const notice=device?(error?.name==='NotAllowedError'||error?.name==='AbortError'?'Захват звука отменён':'Не удалось получить звук устройства'):
+     error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'?'Разрешите доступ к микрофону':
      error?.name==='NotFoundError'||error?.name==='DevicesNotFoundError'?'Микрофон не найден':
      error?.name==='NotReadableError'?'Микрофон занят или недоступен':'Не удалось включить микрофон';
     recognitionIdle(version,notice);
