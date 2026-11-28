@@ -687,6 +687,8 @@ function syncResume(){
  page.classList.toggle('sv-music-empty',!loaded);
  const playing=loaded&&!audio.paused&&!audio.ended;
  const radioMode=loaded&&isRadio();page.classList.toggle('sv-music-radio-player',radioMode);
+ previous.setAttribute('aria-label',radioMode?'Предыдущая станция':'Предыдущий трек');previous.title=previous.getAttribute('aria-label');
+ next.setAttribute('aria-label',radioMode?'Следующая станция':'Следующий трек');next.title=next.getAttribute('aria-label');
  const radioName=$('svRadioPlayerName');if(radioName){const name=radioMode?tracks[index].name:'';if(radioName.textContent!==name)radioName.textContent=name;}
  const radioFreq=$('svRadioPlayerFrequency');if(radioFreq){const match=radioMode?String(tracks[index].quality||'').match(/^\s*(\d{2,3}(?:[.,]\d+)?)\s*FM\s*$/i):null;const value=match?match[1].replace(',','.') : '';radioFreq.textContent=value;radioFreq.hidden=!value;}
  updateRadioAir();
