@@ -319,6 +319,14 @@ const RECENT_KEY='seyveo-music-recent-local-v1';
 function rememberRecent(){
  try{localStorage.setItem(RECENT_KEY,JSON.stringify(recentFiles.slice(0,12).map(file=>({id:favoriteId(file),at:recentPlayedAt.get(file)||0}))))}catch{}
 }
+// History is independent of audio bytes, favorites, queue and replay statistics.
+function removeRecentHistory(id=null){
+ const next=id===null?[]:recentFiles.filter(file=>favoriteId(file)!==id);
+ try{localStorage.setItem(RECENT_KEY,JSON.stringify(next.slice(0,12).map(file=>({id:favoriteId(file),at:recentPlayedAt.get(file)||0}))))}catch{return false}
+ recentFiles=next;
+ for(const file of recentPlayedAt.keys())if(!recentFiles.includes(file))recentPlayedAt.delete(file);
+ return true;
+}
 function restoreRecent(){
  try{
   const saved=JSON.parse(localStorage.getItem(RECENT_KEY)||'[]');if(!Array.isArray(saved))return;
@@ -1434,7 +1442,7 @@ function playRadio(stations,id){
  tracks=available;miniDismissed=false;return switchTrack(selected,true);
 }
 window.SEYVEO_MUSIC=Object.freeze({
- playRadio,replaySummary,
+ playRadio,replaySummary,removeRecentHistory,
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
  searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,prepareTrackPreview,
  // Read-only access to the selected local File for optional visual analysis.
