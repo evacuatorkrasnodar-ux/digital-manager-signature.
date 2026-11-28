@@ -1378,6 +1378,13 @@ html:root[data-theme="light"] body #assistantButton > .sv-sayvi-mini-copy[src*="
   <p class="sv-discovery-empty-caption">Новинки любимых исполнителей — по вашему вкусу.</p>
  </div>
  <p id="sayviDiscoveryStatus" class="sv-discovery-status" role="status" aria-live="polite"></p>
+ <section id="svDiscoveryPublic" class="sv-discovery-public" aria-labelledby="svDiscoveryPublicTitle">
+  <div class="sv-discovery-feed-head"><h3 id="svDiscoveryPublicTitle">Сейчас в музыке</h3></div>
+  <div id="svDiscoveryPublicList" class="sv-discovery-releases"></div>
+  <p id="svDiscoveryPublicStatus" role="status" class="sv-discovery-public-status" hidden></p>
+  <a class="sv-discovery-public-link" href="https://music.apple.com/us/new" target="_blank" rel="noopener noreferrer">Открыть музыкальные новинки <span aria-hidden="true">↗</span></a>
+  <small class="sv-discovery-public-source">Источник: Apple Music · чарт США</small>
+ </section>
 </section>
  <button type="button" id="svMusicRadioToggle" aria-controls="svMusicRadio" aria-expanded="false">Радио</button>
  <section id="svMusicRadio" class="sv-music-tab-panel" hidden aria-labelledby="svMusicRadioTitle">
@@ -6387,7 +6394,7 @@ syncManager();render();
 </div></dialog><script src="assets/seyveo-pay.js?v=20261126-jade-platinum-v222"></script><script src="assets/seyveo-wallet-currency.js?v=3"></script><script src="assets/seyveo-wallet-goals.js?v=1"></script><script src="assets/seyveo-wallet-loyalty.js?v=20261126-v212"></script><script src="assets/seyveo-chat-polls.js?v=6"></script><script src="assets/seyveo-chat-themes.js?v=6"></script><script src="assets/seyveo-family-chat.js?v=20261125-auto-scan"></script><script src="assets/seyveo-avatar-art.js?v=3"></script>
 <script src="assets/seyveo-sayvi-holidays.js?v=20261126-holiday-auto-v150"></script>
 
-<script src="assets/seyveo-business-command.js?v=20261126-attachment-grid-v2"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261126-notifications-glass-v156"></script><script src="assets/seyveo-unified-tasks.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-employee-schedule.js?v=4"></script><script src="assets/seyveo-dock-continuity.js?v=10"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=5-same-origin"></script><script src="assets/seyveo-card-studio.js?v=20261126-card-master-v50"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=20261126-bulk-v119"></script>
+<script src="assets/seyveo-business-command.js?v=20261126-attachment-grid-v2"></script><script src="assets/seyveo-avatar-photo-engine.js?v=1"></script><script src="assets/seyveo-work-inbox-actions.js?v=20261126-notifications-glass-v156"></script><script src="assets/seyveo-unified-tasks.js?v=20261126-dock-response-v202"></script><script src="assets/seyveo-employee-schedule.js?v=4"></script><script src="assets/seyveo-dock-continuity.js?v=10"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=6-public-chart"></script><script src="assets/seyveo-card-studio.js?v=20261126-card-master-v50"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=20261126-bulk-v119"></script>
 <script src="assets/seyveo-learning-lab.js?v=1" defer></script>
 <dialog id="seyveoOfflineDialog" class="seyveo-offline-dialog" aria-labelledby="seyveoOfflineHeading"><div class="seyveo-offline-shell"><header class="seyveo-offline-head"><div><span class="seyveo-offline-kicker">SEYVEO ONE · УПРАВЛЕНИЕ</span><h2 id="seyveoOfflineHeading">Сэйви офлайн</h2><p>Сэйви рядом, даже когда нет интернета</p></div><button type="button" id="seyveoOfflineClose" aria-label="Закрыть">×</button></header><div id="seyveoOfflineChoices" class="seyveo-offline-choices"></div><div class="seyveo-offline-summary"><span>Полный офлайн-комплект</span><strong id="seyveoOfflineSize">0 МБ</strong><small id="seyveoOfflineNotice">Предварительная оценка. Готовые пакеты ещё не опубликованы.</small></div><button type="button" id="seyveoOfflineConfirm" class="seyveo-offline-save">Понятно</button><p class="seyveo-offline-foot">Офлайн-комплект будет доступен для отдельной установки после публикации проверенных файлов. Личная память хранится отдельно.</p></div></dialog><script src="assets/seyveo-offline-manager.js?v=20261125-shared-sheets-v3" defer></script>
 
@@ -9081,5 +9088,15 @@ html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body:h
  html:root[data-theme="light"].sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="new"] > .sv-music-head{background:#fff!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
  html:root[data-theme="light"][data-theme].sv-music-screen.sv-music-browse body:has(#sayviMusicPage[data-music-view="new"]:not([hidden])) #sayviMusicMini:not([hidden]){background:#eef0f2!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 }
+</style>
+
+<style id="svDiscoveryPublicStyle">
+#sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-public{display:grid;gap:8px;margin-top:8px}
+#sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-public .sv-discovery-feed-head{min-height:36px}
+#sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-public-status,#sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-public-source{margin:0;color:var(--secondary);font-size:11px;line-height:1.45}
+#sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-public-link{display:flex;align-items:center;justify-content:space-between;min-height:44px;color:var(--text);font-size:13px;font-weight:500;text-decoration:none}
+#sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-release-art img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+#sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel .sv-discovery-public [hidden]{display:none!important}
+html:root.sv-music-screen.sv-music-browse body #sayviMusicPage[data-music-view="new"]{padding-bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 136px)!important;scroll-padding-bottom:136px!important}
 </style>
 </body></html>

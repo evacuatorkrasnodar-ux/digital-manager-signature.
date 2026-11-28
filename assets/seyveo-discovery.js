@@ -241,11 +241,67 @@ function dismiss(id){
  state.releases=state.releases.filter(r=>r.id!==id);
  persist();update();signal();
 }
+// General public chart: independent of consent and listening history.
+const publicList=$('svDiscoveryPublicList'),publicStatus=$('svDiscoveryPublicStatus'),publicTitle=$('svDiscoveryPublicTitle');
+const PUBLIC_KEY='seyveo-public-music-chart-v1',PUBLIC_TTL=6*3600000;
+let publicLoading=false,publicLastAttempt=0;
+function publicItems(raw){
+ if(!Array.isArray(raw))return [];
+ const now=Date.now(),seen=new Set();
+ return raw.flatMap(r=>{
+  if(!r||!safeUrl(r.url)||!validDate(r.date)||!clean(r.title)||!clean(r.artist))return [];
+  const at=Date.parse(r.date+'T00:00:00Z');
+  if(!Number.isFinite(at)||at>now||seen.has(r.url))return [];
+  seen.add(r.url);
+  let artwork='';
+  try{const u=new URL(r.artwork);if(u.protocol==='https:'&&u.hostname.endsWith('.mzstatic.com'))artwork=u.href}catch{}
+  return [{title:clean(r.title),artist:clean(r.artist),date:r.date,url:safeUrl(r.url),artwork,at}];
+ }).slice(0,50);
+}
+function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
+function showPublic(items,stale=false){
+ if(!publicList||!publicTitle)return;
+ const recent=items.filter(r=>r.at>=Date.now()-LOOKBACK).sort((a,b)=>b.at-a.at);
+ const rows=(recent.length?recent:items).slice(0,12);
+ publicTitle.textContent=recent.length?'Свежие релизы в чарте':'Популярное сейчас';
+ publicList.replaceChildren();
+ for(const r of rows){
+  const row=document.createElement('a');row.className='sv-discovery-release';row.href=r.url;row.target='_blank';row.rel='noopener noreferrer';
+  const art=document.createElement('span');art.className='sv-discovery-release-art';art.setAttribute('aria-hidden','true');art.textContent='♫';
+  if(r.artwork){const img=document.createElement('img');img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.addEventListener('error',()=>{art.textContent='♫'},{once:true});img.src=r.artwork;art.replaceChildren(img)}
+  const copy=document.createElement('span');copy.className='sv-discovery-release-copy';
+  const title=document.createElement('strong');title.textContent=r.title;
+  const artist=document.createElement('small');artist.textContent=r.artist+' · '+new Date(r.at).toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+  const arrow=document.createElement('span');arrow.className='sv-discovery-release-arrow';arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');
+  copy.append(title,artist);row.append(art,copy,arrow);publicList.append(row);
+ }
+ publicMessage(stale?'Сохранённая подборка · обновление пока недоступно.':'');
+}
+async function loadPublic(){
+ if(!publicList||publicLoading)return;
+ let cache=null;try{cache=JSON.parse(localStorage.getItem(PUBLIC_KEY)||'null')}catch{}
+ const cached=publicItems(cache?.items);
+ if(cached.length){showPublic(cached,Date.now()-Number(cache.at)>PUBLIC_TTL);if(Date.now()-Number(cache.at)<PUBLIC_TTL)return}
+ if(Date.now()-publicLastAttempt<60000)return;
+ publicLastAttempt=Date.now();publicLoading=true;
+ if(!cached.length)publicMessage('Загружаем музыкальную подборку…');
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),9000);
+ try{
+  const response=await fetch('https://rss.marketingtools.apple.com/api/v2/us/music/most-played/50/albums.json',{signal:controller.signal,credentials:'omit',referrerPolicy:'no-referrer'});
+  if(!response.ok)throw Error('chart-unavailable');
+  const data=await response.json();
+  const items=publicItems(data?.feed?.results?.map(r=>({title:r.name,artist:r.artistName,date:r.releaseDate,url:r.url,artwork:r.artworkUrl100})));
+  if(!items.length)throw Error('empty-chart');
+  try{localStorage.setItem(PUBLIC_KEY,JSON.stringify({at:Date.now(),items}))}catch{}
+  showPublic(items);
+ }catch{if(cached.length)showPublic(cached,true);else publicMessage('Подборка пока недоступна. Новинки можно открыть по ссылке ниже.')}
+ finally{clearTimeout(timer);publicLoading=false}
+}
 // Navigation to the New tab is owned by the music dock.
 settingsButton?.addEventListener('click',()=>{settingsOpen=!settingsOpen;syncChoice()});
 offerYes?.addEventListener('click',()=>enable(true));
 offerNo?.addEventListener('click',()=>{rememberChoice();syncChoice()});
-document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='new'){settingsOpen=false;syncChoice()}else syncChoice()});
+document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='new'){settingsOpen=false;syncChoice()}else{syncChoice();void loadPublic()}});
 consent.addEventListener('click',()=>enable(!state.enabled));
 checkButton.addEventListener('click',()=>{if(state.enabled)void check({force:true})});
 clearButton.addEventListener('click',clear);
@@ -262,4 +318,5 @@ window.SEYVEO_DISCOVERY=Object.freeze({
  current,postpone,dismiss,check,listen,chooseReleases
 });
 update();signal();maybeCheck();
+if($('sayviMusicPage')?.dataset.musicView==='new'&&!panel.hidden)void loadPublic();
 })();
