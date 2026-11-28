@@ -462,6 +462,26 @@ function replaySummary(period){
  const musicSeconds=all.filter(t=>!t.radio).reduce((sum,t)=>sum+t.seconds,0);
  return {seconds,musicSeconds,radioSeconds,tracks:all.filter(t=>!t.radio).slice(0,5),stations:all.filter(t=>t.radio).slice(0,5),artists:[...artists.values()].sort((a,b)=>b.seconds-a.seconds).slice(0,5)};
 }
+// Read-only summary of the same local statistics shown in My Musical World.
+function discoveryTaste(){
+ const months=Object.keys(replayMonths).filter(k=>/^\d{4}-\d{2}$/.test(k)).sort().slice(-3);
+ const now=new Date(),current=now.getFullYear()*12+now.getMonth();
+ const rows=[];
+ for(const month of months){
+  const [year,num]=month.split('-').map(Number),age=current-(year*12+num-1);
+  if(age<0||age>2)continue;
+  const artists=new Map();
+  for(const item of Object.values(replayMonths[month]?.items||{})){
+   if(!item||item.radio||!item.artist||item.artist==='Моя музыка')continue;
+   const name=String(item.artist).trim().slice(0,100),seconds=Number(item.seconds);
+   if(!name||!Number.isFinite(seconds)||seconds<=0)continue;
+   const key=name.normalize('NFKC').toLocaleLowerCase('ru-RU').replace(/\s+/g,' ').trim();
+   const old=artists.get(key);artists.set(key,{name,key,seconds:(old?.seconds||0)+seconds,month,weight:[1,.5,.25][age]});
+  }
+  rows.push(...artists.values());
+ }
+ return rows.sort((a,b)=>b.seconds*b.weight-a.seconds*a.weight).slice(0,150);
+}
 function isFavorite(file){return !!file&&favorites.has(favoriteId(file))}
 function updateFavorite(){
  if(!favoriteButton)return;
@@ -1442,7 +1462,7 @@ function playRadio(stations,id){
  tracks=available;miniDismissed=false;return switchTrack(selected,true);
 }
 window.SEYVEO_MUSIC=Object.freeze({
- playRadio,replaySummary,removeRecentHistory,
+ playRadio,replaySummary,discoveryTaste,removeRecentHistory,
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
  searchTracks,playFromSearch,playIndexFromSearch,refreshMini:syncResume,prepareTrackPreview,
  // Read-only access to the selected local File for optional visual analysis.
