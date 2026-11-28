@@ -5,6 +5,38 @@ const init=()=>{
 const panel=document.getElementById('svMusicPodcasts');if(!panel)return;
 const get=id=>document.getElementById(id),audio=get('svPodcastAudio'),form=get('svPodcastForm'),input=get('svPodcastUrl'),list=get('svPodcastFeeds'),episodes=get('svPodcastEpisodes'),status=get('svPodcastStatus'),player=get('svPodcastPlayer'),file=get('svPodcastXml');
 const KEY='seyveo-podcasts-v1';
+// Full-screen podcast player: original artwork, calm shared glass and fixed controls.
+const polish=document.createElement('style');polish.id='svPodcastPlayerPolishV15';polish.textContent=`
+html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open #svPodcastPlayer:not([hidden]){
+ justify-content:flex-start;align-items:stretch;gap:12px;padding:calc(44px + env(safe-area-inset-top,0px)) 22px max(16px,env(safe-area-inset-bottom,0px))!important;
+ min-height:100vh;min-height:100dvh;background:linear-gradient(180deg,#25262a 0%,#191a1d 56%,#151515 100%)!important
+}
+html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover{
+ margin:0 auto 5px;width:min(100%,390px);flex:0 0 auto;overflow:visible
+}
+html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover::after{display:none}
+html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover .sv-podcast-art{
+ width:100%;height:auto;aspect-ratio:1;max-height:46vh;min-height:0;border-radius:20px;overflow:hidden;background:#2c2d31;box-shadow:none
+}
+html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover img{width:100%;height:100%;max-height:46vh;object-fit:contain;display:block}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover .sv-podcast-art>svg{width:64px;height:64px;color:#dedee2}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastCollapse{top:env(safe-area-inset-top,0px)}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastCollapse span{box-shadow:none;background:#ffffff75}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-now-identity{width:100%;max-width:390px;margin:0 auto;padding:0}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-now-copy{gap:5px}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastPlaying{font-weight:650;font-size:clamp(19px,5vw,25px);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#svMusicPodcasts.sv-podcast-full-open #svPodcastPlayingFeed{color:#ffffffa8;font-size:13px}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-timeline,#svMusicPodcasts.sv-podcast-full-open .sv-podcast-transport,#svMusicPodcasts.sv-podcast-full-open .sv-podcast-player-tools{width:100%;max-width:390px;margin:0 auto;box-sizing:border-box}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-times{font-size:12px;color:#ffffffa8}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-transport{justify-content:center;gap:36px;padding:0}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-player-tools{display:flex;justify-content:space-evenly;align-items:center;gap:8px;padding:0 8px;border-radius:24px;border:1px solid #ffffff19;background:#ffffff0b}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-player-tools label{display:flex;align-items:center;gap:4px;color:#ffffffa8;font-size:12px;white-space:nowrap}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-player-tools select{background:transparent!important;color:#fff!important;font-size:13px;padding:0 3px!important;min-height:44px}
+#svMusicPodcasts.sv-podcast-full-open .sv-podcast-player-tools option{background:#242529;color:#fff}
+@media(max-height:700px){html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open #svPodcastPlayer:not([hidden]){gap:8px}html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover .sv-podcast-art,html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover img{max-height:38vh}}
+@supports not (aspect-ratio:1){html:root body #sayviMusicPage #svMusicPodcasts.sv-podcast-full-open #svPodcastFullCover .sv-podcast-art{height:42vh}}
+`;document.head.appendChild(polish);
+
 let state={feeds:[],progress:{},favorites:{},last:null,speed:1},selected=null,current=null,loadToken=0,lastSave=0,sleepTimer=null,fullOpen=false,podcastOwnsAudio=false;
 try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&Array.isArray(saved.feeds)){state={...state,...saved};state.progress=state.progress||{};state.favorites=state.favorites||{}}}catch{}
 const say=t=>{status.textContent=t||'';status.hidden=!t};
@@ -22,7 +54,7 @@ for(const item of Array.from(channel.children).filter(n=>n.localName==='item').s
 const enc=direct(item,'enclosure'),url=enc?.getAttribute('url');if(!url)continue;const type=enc.getAttribute('type')||'',src=https(url,base);
 if(!src||type&&!/^(audio\/|application\/ogg)/i.test(type))continue;
 const id=src;if(items.some(x=>x.id===id))continue;
-items.push({id,src,title:(value(item,'title')||'Выпуск').slice(0,250),date:value(item,'pubDate').slice(0,100)});
+const image=direct(item,'image');const imageUrl=image?.getAttribute('href')||value(image,'url');items.push({id,src,title:(value(item,'title')||'Выпуск').slice(0,250),date:value(item,'pubDate').slice(0,100),artwork:imageUrl?https(imageUrl,base):''});
 }
 if(!items.length)throw Error('В этой ленте нет доступных аудиовыпусков.');
 const author=value(channel,'author')||value(channel,'managingEditor');const images=Array.from(channel.children).filter(x=>x.localName==='image');const artUrl=images.map(x=>x.getAttribute('href')||value(x,'url')).find(Boolean);const artwork=artUrl?https(artUrl,base):'';return {title:title.slice(0,160),author:author.slice(0,160),artwork,items};
@@ -57,7 +89,7 @@ const duration=s=>{const n=Math.max(0,Math.floor(s||0));return Math.floor(n/60)+
 function savePosition(force=false){if(!current||audio.readyState<1||!Number.isFinite(audio.currentTime))return;if(!force&&Date.now()-lastSave<5000)return;lastSave=Date.now();state.progress[current.id]={position:audio.currentTime,duration:Number.isFinite(audio.duration)?audio.duration:0,finished:audio.ended,updated:Date.now()};state.last={feed:current.feed,id:current.id};persist()}
 function play(feed,ep){
 if(current?.id===ep.id&&podcastOwnsAudio){openFull();if(audio.paused)audio.play().catch(()=>say('Не удалось начать воспроизведение.'));return}
-savePosition(true);audio.pause();current=null;const pos=state.progress[ep.id];current={...ep,feed:feed.id};player.hidden=false;get('svPodcastPlaying').textContent=ep.title;get('svPodcastPlayingFeed').textContent=feed.title;get('svPodcastNowArt').replaceChildren(artwork(feed));get('svPodcastFullCover').replaceChildren(artwork(feed));get('svPodcastMiniArt').replaceChildren(artwork(feed));get('svPodcastMiniTitle').textContent=ep.title;get('svPodcastMiniAuthor').textContent=feed.title;podcastOwnsAudio=true;openFull();updateTransport();
+savePosition(true);audio.pause();current=null;const pos=state.progress[ep.id];current={...ep,feed:feed.id};player.hidden=false;get('svPodcastPlaying').textContent=ep.title;get('svPodcastPlayingFeed').textContent=feed.title;const cover=ep.artwork?{artwork:ep.artwork}:feed;get('svPodcastNowArt').replaceChildren(artwork(cover));get('svPodcastFullCover').replaceChildren(artwork(cover,true));get('svPodcastMiniArt').replaceChildren(artwork(cover));get('svPodcastMiniTitle').textContent=ep.title;get('svPodcastMiniAuthor').textContent=feed.title;podcastOwnsAudio=true;openFull();updateTransport();
 const main=document.getElementById('sayviMusicAudio');main?.pause();
 audio.src=ep.src;audio.playbackRate=state.speed||1;get('svPodcastSpeed').value=String(audio.playbackRate);
 const expected=ep.src;
@@ -90,14 +122,14 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&fullOpen){e.prevent
 function updateTransport(){
  const d=Number.isFinite(audio.duration)&&audio.duration>0?audio.duration:0,t=Number.isFinite(audio.currentTime)?audio.currentTime:0;
  seek.disabled=!d;seek.max=String(d||1);seek.value=String(Math.min(t,d||1));seek.style.setProperty('--sv-podcast-progress',(d?100*t/d:0)+'%');get('svPodcastElapsed').textContent=duration(t);get('svPodcastRemaining').textContent='−'+duration(Math.max(0,d-t));
- const playing=!audio.paused&&!audio.ended;toggle.setAttribute('aria-label',playing?'Пауза':'Воспроизвести');toggle.innerHTML=playing?'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5l12 7-12 7z"/></svg>';miniToggle.innerHTML=toggle.innerHTML;miniToggle.setAttribute('aria-label',playing?'Пауза':'Воспроизвести');
+ const playing=!audio.paused&&!audio.ended;if(toggle.dataset.playing===String(playing))return;toggle.dataset.playing=String(playing);toggle.setAttribute('aria-label',playing?'Пауза':'Воспроизвести');toggle.innerHTML=playing?'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5l12 7-12 7z"/></svg>';miniToggle.innerHTML=toggle.innerHTML;miniToggle.setAttribute('aria-label',playing?'Пауза':'Воспроизвести');
 }
 function jump(delta){if(Number.isFinite(audio.duration)&&audio.duration>0){audio.currentTime=Math.max(0,Math.min(audio.duration,audio.currentTime+delta));updateTransport()}}
 seek.addEventListener('input',()=>{if(Number.isFinite(audio.duration)){audio.currentTime=Number(seek.value);updateTransport()}});
 get('svPodcastRewind').addEventListener('click',()=>jump(-15));get('svPodcastForward').addEventListener('click',()=>jump(30));
 toggle.addEventListener('click',()=>{if(!current)return;if(audio.paused||audio.ended)audio.play().catch(()=>say('Не удалось начать воспроизведение.'));else audio.pause()});
 for(const type of ['play','pause','ended','loadedmetadata','durationchange','timeupdate','seeking','emptied'])audio.addEventListener(type,updateTransport);
-document.getElementById('sayviMusicAudio')?.addEventListener('play',()=>{audio.pause();podcastOwnsAudio=false;fullOpen=false;syncPodcastView();renderHighlights()});
+document.getElementById('sayviMusicAudio')?.addEventListener('play',()=>{audio.pause();clearTimeout(sleepTimer);get('svPodcastSleep').value='0';podcastOwnsAudio=false;fullOpen=false;syncPodcastView();renderHighlights()});
 audio.addEventListener('timeupdate',()=>savePosition());audio.addEventListener('pause',()=>{savePosition(true);renderEpisodes();renderHighlights()});audio.addEventListener('ended',()=>{savePosition(true);renderEpisodes();renderHighlights()});audio.addEventListener('error',()=>say('Выпуск сейчас недоступен.'));
 get('svPodcastSpeed').addEventListener('change',e=>{state.speed=Number(e.target.value)||1;audio.playbackRate=state.speed;persist()});
 get('svPodcastSleep').addEventListener('change',e=>{clearTimeout(sleepTimer);const minutes=Number(e.target.value);if(minutes>0)sleepTimer=setTimeout(()=>{audio.pause();get('svPodcastSleep').value='0';say('Таймер сна завершён.')},minutes*60000)});
@@ -133,10 +165,10 @@ get('svPodcastAddFile').addEventListener('click',()=>{closeOptions();file.click(
 document.addEventListener('click',e=>{if(!options.hidden&&!options.contains(e.target)&&!manage.contains(e.target))closeOptions()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!options.hidden){closeOptions();manage.focus()}});
 
-function artwork(feed){
+function artwork(feed,large=false){
  const a=el('span','sv-podcast-art');a.setAttribute('aria-hidden','true');
  const fallback=()=>{a.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"><circle cx="12" cy="10" r="2"/><path d="M7.5 16a7 7 0 1 1 9 0M5 19a11 11 0 1 1 14 0M11 14h2l1 7h-4z"/></svg>'};
- fallback();const url=https(feed.directoryArtwork)||https(feed.artwork);if(url){const img=el('img');img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.addEventListener('error',fallback,{once:true});img.src=url;a.replaceChildren(img)}return a
+ fallback();const url=(large?https(feed.artwork):'')||https(feed.directoryArtwork)||https(feed.artwork);if(url){const img=el('img');img.alt='';img.loading=large?'eager':'lazy';img.referrerPolicy='no-referrer';img.addEventListener('error',fallback,{once:true});img.src=url;a.replaceChildren(img)}return a
 }
 function copyOf(title,sub,fn){const c=fn?button('',fn):el('div');c.className='sv-podcast-row-copy';c.append(el('strong','',title));if(sub)c.append(el('small','',sub));return c}
 function action(t,fn){const b=button(t,fn);b.classList.add('sv-podcast-flat-action');return b}
@@ -188,7 +220,7 @@ async function directoryRequest(path,params){
 function countryFor(term){if(/[а-яё]/i.test(term))return 'RU';const region=(navigator.language||'').split('-')[1];return /^[A-Z]{2}$/.test(region||'')?region:'US'}
 async function directoryEpisodes(meta){
  const data=localServer()?await fetch('/api/seyveo-podcast-episodes?'+new URLSearchParams({id:meta.directoryId,country:meta.country||'RU'}),{credentials:'same-origin'}).then(r=>{if(!r.ok)throw Error('Каталог выпусков недоступен.');return r.json()}):await directoryRequest('lookup',{id:meta.directoryId,entity:'podcastEpisode',limit:50,country:meta.country||'RU'});
- const items=[];for(const x of (data.results||[])){const src=https(x.episodeUrl);if(x.kind!=='podcast-episode'||!src||items.some(e=>e.id===src))continue;items.push({id:src,src,title:String(x.trackName||'Выпуск').slice(0,250),date:String(x.releaseDate||'').slice(0,100)})}
+ const items=[];for(const x of (data.results||[])){const src=https(x.episodeUrl);if(x.kind!=='podcast-episode'||!src||items.some(e=>e.id===src))continue;items.push({id:src,src,title:String(x.trackName||'Выпуск').slice(0,250),date:String(x.releaseDate||'').slice(0,100),artwork:https(x.artworkUrl600||x.artworkUrl160||x.artworkUrl100)})}
  if(!items.length)throw Error('Выпуски недоступны');
  return {title:meta.title,author:meta.author||'',directoryId:meta.directoryId,country:meta.country||'RU',artwork:meta.artwork||'',directoryArtwork:meta.directoryArtwork||meta.artwork||'',items}
 }
@@ -199,7 +231,7 @@ async function search(term){
  try{
   const country=countryFor(term);const data=await directoryRequest('search',{term,media:'podcast',entity:'podcast',limit:24,country});if(token!==searchSerial)return;
   results.replaceChildren(el('h3','sv-podcast-heading','Результаты поиска'));
-  const found=[];for(const x of (data.results||[])){const id=https(x.feedUrl);if(!id||found.some(f=>f.id===id))continue;found.push({id,title:String(x.collectionName||x.trackName||'Подкаст').slice(0,160),author:String(x.artistName||'').slice(0,160),directoryId:Number(x.collectionId||x.trackId)||null,artwork:https(String(x.artworkUrl100||x.artworkUrl600||x.artworkUrl60||'').replace(/^http:\/\/(?=[^/]+\.mzstatic\.com\/)/i,'https://')),country})}
+  const found=[];for(const x of (data.results||[])){const id=https(x.feedUrl);if(!id||found.some(f=>f.id===id))continue;found.push({id,title:String(x.collectionName||x.trackName||'Подкаст').slice(0,160),author:String(x.artistName||'').slice(0,160),directoryId:Number(x.collectionId||x.trackId)||null,artwork:https(String(x.artworkUrl600||x.artworkUrl100||x.artworkUrl60||'').replace(/^http:\/\/(?=[^/]+\.mzstatic\.com\/)/i,'https://')),country})}
   if(!found.length)results.append(el('p','sv-podcast-muted','Ничего не найдено. Попробуй другое название или тему.'));
   for(const feed of found){const saved=state.feeds.find(f=>f.id===feed.id);if(saved&&feed.artwork){saved.directoryArtwork=feed.artwork;saved.directoryId=feed.directoryId||saved.directoryId;persist()}const row=el('div','sv-podcast-result');const subscribed=state.feeds.some(f=>f.id===feed.id);const follow=action(subscribed?'✓':'＋',async()=>{if(following||state.feeds.some(f=>f.id===feed.id))return;following=true;follow.disabled=true;follow.textContent='…';try{const ok=await load(feed.id,feed);follow.textContent=ok?'✓':'＋';follow.disabled=!!ok;if(ok)follow.setAttribute('aria-label','Уже в подписках');if(!ok&&status.textContent&&token===searchSerial){const note=el('small','sv-podcast-row-error',status.textContent);row.querySelector('.sv-podcast-row-copy').append(note)}}finally{following=false}});follow.disabled=subscribed;follow.setAttribute('aria-label',subscribed?'Уже в подписках':'Подписаться на '+feed.title);row.append(artwork(feed),copyOf(feed.title,feed.author),follow);results.append(row)}
   if(found.length)results.append(el('small','sv-podcast-directory-credit','Каталог: Apple Podcasts. Аудио — из открытых лент издателей.'));
@@ -216,7 +248,7 @@ async function restoreArtwork(){
  try{for(const feed of state.feeds){if(panel.hidden)break;if(feed.directoryArtwork||artAttempts.has(feed.id)||!https(feed.id))continue;artAttempts.add(feed.id);
   try{const data=await directoryRequest('search',{term:feed.title,media:'podcast',entity:'podcast',limit:20,country:feed.country||countryFor(feed.title)});if(!state.feeds.includes(feed))continue;
    const exact=(data.results||[]).find(x=>(feed.directoryId&&Number(x.collectionId||x.trackId)===Number(feed.directoryId))||https(x.feedUrl)===feed.id);if(!exact)continue;
-   const art=https(String(exact.artworkUrl100||exact.artworkUrl600||exact.artworkUrl60||'').replace(/^http:\/\/(?=[^/]+\.mzstatic\.com\/)/i,'https://'));if(!art)continue;feed.directoryArtwork=art;feed.directoryId=Number(exact.collectionId||exact.trackId)||feed.directoryId;persist();if(!panel.hidden)render();
+   const art=https(String(exact.artworkUrl600||exact.artworkUrl100||exact.artworkUrl60||'').replace(/^http:\/\/(?=[^/]+\.mzstatic\.com\/)/i,'https://'));if(!art)continue;feed.directoryArtwork=art;feed.directoryId=Number(exact.collectionId||exact.trackId)||feed.directoryId;persist();if(!panel.hidden)render();
   }catch{}}
  }finally{repairing=false}
 }
