@@ -115,15 +115,17 @@ function init(){
   });
   const done=document.createElement('button');done.type='button';done.className='sv-pl-header-action sv-pl-header-done';done.setAttribute('aria-label','Сохранить плейлист');done.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>';done.disabled=true;done.addEventListener('click',save);top.append(cancel,done);
   const panel=document.createElement('div');panel.className='sv-pl-smart-panel';
-  const label=document.createElement('label');label.className='sv-pl-smart-label';label.htmlFor='svPlaylistCommand';label.textContent='Скажи, что собрать';panel.append(label);
-  const input=document.createElement('textarea');input.id='svPlaylistCommand';input.rows=2;input.maxLength=400;input.placeholder='В дорогу, добавь рок и Шамана';input.setAttribute('aria-label','Название и состав плейлиста');input.value=existing?.name||'';input.className='sv-pl-smart-input';panel.append(input);
+  const label=document.createElement('label');label.className='sv-pl-smart-label';label.htmlFor='svPlaylistCommand';label.textContent='Название или команда';panel.append(label);
+  const input=document.createElement('textarea');input.id='svPlaylistCommand';input.rows=1;input.maxLength=400;input.placeholder='В дорогу, добавь рок и Шамана';input.setAttribute('aria-label','Название и состав плейлиста');input.value=existing?.name||'';input.className='sv-pl-smart-input';panel.append(input);
   const preview=document.createElement('div');preview.className='sv-pl-smart-preview';preview.setAttribute('aria-live','polite');panel.append(preview);el.append(panel);
   const message=playlistNotice(el,'');message.classList.add('sv-pl-editor-message');message.setAttribute('role','status');
   const manual=new Map((existing?.ids||[]).map(id=>[id,true]));
   let parsed={name:existing?.name||'',query:'',ids:new Set(),missing:[],explicit:false,searchOnly:false},chosen=new Set(existing?.ids||[]),onlySelected=false;
   const toolbar=document.createElement('div');toolbar.className='sv-pl-selection-toolbar';
   const note=document.createElement('span');note.className='sv-pl-selection-count';toolbar.append(note);
-  const toggle=playlistButton('Выбранные',()=>{onlySelected=!onlySelected;refresh()});toggle.setAttribute('aria-pressed','false');toolbar.append(toggle);el.append(toolbar);
+  const all=playlistButton('Выбрать все',()=>{const targets=selectionTargets();const value=!targets.every(t=>chosen.has(t.artKey));for(const t of targets)manual.set(t.artKey,value);if(!value&&onlySelected)onlySelected=false;refresh()});all.classList.add('sv-pl-select-all');
+  const toggle=playlistButton('Только выбранные',()=>{onlySelected=!onlySelected;refresh()});toggle.setAttribute('aria-pressed','false');toolbar.append(all,toggle);el.append(toolbar);
+  function selectionTargets(){return library.filter(t=>!parsed.searchOnly||parsed.ids.has(t.artKey))}
   const list=document.createElement('div');list.className='sv-pl-picker';el.append(list);
   function updateSelection(){
    chosen=new Set(parsed.searchOnly?[]:parsed.ids);
@@ -134,7 +136,8 @@ function init(){
    if(parsed.name){const name=document.createElement('span');name.className='sv-pl-smart-name';name.textContent=parsed.name;preview.append(name)}
    if(parsed.query&&(parsed.explicit||parsed.ids.size)){const count=document.createElement('span');count.textContent='Найдено: '+parsed.ids.size;preview.append(count)}
    if(parsed.explicit&&parsed.missing.length){const hint=document.createElement('small');hint.textContent='Нет совпадений: '+parsed.missing.join(', ');preview.append(hint)}
-   toggle.setAttribute('aria-pressed',String(onlySelected));toggle.textContent=onlySelected?'Все песни':'Выбранные';
+   toggle.setAttribute('aria-pressed',String(onlySelected));toggle.textContent=onlySelected?'Все песни':'Только выбранные';
+   const targets=selectionTargets();all.disabled=!targets.length;all.textContent=targets.length&&targets.every(t=>chosen.has(t.artKey))?'Снять все':'Выбрать все';
   }
   const refresh=()=>{
    updateSelection();list.replaceChildren();
@@ -145,7 +148,7 @@ function init(){
     const row=document.createElement('label');row.className='sv-pl-pick-row';const check=document.createElement('input');check.type='checkbox';check.checked=chosen.has(t.artKey);check.setAttribute('aria-label',t.title+' — '+t.artist);
     const art=document.createElement('span');art.className='sv-music-track-tile sv-pl-pick-art';art.setAttribute('aria-hidden','true');if(!paintCover(art,t.artwork))fallbackCover(art,t);
     const copy=document.createElement('span');copy.className='sv-pl-pick-copy';const name=document.createElement('strong');name.textContent=t.title;const artist=document.createElement('small');artist.textContent=t.artist;copy.append(name,artist);
-    check.addEventListener('change',()=>{manual.set(t.artKey,check.checked);updateSelection();if(onlySelected&&!check.checked)row.remove()});row.append(check,art,copy);list.append(row);
+    check.addEventListener('change',()=>{manual.set(t.artKey,check.checked);updateSelection();if(onlySelected&&!check.checked){row.remove();if(!chosen.size)refresh()}});row.append(check,art,copy);list.append(row);
    }
    if(!matches.length)playlistNotice(list,onlySelected?'Пока ничего не выбрано.':'Песни не найдены.');
   };
@@ -153,7 +156,7 @@ function init(){
    const next=parsePlaylistCommand(input.value,library);
    if(next.searchOnly){next.name=parsed.name;for(const id of chosen)manual.set(id,true)}
    else if(!next.name&&next.explicit)next.name=parsed.name;
-   parsed=next;message.textContent='';refresh();
+   parsed=next;message.textContent='';input.style.height='auto';input.style.height=Math.min(110,input.scrollHeight)+'px';refresh();
   });
   refresh();
   function save(){
