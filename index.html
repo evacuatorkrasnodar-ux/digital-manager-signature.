@@ -6439,7 +6439,7 @@ window.addEventListener('load',()=>{
   }
  }catch(error){console.warn('SEYVEO Browser search handoff failed.',error)}
 },{once:true});
-</script><script src="assets/seyveo-home-presence.js?v=20261126-music-weather-v203"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=20261126-avatar-rebuild-v40"></script><script src="assets/seyveo-work-shell.js?v=20261126-fast-dock-v203"></script><script src="assets/seyveo-task-smart-nl.js?v=20261126-smart-highlight-v54"></script><script src="assets/seyveo-task-places.js?v=20261126-meeting-context-v52"></script><script src="assets/seyveo-search-hub.js?v=1"></script><script src="assets/seyveo-task-ai-policy.js?v=2"></script><script src="assets/seyveo-task-ai.js?v=2"></script><script src="assets/seyveo-task-travel-core.js?v=2"></script><script src="assets/seyveo-task-editor-v3.js?v=20261126-wheel-v69"></script><script src="assets/seyveo-yandex-map.js?v=20261126-jade-map-v75"></script><script src="assets/seyveo-task-places-ui.js?v=20261126-jade-map-v76"></script><script src="assets/seyveo-meeting-place-picker.js?v=20261126-smart-meeting-v53"></script><script src="assets/seyveo-task-travel-ui.js?v=3"></script><script src="assets/seyveo-task-travel-reminders.js?v=1"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
+</script><script src="assets/seyveo-home-presence.js?v=20261126-music-weather-v203"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=20261128-steel-v41"></script><script src="assets/seyveo-work-shell.js?v=20261126-fast-dock-v203"></script><script src="assets/seyveo-task-smart-nl.js?v=20261126-smart-highlight-v54"></script><script src="assets/seyveo-task-places.js?v=20261126-meeting-context-v52"></script><script src="assets/seyveo-search-hub.js?v=1"></script><script src="assets/seyveo-task-ai-policy.js?v=2"></script><script src="assets/seyveo-task-ai.js?v=2"></script><script src="assets/seyveo-task-travel-core.js?v=2"></script><script src="assets/seyveo-task-editor-v3.js?v=20261126-wheel-v69"></script><script src="assets/seyveo-yandex-map.js?v=20261126-jade-map-v75"></script><script src="assets/seyveo-task-places-ui.js?v=20261126-jade-map-v76"></script><script src="assets/seyveo-meeting-place-picker.js?v=20261126-smart-meeting-v53"></script><script src="assets/seyveo-task-travel-ui.js?v=3"></script><script src="assets/seyveo-task-travel-reminders.js?v=1"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
 (function(){
  const dlg=document.getElementById('noteReviewDialog'),field=document.getElementById('noteReviewText');if(!dlg||!field)return;
  // Keyboard visibility is measured from the resting visual viewport, not a
@@ -9301,6 +9301,61 @@ html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo
 html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage > svg,
 html:root[data-theme="light"][data-theme] body footer.dock.sv-shared-dock.seyveo-music-dock.sv-music-navigation-only > #navManage#navManage > svg :is(path,use,circle,rect,line,polyline,polygon):not([stroke="none"]){
  stroke-width:1.55!important;
+}
+</style>
+<style id="svApprovedLightControlSystem">
+/* 2026-11-28 · Approved steel/glass family. Existing controls only.
+   Upper controls use less elevation; reading menus retain opaque text.
+   Dark, blue chat, colored confirmations and dock active states stay intact. */
+:root[data-theme="light"]{
+ --sv-steel-line:1.55;
+ --sv-steel-ink:#57636B;
+ --sv-header-icon-ink:var(--sv-steel-ink);
+ --sv-nav-glyph-stroke:var(--sv-steel-line);
+ --sv-light-control-face:rgba(182,187,193,.16);
+ --sv-light-control-edge:1px solid rgba(157,165,175,.32);
+ --sv-light-control-filter:blur(3px) saturate(108%);
+ --sv-light-control-shadow:inset 0 0 0 .75px rgba(255,255,255,.76),0 2px 5px rgba(30,40,52,.045),0 4px 12px rgba(30,40,52,.075);
+ --sv-menu-icon-stroke:var(--sv-steel-line);
+ --sv-menu-border:1px solid rgba(157,165,175,.30);
+ --sv-menu-shadow:0 10px 28px rgba(30,40,52,.11),0 3px 8px rgba(30,40,52,.045),inset 0 1px 0 rgba(255,255,255,.88);
+}
+html:root[data-theme="light"][data-theme] body seyveo-work-head,
+html:root[data-theme="light"][data-theme] body button:is(.sv-header-material-circle,.sv-white-pearl-circle,.sv-nav-back,.sv-nav-arrow,.sv-note-reader-circle,.sv-doc-head-icon,.sv-doc-search-toggle,.sv-doc-shelf-add,.sv-mail-icon-button,.sv-cabinet-plus,.calendar-header-add,.personal-tasks-add,.svcp-manager-task-create,#calendarAdd,#personalAddTasks,#sayviSurfaceBack,#noteReviewBack,#noteReadBack,#noteScanBack,#assistantChatHistoryBack,#svNoteHomeNew,#svMedicalBack,#svMedicalEdit,#seyveoAvatarClose,#seyveoOfflineClose,#svfClose):not(.sv-mail-top-buttons > button):not(.sv-mail-detail-tools > button):not(.sv-mail-editor-actions > button):not(.sv-mail-attached-remove):not(.is-danger):not(.is-destructive):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-disabled="true"]):not(:disabled):not([hidden]),
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="inbox"] :is(.svcp-work-chat-back,#svcpWorkHistoryTop,.svcp-directory-search-toggle,.sv-inbox-menu-button):not([hidden]):not([aria-pressed="true"]):not(:disabled),
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] :is(#svcpConversationStandaloneBack,.svcp-call-button):not([hidden]):not([aria-pressed="true"]):not(:disabled),
+html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons,
+html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-month-controls,
+html:root[data-theme="light"][data-theme] body #seyveoPayDialog .sw-month.sv-month-nav > .sv-month-controls{
+ --sv-white-pearl-surface:var(--sv-light-control-face);
+ --sv-white-pearl-edge:var(--sv-light-control-edge);
+ --sv-white-pearl-blur:var(--sv-light-control-filter);
+ --sv-white-pearl-circle-shadow:var(--sv-light-control-shadow);
+ --sv-white-pearl-dock-shadow:var(--sv-light-control-shadow);
+ --sv-header-circle:var(--sv-light-control-face);
+ --sv-header-circle-border:var(--sv-light-control-edge);
+ --sv-header-circle-shadow:var(--sv-light-control-shadow);
+ --sv-header-circle-filter:var(--sv-light-control-filter);
+ --sv-nav-capsule-shadow:var(--sv-light-control-shadow);
+}
+html:root[data-theme="light"][data-theme] body button:is(.sv-header-material-circle,.sv-white-pearl-circle,.sv-nav-back,.sv-nav-arrow,.sv-note-reader-circle,.sv-doc-head-icon,.sv-doc-search-toggle,.sv-doc-shelf-add,.sv-mail-icon-button,.sv-cabinet-plus,.calendar-header-add,.personal-tasks-add,.svcp-manager-task-create,#calendarAdd,#personalAddTasks,#sayviSurfaceBack,#noteReviewBack,#noteReadBack,#noteScanBack,#assistantChatHistoryBack,#svNoteHomeNew,#svMedicalBack,#svMedicalEdit,#seyveoAvatarClose,#seyveoOfflineClose,#svfClose):not(.sv-mail-top-buttons > button):not(.sv-mail-detail-tools > button):not(.sv-mail-editor-actions > button):not(.sv-mail-attached-remove):not(.is-danger):not(.is-destructive):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-disabled="true"]):not(:disabled):not([hidden]) > svg,
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="inbox"] :is(.svcp-work-chat-back,#svcpWorkHistoryTop,.svcp-directory-search-toggle,.sv-inbox-menu-button):not([hidden]):not([aria-pressed="true"]):not(:disabled) > svg,
+html:root[data-theme="light"][data-theme] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] :is(#svcpConversationStandaloneBack,.svcp-call-button):not([hidden]):not([aria-pressed="true"]):not(:disabled) > svg,
+html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons > button:not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg,
+html:root[data-theme="light"][data-theme] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-month-controls > button:not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg,
+html:root[data-theme="light"][data-theme] body #seyveoPayDialog .sw-month.sv-month-nav > .sv-month-controls > button:not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg{
+ color:var(--sv-steel-ink)!important;
+ stroke:var(--sv-steel-ink)!important;
+ stroke-width:var(--sv-steel-line)!important;
+}
+html:root[data-theme="light"][data-theme] body :is(.sv-menu-surface,#svcpInboxMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,#svNotebookListMenu,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu,#svSmartVoiceMenu,#svfAttachMenu,#svcpAttachMenu,.sv-doc-list-menu,.sv-doc-scan-more-menu,.svdf-optional-actions,#sayviMenu,#sayviHistoryMenu,.sv-own-actions,.sv-doc-folder-menu,.sv-doc-draft-actions,.sv-task-context-menu,.sv-nb4-actions,.sv-mail-message-menu,.sv-mail-reply-menu,.sv-doc-file-popover,.svcp-message-menu,.sv-reply-menu-options,#svWorkCreateChoices,#homeWorldPopover,#seyveoCleanManageMenu,.sv-doc-head-options) :is(button,[role="menuitem"]):not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > svg,
+html:root[data-theme="light"][data-theme] body :is(.sv-menu-surface,#svcpInboxMenu,#svcpWorkHistoryMenu,.svcp-work-history-row-menu,#svNotebookListMenu,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu,#svSmartVoiceMenu,#svfAttachMenu,#svcpAttachMenu,.sv-doc-list-menu,.sv-doc-scan-more-menu,.svdf-optional-actions,#sayviMenu,#sayviHistoryMenu,.sv-own-actions,.sv-doc-folder-menu,.sv-doc-draft-actions,.sv-task-context-menu,.sv-nb4-actions,.sv-mail-message-menu,.sv-mail-reply-menu,.sv-doc-file-popover,.svcp-message-menu,.sv-reply-menu-options,#svWorkCreateChoices,#homeWorldPopover,#seyveoCleanManageMenu,.sv-doc-head-options) :is(button,[role="menuitem"]):not(.is-danger):not(.is-destructive):not(.sv-nb4-danger):not(.sv-task-context-delete):not(.sv-doc-folder-danger):not(.sv-doc-draft-delete):not(.sv-mail-menu-destructive):not(.svdf-reset):not(#svNotebookDeleteAll):not(#sayviHistoryClear):not([data-action="delete"]):not([data-action="clear"]):not([data-own="delete"]):not([data-sv-menu-action-glyph="delete"]):not(.svcp-work-history-row-menu > button:last-child):not(#svcpWorkHistoryMenu > button:last-child):not(.active):not(.is-active):not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled) > .sv-doc-menu-icon > svg{
+ color:var(--sv-steel-ink)!important;
+ stroke:var(--sv-steel-ink)!important;
+ stroke-width:var(--sv-steel-line)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"]{--sv-light-control-face:#eef0f2;--sv-light-control-filter:none}
 }
 </style>
 </body></html>
