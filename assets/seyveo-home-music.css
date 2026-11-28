@@ -71,7 +71,7 @@ html:root body #homePage #svSayviHomeWeather.sv-home-music-weather-replaced > :i
 html:root[data-theme="light"] #homePage #svHomeInlineMusic{
  --sv-home-player-control-ink:#57636B;
 }
-html:root[data-theme="light"] #homePage #svHomeInlineMusic .sv-home-music-controls button:not([aria-pressed="true"]){
+html:root[data-theme="light"] #homePage #svHomeInlineMusic .sv-home-music-controls button:not(.sv-home-music-mode){
  color:var(--sv-home-player-control-ink);
 }
 html:root[data-theme="light"] #homePage #svHomeInlineMusic .sv-home-music-controls svg,
