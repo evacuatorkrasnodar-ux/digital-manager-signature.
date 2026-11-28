@@ -39,7 +39,7 @@ function init(){
  function playlistNotice(el,label){const p=document.createElement('p');p.className='sv-music-browse-caption';p.textContent=label;el.append(p);return p}
  function setPlaylistEditing(value){
   playlistEditing=!!value;get('svMusicLibrary')?.classList.toggle('sv-pl-editing',playlistEditing);page.classList.toggle('sv-pl-editor-open',playlistEditing);
-  if(!playlistEditing){page.querySelectorAll('.sv-pl-header-action').forEach(b=>b.remove());const label=page.querySelector('[data-title-view="library"]');if(label)label.textContent='Медиатека';}
+  if(!playlistEditing){page.querySelectorAll('.sv-pl-header-action,.sv-pl-selection-toolbar').forEach(b=>b.remove());const label=page.querySelector('[data-title-view="library"]');if(label)label.textContent='Медиатека';}
  }
  const plNorm=value=>String(value||'').normalize('NFKC').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').replace(/[«»"“”]/g,'').replace(/\s+/g,' ').trim();
  function parsePlaylistCommand(value,library){
@@ -124,7 +124,7 @@ function init(){
   const toolbar=document.createElement('div');toolbar.className='sv-pl-selection-toolbar';
   const note=document.createElement('span');note.className='sv-pl-selection-count';toolbar.append(note);
   const all=playlistButton('Выбрать все',()=>{const targets=selectionTargets();const value=!targets.every(t=>chosen.has(t.artKey));for(const t of targets)manual.set(t.artKey,value);if(!value&&onlySelected)onlySelected=false;refresh()});all.classList.add('sv-pl-select-all');
-  const toggle=playlistButton('Только выбранные',()=>{onlySelected=!onlySelected;refresh()});toggle.setAttribute('aria-pressed','false');toolbar.append(all,toggle);el.append(toolbar);
+  const toggle=playlistButton('Только выбранные',()=>{onlySelected=!onlySelected;refresh()});toggle.setAttribute('aria-pressed','false');toolbar.append(all,toggle);top.append(toolbar);
   function selectionTargets(){return library.filter(t=>!parsed.searchOnly||parsed.ids.has(t.artKey))}
   const list=document.createElement('div');list.className='sv-pl-picker';el.append(list);
   function updateSelection(){
