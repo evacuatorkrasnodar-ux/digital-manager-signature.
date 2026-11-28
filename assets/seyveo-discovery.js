@@ -85,7 +85,7 @@ function enable(value){
  persist();update();signal();
  if(state.enabled)maybeCheck();
  if(!state.enabled&&mode==='genres'){mode='for-you';syncFilters();syncPersonal()}
- if(!panel.hidden)void loadPublic();
+ if(feedVisible())void loadPublic();
 }
 function clear(){
  rememberChoice();
@@ -93,7 +93,7 @@ function clear(){
  checking=false;
  state=fresh(false);likes=[];saveLikes();if(mode==='genres'){mode='for-you';syncFilters();syncPersonal()}
  try{localStorage.removeItem(GENRES_KEY);for(let i=localStorage.length-1;i>=0;i--){const key=localStorage.key(i);if(key?.startsWith('seyveo-music-editorial-v3-')&&key!=='seyveo-music-editorial-v3-general')localStorage.removeItem(key)}}catch{}
- persist();update();signal();if(!panel.hidden)void loadPublic();
+ persist();update();signal();if(feedVisible())void loadPublic();
 }
 function listen(payload){
  if(!state.enabled)return false;
@@ -107,7 +107,7 @@ function listen(payload){
  state.artists.push(next);
  state.artists=state.artists.slice(-MAX_ARTISTS);
  persist();update();
- if(next.plays===3)maybeCheck();
+ if(next.plays===3){maybeCheck();if(feedVisible()&&mode==='for-you'&&!previewBox.open&&!publicController)void loadPublic()}
  return true;
 }
 const validDate=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -300,22 +300,13 @@ function readLikes(){
 }
 let likes=readLikes();
 let mode='for-you', lastItems=[], lastStale=false, lastFeedMode='', lastPersonalSignature='', previewRun=0, previewController=null;
-const filters=[['for-you','Для тебя'],['genres','Мои жанры'],['ru','Россия'],['world','Мир'],['rock','Рок'],['pop','Поп'],['chanson','Шансон'],['russianrock','Русский рок'],['russianpop','Русский поп'],['hiphop','Хип-хоп'],['electronic','Электроника'],['upcoming','Скоро'],['news','Новости'],['liked','Понравилось']];
-const filterSheet=document.createElement('dialog');filterSheet.className='sv-new-filter-sheet';filterSheet.setAttribute('aria-labelledby','svNewFilterTitle');document.body.append(filterSheet);
-const filterBar=document.createElement('div');filterBar.className='sv-new-filter-options';filterBar.setAttribute('role','group');filterBar.setAttribute('aria-label','Подборка новинок');
-const filterHead=document.createElement('header');filterHead.className='sv-new-filter-head';
-const filterTitle=document.createElement('h2');filterTitle.id='svNewFilterTitle';filterTitle.textContent='Настройки новинок';
-const filterClose=document.createElement('button');filterClose.type='button';filterClose.className='sv-new-filter-close';filterClose.setAttribute('aria-label','Закрыть настройки');filterClose.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>';filterClose.addEventListener('click',()=>filterSheet.close());
-filterHead.append(filterTitle,filterClose);const grab=document.createElement('span');grab.className='sv-new-filter-grab';grab.setAttribute('aria-hidden','true');filterSheet.append(filterHead,filterBar,info);
-filterSheet.addEventListener('click',e=>{if(e.target!==filterSheet)return;const rect=filterSheet.getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)filterSheet.close()});
 const feedHead=panel.querySelector('.sv-discovery-feed-head');
-if(feedHead){
- feedHead.classList.add('sv-new-personal-head');
- const heading=feedHead.querySelector('h3');if(heading)heading.textContent='Сэйви';
- const edit=$('svDiscoveryEditTaste');if(edit){edit.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="var(--card,#fff)"/><circle cx="15" cy="12" r="2" fill="var(--card,#fff)"/><circle cx="10" cy="17" r="2" fill="var(--card,#fff)"/></svg>';edit.title='Настройки новинок';edit.setAttribute('aria-label',edit.title);edit.setAttribute('aria-haspopup','dialog');const publicHead=$('svDiscoveryPublic')?.querySelector('.sv-discovery-feed-head');if(publicHead)publicHead.append(edit)}
-}
+if(feedHead)feedHead.classList.add('sv-new-personal-head');
+const favButton=$('svDiscoveryEditTaste');
+const publicHead=$('svDiscoveryPublic')?.querySelector('.sv-discovery-feed-head');
+if(favButton&&publicHead)publicHead.append(favButton);
+if(settings){settings.append(info,checkButton);checkButton.textContent='Обновить рекомендации';}
 const emptyCaption=empty?.querySelector('.sv-discovery-empty-caption');if(emptyCaption)emptyCaption.hidden=true;
-
 function button(label,cls,svg){
  const b=document.createElement('button');b.type='button';b.className=cls;b.setAttribute('aria-label',label);b.title=label;
  if(svg)b.innerHTML=svg;else b.textContent=label;return b;
@@ -339,60 +330,13 @@ function qualifiedArtists(){
  }
  return list;
 }
-function selectedTags(){
- if(mode==='for-you'||mode==='upcoming'||mode==='news')return tasteTags();
- if(mode==='genres')return tasteTags();
- return GENRE_TAGS[mode]?[GENRE_TAGS[mode]]:[];
-}
-function syncPersonal(){if(feedHead)feedHead.hidden=true;releasesList.hidden=true;empty.hidden=true;info.hidden=!info.textContent}
-function syncFilters(){for(const b of filterBar.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.mode===mode));}
-function setMode(next){
- if(next==='genres'&&!state.enabled){mode='for-you';syncFilters();syncChoice();status('Включите музыкальные рекомендации, чтобы использовать сохранённые жанры.');return}
- if(next==='genres'&&mode==='genres'){window.SEYVEO_DISCOVERY?.open?.('music');return}
- mode=next;syncFilters();syncChoice();closePreview();syncPersonal();
- if(mode==='liked'){++publicRun;publicController?.abort();showPublic(lastItems,lastStale);return}
- if(mode==='genres'&&!selectedTags().length){window.SEYVEO_DISCOVERY?.open?.('music')}
- void loadPublic();
-}
-const sections=[['Подборка',['for-you','ru','world','news']],['Жанры',['genres','rock','pop','chanson','russianrock','russianpop','hiphop','electronic']],['Просмотр',['upcoming','liked']]];
-const filterGlyphs={
- 'for-you':['#6388ae','<path d="M12 3.5c0 5-3.5 8.5-8.5 8.5 5 0 8.5 3.5 8.5 8.5 0-5 3.5-8.5 8.5-8.5-5 0-8.5-3.5-8.5-8.5Z"/>'],
- ru:['#758b9b','<path d="M5 21V4m0 1c5-4 9 4 14 0v11c-5 4-9-4-14 0"/>'],
- world:['#5095a0','<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/>'],
- news:['#8c80ac','<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8m-8 4h8m-8 3h5"/>'],
- genres:['#8d80ab','<path d="M9 17V6l11-3v11"/><ellipse cx="6" cy="17.5" rx="3" ry="2.3"/><ellipse cx="17" cy="14.5" rx="3" ry="2.3"/>'],
- upcoming:['#658eae','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'],
- liked:['#b66d88','<path d="M20 6a5 5 0 0 0-7 0l-1 1-1-1a5 5 0 0 0-7 7l8 8 8-8a5 5 0 0 0 0-7Z"/>']
-};
-function filterGlyph(id){const data=filterGlyphs[id];if(!data)return null;const el=document.createElement('span');el.className='sv-filter-glyph';el.style.color=data[0];el.setAttribute('aria-hidden','true');el.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round">'+data[1]+'</svg>';return el}
 
-let genreView=false;
-const genreModes=new Set(sections[1][1]);
-const genreNav=button('Жанры','sv-new-filter-option sv-new-filter-genre-nav');
-genreNav.innerHTML='<span>Жанры</span><span class="sv-filter-current"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
-genreNav.prepend(filterGlyph('genres'));
-const genreBack=button('Назад','sv-new-filter-back','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>');
-filterHead.prepend(genreBack);
-function filterPage(value=false){
- genreView=value;
- filterSheet.dataset.page=value?'genres':'main';
- filterTitle.textContent=value?'Жанры':'Настройки новинок';
- genreBack.hidden=!value;filterSheet.scrollTop=0;
- genreNav.querySelector('.sv-filter-current').textContent=genreModes.has(mode)?(filters.find(x=>x[0]===mode)?.[1]||''):'';
-}
-genreNav.addEventListener('click',()=>filterPage(true));genreBack.addEventListener('click',()=>filterPage(false));filterSheet.addEventListener('close',()=>filterPage(false));
-for(const [heading,ids] of sections){
- const group=document.createElement('section');group.className='sv-new-filter-group';group.dataset.section=ids[0];const label=document.createElement('h3');label.textContent=heading;group.append(label);
- for(const id of ids){const entry=filters.find(x=>x[0]===id);if(!entry)continue;const b=button(entry[1],'sv-new-filter-option');b.dataset.mode=id;const label=document.createElement('span');label.className='sv-filter-label';label.textContent=id==='upcoming'?'Скоро выйдут':entry[1];b.replaceChildren(label);const glyph=filterGlyph(id);if(glyph)b.prepend(glyph);b.addEventListener('click',()=>{filterSheet.close();setMode(id)});const tick=document.createElement('span');tick.className='sv-new-filter-tick';tick.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';tick.setAttribute('aria-hidden','true');b.append(tick);group.append(b)}
- if(ids[0]==='upcoming')filterBar.append(genreNav);filterBar.append(group);
-}
-const editGenres=button('Изменить любимые жанры','sv-new-filter-edit');
-editGenres.addEventListener('click',()=>{filterSheet.close();window.SEYVEO_DISCOVERY?.open?.('music')});
-const filterActions=document.createElement('div');filterActions.className='sv-new-filter-actions';
-editGenres.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="var(--card,#fff)"/><circle cx="15" cy="12" r="2" fill="var(--card,#fff)"/><circle cx="10" cy="17" r="2" fill="var(--card,#fff)"/></svg><span>Любимые жанры</span><svg class="sv-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
-checkButton.classList.add('sv-new-filter-refresh');
-checkButton.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2 6M20 4v7h-7"/></svg><span>Обновить новинки</span>';
-filterActions.append(editGenres,checkButton);filterSheet.append(filterActions);filterPage(false);syncFilters();
+function selectedTags(){return tasteTags()}
+function syncPersonal(){if(feedHead)feedHead.hidden=true;releasesList.hidden=true;empty.hidden=true;info.hidden=!info.textContent}
+function syncFilters(){if(!favButton)return;const saved=mode==='liked';favButton.setAttribute('aria-pressed',String(saved));favButton.removeAttribute('aria-haspopup');favButton.title=saved?'Вернуться к новинкам':'Понравилось';favButton.setAttribute('aria-label',favButton.title);favButton.innerHTML=saved?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>':heartIcon}
+function feedVisible(){return location.hash==='#sayvi-music'&&$('sayviMusicPage')?.dataset.musicView==='new'&&!panel.hidden&&!document.hidden}
+function favoriteArtists(){if(!state.enabled)return [];return qualifiedArtists().filter(a=>a.last>Date.now()-120*DAY).sort((a,b)=>Number(!!b.liked)-Number(!!a.liked)||b.plays-a.plays||b.last-a.last).slice(0,3).map(a=>a.name)}
+function setMode(next){mode=next==='liked'?'liked':'for-you';syncFilters();closePreview();if(mode==='liked'){++publicRun;publicController?.abort();publicController=null;showPublic(lastItems,lastStale);return}void loadPublic()}
 const previewBox=document.createElement('dialog');previewBox.className='sv-new-preview';previewBox.setAttribute('aria-label','Предпрослушивание');document.body.append(previewBox);
 let previewAnchor=null;
 function closePreview(){previewRun++;previewController?.abort();previewController=null;previewAnchor=null;if(previewBox.open)previewBox.close();previewBox.replaceChildren()}
@@ -432,7 +376,7 @@ async function preview(r,anchor){
  finally{clearTimeout(timer);if(run===previewRun)previewController=null}
 }
 document.addEventListener('play',e=>{if(e.target instanceof HTMLMediaElement&&previewBox.open)closePreview()},true);
-window.addEventListener('hashchange',()=>{if(location.hash!=='#sayvi-music'){if(filterSheet.open)filterSheet.close();closePreview()}});
+window.addEventListener('hashchange',()=>{if(location.hash!=='#sayvi-music'){closePreview()}});
 const style=document.createElement('style');style.textContent=`
 html:root body #sayviMusicPage #sayviDiscoveryPanel .sv-new-filterbar{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain;margin:0 -4px 10px;padding:4px 4px 10px;align-items:center}
 #sayviDiscoveryPanel .sv-new-filterbar::-webkit-scrollbar{display:none}
@@ -643,6 +587,12 @@ html:root body dialog.sv-new-filter-sheet[data-page="genres"] .sv-new-filter-opt
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-genre-nav .sv-filter-glyph svg{color:#8d80ab!important}
 html:root body dialog.sv-new-filter-sheet .sv-new-filter-group[data-section="for-you"] .sv-new-filter-option{margin:0!important}
 html:root body dialog.sv-new-filter-sheet{background-clip:padding-box}
+
+/* Automatic discovery: one feed, one optional saved-releases shortcut. */
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel #svDiscoveryEditTaste{display:grid!important;place-items:center;min-width:44px;width:44px;min-height:44px;height:44px;border:0!important;background:transparent!important;box-shadow:none!important;transform:none!important;color:var(--text,#141619)}
+html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel #svDiscoveryEditTaste svg{width:21px;height:21px}
+#manageDataDialog #sayviDiscoveryStatus{font-size:12px;color:var(--secondary,#666);line-height:1.4}
+#manageDataDialog #sayviDiscoveryCheck:not([hidden]){display:flex;align-items:center;min-height:44px;border:0;background:transparent;box-shadow:none;color:var(--text,#141619);padding:0;text-align:left}
 `;document.head.append(style);
 
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
@@ -690,7 +640,7 @@ function showPublic(items,stale=false){
  }
  syncPersonal();
  $('svDiscoveryUpcoming').hidden=true;$('svDiscoveryNews').hidden=true;
- publicTitle.textContent=mode==='liked'?'Понравилось':mode==='upcoming'?'Скоро выйдут':mode==='news'?'События и анонсы':mode==='ru'?'Релизы в России':'Свежие релизы';
+ publicTitle.textContent=mode==='liked'?'Понравилось':state.enabled&&(favoriteArtists().length||tasteTags().length)?'Для тебя':'Свежие релизы';
  let cards=[];
  if(mode==='liked')cards=likes.map(artTile);
  else if(mode==='upcoming')cards=upcoming.slice(0,12).map(artTile);
@@ -707,16 +657,18 @@ function showPublic(items,stale=false){
  publicMessage(mode==='liked'?(cards.length?'':'Нажмите сердечко на релизе или анонсе — он останется здесь.'):stale?'Сохранённая подборка · обновление пока недоступно.':cards.length?'':'В каталоге пока нет подходящих релизов.');
  if(publicSource){publicSource.textContent='MusicBrainz · Cover Art Archive · даты могут уточняться';publicSource.hidden=false;$('svDiscoveryPublic').append(publicSource)}
 }
-async function requestCatalog(tags,future,signal){
+async function requestCatalog(tags,future,signal,artists=[]){
  // Serialize public requests, respecting the catalog's one-request-per-second limit.
  const wait=Math.max(0,1200-(Date.now()-lastPublicRequest));
  if(wait)await new Promise(resolve=>setTimeout(resolve,wait));
  if(signal.aborted)throw Error('aborted');
  lastPublicRequest=Date.now();
  const start=future?dayISO(Date.now()+DAY):dayISO(Date.now()-21*DAY);
- const end=future?dayISO(Date.now()+60*DAY):today();
+ const end=future||artists.length?dayISO(Date.now()+60*DAY):today();
  const country=mode==='ru'?'ru':'world';
- const filter=tags.length?' AND ('+tags.map(t=>'tag:"'+t+'"').join(' OR ')+')':'';
+ const quoteArtist=x=>String(x).replace(/[^\p{L}\p{N}\s.'’-]/gu,' ').trim();
+ const artistTerms=artists.map(quoteArtist).filter(Boolean);
+ const filter=artistTerms.length?' AND ('+artistTerms.map(t=>'artist:"'+t+'"').join(' OR ')+')':tags.length?' AND ('+tags.map(t=>'tag:"'+t+'"').join(' OR ')+')':'';
  const query=(country==='ru'?'date:[':'firstreleasedate:[')+start+' TO '+end+'] AND (primarytype:album OR primarytype:single OR primarytype:ep)'+(country==='ru'?' AND status:official AND country:RU':'')+filter;
  const endpoint=new URL('https://musicbrainz.org/ws/2/'+(country==='ru'?'release/':'release-group/'));
  endpoint.searchParams.set('query',query);endpoint.searchParams.set('fmt','json');endpoint.searchParams.set('limit','50');
@@ -728,7 +680,7 @@ async function loadPublic(force=false){
  if(!publicList)return;
  if(mode==='liked'){showPublic(lastItems,lastStale);return}
  if(mode==='genres'&&!state.enabled){mode='for-you';syncFilters();syncChoice();syncPersonal()}
- const tags=selectedTags(),key=PUBLIC_KEY+'feed20-'+(mode==='ru'?'ru-':'')+(tags.join('|')||'general');
+ const tags=selectedTags(),artists=favoriteArtists();const signature=JSON.stringify([tags,artists.map(normalize).sort()]);let hash=2166136261;for(const c of signature)hash=Math.imul(hash^c.charCodeAt(0),16777619);const key=PUBLIC_KEY+'auto26-'+(hash>>>0).toString(36);
  const run=++publicRun;publicController?.abort();publicController=null;
  let cache=null;try{cache=JSON.parse(localStorage.getItem(key)||'null')}catch{}
  const cached=publicItems(cache?.items);
@@ -739,7 +691,7 @@ async function loadPublic(force=false){
   if(publicSource)publicSource.hidden=true;
   if(upcomingStatus){upcomingStatus.hidden=false;upcomingStatus.textContent='Проверяем календарь релизов…'}
  }
- const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),24000);publicController=controller;
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),28000);publicController=controller;
  try{
   let fresh=[],future=[],ok=0;
   try{fresh=await requestCatalog(tags,false,controller.signal);ok++}catch{}
@@ -751,8 +703,10 @@ async function loadPublic(force=false){
    if(future.length<3){try{future=publicItems([...future,...await requestCatalog([],true,controller.signal)])}catch{}}
   }
   if(run!==publicRun)return;
+  let personal=[];if(artists.length&&state.enabled){try{const keys=new Set(artists.map(normalize));personal=(await requestCatalog([],false,controller.signal,artists)).filter(r=>keys.has(normalize(r.artist))).map(r=>({...r,tasteMatch:true}));ok=Math.max(ok,1)}catch{}}
+  if(run!==publicRun)return;
   if(!ok)throw Error('unavailable');
-  const items=publicItems([...fresh,...future,...(ok<2?cached:[])]);
+  const items=publicItems([...personal,...fresh,...future,...(ok<2?cached:[])]);
   if(ok===2)try{localStorage.setItem(key,JSON.stringify({at:Date.now(),items}))}catch{}
   showPublic(items,ok<2);
   if(ok<2){publicMessage('Часть каталога временно недоступна.');if(upcomingStatus&&!upcomingList?.childElementCount){upcomingStatus.hidden=false;upcomingStatus.textContent='Не удалось полностью проверить календарь релизов.'}}
@@ -768,17 +722,18 @@ async function loadPublic(force=false){
 }
 // Navigation to the New tab is owned by the music dock.
 settingsButton?.addEventListener('click',()=>{settingsOpen=!settingsOpen;syncChoice()});
-$('svDiscoveryEditTaste')?.addEventListener('click',()=>{settingsOpen=false;syncChoice();syncFilters();if(!filterSheet.open)filterSheet.showModal()});
-window.addEventListener('seyveo:music-preferences-changed',()=>{if(!panel.hidden)void loadPublic()});
+favButton?.addEventListener('click',()=>setMode(mode==='liked'?'for-you':'liked'));syncFilters();
+window.addEventListener('seyveo:music-preferences-changed',()=>{if(feedVisible()&&!previewBox.open)void loadPublic()});
 offerYes?.addEventListener('click',()=>enable(true));
 offerNo?.addEventListener('click',()=>{rememberChoice();syncChoice()});
-document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='new'){settingsOpen=false;syncChoice();if(filterSheet.open)filterSheet.close();closePreview();++publicRun;publicController?.abort()}else{syncChoice();void loadPublic()}});
+document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='new'){settingsOpen=false;syncChoice();closePreview();++publicRun;publicController?.abort();publicController=null;mode='for-you';syncFilters()}else{syncChoice();void loadPublic()}});
 consent.addEventListener('click',()=>enable(!state.enabled));
-checkButton.addEventListener('click',()=>{if(filterSheet.open)filterSheet.close();if(state.enabled)void check({force:true});void loadPublic(true)});
+checkButton.addEventListener('click',()=>{if(state.enabled)void check({force:true});if(feedVisible())void loadPublic(true)});
 clearButton.addEventListener('click',clear);
 window.addEventListener('seyveo:music-qualified-listen',event=>listen(event.detail));
-window.addEventListener('focus',maybeCheck);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)maybeCheck()});
+function refreshVisible(){maybeCheck();if(feedVisible()&&mode==='for-you'&&!previewBox.open&&!publicController)void loadPublic()}
+window.addEventListener('focus',refreshVisible);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisible()});
 window.addEventListener('storage',event=>{
  if(event.key===LIKES){likes=readLikes();if(mode==='liked')showPublic(lastItems,lastStale);else{renderReleases();if(lastItems.length)showPublic(lastItems,lastStale)}}
  if(event.key===CHOICE){try{answered=localStorage.getItem(CHOICE)==='1'||state.enabled}catch{}syncChoice()}
