@@ -151,20 +151,28 @@
    b.append(title);if(hint){const sub=d.createElement('small');sub.textContent=hint;b.append(sub);}
    b.addEventListener('click',fn);body.append(b);return b;
   }
+  function recognitionIdle(version,notice=''){
+   if(version!==generation||mode!=='recognize'||!dialog?.open)return;
+   body.replaceChildren();
+   recognitionOrbButton('svRecognitionStart','Распознать музыку','',()=>{recognitionApproved=true;recordRecognition(version)});
+   if(notice){
+    const toast=d.createElement('p');toast.className='sv-recognition-toast';toast.setAttribute('role','status');
+    body.append(toast);toast.textContent=notice;
+    w.setTimeout(()=>{if(toast.isConnected)toast.remove()},6000);
+   }
+  }
   function recognitionSheet(quick=false){
    cancelRecognition();
    if(!show('Распознать музыку','recognize'))return;
-   const version=generation;
-   const engine=w.SEYVEO_MUSIC_FINGERPRINT;
-   if(!w.isSecureContext||!w.navigator.mediaDevices?.getUserMedia||!w.MediaRecorder){message('Микрофон недоступен в этом браузере.');return}
-   // The round button is always available. Ask for microphone access only after a tap.
-   recognitionOrbButton('svRecognitionStart','Распознать музыку','',()=>{recognitionApproved=true;recordRecognition(version)});
-   engine?.schedule();
+   recognitionIdle(generation);
+   w.SEYVEO_MUSIC_FINGERPRINT?.schedule();
   }
   async function recordRecognition(version){
    if(version!==generation||mode!=='recognize')return;
    cancelRecognition();body.replaceChildren();
-   const engine=w.SEYVEO_MUSIC_FINGERPRINT;if(!engine?.state().supported){message('Распознавание пока недоступно.');action('Повторить',recognitionSheet);return}
+   const engine=w.SEYVEO_MUSIC_FINGERPRINT;
+   if(!w.isSecureContext||!w.navigator.mediaDevices?.getUserMedia||!w.MediaRecorder){recognitionIdle(version,'Микрофон недоступен в этом браузере');return}
+   if(!engine?.state().supported){recognitionIdle(version,'Распознавание пока недоступно');return}
    engine.setListening(true);
    const valid=()=>version===generation&&mode==='recognize'&&dialog?.open&&!cancelled;
    let stream=null,recorder=null,timer=0,cancelled=false;
@@ -183,7 +191,7 @@
     recorder=new w.MediaRecorder(stream,options?{mimeType:options}:undefined);
     const chunks=[];let size=0;
     recorder.ondataavailable=e=>{if(e.data.size){size+=e.data.size;if(size<=2*1024*1024)chunks.push(e.data)}};
-    recorder.onerror=()=>{if(valid()){body.replaceChildren();message('Не удалось записать звук.');action('Повторить',recognitionSheet)}cancelRecognition()};
+    recorder.onerror=()=>{if(!valid())return;cancelRecognition();recognitionIdle(version,'Не удалось записать звук');};
     recorder.onstop=async()=>{
      release();
      if(!valid())return;
@@ -193,9 +201,9 @@
       const blob=new Blob(chunks,{type:recorder.mimeType||chunks[0]?.type||'audio/webm'});
       if(!blob.size||size>2*1024*1024)throw Error('clip');
       const data={result:await engine.recognize(blob,{signal:controller.signal})};if(!valid())return;
+      if(!data.result){recognitionIdle(version,'Не удалось узнать песню');return}
       body.replaceChildren();
-      if(!data.result){message('Не удалось узнать песню. Попробуйте ещё раз.')}
-      else{
+      {
        const name=d.createElement('strong');name.className='sv-adaptive-tagline';name.textContent=data.result.title;body.append(name);message(data.result.artist);
        if(data.result.album)message(data.result.album);
        action('Включить песню',()=>{const items=music()?.recognitionLibrary?.()||[];const i=items.findIndex(x=>x.id===data.result.id);if(i<0){message('Песня удалена из медиатеки.');return}close();music()?.playIndexFromSearch?.(i)});
@@ -213,12 +221,18 @@
        copy.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12"/></svg><span>Копировать название</span>';
       }
       action('Распознать ещё',recognitionSheet);
-     }catch{if(valid()){body.replaceChildren();message('Не удалось прочитать или сравнить запись.');action('Повторить',recognitionSheet)}}
+     }catch{if(valid())recognitionIdle(version,'Не удалось распознать звук')}
      finally{if(valid()){recognitionCancel=null;engine.setListening(false)}}
     };
     recorder.start();listeningButton.classList.add('is-listening');
     timer=w.setTimeout(()=>{if(recorder.state!=='inactive')recorder.stop();release()},10000);
-   }catch{release();if(valid()){engine.setListening(false);recognitionCancel=null;body.replaceChildren();message('Нет доступа к микрофону или формат записи не поддерживается.');action('Повторить',recognitionSheet)}}
+   }catch(error){release();if(valid()){
+    cancelRecognition();
+    const notice=error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'?'Разрешите доступ к микрофону':
+     error?.name==='NotFoundError'||error?.name==='DevicesNotFoundError'?'Микрофон не найден':
+     error?.name==='NotReadableError'?'Микрофон занят или недоступен':'Не удалось включить микрофон';
+    recognitionIdle(version,notice);
+   }}
   }
   $('svMusicRecognizeHome')?.addEventListener('click',recognitionSheet);
   $('svMusicRecognizeQuick')?.addEventListener('click',()=>recognitionSheet(true));
