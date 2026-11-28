@@ -69,11 +69,11 @@ function update(){
  checkButton.hidden=!state.enabled;
  clearButton.hidden=!state.enabled&&!state.artists.length&&!state.releases.length&&!likes.length;
  checkButton.disabled=checking;
- const qualified=state.artists.filter(a=>a.plays>=3).length;
+ const qualified=qualifiedArtists().length;
  if(!state.enabled)status(state.artists.length?'Поиск новинок выключен. Сохранённые интересы можно очистить.':
   'Открытия можно включить в настройках.');
  else status(checking?'Сэйви проверяет новинки…':
-  qualified?'Любимых исполнителей: '+qualified+'. Проверка при открытом SEYVEO.':
+  qualified?'Подбираю новинки любимых исполнителей.':
   'Сэйви учится по любимым релизам и прослушиваниям.');
  renderReleases();
 }
@@ -84,13 +84,14 @@ function enable(value){
  state.enabled=value===true;
  persist();update();signal();
  if(state.enabled)maybeCheck();
+ if(!state.enabled&&mode==='genres'){mode='for-you';syncFilters();syncPersonal()}
  if(!panel.hidden)void loadPublic();
 }
 function clear(){
  rememberChoice();
  runId++;
  checking=false;
- state=fresh();likes=[];saveLikes();
+ state=fresh();likes=[];saveLikes();if(mode==='genres'){mode='for-you';syncFilters();syncPersonal()}
  try{localStorage.removeItem(GENRES_KEY);for(let i=localStorage.length-1;i>=0;i--){const key=localStorage.key(i);if(key?.startsWith('seyveo-music-editorial-v3-')&&key!=='seyveo-music-editorial-v3-general')localStorage.removeItem(key)}}catch{}
  persist();update();signal();if(!panel.hidden)void loadPublic();
 }
@@ -124,20 +125,9 @@ function renderReleases(){
  if(!releasesList||!empty||!emptyTitle)return;
  const items=state.enabled?state.releases.filter(r=>!state.ignored.includes(r.id)&&validDate(r.date)&&safeUrl(r.url)&&Date.now()>=Number(state.snoozed[r.id]||0)).slice(0,20):[];
  releasesList.replaceChildren();
- for(const r of items){
-  const row=document.createElement('article');row.className='sv-discovery-tile';
-  const art=document.createElement('span');art.className='sv-discovery-release-art';art.setAttribute('aria-hidden','true');
-  art.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17V6l11-3v11"/><ellipse cx="6" cy="17.5" rx="3" ry="2.3"/><ellipse cx="17" cy="14.5" rx="3" ry="2.3"/></svg>';
-  const artwork=safeArtwork(r.artwork);
-  if(artwork){const img=document.createElement('img');img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
-   const fallback=art.innerHTML;img.addEventListener('error',()=>{art.innerHTML=fallback},{once:true});img.src=artwork;art.replaceChildren(img)}
-  const copy=document.createElement('span');copy.className='sv-discovery-release-copy';
-  const title=document.createElement('strong');title.textContent=r.title;
-  const artist=document.createElement('small');artist.textContent=r.artist+' · '+new Date(r.date+'T00:00:00Z').toLocaleDateString('ru-RU',{day:'numeric',month:'short',timeZone:'UTC'});
-  copy.append(title,artist);row.append(art,copy);releasesList.append(row);
- }
+ for(const r of items)releasesList.append(artTile({...r,type:'Album'}));
  releasesList.hidden=mode!=='for-you'||!items.length;empty.hidden=mode!=='for-you'||!!items.length;
- emptyTitle.textContent=!state.enabled?'Открывайте новое с Сэйви':checking?'Ищу новинки':state.artists.some(a=>a.plays>=3)?'Ждём новые релизы':'Пока изучаю ваш вкус';
+ emptyTitle.textContent=!state.enabled?'Открывайте новое с Сэйви':checking?'Ищу новинки':qualifiedArtists().length?'Ждём новые релизы':'Пока изучаю ваш вкус';
 }
 function chooseReleases(data,artist,now=Date.now()){
  if(!data||!Array.isArray(data.results))return [];
@@ -285,8 +275,16 @@ function catalogItems(data,country){
 
 /* Unified New feed: one catalogue, local favourites and lazy official previews. */
 const LIKES='seyveo.music.discovery.likes.v1';
-let likes=[];
-try{likes=publicItems(JSON.parse(localStorage.getItem(LIKES)||'[]'))}catch{}
+function readLikes(){
+ try{
+  const raw=JSON.parse(localStorage.getItem(LIKES)||'[]');if(!Array.isArray(raw))return [];
+  return raw.slice(0,100).flatMap(r=>{
+   if(r&&/^itunes:\d+$/.test(r.id)&&safeUrl(r.url)&&validDate(r.date)&&clean(r.title)&&clean(r.artist))return [{id:r.id,title:clean(r.title),artist:clean(r.artist),date:r.date,type:'Album',url:safeUrl(r.url),artwork:safeArtwork(r.artwork)}];
+   return publicItems([r]);
+  });
+ }catch{return []}
+}
+let likes=readLikes();
 let mode='for-you', lastItems=[], lastStale=false, previewRun=0, previewController=null;
 const filters=[['for-you','Для тебя'],['genres','Мои жанры'],['ru','Россия'],['world','Мир'],['rock','Рок'],['pop','Поп'],['chanson','Шансон'],['russianrock','Русский рок'],['russianpop','Русский поп'],['hiphop','Хип-хоп'],['electronic','Электроника'],['upcoming','Скоро'],['news','Новости'],['liked','Понравилось']];
 const filterBar=document.createElement('nav');filterBar.className='sv-new-filterbar';filterBar.setAttribute('aria-label','Фильтры новинок');
@@ -302,8 +300,7 @@ const liked=r=>likes.some(x=>x.id===r.id);
 function saveLikes(){try{localStorage.setItem(LIKES,JSON.stringify(likes))}catch{}}
 function like(r,b){
  if(liked(r))likes=likes.filter(x=>x.id!==r.id);else likes=[r,...likes].slice(0,100);
- saveLikes();b.setAttribute('aria-pressed',String(liked(r)));b.title=liked(r)?'Убрать из понравившегося':'Нравится';
- b.setAttribute('aria-label',b.title);
+ saveLikes();for(const other of panel.querySelectorAll('[data-discovery-like]'))if(other.dataset.discoveryLike===r.id){other.setAttribute('aria-pressed',String(liked(r)));other.title=liked(r)?'Убрать из понравившегося':'Нравится';other.setAttribute('aria-label',other.title)}
  if(state.enabled&&liked(r))maybeCheck();
  clearButton.hidden=!state.enabled&&!state.artists.length&&!state.releases.length&&!likes.length;
  if(mode==='liked')showPublic(lastItems,lastStale);
@@ -318,12 +315,15 @@ function qualifiedArtists(){
 }
 function selectedTags(){
  if(mode==='for-you'||mode==='upcoming'||mode==='news')return tasteTags();
- if(mode==='genres'){try{return [...new Set((JSON.parse(localStorage.getItem(GENRES_KEY)||'null')?.genres||[]).map(x=>GENRE_TAGS[x]).filter(Boolean))].sort().slice(0,10)}catch{return []}}
+ if(mode==='genres')return tasteTags();
  return GENRE_TAGS[mode]?[GENRE_TAGS[mode]]:[];
 }
+function syncPersonal(){if(feedHead)feedHead.hidden=mode!=='for-you';releasesList.hidden=mode!=='for-you'||!releasesList.childElementCount;empty.hidden=mode!=='for-you'||!!releasesList.childElementCount;info.hidden=mode!=='for-you'||!info.textContent}
 function syncFilters(){for(const b of filterBar.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.mode===mode));}
 function setMode(next){
- mode=next;syncFilters();syncChoice();closePreview();
+ if(next==='genres'&&!state.enabled){mode='for-you';syncFilters();syncChoice();status('Включите музыкальные рекомендации, чтобы использовать сохранённые жанры.');if(!answered&&offer)offer.hidden=false;return}
+ if(next==='genres'&&mode==='genres'){window.SEYVEO_DISCOVERY?.open?.('music');return}
+ mode=next;syncFilters();syncChoice();closePreview();syncPersonal();
  if(mode==='liked'){++publicRun;publicController?.abort();showPublic(lastItems,lastStale);return}
  if(mode==='genres'&&!selectedTags().length){window.SEYVEO_DISCOVERY?.open?.('music')}
  void loadPublic();
@@ -400,14 +400,14 @@ html:root body #sayviMusicPage #sayviDiscoveryPanel .sv-new-story{grid-column:1/
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
 
 function kind(r){return r.type==='Single'?'Сингл':r.type==='EP'?'EP':'Альбом'}
-function heart(r){const b=button(liked(r)?'Убрать из понравившегося':'Нравится','sv-new-icon',heartIcon);b.setAttribute('aria-pressed',String(liked(r)));b.addEventListener('click',()=>like(r,b));return b}
+function heart(r){const b=button(liked(r)?'Убрать из понравившегося':'Нравится','sv-new-icon',heartIcon);b.dataset.discoveryLike=r.id;b.setAttribute('aria-pressed',String(liked(r)));b.addEventListener('click',()=>like(r,b));return b}
 function artTile(r){
  const tile=document.createElement('article');tile.className='sv-discovery-tile sv-new-tile';
  const art=document.createElement('span');art.className='sv-discovery-release-art';art.setAttribute('aria-hidden','true');
  const fallback='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17V6l11-3v11"/><ellipse cx="6" cy="17.5" rx="3" ry="2.3"/><ellipse cx="17" cy="14.5" rx="3" ry="2.3"/></svg>';art.innerHTML=fallback;
  const img=document.createElement('img');img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
  img.addEventListener('error',()=>{art.innerHTML=fallback},{once:true});
- img.src='https://coverartarchive.org/release-group/'+r.id+'/front-250';art.replaceChildren(img);
+ const imageURL=uuid(r.id)?'https://coverartarchive.org/release-group/'+r.id+'/front-250':safeArtwork(r.artwork);if(imageURL){img.src=imageURL;art.replaceChildren(img)}
  const title=document.createElement('strong');title.textContent=r.title;title.title=r.title;
  const artist=document.createElement('small');artist.textContent=r.artist;artist.title=r.artist;
  const date=document.createElement('time');date.className='sv-new-meta';date.dateTime=r.date;date.textContent=kind(r)+' · '+dateLabel(r.date);
@@ -475,13 +475,14 @@ async function requestCatalog(tags,future,signal){
 async function loadPublic(){
  if(!publicList)return;
  if(mode==='liked'){showPublic(lastItems,lastStale);return}
+ if(mode==='genres'&&!state.enabled){mode='for-you';syncFilters();syncChoice();syncPersonal()}
  const tags=selectedTags(),key=PUBLIC_KEY+(mode==='ru'?'ru-':'')+(tags.join('|')||'general');
  const run=++publicRun;publicController?.abort();publicController=null;
  let cache=null;try{cache=JSON.parse(localStorage.getItem(key)||'null')}catch{}
  const cached=publicItems(cache?.items);
  if(cached.length){showPublic(cached,Date.now()-Number(cache.at)>PUBLIC_TTL);if(Date.now()-Number(cache.at)<PUBLIC_TTL)return} else if(cache&&Array.isArray(cache.items)&&Date.now()-Number(cache.at)<PUBLIC_TTL){showPublic([]);return}
  else{
-  publicList.replaceChildren();upcomingList?.replaceChildren();newsList?.replaceChildren();
+  publicList.replaceChildren();upcomingList?.replaceChildren();newsList?.replaceChildren();$('svDiscoveryUpcoming').hidden=true;$('svDiscoveryNews').hidden=true;
   publicTitle.textContent='Свежие релизы';publicMessage('Сэйви проверяет новинки…');
   if(publicSource)publicSource.hidden=true;
   if(upcomingStatus){upcomingStatus.hidden=false;upcomingStatus.textContent='Проверяем календарь релизов…'}
@@ -514,13 +515,13 @@ offerYes?.addEventListener('click',()=>enable(true));
 offerNo?.addEventListener('click',()=>{rememberChoice();syncChoice()});
 document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='new'){settingsOpen=false;syncChoice();closePreview();++publicRun;publicController?.abort()}else{syncChoice();void loadPublic()}});
 consent.addEventListener('click',()=>enable(!state.enabled));
-checkButton.addEventListener('click',()=>{if(state.enabled)void check({force:true})});
+checkButton.addEventListener('click',()=>{if(state.enabled)void check({force:true});void loadPublic()});
 clearButton.addEventListener('click',clear);
 window.addEventListener('seyveo:music-qualified-listen',event=>listen(event.detail));
 window.addEventListener('focus',maybeCheck);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)maybeCheck()});
 window.addEventListener('storage',event=>{
- if(event.key===LIKES){try{likes=publicItems(JSON.parse(localStorage.getItem(LIKES)||'[]'))}catch{likes=[]}if(mode==='liked')showPublic(lastItems,lastStale)}
+ if(event.key===LIKES){likes=readLikes();if(mode==='liked')showPublic(lastItems,lastStale);else{renderReleases();if(lastItems.length)showPublic(lastItems,lastStale)}}
  if(event.key===CHOICE){try{answered=localStorage.getItem(CHOICE)==='1'||state.enabled}catch{}syncChoice()}
  if(event.key===STORE||!event.key){runId++;state=read();if(state.enabled)answered=true;update();signal()}
 });
