@@ -94,9 +94,10 @@
     pos+=10;
     if(!len||len>bytes.length-pos)break;
     const data=bytes.subarray(pos,pos+len);
-    if(['TIT2','TPE1','TALB'].includes(id)){
+    if(['TIT2','TPE1','TALB','TCON','TLAN'].includes(id)){
      const value=decoder(data[0],data.subarray(1)).slice(0,300);
-     if(value)result[{TIT2:'title',TPE1:'artist',TALB:'album'}[id]]=value;
+     if(value)result[{TIT2:'title',TPE1:'artist',TALB:'album',TCON:'genre',TLAN:'language'}[id]]=value;
+    }else if((id==='USLT'||id==='SYLT')&&!result.lyricsLanguage&&data.length>=4){const lang=ascii(data,1,4).toLowerCase();if(/^[a-z]{3}$/.test(lang)&&lang!=='und'&&lang!=='xxx')result.lyricsLanguage=lang;
     }else if(id==='APIC'&&!result.artwork){
      result.artwork=parseApic(data);
     }
@@ -111,7 +112,7 @@
   const title=cleanLabel(tags.title)||fallback.title;
   const artist=cleanLabel(tags.artist)||fallback.artist;
   return {
-   title,artist,album:tags.album||'',
+   title,artist,album:tags.album||'',genre:tags.genre||'',language:tags.language||tags.lyricsLanguage||'',
    display:artist?artist+' — '+title:title,
    artwork:tags.artwork||null,
    source:tags.title||tags.artist?'id3':'filename'
