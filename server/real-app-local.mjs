@@ -6,6 +6,7 @@ import {createServer, get as radioHttpGet} from 'node:http';
 import {Transform} from 'node:stream';
 import {readFileSync,writeFileSync,mkdirSync,renameSync} from 'node:fs';
 import {lookupMusicReleases} from './music-discovery.mjs';
+import {readPublicPodcastFeed,lookupPodcastEpisodes} from './podcast-public-feed.mjs';
 import {MAX_LYRIC_BYTES,lyricFormat,transcribeLyrics,vocalModelConfigured} from './music-lyrics.mjs';
 import {pythonForNoteAudio} from './note-audio-transcriber.mjs';
 import {MAX_MUSIC_CLIP,clipFormat,recognitionConfigured,recognizeMusic} from './music-recognition.mjs';
@@ -304,9 +305,18 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider,
    });incoming.once('error',()=>finish());incoming.once('end',()=>finish());
   });probe.once('error',()=>finish());probeDeadline=setTimeout(()=>finish(),10000);probeDeadline.unref?.()}catch{finish()}
  }
+ let podcastRequests=0;
  const server=createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  if(req.method==='GET'&&(path==='/api/seyveo-podcast-feed'||path==='/api/seyveo-podcast-episodes')){
+   if(req.headers['sec-fetch-site']==='cross-site'){send(res,403,{error:'Недоверенная страница.'});return}
+   if(podcastRequests>=3){send(res,429,{error:'Подожди завершения загрузки.'});return}
+   const params=new URL(req.url,ORIGIN).searchParams;podcastRequests++;
+   try{const data=path.endsWith('-feed')?await readPublicPodcastFeed(params.get('url')||''):await lookupPodcastEpisodes(params.get('id')||'',params.get('country')||'RU');if(!res.destroyed)send(res,200,data)}
+   catch{if(!res.destroyed)send(res,502,{error:'Выпуски пока недоступны.'})}finally{podcastRequests--}
+   return;
+  }
   if(req.method==='GET'&&path==='/api/seyveo-radio-107-archive'){
    if(req.headers['sec-fetch-site']==='cross-site'){send(res,403,{error:'Недоверенная страница.'});return}
    send(res,200,{station:'Радио 107',timezone:'Europe/Moscow',monitor:radioArchiveMonitor,items:archive.filter(x=>x.at>Date.now()-archiveAge)});return;
