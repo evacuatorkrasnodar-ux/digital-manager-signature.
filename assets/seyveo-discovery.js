@@ -293,8 +293,9 @@ function readLikes(){
  try{
   const raw=JSON.parse(localStorage.getItem(LIKES)||'[]');if(!Array.isArray(raw))return [];
   return raw.slice(0,100).flatMap(r=>{
-   if(r&&/^itunes:\d+$/.test(r.id)&&safeUrl(r.url)&&validDate(r.date)&&clean(r.title)&&clean(r.artist))return [{id:r.id,title:clean(r.title),artist:clean(r.artist),date:r.date,type:'Album',url:safeUrl(r.url),artwork:safeArtwork(r.artwork)}];
-   return publicItems([r]);
+   const saved=r?.saved&&typeof r.saved==='object'?{at:Number(r.saved.at)||0,waiting:r.saved.waiting===true,confirmed:r.saved.confirmed===true,heard:Number(r.saved.heard)||0,checked:Number(r.saved.checked)||0,snooze:Number(r.saved.snooze)||0}:{at:0,waiting:validDate(r?.date)&&r.date>today(),confirmed:false,heard:0,checked:0,snooze:0};
+   if(r&&/^itunes:\d+$/.test(r.id)&&safeUrl(r.url)&&validDate(r.date)&&clean(r.title)&&clean(r.artist))return [{id:r.id,title:clean(r.title),artist:clean(r.artist),date:r.date,type:'Album',url:safeUrl(r.url),artwork:safeArtwork(r.artwork),saved}];
+   return publicItems([r]).map(x=>({...x,saved}));
   });
  }catch{return []}
 }
@@ -313,14 +314,68 @@ function button(label,cls,svg){
 }
 const heartIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 5.5a5 5 0 0 0-7 0L12 7l-1.5-1.5a5 5 0 0 0-7 7L12 21l8.5-8.5a5 5 0 0 0 0-7Z"/></svg>';
 const playIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z" fill="currentColor" stroke="none"/></svg>';
-const liked=r=>likes.some(x=>x.id===r.id);
+const savedRelease=r=>likes.find(x=>x.id===r.id||releaseKey(x)===releaseKey(r));
+const liked=r=>!!savedRelease(r);
 function saveLikes(){try{localStorage.setItem(LIKES,JSON.stringify(likes))}catch{}}
 function like(r,b){
- if(liked(r))likes=likes.filter(x=>x.id!==r.id);else likes=[r,...likes].slice(0,100);
- saveLikes();for(const other of panel.querySelectorAll('[data-discovery-like]'))if(other.dataset.discoveryLike===r.id){other.setAttribute('aria-pressed',String(liked(r)));other.title=liked(r)?'Убрать из понравившегося':'Нравится';other.setAttribute('aria-label',other.title)}
+ if(liked(r))likes=likes.filter(x=>x.id!==r.id&&releaseKey(x)!==releaseKey(r));else likes=[{...r,saved:{at:Date.now(),waiting:r.date>today(),confirmed:r.date<=today(),heard:0,checked:0,snooze:0}},...likes].slice(0,100);
+ saveLikes();signal();for(const other of panel.querySelectorAll('[data-discovery-like]'))if(other.dataset.discoveryLike===r.id){other.setAttribute('aria-pressed',String(liked(r)));other.title=liked(r)?'Убрать из понравившегося':'Нравится';other.setAttribute('aria-label',other.title)}
  if(state.enabled&&liked(r))maybeCheck();
  clearButton.hidden=!state.enabled&&!state.artists.length&&!state.releases.length&&!likes.length;
- if(mode==='liked')showPublic(lastItems,lastStale);
+ if(mode==='liked'||feedVisible())showPublic(lastItems,lastStale);
+}
+function markHeard(r){
+ const item=savedRelease(r);if(!item||item.saved?.heard)return;
+ item.saved={...item.saved,heard:Date.now()};saveLikes();signal();
+ if(feedVisible()&&!previewBox.open)showPublic(lastItems,lastStale);
+}
+function observeSavedListen(payload){
+ const artist=normalize(payload?.artist),title=normalize(payload?.title),album=normalize(payload?.album);
+ if(!artist||!title)return;
+ for(const r of likes){if(normalize(r.artist)!==artist||r.saved?.heard||r.date>today())continue;
+  const name=normalize(r.title).replace(/(?:\s*[-–—]\s*|\s+)(?:ep|single)$/i,'').trim();
+  if(name&&(name===title||name===album))markHeard(r);
+ }
+}
+function pendingReminders(){
+ if(!state.enabled)return [];
+ const now=Date.now();
+ return likes.filter(r=>r.saved?.confirmed&&!r.saved.heard&&r.date<=today()&&now>=Number(r.saved.snooze||0)&&(r.saved.waiting||r.saved.at>0&&now-r.saved.at>=3*DAY)).slice(0,3);
+}
+let savedCheckRunning=false;
+async function checkSavedReleases(){
+ if(savedCheckRunning||document.hidden||!state.enabled)return;
+ const now=Date.now();
+ const due=likes.filter(r=>uuid(r.id)&&r.saved?.waiting&&!r.saved.confirmed&&r.date<=today()&&now-Number(r.saved.checked||0)>=6*3600000).slice(0,2);
+ if(!due.length)return;savedCheckRunning=true;
+ try{
+  for(const entry of due){
+   if(document.hidden||!state.enabled)break;
+   const item=likes.find(r=>r.id===entry.id);if(!item)continue;
+   item.saved.checked=Date.now();saveLikes();
+   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),9000);
+   try{
+    const wait=Math.max(0,1200-(Date.now()-lastPublicRequest));if(wait)await new Promise(resolve=>setTimeout(resolve,wait));
+    if(!state.enabled||document.hidden)break;lastPublicRequest=Date.now();
+    const url=new URL('https://musicbrainz.org/ws/2/release-group/'+item.id);url.searchParams.set('inc','releases');url.searchParams.set('fmt','json');
+    const res=await fetch(url.href,{signal:controller.signal,credentials:'omit',referrerPolicy:'no-referrer',headers:{accept:'application/json'}});
+    if(!res.ok)continue;const data=await res.json();
+    const live=likes.find(r=>r.id===entry.id);if(!live||!state.enabled||data.id!==entry.id)continue;
+    const dates=(Array.isArray(data.releases)?data.releases:[]).filter(r=>r.status==='Official'&&validDate(r.date)).map(r=>r.date).sort();
+    if(dates.length){live.date=dates[0];live.saved.confirmed=dates[0]<=today();saveLikes();signal();if(feedVisible()&&!previewBox.open)showPublic(lastItems,lastStale)}
+   }catch{}finally{clearTimeout(timeout)}
+  }
+ }finally{savedCheckRunning=false}
+}
+function reminderCard(r){
+ const card=document.createElement('article');card.className='sv-new-story sv-new-reminder';
+ const label=document.createElement('small');label.textContent='Сэйви · '+(r.saved.waiting?'Релиз по данным каталога':'Из понравившегося');
+ const title=document.createElement('strong');title.textContent=r.artist+' — '+r.title;
+ const body=document.createElement('p');body.textContent=r.saved.waiting?'Ты ждал этот релиз. Хочешь послушать?':'Ты сохранил этот релиз, но я ещё не отмечала прослушивание.';
+ const actions=document.createElement('div');actions.className='sv-new-reminder-actions';
+ const play=button('Послушать','sv-new-reminder-play');play.addEventListener('click',()=>void preview(r,card));
+ const later=button('Позже','sv-new-reminder-later');later.addEventListener('click',()=>{r.saved.snooze=Date.now()+3*DAY;saveLikes();signal();showPublic(lastItems,lastStale)});
+ actions.append(play,later);card.append(label,title,body,actions);return card;
 }
 function qualifiedArtists(){
  const list=state.artists.filter(a=>a.plays>=3).map(a=>({...a}));
@@ -352,6 +407,7 @@ async function preview(r,anchor){
  const title=document.createElement('strong');title.textContent=r.artist+' · '+r.title;
  const close=button('Закрыть','sv-new-close');close.textContent='×';close.addEventListener('click',closePreview);top.append(title,close);
  const message=document.createElement('p');message.textContent='Ищу этот релиз в Apple Music…';previewBox.append(top,message);previewBox.showModal();
+ if(savedRelease(r)&&!savedRelease(r).saved?.heard){const heard=button('Уже послушал','sv-new-heard');heard.addEventListener('click',()=>{markHeard(r);heard.textContent='Прослушано';heard.disabled=true});previewBox.append(heard)}
  const controller=new AbortController();previewController=controller;const timer=setTimeout(()=>controller.abort(),9000);
  try{
   let album=appleAlbumURL(r.url);
@@ -371,7 +427,7 @@ async function preview(r,anchor){
   frame.src=album.replace('https://music.apple.com','https://embed.music.apple.com');frame.allow='autoplay; encrypted-media';frame.referrerPolicy='no-referrer';frame.loading='lazy';
   message.textContent='Предпрослушивание предоставлено Apple Music. Доступность зависит от каталога.';
   for(const a of document.querySelectorAll('audio'))if(!a.paused)a.pause();
-  previewBox.append(frame,link);
+  previewBox.append(frame,link);const download=button('Открыть в iTunes Store','sv-new-store');download.addEventListener('click',()=>{const store=new URL(album);store.hostname='itunes.apple.com';window.open(store.href,'_blank','noopener,noreferrer')});previewBox.append(download);
  }catch{if(run===previewRun)message.textContent='Предпрослушивание сейчас недоступно.'}
  finally{clearTimeout(timer);if(run===previewRun)previewController=null}
 }
@@ -593,6 +649,11 @@ html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel #svDi
 html:root body #sayviMusicPage[data-music-view="new"] #sayviDiscoveryPanel #svDiscoveryEditTaste svg{width:21px;height:21px}
 #manageDataDialog #sayviDiscoveryStatus{font-size:12px;color:var(--secondary,#666);line-height:1.4}
 #manageDataDialog #sayviDiscoveryCheck:not([hidden]){display:flex;align-items:center;min-height:44px;border:0;background:transparent;box-shadow:none;color:var(--text,#141619);padding:0;text-align:left}
+
+#sayviDiscoveryPanel .sv-new-reminder{grid-column:1/-1!important;margin:0 0 7px!important;padding:12px 0!important;border-top:0!important;border-bottom:1px solid rgba(127,140,155,.15)!important;display:grid;gap:4px}
+#sayviDiscoveryPanel .sv-new-reminder-actions{display:flex;gap:18px;align-items:center}
+#sayviDiscoveryPanel .sv-new-reminder-actions button,dialog.sv-new-preview :is(.sv-new-heard,.sv-new-store){border:0!important;background:transparent!important;box-shadow:none!important;min-height:44px!important;padding:0 2px!important;color:#3879bb;font-size:13px;font-weight:500;transform:none!important}
+#sayviDiscoveryPanel .sv-new-reminder-actions .sv-new-reminder-later{color:var(--secondary,#666)}
 `;document.head.append(style);
 
 function publicMessage(s){if(publicStatus){publicStatus.textContent=s;publicStatus.hidden=!s}}
@@ -612,10 +673,10 @@ function artTile(r){
  const date=document.createElement('time');date.className='sv-new-meta';date.dateTime=r.date;date.textContent=kind(r)+' · '+new Date(r.date+'T00:00:00Z').toLocaleDateString('ru-RU',{day:'numeric',month:'short',timeZone:'UTC'});date.title=dateLabel(r.date);
  const cover=document.createElement('div');cover.className='sv-new-cover';cover.append(art);
  const copy=document.createElement('div');copy.className='sv-new-copy';copy.append(title,artist,date);
- if(r.date<=today()){
+ if(r.date<=today()&&!(r.saved?.waiting&&!r.saved.confirmed)){
   const play=button('Предпрослушивание: '+r.title,'sv-new-icon sv-new-cover-play','<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 5.5v13l10-6.5z"/></svg>');
   play.addEventListener('click',()=>{if(previewBox.open&&previewAnchor===tile){closePreview();return}void preview(r,tile)});cover.append(play);
- }else{const soon=document.createElement('span');soon.className='sv-new-cover-soon';soon.textContent='Скоро';cover.append(soon)}
+ }else{const soon=document.createElement('span');soon.className='sv-new-cover-soon';soon.textContent=r.date>today()?'Скоро':'Уточняем';cover.append(soon)}
  const favourite=heart(r);favourite.classList.add('sv-new-cover-heart');cover.append(favourite);
  tile.append(cover,copy);return tile;
 }
@@ -642,7 +703,7 @@ function showPublic(items,stale=false){
  $('svDiscoveryUpcoming').hidden=true;$('svDiscoveryNews').hidden=true;
  publicTitle.textContent=mode==='liked'?'Понравилось':state.enabled&&(favoriteArtists().length||tasteTags().length)?'Для тебя':'Свежие релизы';
  let cards=[];
- if(mode==='liked')cards=likes.map(artTile);
+ if(mode==='liked')cards=[...likes].sort((a,b)=>Number(!!b.saved?.confirmed&&!b.saved?.heard)-Number(!!a.saved?.confirmed&&!a.saved?.heard)).map(artTile);
  else if(mode==='upcoming')cards=upcoming.slice(0,12).map(artTile);
  else if(mode==='news')cards=[...upcoming.slice(0,6).map(r=>story(r,true)),...recent.slice(0,8).map(r=>story(r,false))];
  else{
@@ -653,6 +714,7 @@ function showPublic(items,stale=false){
   if(recent.length<3&&upcoming[0])cards.push(story(upcoming[0],true));
   const remaining=upcoming.slice(recent.length>=6?2:1,5);if(remaining.length){const heading=document.createElement('h3');heading.textContent='Скоро выйдут';heading.style.gridColumn='1/-1';cards.push(heading,...remaining.map(artTile))}
  }
+ if(mode==='for-you')cards.unshift(...pendingReminders().slice(0,1).map(reminderCard));
  publicList.replaceChildren(...cards);
  publicMessage(mode==='liked'?(cards.length?'':'Нажмите сердечко на релизе или анонсе — он останется здесь.'):stale?'Сохранённая подборка · обновление пока недоступно.':cards.length?'':'В каталоге пока нет подходящих релизов.');
  if(publicSource){publicSource.textContent='MusicBrainz · Cover Art Archive · даты могут уточняться';publicSource.hidden=false;$('svDiscoveryPublic').append(publicSource)}
@@ -726,12 +788,13 @@ favButton?.addEventListener('click',()=>setMode(mode==='liked'?'for-you':'liked'
 window.addEventListener('seyveo:music-preferences-changed',()=>{if(feedVisible()&&!previewBox.open)void loadPublic()});
 offerYes?.addEventListener('click',()=>enable(true));
 offerNo?.addEventListener('click',()=>{rememberChoice();syncChoice()});
-document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='new'){settingsOpen=false;syncChoice();closePreview();++publicRun;publicController?.abort();publicController=null;mode='for-you';syncFilters()}else{syncChoice();void loadPublic()}});
+document.addEventListener('seyveo:music-view',event=>{if(event.detail?.view!=='new'){settingsOpen=false;syncChoice();closePreview();++publicRun;publicController?.abort();publicController=null;mode='for-you';syncFilters()}else{syncChoice();void loadPublic();void checkSavedReleases()}});
 consent.addEventListener('click',()=>enable(!state.enabled));
 checkButton.addEventListener('click',()=>{if(state.enabled)void check({force:true});if(feedVisible())void loadPublic(true)});
 clearButton.addEventListener('click',clear);
-window.addEventListener('seyveo:music-qualified-listen',event=>listen(event.detail));
-function refreshVisible(){maybeCheck();if(feedVisible()&&mode==='for-you'&&!previewBox.open&&!publicController)void loadPublic()}
+window.addEventListener('seyveo:music-qualified-listen',event=>{observeSavedListen(event.detail);listen(event.detail)});
+window.addEventListener('seyveo:music-saved-listen',event=>observeSavedListen(event.detail));
+function refreshVisible(){maybeCheck();void checkSavedReleases();if(feedVisible()&&mode==='for-you'&&!previewBox.open&&!publicController)void loadPublic()}
 window.addEventListener('focus',refreshVisible);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisible()});
 window.addEventListener('storage',event=>{
@@ -744,6 +807,6 @@ window.SEYVEO_DISCOVERY=Object.freeze({
  enabled:()=>state.enabled,artists:()=>state.artists.map(a=>({...a})),
  current,postpone,dismiss,check,listen,chooseReleases
 });
-update();signal();maybeCheck();
+update();signal();maybeCheck();void checkSavedReleases();
 if($('sayviMusicPage')?.dataset.musicView==='new'&&!panel.hidden)void loadPublic();
 })();
