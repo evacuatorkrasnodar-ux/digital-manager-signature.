@@ -77,8 +77,14 @@ function init(){
   setPlaylistEditing(true);stopCoverObserver();el.replaceChildren();page.scrollTop=0;
   const top=page.querySelector('.sv-music-head');
   const labelTitle=top.querySelector('[data-title-view="library"]');labelTitle.textContent=existing?'Редактирование':'Новый плейлист';
-  const cancel=playlistButton('Отмена',()=>{setPlaylistEditing(false);renderTracks()},'sv-pl-header-action sv-pl-header-cancel');
-  const done=playlistButton('Готово',()=>save(),'sv-pl-header-action sv-pl-header-done');top.append(cancel,done);
+  const cancel=top.querySelector('.sv-music-inner-back').cloneNode(true);
+  cancel.removeAttribute('data-music-view-action');cancel.classList.add('sv-pl-header-action','sv-pl-header-cancel');cancel.setAttribute('aria-label','Назад');cancel.addEventListener('click',()=>{
+   const initial=new Set(existing?.ids||[]);
+   const dirty=parsed.name.trim()!==(existing?.name||'')||chosen.size!==initial.size||[...chosen].some(id=>!initial.has(id));
+   if(dirty&&!window.confirm('Выйти без сохранения?'))return;
+   setPlaylistEditing(false);renderTracks();
+  });
+  const done=document.createElement('button');done.type='button';done.className='sv-pl-header-action sv-pl-header-done';done.setAttribute('aria-label','Сохранить плейлист');done.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>';done.disabled=true;done.addEventListener('click',save);top.append(cancel,done);
   const panel=document.createElement('div');panel.className='sv-pl-smart-panel';
   const label=document.createElement('label');label.className='sv-pl-smart-label';label.htmlFor='svPlaylistCommand';label.textContent='Скажи, что собрать';panel.append(label);
   const input=document.createElement('textarea');input.id='svPlaylistCommand';input.rows=2;input.maxLength=400;input.placeholder='В дорогу, добавь рок и Шамана';input.setAttribute('aria-label','Название и состав плейлиста');input.value=existing?.name||'';input.className='sv-pl-smart-input';panel.append(input);
@@ -94,6 +100,7 @@ function init(){
    chosen=new Set(parsed.searchOnly?[]:parsed.ids);
    for(const [id,value] of manual){if(value)chosen.add(id);else chosen.delete(id)}
    note.textContent='Выбрано: '+chosen.size;
+   done.disabled=!parsed.name.trim()||!chosen.size;
    preview.replaceChildren();
    if(parsed.name){const name=document.createElement('span');name.className='sv-pl-smart-name';name.textContent=parsed.name;preview.append(name)}
    if(parsed.query&&(parsed.explicit||parsed.ids.size)){const count=document.createElement('span');count.textContent='Найдено: '+parsed.ids.size;preview.append(count)}
