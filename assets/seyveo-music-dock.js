@@ -228,7 +228,7 @@ function init(){
   const orb=portraitEl('span','sv-portrait-orb sv-sayvi-symbol');orb.setAttribute('aria-hidden','true');
   const copy=portraitEl('div','sv-portrait-insight-copy');copy.append(portraitEl('small','','Сэйви заметила'),portraitEl('p','',portraitInsight(p,previous)));insight.append(orb,copy);total.append(insight);
   const grid=portraitEl('div','sv-portrait-grid');out.append(grid);
-  const daily=portraitPanel('Музыка по дням',p.trackedFrom?'Фактическое время прослушивания':'Детальная история начнёт появляться после обновления');
+  const daily=portraitPanel(/^\d{4}$/.test(period)?'Музыка по месяцам':'Музыка по дням');
   if(p.trackedFrom){
    const year=/^\d{4}$/.test(period);let entries=[];
    if(year){for(let i=1;i<=12;i++){const m=period+'-'+String(i).padStart(2,'0');entries.push({key:m,label:new Date(Number(period),i-1,1).toLocaleDateString('ru-RU',{month:'short'}),seconds:Object.entries(p.days).filter(([d])=>d.startsWith(m)).reduce((a,[,v])=>a+v,0),known:m>=p.trackedFrom.slice(0,7)})}}
@@ -241,18 +241,18 @@ function init(){
    entries.forEach((e,i)=>{const col=portraitEl('button','sv-portrait-bar-col');col.type='button';col.disabled=!e.known;col.setAttribute('aria-label',(year?e.label:e.label+' число')+': '+(e.known?portraitDuration(e.seconds):'нет детализации'));const rail=portraitEl('span','sv-portrait-bar-rail'),bar=portraitEl('i','sv-portrait-bar');bar.style.height=(e.known?Math.max(e.seconds?4:0,100*e.seconds/max):0)+'%';if(peak===e)bar.classList.add('is-peak');rail.append(bar);const label=portraitEl('small','',year||i===0||i===entries.length-1||i%7===6?e.label:'');col.append(rail,label);col.addEventListener('click',()=>{detail.textContent=(year?e.label:e.label+' число')+' · '+portraitDuration(e.seconds)});chart.append(col)});
    daily.append(detail,chart);
    const tracked=Object.values(p.days).reduce((a,b)=>a+b,0);if(tracked<p.total*.99)daily.append(portraitEl('p','sv-portrait-note','Детализация доступна с '+p.trackedFrom.split('-').reverse().join('.')+'. Более раннее время сохранено в общем итоге.'));
-  }else daily.append(portraitEl('p','sv-portrait-empty','Пока есть только общий итог. Новые прослушивания автоматически появятся на графике.'));
+  }else{daily.classList.add('is-empty');daily.append(portraitEl('p','sv-portrait-empty','График появится с новыми прослушиваниями.'));}
   grid.append(daily);
   function distribution(title,kind,rows,known,oldRows,oldKnown){
    const panel=portraitPanel(title);
-   if(!known){panel.append(portraitEl('p','sv-portrait-empty',kind==='genre'?'Сэйви уточняет жанры по метаданным музыкальных файлов.':'Язык появится, когда он указан в метаданных или текстах песен.'));return panel}
+   if(!known){panel.classList.add('is-empty');panel.append(portraitEl('p','sv-portrait-empty',kind==='genre'?'Сэйви ещё знакомится с твоими жанрами.':'Пока недостаточно данных о языках песен.'));return panel}
    const displayed=rows.slice(0,5),rest=known-displayed.reduce((n,r)=>n+r.seconds,0);if(rest>0.5)displayed.push({name:'Другие',seconds:rest});
    const donut=portraitEl('div','sv-portrait-donut'),stops=[];let at=0;
    displayed.forEach((r,i)=>{const end=at+r.seconds/known*100;stops.push(portraitColors[i%portraitColors.length]+' '+at+'% '+end+'%');at=end});
    donut.style.background='conic-gradient('+stops.join(',')+')';
    const center=portraitEl('div','sv-portrait-donut-center');center.append(portraitEl('strong','',Math.round(displayed[0].seconds/known*100)+'%'),portraitEl('small','',displayed[0].name));donut.append(center);donut.setAttribute('aria-hidden','true');
    const body=portraitEl('div','sv-portrait-distribution');body.append(donut);const legend=portraitEl('div','sv-portrait-legend');
-   const canCompare=kind==='genre'&&p.music>=600&&previous.music>=600&&known/p.music>=.6&&oldKnown/previous.music>=.6;
+   const canCompare=p.music>=600&&previous.music>=600&&known/p.music>=.6&&oldKnown/previous.music>=.6;
    const old=new Map(oldRows.map(r=>[r.name,r.seconds/oldKnown]));
    displayed.forEach((r,i)=>{const row=portraitEl('div','sv-portrait-legend-row'),dot=portraitEl('i','');dot.style.background=portraitColors[i%portraitColors.length];const name=portraitEl('span','',r.name),percent=portraitEl('strong','',Math.round(r.seconds/known*100)+'%');row.append(dot,name,percent);if(canCompare&&r.name!=='Другие'){const change=Math.round((r.seconds/known-(old.get(r.name)||0))*100);if(change)row.append(portraitEl('small','sv-portrait-change '+(change>0?'up':'down'),(change>0?'+':'')+change+' п. п.'))}legend.append(row)});body.append(legend);panel.append(body);
    const coverage=Math.min(100,Math.round(known/Math.max(1,p.music)*100));panel.append(portraitEl('p','sv-portrait-note',(canCompare?'Динамика к прошлому периоду · ':'')+'Известно для '+coverage+'% времени музыки'));return panel;
@@ -260,6 +260,11 @@ function init(){
   grid.append(distribution('Жанры и изменение вкуса','genre',p.genres,p.genreKnown,previous.genres,previous.genreKnown));
   const sourcePanel=portraitPanel('Любимые источники музыки','По времени прослушивания');
   const sourceRows=Array.isArray(p.sources)?p.sources:[],sourceTotal=sourceRows.reduce((n,r)=>n+r.seconds,0);
+  const oldSources=Array.isArray(previous.sources)?previous.sources:[],oldSourceTotal=oldSources.reduce((n,r)=>n+r.seconds,0);
+  const unknownSource='Медиатека · без источника';
+  const knownShare=(rows,total)=>total?1-(rows.find(r=>r.name===unknownSource)?.seconds||0)/total:0;
+  const compareSources=sourceTotal>=600&&oldSourceTotal>=600&&sourceTotal>=p.total*.95&&oldSourceTotal>=previous.total*.95&&knownShare(sourceRows,sourceTotal)>=.6&&knownShare(oldSources,oldSourceTotal)>=.6;
+  const oldSourceShares=new Map(oldSources.map(r=>[r.name,r.seconds/Math.max(1,oldSourceTotal)*100]));
   if(sourceTotal>0){
    const list=portraitEl('div','sv-portrait-source-list');
    const displayed=sourceRows.slice(0,6),rest=sourceTotal-displayed.reduce((n,r)=>n+r.seconds,0);
@@ -267,19 +272,22 @@ function init(){
    displayed.forEach((r,i)=>{
     const row=portraitEl('div','sv-portrait-source-row'),head=portraitEl('div','sv-portrait-source-head');
     const share=r.seconds/sourceTotal*100;
-    head.append(portraitEl('span','',r.name),portraitEl('strong','',Math.round(share)+'%'));
+    head.append(portraitEl('span','',r.name===unknownSource?'Моя медиатека':r.name),portraitEl('strong','',Math.round(share)+'%'));
+    if(compareSources&&r.name!==unknownSource&&r.name!=='Другие источники'){const change=Math.round(share-(oldSourceShares.get(r.name)||0));if(change)head.append(portraitEl('small','sv-portrait-change '+(change>0?'up':'down'),(change>0?'+':'')+change+' п. п.'));}
     const track=portraitEl('div','sv-portrait-rhythm-track'),fill=portraitEl('i','');
     fill.style.width=share+'%';fill.style.background=portraitColors[i%portraitColors.length];track.append(fill);
     row.append(head,track,portraitEl('small','sv-portrait-source-time',portraitDuration(r.seconds)));list.append(row);
    });
-   sourcePanel.append(list,portraitEl('p','sv-portrait-note','Сайты определяются по метаданным файлов. Если источник не указан, музыка остаётся в медиатеке.'));
+   sourcePanel.append(list);
+   if(sourceRows.some(r=>r.name===unknownSource))sourcePanel.append(portraitEl('p','sv-portrait-note','Моя медиатека — треки без указанного источника.'));
+   if(compareSources)sourcePanel.append(portraitEl('p','sv-portrait-note','Изменения к прошлому периоду.'));
    if(sourceTotal<p.total*.99)sourcePanel.append(portraitEl('p','sv-portrait-note','Данные доступны не для всей истории прослушиваний.'));
-  }else sourcePanel.append(portraitEl('p','sv-portrait-empty','Источники появятся по мере прослушивания музыки.'));
+  }else{sourcePanel.classList.add('is-empty');sourcePanel.append(portraitEl('p','sv-portrait-empty','Источники появятся с новыми прослушиваниями.'));}
   grid.append(sourcePanel);
   grid.append(distribution('Языки музыки','language',p.languages,p.languageKnown,previous.languages,previous.languageKnown));
   const times=portraitPanel('Твой музыкальный ритм');
   const bands=[['Утро',6,12],['День',12,18],['Вечер',18,24],['Ночь',0,6]].map(([name,a,b])=>({name,seconds:p.hours.slice(a,b).reduce((n,v)=>n+v,0)})),hourTotal=bands.reduce((a,r)=>a+r.seconds,0);
-  if(hourTotal){const leader=[...bands].sort((a,b)=>b.seconds-a.seconds)[0];times.append(portraitEl('p','sv-portrait-rhythm-note',leader.name+' — твоё самое музыкальное время'));const rails=portraitEl('div','sv-portrait-rhythm');bands.forEach((r,i)=>{const row=portraitEl('div','sv-portrait-rhythm-row'),track=portraitEl('span','sv-portrait-rhythm-track'),fill=portraitEl('i','');fill.style.width=r.seconds/hourTotal*100+'%';fill.style.background=portraitColors[i];track.append(fill);row.append(portraitEl('span','',r.name),track,portraitEl('strong','',Math.round(r.seconds/hourTotal*100)+'%'));rails.append(row)});times.append(rails)}else times.append(portraitEl('p','sv-portrait-empty','Сэйви начнёт замечать, в какое время ты чаще слушаешь музыку.'));
+  if(hourTotal){const leader=[...bands].sort((a,b)=>b.seconds-a.seconds)[0];times.append(portraitEl('p','sv-portrait-rhythm-note',leader.name+' — твоё самое музыкальное время'));const rails=portraitEl('div','sv-portrait-rhythm');bands.forEach((r,i)=>{const row=portraitEl('div','sv-portrait-rhythm-row'),track=portraitEl('span','sv-portrait-rhythm-track'),fill=portraitEl('i','');fill.style.width=r.seconds/hourTotal*100+'%';fill.style.background=portraitColors[i];track.append(fill);row.append(portraitEl('span','',r.name),track,portraitEl('strong','',Math.round(r.seconds/hourTotal*100)+'%'));rails.append(row)});times.append(rails)}else{times.classList.add('is-empty');times.append(portraitEl('p','sv-portrait-empty','Сэйви изучает твой музыкальный ритм.'));}
   grid.append(times);
  }
  function renderReplay(scan=true){
