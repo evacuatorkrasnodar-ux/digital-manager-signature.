@@ -873,78 +873,77 @@ function editQueue(from,to,remove=false){
  tracks=order;index=tracks.indexOf(current);resetShuffle(current);
  collectionRender();syncResume();return true;
 }
-function bindQueueGesture(btn,handle,file,list){
- let start=null,blockedUntil=0,target=null;
+function bindQueueGesture(btn,handle,file,list,slide,remove){
+ const WIDTH=88;
+ let gesture=null,blockedUntil=0,target=null;
  const locate=()=>tracks.indexOf(file);
- const clear=()=>{btn.classList.remove('sv-queue-dragging','sv-queue-swiping');btn.style.removeProperty('--sv-queue-swipe');target?.classList.remove('sv-queue-target');target=null};
- btn.addEventListener('pointerdown',e=>{
-  if(e.pointerType==='touch'||!e.isPrimary||e.button!==0)return;
-  const drag=handle.contains(e.target);
-  if(!drag&&locate()===index)return;
-  start={id:e.pointerId,x:e.clientX,y:e.clientY,drag,swipe:false};
-  if(drag){handle.setPointerCapture(e.pointerId);btn.classList.add('sv-queue-dragging')}
+ const open=()=>slide.classList.contains('sv-queue-open');
+ const setOpen=value=>{slide.classList.toggle('sv-queue-open',value);remove.hidden=!value;remove.tabIndex=value?0:-1;};
+ const closeOthers=()=>list.querySelectorAll('.sv-queue-slide.sv-queue-open').forEach(row=>{
+  if(row!==slide){row.classList.remove('sv-queue-open');const action=row.querySelector('.sv-queue-swipe-delete');if(action){action.hidden=true;action.tabIndex=-1}}
  });
- btn.addEventListener('pointermove',e=>{
-  if(!start||e.pointerId!==start.id)return;
-  const dx=e.clientX-start.x,dy=e.clientY-start.y;
-  if(start.drag){
-   const row=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-queue-index]');
+ function begin(x,y,drag,id){
+  closeOthers();
+  if(!drag&&locate()===index)return;
+  gesture={x,y,drag,id,swipe:false,vertical:false,startOpen:open()};
+  if(drag)btn.classList.add('sv-queue-dragging');
+ }
+ function move(x,y,event){
+  const g=gesture;if(!g||g.vertical)return;
+  const dx=x-g.x,dy=y-g.y;
+  if(g.drag){
+   if(event.cancelable)event.preventDefault();
+   const row=document.elementFromPoint(x,y)?.closest('[data-queue-index]');
    if(row!==target){target?.classList.remove('sv-queue-target');target=row&&list.contains(row)?row:null;target?.classList.add('sv-queue-target')}
    const rect=list.getBoundingClientRect();
-   if(e.clientY<rect.top+26)list.scrollTop-=12;else if(e.clientY>rect.bottom-26)list.scrollTop+=12;
-  }else{
-   if(!start.swipe&&Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx)){start=null;return}
-   if(dx<-12&&Math.abs(dx)>Math.abs(dy)*1.3&&!start.swipe){start.swipe=true;btn.setPointerCapture(e.pointerId)}
-   if(start.swipe){btn.classList.add('sv-queue-swiping');btn.style.setProperty('--sv-queue-swipe',Math.max(-76,Math.min(0,dx))+'px')}
-  }
- });
- btn.addEventListener('pointerup',e=>{
-  if(!start||e.pointerId!==start.id)return;
-  const g=start;start=null;
-  const dx=e.clientX-g.x,dy=e.clientY-g.y;
-  const to=target?Number(target.dataset.queueIndex):-1;
-  clear();
-  if(g.drag){blockedUntil=Date.now()+450;if(Math.abs(dy)>8&&to>=0)editQueue(locate(),to)}
-  else if(g.swipe){blockedUntil=Date.now()+450;if(dx<-72)editQueue(locate(),-1,true)}
- });
- btn.addEventListener('pointercancel',()=>{start=null;clear()});
- btn.addEventListener('lostpointercapture',()=>{if(start){start=null;clear()}});
- btn.addEventListener('click',e=>{if(Date.now()<blockedUntil||handle.contains(e.target)){e.preventDefault();e.stopImmediatePropagation()}},true);
- // Touch events are explicit for older iPhone Safari; vertical scrolling
- // stays native until a horizontal swipe or a grip drag is established.
- let touch=null;
- btn.addEventListener('touchstart',e=>{
-  if(e.touches.length!==1){touch=null;return}
-  const p=e.touches[0],drag=handle.contains(e.target);
-  if(!drag&&locate()===index)return;
-  touch={id:p.identifier,x:p.clientX,y:p.clientY,drag,swipe:false};
-  if(drag){btn.classList.add('sv-queue-dragging');e.preventDefault()}
- },{passive:false});
- btn.addEventListener('touchmove',e=>{
-  if(!touch)return;const p=Array.from(e.touches).find(t=>t.identifier===touch.id);if(!p)return;
-  const dx=p.clientX-touch.x,dy=p.clientY-touch.y;
-  if(touch.drag){
-   if(e.cancelable)e.preventDefault();
-   const row=document.elementFromPoint(p.clientX,p.clientY)?.closest('[data-queue-index]');
-   if(row!==target){target?.classList.remove('sv-queue-target');target=row&&list.contains(row)?row:null;target?.classList.add('sv-queue-target')}
-   const rect=list.getBoundingClientRect();
-   if(p.clientY<rect.top+30)list.scrollTop-=10;else if(p.clientY>rect.bottom-30)list.scrollTop+=10;
+   if(y<rect.top+30)list.scrollTop-=10;else if(y>rect.bottom-30)list.scrollTop+=10;
    return;
   }
-  if(!touch.swipe&&Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx)){touch=null;return}
-  if(dx<-12&&Math.abs(dx)>Math.abs(dy)*1.25)touch.swipe=true;
-  if(touch.swipe){if(e.cancelable)e.preventDefault();btn.classList.add('sv-queue-swiping');btn.style.setProperty('--sv-queue-swipe',Math.max(-76,Math.min(0,dx))+'px')}
- },{passive:false});
- btn.addEventListener('touchend',e=>{
-  if(!touch)return;const p=Array.from(e.changedTouches).find(t=>t.identifier===touch.id);if(!p)return;
-  const g=touch;touch=null;const to=target?Number(target.dataset.queueIndex):-1;clear();
-  if(g.drag||g.swipe){
-   if(e.cancelable)e.preventDefault();blockedUntil=Date.now()+450;
-   if(g.drag&&Math.abs(p.clientY-g.y)>8&&to>=0)editQueue(locate(),to);
-   else if(g.swipe&&p.clientX-g.x<-72)editQueue(locate(),-1,true);
+  if(!g.swipe){
+   if(Math.abs(dy)>9&&Math.abs(dy)>Math.abs(dx)){g.vertical=true;return}
+   if(Math.abs(dx)<9||Math.abs(dx)<Math.abs(dy))return;
+   if(dx>0&&!g.startOpen)return;
+   g.swipe=true;slide.classList.add('sv-queue-sliding');remove.hidden=false;
   }
+  if(event.cancelable)event.preventDefault();
+  slide.style.setProperty('--sv-queue-offset',Math.max(-WIDTH,Math.min(0,(g.startOpen?-WIDTH:0)+dx))+'px');
+ }
+ function finish(x,y,cancel=false){
+  const g=gesture;gesture=null;if(!g)return;
+  const to=target?Number(target.dataset.queueIndex):-1;
+  target?.classList.remove('sv-queue-target');target=null;
+  btn.classList.remove('sv-queue-dragging');slide.classList.remove('sv-queue-sliding');slide.style.removeProperty('--sv-queue-offset');
+  const dx=x-g.x,dy=y-g.y;
+  if(g.drag){blockedUntil=Date.now()+450;if(!cancel&&Math.abs(dy)>8&&to>=0)editQueue(locate(),to);return}
+  if(g.swipe||(!cancel&&!g.vertical&&dx<-35&&Math.abs(dx)>Math.abs(dy)*1.25)){
+   blockedUntil=Date.now()+450;
+   setOpen(cancel?g.startOpen:((g.startOpen?-WIDTH:0)+dx)<-36);
+  }else if(cancel)setOpen(g.startOpen);
+ }
+ // Dedicated row surface and non-passive horizontal touchmove, matching notebook swipe.
+ slide.addEventListener('touchstart',e=>{
+  if(!btn.contains(e.target)||e.touches.length!==1)return;
+  const p=e.touches[0],drag=handle.contains(e.target);begin(p.clientX,p.clientY,drag,p.identifier);
+  if(drag&&e.cancelable)e.preventDefault();
  },{passive:false});
- btn.addEventListener('touchcancel',()=>{touch=null;clear()},{passive:true});
+ slide.addEventListener('touchmove',e=>{
+  if(!gesture||e.touches.length!==1)return;const p=e.touches[0];if(p.identifier===gesture.id)move(p.clientX,p.clientY,e);
+ },{passive:false});
+ slide.addEventListener('touchend',e=>{
+  if(!gesture)return;const p=Array.from(e.changedTouches).find(t=>t.identifier===gesture.id);if(!p)return;
+  if((gesture.drag||gesture.swipe)&&e.cancelable)e.preventDefault();finish(p.clientX,p.clientY);
+ },{passive:false});
+ slide.addEventListener('touchcancel',()=>{if(gesture)finish(gesture.x,gesture.y,true)},{passive:true});
+ btn.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='touch'||e.button!==0)return;begin(e.clientX,e.clientY,handle.contains(e.target),e.pointerId);
+  if(gesture)try{btn.setPointerCapture(e.pointerId)}catch{}
+ });
+ btn.addEventListener('pointermove',e=>{if(gesture&&e.pointerType!=='touch'&&gesture.id===e.pointerId)move(e.clientX,e.clientY,e)});
+ btn.addEventListener('pointerup',e=>{if(gesture&&e.pointerType!=='touch'&&gesture.id===e.pointerId)finish(e.clientX,e.clientY)});
+ btn.addEventListener('pointercancel',e=>{if(gesture&&e.pointerType!=='touch')finish(gesture.x,gesture.y,true)});
+ btn.addEventListener('click',e=>{
+  if(Date.now()<blockedUntil||handle.contains(e.target)||open()){e.preventDefault();e.stopImmediatePropagation();if(open()&&Date.now()>=blockedUntil&&!handle.contains(e.target))setOpen(false)}
+ },true);
  btn.addEventListener('keydown',e=>{
   if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const i=locate(),to=i+(e.key==='ArrowUp'?-1:1);if(editQueue(i,to))collection.querySelector('[data-queue-index="'+to+'"]')?.focus({preventScroll:true})}
   else if(e.key==='Delete'&&locate()!==index){e.preventDefault();const i=locate();if(editQueue(i,-1,true))collection.querySelector('[data-queue-index="'+Math.min(i,tracks.length-1)+'"]')?.focus({preventScroll:true})}
@@ -1009,13 +1008,19 @@ function collectionRender(){
     btn.setAttribute('aria-label',(info.title||'Без названия')+' · текущий трек');
   }
   btn.append(tile,copy,action);
+  let row=btn;
   if(!favoriteView&&match&&!match.file.radio){
     btn.dataset.queueIndex=String(match.i);
     const handle=document.createElement('span');handle.className='sv-queue-handle';handle.setAttribute('aria-hidden','true');
     handle.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 8h10M7 12h10M7 16h10"/></svg>';
     handle.title='Перетащить';btn.append(handle);
     btn.setAttribute('aria-keyshortcuts','Alt+ArrowUp Alt+ArrowDown'+(current?'':' Delete'));
-    bindQueueGesture(btn,handle,match.file,list);
+    const slide=document.createElement('div');slide.className='sv-queue-slide';
+    const swipeDelete=document.createElement('button');swipeDelete.type='button';swipeDelete.className='sv-queue-swipe-delete';swipeDelete.hidden=true;swipeDelete.tabIndex=-1;swipeDelete.disabled=current;
+    swipeDelete.textContent='Удалить';swipeDelete.setAttribute('aria-label','Убрать из очереди: '+(info.title||'Без названия'));
+    swipeDelete.addEventListener('click',()=>editQueue(tracks.indexOf(match.file),-1,true));
+    slide.append(btn,swipeDelete);row=slide;
+    bindQueueGesture(btn,handle,match.file,list,slide,swipeDelete);
   }
   if(!match){
    btn.classList.add('sv-music-favorites-unavailable');btn.title='Добавить файл повторно';
@@ -1039,8 +1044,8 @@ function collectionRender(){
    remove.setAttribute('aria-label','Убрать из очереди: '+(info.title||'Без названия'));
    remove.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12h7"/></svg>';
    remove.addEventListener('click',()=>editQueue(tracks.indexOf(match.file),-1,true));
-   wrap.append(remove,btn);list.append(wrap);
-  }else list.append(btn);
+   wrap.append(remove,row);list.append(wrap);
+  }else list.append(row);
  });
  list.scrollTop=oldTop;
  syncQueueToggle();
